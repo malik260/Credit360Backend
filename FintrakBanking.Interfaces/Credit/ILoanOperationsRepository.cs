@@ -96,6 +96,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanReviewIrregularScheduleViewModel> GetLoanReviewOperationIrregularSchedule(int loanReviewOperationId);
 
         bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
+        bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer);
 
         bool DeleteLoanExistingOnDailyAndPeriodicSchedule(int loanId);
 

@@ -6,23 +6,20 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class TBL_MEDIA_LOAN_DOCUMENTS
+    public partial class TBL_JOB_REQUEST_MSG_DOCUMENT
     {
         [Key]
-        public int DOCUMENTID { get; set; }
+        public int MESSAGEDOCUMENTID { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string LOANAPPLICATIONNUMBER { get; set; }
-
-        [StringLength(50)]
-        public string LOANREFERENCENUMBER { get; set; }
-
-        public int? LOAN_BOOKING_REQUESTID { get; set; }
+        public string JOBREQUESTCODE { get; set; }
 
         [Required]
         [StringLength(250)]
         public string DOCUMENTTITLE { get; set; }
+
+        public int JOBREQUEST_MESSAGEID { get; set; }
 
         public short DOCUMENTTYPEID { get; set; }
 
@@ -46,10 +43,5 @@ namespace FintrakBanking.Entities.DocumentModels
         public string PHYSICALLOCATION { get; set; }
 
         public int CREATEDBY { get; set; }
-        public bool ISPRIMARYDOCUMENT { get; set; }
-        public int? COMPANYID { get; set; }
-        public int? LOANSYSTEMTYPEID { get; set; }
-        public int? LOANREVIEWOPERATIONID { get; set; }
-
     }
 }

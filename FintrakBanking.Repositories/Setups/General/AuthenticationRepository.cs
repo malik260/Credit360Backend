@@ -822,6 +822,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return activities;
         }
+
         public LookupViewModel GetDashboardStaffRole(int staffId)
         {
             var dash = (from st in context.TBL_STAFF
@@ -834,6 +835,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         }).FirstOrDefault();
             return dash;
         }
+
         public bool PasswordChange(PasswordChangeViewModel pwdChange)
         {
 
@@ -873,6 +875,7 @@ namespace FintrakBanking.Repositories.Setups.General
             else
                 throw new SecureException("New Password should not be same as the Current Password");
         }
+
         public bool ValidatePasswordPolicy(string password)
         {
             var hasNumber = new Regex(@"[0-9]+");
@@ -882,6 +885,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var isValidated = hasNumber.IsMatch(password) && hasUpperChar.IsMatch(password) && hasMinimum8Chars.IsMatch(password);
             return isValidated;
         }
+
         public bool ValidateOldPassword(string username, string oldPassword)
         {
             bool isOldPasswordValid = false;
@@ -895,6 +899,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
             return isOldPasswordValid;
+        }
+
+        public bool GetRunningEndOfDayProcess(int companyId)
+        {
+            var applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+            return context.TBL_FINANCE_ENDOFDAY
+                .Where(x => x.DATE == applicationDate && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing)
+                .Any();
         }
     }
 }

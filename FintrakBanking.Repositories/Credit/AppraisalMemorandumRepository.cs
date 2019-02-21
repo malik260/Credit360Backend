@@ -340,6 +340,7 @@ namespace FintrakBanking.Repositories.Credit
                 var dictionary = GetRepresentStepdownItems(model.applicationId, model.forwardAction,operationId);
                 workflow.NextLevelId = dictionary["levelId"];
                 workflow.ToStaffId = dictionary["staffId"];
+                if (model.forwardAction == 8) workflow.ToStaffId = null;
             }
 
             string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
@@ -361,6 +362,8 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.DeferredExecution = true;
             workflow.LogActivity();
+
+            WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
 
             // DETAIL CHANGES
             if (model.recommendedChanges.Count() > 0) // only approving authority
@@ -485,6 +488,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+                workflow.SetResponse = false;
                 workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, null, "New pproved application", true, false);
             }
 
@@ -839,7 +843,7 @@ namespace FintrakBanking.Repositories.Credit
                         customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
                         obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
                         currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
-
+                        loanPurpose = x.d.LOANPURPOSE,
                         proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
                         proposedTenor = x.d.PROPOSEDTENOR,
                         proposedRate = x.d.PROPOSEDINTERESTRATE,
@@ -915,7 +919,7 @@ namespace FintrakBanking.Repositories.Credit
                     customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
                     obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
                     currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
-
+                    loanPurpose = x.d.LOANPURPOSE,
                     proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
                     proposedTenor = x.d.PROPOSEDTENOR,
                     proposedRate = x.d.PROPOSEDINTERESTRATE,
@@ -1007,6 +1011,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationAmount = a.APPLICATIONAMOUNT,
                 dateTimeCreated = a.DATETIMECREATED,
                 collateralDetail = a.COLLATERALDETAIL,
+                loanPurpose = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false).Select(l => l.LOANPURPOSE).FirstOrDefault(),
                 LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false)
                                             .Select(c => new LoanApplicationDetailViewModel
                                             {
@@ -1019,6 +1024,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 currencyId = c.CURRENCYID,
                                                 currencyName = c.TBL_CURRENCY.CURRENCYNAME,
                                                 customerId = c.CUSTOMERID,
+                                                loanPurpose = c.LOANPURPOSE,
                                                 exchangeRate = c.EXCHANGERATE,
                                                 loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                                                 subSectorId = c.SUBSECTORID,
@@ -1886,7 +1892,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
                             email = c.EMAILADDRESS,
-                            applicationReferenceNumber = a.RELATEDREFERENCENUMBER,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             approvalStatusId = a.APPROVALSTATUSID
                         }).Distinct().ToList();
@@ -1898,7 +1904,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                
                 string referenceNo = customer.applicationReferenceNumber;
-                var successEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                var successEmailBody = "Dear Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
                 string messageSubject = "APPROVAL FOR LOAN APPLICATION";
 
                 emailLogger.ComposeEmail(referenceNo,successEmailBody, messageSubject,customer.email,false);
@@ -1917,7 +1923,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
                             email = c.EMAILADDRESS,
-                            applicationReferenceNumber = a.RELATEDREFERENCENUMBER,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             approvalStatusId = a.APPROVALSTATUSID
                         }).Distinct().ToList();
@@ -1926,7 +1932,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 string referenceNo = customer.applicationReferenceNumber;
 
-                var failedEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                var failedEmailBody = "Dear Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
                 string messageSubject = "DISAPPROVAL FOR LOAN APPLICATION";
 
                 emailLogger.ComposeEmail(referenceNo, failedEmailBody, messageSubject, customer.email,false);

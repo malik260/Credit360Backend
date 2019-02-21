@@ -58,6 +58,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool externalInitialization = false;
         private bool keepPending = false;
         private bool politicallyExposed = false;
+        private bool setResponse = true;
         private bool deferredExecution = false;
         private short? vote = null;
         private int? toStaffId = null;
@@ -80,6 +81,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool Untenored { set { untenored = value; } }
         public bool Disputed { set { disputed = value; } }
         public bool PoliticallyExposed { set { politicallyExposed = value; } }
+        public bool SetResponse { set { setResponse = value; } }
         public short? Vote { set { vote = value; } }
 
         public float? InterestRateConcession { set { interestRateConcession = value; } }
@@ -283,13 +285,18 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void SetResponseInformation()
         {
+            if (this.setResponse == false) return;
+
             response.fromLevelId = this.fromLevelId;
-            response.statusId = this.statusId;
             response.stateId = this.newStateId;
             response.nextLevelId = this.nextLevelId;
             response.nextPersonId = this.toStaffId;
+            int finalStatusId = this.statusId;
 
-            var s = context.TBL_APPROVAL_STATUS.Find(this.statusId);
+            if (response.nextLevelId == null && finalStatusId == (int)ApprovalStatusEnum.Processing) finalStatusId = (int)ApprovalStatusEnum.Approved;
+            response.statusId = finalStatusId;
+
+            var s = context.TBL_APPROVAL_STATUS.Find(finalStatusId);
             response.statusName = s.APPROVALSTATUSNAME;
 
             response.nextLevelName = String.Empty;

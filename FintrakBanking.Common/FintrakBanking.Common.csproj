@@ -95,6 +95,8 @@
     <Compile Include="Enum\AttachmentTypeEnum.cs" />
     <Compile Include="Enum\ChargeTypeEnum.cs" />
     <Compile Include="Enum\CurrencyEnum.cs" />
+    <Compile Include="Enum\EodOperationEnum.cs" />
+    <Compile Include="Enum\EodOperationStatusEnum.cs" />
     <Compile Include="Enum\OtherOperationEnum.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />
     <Compile Include="Enum\AccreditedConsultantTypeEnum.cs" />

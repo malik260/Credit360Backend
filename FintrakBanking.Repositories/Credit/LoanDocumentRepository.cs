@@ -177,6 +177,26 @@ namespace FintrakBanking.Repositories.Credit
             });
         }
 
+        public void GetAllLoanDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result, int operationReviewId)
+        {
+            result = this.context.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Where(x => x.TEMPLOANREVIEWOPERATIONID == operationReviewId)
+                .Select(x => new LoanDocumentViewModel
+                {
+                    documentId = x.DOCUMENTID,
+                    loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                    loanReferenceNumber = x.LOANREFERENCENUMBER,
+                    documentTitle = x.DOCUMENTTITLE,
+                    documentTypeId = x.DOCUMENTTYPEID,
+                    fileData = x.FILEDATA,
+                    fileName = x.FILENAME,
+                    fileExtension = x.FILEEXTENSION,
+                    systemDateTime = x.SYSTEMDATETIME,
+                    physicalFileNumber = x.PHYSICALFILENUMBER,
+                    physicalLocation = x.PHYSICALLOCATION,
+                    isPrimaryDocument = x.ISPRIMARYDOCUMENT,
+                    operationReviewId = x.TEMPLOANREVIEWOPERATIONID,
+                }).ToList();
+        }
 
         public void GetAllLoanDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
         {
@@ -1915,7 +1935,13 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+        public List<LoanDocumentViewModel> getListOfUploadedOperationsDocument(LoanDocumentViewModel model, int operationReviewId)
+        {
+            var result = new List<LoanDocumentViewModel>();
+                 GetAllLoanDocument(model, out result, operationReviewId);
+            return result;
 
+        }
 
         public int DeleteUploadedDocument(LoanDocumentViewModel model)
         {

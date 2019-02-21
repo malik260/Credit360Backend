@@ -59,6 +59,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoanDocumentViewModel getUploadedDocument(LoanDocumentViewModel model);
 
         List<LoanDocumentViewModel> getListOfUploadedDocument(LoanDocumentViewModel model);
+        List<LoanDocumentViewModel> getListOfUploadedOperationsDocument(LoanDocumentViewModel model, int operationReviewId);
 
 
         void GetApplicationLoanDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result);

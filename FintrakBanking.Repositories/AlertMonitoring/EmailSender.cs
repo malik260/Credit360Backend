@@ -236,7 +236,25 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
                             if (newMail.ATTACHMENTTYPEID != null)
                             {
-                                if(newMail.ATTACHMENTTYPEID == (int)AttachementTypeEnum.JobRequest)
+                                if (newMail.ATTACHMENTTYPEID == (int)AttachementTypeEnum.ContingentTermination)
+                                {
+                                    List<TBL_MEDIA_LOAN_DOCUMENTS> requestDoc = new List<TBL_MEDIA_LOAN_DOCUMENTS>();
+                                    int loanOperationID = Convert.ToInt32(newMail.ATTACHMENTCODE);
+
+                                    requestDoc = docContext.TBL_MEDIA_LOAN_DOCUMENTS.Where(x => x.LOANREVIEWOPERATIONID == loanOperationID).ToList();
+                                    foreach (var binaryFile in requestDoc)
+                                    {
+                                        MemoryStream memoryStream = new MemoryStream(binaryFile.FILEDATA);
+                                        Attachment attachment = new Attachment(memoryStream, binaryFile.FILENAME);
+                                        mail.Attachments.Add(attachment);
+
+                                    }
+
+                                }
+
+
+
+                                if (newMail.ATTACHMENTTYPEID == (int)AttachementTypeEnum.JobRequest)
                                 {
                                     List<TBL_MEDIA_JOB_REQUEST_DOCUMENT> requestDoc = new List<TBL_MEDIA_JOB_REQUEST_DOCUMENT>();
                                     

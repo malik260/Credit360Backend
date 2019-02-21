@@ -86,6 +86,12 @@ namespace FintrakBanking.APICore.Providers
 
                 ActiveUserDetails userInfo = authRepo.GetUserAuthenticationInfo(userVm.username);
 
+                if (authRepo.GetRunningEndOfDayProcess(userInfo.countryId))
+                {
+                    context.SetError("invalid_grant", "End of day process is running!");
+                    return;
+                }
+
                 if (userInfo.grantMessage != "valid")
                 {
                     context.SetError("invalid_grant", userInfo.grantMessage);

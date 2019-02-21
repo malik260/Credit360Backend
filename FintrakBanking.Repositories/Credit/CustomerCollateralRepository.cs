@@ -1210,11 +1210,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
             return listOfJoinCollateralGuarantee;
-
-
-
-
-
         }
 
         private List<CollateralViewModel> GetCollateralJoinGuarantiee(int collateralId)
