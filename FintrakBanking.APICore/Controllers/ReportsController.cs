@@ -707,7 +707,31 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan/document-deferred")]
+        public HttpResponseMessage GetLoanDocumentDeferred(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+
+                var data = repo.GetLoanDocumentDeferred(token.GetCompanyId, dateRange, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan/document-deferrals")]
         public HttpResponseMessage GetLoanDocumentDeferrals(DateRange dateRange)
         {

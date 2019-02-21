@@ -11,12 +11,14 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<ContingentLoansViewModel> GetAllContingentLoans(int staffId, int companyId);
 
-        bool SaveContigentLoans(ContingentLoanUsageViewModel entity, int companyId);
+        bool SaveContigentLoans(ContingentLoanUsageViewModel entity , byte[] buffer);
 
         IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId);
 
         bool SaveContigentLoansUsageApproval(ApproveAPSRequestViewModel entity);
 
         List<ContingentLoansViewModel> GetContingentUsage(int loanId);
+
+        List<CollateralDocumentViewModel> GetContingentUsageDocument(int loanId);
     }
 }

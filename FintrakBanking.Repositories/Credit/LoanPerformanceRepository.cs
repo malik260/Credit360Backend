@@ -348,8 +348,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 //Send Email to Customer
-                string loanClasssification = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(o => o.PRUDENTIALGUIDELINETYPEID == termLoan.userPrudentialGuidelineStatusId).Select(o => o.PRUDENTIALGUIDELINETYPENAME).FirstOrDefault();
-                emailBody = "There Valuable Customer, <br /><br /> Your facility with Reference Number: " + termLoan.loanReferenceNumber + " has been classified as "+ loanClasssification + ".,<br /> Kindly contact your Relationship Manager for more information.";
+                string loanClasssification = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(o => o.PRUDENTIALGUIDELINETYPEID == entity.prudentialGuidelineStatusId).Select(o => o.PRUDENTIALGUIDELINETYPENAME).FirstOrDefault();
+                emailBody = "Dear Valuable Customer, <br /><br /> Your facility with Reference Number: " + termLoan.loanReferenceNumber + " has been classified as "+ loanClasssification + ".,<br /> Kindly contact your Relationship Manager for more information.";
                 emailSubject = "LOAN PERFORMANCE STATUS REPORT";
 
                 emailLogger.ComposeEmail(termLoan.loanReferenceNumber, emailBody, emailSubject, termLoan.customerEmail,false);
@@ -369,8 +369,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 //Send Email to Customer
-                string loanClasssification = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(o => o.PRUDENTIALGUIDELINETYPEID == revolvingLoan.userPrudentialGuidelineStatusId).Select(o => o.PRUDENTIALGUIDELINETYPENAME).FirstOrDefault();
-                emailBody = "There Valuable Customer, <br /><br /> Your facility with Reference Number: " + revolvingLoan.loanReferenceNumber + " has been classified as " + loanClasssification + ".,<br /> Kindly contact your Relationship Manager for more information.";
+                string loanClasssification = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(o => o.PRUDENTIALGUIDELINETYPEID == entity.prudentialGuidelineStatusId).Select(o => o.PRUDENTIALGUIDELINETYPENAME).FirstOrDefault();
+                emailBody = "Dear Valuable Customer, <br /><br /> Your facility with Reference Number: " + revolvingLoan.loanReferenceNumber + " has been classified as " + loanClasssification + ".,<br /> Kindly contact your Relationship Manager for more information.";
                 emailSubject = "LOAN PERFORMANCE STATUS REPORT";
 
                 emailLogger.ComposeEmail(revolvingLoan.loanReferenceNumber, emailBody, emailSubject, revolvingLoan.customerEmail,false);
