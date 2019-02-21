@@ -121,7 +121,8 @@ namespace FintrakBanking.ViewModels.Reports
         public string loginStatus { get; set; }
         public short loanStatusId { get; set; }
         public short waivedOrDeferred { get; set; }
-        
+        public string searchParameter { get; set; }
+
     }
 
     public class ReportSearchEntity
@@ -234,9 +235,11 @@ namespace FintrakBanking.ViewModels.Reports
 
     public class LoanDocumentWaivedViewModel
     {
+        public DateTime deferralExpiryDate { get; set; }
 
         public string checkListStatusName { get; set; }
-
+        public int cummulativeDays { get; set; }
+        public int deferralDurration { get; set; }
         public string firstName { get; set; }
         public string lastName { get; set; }
         public string middleName { get; set; }
@@ -248,22 +251,28 @@ namespace FintrakBanking.ViewModels.Reports
         public DateTime waveredDate { get; set; }
         public string facilityType { get; set; }
         public string applicationRefrenceNumber { get; set; }
-        public string customerName { get { return lastName + " " + middleName + " " + firstName; } }
+        public string customerName { get; set; }
         public string branchName { get; set; }
         public int loanApplicationId { get; set; }
         public decimal proposedAmount { get; set; }
         public string companyName { get; set; }
         public string name { get; set; }
         public string  facilityProduct { get; set; }
-        public string staffId { get; set; }
-        public string currentExposure { get; set; }
+        public int staffId { get; set; }
+        public decimal currentExposure { get; set; }
         public string defferalDocument { get; set; }
         public DateTime initialDefferalDate { get; set; }
         public DateTime? currentDefferalDate { get; set; }
         public DateTime? defferalExpiryDate { get; set; }
+        public string staffCode { get; set; }
+        
+        public string customerAcct { get; set; }
+        public string nameOfRM { get; set; }
         public string nameOfBM { get; set; }
         public string customerCode { get; set; }
         public DateTime dateCreated { get; set; }
+        public string businessUnit { get; set; }
+       
         public int deferralDuration { get { return (this.initialDefferalDate - this.dateCreated).Days; } }
         public int cumulativeDays { get { return (DateTime.Now - this.dateCreated).Days; } }
     }
