@@ -38,5 +38,7 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+      //  public string TEMPLATESECTIONCODE { get; set; }
     }
 }

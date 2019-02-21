@@ -1948,6 +1948,7 @@ namespace FintrakBanking.Repositories.Credit
                         COMMENTS = model.comments,
                         PRODUCTID = model.productId,
                         ISACCEPTED = model.isAccepted
+                        
                     };
 
                     context.TBL_OFFERLETTER.Add(document);
