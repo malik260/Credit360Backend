@@ -115,6 +115,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool SECUREDBYCOLLATERAL { get; set; }
         public int? CRMSCOLLATERALTYPEID { get; set; }
+        public int? MORATORIUMDURATION { get; set; }
 
         public int? CRMSFUNDINGSOURCEID { get; set; }
 
@@ -126,6 +127,7 @@ namespace FintrakBanking.Entities.Models
 
         public string CRMSCODE { get; set; }
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
+        public bool? CRMSVALIDATED { get; set; }
 
         public DateTime? CRMSDATE { get; set; }
 

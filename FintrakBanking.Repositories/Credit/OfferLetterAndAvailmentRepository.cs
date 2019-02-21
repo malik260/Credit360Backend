@@ -66,6 +66,7 @@ namespace FintrakBanking.Repositories.Credit
             LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
             LoanDetails.CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentTypeId;
             LoanDetails.ISSPECIALISED = model.isSpecialised;
+            LoanDetails.MORATORIUMDURATION = model.moratoriumPeriod;
 
             var auditRec = new TBL_AUDIT
             {

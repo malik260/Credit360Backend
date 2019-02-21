@@ -86,6 +86,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short approvedProductId { get; set; }
         public decimal convertedApprovedAmount { get { return this.approvedAmount * (decimal)this.exchangeRate; } }
+        public int? moratoriumPeriod { get; set; }
 
         public int customerId { get; set; }
         public string terms { get; set; }

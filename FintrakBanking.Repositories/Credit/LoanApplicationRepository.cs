@@ -1570,6 +1570,7 @@ namespace FintrakBanking.Repositories.Credit
                     PRODUCTPRICEINDEXID = a.productPriceIndexId,
                     PRODUCTPRICEINDEXRATE = a.productPriceIndexRate,
                     TENORFREQUENCYTYPEID = a.tenorModeId,
+                    CRMSVALIDATED =false,
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
