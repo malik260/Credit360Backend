@@ -1,21 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
 namespace FintrakBanking.Entities.DocumentModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
-
-    public partial class TBL_DOC_COLLATERAL_VISITATION
-    { 
+  public  partial class TBL_LOAN_CONTINGENT_USAGE_DOCS
+    {
         [Key]
         public int DOCUMENTID { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
-
-        public int APPROVALSTATUSID { get; set; }
-
-        public int COLLATERALVISITATIONID { get; set; }
+        public int CONTINGENTLOANUSAGEID { get; set; }
 
         [Required]
         [StringLength(400)]
@@ -30,6 +27,12 @@ namespace FintrakBanking.Entities.DocumentModels
 
         public DateTime SYSTEMDATETIME { get; set; }
 
+        public DateTime DATECREATED { get; set; }
+
         public int CREATEDBY { get; set; }
+
+        public string PHYSICALFILENUMBER { get; set; }
+
+        public string PHYSICALLOCATION { get; set; }
     }
 }

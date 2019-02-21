@@ -325,6 +325,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime firstPrincipalPaymentDate1 { get; set; }
         public DateTime firstInterestPaymentDate1 { get; set; }
         public string productPriceIndex { get; set; }
+        public DateTime? timeIn { get; set; }
         public string approvedTenorString
         {
             get
@@ -354,6 +355,18 @@ namespace FintrakBanking.ViewModels.Credit
                 if (writtenOff) return "Written Off";
                 if (!isPerforming) return "Non Performing";
                 return "Performing";
+            }
+        }
+
+        public string timeLapse
+        {
+            get
+            {
+                if (timeIn == null) return "n/a";
+                int count = (int)Math.Round((DateTime.Now - (DateTime)timeIn).TotalDays);
+                string units = count == 1 ? " day" : " days";
+                if ((DateTime.Now - (DateTime)timeIn).TotalHours < 24) return timeIn.ToString();
+                return count.ToString() + units;
             }
         }
 
@@ -484,6 +497,20 @@ namespace FintrakBanking.ViewModels.Credit
         public short loanSystemTypeId { get; set; }
         public int? userPrudentialGuidelineStatusId { get; set; }
 
+        public DateTime? timeIn { get; set; }
+
+        public string timeLapse
+        {
+            get
+            {
+                if (timeIn == null) return "n/a";
+                int count = (int)Math.Round((DateTime.Now - (DateTime)timeIn).TotalDays);
+                string units = count == 1 ? " day" : " days";
+                if ((DateTime.Now - (DateTime)timeIn).TotalHours < 24) return timeIn.ToString();
+                return count.ToString() + units;
+            }
+        }
+
     }
 
     public class ContingentLoanViewModel : GeneralEntity
@@ -571,6 +598,20 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         public short loanSystemTypeId { get; set; }
         //......End f Loan Relational Table View Mapping Models......//
+
+        public DateTime?  timeIn { get; set; }
+        public string timeLapse
+        {
+            get
+            {
+                if (timeIn == null) return "n/a";
+                int count = (int)Math.Round((DateTime.Now - (DateTime)timeIn).TotalDays);
+                string units = count == 1 ? " day" : " days";
+                if ((DateTime.Now - (DateTime)timeIn).TotalHours < 24) return timeIn.ToString();
+                return count.ToString() + units;
+            }
+        }
+
     }
 
     public class LoanBookingRequestViewModel : GeneralEntity

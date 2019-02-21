@@ -1889,7 +1889,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
                             email = c.EMAILADDRESS,
-                            applicationReferenceNumber = a.RELATEDREFERENCENUMBER,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             approvalStatusId = a.APPROVALSTATUSID
                         }).Distinct().ToList();
@@ -1901,7 +1901,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                
                 string referenceNo = customer.applicationReferenceNumber;
-                var successEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                var successEmailBody = "Dear Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
                 string messageSubject = "APPROVAL FOR LOAN APPLICATION";
 
                 emailLogger.ComposeEmail(referenceNo,successEmailBody, messageSubject,customer.email,false);
@@ -1920,7 +1920,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
                             email = c.EMAILADDRESS,
-                            applicationReferenceNumber = a.RELATEDREFERENCENUMBER,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             approvalStatusId = a.APPROVALSTATUSID
                         }).Distinct().ToList();
@@ -1929,7 +1929,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 string referenceNo = customer.applicationReferenceNumber;
 
-                var failedEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                var failedEmailBody = "Dear Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
                 string messageSubject = "DISAPPROVAL FOR LOAN APPLICATION";
 
                 emailLogger.ComposeEmail(referenceNo, failedEmailBody, messageSubject, customer.email,false);
