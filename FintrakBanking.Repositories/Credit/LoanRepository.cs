@@ -1250,6 +1250,7 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTNUMBEROFINSTALLMENT = 0,
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
+
                 PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
                 PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID ,
 
@@ -2505,6 +2506,8 @@ namespace FintrakBanking.Repositories.Credit
                                 teamMiscode = ln.TEAMMISCODE,
                                 interestRate = ln.INTERESTRATE,
                                 effectiveDate = ln.EFFECTIVEDATE,
+                                bookedAmount = ln.PRINCIPALAMOUNT,
+
                                 maturityDate = ln.MATURITYDATE,
                                 bookingDate = ln.BOOKINGDATE,
                                 principalAmount = ln.PRINCIPALAMOUNT,
@@ -2710,6 +2713,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
 
                                 overdraftLimit = ln.OVERDRAFTLIMIT,
+                                bookedAmount = ln.OVERDRAFTLIMIT,
                                 approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                                 disbursableAmount = ln.OVERDRAFTLIMIT,
                                 customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,

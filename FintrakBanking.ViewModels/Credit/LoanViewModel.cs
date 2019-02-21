@@ -48,6 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public decimal bookedAmount { get; set; }
+
         public string productAccountName2 { get; set; }
 
         public string operationTypeName { get; set; }
@@ -370,6 +372,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public decimal bookedAmount { get; set; }
+
         public short scheduleDayCountConventionId { get; set; }
 
         public short? crmsRepaymentAgreementTypeId { get; set; }
