@@ -28,13 +28,13 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateDraftOfferLetter(int documentId, OfferLetterTemplateViewModel model);
 
-        bool SaveFinalOfferLetter(OfferLetterTemplateViewModel model);
+        bool SaveFinalOfferLetter(int loanApplicationId, OfferLetterTemplateViewModel model);
 
         int ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity);
 
-        IEnumerable<OfferLetterTemplateViewModel> GetAllFinalOfferLetters();
+        IQueryable<OfferLetterTemplateViewModel> GetAllFinalOfferLetters();
 
-        OfferLetterTemplateViewModel GetFinalOfferLetterByApplRefNumber(string applicationRefNumber);
+        OfferLetterTemplateViewModel GetFinalOfferLetterByApplRefNumber(int loanApplicationId);
 
         //bool LogApplicationForApprovalDuringAvailment(LoanAvailmentApprovalViewModel model);
 
@@ -44,7 +44,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool ForwardBondsAndGuarantee(ForwardViewModel entity);
 
-        bool UpdateFinalOfferLetter(string applicationRef, OfferLetterTemplateViewModel model);
+        bool UpdateFinalOfferLetter(int loanApplicationId, OfferLetterTemplateViewModel model);
 
         bool OfferLetterRejection(ForwardViewModel entity);
 

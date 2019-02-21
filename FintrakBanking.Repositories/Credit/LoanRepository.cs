@@ -2496,7 +2496,7 @@ namespace FintrakBanking.Repositories.Credit
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 crmsCode = ln.CRMSCODE,
                                 staffId = staffId,
-
+                                timeIn = atrail.SYSTEMARRIVALDATETIME,
                                 pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.DESCRIPTION ?? null,
                                 interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE1.DESCRIPTION ?? null,
                                 scheduleDayCountConventionId = ln.SCHEDULEDAYCOUNTCONVENTIONID,
@@ -2574,7 +2574,7 @@ namespace FintrakBanking.Repositories.Credit
                                 createdBy = ln.CREATEDBY,
                                 creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
                                 dateTimeCreated = ln.DATETIMECREATED,
-                                comment = "",
+                                comment = atrail.COMMENT,
                                 isBidbond = false,
                                 isOverdraft = false,
 
@@ -2701,6 +2701,7 @@ namespace FintrakBanking.Repositories.Credit
                                 bookingDate = ln.BOOKINGDATE,
                                 
                                 scheduleDayCountConventionId = ln.DAYCOUNTCONVENTIONID,
+                                timeIn = atrail.SYSTEMARRIVALDATETIME,
                                 approvalStatusId = ln.APPROVALSTATUSID,
                                 // approvedBy = (int)ln.APPROVEDBY,
                                 approverComment = ln.APPROVERCOMMENT,
@@ -2711,7 +2712,7 @@ namespace FintrakBanking.Repositories.Credit
                                 disburserComment = ln.DISBURSERCOMMENT,
                                 disburseDate = ln.DISBURSEDATE,
                                 loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-
+                                comment = atrail.COMMENT,
                                 overdraftLimit = ln.OVERDRAFTLIMIT,
                                 bookedAmount = ln.OVERDRAFTLIMIT,
                                 approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
@@ -2750,7 +2751,6 @@ namespace FintrakBanking.Repositories.Credit
                                 createdBy = ln.CREATEDBY,
                                 creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
                                 dateTimeCreated = ln.DATETIMECREATED,
-                                comment = "",
                                 isBidbond = false,
                                 isOverdraft = false,
                                 loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANID == ln.REVOLVINGLOANID && x.LOANSYSTEMTYPEID == ln.LOANSYSTEMTYPEID)
@@ -2858,7 +2858,7 @@ namespace FintrakBanking.Repositories.Credit
                             effectiveDate = ln.EFFECTIVEDATE,
                             maturityDate = ln.MATURITYDATE,
                             bookingDate = ln.BOOKINGDATE,
-
+                            timeIn = atrail.SYSTEMARRIVALDATETIME,
                             approvalStatusId = ln.APPROVALSTATUSID,
                             //approvedBy = (int)ln.APPROVEDBY,
                             approverComment = ln.APPROVERCOMMENT,
@@ -2904,7 +2904,7 @@ namespace FintrakBanking.Repositories.Credit
                             createdBy = ln.CREATEDBY,
                             creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
                             dateTimeCreated = ln.DATETIMECREATED,
-                            comment = "",
+                            comment = atrail.COMMENT,
                             isBidbond = ln.TBL_PRODUCT.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees ? true : false,
                             isOverdraft = ln.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
 

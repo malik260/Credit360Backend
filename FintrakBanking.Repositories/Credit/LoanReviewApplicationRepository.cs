@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationId = x.application.OPERATIONID,
                 customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
                 atInitiator = x.application.CREATEDBY == staffId,
-                
+                timeIn = x.trail.SYSTEMARRIVALDATETIME,
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 
@@ -562,7 +562,7 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            context.SaveChanges(); // redundant !
+            // context.SaveChanges(); // redundant !
 
             // DETAIL CHANGES
             List<TBL_LMSR_APPLICATION_DETAIL> items = null;
