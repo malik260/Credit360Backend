@@ -1948,6 +1948,7 @@ namespace FintrakBanking.Repositories.Credit
                         COMMENTS = model.comments,
                         PRODUCTID = model.productId,
                         ISACCEPTED = model.isAccepted
+                        
                     };
 
                     context.TBL_OFFERLETTER.Add(document);
@@ -1956,6 +1957,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (model.isAccepted == false && model.saveOnly != true)
                 {
                     var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+
                     if (appl == null)
                     {
                         result = false;
@@ -2571,19 +2573,39 @@ namespace FintrakBanking.Repositories.Credit
 
         public void AddOfferLetterClauses(int applicationId, int staffId,bool isLMS, bool callSaveChanges)
         {
-            var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
+            int? customerExist = null;
+            var detail = new OfferLetterViewModel();
+            if (isLMS) {
+                 customerExist = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
 
-            var detail = (from a in context.TBL_LOAN_APPLICATION
-                                      join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
-                                      where a.LOANAPPLICATIONID == applicationId
-                                      select new OfferLetterViewModel
-                                      {
-                                          customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o=>o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o=>o.GROUPNAME).FirstOrDefault(),
-                                          offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 221).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
-                                          offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 222).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
-                                          customerId = b.CUSTOMERID
+                 detail = (from a in context.TBL_LMSR_APPLICATION
+                              join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                              where a.LOANAPPLICATIONID == applicationId
+                              select new OfferLetterViewModel
+                              {
+                                  customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                  offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 221).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 222).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  customerId = b.CUSTOMERID
 
-                                      }).FirstOrDefault();
+                              }).FirstOrDefault();
+
+            } else {
+                 customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
+
+                 detail = (from a in context.TBL_LOAN_APPLICATION
+                              join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                              where a.LOANAPPLICATIONID == applicationId
+                              select new OfferLetterViewModel
+                              {
+                                  customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                  offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 221).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 222).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  customerId = b.CUSTOMERID
+
+                              }).FirstOrDefault();
+            }
+           
 
             var offerLetterDoc = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == detail.customerId).Select(o => o).FirstOrDefault();
             if (offerLetterDoc!=null)

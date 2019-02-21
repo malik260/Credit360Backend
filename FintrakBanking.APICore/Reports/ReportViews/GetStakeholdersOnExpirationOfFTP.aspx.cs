@@ -67,7 +67,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "Stakeholder";
+                    reportDataSource.Name = "StakeHolderWithExpiedFTP";
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/StakeholderWithExpiredFTP.rdlc");

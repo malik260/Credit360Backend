@@ -91,5 +91,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetExpiredReport(DateRange dateRange);
         string GetExcessReport(DateRange dateRange);
 
+        string GetLoanDocumentDeferred(int companyId, DateRange dateRange, int staffId);
+
     }
 }
