@@ -241,7 +241,7 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
-                    isFinal = context.TBL_OFFERLETTER.Where(o => o.APPLICATIONREFERENCENUMBER == x.c.a.APPLICATIONREFERENCENUMBER).Select(o => o.ISFINAL).FirstOrDefault(),
+                    isFinal = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID).Select(o => o.ISFINAL).FirstOrDefault(),
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                 });
 
@@ -1815,7 +1815,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (model.isAccepted == true)
                     {
-                        return SaveFinalOfferLetter(model);
+                        return SaveFinalOfferLetter(1,model);
                     }
 
                     return context.SaveChanges() > 0;
@@ -1829,20 +1829,13 @@ namespace FintrakBanking.Repositories.Credit
             return false;
         }
 
-        public bool UpdateFinalOfferLetter(string applicationRef, OfferLetterTemplateViewModel model)
+        public bool UpdateFinalOfferLetter(int loanApplicationId, OfferLetterTemplateViewModel model)
         {
             if (model != null)
             {
                 try
                 {
-                    SaveFinalOfferLetter(model);
-                    TBL_OFFERLETTER result = (from p in context.TBL_OFFERLETTER
-                                              where p.APPLICATIONREFERENCENUMBER == applicationRef
-                                              select p).SingleOrDefault();
-
-                    result.ISFINAL = model.isFinal;
-
-                    context.SaveChanges();
+                    SaveFinalOfferLetter(loanApplicationId,model);
                 }
                 catch (Exception ex)
                 {
@@ -1886,32 +1879,25 @@ namespace FintrakBanking.Repositories.Credit
             return new OfferLetterTemplateViewModel { };
         }
 
-        public IEnumerable<OfferLetterTemplateViewModel> GetAllFinalOfferLetters()
+        public IQueryable<OfferLetterTemplateViewModel> GetAllFinalOfferLetters()
         {
-            var data = (from a in context.TBL_OFFERLETTER
+            var data = (from a in context.TBL_LOAN_OFFER_LETTER
                         select new OfferLetterTemplateViewModel
                         {
-                            documentId = a.DOCUMENTID,
-                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                            documentTemplate = a.LOANAPPLICATIONDOCUMENT,
-                            comments = a.COMMENTS,
-                            productId = a.PRODUCTID,
                             isAccepted = (bool)a.ISACCEPTED,
                             isFinal = a.ISFINAL,
+                            loanApplicationId = a.LOANAPPLICATIONID,
 
-                        }).ToList();
 
-            if (data != null)
-            {
+                        });
+
                 return data;
-            }
 
-            return new List<OfferLetterTemplateViewModel> { };
         }
 
-        public OfferLetterTemplateViewModel GetFinalOfferLetterByApplRefNumber(string applicationRefNumber)
+        public OfferLetterTemplateViewModel GetFinalOfferLetterByApplRefNumber(int loanApplicationId)
         {
-            var data = GetAllFinalOfferLetters().Where(x => x.applicationReferenceNumber == applicationRefNumber).FirstOrDefault();
+            var data = GetAllFinalOfferLetters().Where(x => x.loanApplicationId == loanApplicationId).FirstOrDefault();
 
             if (data != null)
             {
@@ -1921,19 +1907,16 @@ namespace FintrakBanking.Repositories.Credit
             return new OfferLetterTemplateViewModel { };
         }
 
-        public bool SaveFinalOfferLetter(OfferLetterTemplateViewModel model)
+        public bool SaveFinalOfferLetter(int loanApplicationId, OfferLetterTemplateViewModel model)
         {
             bool result = false;
             try
             {
-                var exisitingDocument = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
+                var exisitingDocument = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == loanApplicationId).FirstOrDefault();
 
                 if (exisitingDocument != null)
                 {
-                    exisitingDocument.LOANAPPLICATIONDOCUMENT = model.documentTemplate;
-                    exisitingDocument.APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber;
-                    exisitingDocument.COMMENTS = model.comments;
-                    exisitingDocument.PRODUCTID = model.productId;
+                    exisitingDocument.ISFINAL = model.isFinal;
                     exisitingDocument.ISACCEPTED = model.isAccepted;
 
                     //if (!model.isAccepted)
@@ -1941,27 +1924,16 @@ namespace FintrakBanking.Repositories.Credit
                     //    UpdateLoanApplicationStatus(model.applicationReferenceNumber, (short)LoanApplicationStatusEnum.ApplicationUnderReview);
                     //}
                 }
-                else
-                {
-                    var document = new TBL_OFFERLETTER
-                    {
-                        LOANAPPLICATIONDOCUMENT = model.documentTemplate,
-                        APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
-                        COMMENTS = model.comments,
-                        PRODUCTID = model.productId,
-                        ISACCEPTED = model.isAccepted
-                    };
-
-                    context.TBL_OFFERLETTER.Add(document);
-                }
+                
 
                 if (model.isAccepted == false && model.saveOnly != true)
                 {
-                    var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+                    var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == loanApplicationId);
+
                     if (appl == null)
                     {
                         result = false;
-                        throw new SecureException("Loan application with the given reference number not found!");
+                       // throw new SecureException("Loan application with the given reference number not found!");
                     }
                     else
                     {
@@ -2573,19 +2545,39 @@ namespace FintrakBanking.Repositories.Credit
 
         public void AddOfferLetterClauses(int applicationId, int staffId,bool isLMS, bool callSaveChanges)
         {
-            var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
+            int? customerExist = null;
+            var detail = new OfferLetterViewModel();
+            if (isLMS) {
+                 customerExist = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
 
-            var detail = (from a in context.TBL_LOAN_APPLICATION
-                                      join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
-                                      where a.LOANAPPLICATIONID == applicationId
-                                      select new OfferLetterViewModel
-                                      {
-                                          customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o=>o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o=>o.GROUPNAME).FirstOrDefault(),
-                                          offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 221).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
-                                          offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 222).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
-                                          customerId = b.CUSTOMERID
+                 detail = (from a in context.TBL_LMSR_APPLICATION
+                              join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                              where a.LOANAPPLICATIONID == applicationId
+                              select new OfferLetterViewModel
+                              {
+                                  customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                  offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  customerId = b.CUSTOMERID
 
-                                      }).FirstOrDefault();
+                              }).FirstOrDefault();
+
+            } else {
+                 customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
+
+                 detail = (from a in context.TBL_LOAN_APPLICATION
+                              join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                              where a.LOANAPPLICATIONID == applicationId
+                              select new OfferLetterViewModel
+                              {
+                                  customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                  offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  customerId = b.CUSTOMERID
+
+                              }).FirstOrDefault();
+            }
+           
 
             var offerLetterDoc = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == detail.customerId).Select(o => o).FirstOrDefault();
             if (offerLetterDoc!=null)
@@ -2602,6 +2594,8 @@ namespace FintrakBanking.Repositories.Credit
                     LOANAPPLICATIONID = applicationId,
                     OFFERLETTERACCEPTANCE = detail.offerLetteracceptance,
                     OFFERLETTERCLAUSES = detail.offerLetterClauses,
+                    ISACCEPTED = true,
+                    ISFINAL = false
                 };
 
                 context.TBL_LOAN_OFFER_LETTER.Add(loanOfferLetter);

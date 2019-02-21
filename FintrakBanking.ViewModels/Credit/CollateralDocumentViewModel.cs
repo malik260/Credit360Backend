@@ -20,7 +20,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? documentTypeId { get; set; }
         public string documentType { get; set; }
         public string collateralCode { get; set; }
-
+        public decimal ContingentAmount { get; set; }
     }
 
     public class CollateralVisitationDocumentViewModel : GeneralEntity

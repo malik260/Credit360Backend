@@ -6,16 +6,22 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class TBL_DOC_COLLATERAL_VISITATION
-    { 
+    public partial class TBL_JOB_REQUEST_MSG_DOCUMENT
+    {
         [Key]
-        public int DOCUMENTID { get; set; }
+        public int MESSAGEDOCUMENTID { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string JOBREQUESTCODE { get; set; }
 
-        public int APPROVALSTATUSID { get; set; }
+        [Required]
+        [StringLength(250)]
+        public string DOCUMENTTITLE { get; set; }
 
-        public int COLLATERALVISITATIONID { get; set; }
+        public int JOBREQUEST_MESSAGEID { get; set; }
+
+        public short DOCUMENTTYPEID { get; set; }
 
         [Required]
         [StringLength(400)]
@@ -29,6 +35,12 @@ namespace FintrakBanking.Entities.DocumentModels
         public byte[] FILEDATA { get; set; }
 
         public DateTime SYSTEMDATETIME { get; set; }
+
+        [StringLength(50)]
+        public string PHYSICALFILENUMBER { get; set; }
+
+        [StringLength(250)]
+        public string PHYSICALLOCATION { get; set; }
 
         public int CREATEDBY { get; set; }
     }

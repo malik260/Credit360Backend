@@ -25,6 +25,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool Untenored { set; }
         bool Disputed { set; }
         bool PoliticallyExposed { set; }
+        bool SetResponse { set; }
         bool SmsNotification { set; }
         bool ExternalInitialization { set; }
         bool DeferredExecution { set; }

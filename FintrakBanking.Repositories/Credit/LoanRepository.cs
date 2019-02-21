@@ -1250,6 +1250,7 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTNUMBEROFINSTALLMENT = 0,
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
+
                 PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
                 PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID ,
 
@@ -2495,7 +2496,7 @@ namespace FintrakBanking.Repositories.Credit
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 //crmsCode = ln.CRMSCODE,
                                 staffId = staffId,
-
+                                timeIn = atrail.SYSTEMARRIVALDATETIME,
                                 pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.DESCRIPTION ?? null,
                                 interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE1.DESCRIPTION ?? null,
                                 scheduleDayCountConventionId = ln.SCHEDULEDAYCOUNTCONVENTIONID,
@@ -2505,6 +2506,8 @@ namespace FintrakBanking.Repositories.Credit
                                 teamMiscode = ln.TEAMMISCODE,
                                 interestRate = ln.INTERESTRATE,
                                 effectiveDate = ln.EFFECTIVEDATE,
+                                bookedAmount = ln.PRINCIPALAMOUNT,
+
                                 maturityDate = ln.MATURITYDATE,
                                 bookingDate = ln.BOOKINGDATE,
                                 principalAmount = ln.PRINCIPALAMOUNT,
@@ -2571,7 +2574,7 @@ namespace FintrakBanking.Repositories.Credit
                                 createdBy = ln.CREATEDBY,
                                 creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
                                 dateTimeCreated = ln.DATETIMECREATED,
-                                comment = "",
+                                comment = atrail.COMMENT,
                                 isBidbond = false,
                                 isOverdraft = false,
 
@@ -2698,6 +2701,7 @@ namespace FintrakBanking.Repositories.Credit
                                 bookingDate = ln.BOOKINGDATE,
                                 
                                 scheduleDayCountConventionId = ln.DAYCOUNTCONVENTIONID,
+                                timeIn = atrail.SYSTEMARRIVALDATETIME,
                                 approvalStatusId = ln.APPROVALSTATUSID,
                                 // approvedBy = (int)ln.APPROVEDBY,
                                 approverComment = ln.APPROVERCOMMENT,
@@ -2708,8 +2712,9 @@ namespace FintrakBanking.Repositories.Credit
                                 disburserComment = ln.DISBURSERCOMMENT,
                                 disburseDate = ln.DISBURSEDATE,
                                 loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-
+                                comment = atrail.COMMENT,
                                 overdraftLimit = ln.OVERDRAFTLIMIT,
+                                bookedAmount = ln.OVERDRAFTLIMIT,
                                 approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                                 disbursableAmount = ln.OVERDRAFTLIMIT,
                                 customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
@@ -2746,7 +2751,6 @@ namespace FintrakBanking.Repositories.Credit
                                 createdBy = ln.CREATEDBY,
                                 creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
                                 dateTimeCreated = ln.DATETIMECREATED,
-                                comment = "",
                                 isBidbond = false,
                                 isOverdraft = false,
                                 loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANID == ln.REVOLVINGLOANID && x.LOANSYSTEMTYPEID == ln.LOANSYSTEMTYPEID)
@@ -2854,7 +2858,7 @@ namespace FintrakBanking.Repositories.Credit
                             effectiveDate = ln.EFFECTIVEDATE,
                             maturityDate = ln.MATURITYDATE,
                             bookingDate = ln.BOOKINGDATE,
-
+                            timeIn = atrail.SYSTEMARRIVALDATETIME,
                             approvalStatusId = ln.APPROVALSTATUSID,
                             //approvedBy = (int)ln.APPROVEDBY,
                             approverComment = ln.APPROVERCOMMENT,
@@ -2900,7 +2904,7 @@ namespace FintrakBanking.Repositories.Credit
                             createdBy = ln.CREATEDBY,
                             creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
                             dateTimeCreated = ln.DATETIMECREATED,
-                            comment = "",
+                            comment = atrail.COMMENT,
                             isBidbond = ln.TBL_PRODUCT.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees ? true : false,
                             isOverdraft = ln.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
 
@@ -3980,27 +3984,27 @@ namespace FintrakBanking.Repositories.Credit
             return loanModel;
         }
 
-        private string getLoanDisbursementDescription(LoanViewModel model)
-        {
-            var loanDescription = "Loan disbursement";
+        //private string getLoanDisbursementDescription(LoanViewModel model)
+        //{
+        //    var loanDescription = "FTK" + model.loanReferenceNumber + " disbursement";
 
-            if (model.productTypeId == (short)LoanProductTypeEnum.TermLoan)
-                loanDescription = "Term Loan Disbursement";
+        //    //if (model.productTypeId == (short)LoanProductTypeEnum.TermLoan)
+        //    //    loanDescription = "Term Loan Disbursement";
 
-            if (model.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
-                loanDescription = "Self Liquidating Loan Disbursement";
+        //    //if (model.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
+        //    //    loanDescription = "Self Liquidating Loan Disbursement";
 
-            if (model.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
-                loanDescription = "Syndicated Loan Disbursement";
+        //    //if (model.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+        //    //    loanDescription = "Syndicated Loan Disbursement";
 
-            if ((int)model.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
-                loanDescription = "Commercial Loan Disbursement";
+        //    //if ((int)model.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
+        //    //    loanDescription = "Commercial Loan Disbursement";
 
-            if ((int)model.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
-                loanDescription = "fx revolving Loan Disbursement";
+        //    //if ((int)model.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+        //    //    loanDescription = "fx revolving Loan Disbursement";
 
-            return loanDescription;
-        }
+        //    return loanDescription;
+        //}
 
         public List<FinanceTransactionViewModel> BuildLoanDisbursmentPosting(LoanViewModel model)
         {
@@ -4036,7 +4040,11 @@ namespace FintrakBanking.Repositories.Credit
             List<FinanceTransactionViewModel> debits = new List<FinanceTransactionViewModel>();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
 
-            var loanDescription = getLoanDisbursementDescription(model);
+            var loanDescription = "FTK" + model.loanReferenceNumber + " disbursement"; //getLoanDisbursementDescription(model);
+            if (loanDescription.Length > 40)
+            {
+                loanDescription = loanDescription.Substring(0, 40);
+            }
 
             debit.operationId = (int)model.operationId;
             debit.description = loanDescription; // $"Loan disbursement";
@@ -4270,10 +4278,16 @@ namespace FintrakBanking.Repositories.Credit
         public List<FinanceTransactionViewModel> BuildLoanChargeFeesPosting(LoanViewModel loanDetails)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            var feeDescription = "FTK" + loanDetails.loanReferenceNumber + " fees";
+            if (feeDescription.Length > 40)
+            {
+                feeDescription = feeDescription.Substring(0, 40);
+            }
+
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
             //TBL_LOAN loanTable = new TBL_LOAN();
             var bookingRequestDetails = context.TBL_LOAN_BOOKING_REQUEST.FirstOrDefault(x => x.LOAN_BOOKING_REQUESTID == loanDetails.loanBookingRequestId);
-
             var company = context.TBL_COMPANY.Find(loanDetails.companyId);
             foreach (var item in loanDetails.loanChargeFee)
             {
@@ -4309,7 +4323,7 @@ namespace FintrakBanking.Repositories.Credit
                                 debitAmount = (decimal)debits.VALUE;
 
                             debit.operationId = (int)loanDetails.operationId;
-                            debit.description = $"Fee charge on {debits.DESCRIPTION}";
+                            debit.description = feeDescription; // $"Fee charge on {debits.DESCRIPTION}";
                             debit.valueDate = generalSetup.GetApplicationDate();
                             debit.transactionDate = debit.valueDate;
                             debit.currencyId = casa.CURRENCYID;
@@ -4350,7 +4364,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                             credit.operationId = (int)loanDetails.operationId;
-                            credit.description = $"Fee charge on {credits.DESCRIPTION}";
+                            credit.description = feeDescription; // $"Fee charge on {credits.DESCRIPTION}";
                             credit.valueDate = generalSetup.GetApplicationDate();
                             credit.transactionDate = credit.valueDate;
                             credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanDetails.companyId).CURRENCYID; //(short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, loanDetails.companyId); //casa.CURRENCYID;
