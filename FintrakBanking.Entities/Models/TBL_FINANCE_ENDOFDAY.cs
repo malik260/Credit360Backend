@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
 
         public int CREATEDBY { get; set; }
 
+        public int EODSTATUSID { get; set; }
+         
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
     }
 }

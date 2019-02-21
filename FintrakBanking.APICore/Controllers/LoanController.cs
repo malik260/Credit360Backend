@@ -929,7 +929,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetLoanBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetLoanFacilityBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (data.Any() == false)
                 {
@@ -956,36 +956,31 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [Route("loan-booking/verification/awaiting-approval")]
+        public HttpResponseMessage GetBookedLoanApplicationForBookingVerification()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var data = repo.GetBookedLoanApplicationForBookingVerification(token.GetStaffId, token.GetCompanyId);
+
+            if (data.Any() == false)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        }
+
+        [HttpGet]
         [Route("loan-booking/revolving/awaiting-approval")]
         public HttpResponseMessage GetRevolvingFacilityBookingAwaitingApproval()
         {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetRevolvingFacilityBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var data = repo.GetRevolvingFacilityBookingAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
-                if (data.Any() == false)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found",  });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
-            }
-            catch (ConditionNotMetException ex)
+            if (data.Any() == false)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}", error = ex.InnerException });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found", });
             }
-            catch (BadLogicException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}", error = ex.InnerException });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}", error = ex.InnerException });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured", error = ex.InnerException });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
         }
 
         [HttpGet]
@@ -1126,6 +1121,71 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-booking/verification/{loanBookingRequestId}")]
+        public HttpResponseMessage ApproveLoanBookingVerification([FromBody] ApprovalViewModel model, int loanBookingRequestId)
+        {
+            try
+            {
+
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.BranchId = (short)token.GetBranchId;
+                model.staffId = token.GetStaffId;
+
+                var responseId = repo.GoForApproval(model, loanBookingRequestId);
+                var dynamicMessage = string.Empty;
+                if (responseId == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation successful. Facility Booking was verified successfully " });
+                }
+                else if (responseId == 2)
+                {
+                    dynamicMessage = "Loan booking has been successfully Verified";
+                    if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
+                        dynamicMessage = "Overdraft facility grant successfully verified";
+                    if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
+                        dynamicMessage = "Contingent Liability successfully verified";
+                    if (model.operationId == (short)OperationsEnum.TermLoanBooking)
+                        dynamicMessage = "Loan booking has been successfully verified";
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, message = dynamicMessage });
+                }
+                else if (responseId == 3)
+                {
+                    dynamicMessage = "Loan booking verification has been disapproved";
+                    if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
+                        dynamicMessage = "Overdraft facility grant verification disapproved";
+                    if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
+                        dynamicMessage = "Contingent Liability verification disapproved";
+                    if (model.operationId == (short)OperationsEnum.TermLoanBooking)
+                        dynamicMessage = "Loan booking disapproval was successful";
+
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, message = dynamicMessage });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
+                }
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -1360,6 +1420,75 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (Exception)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-collaterals/{loanId}/{loanSystemTypeId}")]
+        public HttpResponseMessage GetLoanCollateral(int loanId, int loanSystemTypeId)
+        {
+            try
+            {
+                var data = repo.GetLoanCollateral(loanId, loanSystemTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("foreign-loan-naration/{loanId}")]
+        public HttpResponseMessage GetForeignLoanBeneficiaryNaration(int loanId)
+        {
+            try
+            {
+                var data = repo.GetForeignLoanBeneficiaryNaration(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-monitoring-triggers/{loanId}/{loanSystemTypeId}")]
+        public HttpResponseMessage GetLoanMonitoringTriggers(int loanId, int loanSystemTypeId)
+        {
+            try
+            {
+                var data = repo.GetLoanMonitoringTriggers(loanId, loanSystemTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
             }
         }
 
@@ -1792,28 +1921,28 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         public HttpResponseMessage GetAvailedLoanApplicationsReadyForBooking()
         {
             TokenDecryptionHelper token = new TokenDecryptionHelper();
-            try
+            var response = repo.GetAvailedLoanApplicationsReadyForBooking(token.GetCompanyId, token.GetStaffId);
+            if (!response.Any())
             {
-                var response = repo.GetAvailedLoanApplicationsReadyForBooking(token.GetCompanyId, token.GetStaffId);
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-            }
-            catch (ConditionNotMetException ce)
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+
+        }
+
+        [HttpGet]
+        [Route("availed-contingent-facility-for-release")]
+        public HttpResponseMessage GetAvailedContingentFacilityBooking()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var response = repo.GetAvailedContingentFacilityBooking(token.GetCompanyId, token.GetStaffId);
+            if (!response.Any())
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
 
         }
 

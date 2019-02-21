@@ -22,5 +22,9 @@ namespace FintrakBanking.Interfaces.Setups.General
         Task<bool> AddActivitiesToGroup(GroupViewModel model);
 
         //bool AddActivitiesToGroup(GroupViewModel model);
+
+        int GetLoggedInUsersNumber(int? userId = null);
+
+        bool LogOutAllUsers(int userId);
     }
 }
