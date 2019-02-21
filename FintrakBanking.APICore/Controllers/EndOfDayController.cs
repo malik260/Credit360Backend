@@ -151,13 +151,31 @@ namespace FintrakBanking.APICore.Controllers
             //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
             //}
         }
-        
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("get_endofday_operation_log")]
         public HttpResponseMessage GetEndofdayOperationLog([FromBody] FinanceEndofdayViewModel model)
         {
-            var  data = repoEOD.GetEndofdayOperationLog((DateTime)model.eodDate, token.GetCompanyId);
+            var data = repoEOD.GetEndofdayOperationLog((DateTime)model.eodDate, token.GetCompanyId);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "An unknown error has occured" });
+
+        }
+        
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("get_endofday_operation_log_monitoring")]
+        public HttpResponseMessage GetEndofdayOperationLogMonitoring([FromBody] FinanceEndofdayViewModel model)
+        {
+            var data = repoEOD.GetEndofdayOperationLogMonitoring(token.GetCompanyId);
 
             if (data != null)
             {
