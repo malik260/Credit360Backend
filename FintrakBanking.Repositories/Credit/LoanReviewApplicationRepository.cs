@@ -562,7 +562,7 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            context.SaveChanges(); // redundant !
+            // context.SaveChanges(); // redundant !
 
             // DETAIL CHANGES
             List<TBL_LMSR_APPLICATION_DETAIL> items = null;
