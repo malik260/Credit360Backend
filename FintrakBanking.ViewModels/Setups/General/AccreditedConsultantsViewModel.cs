@@ -78,4 +78,12 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int accreditedConsultantTypeId { get; set; }
         public string name { get; set; }
     }
+
+    public class LoanConsultantViewModel : GeneralEntity
+    {
+        public int id { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public int accreditedConsultantId { get; set; }
+        public string description { get; set; }
+    }
 }

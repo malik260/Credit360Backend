@@ -374,7 +374,7 @@ namespace FintrakBanking.ReportObjects
 
                                                          select new DisburstLoanViewModel
                                                          {
-                                                             cRMSCode = a.CRMSCODE,
+                                                             cRMSCode = b.CRMSCODE,
                                                              bookingRef = a.LOANREFERENCENUMBER,
                                                              outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
                                                              approvedInterestRate = a.INTERESTRATE,

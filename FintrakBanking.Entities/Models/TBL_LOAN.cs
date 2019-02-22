@@ -214,13 +214,13 @@ namespace FintrakBanking.Entities.Models
 
         public int? NOSTROCURRENCYID { get; set; }
 
-        public string CRMSCODE { get; set; }
+        //public string CRMSCODE { get; set; }
 
-        public DateTime? CRMSDATE { get; set; }
+        //public DateTime? CRMSDATE { get; set; }
 
         public int? LOAN_BOOKING_REQUESTID { get; set; }
 
-        public short? CRMSREPAYMENTAGREEMENTID { get; set; }
+        //public short? CRMSREPAYMENTAGREEMENTID { get; set; }
 
         //[Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
