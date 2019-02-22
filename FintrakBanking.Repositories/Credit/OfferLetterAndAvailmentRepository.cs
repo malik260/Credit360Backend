@@ -2632,8 +2632,6 @@ namespace FintrakBanking.Repositories.Credit
                 this.auditTrail.AddAuditTrail(audit);
             }
 
-           
-
             if (context.SaveChanges() > 0)
                 return true;
 
