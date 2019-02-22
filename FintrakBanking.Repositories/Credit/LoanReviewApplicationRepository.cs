@@ -562,14 +562,12 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            // context.SaveChanges(); // redundant !
-
             // DETAIL CHANGES
             List<TBL_LMSR_APPLICATION_DETAIL> items = null;
             if (model.recommendedChanges != null && model.recommendedChanges.Count() > 0) // only approving authority
             {
                 //updateApprovedAmount = true;
-                items = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).ToList();
+                items = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
                 foreach (var changed in model.recommendedChanges)
                 {
                     var detail = items.FirstOrDefault(x => x.LOANREVIEWAPPLICATIONID == changed.detailId);
@@ -596,6 +594,9 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
+
+            context.SaveChanges();
+
             //generate offer letter doc
             offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
 
@@ -862,7 +863,8 @@ namespace FintrakBanking.Repositories.Credit
                     requestStaffId = x.b.REQUESTSTAFFID,
                     toApprovalLevelId = x.b.TOAPPROVALLEVELID,
 
-                    applicationDetails = x.a.TBL_LMSR_APPLICATION_DETAIL.Select(d => new applicationDetails
+                    applicationDetails = x.a.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
+                    .Select(d => new applicationDetails
                     {
                         detailId = d.LOANREVIEWAPPLICATIONID,
                         operationId = d.OPERATIONID,
@@ -1122,11 +1124,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
                              where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
+                             && c.TBL_LMSR_APPLICATION_DETAIL.DELETED != true
                              && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false
                              select c).ToList();
 
             var status = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
                           where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
+                             && c.TBL_LMSR_APPLICATION_DETAIL.DELETED != true
                           && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null
                           select c).ToList();
 
@@ -1173,7 +1177,7 @@ namespace FintrakBanking.Repositories.Credit
             List<int> existingCollateralIds;
             List<TBL_LOAN_APPLICATION_COLLATERL> recommendedCollaterals;
 
-            var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+            var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false).Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
             
             foreach(var d in details)
             {

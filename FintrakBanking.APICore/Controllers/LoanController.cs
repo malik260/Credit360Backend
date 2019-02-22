@@ -1886,6 +1886,24 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+
+        [HttpGet]
+        [Route("availed-loan-applications/crms-code-ready")]
+        public HttpResponseMessage GetAvailedLoanApplicationsReadyForCrmsCode()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var response = repo.GetAvailedLoanApplicationsReadyForCrmsCode(token.GetCompanyId, token.GetStaffId);
+            if (!response.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+
+        }
+
+
+
         [HttpGet]
         [Route("availed-loan-applications/booking-ready")]
         public HttpResponseMessage GetAvailedLoanApplicationsReadyForBooking()
