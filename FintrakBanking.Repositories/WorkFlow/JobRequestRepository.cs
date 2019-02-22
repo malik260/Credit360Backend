@@ -452,13 +452,17 @@ namespace FintrakBanking.Repositories.WorkFlow
             List<JobRequestViewModel> adminData = new List<JobRequestViewModel>();
             List<JobRequestViewModel> hubStaffData = new List<JobRequestViewModel>();
             List<JobRequestViewModel> staffData = new List<JobRequestViewModel>();
-
+            List<int> adminJobTypeIds = new List<int>();
             if (staffAdmin.Any())
             {
+                foreach(var i in staffAdmin)
+                {
+                    adminJobTypeIds.Add(i.JOBTYPEID);
+                }
                 adminData = (from x in context.TBL_JOB_REQUEST
                             join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                             join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                            where x.JOBTYPEID == staffAdmin.FirstOrDefault().JOBTYPEID
+                            where  adminJobTypeIds.Contains(x.JOBTYPEID)
                             orderby x.ARRIVALDATE descending
                             select (
                             new JobRequestViewModel
@@ -512,11 +516,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
                             })).ToList().OrderByDescending(x => x.arrivalDate).Take(40).ToList();
-
-               
-
             }
-           
+
+            List<int> jobRequestIds = new List<int>();
+
+           foreach(var i in adminData) { jobRequestIds.Add(i.jobRequestId); }
+
             if (staffHub.Any() && middleOfficeUnit.Any() && isTeamLead)
             {
                 List<int> unitIds = new List<int>();
@@ -528,7 +533,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 hubStaffData = (from x in context.TBL_JOB_REQUEST
                                 join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                                 join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                                where unitIds.Contains((int)x.JOBTYPEUNITID )
+                                where unitIds.Contains((int)x.JOBTYPEUNITID ) && !jobRequestIds.Contains(x.JOBREQUESTID)
                                 orderby x.REQUESTSTATUSID ascending
                                 select (
                                 new JobRequestViewModel
@@ -595,7 +600,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var xy = (from x in context.TBL_JOB_REQUEST
                           join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                           join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                          where x.SENDERSTAFFID == staffId || x.RECEIVERSTAFFID == staffId || x.REASSIGNEDTO == staffId || unitIds.Contains((int)x.JOBTYPEUNITID)
+                          where (x.SENDERSTAFFID == staffId || x.RECEIVERSTAFFID == staffId || x.REASSIGNEDTO == staffId || unitIds.Contains((int)x.JOBTYPEUNITID))
+                          && !jobRequestIds.Contains(x.JOBREQUESTID)
                           orderby x.ARRIVALDATE descending
                           select (
                           new JobRequestViewModel
@@ -658,7 +664,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 staffData = (from x in context.TBL_JOB_REQUEST
                              join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                              join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                             where x.SENDERSTAFFID == staffId || x.RECEIVERSTAFFID == staffId || x.REASSIGNEDTO == staffId
+                             where (x.SENDERSTAFFID == staffId || x.RECEIVERSTAFFID == staffId || x.REASSIGNEDTO == staffId) && !jobRequestIds.Contains(x.JOBREQUESTID)
                              orderby x.ARRIVALDATE descending
                              select (
                              new JobRequestViewModel
@@ -714,8 +720,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                              })).ToList().OrderByDescending(x => x.arrivalDate).Take(40).ToList();
             }
 
-                
-
             allData = adminData.Union(hubStaffData).Union(staffData).Distinct().ToList();
 
             foreach (var item in allData)
@@ -746,19 +750,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (item.jobSubTypeId == null || item.jobSubTypeId < 1) item.jobSubTypeName = "n/a";
             }
 
-            //if (staffHub.Any() && middleOfficeUnit.Any() && isTeamLead)
-            //{
-            //    return data.Where(x => x.senderStaffId == staffId || x.receiverStaffId == staffId || x.reassignedTo == staffId || x.jobTypeUnitId == staffHub.FirstOrDefault().JOBTYPEUNITID);
-            //}
-            //if (staffHub.Any() && middleOfficeUnit.Any() && !isTeamLead)
-            //{
-            //    return data.Where(x => x.senderStaffId == staffId || x.receiverStaffId == staffId || x.reassignedTo == staffId);
-            //}
-            //else if (staffHub.Any())
-            //{
-            //    return data.Where(x => x.senderStaffId == staffId || x.receiverStaffId == staffId || x.reassignedTo == staffId || x.jobTypeUnitId == staffHub.FirstOrDefault().JOBTYPEUNITID);
-            //}
-            //else { return data.Where(x => x.senderStaffId == staffId || x.receiverStaffId == staffId || x.reassignedTo == staffId); }
+
             return allData;
         }
 
