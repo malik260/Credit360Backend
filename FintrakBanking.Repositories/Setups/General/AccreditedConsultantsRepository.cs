@@ -1039,7 +1039,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.TBL_LOAN_APPLICATION_DETL_CON.Where(x => x.DELETED == false && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
             .Select(c => new LoanConsultantViewModel
             {
-                loanApplicationConsultantId = c.LOANAPPLICATIONCONSULTANTID,
+                id = c.LOANAPPLICATIONCONSULTANTID,
                 loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                 accreditedConsultantId = c.ACCREDITEDCONSULTANTID,
                 description = c.DESCRIPTION,
