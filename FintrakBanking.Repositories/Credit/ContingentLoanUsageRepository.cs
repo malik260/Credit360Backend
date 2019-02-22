@@ -16,6 +16,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Entities.DocumentModels;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -26,16 +27,19 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workflow;
         private IAuditTrailRepository auditTrail;
         private ICasaLienRepository casaLien;
+        private FinTrakBankingDocumentsContext documentsContext;
 
         public object entiry { get; private set; }
 
-        public ContingentLoanUsageRepository(FinTrakBankingContext context, IGeneralSetupRepository genSetup, IAuditTrailRepository auditTrail, IWorkflow workflow, ICasaLienRepository casaLien)
+        public ContingentLoanUsageRepository(FinTrakBankingContext context, IGeneralSetupRepository genSetup,
+            IAuditTrailRepository auditTrail, IWorkflow workflow, ICasaLienRepository casaLien, FinTrakBankingDocumentsContext documentsContext)
         {
             this.context = context;
             this.genSetup = genSetup;
             this.auditTrail = auditTrail;
             this.workflow = workflow;
             this.casaLien = casaLien;
+            this.documentsContext = documentsContext;
         }
 
         public IEnumerable<ContingentLoansViewModel> GetAllContingentLoans(int staffId, int companyId)
@@ -46,7 +50,7 @@ namespace FintrakBanking.Repositories.Credit
                 DateTime currentDate = genSetup.GetApplicationDate();
                 var data = (from a in context.TBL_LOAN_CONTINGENT
                             join b in context.TBL_PRODUCT_BEHAVIOUR on a.PRODUCTID equals b.PRODUCTID
-                            where  currentDate <= a.MATURITYDATE && b.ALLOWFUNDUSAGE == true
+                            where currentDate <= a.MATURITYDATE && b.ALLOWFUNDUSAGE == true
                             select new ContingentLoansViewModel()
                             {
                                 principalName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
@@ -104,7 +108,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (usedData.Any())
                     {
                         item.usedAmount = usedData.Sum(c => c.AMOUNTREQUESTED);
-                       // item.amountRemaining = item.facilityAmount - item.usedAmount;
+                        // item.amountRemaining = item.facilityAmount - item.usedAmount;
                     }
                     contingentData.Add(item);
 
@@ -127,19 +131,20 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = entity.operationId;
             workflow.TargetId = entity.targetId;
             workflow.CompanyId = entity.companyId;
-            workflow.StatusId = entity.approvalStatusId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
             workflow.Comment = entity.comment;
             workflow.ExternalInitialization = entity.externalInitialization;
             workflow.DeferredExecution = entity.deferredExecution;
             return response = workflow.LogActivity();
+           
         }
 
-        public bool SaveContigentLoans(ContingentLoanUsageViewModel entity, int companyId)
+        public bool SaveContigentLoans(ContingentLoanUsageViewModel entity, byte[] buffer)
         {
             var data = new TBL_LOAN_CONTINGENT_USAGE
             {
                 AMOUNTREQUESTED = entity.amountRequuested,
-                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing,
                 CONTINGENTLOANID = entity.contingentLoanId,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
@@ -147,7 +152,7 @@ namespace FintrakBanking.Repositories.Credit
                 REMARK = entity.remark
             };
             context.TBL_LOAN_CONTINGENT_USAGE.Add(data);
-            
+
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -166,6 +171,20 @@ namespace FintrakBanking.Repositories.Credit
             bool response = false;
             //--------------------------------------------------
             response = context.SaveChanges() > 0;
+            int contingentUsedId = data.CONTINGENTLOANUSAGEID;
+
+            var file = new TBL_LOAN_CONTINGENT_USAGE_DOCS
+            {
+                CONTINGENTLOANUSAGEID = contingentUsedId,
+                CREATEDBY = entity.createdBy,
+                DATECREATED = genSetup.GetApplicationDate(),
+                FILEDATA = buffer,
+                FILEEXTENSION = entity.fileExtension,
+                SYSTEMDATETIME = DateTime.Now,
+                PHYSICALFILENUMBER = entity.fileName,
+                PHYSICALLOCATION = entity.documentTitle,
+                FILENAME = entity.fileName
+            };
             if (response)
             {
                 // ----------------Drop into CAM-------------------
@@ -182,19 +201,22 @@ namespace FintrakBanking.Repositories.Credit
                         deferredExecution = false,
                     };
 
+                    documentsContext.TBL_LOAN_CONTINGENT_USAGE_DOCS.Add(file);
+                    documentsContext.SaveChanges();
+
                     response = LogForApproval(log);
 
                 }
             }
             return response;
-    } 
-            
+        }
+
         public IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId)
         {
             return GetRequestWaitingApprovalByOperation(staffId).ToList();
         }
 
-        public IQueryable<ContingentLoansViewModel> GetRequestWaitingApprovalByOperation( int staffId)
+        public IQueryable<ContingentLoansViewModel> GetRequestWaitingApprovalByOperation(int staffId)
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContingentLiabilityUsage).ToList();
 
@@ -203,6 +225,7 @@ namespace FintrakBanking.Repositories.Credit
                                where atrail.OPERATIONID == (int)OperationsEnum.ContingentLiabilityUsage
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                      && atrail.RESPONSESTAFFID == null
+                                     && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                orderby lcu.CONTINGENTLOANUSAGEID descending
 
                                select new ContingentLoansViewModel
@@ -243,25 +266,25 @@ namespace FintrakBanking.Repositories.Credit
                 staffId = entity.staffId,
                 operationId = (int)OperationsEnum.ContingentLiabilityUsage,
                 targetId = entity.contingenliabilityUsageId,
-                companyId = entity.companyId,                 
+                companyId = entity.companyId,
                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                comment =entity.comment,               
+                comment = entity.comment,
                 deferredExecution = true
             };
 
             LogForApproval(log);
-            
+
 
 
             if (workflow.NewState == (int)ApprovalState.Ended)
-            {                
+            {
                 decimal newLienAmount = 0;
 
                 string lienReferenceNumber = string.Empty;
 
                 if (contingentLoanRecord.Count() == 0)
                 {
-                      lienReferenceNumber = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER;
+                    lienReferenceNumber = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER;
                 }
                 else
                 {
@@ -270,11 +293,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 decimal oldLien = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.CONTINGENTAMOUNT;
 
-                var casaAccountId =   contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.CASAACCOUNTID;
-       
+                var casaAccountId = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.CASAACCOUNTID;
+
                 var lienModel = new CasaLienViewModel
                 {
-                    productAccountNumber = context.TBL_CASA.FirstOrDefault(c=> c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
+                    productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
                     sourceReferenceNumber = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
                     userBranchId = (short)entity.BranchId,
                     branchId = (short)entity.BranchId,
@@ -290,7 +313,7 @@ namespace FintrakBanking.Repositories.Credit
                 casaLien.ReleaseLien(lienModel);
 
 
-                lienReferenceNumber = string.Concat( lienReferenceNumber, contingentLoanRecord.Count());
+                lienReferenceNumber = string.Concat(lienReferenceNumber, contingentLoanRecord.Count());
                 newLienAmount = oldLien - contingentLoanRecord.FirstOrDefault().AMOUNTREQUESTED;
                 var lienModel2 = new CasaLienViewModel
                 {
@@ -309,11 +332,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 casaLien.PlaceLien(lienModel);
             }
-                   
+
 
             return this.context.SaveChanges() > 0;
         }
-        
+
         public bool SaveContigentLoansUsageApproval(ApproveAPSRequestViewModel entity)
         {
             workflow.StaffId = entity.staffId;
@@ -350,7 +373,7 @@ namespace FintrakBanking.Repositories.Credit
                     createdBy = entity.createdBy,
                     userIPAddress = entity.userIPAddress,
                     applicationUrl = entity.applicationUrl,
-                },null,false);
+                }, null, false);
 
                 decimal newLienAmount = oldLien - usage.AMOUNTREQUESTED;
 
@@ -387,7 +410,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN_CONTINGENT
                         join b in context.TBL_PRODUCT_BEHAVIOUR on a.PRODUCTID equals b.PRODUCTID
                         join c in context.TBL_LOAN_CONTINGENT_USAGE on a.CONTINGENTLOANID equals c.CONTINGENTLOANID
-                        where  b.ALLOWFUNDUSAGE == true && c.CONTINGENTLOANID==loanId
+                        where b.ALLOWFUNDUSAGE == true && c.CONTINGENTLOANID == loanId
                         select new ContingentLoansViewModel()
                         {
                             principalName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
@@ -408,6 +431,31 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
 
             return data;
+        }
+
+        public List<CollateralDocumentViewModel> GetContingentUsageDocument(int loanId)
+        {
+            var model = new List<CollateralDocumentViewModel>();
+            var contingent = context.TBL_LOAN_CONTINGENT_USAGE.Where(o => o.CONTINGENTLOANID == loanId).Select(o => o).ToList();
+            if (contingent.Count() < 1)
+                return model;
+
+            foreach (var x in contingent)
+            {
+                var data = documentsContext.TBL_LOAN_CONTINGENT_USAGE_DOCS.Where(o => o.CONTINGENTLOANUSAGEID == x.CONTINGENTLOANUSAGEID).Select(o => new CollateralDocumentViewModel
+                {
+                    ContingentAmount = x.AMOUNTREQUESTED,
+                    fileData = o.FILEDATA,
+                    fileExtension = o.FILEEXTENSION,
+                    fileName = o.FILENAME,
+                    dateTimeCreated = x.DATETIMECREATED,
+                    documentId = o.DOCUMENTID,
+                    documentTitle = o.PHYSICALLOCATION
+                }).FirstOrDefault();
+
+                model.Add(data);
+            }
+            return model;
         }
     }
 }

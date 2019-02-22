@@ -47,7 +47,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("save-collateral-type-crms")]
-        public HttpResponseMessage UpdateApprovalRelief([FromBody] ApprovedLoanDetailViewModel model)
+        public HttpResponseMessage AddCRMSCollateralType([FromBody] ApprovedLoanDetailViewModel model)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
                 int applicationId = model.loanApplicationDetailId;
-                var data = repo.UpdateLoadDetails(applicationId, model);
+                var data = repo.AddCRMSCollateralType(applicationId, model);
 
                 if (data)
                 {
@@ -147,15 +147,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [ClaimsAuthorization]
-        [Route("updateFinalOfferLetter/{applicationRef}")]
-        public HttpResponseMessage UpdateFinalOfferLetter(string applicationRef, OfferLetterTemplateViewModel model)
+        [Route("updateFinalOfferLetter/{loanApplicationId}")]
+        public HttpResponseMessage UpdateFinalOfferLetter(int loanApplicationId, OfferLetterTemplateViewModel model)
         {
             try
             {
                 model.userBranchId = (short)token.GetBranchId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
-                var data = repo.UpdateFinalOfferLetter(applicationRef, model);
+                var data = repo.UpdateFinalOfferLetter(loanApplicationId, model);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been updated successfully" });
@@ -383,12 +383,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-application/prepared-offer-letter/final/{applicationRefNumber}")]
-        public HttpResponseMessage GetFinalOfferLetterByApplRefNumber([FromUri] string applicationRefNumber)
+        [Route("loan-application/prepared-offer-letter/final/{loanApplicationId}")]
+        public HttpResponseMessage GetFinalOfferLetterByApplRefNumber([FromUri] int loanApplicationId)
         {
             try
             {
-                var response = repo.GetFinalOfferLetterByApplRefNumber(applicationRefNumber);
+                var response = repo.GetFinalOfferLetterByApplRefNumber(loanApplicationId);
 
                 if (response != null)
                 {
@@ -410,7 +410,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.SaveFinalOfferLetter(model);
+                var response = repo.SaveFinalOfferLetter(1,model);
 
                 if (response)
                 {

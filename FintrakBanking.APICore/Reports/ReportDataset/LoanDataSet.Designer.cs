@@ -76,8 +76,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         private LoanDocumentDefferalsDataTable tableLoanDocumentDefferals;
         
-        private LoanDocumentWaivedOrDeferredDataTable tableLoanDocumentWaivedOrDeferred;
-        
         private MiddleOfficeReportDataTable tableMiddleOfficeReport;
         
         private CollateralValuationReportDataTable tableCollateralValuationReport;
@@ -99,6 +97,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         private ExcessReportDataTable tableExcessReport;
         
         private WeeklyRecoveryReportFINCONDataTable tableWeeklyRecoveryReportFINCON;
+        
+        private LoanDocumentWaivedDataTable tableLoanDocumentWaived;
+        
+        private LoanDocumentDeferredDataTable tableLoanDocumentDeferred;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -206,9 +208,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["LoanDocumentDefferals"] != null)) {
                     base.Tables.Add(new LoanDocumentDefferalsDataTable(ds.Tables["LoanDocumentDefferals"]));
                 }
-                if ((ds.Tables["LoanDocumentWaivedOrDeferred"] != null)) {
-                    base.Tables.Add(new LoanDocumentWaivedOrDeferredDataTable(ds.Tables["LoanDocumentWaivedOrDeferred"]));
-                }
                 if ((ds.Tables["MiddleOfficeReport"] != null)) {
                     base.Tables.Add(new MiddleOfficeReportDataTable(ds.Tables["MiddleOfficeReport"]));
                 }
@@ -241,6 +240,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["WeeklyRecoveryReportFINCON"] != null)) {
                     base.Tables.Add(new WeeklyRecoveryReportFINCONDataTable(ds.Tables["WeeklyRecoveryReportFINCON"]));
+                }
+                if ((ds.Tables["LoanDocumentWaived"] != null)) {
+                    base.Tables.Add(new LoanDocumentWaivedDataTable(ds.Tables["LoanDocumentWaived"]));
+                }
+                if ((ds.Tables["LoanDocumentDeferred"] != null)) {
+                    base.Tables.Add(new LoanDocumentDeferredDataTable(ds.Tables["LoanDocumentDeferred"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -524,16 +529,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public LoanDocumentWaivedOrDeferredDataTable LoanDocumentWaivedOrDeferred {
-            get {
-                return this.tableLoanDocumentWaivedOrDeferred;
-            }
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        [global::System.ComponentModel.Browsable(false)]
-        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
         public MiddleOfficeReportDataTable MiddleOfficeReport {
             get {
                 return this.tableMiddleOfficeReport;
@@ -637,6 +632,26 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         public WeeklyRecoveryReportFINCONDataTable WeeklyRecoveryReportFINCON {
             get {
                 return this.tableWeeklyRecoveryReportFINCON;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public LoanDocumentWaivedDataTable LoanDocumentWaived {
+            get {
+                return this.tableLoanDocumentWaived;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public LoanDocumentDeferredDataTable LoanDocumentDeferred {
+            get {
+                return this.tableLoanDocumentDeferred;
             }
         }
         
@@ -785,9 +800,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["LoanDocumentDefferals"] != null)) {
                     base.Tables.Add(new LoanDocumentDefferalsDataTable(ds.Tables["LoanDocumentDefferals"]));
                 }
-                if ((ds.Tables["LoanDocumentWaivedOrDeferred"] != null)) {
-                    base.Tables.Add(new LoanDocumentWaivedOrDeferredDataTable(ds.Tables["LoanDocumentWaivedOrDeferred"]));
-                }
                 if ((ds.Tables["MiddleOfficeReport"] != null)) {
                     base.Tables.Add(new MiddleOfficeReportDataTable(ds.Tables["MiddleOfficeReport"]));
                 }
@@ -820,6 +832,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["WeeklyRecoveryReportFINCON"] != null)) {
                     base.Tables.Add(new WeeklyRecoveryReportFINCONDataTable(ds.Tables["WeeklyRecoveryReportFINCON"]));
+                }
+                if ((ds.Tables["LoanDocumentWaived"] != null)) {
+                    base.Tables.Add(new LoanDocumentWaivedDataTable(ds.Tables["LoanDocumentWaived"]));
+                }
+                if ((ds.Tables["LoanDocumentDeferred"] != null)) {
+                    base.Tables.Add(new LoanDocumentDeferredDataTable(ds.Tables["LoanDocumentDeferred"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -1010,12 +1028,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableLoanDocumentDefferals.InitVars();
                 }
             }
-            this.tableLoanDocumentWaivedOrDeferred = ((LoanDocumentWaivedOrDeferredDataTable)(base.Tables["LoanDocumentWaivedOrDeferred"]));
-            if ((initTable == true)) {
-                if ((this.tableLoanDocumentWaivedOrDeferred != null)) {
-                    this.tableLoanDocumentWaivedOrDeferred.InitVars();
-                }
-            }
             this.tableMiddleOfficeReport = ((MiddleOfficeReportDataTable)(base.Tables["MiddleOfficeReport"]));
             if ((initTable == true)) {
                 if ((this.tableMiddleOfficeReport != null)) {
@@ -1082,6 +1094,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableWeeklyRecoveryReportFINCON.InitVars();
                 }
             }
+            this.tableLoanDocumentWaived = ((LoanDocumentWaivedDataTable)(base.Tables["LoanDocumentWaived"]));
+            if ((initTable == true)) {
+                if ((this.tableLoanDocumentWaived != null)) {
+                    this.tableLoanDocumentWaived.InitVars();
+                }
+            }
+            this.tableLoanDocumentDeferred = ((LoanDocumentDeferredDataTable)(base.Tables["LoanDocumentDeferred"]));
+            if ((initTable == true)) {
+                if ((this.tableLoanDocumentDeferred != null)) {
+                    this.tableLoanDocumentDeferred.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1144,8 +1168,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableContigentLiabilityInformation);
             this.tableLoanDocumentDefferals = new LoanDocumentDefferalsDataTable();
             base.Tables.Add(this.tableLoanDocumentDefferals);
-            this.tableLoanDocumentWaivedOrDeferred = new LoanDocumentWaivedOrDeferredDataTable();
-            base.Tables.Add(this.tableLoanDocumentWaivedOrDeferred);
             this.tableMiddleOfficeReport = new MiddleOfficeReportDataTable();
             base.Tables.Add(this.tableMiddleOfficeReport);
             this.tableCollateralValuationReport = new CollateralValuationReportDataTable();
@@ -1168,6 +1190,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableExcessReport);
             this.tableWeeklyRecoveryReportFINCON = new WeeklyRecoveryReportFINCONDataTable();
             base.Tables.Add(this.tableWeeklyRecoveryReportFINCON);
+            this.tableLoanDocumentWaived = new LoanDocumentWaivedDataTable();
+            base.Tables.Add(this.tableLoanDocumentWaived);
+            this.tableLoanDocumentDeferred = new LoanDocumentDeferredDataTable();
+            base.Tables.Add(this.tableLoanDocumentDeferred);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1328,12 +1354,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        private bool ShouldSerializeLoanDocumentWaivedOrDeferred() {
-            return false;
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private bool ShouldSerializeMiddleOfficeReport() {
             return false;
         }
@@ -1395,6 +1415,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private bool ShouldSerializeWeeklyRecoveryReportFINCON() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeLoanDocumentWaived() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeLoanDocumentDeferred() {
             return false;
         }
         
@@ -1532,9 +1564,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         public delegate void LoanDocumentDefferalsRowChangeEventHandler(object sender, LoanDocumentDefferalsRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public delegate void LoanDocumentWaivedOrDeferredRowChangeEventHandler(object sender, LoanDocumentWaivedOrDeferredRowChangeEvent e);
-        
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void MiddleOfficeReportRowChangeEventHandler(object sender, MiddleOfficeReportRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -1566,6 +1595,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void WeeklyRecoveryReportFINCONRowChangeEventHandler(object sender, WeeklyRecoveryReportFINCONRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public delegate void LoanDocumentWaivedRowChangeEventHandler(object sender, LoanDocumentWaivedRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public delegate void LoanDocumentDeferredRowChangeEventHandler(object sender, LoanDocumentDeferredRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -4288,6 +4323,28 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnoverDraft;
             
+            private global::System.Data.DataColumn columnnameOfRM;
+            
+            private global::System.Data.DataColumn columnstaffCode;
+            
+            private global::System.Data.DataColumn columncustomerAcct;
+            
+            private global::System.Data.DataColumn columncustomerId;
+            
+            private global::System.Data.DataColumn columnbusinessUnit;
+            
+            private global::System.Data.DataColumn columnfacilityLimit;
+            
+            private global::System.Data.DataColumn columnfacilityRate;
+            
+            private global::System.Data.DataColumn columnexchangeRate;
+            
+            private global::System.Data.DataColumn columntenorToDate;
+            
+            private global::System.Data.DataColumn columnvalueDate;
+            
+            private global::System.Data.DataColumn columncustomerCode;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public StakeHolderWithExpiedFTPDataTable() {
@@ -4459,6 +4516,94 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn nameOfRMColumn {
+                get {
+                    return this.columnnameOfRM;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn staffCodeColumn {
+                get {
+                    return this.columnstaffCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerAcctColumn {
+                get {
+                    return this.columncustomerAcct;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerIdColumn {
+                get {
+                    return this.columncustomerId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn businessUnitColumn {
+                get {
+                    return this.columnbusinessUnit;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn facilityLimitColumn {
+                get {
+                    return this.columnfacilityLimit;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn facilityRateColumn {
+                get {
+                    return this.columnfacilityRate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn exchangeRateColumn {
+                get {
+                    return this.columnexchangeRate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn tenorToDateColumn {
+                get {
+                    return this.columntenorToDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn valueDateColumn {
+                get {
+                    return this.columnvalueDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerCodeColumn {
+                get {
+                    return this.columncustomerCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -4511,7 +4656,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string customerAvailableAmount, 
                         string teno, 
                         string effectiveDate, 
-                        string overDraft) {
+                        string overDraft, 
+                        string nameOfRM, 
+                        string staffCode, 
+                        string customerAcct, 
+                        string customerId, 
+                        string businessUnit, 
+                        string facilityLimit, 
+                        string facilityRate, 
+                        string exchangeRate, 
+                        string tenorToDate, 
+                        string valueDate, 
+                        string customerCode) {
                 StakeHolderWithExpiedFTPRow rowStakeHolderWithExpiedFTPRow = ((StakeHolderWithExpiedFTPRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         loanReferenceNumber,
@@ -4530,7 +4686,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         customerAvailableAmount,
                         teno,
                         effectiveDate,
-                        overDraft};
+                        overDraft,
+                        nameOfRM,
+                        staffCode,
+                        customerAcct,
+                        customerId,
+                        businessUnit,
+                        facilityLimit,
+                        facilityRate,
+                        exchangeRate,
+                        tenorToDate,
+                        valueDate,
+                        customerCode};
                 rowStakeHolderWithExpiedFTPRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowStakeHolderWithExpiedFTPRow);
                 return rowStakeHolderWithExpiedFTPRow;
@@ -4570,6 +4737,17 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnteno = base.Columns["teno"];
                 this.columneffectiveDate = base.Columns["effectiveDate"];
                 this.columnoverDraft = base.Columns["overDraft"];
+                this.columnnameOfRM = base.Columns["nameOfRM"];
+                this.columnstaffCode = base.Columns["staffCode"];
+                this.columncustomerAcct = base.Columns["customerAcct"];
+                this.columncustomerId = base.Columns["customerId"];
+                this.columnbusinessUnit = base.Columns["businessUnit"];
+                this.columnfacilityLimit = base.Columns["facilityLimit"];
+                this.columnfacilityRate = base.Columns["facilityRate"];
+                this.columnexchangeRate = base.Columns["exchangeRate"];
+                this.columntenorToDate = base.Columns["tenorToDate"];
+                this.columnvalueDate = base.Columns["valueDate"];
+                this.columncustomerCode = base.Columns["customerCode"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4609,6 +4787,28 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columneffectiveDate);
                 this.columnoverDraft = new global::System.Data.DataColumn("overDraft", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnoverDraft);
+                this.columnnameOfRM = new global::System.Data.DataColumn("nameOfRM", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnnameOfRM);
+                this.columnstaffCode = new global::System.Data.DataColumn("staffCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnstaffCode);
+                this.columncustomerAcct = new global::System.Data.DataColumn("customerAcct", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerAcct);
+                this.columncustomerId = new global::System.Data.DataColumn("customerId", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerId);
+                this.columnbusinessUnit = new global::System.Data.DataColumn("businessUnit", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbusinessUnit);
+                this.columnfacilityLimit = new global::System.Data.DataColumn("facilityLimit", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityLimit);
+                this.columnfacilityRate = new global::System.Data.DataColumn("facilityRate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityRate);
+                this.columnexchangeRate = new global::System.Data.DataColumn("exchangeRate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnexchangeRate);
+                this.columntenorToDate = new global::System.Data.DataColumn("tenorToDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntenorToDate);
+                this.columnvalueDate = new global::System.Data.DataColumn("valueDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnvalueDate);
+                this.columncustomerCode = new global::System.Data.DataColumn("customerCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerCode);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -13028,479 +13228,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class LoanDocumentWaivedOrDeferredDataTable : global::System.Data.TypedTableBase<LoanDocumentWaivedOrDeferredRow> {
-            
-            private global::System.Data.DataColumn columnfirstName;
-            
-            private global::System.Data.DataColumn columnlastName;
-            
-            private global::System.Data.DataColumn columnmiddleName;
-            
-            private global::System.Data.DataColumn columnwaivedDocument;
-            
-            private global::System.Data.DataColumn columnfacilityAmount;
-            
-            private global::System.Data.DataColumn columnfacilityExpirationDate;
-            
-            private global::System.Data.DataColumn columnfacilityGrantedDate;
-            
-            private global::System.Data.DataColumn columnwaveredDate;
-            
-            private global::System.Data.DataColumn columnfacilityType;
-            
-            private global::System.Data.DataColumn columnapplicationRefrenceNumber;
-            
-            private global::System.Data.DataColumn columncustomerName;
-            
-            private global::System.Data.DataColumn columnloanApplicationId;
-            
-            private global::System.Data.DataColumn columncompanyName;
-            
-            private global::System.Data.DataColumn columnbranchName;
-            
-            private global::System.Data.DataColumn columnproposedAmount;
-            
-            private global::System.Data.DataColumn columncheckListStatusName;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public LoanDocumentWaivedOrDeferredDataTable() {
-                this.TableName = "LoanDocumentWaivedOrDeferred";
-                this.BeginInit();
-                this.InitClass();
-                this.EndInit();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal LoanDocumentWaivedOrDeferredDataTable(global::System.Data.DataTable table) {
-                this.TableName = table.TableName;
-                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
-                    this.CaseSensitive = table.CaseSensitive;
-                }
-                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
-                    this.Locale = table.Locale;
-                }
-                if ((table.Namespace != table.DataSet.Namespace)) {
-                    this.Namespace = table.Namespace;
-                }
-                this.Prefix = table.Prefix;
-                this.MinimumCapacity = table.MinimumCapacity;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected LoanDocumentWaivedOrDeferredDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
-                    base(info, context) {
-                this.InitVars();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn firstNameColumn {
-                get {
-                    return this.columnfirstName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn lastNameColumn {
-                get {
-                    return this.columnlastName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn middleNameColumn {
-                get {
-                    return this.columnmiddleName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn waivedDocumentColumn {
-                get {
-                    return this.columnwaivedDocument;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn facilityAmountColumn {
-                get {
-                    return this.columnfacilityAmount;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn facilityExpirationDateColumn {
-                get {
-                    return this.columnfacilityExpirationDate;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn facilityGrantedDateColumn {
-                get {
-                    return this.columnfacilityGrantedDate;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn waveredDateColumn {
-                get {
-                    return this.columnwaveredDate;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn facilityTypeColumn {
-                get {
-                    return this.columnfacilityType;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn applicationRefrenceNumberColumn {
-                get {
-                    return this.columnapplicationRefrenceNumber;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn customerNameColumn {
-                get {
-                    return this.columncustomerName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn loanApplicationIdColumn {
-                get {
-                    return this.columnloanApplicationId;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn companyNameColumn {
-                get {
-                    return this.columncompanyName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn branchNameColumn {
-                get {
-                    return this.columnbranchName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn proposedAmountColumn {
-                get {
-                    return this.columnproposedAmount;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn checkListStatusNameColumn {
-                get {
-                    return this.columncheckListStatusName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            [global::System.ComponentModel.Browsable(false)]
-            public int Count {
-                get {
-                    return this.Rows.Count;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public LoanDocumentWaivedOrDeferredRow this[int index] {
-                get {
-                    return ((LoanDocumentWaivedOrDeferredRow)(this.Rows[index]));
-                }
-            }
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event LoanDocumentWaivedOrDeferredRowChangeEventHandler LoanDocumentWaivedOrDeferredRowChanging;
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event LoanDocumentWaivedOrDeferredRowChangeEventHandler LoanDocumentWaivedOrDeferredRowChanged;
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event LoanDocumentWaivedOrDeferredRowChangeEventHandler LoanDocumentWaivedOrDeferredRowDeleting;
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event LoanDocumentWaivedOrDeferredRowChangeEventHandler LoanDocumentWaivedOrDeferredRowDeleted;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void AddLoanDocumentWaivedOrDeferredRow(LoanDocumentWaivedOrDeferredRow row) {
-                this.Rows.Add(row);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public LoanDocumentWaivedOrDeferredRow AddLoanDocumentWaivedOrDeferredRow(
-                        string firstName, 
-                        string lastName, 
-                        string middleName, 
-                        string waivedDocument, 
-                        string facilityAmount, 
-                        string facilityExpirationDate, 
-                        string facilityGrantedDate, 
-                        string waveredDate, 
-                        string facilityType, 
-                        string applicationRefrenceNumber, 
-                        string customerName, 
-                        string loanApplicationId, 
-                        string companyName, 
-                        string branchName, 
-                        string proposedAmount, 
-                        string checkListStatusName) {
-                LoanDocumentWaivedOrDeferredRow rowLoanDocumentWaivedOrDeferredRow = ((LoanDocumentWaivedOrDeferredRow)(this.NewRow()));
-                object[] columnValuesArray = new object[] {
-                        firstName,
-                        lastName,
-                        middleName,
-                        waivedDocument,
-                        facilityAmount,
-                        facilityExpirationDate,
-                        facilityGrantedDate,
-                        waveredDate,
-                        facilityType,
-                        applicationRefrenceNumber,
-                        customerName,
-                        loanApplicationId,
-                        companyName,
-                        branchName,
-                        proposedAmount,
-                        checkListStatusName};
-                rowLoanDocumentWaivedOrDeferredRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowLoanDocumentWaivedOrDeferredRow);
-                return rowLoanDocumentWaivedOrDeferredRow;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public override global::System.Data.DataTable Clone() {
-                LoanDocumentWaivedOrDeferredDataTable cln = ((LoanDocumentWaivedOrDeferredDataTable)(base.Clone()));
-                cln.InitVars();
-                return cln;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override global::System.Data.DataTable CreateInstance() {
-                return new LoanDocumentWaivedOrDeferredDataTable();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal void InitVars() {
-                this.columnfirstName = base.Columns["firstName"];
-                this.columnlastName = base.Columns["lastName"];
-                this.columnmiddleName = base.Columns["middleName"];
-                this.columnwaivedDocument = base.Columns["waivedDocument"];
-                this.columnfacilityAmount = base.Columns["facilityAmount"];
-                this.columnfacilityExpirationDate = base.Columns["facilityExpirationDate"];
-                this.columnfacilityGrantedDate = base.Columns["facilityGrantedDate"];
-                this.columnwaveredDate = base.Columns["waveredDate"];
-                this.columnfacilityType = base.Columns["facilityType"];
-                this.columnapplicationRefrenceNumber = base.Columns["applicationRefrenceNumber"];
-                this.columncustomerName = base.Columns["customerName"];
-                this.columnloanApplicationId = base.Columns["loanApplicationId"];
-                this.columncompanyName = base.Columns["companyName"];
-                this.columnbranchName = base.Columns["branchName"];
-                this.columnproposedAmount = base.Columns["proposedAmount"];
-                this.columncheckListStatusName = base.Columns["checkListStatusName"];
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            private void InitClass() {
-                this.columnfirstName = new global::System.Data.DataColumn("firstName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnfirstName);
-                this.columnlastName = new global::System.Data.DataColumn("lastName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnlastName);
-                this.columnmiddleName = new global::System.Data.DataColumn("middleName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnmiddleName);
-                this.columnwaivedDocument = new global::System.Data.DataColumn("waivedDocument", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnwaivedDocument);
-                this.columnfacilityAmount = new global::System.Data.DataColumn("facilityAmount", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnfacilityAmount);
-                this.columnfacilityExpirationDate = new global::System.Data.DataColumn("facilityExpirationDate", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnfacilityExpirationDate);
-                this.columnfacilityGrantedDate = new global::System.Data.DataColumn("facilityGrantedDate", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnfacilityGrantedDate);
-                this.columnwaveredDate = new global::System.Data.DataColumn("waveredDate", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnwaveredDate);
-                this.columnfacilityType = new global::System.Data.DataColumn("facilityType", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnfacilityType);
-                this.columnapplicationRefrenceNumber = new global::System.Data.DataColumn("applicationRefrenceNumber", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnapplicationRefrenceNumber);
-                this.columncustomerName = new global::System.Data.DataColumn("customerName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncustomerName);
-                this.columnloanApplicationId = new global::System.Data.DataColumn("loanApplicationId", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnloanApplicationId);
-                this.columncompanyName = new global::System.Data.DataColumn("companyName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncompanyName);
-                this.columnbranchName = new global::System.Data.DataColumn("branchName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnbranchName);
-                this.columnproposedAmount = new global::System.Data.DataColumn("proposedAmount", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnproposedAmount);
-                this.columncheckListStatusName = new global::System.Data.DataColumn("checkListStatusName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncheckListStatusName);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public LoanDocumentWaivedOrDeferredRow NewLoanDocumentWaivedOrDeferredRow() {
-                return ((LoanDocumentWaivedOrDeferredRow)(this.NewRow()));
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new LoanDocumentWaivedOrDeferredRow(builder);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override global::System.Type GetRowType() {
-                return typeof(LoanDocumentWaivedOrDeferredRow);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanged(e);
-                if ((this.LoanDocumentWaivedOrDeferredRowChanged != null)) {
-                    this.LoanDocumentWaivedOrDeferredRowChanged(this, new LoanDocumentWaivedOrDeferredRowChangeEvent(((LoanDocumentWaivedOrDeferredRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanging(e);
-                if ((this.LoanDocumentWaivedOrDeferredRowChanging != null)) {
-                    this.LoanDocumentWaivedOrDeferredRowChanging(this, new LoanDocumentWaivedOrDeferredRowChangeEvent(((LoanDocumentWaivedOrDeferredRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleted(e);
-                if ((this.LoanDocumentWaivedOrDeferredRowDeleted != null)) {
-                    this.LoanDocumentWaivedOrDeferredRowDeleted(this, new LoanDocumentWaivedOrDeferredRowChangeEvent(((LoanDocumentWaivedOrDeferredRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleting(e);
-                if ((this.LoanDocumentWaivedOrDeferredRowDeleting != null)) {
-                    this.LoanDocumentWaivedOrDeferredRowDeleting(this, new LoanDocumentWaivedOrDeferredRowChangeEvent(((LoanDocumentWaivedOrDeferredRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void RemoveLoanDocumentWaivedOrDeferredRow(LoanDocumentWaivedOrDeferredRow row) {
-                this.Rows.Remove(row);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
-                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
-                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                LoanDataSet ds = new LoanDataSet();
-                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
-                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
-                any1.MinOccurs = new decimal(0);
-                any1.MaxOccurs = decimal.MaxValue;
-                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any1);
-                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
-                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
-                any2.MinOccurs = new decimal(1);
-                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any2);
-                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
-                attribute1.Name = "namespace";
-                attribute1.FixedValue = ds.Namespace;
-                type.Attributes.Add(attribute1);
-                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
-                attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "LoanDocumentWaivedOrDeferredDataTable";
-                type.Attributes.Add(attribute2);
-                type.Particle = sequence;
-                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
-                if (xs.Contains(dsSchema.TargetNamespace)) {
-                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
-                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
-                    try {
-                        global::System.Xml.Schema.XmlSchema schema = null;
-                        dsSchema.Write(s1);
-                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
-                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
-                            s2.SetLength(0);
-                            schema.Write(s2);
-                            if ((s1.Length == s2.Length)) {
-                                s1.Position = 0;
-                                s2.Position = 0;
-                                for (; ((s1.Position != s1.Length) 
-                                            && (s1.ReadByte() == s2.ReadByte())); ) {
-                                    ;
-                                }
-                                if ((s1.Position == s1.Length)) {
-                                    return type;
-                                }
-                            }
-                        }
-                    }
-                    finally {
-                        if ((s1 != null)) {
-                            s1.Close();
-                        }
-                        if ((s2 != null)) {
-                            s2.Close();
-                        }
-                    }
-                }
-                xs.Add(dsSchema);
-                return type;
-            }
-        }
-        
-        /// <summary>
-        ///Represents the strongly named DataTable class.
-        ///</summary>
-        [global::System.Serializable()]
-        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
         public partial class MiddleOfficeReportDataTable : global::System.Data.TypedTableBase<MiddleOfficeReportRow> {
             
             private global::System.Data.DataColumn columndateTimeCreated;
@@ -19672,6 +19399,839 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class LoanDocumentWaivedDataTable : global::System.Data.TypedTableBase<LoanDocumentWaivedRow> {
+            
+            private global::System.Data.DataColumn columnwaivedDocument;
+            
+            private global::System.Data.DataColumn columnfacilityAmount;
+            
+            private global::System.Data.DataColumn columnfacilityGrantedDate;
+            
+            private global::System.Data.DataColumn columnfacilityType;
+            
+            private global::System.Data.DataColumn columncustomerName;
+            
+            private global::System.Data.DataColumn columncustomerCode;
+            
+            private global::System.Data.DataColumn columnbusinessUnit;
+            
+            private global::System.Data.DataColumn columnfacilityExpirationDate;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentWaivedDataTable() {
+                this.TableName = "LoanDocumentWaived";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal LoanDocumentWaivedDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected LoanDocumentWaivedDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn waivedDocumentColumn {
+                get {
+                    return this.columnwaivedDocument;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn facilityAmountColumn {
+                get {
+                    return this.columnfacilityAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn facilityGrantedDateColumn {
+                get {
+                    return this.columnfacilityGrantedDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn facilityTypeColumn {
+                get {
+                    return this.columnfacilityType;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerNameColumn {
+                get {
+                    return this.columncustomerName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerCodeColumn {
+                get {
+                    return this.columncustomerCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn businessUnitColumn {
+                get {
+                    return this.columnbusinessUnit;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn facilityExpirationDateColumn {
+                get {
+                    return this.columnfacilityExpirationDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentWaivedRow this[int index] {
+                get {
+                    return ((LoanDocumentWaivedRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanDocumentWaivedRowChangeEventHandler LoanDocumentWaivedRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanDocumentWaivedRowChangeEventHandler LoanDocumentWaivedRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanDocumentWaivedRowChangeEventHandler LoanDocumentWaivedRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanDocumentWaivedRowChangeEventHandler LoanDocumentWaivedRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddLoanDocumentWaivedRow(LoanDocumentWaivedRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentWaivedRow AddLoanDocumentWaivedRow(string waivedDocument, string facilityAmount, string facilityGrantedDate, string facilityType, string customerName, string customerCode, string businessUnit, string facilityExpirationDate) {
+                LoanDocumentWaivedRow rowLoanDocumentWaivedRow = ((LoanDocumentWaivedRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        waivedDocument,
+                        facilityAmount,
+                        facilityGrantedDate,
+                        facilityType,
+                        customerName,
+                        customerCode,
+                        businessUnit,
+                        facilityExpirationDate};
+                rowLoanDocumentWaivedRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowLoanDocumentWaivedRow);
+                return rowLoanDocumentWaivedRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                LoanDocumentWaivedDataTable cln = ((LoanDocumentWaivedDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new LoanDocumentWaivedDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columnwaivedDocument = base.Columns["waivedDocument"];
+                this.columnfacilityAmount = base.Columns["facilityAmount"];
+                this.columnfacilityGrantedDate = base.Columns["facilityGrantedDate"];
+                this.columnfacilityType = base.Columns["facilityType"];
+                this.columncustomerName = base.Columns["customerName"];
+                this.columncustomerCode = base.Columns["customerCode"];
+                this.columnbusinessUnit = base.Columns["businessUnit"];
+                this.columnfacilityExpirationDate = base.Columns["facilityExpirationDate"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columnwaivedDocument = new global::System.Data.DataColumn("waivedDocument", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnwaivedDocument);
+                this.columnfacilityAmount = new global::System.Data.DataColumn("facilityAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityAmount);
+                this.columnfacilityGrantedDate = new global::System.Data.DataColumn("facilityGrantedDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityGrantedDate);
+                this.columnfacilityType = new global::System.Data.DataColumn("facilityType", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityType);
+                this.columncustomerName = new global::System.Data.DataColumn("customerName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerName);
+                this.columncustomerCode = new global::System.Data.DataColumn("customerCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerCode);
+                this.columnbusinessUnit = new global::System.Data.DataColumn("businessUnit", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbusinessUnit);
+                this.columnfacilityExpirationDate = new global::System.Data.DataColumn("facilityExpirationDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityExpirationDate);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentWaivedRow NewLoanDocumentWaivedRow() {
+                return ((LoanDocumentWaivedRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new LoanDocumentWaivedRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(LoanDocumentWaivedRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.LoanDocumentWaivedRowChanged != null)) {
+                    this.LoanDocumentWaivedRowChanged(this, new LoanDocumentWaivedRowChangeEvent(((LoanDocumentWaivedRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.LoanDocumentWaivedRowChanging != null)) {
+                    this.LoanDocumentWaivedRowChanging(this, new LoanDocumentWaivedRowChangeEvent(((LoanDocumentWaivedRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.LoanDocumentWaivedRowDeleted != null)) {
+                    this.LoanDocumentWaivedRowDeleted(this, new LoanDocumentWaivedRowChangeEvent(((LoanDocumentWaivedRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.LoanDocumentWaivedRowDeleting != null)) {
+                    this.LoanDocumentWaivedRowDeleting(this, new LoanDocumentWaivedRowChangeEvent(((LoanDocumentWaivedRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveLoanDocumentWaivedRow(LoanDocumentWaivedRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                LoanDataSet ds = new LoanDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "LoanDocumentWaivedDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class LoanDocumentDeferredDataTable : global::System.Data.TypedTableBase<LoanDocumentDeferredRow> {
+            
+            private global::System.Data.DataColumn columnwaivedDocument;
+            
+            private global::System.Data.DataColumn columnfacilityAmount;
+            
+            private global::System.Data.DataColumn columnfacilityExpirationDate;
+            
+            private global::System.Data.DataColumn columnfacilityGrantedDate;
+            
+            private global::System.Data.DataColumn columnfacilityType;
+            
+            private global::System.Data.DataColumn columncustomerName;
+            
+            private global::System.Data.DataColumn columnnameOfRM;
+            
+            private global::System.Data.DataColumn columncustomerAcct;
+            
+            private global::System.Data.DataColumn columncustomerCode;
+            
+            private global::System.Data.DataColumn columnbusinessUnit;
+            
+            private global::System.Data.DataColumn columncurrentExposure;
+            
+            private global::System.Data.DataColumn columninitialDefferalDate;
+            
+            private global::System.Data.DataColumn columncurrentDefferalDate;
+            
+            private global::System.Data.DataColumn columndeferralDurration;
+            
+            private global::System.Data.DataColumn columncummulativeDays;
+            
+            private global::System.Data.DataColumn columndeferralExpiryDate;
+            
+            private global::System.Data.DataColumn columnnameOfBM;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentDeferredDataTable() {
+                this.TableName = "LoanDocumentDeferred";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal LoanDocumentDeferredDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected LoanDocumentDeferredDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn waivedDocumentColumn {
+                get {
+                    return this.columnwaivedDocument;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn facilityAmountColumn {
+                get {
+                    return this.columnfacilityAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn facilityExpirationDateColumn {
+                get {
+                    return this.columnfacilityExpirationDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn facilityGrantedDateColumn {
+                get {
+                    return this.columnfacilityGrantedDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn facilityTypeColumn {
+                get {
+                    return this.columnfacilityType;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerNameColumn {
+                get {
+                    return this.columncustomerName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn nameOfRMColumn {
+                get {
+                    return this.columnnameOfRM;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerAcctColumn {
+                get {
+                    return this.columncustomerAcct;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerCodeColumn {
+                get {
+                    return this.columncustomerCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn businessUnitColumn {
+                get {
+                    return this.columnbusinessUnit;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn currentExposureColumn {
+                get {
+                    return this.columncurrentExposure;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn initialDefferalDateColumn {
+                get {
+                    return this.columninitialDefferalDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn currentDefferalDateColumn {
+                get {
+                    return this.columncurrentDefferalDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn deferralDurrationColumn {
+                get {
+                    return this.columndeferralDurration;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn cummulativeDaysColumn {
+                get {
+                    return this.columncummulativeDays;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn deferralExpiryDateColumn {
+                get {
+                    return this.columndeferralExpiryDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn nameOfBMColumn {
+                get {
+                    return this.columnnameOfBM;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentDeferredRow this[int index] {
+                get {
+                    return ((LoanDocumentDeferredRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanDocumentDeferredRowChangeEventHandler LoanDocumentDeferredRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanDocumentDeferredRowChangeEventHandler LoanDocumentDeferredRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanDocumentDeferredRowChangeEventHandler LoanDocumentDeferredRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event LoanDocumentDeferredRowChangeEventHandler LoanDocumentDeferredRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddLoanDocumentDeferredRow(LoanDocumentDeferredRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentDeferredRow AddLoanDocumentDeferredRow(
+                        string waivedDocument, 
+                        string facilityAmount, 
+                        string facilityExpirationDate, 
+                        string facilityGrantedDate, 
+                        string facilityType, 
+                        string customerName, 
+                        string nameOfRM, 
+                        string customerAcct, 
+                        string customerCode, 
+                        string businessUnit, 
+                        string currentExposure, 
+                        string initialDefferalDate, 
+                        string currentDefferalDate, 
+                        string deferralDurration, 
+                        string cummulativeDays, 
+                        string deferralExpiryDate, 
+                        string nameOfBM) {
+                LoanDocumentDeferredRow rowLoanDocumentDeferredRow = ((LoanDocumentDeferredRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        waivedDocument,
+                        facilityAmount,
+                        facilityExpirationDate,
+                        facilityGrantedDate,
+                        facilityType,
+                        customerName,
+                        nameOfRM,
+                        customerAcct,
+                        customerCode,
+                        businessUnit,
+                        currentExposure,
+                        initialDefferalDate,
+                        currentDefferalDate,
+                        deferralDurration,
+                        cummulativeDays,
+                        deferralExpiryDate,
+                        nameOfBM};
+                rowLoanDocumentDeferredRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowLoanDocumentDeferredRow);
+                return rowLoanDocumentDeferredRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                LoanDocumentDeferredDataTable cln = ((LoanDocumentDeferredDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new LoanDocumentDeferredDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columnwaivedDocument = base.Columns["waivedDocument"];
+                this.columnfacilityAmount = base.Columns["facilityAmount"];
+                this.columnfacilityExpirationDate = base.Columns["facilityExpirationDate"];
+                this.columnfacilityGrantedDate = base.Columns["facilityGrantedDate"];
+                this.columnfacilityType = base.Columns["facilityType"];
+                this.columncustomerName = base.Columns["customerName"];
+                this.columnnameOfRM = base.Columns["nameOfRM"];
+                this.columncustomerAcct = base.Columns["customerAcct"];
+                this.columncustomerCode = base.Columns["customerCode"];
+                this.columnbusinessUnit = base.Columns["businessUnit"];
+                this.columncurrentExposure = base.Columns["currentExposure"];
+                this.columninitialDefferalDate = base.Columns["initialDefferalDate"];
+                this.columncurrentDefferalDate = base.Columns["currentDefferalDate"];
+                this.columndeferralDurration = base.Columns["deferralDurration"];
+                this.columncummulativeDays = base.Columns["cummulativeDays"];
+                this.columndeferralExpiryDate = base.Columns["deferralExpiryDate"];
+                this.columnnameOfBM = base.Columns["nameOfBM"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columnwaivedDocument = new global::System.Data.DataColumn("waivedDocument", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnwaivedDocument);
+                this.columnfacilityAmount = new global::System.Data.DataColumn("facilityAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityAmount);
+                this.columnfacilityExpirationDate = new global::System.Data.DataColumn("facilityExpirationDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityExpirationDate);
+                this.columnfacilityGrantedDate = new global::System.Data.DataColumn("facilityGrantedDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityGrantedDate);
+                this.columnfacilityType = new global::System.Data.DataColumn("facilityType", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnfacilityType);
+                this.columncustomerName = new global::System.Data.DataColumn("customerName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerName);
+                this.columnnameOfRM = new global::System.Data.DataColumn("nameOfRM", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnnameOfRM);
+                this.columncustomerAcct = new global::System.Data.DataColumn("customerAcct", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerAcct);
+                this.columncustomerCode = new global::System.Data.DataColumn("customerCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerCode);
+                this.columnbusinessUnit = new global::System.Data.DataColumn("businessUnit", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbusinessUnit);
+                this.columncurrentExposure = new global::System.Data.DataColumn("currentExposure", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncurrentExposure);
+                this.columninitialDefferalDate = new global::System.Data.DataColumn("initialDefferalDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columninitialDefferalDate);
+                this.columncurrentDefferalDate = new global::System.Data.DataColumn("currentDefferalDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncurrentDefferalDate);
+                this.columndeferralDurration = new global::System.Data.DataColumn("deferralDurration", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndeferralDurration);
+                this.columncummulativeDays = new global::System.Data.DataColumn("cummulativeDays", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncummulativeDays);
+                this.columndeferralExpiryDate = new global::System.Data.DataColumn("deferralExpiryDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndeferralExpiryDate);
+                this.columnnameOfBM = new global::System.Data.DataColumn("nameOfBM", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnnameOfBM);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentDeferredRow NewLoanDocumentDeferredRow() {
+                return ((LoanDocumentDeferredRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new LoanDocumentDeferredRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(LoanDocumentDeferredRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.LoanDocumentDeferredRowChanged != null)) {
+                    this.LoanDocumentDeferredRowChanged(this, new LoanDocumentDeferredRowChangeEvent(((LoanDocumentDeferredRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.LoanDocumentDeferredRowChanging != null)) {
+                    this.LoanDocumentDeferredRowChanging(this, new LoanDocumentDeferredRowChangeEvent(((LoanDocumentDeferredRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.LoanDocumentDeferredRowDeleted != null)) {
+                    this.LoanDocumentDeferredRowDeleted(this, new LoanDocumentDeferredRowChangeEvent(((LoanDocumentDeferredRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.LoanDocumentDeferredRowDeleting != null)) {
+                    this.LoanDocumentDeferredRowDeleting(this, new LoanDocumentDeferredRowChangeEvent(((LoanDocumentDeferredRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveLoanDocumentDeferredRow(LoanDocumentDeferredRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                LoanDataSet ds = new LoanDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "LoanDocumentDeferredDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
         public partial class LoanStatementRow : global::System.Data.DataRow {
@@ -22951,6 +23511,189 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string nameOfRM {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.nameOfRMColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'nameOfRM\' in table \'StakeHolderWithExpiedFTP\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.nameOfRMColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string staffCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.staffCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'staffCode\' in table \'StakeHolderWithExpiedFTP\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.staffCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerAcct {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.customerAcctColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerAcct\' in table \'StakeHolderWithExpiedFTP\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.customerAcctColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerId {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.customerIdColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerId\' in table \'StakeHolderWithExpiedFTP\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.customerIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string businessUnit {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.businessUnitColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'businessUnit\' in table \'StakeHolderWithExpiedFTP\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.businessUnitColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string facilityLimit {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.facilityLimitColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityLimit\' in table \'StakeHolderWithExpiedFTP\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.facilityLimitColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string facilityRate {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.facilityRateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityRate\' in table \'StakeHolderWithExpiedFTP\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.facilityRateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string exchangeRate {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.exchangeRateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'exchangeRate\' in table \'StakeHolderWithExpiedFTP\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.exchangeRateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string tenorToDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.tenorToDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'tenorToDate\' in table \'StakeHolderWithExpiedFTP\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.tenorToDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string valueDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.valueDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'valueDate\' in table \'StakeHolderWithExpiedFTP\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.valueDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.customerCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerCode\' in table \'StakeHolderWithExpiedFTP\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableStakeHolderWithExpiedFTP.customerCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsloanReferenceNumberNull() {
                 return this.IsNull(this.tableStakeHolderWithExpiedFTP.loanReferenceNumberColumn);
             }
@@ -23151,6 +23894,138 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetoverDraftNull() {
                 this[this.tableStakeHolderWithExpiedFTP.overDraftColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsnameOfRMNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.nameOfRMColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetnameOfRMNull() {
+                this[this.tableStakeHolderWithExpiedFTP.nameOfRMColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsstaffCodeNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.staffCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetstaffCodeNull() {
+                this[this.tableStakeHolderWithExpiedFTP.staffCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerAcctNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.customerAcctColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerAcctNull() {
+                this[this.tableStakeHolderWithExpiedFTP.customerAcctColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerIdNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.customerIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerIdNull() {
+                this[this.tableStakeHolderWithExpiedFTP.customerIdColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbusinessUnitNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.businessUnitColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbusinessUnitNull() {
+                this[this.tableStakeHolderWithExpiedFTP.businessUnitColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsfacilityLimitNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.facilityLimitColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetfacilityLimitNull() {
+                this[this.tableStakeHolderWithExpiedFTP.facilityLimitColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsfacilityRateNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.facilityRateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetfacilityRateNull() {
+                this[this.tableStakeHolderWithExpiedFTP.facilityRateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsexchangeRateNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.exchangeRateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetexchangeRateNull() {
+                this[this.tableStakeHolderWithExpiedFTP.exchangeRateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IstenorToDateNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.tenorToDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SettenorToDateNull() {
+                this[this.tableStakeHolderWithExpiedFTP.tenorToDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsvalueDateNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.valueDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetvalueDateNull() {
+                this[this.tableStakeHolderWithExpiedFTP.valueDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerCodeNull() {
+                return this.IsNull(this.tableStakeHolderWithExpiedFTP.customerCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerCodeNull() {
+                this[this.tableStakeHolderWithExpiedFTP.customerCodeColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -30558,485 +31433,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class LoanDocumentWaivedOrDeferredRow : global::System.Data.DataRow {
-            
-            private LoanDocumentWaivedOrDeferredDataTable tableLoanDocumentWaivedOrDeferred;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal LoanDocumentWaivedOrDeferredRow(global::System.Data.DataRowBuilder rb) : 
-                    base(rb) {
-                this.tableLoanDocumentWaivedOrDeferred = ((LoanDocumentWaivedOrDeferredDataTable)(this.Table));
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string firstName {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.firstNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'firstName\' in table \'LoanDocumentWaivedOrDeferred\' is DBNul" +
-                                "l.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.firstNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string lastName {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.lastNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'lastName\' in table \'LoanDocumentWaivedOrDeferred\' is DBNull" +
-                                ".", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.lastNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string middleName {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.middleNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'middleName\' in table \'LoanDocumentWaivedOrDeferred\' is DBNu" +
-                                "ll.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.middleNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string waivedDocument {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.waivedDocumentColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'waivedDocument\' in table \'LoanDocumentWaivedOrDeferred\' is " +
-                                "DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.waivedDocumentColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string facilityAmount {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.facilityAmountColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'facilityAmount\' in table \'LoanDocumentWaivedOrDeferred\' is " +
-                                "DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.facilityAmountColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string facilityExpirationDate {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.facilityExpirationDateColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'facilityExpirationDate\' in table \'LoanDocumentWaivedOrDefer" +
-                                "red\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.facilityExpirationDateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string facilityGrantedDate {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.facilityGrantedDateColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'facilityGrantedDate\' in table \'LoanDocumentWaivedOrDeferred" +
-                                "\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.facilityGrantedDateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string waveredDate {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.waveredDateColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'waveredDate\' in table \'LoanDocumentWaivedOrDeferred\' is DBN" +
-                                "ull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.waveredDateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string facilityType {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.facilityTypeColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'facilityType\' in table \'LoanDocumentWaivedOrDeferred\' is DB" +
-                                "Null.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.facilityTypeColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string applicationRefrenceNumber {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.applicationRefrenceNumberColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'applicationRefrenceNumber\' in table \'LoanDocumentWaivedOrDe" +
-                                "ferred\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.applicationRefrenceNumberColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string customerName {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.customerNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'LoanDocumentWaivedOrDeferred\' is DB" +
-                                "Null.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.customerNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string loanApplicationId {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.loanApplicationIdColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'loanApplicationId\' in table \'LoanDocumentWaivedOrDeferred\' " +
-                                "is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.loanApplicationIdColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string companyName {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.companyNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'companyName\' in table \'LoanDocumentWaivedOrDeferred\' is DBN" +
-                                "ull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.companyNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string branchName {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.branchNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'branchName\' in table \'LoanDocumentWaivedOrDeferred\' is DBNu" +
-                                "ll.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.branchNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string proposedAmount {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.proposedAmountColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'proposedAmount\' in table \'LoanDocumentWaivedOrDeferred\' is " +
-                                "DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.proposedAmountColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string checkListStatusName {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoanDocumentWaivedOrDeferred.checkListStatusNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'checkListStatusName\' in table \'LoanDocumentWaivedOrDeferred" +
-                                "\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoanDocumentWaivedOrDeferred.checkListStatusNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsfirstNameNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.firstNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetfirstNameNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.firstNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IslastNameNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.lastNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetlastNameNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.lastNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsmiddleNameNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.middleNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetmiddleNameNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.middleNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IswaivedDocumentNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.waivedDocumentColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetwaivedDocumentNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.waivedDocumentColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsfacilityAmountNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.facilityAmountColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetfacilityAmountNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.facilityAmountColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsfacilityExpirationDateNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.facilityExpirationDateColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetfacilityExpirationDateNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.facilityExpirationDateColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsfacilityGrantedDateNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.facilityGrantedDateColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetfacilityGrantedDateNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.facilityGrantedDateColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IswaveredDateNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.waveredDateColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetwaveredDateNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.waveredDateColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsfacilityTypeNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.facilityTypeColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetfacilityTypeNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.facilityTypeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsapplicationRefrenceNumberNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.applicationRefrenceNumberColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetapplicationRefrenceNumberNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.applicationRefrenceNumberColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IscustomerNameNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.customerNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetcustomerNameNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.customerNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsloanApplicationIdNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.loanApplicationIdColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetloanApplicationIdNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.loanApplicationIdColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IscompanyNameNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.companyNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetcompanyNameNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.companyNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsbranchNameNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.branchNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetbranchNameNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.branchNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsproposedAmountNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.proposedAmountColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetproposedAmountNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.proposedAmountColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IscheckListStatusNameNull() {
-                return this.IsNull(this.tableLoanDocumentWaivedOrDeferred.checkListStatusNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetcheckListStatusNameNull() {
-                this[this.tableLoanDocumentWaivedOrDeferred.checkListStatusNameColumn] = global::System.Convert.DBNull;
-            }
-        }
-        
-        /// <summary>
-        ///Represents strongly named DataRow class.
-        ///</summary>
         public partial class MiddleOfficeReportRow : global::System.Data.DataRow {
             
             private MiddleOfficeReportDataTable tableMiddleOfficeReport;
@@ -38044,6 +38440,746 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class LoanDocumentWaivedRow : global::System.Data.DataRow {
+            
+            private LoanDocumentWaivedDataTable tableLoanDocumentWaived;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal LoanDocumentWaivedRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableLoanDocumentWaived = ((LoanDocumentWaivedDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string waivedDocument {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentWaived.waivedDocumentColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'waivedDocument\' in table \'LoanDocumentWaived\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentWaived.waivedDocumentColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string facilityAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentWaived.facilityAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityAmount\' in table \'LoanDocumentWaived\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentWaived.facilityAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string facilityGrantedDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentWaived.facilityGrantedDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityGrantedDate\' in table \'LoanDocumentWaived\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentWaived.facilityGrantedDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string facilityType {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentWaived.facilityTypeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityType\' in table \'LoanDocumentWaived\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentWaived.facilityTypeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerName {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentWaived.customerNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'LoanDocumentWaived\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentWaived.customerNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentWaived.customerCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerCode\' in table \'LoanDocumentWaived\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentWaived.customerCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string businessUnit {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentWaived.businessUnitColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'businessUnit\' in table \'LoanDocumentWaived\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentWaived.businessUnitColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string facilityExpirationDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentWaived.facilityExpirationDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityExpirationDate\' in table \'LoanDocumentWaived\' is DB" +
+                                "Null.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentWaived.facilityExpirationDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IswaivedDocumentNull() {
+                return this.IsNull(this.tableLoanDocumentWaived.waivedDocumentColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetwaivedDocumentNull() {
+                this[this.tableLoanDocumentWaived.waivedDocumentColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsfacilityAmountNull() {
+                return this.IsNull(this.tableLoanDocumentWaived.facilityAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetfacilityAmountNull() {
+                this[this.tableLoanDocumentWaived.facilityAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsfacilityGrantedDateNull() {
+                return this.IsNull(this.tableLoanDocumentWaived.facilityGrantedDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetfacilityGrantedDateNull() {
+                this[this.tableLoanDocumentWaived.facilityGrantedDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsfacilityTypeNull() {
+                return this.IsNull(this.tableLoanDocumentWaived.facilityTypeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetfacilityTypeNull() {
+                this[this.tableLoanDocumentWaived.facilityTypeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerNameNull() {
+                return this.IsNull(this.tableLoanDocumentWaived.customerNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerNameNull() {
+                this[this.tableLoanDocumentWaived.customerNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerCodeNull() {
+                return this.IsNull(this.tableLoanDocumentWaived.customerCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerCodeNull() {
+                this[this.tableLoanDocumentWaived.customerCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbusinessUnitNull() {
+                return this.IsNull(this.tableLoanDocumentWaived.businessUnitColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbusinessUnitNull() {
+                this[this.tableLoanDocumentWaived.businessUnitColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsfacilityExpirationDateNull() {
+                return this.IsNull(this.tableLoanDocumentWaived.facilityExpirationDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetfacilityExpirationDateNull() {
+                this[this.tableLoanDocumentWaived.facilityExpirationDateColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class LoanDocumentDeferredRow : global::System.Data.DataRow {
+            
+            private LoanDocumentDeferredDataTable tableLoanDocumentDeferred;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal LoanDocumentDeferredRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableLoanDocumentDeferred = ((LoanDocumentDeferredDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string waivedDocument {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.waivedDocumentColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'waivedDocument\' in table \'LoanDocumentDeferred\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.waivedDocumentColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string facilityAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.facilityAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityAmount\' in table \'LoanDocumentDeferred\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.facilityAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string facilityExpirationDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.facilityExpirationDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityExpirationDate\' in table \'LoanDocumentDeferred\' is " +
+                                "DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.facilityExpirationDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string facilityGrantedDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.facilityGrantedDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityGrantedDate\' in table \'LoanDocumentDeferred\' is DBN" +
+                                "ull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.facilityGrantedDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string facilityType {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.facilityTypeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'facilityType\' in table \'LoanDocumentDeferred\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.facilityTypeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerName {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.customerNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'LoanDocumentDeferred\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.customerNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string nameOfRM {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.nameOfRMColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'nameOfRM\' in table \'LoanDocumentDeferred\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.nameOfRMColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerAcct {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.customerAcctColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerAcct\' in table \'LoanDocumentDeferred\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.customerAcctColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.customerCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerCode\' in table \'LoanDocumentDeferred\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.customerCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string businessUnit {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.businessUnitColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'businessUnit\' in table \'LoanDocumentDeferred\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.businessUnitColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string currentExposure {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.currentExposureColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'currentExposure\' in table \'LoanDocumentDeferred\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.currentExposureColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string initialDefferalDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.initialDefferalDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'initialDefferalDate\' in table \'LoanDocumentDeferred\' is DBN" +
+                                "ull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.initialDefferalDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string currentDefferalDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.currentDefferalDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'currentDefferalDate\' in table \'LoanDocumentDeferred\' is DBN" +
+                                "ull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.currentDefferalDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string deferralDurration {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.deferralDurrationColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'deferralDurration\' in table \'LoanDocumentDeferred\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.deferralDurrationColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string cummulativeDays {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.cummulativeDaysColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'cummulativeDays\' in table \'LoanDocumentDeferred\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.cummulativeDaysColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string deferralExpiryDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.deferralExpiryDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'deferralExpiryDate\' in table \'LoanDocumentDeferred\' is DBNu" +
+                                "ll.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.deferralExpiryDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string nameOfBM {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentDeferred.nameOfBMColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'nameOfBM\' in table \'LoanDocumentDeferred\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentDeferred.nameOfBMColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IswaivedDocumentNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.waivedDocumentColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetwaivedDocumentNull() {
+                this[this.tableLoanDocumentDeferred.waivedDocumentColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsfacilityAmountNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.facilityAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetfacilityAmountNull() {
+                this[this.tableLoanDocumentDeferred.facilityAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsfacilityExpirationDateNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.facilityExpirationDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetfacilityExpirationDateNull() {
+                this[this.tableLoanDocumentDeferred.facilityExpirationDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsfacilityGrantedDateNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.facilityGrantedDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetfacilityGrantedDateNull() {
+                this[this.tableLoanDocumentDeferred.facilityGrantedDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsfacilityTypeNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.facilityTypeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetfacilityTypeNull() {
+                this[this.tableLoanDocumentDeferred.facilityTypeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerNameNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.customerNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerNameNull() {
+                this[this.tableLoanDocumentDeferred.customerNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsnameOfRMNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.nameOfRMColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetnameOfRMNull() {
+                this[this.tableLoanDocumentDeferred.nameOfRMColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerAcctNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.customerAcctColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerAcctNull() {
+                this[this.tableLoanDocumentDeferred.customerAcctColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerCodeNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.customerCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerCodeNull() {
+                this[this.tableLoanDocumentDeferred.customerCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbusinessUnitNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.businessUnitColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbusinessUnitNull() {
+                this[this.tableLoanDocumentDeferred.businessUnitColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscurrentExposureNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.currentExposureColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcurrentExposureNull() {
+                this[this.tableLoanDocumentDeferred.currentExposureColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsinitialDefferalDateNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.initialDefferalDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetinitialDefferalDateNull() {
+                this[this.tableLoanDocumentDeferred.initialDefferalDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscurrentDefferalDateNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.currentDefferalDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcurrentDefferalDateNull() {
+                this[this.tableLoanDocumentDeferred.currentDefferalDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdeferralDurrationNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.deferralDurrationColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdeferralDurrationNull() {
+                this[this.tableLoanDocumentDeferred.deferralDurrationColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscummulativeDaysNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.cummulativeDaysColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcummulativeDaysNull() {
+                this[this.tableLoanDocumentDeferred.cummulativeDaysColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdeferralExpiryDateNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.deferralExpiryDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdeferralExpiryDateNull() {
+                this[this.tableLoanDocumentDeferred.deferralExpiryDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsnameOfBMNull() {
+                return this.IsNull(this.tableLoanDocumentDeferred.nameOfBMColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetnameOfBMNull() {
+                this[this.tableLoanDocumentDeferred.nameOfBMColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -38931,40 +40067,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public class LoanDocumentWaivedOrDeferredRowChangeEvent : global::System.EventArgs {
-            
-            private LoanDocumentWaivedOrDeferredRow eventRow;
-            
-            private global::System.Data.DataRowAction eventAction;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public LoanDocumentWaivedOrDeferredRowChangeEvent(LoanDocumentWaivedOrDeferredRow row, global::System.Data.DataRowAction action) {
-                this.eventRow = row;
-                this.eventAction = action;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public LoanDocumentWaivedOrDeferredRow Row {
-                get {
-                    return this.eventRow;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataRowAction Action {
-                get {
-                    return this.eventAction;
-                }
-            }
-        }
-        
-        /// <summary>
-        ///Row event argument class
-        ///</summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public class MiddleOfficeReportRowChangeEvent : global::System.EventArgs {
             
             private MiddleOfficeReportRow eventRow;
@@ -39321,6 +40423,74 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public WeeklyRecoveryReportFINCONRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class LoanDocumentWaivedRowChangeEvent : global::System.EventArgs {
+            
+            private LoanDocumentWaivedRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentWaivedRowChangeEvent(LoanDocumentWaivedRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentWaivedRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class LoanDocumentDeferredRowChangeEvent : global::System.EventArgs {
+            
+            private LoanDocumentDeferredRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentDeferredRowChangeEvent(LoanDocumentDeferredRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public LoanDocumentDeferredRow Row {
                 get {
                     return this.eventRow;
                 }

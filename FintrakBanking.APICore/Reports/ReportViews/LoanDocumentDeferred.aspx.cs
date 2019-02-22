@@ -12,7 +12,7 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class LoanDocumentWaived : System.Web.UI.Page
+    public partial class LoanDocumentDeferred : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -63,12 +63,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
                     LoanReportObjects dispursement = new LoanReportObjects();
-                    var data = dispursement.LoanDocumentWaived(startDate, endDate, companyId, branchId, searchParameter);
+                    var data = dispursement.LoanDocumentDeferred(startDate, endDate, companyId, branchId,searchParameter);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "LoanDocumentWaived";
+                    reportDataSource.Name = "LoanDocumentDeferred";
 
                     //ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
                     //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
@@ -82,7 +82,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     }
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanDocumentWaived.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanDocumentDeferred.rdlc");
                     //ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }

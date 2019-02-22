@@ -110,7 +110,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationId = x.application.OPERATIONID,
                 customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
                 atInitiator = x.application.CREATEDBY == staffId,
-                
+                timeIn = x.trail.SYSTEMARRIVALDATETIME,
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 
@@ -562,8 +562,6 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            context.SaveChanges(); // redundant !
-
             // DETAIL CHANGES
             List<TBL_LMSR_APPLICATION_DETAIL> items = null;
             if (model.recommendedChanges != null && model.recommendedChanges.Count() > 0) // only approving authority
@@ -596,6 +594,9 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
+
+            context.SaveChanges();
+
             //generate offer letter doc
             offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
 
