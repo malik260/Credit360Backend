@@ -2593,7 +2593,7 @@ namespace FintrakBanking.Repositories.Credit
                     OFFERLETTERACCEPTANCE = detail.offerLetteracceptance,
                     OFFERLETTERCLAUSES = detail.offerLetterClauses,
                     ISACCEPTED = true,
-                    ISFINAL = true
+                    ISFINAL = false
                 };
 
                 context.TBL_LOAN_OFFER_LETTER.Add(loanOfferLetter);
