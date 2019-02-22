@@ -65,11 +65,11 @@ namespace FintrakBanking.Repositories.Setups.General
                     }).ToList();
         }
 
-        public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId)
+        public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultants(int companyId)
         {
             var data =   (from m in context.TBL_ACCREDITEDCONSULTANT
                     join c in context.TBL_ACCREDITEDCONSULTANT_STATE on m.ACCREDITEDCONSULTANTID equals c.ACCREDITEDCONSULTANTID
-                    where m.COMPANYID == companyId && c.STATEID == stateId 
+                    where m.COMPANYID == companyId //&& c.STATEID == stateId 
                     select new AccreditedConsultantsViewModel
                     {
                         accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
@@ -85,19 +85,46 @@ namespace FintrakBanking.Repositories.Setups.General
                         phoneNumber = m.PHONENUMBER,
                         address = m.ADDRESS,
                         coreCompetence = m.CORECOMPETENCE,
-                        accreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID).Select(k =>
-                           new AccreditedConsultantStateViewModel()
-                           {
-                               accreditedConsultantStateCoveredID = k.CONSULT_STATE_COVREDID,
-                               stateId = k.STATEID,
-                               stateName = context.TBL_STATE.FirstOrDefault(x => x.STATEID == k.STATEID).STATENAME,
-                               accreditedConsultantId = k.ACCREDITEDCONSULTANTID
-                           }).ToList()
                     });
+
+            return data;
+        }
+
+
+        public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId)
+        {
+            var data = (from m in context.TBL_ACCREDITEDCONSULTANT
+                        join c in context.TBL_ACCREDITEDCONSULTANT_STATE on m.ACCREDITEDCONSULTANTID equals c.ACCREDITEDCONSULTANTID
+                        where m.COMPANYID == companyId && c.STATEID == stateId
+                        select new AccreditedConsultantsViewModel
+                        {
+                            accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
+                            registrationNumber = m.REGISTRATIONNUMBER,
+                            name = m.NAME,
+                            firmName = m.FIRMNAME,
+                            accreditedConsultantTypeId = m.ACCREDITEDCONSULTANTTYPEID,
+                            cityId = (short)m.CITYID,
+                            accountNumber = m.ACCOUNTNUMBER,
+                            solicitorBVN = m.SOLICITORBVN,
+                            countryId = m.COUNTRYID,
+                            emailAddress = m.EMAILADDRESS,
+                            phoneNumber = m.PHONENUMBER,
+                            address = m.ADDRESS,
+                            coreCompetence = m.CORECOMPETENCE,
+                            accreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == m.ACCREDITEDCONSULTANTID).Select(k =>
+                               new AccreditedConsultantStateViewModel()
+                               {
+                                   accreditedConsultantStateCoveredID = k.CONSULT_STATE_COVREDID,
+                                   stateId = k.STATEID,
+                                   stateName = context.TBL_STATE.FirstOrDefault(x => x.STATEID == k.STATEID).STATENAME,
+                                   accreditedConsultantId = k.ACCREDITEDCONSULTANTID
+                               }).ToList()
+                        });
             var v = data.ToList();
 
             return data;
         }
+
         public bool AddConsultantType(AccreditedConsultantTypeViewModel entity)
         {
             bool output = false;
@@ -1003,5 +1030,114 @@ namespace FintrakBanking.Repositories.Setups.General
         //    return response;
         //}
         #endregion
+
+
+        #region Loan Consultants
+
+        public List<LoanConsultantViewModel> GetLoanConsultant(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATION_DETL_CON.Where(x => x.DELETED == false && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
+            .Select(c => new LoanConsultantViewModel
+            {
+                loanApplicationConsultantId = c.LOANAPPLICATIONCONSULTANTID,
+                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                accreditedConsultantId = c.ACCREDITEDCONSULTANTID,
+                description = c.DESCRIPTION,
+            })
+            .ToList();
+        }
+
+        public bool AddLoanConsultant(LoanConsultantViewModel model)
+        {
+            var data = new TBL_LOAN_APPLICATION_DETL_CON
+            {
+                LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                ACCREDITEDCONSULTANTID = model.accreditedConsultantId,
+                DESCRIPTION = model.description,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                CREATEDBY = model.createdBy,
+            };
+
+            context.TBL_LOAN_APPLICATION_DETL_CON.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanConsultantAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Loan Consultant  ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            auditTrail.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool EditLoanConsultant(int id, LoanConsultantViewModel model)
+        {
+            var data = this.context.TBL_LOAN_APPLICATION_DETL_CON.Find(id);
+            if (data == null) return false;
+
+            data.ACCREDITEDCONSULTANTID = model.accreditedConsultantId;
+            data.DESCRIPTION = model.description;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+
+            context.Entry(data).State = System.Data.Entity.EntityState.Modified;
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanConsultantUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Loan Consultant' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            auditTrail.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool RemoveLoanConsultant(int id, UserInfo user)
+        {
+            var data = this.context.TBL_LOAN_APPLICATION_DETL_CON.Find(id);
+            if (data == null) return false;
+
+            data.DELETED = true;
+            data.DATETIMEDELETED = DateTime.Now;
+            data.DELETEDBY = user.createdBy;
+
+            context.Entry(data).State = System.Data.Entity.EntityState.Modified;
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Condition Precedent' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            auditTrail.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        #endregion Loan Consultants
+
     }
 }
