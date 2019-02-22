@@ -49,10 +49,15 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanViewModel : GeneralEntity
     {
         public string productAccountName2 { get; set; }
-
+        public string businessUnit { get; set; }
+        public string nameOfRM { get; set; }
+        public decimal facilityRate { get; set; }
         public string operationTypeName { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public int approvedTenor { get; set; }
+        public string staffCode { get; set; }
+        public int tenorToDate { get; set; }
+
         public string payingAccountNumber { get; set; }
 
         public string legalContingentCode { get; set; }
@@ -63,6 +68,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string operationPerformed { get; set; }
         public short? instructionTypeId { get; set; }
         public string instructionTypeName { get; set; }
+        public string customerAcct { get; set; }
 
 
         public short productPriceIndexId { get; set; }
@@ -203,6 +209,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime paymentDate { get; set; }
         public decimal totalAmount { get; set; }
         public int chargeFeeId { get; set; }
+        public decimal facilityLimit { get; set; }
 
         //...................For Loan Review................//
         public int loanReviewOperationTypeId { get; set; }
