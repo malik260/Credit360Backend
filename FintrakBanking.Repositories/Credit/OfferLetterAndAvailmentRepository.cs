@@ -58,13 +58,15 @@ namespace FintrakBanking.Repositories.Credit
 
         #region OfferLetter & Availment Process
 
-        public bool UpdateLoadDetails(int applicationId, ApprovedLoanDetailViewModel model)
+        public bool AddCRMSCollateralType(int applicationId, ApprovedLoanDetailViewModel model)
         {
             bool output = false;
             var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
             LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
             LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+            LoanDetails.CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentTypeId;
             LoanDetails.ISSPECIALISED = model.isSpecialised;
+            LoanDetails.MORATORIUMDURATION = model.moratoriumPeriod;
 
             var auditRec = new TBL_AUDIT
             {

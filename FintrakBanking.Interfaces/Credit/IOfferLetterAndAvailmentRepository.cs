@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.Credit
     public interface IOfferLetterAndAvailmentRepository
     {
         IQueryable<CamProcessedLoanViewModel> GetApplicationsAtOfferLetter(int staffId, int companyId);
-        bool UpdateLoadDetails(int applicationId, ApprovedLoanDetailViewModel model);
+        bool AddCRMSCollateralType(int applicationId, ApprovedLoanDetailViewModel model);
 
         IQueryable<CamProcessedLoanViewModel> GetApplicationsAtOfferLetter(int staffId, int branchId, int companyId);
 
