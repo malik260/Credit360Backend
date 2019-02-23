@@ -384,6 +384,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalExistingLimitAmount { get; set; }
         public string crmsCode { get; set; }
         public string customerEmail { get; set; }
+        public object totalRepayment { get; set; }
 
 
 
