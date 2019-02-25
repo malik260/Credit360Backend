@@ -619,11 +619,35 @@ namespace FintrakBanking.Repositories.Credit
                                }).FirstOrDefault();
             var applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
             loanDetails.accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanDetails.loanId && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault();
+            loanDetails.totalRepayment = PresentRepayments(loanDetails.loanReferenceNumber, loanDetails.companyId);
 
             return loanDetails;
 
-        } 
+        }
+        private decimal PresentRepayments(string loanRefNo, int compoanyId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                decimal repayments = 0;
 
+                List<LoanViewModel> data = (from a in context.TBL_FINANCE_TRANSACTION
+                                            where a.SOURCEREFERENCENUMBER == loanRefNo
+                                            && a.TBL_CHART_OF_ACCOUNT.GLCLASSID == (short)GLClassEnum.CASA
+                                            && a.OPERATIONID != (int)OperationsEnum.TermLoanBooking && a.DEBITAMOUNT > 0
+                                            && a.COMPANYID == compoanyId
+
+                                            select new LoanViewModel()
+                                            {
+                                                debitAmount = a.DEBITAMOUNT,
+
+                                            }).ToList();
+                foreach (var x in data)
+                    repayments = repayments + x.debitAmount;
+
+                return repayments;
+            }
+
+        }
         private LoanViewModel GetLoanArchive(int archiveId)
         {
             var loanDetails = (from a in context.TBL_LOAN_ARCHIVE
@@ -1566,6 +1590,8 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+
+      
 
         public List<LoanViewModel> ContingentUtilization(int contingentId)
         {
