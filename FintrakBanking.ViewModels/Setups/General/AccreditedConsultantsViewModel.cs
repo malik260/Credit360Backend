@@ -85,5 +85,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int loanApplicationDetailId { get; set; }
         public int accreditedConsultantId { get; set; }
         public string description { get; set; }
+        public string productCustomerName { get; set; }
+        public string consultantName { get; set; }
     }
 }

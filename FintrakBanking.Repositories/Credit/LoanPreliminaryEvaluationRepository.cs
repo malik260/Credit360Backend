@@ -320,19 +320,19 @@ namespace FintrakBanking.Repositories.Credit
         {
             int[] regionIds = GetStaffRegions(staffId);
 
-            if (regionIds.Length > 0)
+            //if (regionIds.Length > 0)
                 return GetCustomerPreliminaryEvaluationsByAtaffRegionAwaitingApproval(staffId, companyId, regionIds);
-            switch (loanTypeId)
-            {
-                case (int)LoanTypeEnum.Single:
-                    return GetSingleCustomerPreliminaryEvaluationsAwaitingApproval(staffId, companyId);
+            //switch (loanTypeId)
+            //{
+            //    case (int)LoanTypeEnum.Single:
+            //        return GetSingleCustomerPreliminaryEvaluationsAwaitingApproval(staffId, companyId);
 
-                case (int)LoanTypeEnum.CustomerGroup:
-                    return GetGroupCustomerPreliminaryEvaluationsAwaitingApproval(staffId, companyId);
+            //    case (int)LoanTypeEnum.CustomerGroup:
+            //        return GetGroupCustomerPreliminaryEvaluationsAwaitingApproval(staffId, companyId);
 
-                default:
-                    return new List<LoanPreliminaryEvaluationViewModel>();
-            }
+            //    default:
+            //        return new List<LoanPreliminaryEvaluationViewModel>();
+            //}
         }
 
         public IEnumerable<LoanPreliminaryEvaluationViewModel> GetSingleCustomerPreliminaryEvaluationsAwaitingApproval(int staffId, int companyId)
@@ -1347,7 +1347,28 @@ namespace FintrakBanking.Repositories.Credit
         private IEnumerable<LoanPreliminaryEvaluationViewModel> GetCustomerPreliminaryEvaluationsByAtaffRegionAwaitingApproval(int staffId, int companyId, int[] regionIds)
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanPreliminaryEvaluation).ToList();
-
+            //int[] regionIds = GetStaffRegions(staffId);
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         levelTypeId =l.LEVELTYPEID,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList();
+            List<int> houLevelid = new List<int>();
+            foreach(var i in levels)
+            {
+                if(i.levelTypeId == 2 && ids.Contains(i.levelId)) { houLevelid.Add(i.levelId); }
+                
+            }
             var data = (from pen in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on pen.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on pen.BRANCHID equals br.BRANCHID
@@ -1357,7 +1378,7 @@ namespace FintrakBanking.Repositories.Credit
                             //&& pen.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single 
                             && atrail.RESPONSESTAFFID == null
                             && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation
-                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID) //|| (houLevelid.Count > 0 && houLevelid.Contains((int)atrail.TOAPPROVALLEVELID))
                             && regionIds.ToList().Contains((int)pen.CAPREGIONID)
 
                         orderby pen.LOANPRELIMINARYEVALUATIONID descending

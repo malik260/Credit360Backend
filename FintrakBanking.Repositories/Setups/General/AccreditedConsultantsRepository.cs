@@ -33,6 +33,7 @@ namespace FintrakBanking.Repositories.Setups.General
             this.workFlow = _workflow;
 
         }
+
         #region Solicitors
         public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId,int accreditedConsultantId)
         {
@@ -1031,18 +1032,19 @@ namespace FintrakBanking.Repositories.Setups.General
         //}
         #endregion
 
-
         #region Loan Consultants
 
         public List<LoanConsultantViewModel> GetLoanConsultant(int applicationId)
         {
             return context.TBL_LOAN_APPLICATION_DETL_CON.Where(x => x.DELETED == false && x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId)
-            .Select(c => new LoanConsultantViewModel
+            .Select(x => new LoanConsultantViewModel
             {
-                id = c.LOANAPPLICATIONCONSULTANTID,
-                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
-                accreditedConsultantId = c.ACCREDITEDCONSULTANTID,
-                description = c.DESCRIPTION,
+                id = x.LOANAPPLICATIONCONSULTANTID,
+                loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                accreditedConsultantId = x.ACCREDITEDCONSULTANTID,
+                consultantName = context.TBL_ACCREDITEDCONSULTANT.FirstOrDefault(c => c.ACCREDITEDCONSULTANTID == x.ACCREDITEDCONSULTANTID).NAME,
+                description = x.DESCRIPTION,
+                productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
             })
             .ToList();
         }
