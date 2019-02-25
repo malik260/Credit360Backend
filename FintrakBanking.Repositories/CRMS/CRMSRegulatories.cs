@@ -1,6 +1,4 @@
-﻿
-
-using FintrakBanking.Common;
+﻿using FintrakBanking.Common;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
@@ -35,13 +33,12 @@ namespace FintrakBanking.Repositories.CRMS
         public CRMSRegulatories(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
                                         IAuditTrailRepository _audit,
-                                        ICRMSCodeBookRepository _codeBook, IFinacleIntegrationRepository _finacleIntegration)
+                                        ICRMSCodeBookRepository _codeBook, IFinacleIntegrationRepository finacleIntegration)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
             this.auditTrail = _auditTrail;
             this.codeBook = _codeBook;
-            this.finacleIntegration = _finacleIntegration;
 
         }
 
@@ -2523,8 +2520,6 @@ namespace FintrakBanking.Repositories.CRMS
             }
             return new CRMSRecord();
         }
-
-
         public CRMSRecord GenerateBatchPosting(DateRange model)
         {
 
@@ -2602,6 +2597,5 @@ namespace FintrakBanking.Repositories.CRMS
 
             return excel;
         }
-
     }
 }

@@ -10358,18 +10358,18 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var allFilteredLoan = (from a in context.TBL_LOAN
-                                   join f in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals f.LOANID
+                                  // join f in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals f.LOANID
                                    //join lm in context.TBL_LMSR_APPLICATION on f.LOANAPPLICATIONID equals lm.LOANAPPLICATIONID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && f.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility &&   // a.MATURITYDATE >=      &&  //a.LOANSTATUSID != 7 &&
+                                   where a.ISDISBURSED == true && //f.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility &&   // a.MATURITYDATE >=      &&  //a.LOANSTATUSID != 7 &&
                                    (a.LOANREFERENCENUMBER.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
                                    c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
-                                   && f.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
-                                   && f.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
+                                 //  && a.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                                  // && a.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
                                    && !productTypes.Contains(a.TBL_PRODUCT.PRODUCTTYPEID)
                                    select new LoanViewModel
                                    {
@@ -10392,7 +10392,7 @@ namespace FintrakBanking.Repositories.Credit
                                        writtenOff = a.LOANSTATUSID == 7,
                                        loanStatusId = a.LOANSTATUSID,
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
-                                       lmsApplicationDetailId = f.LOANREVIEWAPPLICATIONID
+                                     //  lmsApplicationDetailId = f.LOANREVIEWAPPLICATIONID
                                    });
             var j = allFilteredLoan.ToList();
             return allFilteredLoan;
@@ -10406,10 +10406,10 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
-                                   join f in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals f.LOANID
+                                 //  join f in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals f.LOANID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && f.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft && //(int)LoanSystemTypeEnum.OverdraftFacility &&
+                                   where a.ISDISBURSED == true &&// f.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft && //(int)LoanSystemTypeEnum.OverdraftFacility &&
                                     (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
@@ -10436,7 +10436,7 @@ namespace FintrakBanking.Repositories.Credit
                                        writtenOff = a.LOANSTATUSID == 7,
                                        loanStatusId = a.LOANSTATUSID,
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
-                                       lmsApplicationDetailId = f.LOANREVIEWAPPLICATIONID
+                                     //  lmsApplicationDetailId = f.LOANREVIEWAPPLICATIONID
 
                                    });
 
@@ -10448,10 +10448,10 @@ namespace FintrakBanking.Repositories.Credit
         private IQueryable<LoanViewModel> SearchContigentLoanFeeCharge(string searchQuery)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
-                                   join f in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals f.LOANID
+                                 //  join f in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals f.LOANID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (f.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || f.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal) && //(int)LoanSystemTypeEnum.OverdraftFacility &&
+                                   where a.ISDISBURSED == true && //(f.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || f.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal) && //(int)LoanSystemTypeEnum.OverdraftFacility &&
                                    (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
@@ -10477,7 +10477,7 @@ namespace FintrakBanking.Repositories.Credit
                                        writtenOff = a.LOANSTATUSID == 7,
                                        loanStatusId = a.LOANSTATUSID,
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
-                                       lmsApplicationDetailId = f.LOANREVIEWAPPLICATIONID
+                                      // lmsApplicationDetailId = f.LOANREVIEWAPPLICATIONID
 
 
                                    });
