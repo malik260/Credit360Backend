@@ -5414,7 +5414,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 //&& p.LOANCHARGEFEEID == chargeTypeId
                                                 && p.CHARGEFEEID == chargeTypeId
                                                 && p.LOANSYSTEMTYPEID == chargeDetails.LOANSYSTEMTYPEID
-                                          select p).SingleOrDefault();
+                                          select p).FirstOrDefault();
 
                 feeResult.FEEAMOUNT = NewFeeAmount;
                 feeResult.EARNEDFEEAMOUNT = AccruedFeeToDate;
