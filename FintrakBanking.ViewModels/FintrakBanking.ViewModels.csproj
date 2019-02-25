@@ -160,6 +160,7 @@
     <Compile Include="CASA\CasaLienViewModel.cs" />
     <Compile Include="Finance\EndOfDayViewModel.cs" />
     <Compile Include="Finance\FinanceTransactionViewModel.cs" />
+    <Compile Include="Finance\IndexRateChangeViewModel.cs" />
     <Compile Include="GenaralEntity.cs" />
     <Compile Include="LookupViewModel.cs" />
     <Compile Include="Notification\NotificationViewModel.cs" />
