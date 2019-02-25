@@ -7,11 +7,14 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.Entities.StagingModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Transactions;
+using System.Data.Entity;
+using FintrakBanking.Interfaces.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Finance
 {
@@ -22,12 +25,14 @@ namespace FintrakBanking.Repositories.Finance
         private IAuditTrailRepository auditTrail;
         private ILoanOperationsRepository loanOperation;
         private IPublicHolidayRepository publicHoliday;
+        private FinTrakBankingStagingContext stagingContext;
         private ICustomerCollateralRepository collateralItemPolicy;
         private ILoanCovenantRepository loanCovenantRepository;
+        private IFinacleIntegrationRepository finacleIntegration;
 
         public EndOfDayRepository(FinTrakBankingContext _context, IGeneralSetupRepository _generalSetup,
                                     ILoanOperationsRepository _loanOperation, IPublicHolidayRepository _publicHoliday,
-                                    IAuditTrailRepository _auditTrail, ICustomerCollateralRepository _collateralItemPolicy, ILoanCovenantRepository _loanCovenantRepository)
+                                    IAuditTrailRepository _auditTrail, ICustomerCollateralRepository _collateralItemPolicy, ILoanCovenantRepository _loanCovenantRepository, FinTrakBankingStagingContext _stagingContext, IFinacleIntegrationRepository _finacleIntegration)
         {
             this.context = _context;
             this.generalSetup = _generalSetup;
@@ -36,6 +41,8 @@ namespace FintrakBanking.Repositories.Finance
             this.loanOperation = _loanOperation;
             this.collateralItemPolicy = _collateralItemPolicy;
             this.loanCovenantRepository = _loanCovenantRepository;
+            this.stagingContext = _stagingContext;
+            this.finacleIntegration = _finacleIntegration;
         }
 
 
@@ -167,7 +174,7 @@ namespace FintrakBanking.Repositories.Finance
                 endOfDay.STARTDATETIME = DateTime.Now;
                 endOfDay.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
             }
-            
+
 
             if (endOfDay.COMPANYID != 0)
             {
@@ -277,7 +284,7 @@ namespace FintrakBanking.Repositories.Finance
                             {
                                 transactionScope.Dispose();
                                 throw ex;
-                                
+
                             }
 
                         }
@@ -445,7 +452,7 @@ namespace FintrakBanking.Repositories.Finance
 
                                 loanOperation.ProcessLoanRepaymentPostingPastDue(date);
 
-                                
+
 
                                 transactionScope.Complete();
 
@@ -552,7 +559,7 @@ namespace FintrakBanking.Repositories.Finance
                         eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                         context.SaveChanges();
                     }
-                    
+
                 }
 
 
@@ -665,6 +672,21 @@ namespace FintrakBanking.Repositories.Finance
                                   companyId = e.COMPANYID,
                                   companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x.NAME).FirstOrDefault(),
                               }).ToList();
+            return financeEod;
+        }
+
+        public IEnumerable<RefreshStagingMonitoringModel> RefreshStagingMonitoring(DateTime stateDate, DateTime endDate)
+        {
+
+            var financeEod = (from e in stagingContext.FINTRAK_TRAN_PROC_DETAILS
+                              where DbFunctions.TruncateTime(e.RCRE_DATE) >= stateDate && DbFunctions.TruncateTime(e.RCRE_DATE) <= endDate
+                              group e by e.STATUS into g
+                              select new RefreshStagingMonitoringModel()
+                              {
+                                  status = g.Key,
+                                  count = g.Count()
+                              }).ToList();
+
             return financeEod;
         }
 

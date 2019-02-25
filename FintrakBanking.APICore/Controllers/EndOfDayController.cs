@@ -4,6 +4,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Interfaces.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Finance;
 using System;
 using System.Net;
@@ -18,12 +19,14 @@ namespace FintrakBanking.APICore.Controllers
         private IEndOfDayRepository repoEOD;
         private ILoanOperationsRepository repoLoanOP;
         private IAdminRepository adminRepo;
+        private IFinacleIntegrationRepository finacleIntegration;
 
-        public EndOfDayController(IEndOfDayRepository _repoEOD, ILoanOperationsRepository _repoLoanOP, IAdminRepository _adminRepo)
+        public EndOfDayController(IEndOfDayRepository _repoEOD, ILoanOperationsRepository _repoLoanOP, IAdminRepository _adminRepo, IFinacleIntegrationRepository _finacleIntegration)
         {
             this.repoEOD = _repoEOD;
             this.repoLoanOP = _repoLoanOP;
             this.adminRepo = _adminRepo;
+            this.finacleIntegration = _finacleIntegration;
         }
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 

@@ -1480,6 +1480,23 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-casa-balance/{accountNumber}")]
+        public HttpResponseMessage GetCollateralStampToCoverValues(string accountNumber)
+        {
+            try
+            {
+                var response = repo.GetFixedDepositAccountBalance(accountNumber);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
 

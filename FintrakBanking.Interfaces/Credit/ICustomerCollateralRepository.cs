@@ -107,6 +107,10 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId);
 
         IEnumerable<CollateralViewModel> GetCollateralStampToCoverValues(int customerId);
-        
+
+        decimal GetFixedDepositAccountBalance(string AccpuntNumber);
+
+
+
     }
 }

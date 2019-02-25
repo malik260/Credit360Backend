@@ -1672,7 +1672,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -1934,7 +1934,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)loan.PRINCIPALFREQUENCYTYPEID);
 
@@ -2216,7 +2216,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -2548,7 +2548,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -2921,7 +2921,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -3154,7 +3154,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)frequencyId);
 
@@ -3420,7 +3420,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -3719,7 +3719,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -3996,7 +3996,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -4303,7 +4303,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -4651,7 +4651,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -4950,7 +4950,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -5249,7 +5249,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -5620,7 +5620,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
