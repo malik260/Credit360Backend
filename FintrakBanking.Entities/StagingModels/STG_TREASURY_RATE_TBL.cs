@@ -11,6 +11,8 @@ namespace FintrakBanking.Entities.StagingModels
     [Table("STG_TREASURY_RATE_TBL")]
     public  class STG_TREASURY_RATE_TBL
     {
+        [Key]
+        public int PRODUCTCURRENCYID { get; set; }
         public string PRODUCT { get; set; }
         public string CURRENCY { get; set; }
 
