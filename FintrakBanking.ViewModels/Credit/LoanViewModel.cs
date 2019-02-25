@@ -48,6 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public decimal bookedAmount { get; set; }
+
         public string productAccountName2 { get; set; }
         public string businessUnit { get; set; }
         public string nameOfRM { get; set; }
@@ -382,6 +384,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalExistingLimitAmount { get; set; }
         public string crmsCode { get; set; }
         public string customerEmail { get; set; }
+        public object totalRepayment { get; set; }
 
 
 
@@ -390,6 +393,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public decimal bookedAmount { get; set; }
+
         public short scheduleDayCountConventionId { get; set; }
 
         public short? crmsRepaymentAgreementTypeId { get; set; }
@@ -819,12 +824,13 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanChargeFeeViewModel : ChargeRangeViewModel //GeneralEntity //ChargeRangeViewModel
 
     {
-        public string productName;
-        public string casaAccountName;
-        public decimal casaAccountBalance;
-        public string productTypeName;
-        public string customerName;
-        public string loanReferenceNumber;
+        public int dealTypeId { get; set; }
+        public string productName { get; set; }
+        public string casaAccountName { get; set; }
+        public decimal casaAccountBalance { get; set; }
+        public string productTypeName { get; set; }
+        public string customerName { get; set; }
+        public string loanReferenceNumber { get; set; }
 
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
