@@ -188,7 +188,6 @@ namespace FintrakBanking.Repositories.Setups.General
             // activeUsers.
             foreach (var user in activeUsers)
             {
-                user.ISACTIVE = false;
                 user.LOGINCODE = null;
             }
 
