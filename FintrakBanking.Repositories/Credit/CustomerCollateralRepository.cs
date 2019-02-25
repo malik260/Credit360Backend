@@ -5412,6 +5412,14 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
+        public decimal GetFixedDepositAccountBalance(string AccpuntNumber)
+        {
+          var  finacleBalance = finacle.ValidateTDAccountNumber(AccpuntNumber);
+
+            return finacleBalance.balance;
+        }
+
+       
     }
 
 }

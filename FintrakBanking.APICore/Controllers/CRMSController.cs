@@ -82,7 +82,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
             }
         }
-       [HttpPost]
+
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("regulatory/export")]
         public HttpResponseMessage ExportScheduleToExcel([FromBody] CRMSViewModel model)
@@ -108,21 +109,23 @@ namespace FintrakBanking.APICore.Controllers
             }
 
             }
+        
+
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("regulatory/export-by-loan-application-id")]
-        public HttpResponseMessage ExportScheduleToExcelByLoanId([FromBody] CRMSViewModel model)
+        [Route("postingdetail/export")]
+        public HttpResponseMessage ExportPostingDetailToExcel([FromBody] CRMSViewModel model)
         {
             try
             {
                 model.companyId = token.GetCompanyId;
-                var fileBytes = repo.GenerateCBNReportByLoanAppId(model);
+                var fileBytes = repo.GenerateCBNReport(model);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
             }
             catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { data = "no-record",  success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { data = "no-record", success = false, message = $"Error: {ce.Message}" });
             }
             catch (BadLogicException be)
             {
@@ -133,6 +136,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
             }
 
-            }
+        }
+
     }
 }
