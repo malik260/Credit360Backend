@@ -2228,8 +2228,8 @@ namespace FintrakBanking.Repositories.Finance
             credit.glAccountId = creditGL; // context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanData.PRODUCTID).PRINCIPALBALANCEGL.Value;
             credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             credit.casaAccountId = null;
-            credit.debitAmount = postedAmount;
-            credit.creditAmount = 0;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
             credit.sourceBranchId = loanData.BRANCHID;
             credit.destinationBranchId = loanData.BRANCHID;
 
@@ -2253,8 +2253,8 @@ namespace FintrakBanking.Repositories.Finance
             debit.glAccountId = debitGL;
             debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             debit.casaAccountId = null;
-            debit.debitAmount = 0;
-            debit.creditAmount = postedAmount;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
             //debit.sourceBranchId = casa.BRANCHID;
             debit.sourceBranchId = loanData.BRANCHID;
             debit.destinationBranchId = loanData.BRANCHID;
@@ -2305,8 +2305,8 @@ namespace FintrakBanking.Repositories.Finance
             credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanData.PRODUCTID).PRINCIPALBALANCEGL.Value;
             credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             credit.casaAccountId = null;
-            credit.debitAmount = postedAmount;
-            credit.creditAmount = 0;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
             credit.sourceBranchId = loanData.BRANCHID;
             credit.destinationBranchId = loanData.BRANCHID;
 
@@ -2330,8 +2330,8 @@ namespace FintrakBanking.Repositories.Finance
             debit.glAccountId = debitGL;
             debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             debit.casaAccountId = null;
-            debit.debitAmount = 0;
-            debit.creditAmount = postedAmount;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
             //debit.sourceBranchId = casa.BRANCHID;
             debit.sourceBranchId = loanData.BRANCHID;
             debit.destinationBranchId = loanData.BRANCHID;
