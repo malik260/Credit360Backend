@@ -213,7 +213,8 @@ namespace FintrakBanking.Repositories.Credit
                                       feeIntervalName = fa.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
                                       isIntegralFee = fa.TBL_CHARGE_FEE.ISINTEGRALFEE,
                                       isRecurring = fa.TBL_CHARGE_FEE.RECURRING,
-                                      valueBase = "Rate(%)"
+                                      valueBase = "Rate(%)",
+                                      dealTypeId = 0
                                   }).ToList();
 
             var lisProdFeeViewModel = new List<ProductFeeViewModel>();
@@ -233,7 +234,8 @@ namespace FintrakBanking.Repositories.Credit
                         feeIntervalName = chargeFeeDetail.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
                         isIntegralFee = chargeFeeDetail.TBL_CHARGE_FEE.ISINTEGRALFEE,
                         isRecurring = chargeFeeDetail.TBL_CHARGE_FEE.RECURRING,
-                        valueBase = "Rate(%)"
+                        valueBase = "Rate(%)",
+                        dealTypeId = (short)ChargeFeeDetailTypeEnum.Tax
                     };
                     
                     lisProdFeeViewModel.Add(prodFeeView);
@@ -4519,31 +4521,33 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short loanSystemTypeId, int companyId, bool feeOverride)
         {
-
             foreach (var ent in feeModel)
             {
-                var fee = new TBL_LOAN_FEE
+                if(ent.dealTypeId != (short)ChargeFeeDealTypeEnum.Tax)
                 {
-                    CHARGEFEEID = ent.chargeFeeId,
-                    FEEAMOUNT = ent.feeAmount,
-                    FEEDEPENDENTAMOUNT = ent.feeDependentAmount,
-                    FEERATEVALUE = ent.feeRateValue,
-                    ISINTEGRALFEE = ent.isIntegralFee,
-                    LOANID = loanId,
-                    LOANSYSTEMTYPEID = loanSystemTypeId,
-                    ISRECURRING = ent.recurring,
-                    RECURRINGPAYMENTDAY = 28,
-                    CREATEDBY = staffId,
-                    DATETIMECREATED = DateTime.Now.Date,
-                    ISPOSTED = ent.isPosted
-                };
-                if (feeOverride)
-                {
-                    fee.ISPOSTED = false;
-                }
-                else fee.ISPOSTED = true;
+                    var fee = new TBL_LOAN_FEE
+                    {
+                        CHARGEFEEID = ent.chargeFeeId,
+                        FEEAMOUNT = ent.feeAmount,
+                        FEEDEPENDENTAMOUNT = ent.feeDependentAmount,
+                        FEERATEVALUE = ent.feeRateValue,
+                        ISINTEGRALFEE = ent.isIntegralFee,
+                        LOANID = loanId,
+                        LOANSYSTEMTYPEID = loanSystemTypeId,
+                        ISRECURRING = ent.recurring,
+                        RECURRINGPAYMENTDAY = 28,
+                        CREATEDBY = staffId,
+                        DATETIMECREATED = DateTime.Now.Date,
+                        ISPOSTED = ent.isPosted
+                    };
+                    if (feeOverride)
+                    {
+                        fee.ISPOSTED = false;
+                    }
+                    else fee.ISPOSTED = true;
 
-                context.TBL_LOAN_FEE.Add(fee);
+                    context.TBL_LOAN_FEE.Add(fee);
+                }
             }
             //return context.SaveChanges() > 0;
         }
