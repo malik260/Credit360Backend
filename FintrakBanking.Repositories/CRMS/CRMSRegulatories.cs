@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Common;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.ViewModels.Reports;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
@@ -16,6 +17,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.Interfaces.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.CRMS
 {
@@ -26,17 +28,18 @@ namespace FintrakBanking.Repositories.CRMS
         private IAuditTrailRepository auditTrail;
         private ILoanScheduleRepository loanSchedule;
         private ICRMSCodeBookRepository codeBook;
+        private IFinacleIntegrationRepository finacleIntegration;
 
         public CRMSRegulatories(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
                                         IAuditTrailRepository _audit,
-                                        ICRMSCodeBookRepository _codeBook)
+                                        ICRMSCodeBookRepository _codeBook, IFinacleIntegrationRepository _finacleIntegration)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
             this.auditTrail = _auditTrail;
             this.codeBook = _codeBook;
-
+            this.finacleIntegration = _finacleIntegration;
         }
 
         public string AddCRMSCode(CRMSViewModel param)
@@ -1249,6 +1252,7 @@ namespace FintrakBanking.Repositories.CRMS
 
             return data;
         }
+
         private CRMSRecord GenerateCRMS400CTemplate(List<CRMSTemplateViewModel> loanInput, CRMSViewModel param)
         {
             Byte[] fileBytes = null;
@@ -2347,7 +2351,7 @@ namespace FintrakBanking.Repositories.CRMS
 
             return GenerateCRMS600Template(result.ToList());
         }
-         public CRMSRecord GenerateCBNReport(CRMSViewModel param)
+        public CRMSRecord GenerateCBNReport(CRMSViewModel param)
         {
             if (param.templateTypeId == (int)CRMSTemplate.Template100)
             {
@@ -2379,5 +2383,84 @@ namespace FintrakBanking.Repositories.CRMS
             }
             return new CRMSRecord();
         }
+
+        public CRMSRecord GenerateBatchPosting(DateRange model)
+        {
+
+        var loanInput = finacleIntegration.GetBatchPostingDetailSearch(model.startDate, model.endDate, model.status);
+
+            Byte[] fileBytes = null;
+            CRMSRecord excel = new CRMSRecord();
+            if (loanInput != null)
+            {
+                using (ExcelPackage pck = new ExcelPackage())
+                {
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Batch Posting Data");
+                    
+
+                    ws.Cells[1, 1].Value = "SID";
+                    ws.Cells[1, 2].Value = "BATCH_ID";
+                    ws.Cells[1, 3].Value = "BATCH_REF_ID";
+                    ws.Cells[1, 4].Value = "TRAN_TYPE";
+                    ws.Cells[1, 5].Value = "FLOW_TYPE";
+                    ws.Cells[1, 6].Value = "AMT";
+                    ws.Cells[1, 7].Value = "DR_ACCT";
+                    ws.Cells[1, 8].Value = "CR_ACCT";
+                    ws.Cells[1, 9].Value = "REF_CRNCY_CODE";
+                    ws.Cells[1, 10].Value = "RATE_CODE";
+                    ws.Cells[1, 11].Value = "PSTD_USR_ID";
+                    ws.Cells[1, 12].Value = "FAIL_FLG";
+                    ws.Cells[1, 13].Value = "DEL_FLG";
+                    ws.Cells[1, 14].Value = "FAILURE_REASON_CODE ";
+                    ws.Cells[1, 15].Value = "FAILURE_REASON";
+                    ws.Cells[1, 16].Value = "AMT_COLLECTED";
+                    ws.Cells[1, 17].Value = "LIEN_AMT";
+                    ws.Cells[1, 18].Value = "LIEN_FLG";
+                    ws.Cells[1, 19].Value = "TOD_FLG";
+                    ws.Cells[1, 20].Value = "VALUE_DATE_NUM";
+                    ws.Cells[1, 21].Value = "LOAN_ACCT";
+                    ws.Cells[1, 22].Value = "FINTRAK_FLG ";
+                    ws.Cells[1, 23].Value = "BANK_ID";
+                    ws.Cells[1, 24].Value = "STATUS";
+                    
+                    for (int i = 2; i <= loanInput.Count + 1; i++)
+                    {
+                        var record = loanInput[i - 2];
+                        
+                        ws.Cells[i, 1].Value = record.sid;
+                        ws.Cells[i, 2].Value = record.batchId;
+                        ws.Cells[i, 3].Value = record.batchRefId;
+                        ws.Cells[i, 4].Value = record.trancType;
+                        ws.Cells[i, 5].Value = record.flowType;
+                        ws.Cells[i, 6].Value = record.amt;
+                        ws.Cells[i, 7].Value = record.drAccount;
+                        ws.Cells[i, 8].Value = record.crAccount;
+                        ws.Cells[i, 9].Value = record.currencyCode;
+                        ws.Cells[i, 10].Value = record.rateCode;
+                        ws.Cells[i, 11].Value = record.postedDate;
+                        ws.Cells[i, 12].Value = record.failedFlag;
+                        ws.Cells[i, 13].Value = record.deleteFlag;
+                        ws.Cells[i, 14].Value = record.failureReasonCode;
+                        ws.Cells[i, 15].Value = record.failureReason;
+                        ws.Cells[i, 16].Value = record.amountCollected;
+                        ws.Cells[i, 17].Value = record.lienAmount;
+                        ws.Cells[i, 18].Value = record.lienFlg;
+                        ws.Cells[i, 19].Value = record.TodFlg;
+                        ws.Cells[i, 20].Value = record.valueDateNumber;
+                        ws.Cells[i, 21].Value = record.loanAccount;
+                        ws.Cells[i, 22].Value = record.fintrakFlag;
+                        ws.Cells[i, 23].Value = record.bankId;
+                        ws.Cells[i, 24].Value = record.status;
+
+                    }
+                    fileBytes = pck.GetAsByteArray();
+                    excel.reportData = fileBytes;
+                    excel.templateTypeName = "BatchPostingData";
+                }
+            }
+
+            return excel;
+        }
+
     }
 }

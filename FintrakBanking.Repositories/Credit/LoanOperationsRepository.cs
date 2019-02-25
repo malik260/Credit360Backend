@@ -15156,14 +15156,7 @@ namespace FintrakBanking.Repositories.Credit
             return response;
 
         }
-
-
-
-
-
-
-
-
+        
         public bool ContingentLiabilityTenorExtension(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
@@ -15352,6 +15345,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return output;
         }
+
         public bool ContingentLiabilityAmountAddition(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
@@ -16279,7 +16273,7 @@ namespace FintrakBanking.Repositories.Credit
                     else if ((int)OperationsEnum.ContingentLiabilityAmountAddition == model.operationId)
                     {
 
-                       //result = ContingentLiabilityAmountAddition(twoFactorAuth, model, approvalComment);
+                       result = ContingentLiabilityAmountAddition(twoFactorAuth, model, approvalComment);
 
                         if (result == true)
                         {

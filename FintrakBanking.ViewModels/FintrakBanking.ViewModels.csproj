@@ -159,6 +159,7 @@
     <Compile Include="Finance\CurrencyExchangeRateViewModel.cs" />
     <Compile Include="CASA\CasaLienViewModel.cs" />
     <Compile Include="Finance\EndOfDayViewModel.cs" />
+    <Compile Include="Finance\RefreshStagingMonitoringModel.cs" />
     <Compile Include="Finance\FinanceTransactionViewModel.cs" />
     <Compile Include="GenaralEntity.cs" />
     <Compile Include="LookupViewModel.cs" />
