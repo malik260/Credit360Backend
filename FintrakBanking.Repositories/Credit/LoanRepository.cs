@@ -2466,9 +2466,9 @@ namespace FintrakBanking.Repositories.Credit
                             join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                                   && operationIds.Contains(atrail.OPERATIONID)
-                                  && ln.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                                  && ln.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility 
                                   && ln.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.RevolvingLoan
-                                  && ln.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
+                                  //&& ln.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
                                   && req.DELETED == false
                                   && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                   && ln.LOANSTATUSID == (short)LoanStatusEnum.Inactive
@@ -2688,6 +2688,7 @@ namespace FintrakBanking.Repositories.Credit
                                 currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
+
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 //crmsRepaymentAgreementTypeId = ln.CRMSREPAYMENTAGREEMENTID,
 

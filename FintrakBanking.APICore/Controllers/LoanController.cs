@@ -440,7 +440,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 entity.userBranchId = (short)token.GetBranchId;
-                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
@@ -457,7 +456,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                         if(entity.isInEditMode)
                             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Loan Loan with Account Number: '{ data}' was successfully modified."  });
                         else
-                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successful and is waiting approval.\r\n Loan Account Number: " + data });
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successfully initiated and is waiting authorization.\r\n Loan Account Number: " + data });
                     }
 
                     if(entity.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
@@ -465,7 +464,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                         if (entity.isInEditMode)
                             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Overdaft with Account Number: '{ data}' was successfully modified." });
                         else
-                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successfully initiated and is awaiting authorization.\r\n Facility Account Number: " + data });
                     }
 
                     if (entity.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
@@ -473,12 +472,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                         if (entity.isInEditMode)
                             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"contigent facility with Account Number: '{ data}' was successfully modified." });
                         else
-                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successfully initiated and is awaiting authorization.\r\n Facility Account Number: " + data });
                     }
-                        
-
-                    //This is not allowed
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Unknown facility type booked.\r\n Facility Account Number: " + data });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
@@ -486,10 +481,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (ConditionNotMetException ce)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $" {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{be.Message}" });
             }
             catch (APIErrorException ae)
             {
@@ -893,34 +884,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        //[HttpGet]
-        //[Route("commercial-loans}")]
-        //public HttpResponseMessage GetLoanCommercialLoans()
-        //{
-        //    try
-        //    {
-        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
-        //        var data = repo.GetLoanCommercialLoans(token.GetCompanyId);
-
-        //        if (data.Any() == false)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
-        //    }
-        //    catch (ConditionNotMetException ce)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-        //    }
-        //    catch (BadLogicException be)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-        //    }
-        //}
 
         [HttpGet]
         [Route("loan-booking/term/awaiting-approval")]
@@ -1141,30 +1104,37 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 var dynamicMessage = string.Empty;
                 if (responseId == 1)
                 {
+                    dynamicMessage = "Facility booking has been successfully authorized";
+                    if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
+                        dynamicMessage = "Overdraft booking successfully authorized";
+                    if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
+                        dynamicMessage = "Contingent Liability booking successfully authorized";
+                    if (model.operationId == (short)OperationsEnum.TermLoanBooking)
+                        dynamicMessage = "Loan booking has been successfully authorized";
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful. Facility Booking was verified successfully " });
+                                            new { success = true, message = dynamicMessage });
                 }
                 else if (responseId == 2)
                 {
-                    dynamicMessage = "Loan booking has been successfully Verified";
+                    dynamicMessage = "Loan booking has been successfully completed";
                     if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
-                        dynamicMessage = "Overdraft facility grant successfully verified";
+                        dynamicMessage = "Overdraft booking successfully completed";
                     if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
-                        dynamicMessage = "Contingent Liability successfully verified";
+                        dynamicMessage = "Contingent Liability successfully released";
                     if (model.operationId == (short)OperationsEnum.TermLoanBooking)
-                        dynamicMessage = "Loan booking has been successfully verified";
+                        dynamicMessage = "Loan booking has been successfully completed";
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, message = dynamicMessage });
                 }
                 else if (responseId == 3)
                 {
-                    dynamicMessage = "Loan booking verification has been disapproved";
+                    dynamicMessage = "Loan booking authorization declined.";
                     if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
-                        dynamicMessage = "Overdraft facility grant verification disapproved";
+                        dynamicMessage = "Overdraft facility booking authorization declined.";
                     if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
-                        dynamicMessage = "Contingent Liability verification disapproved";
+                        dynamicMessage = "Contingent Liability booking authorization declined.";
                     if (model.operationId == (short)OperationsEnum.TermLoanBooking)
-                        dynamicMessage = "Loan booking disapproval was successful";
+                        dynamicMessage = "Loan booking authorization declined.";
 
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, message = dynamicMessage });
