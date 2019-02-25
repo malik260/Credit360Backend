@@ -1187,6 +1187,11 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == entity.companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            if (applicationDetail.CURRENCYID != defaultCurrencyId)
+            {
+                AddFXLoan(entity);
+            }
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var company = context.TBL_COMPANY.Find(entity.companyId);
 
@@ -2725,7 +2730,6 @@ namespace FintrakBanking.Repositories.Credit
 
                                 subSectorId = ln.SUBSECTORID,
                                 subSectorName = ln.TBL_SUB_SECTOR.NAME,
-
                                 dischargeLetter = ln.DISCHARGELETTER,
                                 suspendInterest = ln.SUSPENDINTEREST,
 
@@ -6452,7 +6456,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var staff = context.TBL_STAFF.Find(staffId);
             var activities = admin.GetUserActivitiesByUser(staffId);           
-            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
             var cpldStaffLevels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == (int)OperationsEnum.TermLoanBooking
             || x.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
