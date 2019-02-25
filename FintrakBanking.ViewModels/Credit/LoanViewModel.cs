@@ -824,12 +824,13 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanChargeFeeViewModel : ChargeRangeViewModel //GeneralEntity //ChargeRangeViewModel
 
     {
-        public string productName;
-        public string casaAccountName;
-        public decimal casaAccountBalance;
-        public string productTypeName;
-        public string customerName;
-        public string loanReferenceNumber;
+        public int dealTypeId { get; set; }
+        public string productName { get; set; }
+        public string casaAccountName { get; set; }
+        public decimal casaAccountBalance { get; set; }
+        public string productTypeName { get; set; }
+        public string customerName { get; set; }
+        public string loanReferenceNumber { get; set; }
 
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }

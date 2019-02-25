@@ -17,6 +17,8 @@ using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Entities.DocumentModels;
+using FintrakBanking.Common.AlertMonitoring;
+using System.Configuration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -203,12 +205,60 @@ namespace FintrakBanking.Repositories.Credit
 
                     documentsContext.TBL_LOAN_CONTINGENT_USAGE_DOCS.Add(file);
                     documentsContext.SaveChanges();
-
+                    var mail = SendEmailToBGDesk( entity.companyId,  entity.staffId,  entity.userBranchId, entity.loanReferenceNumber);
                     response = LogForApproval(log);
 
                 }
             }
             return response;
+        }
+        public bool SendEmailToBGDesk(int companyId, int staffId, short branchId, string facilityRefNumber)
+        {
+            TBL_MONITORING_ALERT_SETUP alertsetupForBGDesk = (from x in context.TBL_MONITORING_ALERT_SETUP
+                                                                    where x.MONITORING_ITEMID == (int)AlertMessageEnum.BGDesk
+                                                                    select x).FirstOrDefault();
+            //var messageBody = "A recovery email";
+            string messageBody = "Dear Team, <br /><br />This is to bring your attention that an APS Release has Been Initiated on " + $" { DateTime.Today.Date }. with Facility Reference Number" + $"{ facilityRefNumber }  <br /> <br />";
+
+            var subject = "APS RELEASE REQUEST";
+            if (string.IsNullOrEmpty(facilityRefNumber)) return false;
+
+            //var email = (from m in context.TBL_ACCREDITEDCONSULTANT
+            //             where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTID == accreditedConsultantId
+            //             select new { m.EMAILADDRESS }).FirstOrDefault();
+
+            var emailLog = new TBL_MESSAGE_LOG
+            {
+                DATETIMERECEIVED = DateTime.Now,
+                TOADDRESS  = $"{alertsetupForBGDesk.RECIPIENTEMAILS1.Trim()}",
+                FROMADDRESS = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                MESSAGEBODY = messageBody,
+                MESSAGESUBJECT = subject,
+                MESSAGESTATUSID = 1,
+                MESSAGETYPEID = 1,
+                OPERATIONID = (int)OperationsEnum.ContingentLiabilityUsage,
+                SENDONDATETIME = DateTime.Now,
+
+            };
+
+            context.TBL_MESSAGE_LOG.Add(emailLog);
+
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ContingentLoanUsageAdd,
+                STAFFID = staffId,
+                BRANCHID = branchId,
+                DETAIL = $"An APS Release Email has been sent to B & G Desk ",
+                // IPADDRESS = model.userIPAddress,
+                //URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
         }
 
         public IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId)

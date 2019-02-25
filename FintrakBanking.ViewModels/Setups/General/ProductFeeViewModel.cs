@@ -2,6 +2,8 @@
 {
     public class ProductFeeViewModel : GeneralEntity
     {
+        public short dealTypeId { get; set; }
+
         public string valueBase { get; set; }
         public short approvalStatusId { get; set; }
         public string chargeFeeName { get; set; }

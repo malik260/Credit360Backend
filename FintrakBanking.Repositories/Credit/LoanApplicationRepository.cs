@@ -1519,6 +1519,15 @@ namespace FintrakBanking.Repositories.Credit
                 ENTRYSHEETNUMBER = c.entrySheetNumber
 
             });
+
+            foreach (var item in data) // invoice reuse check
+            {
+                if (context.TBL_LOAN_APPLICATION_DETL_INV.Where(x =>
+                    x.INVOICENO == item.INVOICENO &&
+                    x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID != item.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                    ).Any()) { throw new SecureException("This invoice number have been used in another application!"); }
+            }
+
             context.TBL_LOAN_APPLICATION_DETL_INV.AddRange(data);
         }
 

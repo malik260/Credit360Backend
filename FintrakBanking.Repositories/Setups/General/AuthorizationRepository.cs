@@ -169,7 +169,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 });
         }
 
-
         public int GetLoggedInUsersNumber(int? userId = null)
         {
             if (userId == null)
@@ -181,17 +180,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool LogOutAllUsers(int userId)
         {
-            var activeUsers = context.TBL_PROFILE_USER
-                .Where(x => x.LOGINCODE != null && x.ISACTIVE == true && x.USERID != userId)
-                //.ToList()
-                ;
-            // activeUsers.
-            foreach (var user in activeUsers)
-            {
-                user.ISACTIVE = false;
-                user.LOGINCODE = null;
-            }
-
+            var activeUsers = context.TBL_PROFILE_USER.Where(x => x.LOGINCODE != null && x.ISACTIVE == true && x.USERID != userId);
+            foreach (var user in activeUsers) user.LOGINCODE = null;
+            if (!activeUsers.Any()) return true;
             return context.SaveChanges() > 0;
         }
     }
