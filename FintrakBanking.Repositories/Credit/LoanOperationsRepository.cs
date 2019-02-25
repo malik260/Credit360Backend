@@ -5414,7 +5414,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 //&& p.LOANCHARGEFEEID == chargeTypeId
                                                 && p.CHARGEFEEID == chargeTypeId
                                                 && p.LOANSYSTEMTYPEID == chargeDetails.LOANSYSTEMTYPEID
-                                          select p).SingleOrDefault();
+                                          select p).FirstOrDefault();
 
                 feeResult.FEEAMOUNT = NewFeeAmount;
                 feeResult.EARNEDFEEAMOUNT = AccruedFeeToDate;
@@ -15156,14 +15156,7 @@ namespace FintrakBanking.Repositories.Credit
             return response;
 
         }
-
-
-
-
-
-
-
-
+        
         public bool ContingentLiabilityTenorExtension(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
@@ -15352,6 +15345,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return output;
         }
+
         public bool ContingentLiabilityAmountAddition(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 

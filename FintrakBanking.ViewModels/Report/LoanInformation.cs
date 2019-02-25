@@ -122,6 +122,7 @@ namespace FintrakBanking.ViewModels.Reports
         public short loanStatusId { get; set; }
         public short waivedOrDeferred { get; set; }
         public string searchParameter { get; set; }
+        public string status { get; set; }
 
     }
 
