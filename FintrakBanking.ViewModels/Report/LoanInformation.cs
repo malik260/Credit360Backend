@@ -310,4 +310,5 @@ namespace FintrakBanking.ViewModels.Reports
 
 
     }
+
 }
