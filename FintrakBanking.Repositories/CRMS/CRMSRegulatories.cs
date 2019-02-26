@@ -1,6 +1,4 @@
-﻿
-
-using FintrakBanking.Common;
+﻿using FintrakBanking.Common;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
@@ -42,7 +40,6 @@ namespace FintrakBanking.Repositories.CRMS
             this.auditTrail = _auditTrail;
             this.codeBook = _codeBook;
             this.finacleIntegration = _finacleIntegration;
-
         }
 
         public string AddCRMSCode(CRMSViewModel param)
@@ -2523,8 +2520,6 @@ namespace FintrakBanking.Repositories.CRMS
             }
             return new CRMSRecord();
         }
-
-
         public CRMSRecord GenerateBatchPosting(DateRange model)
         {
 

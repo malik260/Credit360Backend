@@ -55,6 +55,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanDynamicsId { get; set; }
         public double SN { get; set; }
         public int? position { get; set; }
+        public bool? isExternal { get; set; }
+
     }
 
     public class ComplianceTimelineViewModel : GeneralEntity

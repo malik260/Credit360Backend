@@ -26,6 +26,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddTransactionDynamics(TransactionDynamicsViewModel model)
         {
+            if (model.isExternal == null)
+            {
+                model.isExternal = false;
+            }
             var data = new TBL_LOAN_TRANSACTION_DYNAMICS
             {
                 DYNAMICS = model.dynamics,
@@ -34,6 +38,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
                 DATETIMECREATED = general.GetApplicationDate(),
                 POSITION = model.position,
+                ISEXTERNAL = model.isExternal,
             };
 
             context.TBL_LOAN_TRANSACTION_DYNAMICS.Add(data);
@@ -70,7 +75,7 @@ namespace FintrakBanking.Repositories.Credit
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.POSITION = model.position;
-
+            data.ISEXTERNAL = model.isExternal;
             context.Entry(data).State = System.Data.Entity.EntityState.Modified;
 
             // Audit Section ---------------------------
@@ -109,6 +114,7 @@ namespace FintrakBanking.Repositories.Credit
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
                         position = c.POSITION,
+                        isExternal = c.ISEXTERNAL,
                     });
         }
 
@@ -155,6 +161,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (!loanconditions.Any(x => x.DYNAMICSID == (int)c.DYNAMICSID))
                 {
+                    if (c.ISEXTERNAL == null)
+                    {
+                        c.ISEXTERNAL = false;
+                    }
                     context.TBL_LOAN_TRANSACTION_DYNAMICS.Add(new TBL_LOAN_TRANSACTION_DYNAMICS
                     {
                         DYNAMICS = c.DYNAMICS,
@@ -163,6 +173,8 @@ namespace FintrakBanking.Repositories.Credit
                         LOANAPPLICATIONDETAILID = entity.detailId,
                         DATETIMECREATED = general.GetApplicationDate(),
                         POSITION = 1,
+                        ISEXTERNAL = c.ISEXTERNAL,
+                        
                     });
                 }
             }
@@ -190,17 +202,23 @@ namespace FintrakBanking.Repositories.Credit
                 productName = c.TBL_PRODUCT.PRODUCTNAME,
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
+                isExternal = c.ISEXTERNAL==null?false : c.ISEXTERNAL,
             });
         }
 
         public bool AddTransactionDynamicsTemplate(TransactionDynamicsViewModel model)
         {
+            if (model.isExternal == null)
+            {
+                model.isExternal = false;
+            }
             var data = new TBL_TRANSACTION_DYNAMICS
             {
                 DYNAMICS = model.dynamics,
                 PRODUCTID = (short)model.productId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
+                ISEXTERNAL = model.isExternal,
             };
 
             context.TBL_TRANSACTION_DYNAMICS.Add(data);
@@ -237,6 +255,7 @@ namespace FintrakBanking.Repositories.Credit
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMEUPDATED = general.GetApplicationDate();
+            data.ISEXTERNAL = model.isExternal;
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -271,6 +290,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationDetailId = c.PRODUCTID,
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
+                isExternal = c.ISEXTERNAL
             });
 
             return dynamics.ToList();
@@ -291,6 +311,8 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationDetailId = c.PRODUCTID,
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
+                isExternal = c.ISEXTERNAL
+
             });
 
             return dynamics.ToList();
@@ -311,6 +333,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (!loanconditions.Any(x => x.DYNAMICSID == (int)c.DYNAMICSID))
                 {
+                    if (c.ISEXTERNAL == null)
+                    {
+                        c.ISEXTERNAL = false;
+                    }
                     context.TBL_LMSR_TRANSACTION_DYNAMICS.Add(new TBL_LMSR_TRANSACTION_DYNAMICS
                     {
                         DYNAMICS = c.DYNAMICS,
@@ -319,6 +345,8 @@ namespace FintrakBanking.Repositories.Credit
                         LOANREVIEWAPPLICATIONID = entity.detailId,
                         DATETIMECREATED = general.GetApplicationDate(),
                         POSITION = 1,
+                        ISEXTERNAL = c.ISEXTERNAL,
+                        
                     });
                 }
             }
@@ -374,6 +402,7 @@ namespace FintrakBanking.Repositories.Credit
             data.DATETIMEUPDATED = DateTime.Now;
             data.POSITION = model.position;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.ISEXTERNAL = model.isExternal;
 
             context.Entry(data).State = System.Data.Entity.EntityState.Modified;
 
@@ -397,6 +426,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddTransactionDynamicsLms(TransactionDynamicsViewModel model)
         {
+            if (model.isExternal == null)
+            {
+                model.isExternal = false;
+            }
             var data = new TBL_LMSR_TRANSACTION_DYNAMICS
             {
                 DYNAMICS = model.dynamics,
@@ -405,6 +438,7 @@ namespace FintrakBanking.Repositories.Credit
                 //LOANAPPLICATIONID = model.loanApplicationId,
                 LOANREVIEWAPPLICATIONID = model.loanApplicationDetailId,
                 DATETIMECREATED = general.GetApplicationDate(),
+                ISEXTERNAL = model.isExternal==null? false : model.isExternal,
             };
 
             context.TBL_LMSR_TRANSACTION_DYNAMICS.Add(data);
@@ -441,6 +475,7 @@ namespace FintrakBanking.Repositories.Credit
                     s => s.STAFFID,
                     (c, s) => new TransactionDynamicsViewModel
                     {
+                        
                         loanDynamicsId = c.LOANDYNAMICSID,
                         dynamicsId = c.DYNAMICSID == null ? 0 : (int)c.DYNAMICSID,
                         dynamics = c.DYNAMICS,
@@ -450,6 +485,7 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationDetailId = c.LOANREVIEWAPPLICATIONID,
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
+                        isExternal = c.ISEXTERNAL,
                     });
         }
 

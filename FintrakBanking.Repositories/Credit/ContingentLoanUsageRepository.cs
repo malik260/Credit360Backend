@@ -226,13 +226,15 @@ namespace FintrakBanking.Repositories.Credit
             //var email = (from m in context.TBL_ACCREDITEDCONSULTANT
             //             where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTID == accreditedConsultantId
             //             select new { m.EMAILADDRESS }).FirstOrDefault();
+            string templateUrl = @"~/EmailTemplates/Monitoring.html";
+            string mailBody = EmailHelpers.PopulateBody(messageBody, templateUrl);
 
             var emailLog = new TBL_MESSAGE_LOG
             {
                 DATETIMERECEIVED = DateTime.Now,
                 TOADDRESS  = $"{alertsetupForBGDesk.RECIPIENTEMAILS1.Trim()}",
                 FROMADDRESS = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                MESSAGEBODY = messageBody,
+                MESSAGEBODY = mailBody,
                 MESSAGESUBJECT = subject,
                 MESSAGESTATUSID = 1,
                 MESSAGETYPEID = 1,
