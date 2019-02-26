@@ -331,7 +331,7 @@ namespace FintrakBanking.Repositories.Credit
                 //        return this.AddFXLoan(entity,true);
                 //}
 
-                if (entity.isInEditMode)
+                if(entity.isInEditMode)
                 {
                     return this.EditTermLoan(entity);
                 }
