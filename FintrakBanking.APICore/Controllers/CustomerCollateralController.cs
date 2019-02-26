@@ -1488,7 +1488,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetFixedDepositAccountBalance(accountNumber);
+                var response = repo.GetFixedDepositAccountDetail(accountNumber);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
