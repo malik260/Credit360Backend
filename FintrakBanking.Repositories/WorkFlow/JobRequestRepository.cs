@@ -589,7 +589,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 })).OrderByDescending(x => x.arrivalDate).Take(40).ToList();
 
             }
-
+            
             if (staffHub.Any() && !middleOfficeUnit.Any())
             {
                 List<int> unitIds = new List<int>();
@@ -600,7 +600,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var xy = (from x in context.TBL_JOB_REQUEST
                           join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                           join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                          where (x.SENDERSTAFFID == staffId || x.RECEIVERSTAFFID == staffId || x.REASSIGNEDTO == staffId || unitIds.Contains((int)x.JOBTYPEUNITID))
+                          where ((x.SENDERSTAFFID == staffId) || (x.RECEIVERSTAFFID == staffId) || (x.REASSIGNEDTO == staffId) || (unitIds.Contains((int)x.JOBTYPEUNITID)))
                           && !jobRequestIds.Contains(x.JOBREQUESTID)
                           orderby x.ARRIVALDATE descending
                           select (
@@ -659,12 +659,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 staffData.AddRange(xy);
             }
 
-            if(middleOfficeUnit.Any() && !isTeamLead)
+
+            if ((middleOfficeUnit.Any() && !isTeamLead) || (!staffHub.Any() && !middleOfficeUnit.Any() && !isTeamLead))
             {
                 staffData = (from x in context.TBL_JOB_REQUEST
                              join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                              join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                             where (x.SENDERSTAFFID == staffId || x.RECEIVERSTAFFID == staffId || x.REASSIGNEDTO == staffId) && !jobRequestIds.Contains(x.JOBREQUESTID)
+                             where ((x.SENDERSTAFFID == staffId) || (x.RECEIVERSTAFFID == staffId) || (x.REASSIGNEDTO == staffId)) && !jobRequestIds.Contains(x.JOBREQUESTID)
                              orderby x.ARRIVALDATE descending
                              select (
                              new JobRequestViewModel
@@ -717,10 +718,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                                  to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                                  assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                             })).ToList().OrderByDescending(x => x.arrivalDate).Take(40).ToList();
+                             })).OrderByDescending(x => x.arrivalDate).Take(40).ToList();
             }
 
             allData = adminData.Union(hubStaffData).Union(staffData).Distinct().ToList();
+
+
 
             foreach (var item in allData)
             {
@@ -754,6 +757,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             return allData;
         }
 
+   
         public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId, int branchId)
         {
             return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId);

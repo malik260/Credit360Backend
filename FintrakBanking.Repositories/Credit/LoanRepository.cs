@@ -320,11 +320,25 @@ namespace FintrakBanking.Repositories.Credit
             //...................CHECK IF THE LOAN RECORD IS TERM(SCHEDULED) LOAN..................//
             if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating || entity.productTypeId == (int)LoanProductTypeEnum.SyndicatedTermLoan)
             {
-                if (entity.isInEditMode)
-                    return this.EditTermLoan(entity);
+                //var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+                //var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == entity.companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+                //if (applicationDetail.CURRENCYID != defaultCurrencyId)
+                //{
+                //    if (entity.isInEditMode)
+                //        return this.EditFXLoan(entity);
 
+                //    else
+                //        return this.AddFXLoan(entity,true);
+                //}
+
+                if(entity.isInEditMode)
+                {
+                    return this.EditTermLoan(entity);
+                }
                 else
+                {
                     return this.AddTermLoan(entity);
+                }
             }
             // ...............CHECK IF THE  LOAN RECORD IS A COMMERCIAL LOAN....................//
             else if (entity.productTypeId == (int)LoanProductTypeEnum.CommercialLoan)
@@ -341,7 +355,7 @@ namespace FintrakBanking.Repositories.Credit
                     return this.EditFXLoan(entity);
 
                 else
-                    return AddFXLoan(entity);
+                    return AddFXLoan(entity,false);
             }
             // ...............CHECK IF THE LOAN RECORD IS A NON SCHEDULED LOAN....................//
             else if (entity.productTypeId == (int)LoanProductTypeEnum.RevolvingLoan)
@@ -1187,6 +1201,8 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == entity.companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+          
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var company = context.TBL_COMPANY.Find(entity.companyId);
 
@@ -1861,7 +1877,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private string AddFXLoan(LoanViewModel entity)
+        private string AddFXLoan(LoanViewModel entity, bool isTermLoan)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
@@ -2725,7 +2741,6 @@ namespace FintrakBanking.Repositories.Credit
 
                                 subSectorId = ln.SUBSECTORID,
                                 subSectorName = ln.TBL_SUB_SECTOR.NAME,
-
                                 dischargeLetter = ln.DISCHARGELETTER,
                                 suspendInterest = ln.SUSPENDINTEREST,
 
@@ -6452,7 +6467,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var staff = context.TBL_STAFF.Find(staffId);
             var activities = admin.GetUserActivitiesByUser(staffId);           
-            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
             var cpldStaffLevels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == (int)OperationsEnum.TermLoanBooking
             || x.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking

@@ -3233,5 +3233,16 @@ namespace FintrakBanking.ReportObjects
                 }
             }
 
-        }
+        //public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId)
+        //{
+        //    using (FinTrakBankingContext context = new FinTrakBankingContext())
+        //    {
+                
+
+        //    }
+        //}
+
+
+
     }
+}
