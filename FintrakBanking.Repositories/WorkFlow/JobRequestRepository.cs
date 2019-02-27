@@ -164,6 +164,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if(model.rejectionReasonId != null)data.JOB_STATUS_FEEDBACKID = (short)model.rejectionReasonId;
             data.RESPONSECOMMENT = model.responseComment;
             data.RESPONSEDATE = applicationDate;
+            data.RESPONSESTAFFID = model.createdBy;
             data.SYSTEMRESPONSEDATE = DateTime.Now;
 
             // Audit Section ---------------------------
@@ -852,12 +853,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                             fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
                             to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                             assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
-
+                            responseStaffId = x.RESPONSESTAFFID,
+                           
                         })).ToList().OrderByDescending(x => x.arrivalDate);
 
 
             foreach (var item in data)
             {
+                var responderRecord = context.TBL_STAFF.Find(item.responseStaffId);
+                if (responderRecord != null)
+                {
+                    item.responseStaffName = responderRecord.FIRSTNAME == null ? "n/a" : responderRecord.FIRSTNAME + " " + responderRecord.LASTNAME;
+                }
+
                 var applicationDet = context.TBL_LOAN_APPLICATION_DETAIL.Find(item.targetId);
                 if (applicationDet != null)
                 {
@@ -2330,6 +2338,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jb.userBranchId = model.userBranchId;
                 jb.statusId = (short)model?.statusId;
                 jb.rejectionReasonId =  model?.rejectionReasonId;
+                jb.responseStaffId = model.createdBy;
 
                 return ReplyJobRequest(jb, jb.jobRequestId);
             }
