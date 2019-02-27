@@ -1269,9 +1269,6 @@ namespace FintrakBanking.Repositories.Credit
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
 
-                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
-                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID ,
-
                 SUBSECTORID = entity.subSectorId,
                 CURRENCYID = (short)entity.currencyId,
                 EXCHANGERATE = currentExchangeRate,
@@ -1332,9 +1329,14 @@ namespace FintrakBanking.Repositories.Credit
                 REPRICINGDURATION = entity.loanScheduleInput.repricingDuration != 0 ? entity.loanScheduleInput.repricingDuration : null,
 
             };
+            if (priceIndex.PRODUCTPRICEINDEXID > 0)
+            {
+                data.PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID;
+                data.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0;
+            }
 
             //FOREIGN LOANS 'NOSTRO - INTEREST-CAP-ACCOUNT' BEHAVIOUR
-            if(entity.currencyId  != company.CURRENCYID && application.PRODUCTCLASSID != (short)ProductClassEnum.InvoiceDiscountingFacility)
+            if (entity.currencyId  != company.CURRENCYID && application.PRODUCTCLASSID != (short)ProductClassEnum.InvoiceDiscountingFacility)
             {
                 var nostroAccount = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Find(entity.casaAccountId2);
                 var nostroAccountNumber = nostroAccount.ACCOUNTID;
@@ -1620,8 +1622,8 @@ namespace FintrakBanking.Repositories.Credit
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
                 //PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
                 //PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
-                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
-                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
+                //PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
+                //PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
                 SUBSECTORID = applicationDetail.SUBSECTORID,
                 CURRENCYID = (short)applicationDetail.CURRENCYID,
                 EXCHANGERATE = currentExchangeRate,
@@ -1669,6 +1671,12 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
             };
+
+            if (priceIndex.PRODUCTPRICEINDEXID > 0)
+            {
+                data.PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID;
+                data.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0;
+            }
 
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -1941,8 +1949,8 @@ namespace FintrakBanking.Repositories.Credit
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
                 //PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
                 //PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
-                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
-                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
+                //PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
+                //PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
                 SUBSECTORID = applicationDetail.SUBSECTORID,
                 CURRENCYID = (short)applicationDetail.CURRENCYID,
                 EXCHANGERATE = currentExchangeRate,
@@ -1994,6 +2002,12 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
             };
+
+            if (priceIndex.PRODUCTPRICEINDEXID > 0)
+            {
+                data.PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID;
+                data.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0;
+            }
 
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
