@@ -677,27 +677,18 @@ namespace FintrakBanking.Repositories.Finance
 
         public IEnumerable<RefreshStagingMonitoringModel> RefreshStagingMonitoring(DateTime stateDate, DateTime endDate)
         {
-            List<RefreshStagingMonitoringModel> financeEod = new List<RefreshStagingMonitoringModel>();
 
-            try
-            {
-                 financeEod = (from e in stagingContext.FINTRAK_TRAN_PROC_DETAILS
-                                  where DbFunctions.TruncateTime(e.RCRE_DATE) >= stateDate && DbFunctions.TruncateTime(e.RCRE_DATE) <= endDate
-                                  group e by e.STATUS into g
-                                  select new RefreshStagingMonitoringModel()
-                                  {
-                                      status = g.Key,
-                                      count = g.Count()
-                                  }).ToList();
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-           
+            var financeEod = (from e in stagingContext.FINTRAK_TRAN_PROC_DETAILS
+                              where DbFunctions.TruncateTime(e.RCRE_DATE) >= stateDate && DbFunctions.TruncateTime(e.RCRE_DATE) <= endDate
+                              group e by e.STATUS into g
+                              select new RefreshStagingMonitoringModel()
+                              {
+                                  status = g.Key,
+                                  count = g.Count()
+                              }).ToList();
 
             return financeEod;
+
         }
 
     }

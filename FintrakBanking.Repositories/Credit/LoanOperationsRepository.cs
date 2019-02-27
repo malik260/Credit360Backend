@@ -10569,7 +10569,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (interestOnpastdueprincipal > 0)
                 {
-                    inputTransactions.AddRange(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, interestOnpastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Interest On Past-Due Principal"));
+                    inputTransactions.AddRange(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, interestOnpastdueprincipal, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Interest On Past-Due Principal"));
                 }
 
                 /////split all the outstanding balance i.e pastdue interest and principal, interest on both interest and principal pastdue
