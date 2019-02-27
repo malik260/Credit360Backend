@@ -649,6 +649,13 @@
     <Compile Include="Reports\ReportViews\Lein.aspx.designer.cs">
       <DependentUpon>Lein.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\LoanBookingReport.aspx.cs">
+      <DependentUpon>LoanBookingReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanBookingReport.aspx.designer.cs">
+      <DependentUpon>LoanBookingReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\LoanClassification.aspx.cs">
       <DependentUpon>LoanClassification.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1042,6 +1049,7 @@
     <Content Include="Reports\ReportViews\ImpairedWatchListReport.aspx" />
     <Content Include="Reports\ReportViews\InsuranceReport.aspx" />
     <Content Include="Reports\ReportViews\Lein.aspx" />
+    <Content Include="Reports\ReportViews\LoanBookingReport.aspx" />
     <Content Include="Reports\ReportViews\LoanClassification.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferred.aspx" />
@@ -1321,6 +1329,7 @@
     <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanBookingReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanClassification.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
