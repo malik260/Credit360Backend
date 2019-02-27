@@ -480,6 +480,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationDetailInvoiceViewModel
     {
+        public bool revalidated { get; set; }
+
         public string contractNumber { get; set; }
         public string purchaseOrderNumber { get; set; }
 
