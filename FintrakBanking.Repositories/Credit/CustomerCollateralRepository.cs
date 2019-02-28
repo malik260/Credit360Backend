@@ -102,6 +102,7 @@ namespace FintrakBanking.Repositories.Credit
                         case (int)CollateralTypeEnum.PreciousMetal: AddTempPreciousMetalCollateral(collateralId, entity); break;
                         case (int)CollateralTypeEnum.Stock: AddTempStockCollateral(collateralId, entity); break;
                         case (int)CollateralTypeEnum.Vehicle: AddVehicleCollateral(collateralId, entity); break;
+                        case (int)CollateralTypeEnum.Promissory: AddPromissoryCollateral(collateralId, entity); break;
 
                         default: break;
                     }
@@ -147,6 +148,7 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)CollateralTypeEnum.PreciousMetal: UpdatePreciousMetalCollateral(entity); break;
                 case (int)CollateralTypeEnum.Stock: UpdateStockCollateral(entity); break;
                 case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(entity); break;
+                case (int)CollateralTypeEnum.Promissory: UpdatePromissoryCollateral(entity); break;
 
                 default: break;
             }
@@ -177,6 +179,7 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)CollateralTypeEnum.PreciousMetal: UpdatePreciousMetalCollateral(entity); break;
                 case (int)CollateralTypeEnum.Stock: UpdateStockCollateral(entity); break;
                 case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(entity); break;
+                case (int)CollateralTypeEnum.Promissory: UpdatePromissoryCollateral(entity); break;
 
                 default: break;
             }
@@ -665,6 +668,7 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)CollateralTypeEnum.PreciousMetal: data = GetCollateralPreciousMetal(collateralId); break;
                 case (int)CollateralTypeEnum.Stock: data = GetCollateralStock(collateralId); break;
                 case (int)CollateralTypeEnum.Vehicle: data = GetCollateralVehicle(collateralId); break;
+                case (int)CollateralTypeEnum.Promissory: data = GetCollateralPromissory(collateralId); break;
 
                 default:
                     break;
@@ -878,6 +882,69 @@ namespace FintrakBanking.Repositories.Credit
             return details;
         }
 
+        // promissory collateral
+
+        private void AddPromissoryCollateral(int collateralId, CollateralViewModel entity)
+        {
+            var promissoryExist = context.TBL_COLLATERAL_PROMISSORY.Where(a => a.PROMISSORYNOTEID == entity.promissoryNoteRefferenceNumber).FirstOrDefault();
+            if (promissoryExist !=null)
+            {
+                throw new ConditionNotMetException("Promisory Note Has Already Been Used Before.");
+            }
+
+
+            //if (entity.valuationDate > DateTime.Now || entity.dateOfManufacture > DateTime.Now)
+            //    throw new SecureException("Wrong date selected. Transaction aborted");
+
+            context.TBL_TEMP_COLLATERAL_PROMISSORY.Add(new TBL_TEMP_COLLATERAL_PROMISSORY
+            {
+                TEMPCOLLATERALCUSTOMERID = collateralId,
+                TEMPCOLLATERALPROMISSORYID = entity.collateralPromissoryId,
+                PROMISSORYNOTEID = entity.promissoryNoteRefferenceNumber,
+                //PROMISSORYVALUE = entity.promissoryValue,
+                EFFECTIVEDATE = entity.promissoryEffectiveDate,
+                MATURITYDATE = entity.promissoryMaturityDate,
+                
+            });
+            workflow.StaffId = entity.createdBy;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = collateralId;
+            workflow.Comment = "Request for promissory collateral approval";
+            workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
+        }
+
+        private void UpdatePromissoryCollateral(CollateralViewModel entity)
+        {
+            var collateral = context.TBL_COLLATERAL_PROMISSORY
+                .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
+                .FirstOrDefault();
+
+            collateral.PROMISSORYNOTEID = entity.promissoryNoteRefferenceNumber;
+            //collateral.PROMISSORYVALUE = entity.promissoryValue;
+            collateral.EFFECTIVEDATE = entity.promissoryEffectiveDate;
+            collateral.MATURITYDATE = entity.promissoryMaturityDate;
+        }
+
+        private CollateralViewModel GetCollateralPromissory(int collateralId)
+        {
+            var specifics = context.TBL_COLLATERAL_PROMISSORY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.COLLATERALCUSTOMERID,
+                collateralPromissoryId = specifics.COLLATERALPROMISSORYID,
+                collateralCustomerId = specifics.COLLATERALCUSTOMERID,
+                promissoryNoteRefferenceNumber = specifics.PROMISSORYNOTEID,
+                promissoryEffectiveDate = specifics.EFFECTIVEDATE,
+                promissoryMaturityDate = specifics.MATURITYDATE,
+                //promissoryValue = specifics.PROMISSORYVALUE,
+            };
+            details = GetCollateralInsurancePolicy(details);
+            return details;
+        }
 
         // vehicle collateral
 
@@ -4204,6 +4271,7 @@ namespace FintrakBanking.Repositories.Credit
                                 case (int)CollateralTypeEnum.PreciousMetal: UpdateMetalCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
                                 case (int)CollateralTypeEnum.Stock: UpdateStockCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
                                 case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
+                                case (int)CollateralTypeEnum.Promissory: UpdatePromissoryCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
 
                                 default: break;
                             }
@@ -4860,6 +4928,51 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        private void UpdatePromissoryCollateral(int tempCollateralId, string collateralcode, int newCollateralId)
+        {
+            var tempPromissory= context.TBL_TEMP_COLLATERAL_PROMISSORY.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).FirstOrDefault();
+
+
+
+            //get all collateral details from temp
+            var promissorynoteExist = context.TBL_COLLATERAL_PROMISSORY.Where(x => x.PROMISSORYNOTEID == tempPromissory.PROMISSORYNOTEID).FirstOrDefault();
+            if (promissorynoteExist != null)
+            {
+                throw new ConditionNotMetException("Promissory Note Has Been Used Before");
+            }
+
+            if (tempPromissory != null)
+            {
+                //get collateral detial from main table
+                var mainVehicle = (from x in context.TBL_COLLATERAL_PROMISSORY
+                                   join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                                   where c.COLLATERALCODE == collateralcode
+                                   select (x)).FirstOrDefault();
+
+                if (mainVehicle != null)
+                {
+                    mainVehicle.COLLATERALCUSTOMERID = newCollateralId;
+                    mainVehicle.PROMISSORYNOTEID = tempPromissory.PROMISSORYNOTEID;
+                    mainVehicle.EFFECTIVEDATE = tempPromissory.EFFECTIVEDATE;
+                    mainVehicle.MATURITYDATE = tempPromissory.MATURITYDATE;
+                    //mainVehicle.PROMISSORYVALUE = tempPromissory.PROMISSORYVALUE;
+
+                }
+                else
+                {
+                    context.TBL_COLLATERAL_PROMISSORY.Add(new TBL_COLLATERAL_PROMISSORY
+                    {
+                        COLLATERALCUSTOMERID = newCollateralId,
+                        PROMISSORYNOTEID = tempPromissory.PROMISSORYNOTEID,
+                        EFFECTIVEDATE = tempPromissory.EFFECTIVEDATE,
+                        MATURITYDATE = tempPromissory.MATURITYDATE,
+                        //PROMISSORYVALUE = tempPromissory.PROMISSORYVALUE,
+
+                    });
+                }
+            }
+
+        }
 
         private void UpdateCASAcollateral(int tempCollateralId, string collateralcode, int newCollateralId)
         {
@@ -5025,6 +5138,7 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)CollateralTypeEnum.PreciousMetal: data = GetTempCollateralPreciousMetal(collateralId); break;
                 case (int)CollateralTypeEnum.Stock: data = GetTempCollateralStock(collateralId); break;
                 case (int)CollateralTypeEnum.Vehicle: data = GetTempCollateralVehicle(collateralId); break;
+                case (int)CollateralTypeEnum.Promissory: data = GetTempCollateralPromissory(collateralId); break;
 
                 default:
                     break;
@@ -5299,6 +5413,23 @@ namespace FintrakBanking.Repositories.Credit
             details.companyName = context.TBL_STOCK_COMPANY.FirstOrDefault(x => x.STOCKID == compId).STOCKNAME;
 
             //details = GetTempCollateralInsurancePolicy(details);
+            return details;
+        }
+        private CollateralViewModel GetTempCollateralPromissory(int collateralId)
+        {
+            var test = context.TBL_TEMP_COLLATERAL_PROMISSORY.Where(a=>a.TEMPCOLLATERALCUSTOMERID==collateralId).FirstOrDefault();
+            var specifics = context.TBL_TEMP_COLLATERAL_PROMISSORY.FirstOrDefault(x => x.TEMPCOLLATERALCUSTOMERID == collateralId);
+            var details = new CollateralViewModel
+            {
+                collateralId = specifics.TEMPCOLLATERALCUSTOMERID,
+                collateralPromissoryId = specifics.TEMPCOLLATERALPROMISSORYID,
+                collateralCustomerId = specifics.TEMPCOLLATERALCUSTOMERID,
+                promissoryNoteRefferenceNumber = specifics.PROMISSORYNOTEID,
+                promissoryValue = specifics.PROMISSORYVALUE,
+                promissoryEffectiveDate = specifics.EFFECTIVEDATE,
+                promissoryMaturityDate = specifics.MATURITYDATE,
+            };
+            //  details = GetTempCollateralInsurancePolicy(details);
             return details;
         }
         private CollateralViewModel GetTempCollateralVehicle(int collateralId)

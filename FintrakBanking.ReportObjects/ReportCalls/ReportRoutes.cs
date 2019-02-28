@@ -884,7 +884,14 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string Form3800BApprovedFacility(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
 
+            string path = string.Empty;
+            path = reportPath + "ReportViews/ApprovedForm3800BFacilities.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId  + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
     }
 
 }

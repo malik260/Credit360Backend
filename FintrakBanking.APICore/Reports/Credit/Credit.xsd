@@ -594,6 +594,21 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="Form3800BReport" msprop:Generator_TableClassName="Form3800BReportDataTable" msprop:Generator_TableVarName="tableForm3800BReport" msprop:Generator_TablePropName="Form3800BReport" msprop:Generator_RowDeletingName="Form3800BReportRowDeleting" msprop:Generator_RowChangingName="Form3800BReportRowChanging" msprop:Generator_RowEvHandlerName="Form3800BReportRowChangeEventHandler" msprop:Generator_RowDeletedName="Form3800BReportRowDeleted" msprop:Generator_UserTableName="Form3800BReport" msprop:Generator_RowChangedName="Form3800BReportRowChanged" msprop:Generator_RowEvArgName="Form3800BReportRowChangeEvent" msprop:Generator_RowClassName="Form3800BReportRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="date" msprop:Generator_ColumnVarNameInTable="columndate" msprop:Generator_ColumnPropNameInRow="date" msprop:Generator_ColumnPropNameInTable="dateColumn" msprop:Generator_UserColumnName="date" type="xs:string" minOccurs="0" />
+              <xs:element name="operativeAccount" msprop:Generator_ColumnVarNameInTable="columnoperativeAccount" msprop:Generator_ColumnPropNameInRow="operativeAccount" msprop:Generator_ColumnPropNameInTable="operativeAccountColumn" msprop:Generator_UserColumnName="operativeAccount" type="xs:string" minOccurs="0" />
+              <xs:element name="businessUnit" msprop:Generator_ColumnVarNameInTable="columnbusinessUnit" msprop:Generator_ColumnPropNameInRow="businessUnit" msprop:Generator_ColumnPropNameInTable="businessUnitColumn" msprop:Generator_UserColumnName="businessUnit" type="xs:string" minOccurs="0" />
+              <xs:element name="branch" msprop:Generator_ColumnVarNameInTable="columnbranch" msprop:Generator_ColumnPropNameInRow="branch" msprop:Generator_ColumnPropNameInTable="branchColumn" msprop:Generator_UserColumnName="branch" type="xs:string" minOccurs="0" />
+              <xs:element name="customer" msprop:Generator_ColumnVarNameInTable="columncustomer" msprop:Generator_ColumnPropNameInRow="customer" msprop:Generator_ColumnPropNameInTable="customerColumn" msprop:Generator_UserColumnName="customer" type="xs:string" minOccurs="0" />
+              <xs:element name="cap" msprop:Generator_ColumnVarNameInTable="columncap" msprop:Generator_ColumnPropNameInRow="cap" msprop:Generator_ColumnPropNameInTable="capColumn" msprop:Generator_UserColumnName="cap" type="xs:string" minOccurs="0" />
+              <xs:element name="status" msprop:Generator_ColumnVarNameInTable="columnstatus" msprop:Generator_ColumnPropNameInRow="status" msprop:Generator_ColumnPropNameInTable="statusColumn" msprop:Generator_UserColumnName="status" type="xs:string" minOccurs="0" />
+              <xs:element name="purpose" msprop:Generator_ColumnVarNameInTable="columnpurpose" msprop:Generator_ColumnPropNameInRow="purpose" msprop:Generator_ColumnPropNameInTable="purposeColumn" msprop:Generator_UserColumnName="purpose" type="xs:string" minOccurs="0" />
+              <xs:element name="newApproval" msprop:Generator_ColumnVarNameInTable="columnnewApproval" msprop:Generator_ColumnPropNameInRow="newApproval" msprop:Generator_ColumnPropNameInTable="newApprovalColumn" msprop:Generator_UserColumnName="newApproval" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>
