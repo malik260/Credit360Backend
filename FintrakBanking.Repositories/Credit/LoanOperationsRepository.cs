@@ -13082,13 +13082,13 @@ namespace FintrakBanking.Repositories.Credit
                         {
 
                             //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
-                            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
-                            {
-                                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                            //if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+                            //{
+                            //    var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                                if (authenticated.authenticated == false)
-                                    throw new TwoFactorAuthenticationException(authenticated.message);
-                            }
+                            //    if (authenticated.authenticated == false)
+                            //        throw new TwoFactorAuthenticationException(authenticated.message);
+                            //}
                             twoFADetails.skipAuthentication = true;
                             var fees = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
 
@@ -13115,15 +13115,15 @@ namespace FintrakBanking.Repositories.Credit
 
 
                             //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
-                            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
-                            {
-                                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                            //if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+                            //{
+                            //    var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                                if (authenticated.authenticated == false)
-                                    throw new TwoFactorAuthenticationException(authenticated.message);
+                            //    if (authenticated.authenticated == false)
+                            //        throw new TwoFactorAuthenticationException(authenticated.message);
 
-                                twoFADetails.skipAuthentication = true;
-                            }
+                            //    twoFADetails.skipAuthentication = true;
+                            //}
 
 
                             var validate = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == 0).ToList();
