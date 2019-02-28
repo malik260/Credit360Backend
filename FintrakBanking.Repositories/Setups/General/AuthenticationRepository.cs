@@ -583,6 +583,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.companyName = staff1.TBL_COMPANY.NAME;
                 userInfo.logincode = profile.LOGINCODE;
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
+                userInfo.roleId = staff1.STAFFROLEID;
 
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
@@ -609,6 +610,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.companyName = staff.TBL_COMPANY.NAME;
                 userInfo.logincode = profile.LOGINCODE;
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
+                userInfo.roleId = staff.STAFFROLEID;
 
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;

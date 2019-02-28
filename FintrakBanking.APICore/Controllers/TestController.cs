@@ -9,10 +9,11 @@ using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.APICore.Filters;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    [RoutePrefix("api/v1/test/company")]
+    [RoutePrefix("api/v1/test")]
     public class TestController : ApiController
     {
         private ICompanyRepository repo;
@@ -53,7 +54,7 @@ namespace FintrakBanking.APICore.Controllers
          */
 
         [HttpGet]
-        [Route("")]
+        [Route("company")]
         public HttpResponseMessage GetAllCompany()
         {
             try
@@ -76,6 +77,14 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
 
+        }
+
+        [HttpGet]
+        [AdministratorLockoutFilter]
+        [Route("unauthorized")]
+        public HttpResponseMessage GetUnauthorized()
+        {
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "sdfgthiuytr mwertyui" });
         }
     }
 
