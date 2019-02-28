@@ -93,6 +93,7 @@ namespace FintrakBanking.Interfaces.Reports
 
         string GetLoanDocumentDeferred(int companyId, DateRange dateRange, int staffId);
 
-        string GetLoanBookingReport(DateRange dateRange);
+        string GetLoanBookingReport(DateRange dateRange); 
+        string Form3800BApprovedFacility(DateRange dateRange); 
     }
 }

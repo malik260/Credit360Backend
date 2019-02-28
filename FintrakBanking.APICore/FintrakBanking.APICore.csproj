@@ -480,6 +480,13 @@
     <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.designer.cs">
       <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx.cs">
+      <DependentUpon>ApprovedForm3800BFacilities.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx.designer.cs">
+      <DependentUpon>ApprovedForm3800BFacilities.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\Blacklist.aspx.cs">
       <DependentUpon>Blacklist.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1022,6 +1029,7 @@
     <Content Include="Reports\ReportViews\AgeAnalysisReport.aspx" />
     <Content Include="Reports\ReportViews\AllCommercialLoanReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
+    <Content Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
     <Content Include="Reports\ReportViews\Blacklist.aspx" />
     <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
@@ -1324,6 +1332,7 @@
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Form3800BFacilityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ImpairedWatchListReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />

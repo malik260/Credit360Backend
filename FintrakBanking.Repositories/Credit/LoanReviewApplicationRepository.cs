@@ -597,9 +597,6 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
-            //generate offer letter doc
-            offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
-
 
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
@@ -612,6 +609,9 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 if (operationId == lastOperationId/* || model.operationId == 71*/) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
+
+                //generate offer letter doc
+                offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
 
                 context.SaveChanges();
 
