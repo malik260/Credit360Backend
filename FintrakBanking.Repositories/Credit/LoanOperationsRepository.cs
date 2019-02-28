@@ -8009,6 +8009,7 @@ namespace FintrakBanking.Repositories.Credit
                     loan.INTERESTRATE = (double)reviewData.INTERATERATE;
                     //-------------------------------------------------
                 }
+
                 var result = context.SaveChanges() > 0;
 
                 if (result)
@@ -18400,7 +18401,7 @@ namespace FintrakBanking.Repositories.Credit
                         LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.TermDisbursedFacility,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
                         OPERATIONTYPEID = (int)OperationsEnum.GlobalInterestRateChange,
                         EFFECTIVEDATE = effectiveDate,
-                        //REVIEWDETAILS = model.reviewDetails,
+                        REVIEWDETAILS = "Global Interest Rate Change for Loan: " + item.TERMLOANID,
                         INTERATERATE = newInterestRate,
                         PREPAYMENT = item.OUTSTANDINGPRINCIPAL,
                         PRINCIPALFREQUENCYTYPEID = item.PRINCIPALFREQUENCYTYPEID,
@@ -18422,7 +18423,7 @@ namespace FintrakBanking.Repositories.Credit
                         DATECREATED = DateTime.Now,
                     });
 
-                    context.SaveChanges();
+                        context.SaveChanges();
 
                     InterestRateReview(loanInput.loanId, loanInput, effectiveDate, staffId);
 
