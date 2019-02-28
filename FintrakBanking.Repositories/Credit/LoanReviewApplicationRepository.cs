@@ -113,6 +113,16 @@ namespace FintrakBanking.Repositories.Credit
                 timeIn = x.trail.SYSTEMARRIVALDATETIME,
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
+                creditOperationType = context.TBL_LMSR_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).Count() > 1 
+                    ? "Multiple"
+                    : context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID ==
+                            context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).OPERATIONID
+                        ).OPERATIONNAME,
+                // : "test",
+                // facilityType = "N/A",
+                facilityType = //context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID ==
+                    context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                   // ).FirstOrDefault().PRODUCTCLASSNAME,
 
                 applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
                 .Select(d => new applicationDetails
@@ -597,9 +607,6 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
-            //generate offer letter doc
-            offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
-
 
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
@@ -612,6 +619,9 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 if (operationId == lastOperationId/* || model.operationId == 71*/) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
+
+                //generate offer letter doc
+                offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
 
                 context.SaveChanges();
 
@@ -899,11 +909,12 @@ namespace FintrakBanking.Repositories.Credit
 
             int[] operations = { (int)OperationsEnum.LoanReviewApprovalAppraisal, (int)OperationsEnum.LoanReviewApprovalOfferLetter, (int)OperationsEnum.LoanReviewApprovalAvailment ,
            (int)OperationsEnum.NPLoanReviewApprovalAppraisal,(int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal};
+            int staffId = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault();
 
             var applications = from a in context.TBL_LMSR_APPLICATION
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
-                               join y in context.TBL_APPROVAL_TRAIL on d.LOANREVIEWAPPLICATIONID equals y.TARGETID
+                               join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals y.TARGETID
                               // let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
                                where y.RESPONSESTAFFID == null
                                && operations.Contains(y.OPERATIONID)
@@ -911,8 +922,8 @@ namespace FintrakBanking.Repositories.Credit
                                || g.FIRSTNAME.ToLower().Contains(searchString)
                                || g.LASTNAME.ToLower().Contains(searchString)
                                || g.MIDDLENAME.ToLower().Contains(searchString)
-                               || d.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
-                               )
+                               || d.CREATEDBY == staffId
+                              )
                                select new LoanApplicationViewModel
                                {
                                    firstName = g.FIRSTNAME,

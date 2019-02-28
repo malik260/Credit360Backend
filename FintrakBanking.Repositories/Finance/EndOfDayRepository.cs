@@ -688,6 +688,7 @@ namespace FintrakBanking.Repositories.Finance
                               }).ToList();
 
             return financeEod;
+
         }
 
     }

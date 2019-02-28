@@ -3233,5 +3233,202 @@ namespace FintrakBanking.ReportObjects
                 }
             }
 
+        public IEnumerable<LoanViewModel> GetLoanBookingReport(int companyId, string searchInfo, DateTime startDate, DateTime endDate)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+           int? staffId = context.TBL_STAFF.Where(o => o.STAFFCODE == searchInfo).Select(o => o.STAFFID).FirstOrDefault();
+
+            var termLoan = GetLoanFacility(companyId, staffId, searchInfo, startDate, endDate);
+            var Contingent = GetLoanFacility(companyId, staffId, searchInfo, startDate, endDate);
+            var revolving = GetLoanFacility(companyId, staffId, searchInfo, startDate, endDate);
+
+            return termLoan.Union(Contingent).Union(revolving);
+        }
+
+        private IEnumerable<LoanViewModel> GetLoanFacility(int companyId,int? staffId,string searchInfo, DateTime startDate, DateTime endDate)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var data = (from ln in context.TBL_LOAN
+                        join req in context.TBL_LOAN_BOOKING_REQUEST on ln.LOANAPPLICATIONDETAILID equals req.LOANAPPLICATIONDETAILID
+                        where //ln.LOANSTATUSID != (short)LoanStatusEnum.Cancelled && ln.LOANSTATUSID != (short)LoanStatusEnum.Terminated
+                         (DbFunctions.TruncateTime(ln.BOOKINGDATE) >= DbFunctions.TruncateTime(startDate) &&
+                                                  DbFunctions.TruncateTime(ln.BOOKINGDATE) <= DbFunctions.TruncateTime(endDate))
+                                                  && ln.COMPANYID == companyId
+                                                   && (ln.CREATEDBY == staffId || staffId == 0 || staffId == null)
+                                                   && (ln.LOANREFERENCENUMBER == searchInfo || searchInfo == null || searchInfo == "")
+
+
+                        select new LoanViewModel()
+                        {
+                            casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            interestRate = ln.INTERESTRATE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            bookedAmount = ln.PRINCIPALAMOUNT,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+                            principalAmount = ln.PRINCIPALAMOUNT,
+                            disbursableAmount = ln.PRINCIPALAMOUNT,
+                            approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            productTypeName = ln.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                            creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
+                            dateTimeCreated = ln.BOOKINGDATE,
+                            loanSystemTypeName = ln.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
+                            loanStatus = context.TBL_LOAN_STATUS.Where(o=>o.LOANSTATUSID== ln.LOANSTATUSID).Select(o=>o.ACCOUNTSTATUS).FirstOrDefault(),
+
+                        }).ToList();
+
+
+
+
+            return data;
+
+        }
+
+        private IEnumerable<LoanViewModel> GetRevolvingFacility(int companyId,int? staffId, string searchInfo, DateTime startDate, DateTime endDate)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var data = (from ln in context.TBL_LOAN_REVOLVING
+                        join req in context.TBL_LOAN_BOOKING_REQUEST on ln.LOANAPPLICATIONDETAILID equals req.LOANAPPLICATIONDETAILID
+                        where //ln.LOANSTATUSID != (short)LoanStatusEnum.Cancelled && ln.LOANSTATUSID != (short)LoanStatusEnum.Terminated
+                         (DbFunctions.TruncateTime(ln.BOOKINGDATE) >= DbFunctions.TruncateTime(startDate) &&
+                                                  DbFunctions.TruncateTime(ln.BOOKINGDATE) <= DbFunctions.TruncateTime(endDate))
+                                                  && ln.COMPANYID == companyId
+                                                   && (ln.CREATEDBY == staffId || staffId == 0 || staffId == null)
+                                                   && (ln.LOANREFERENCENUMBER == searchInfo || searchInfo == null || searchInfo == "")
+
+                        select new LoanViewModel()
+                        {
+                            casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            interestRate = ln.INTERESTRATE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            bookedAmount = 0,//ln.PRINCIPALAMOUNT,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+                            principalAmount = 0,//ln.PRINCIPALAMOUNT,
+                            disbursableAmount = 0,//ln.PRINCIPALAMOUNT,
+                            approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            productTypeName = ln.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                            creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
+                            dateTimeCreated = ln.DATETIMECREATED,
+                            loanSystemTypeName = ln.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
+                            loanStatus = context.TBL_LOAN_STATUS.Where(o => o.LOANSTATUSID == ln.LOANSTATUSID).Select(o => o.ACCOUNTSTATUS).FirstOrDefault(),
+                        }).ToList();
+
+
+
+
+            return data;
+
+
+        }
+
+        private IEnumerable<LoanViewModel> GetContingentFacility(int companyId,int? staffId, string searchInfo, DateTime startDate, DateTime endDate)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var data = (from ln in context.TBL_LOAN_CONTINGENT
+                        join req in context.TBL_LOAN_BOOKING_REQUEST on ln.LOANAPPLICATIONDETAILID equals req.LOANAPPLICATIONDETAILID
+                        where //ln.LOANSTATUSID != (short)LoanStatusEnum.Cancelled && ln.LOANSTATUSID != (short)LoanStatusEnum.Terminated
+                        (DbFunctions.TruncateTime(ln.BOOKINGDATE) >= DbFunctions.TruncateTime(startDate) &&
+                                                  DbFunctions.TruncateTime(ln.BOOKINGDATE) <= DbFunctions.TruncateTime(endDate))
+                                                  && ln.COMPANYID == companyId
+                                                   && (ln.CREATEDBY == staffId || staffId == 0 || staffId == null)
+                                                   && (ln.LOANREFERENCENUMBER == searchInfo || searchInfo == null || searchInfo == "")
+
+                        orderby ln.CONTINGENTLOANID descending
+
+                        select new LoanViewModel()
+                        {
+                            casaAccountNumber = ln.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            interestRate = 0,//ln.INTERESTRATE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            bookedAmount = 0,//ln.PRINCIPALAMOUNT,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+                            principalAmount = 0,//ln.PRINCIPALAMOUNT,
+                            disbursableAmount = 0,//ln.PRINCIPALAMOUNT,
+                            approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.MIDDLENAME + " " + ln.TBL_STAFF1.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            productTypeName = ln.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            loanStatusName = ln.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                            creatorName = ln.TBL_STAFF.LASTNAME + " " + ln.TBL_STAFF.FIRSTNAME + " (" + ln.TBL_STAFF.STAFFCODE + ")",
+                            dateTimeCreated = ln.DATETIMECREATED,
+                            loanSystemTypeName = ln.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
+                            loanStatus = context.TBL_LOAN_STATUS.Where(o => o.LOANSTATUSID == ln.LOANSTATUSID).Select(o => o.ACCOUNTSTATUS).FirstOrDefault(),
+
+                        }).ToList();
+
+
+
+            return data;
+        }
+
+        public List<Form3800BReportViewModel> Form3800BApprovedFacility(int companyId, DateTime startDate, DateTime endDate)
+        {
+            using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
+            {
+               var misList = (from sl in stagecontext.STG_STAFFMIS select new { sl.USERNAME, sl.GROUP_HUB, sl.DEPT_NAME}).ToList();
+              var  data = new List<Form3800BReportViewModel>();
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+
+                     data = (from x in context.TBL_LOAN_APPLICATION_DETAIL
+                                join a in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                join tr in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONDETAILID equals tr.TARGETID
+                              //  let staffCode = context.TBL_STAFF.Where(s => s.STAFFID == a.RELATIONSHIPMANAGERID).Select(s => s.STAFFCODE).FirstOrDefault()
+                               // let mis = misList.Where(o => o.USERNAME == staffCode).Select(o=>o).FirstOrDefault()
+                                where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                                  DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                                                  && a.COMPANYID == companyId
+                                select new Form3800BReportViewModel
+                                {
+                                  date =  x.DATETIMECREATED,
+                                  operativeAccount = "",
+                                 // businessUnit = mis.DEPT_NAME,
+                                  branch = a.TBL_BRANCH.BRANCHNAME,
+                                  customer = a.TBL_CUSTOMER.FIRSTNAME + "" + a.TBL_CUSTOMER.LASTNAME + "" + a.TBL_CUSTOMER.MIDDLENAME,
+                                  cap = "",
+                                  status = "",
+                                  purpose = "",
+                                  newApproval =""
+
+                                }).ToList();
+
+                }
+                return data;
+            }
         }
     }
+
+
+}

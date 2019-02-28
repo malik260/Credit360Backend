@@ -61,7 +61,9 @@ namespace FintrakBanking.ReportObjects.Credit
                                           //  producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                           //customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
                                           offerLetterTitle = b.OFFERLETTERTITLE,
-                                          offerLetterSalutation = b.OFFERLETTERSALUTATION
+                                          offerLetterSalutation = b.OFFERLETTERSALUTATION,
+                                           offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
+                                          offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
 
 
                                       }).FirstOrDefault();
@@ -92,9 +94,7 @@ namespace FintrakBanking.ReportObjects.Credit
                          }).FirstOrDefault();
             return managementPosition;
         }
-
-
-
+        
         public static List<SignatoryViewModel> GetLoanApplicationSignatory(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -160,8 +160,7 @@ namespace FintrakBanking.ReportObjects.Credit
             return new List<LoanApplicationCollateralViewModel>();
 
         }
-
-
+        
         public static List<ProductFeeViewModel> GetLoanApplicationFee(string applicationRefNumber)
         {
             if (applicationRefNumber == null) new List<ProductFeeViewModel>();
@@ -647,6 +646,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
 
         }
+
         private List<ProductFeeViewModel> Lms_Fee(int applicationDeatailId)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -729,6 +729,7 @@ namespace FintrakBanking.ReportObjects.Credit
         //    var conditionSubsequents = Lmsr_ConditionSubsequents(applicationRefNumber);
         //    return conditionSubsequents.Where(x => x.isExternal == false).ToList();
         //}
+
         public List<OfferLetterConditionPrecidentViewModel> Lmsr_ConditionSubsequents(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -765,8 +766,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
            
         }
-
-
+        
         public List<TransactionDynamicsViewModel> Lmsr_ConditionDynamics(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -823,6 +823,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
             return loanCollaterals;
         }
+
         public List<LoanApplicationCommentViewModel> Lmsr_LoanComments(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -878,6 +879,7 @@ namespace FintrakBanking.ReportObjects.Credit
                           }).FirstOrDefault();
             return clause;
         }
+
         #endregion
 
     }

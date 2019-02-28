@@ -1939,6 +1939,55 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-booking-report")]
+        public HttpResponseMessage GetLoanBookingReport([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetLoanBookingReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("form3800b-report")]
+        public HttpResponseMessage Form3800BApprovedFacility([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.Form3800BApprovedFacility(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
 

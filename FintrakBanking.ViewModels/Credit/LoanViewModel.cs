@@ -385,6 +385,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string crmsCode { get; set; }
         public string customerEmail { get; set; }
         public object totalRepayment { get; set; }
+        public string loanSystemTypeName { get; set; }
 
 
 
@@ -523,6 +524,7 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public int principalAmount { get; set; }
     }
 
     public class ContingentLoanViewModel : GeneralEntity

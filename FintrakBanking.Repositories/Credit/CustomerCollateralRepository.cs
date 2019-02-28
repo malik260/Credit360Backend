@@ -5543,11 +5543,11 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
-        public decimal GetFixedDepositAccountBalance(string AccpuntNumber)
+        public TDAccountRecordViewModel GetFixedDepositAccountDetail(string AccpuntNumber)
         {
           var  finacleBalance = finacle.ValidateTDAccountNumber(AccpuntNumber);
 
-            return finacleBalance.balance;
+            return finacleBalance;
         }
 
        
