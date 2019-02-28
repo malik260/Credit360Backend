@@ -113,7 +113,12 @@ namespace FintrakBanking.Repositories.Credit
                 timeIn = x.trail.SYSTEMARRIVALDATETIME,
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
-
+                creditOperationType = context.TBL_LMSR_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).Count() > 1 
+                    ? "Multiple" 
+                    : context.TBL_OPERATIONS.Find(
+                            context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).OPERATIONID
+                        ).OPERATIONNAME,
+                facilityType = "N/A",
                 applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
                 .Select(d => new applicationDetails
                 {
