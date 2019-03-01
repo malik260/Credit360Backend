@@ -137,6 +137,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<CollateralLoanApplication> GetLoanCollateral(int loanId, int loanType);
         List<LoanDisbursementViewModel> GetForeignLoanBeneficiaryNaration(int loanId);
         List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTriggers(int loanId, int loanSystemTypeId);
+        bool VerifyLegalContingentCode(string legalContingentCode, int loanApplicationDetailId);
 
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
         List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId);
