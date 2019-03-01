@@ -118,11 +118,7 @@ namespace FintrakBanking.Repositories.Credit
                     : context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID ==
                             context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).OPERATIONID
                         ).OPERATIONNAME,
-                // : "test",
-                // facilityType = "N/A",
-                facilityType = //context.TBL_PRODUCT_CLASS.Where(p => p.PRODUCTCLASSID ==
-                    context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-                   // ).FirstOrDefault().PRODUCTCLASSNAME,
+                facilityType = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
                 applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
                 .Select(d => new applicationDetails
