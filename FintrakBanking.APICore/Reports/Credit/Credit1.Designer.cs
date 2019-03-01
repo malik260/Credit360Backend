@@ -14677,6 +14677,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnnewApproval;
             
+            private global::System.Data.DataColumn columncurrency;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public Form3800BReportDataTable() {
@@ -14784,6 +14786,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn currencyColumn {
+                get {
+                    return this.columncurrency;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -14819,7 +14829,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public Form3800BReportRow AddForm3800BReportRow(string date, string operativeAccount, string businessUnit, string branch, string customer, string cap, string status, string purpose, string newApproval) {
+            public Form3800BReportRow AddForm3800BReportRow(string date, string operativeAccount, string businessUnit, string branch, string customer, string cap, string status, string purpose, string newApproval, string currency) {
                 Form3800BReportRow rowForm3800BReportRow = ((Form3800BReportRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         date,
@@ -14830,7 +14840,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         cap,
                         status,
                         purpose,
-                        newApproval};
+                        newApproval,
+                        currency};
                 rowForm3800BReportRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowForm3800BReportRow);
                 return rowForm3800BReportRow;
@@ -14862,6 +14873,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnstatus = base.Columns["status"];
                 this.columnpurpose = base.Columns["purpose"];
                 this.columnnewApproval = base.Columns["newApproval"];
+                this.columncurrency = base.Columns["currency"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -14885,6 +14897,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnpurpose);
                 this.columnnewApproval = new global::System.Data.DataColumn("newApproval", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnnewApproval);
+                this.columncurrency = new global::System.Data.DataColumn("currency", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncurrency);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -26641,6 +26655,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string currency {
+                get {
+                    try {
+                        return ((string)(this[this.tableForm3800BReport.currencyColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'currency\' in table \'Form3800BReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableForm3800BReport.currencyColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsdateNull() {
                 return this.IsNull(this.tableForm3800BReport.dateColumn);
             }
@@ -26745,6 +26775,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetnewApprovalNull() {
                 this[this.tableForm3800BReport.newApprovalColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IscurrencyNull() {
+                return this.IsNull(this.tableForm3800BReport.currencyColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetcurrencyNull() {
+                this[this.tableForm3800BReport.currencyColumn] = global::System.Convert.DBNull;
             }
         }
         
