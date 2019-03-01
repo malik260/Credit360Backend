@@ -243,6 +243,8 @@ namespace FintrakBanking.Repositories.Credit
                     isFirstApprover = false,
                     isFinal = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID).Select(o => o.ISFINAL).FirstOrDefault(),
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
+                    currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
+
                 });
 
             data = data.Where(x =>
@@ -2492,6 +2494,78 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductClassId = null;
             workflow.ProductId = null;
             workflow.NextLevelId = staffRoleLevelId;
+            workflow.ToStaffId = staffId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+
+            // log
+            workflow.LogActivity();
+
+            return context.SaveChanges() > 0;
+        }
+
+        public bool ReferBackOneStep(LoanAvailmentApprovalViewModel model)
+        {
+            int? productClassId = 0;
+            int staffId = 0;
+
+
+            int? currentLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == 38)
+                .OrderByDescending(x => x.APPROVALTRAILID)
+                .FirstOrDefault()
+                .TOAPPROVALLEVELID
+                ;
+
+            if (model.operationId == (int)OperationsEnum.LoanAvailment)
+            {
+                var appla = context.TBL_LOAN_APPLICATION.Find(model.targetId);
+                productClassId = appla.PRODUCTCLASSID;
+                staffId = appla.CREATEDBY;
+
+            }
+            if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            {
+                var applb = context.TBL_LMSR_APPLICATION.Find(model.targetId);
+                productClassId = null;
+                staffId = applb.CREATEDBY;
+            }
+
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.PRODUCTCLASSID == productClassId)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList()
+                     ;
+
+            int? nextId = null;
+            foreach (var level in levels)
+            {
+                if (level.levelId == currentLevelId) break;
+                nextId = level.levelId;
+            }
+
+            if (nextId == null) throw new SecureException("Unable to complete refer back. The destination approval level could not be resolved!");
+
+            // init
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = null;
+            workflow.ProductId = null;
+            workflow.NextLevelId = nextId;
             workflow.ToStaffId = staffId;
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;

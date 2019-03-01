@@ -64,5 +64,6 @@ namespace FintrakBanking.Interfaces.Credit
         OfferLetterViewModel GetOfferLetterSalutation(int custimerId);
         OfferLetterViewModel GetOfferLetterAcceptance(int applicationId);
         OfferLetterViewModel GetOfferLetterClause(int applicationId);
+        bool ReferBackOneStep(LoanAvailmentApprovalViewModel entity);
     }
 }
