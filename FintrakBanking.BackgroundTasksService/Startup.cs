@@ -15,6 +15,7 @@ namespace FintrakBanking.BackgroundTasksService
     {
         public void Configuration(IAppBuilder app)
         {
+           
             string connectionString = ConfigurationManager.ConnectionStrings["FinTrakBankingContext"].ToString();
             GlobalConfiguration.Configuration.UseStorage(
                 new OracleStorage(
@@ -30,7 +31,7 @@ namespace FintrakBanking.BackgroundTasksService
                         TransactionTimeout = TimeSpan.FromMinutes(1),
                         SchemaName = "HANGFIRE"
                     }));
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard("/hangfire");
             app.UseHangfireServer();
 
         }
