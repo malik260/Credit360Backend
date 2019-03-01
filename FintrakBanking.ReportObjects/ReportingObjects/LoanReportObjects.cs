@@ -3393,6 +3393,42 @@ namespace FintrakBanking.ReportObjects
             return data;
         }
 
+        public List<Form3800BReportViewModel> Form3800BApprovedFacility(int companyId, DateTime startDate, DateTime endDate)
+        {
+            using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
+            {
+               var misList = (from sl in stagecontext.STG_STAFFMIS select new { sl.USERNAME, sl.GROUP_HUB, sl.DEPT_NAME}).ToList();
+              var  data = new List<Form3800BReportViewModel>();
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
 
+                     data = (from x in context.TBL_LOAN_APPLICATION_DETAIL
+                                join a in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                join tr in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONDETAILID equals tr.TARGETID
+                              //  let staffCode = context.TBL_STAFF.Where(s => s.STAFFID == a.RELATIONSHIPMANAGERID).Select(s => s.STAFFCODE).FirstOrDefault()
+                               // let mis = misList.Where(o => o.USERNAME == staffCode).Select(o=>o).FirstOrDefault()
+                                where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                                  DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                                                  && a.COMPANYID == companyId
+                                select new Form3800BReportViewModel
+                                {
+                                  date =  x.DATETIMECREATED,
+                                  operativeAccount = "",
+                                 // businessUnit = mis.DEPT_NAME,
+                                  branch = a.TBL_BRANCH.BRANCHNAME,
+                                  customer = a.TBL_CUSTOMER.FIRSTNAME + "" + a.TBL_CUSTOMER.LASTNAME + "" + a.TBL_CUSTOMER.MIDDLENAME,
+                                  cap = "",
+                                  status = "",
+                                  purpose = "",
+                                  newApproval =""
+
+                                }).ToList();
+
+                }
+                return data;
+            }
+        }
     }
+
+
 }

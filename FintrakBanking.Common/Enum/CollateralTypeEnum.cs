@@ -17,5 +17,7 @@ namespace FintrakBanking.Common.Enum
         Gaurantee = 9,
         Miscellaneous = 17,
         Stock = 14,
+        Promissory = 18,
+
     }
 }
