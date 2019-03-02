@@ -14655,6 +14655,7 @@ namespace FintrakBanking.Repositories.Credit
                 //    }
                 //}
 
+                var operationRec = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
 
 
                 TBL_LOAN_CONTINGENT addContingent = new TBL_LOAN_CONTINGENT
@@ -14704,7 +14705,7 @@ namespace FintrakBanking.Repositories.Credit
                     FIELD8 = oldContingent.FIELD8,
                     FIELD9 = oldContingent.FIELD9,
                     FIELD10 = oldContingent.FIELD10,
-
+                    LEGALCONTINGENTCODE = operationRec.LEGALCONTINGENTCODE,
                 };
 
                 int operation;
@@ -19464,34 +19465,17 @@ namespace FintrakBanking.Repositories.Credit
             return documentContext.SaveChanges() != 0;
         }
 
-       public bool VerifyLegalContingentCode(string legalContingentCode)
-        {
-            bool result = false;
-            var record = (from a in context.TBL_LOAN_CONTINGENT
-                          join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                          where a.LEGALCONTINGENTCODE == legalContingentCode
-                          select a.LEGALCONTINGENTCODE 
-                          ).FirstOrDefault();
-            if (string.IsNullOrEmpty(record))
-            {
-                result = false;
-            }
-            else
-            {
-                result = true;
-            }
-            return result;
-        }
+    
 
 
         //public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model)
         public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer)
         {
-            //var record = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
+            var record = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
             //bool validatelegalContingentCode =false;
             if ((int)OperationsEnum.ContingentLiabilityRenewal == model.operationTypeId)
             {
-               bool validatelegalContingentCode = VerifyLegalContingentCode(model.legalContingentCode);
+               bool validatelegalContingentCode = loanGenerate.VerifyLegalContingentCode(model.legalContingentCode, record.LOANAPPLICATIONDETAILID);
                 if (validatelegalContingentCode)
                 {
                     throw new ConditionNotMetException("Legal Contingent Code Provided Has Been Used Before..");

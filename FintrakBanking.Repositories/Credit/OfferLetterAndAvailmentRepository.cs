@@ -325,6 +325,16 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
                     currentApprovalLevel = x.d.TBL_APPROVAL_LEVEL1.LEVELNAME,
 
+                    responsiblePerson = context.TBL_STAFF
+                                            .Where(s => s.STAFFID == x.d.TOSTAFFID)
+                                            .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
+                                            .FirstOrDefault().name ?? "",
+                    requestStaffId = x.d.REQUESTSTAFFID,
+                    toApprovalLevelId = x.d.TOAPPROVALLEVELID,
+
+
+
+
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
                     atInitiator = x.c.a.CREATEDBY == staffId,

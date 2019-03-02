@@ -10,6 +10,7 @@ using System.Web;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.CreditLimitValidations;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -518,5 +519,15 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("total-exposure-limit")]
+        public HttpResponseMessage GetTotalExposureLimit([FromBody] ExposureLimitRequestModel entity)
+        {
+            entity.companyId = token.GetCompanyId;
+            TotalExposureLimit data = repo.GetTotalExposureLimit(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
     }
 } 

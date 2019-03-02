@@ -813,5 +813,212 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             return model;
         }
+
+        public TotalExposureLimit GetTotalExposureLimit(ExposureLimitRequestModel model)
+        {
+            int? branchId = model.branchId;
+            int? sectorId = model.sectorId;
+            int? staffId = model.staffId;
+            int? customerId = model.customerId;
+            int? customerGroupId = model.customerGroupId;
+
+            decimal outstandingLoan = 0;
+            decimal outstandingRevolving = 0;
+
+            double shareHoldersFund = (double)context.TBL_COMPANY.Find(model.companyId).SHAREHOLDERSFUND;
+
+            TotalExposureLimit result = new TotalExposureLimit();
+
+            if (model.applicationId != null)
+            {
+                var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+                if (appl != null)
+                {
+                    if (branchId == null) branchId = appl.BRANCHID;
+                    if (customerId == null) customerId = appl.CUSTOMERID;
+                    if (customerGroupId == null) customerGroupId = appl.CUSTOMERGROUPID;
+                    if (sectorId == null) sectorId = appl.TBL_CUSTOMER.SUBSECTORID;
+                    if (staffId == null) appl.RELATIONSHIPOFFICERID = (int)staffId;
+                }
+            }
+
+            // relationship officer (npl)
+
+            if (staffId != null)
+            {
+                outstandingLoan = (from d in context.TBL_LOAN
+                                       where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
+                                       (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
+                                       select d.OUTSTANDINGPRINCIPAL).Sum();
+
+                outstandingRevolving = (from d in context.TBL_LOAN_REVOLVING
+                                       where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
+                                       (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
+                                       select d.OVERDRAFTLIMIT).Sum();
+
+                result.AccountOfficerNPLExposure = outstandingLoan + outstandingRevolving;
+
+                var officer = context.TBL_STAFF.FirstOrDefault(a => a.STAFFID == staffId);
+                result.AccountOfficerMaximumNPLExposure = officer.NPL_LIMIT;
+
+                result.AccountOfficerNPLLimit = result.AccountOfficerMaximumNPLExposure - result.AccountOfficerNPLExposure;
+            }
+
+            // branch (npl)
+
+            if (branchId != null)
+            {
+                outstandingLoan = (from a in context.TBL_LOAN
+                                   where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
+                                   a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                   select a.OUTSTANDINGPRINCIPAL).Sum();
+
+                outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
+                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
+                                        a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                        select a.OVERDRAFTLIMIT).Sum();
+
+                result.BranchNPLExposure = outstandingLoan + outstandingRevolving;
+
+                var branch = context.TBL_BRANCH.FirstOrDefault(a => a.BRANCHID == branchId);
+                result.BranchMaximumNPLExposure = branch.NPL_LIMIT;
+
+                result.BranchNPLLimit = result.BranchMaximumNPLExposure - result.BranchNPLExposure;
+            }
+
+            // sector
+
+            if (sectorId != null)
+            {
+                outstandingLoan = (from a in context.TBL_LOAN
+                                   join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
+                                   where a.LOANSTATUSID == (short)LoanStatusEnum.Active && c.SUBSECTORID == sectorId
+                                   select a.OUTSTANDINGPRINCIPAL).Sum();
+
+                outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
+                                        join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
+                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && c.SUBSECTORID == sectorId
+                                        select a.OVERDRAFTLIMIT).Sum();
+
+                result.SectorExposure = outstandingLoan + outstandingRevolving;
+
+                var sector = context.TBL_SECTOR.FirstOrDefault(a => a.SECTORID == sectorId);
+                result.SectorMaximumExposure = sector.LOAN_LIMIT;
+
+                result.SectorLimit = result.SectorMaximumExposure - result.SectorExposure;
+            }
+
+            // customer
+
+            if (customerId != null)
+            {
+                outstandingLoan = (from a in context.TBL_LOAN
+                                   where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.CUSTOMERID == customerId
+                                   select a.OUTSTANDINGPRINCIPAL).Sum();
+
+                outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
+                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.CUSTOMERID == customerId
+                                        select a.OVERDRAFTLIMIT).Sum();
+
+                result.ObligorExposure = outstandingLoan + outstandingRevolving;
+
+                result.ObligorMaximumExposure = (from a in context.TBL_CUSTOMER
+                                                          join b in context.TBL_CUSTOMER_RISK_RATING on a.RISKRATINGID equals b.RISKRATINGID
+                                                          where a.CUSTOMERID == customerId && a.DELETED == false
+                                                          let maximumLimit = ((b.MAX_SHAREHOLDER_FUND_PERCENTAG / 100) * shareHoldersFund)
+                                                          select (decimal)maximumLimit).FirstOrDefault();
+
+                result.ObligorLimit = result.ObligorMaximumExposure - result.ObligorExposure;
+            }
+
+            // customer group
+
+            if (customerGroupId != null)
+            {
+                outstandingLoan = (from a in context.TBL_LOAN
+                                   where a.LOANSTATUSID == (short)LoanStatusEnum.Active &&
+                                   a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID == customerGroupId
+                                   select a.OUTSTANDINGPRINCIPAL).Sum();
+
+                outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
+                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active &&
+                                        a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID == customerGroupId
+                                        select a.OVERDRAFTLIMIT).Sum();
+
+                result.ObligorExposure = outstandingLoan + outstandingRevolving;
+
+                result.ObligorMaximumExposure = (from a in context.TBL_CUSTOMER_GROUP
+                                                 join b in context.TBL_CUSTOMER_RISK_RATING on a.RISKRATINGID equals b.RISKRATINGID
+                                                 where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
+                                                 let maximumLimit = ((b.MAX_SHAREHOLDER_FUND_PERCENTAG / 100) * shareHoldersFund)
+                                                 select (decimal)maximumLimit).FirstOrDefault();
+
+                result.ObligorLimit = result.ObligorMaximumExposure - result.ObligorExposure;
+            }
+
+            // pipeline
+
+            var initiated = (from a in context.TBL_LOAN_APPLICATION
+                             join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                             where d.STATUSID == (short)ApprovalStatusEnum.Approved && a.APPROVEDDATE == null
+                             select d.APPROVEDAMOUNT).Sum();
+
+            var approved = (from a in context.TBL_LOAN_APPLICATION
+                             join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                             where d.STATUSID == (short)ApprovalStatusEnum.Approved && a.APPROVEDDATE != null &&
+                             (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestCompleted &&
+                             a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestInitiated)
+                             select d.APPROVEDAMOUNT).Sum();
+
+            result.InitiatedLoansBalance = initiated;
+
+            result.UndisbursedApprovedLoansBalance = approved;
+
+            return result;
+        }
+
+        public bool BranchLimitExceeded(int branchId, decimal applicationAmount)
+        {
+            var outstandingLoan = (from a in context.TBL_LOAN
+                               where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
+                               a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                               select a.OUTSTANDINGPRINCIPAL).Sum();
+
+            var outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
+                                    where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
+                                    a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
+                                    select a.OVERDRAFTLIMIT).Sum();
+
+            var branchNPLExposure = outstandingLoan + outstandingRevolving;
+
+            var branch = context.TBL_BRANCH.FirstOrDefault(a => a.BRANCHID == branchId);
+            var branchMaximumNPLExposure = branch.NPL_LIMIT;
+
+            var branchNPLLimit = branchMaximumNPLExposure - branchNPLExposure;
+
+            return branchNPLLimit < applicationAmount;
+        }
+
+        public bool SectorLimitExceeded(int sectorId, decimal applicationAmount)
+        {
+            var outstandingLoan = (from a in context.TBL_LOAN
+                               join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
+                               where a.LOANSTATUSID == (short)LoanStatusEnum.Active && c.SUBSECTORID == sectorId
+                               select a.OUTSTANDINGPRINCIPAL).Sum();
+
+            var outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
+                                    join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
+                                    where a.LOANSTATUSID == (short)LoanStatusEnum.Active && c.SUBSECTORID == sectorId
+                                    select a.OVERDRAFTLIMIT).Sum();
+
+            var sectorExposure = outstandingLoan + outstandingRevolving;
+
+            var sector = context.TBL_SECTOR.FirstOrDefault(a => a.SECTORID == sectorId);
+            var sectorMaximumExposure = sector.LOAN_LIMIT;
+
+            var sectorLimit = sectorMaximumExposure - sectorExposure;
+
+            return sectorLimit < applicationAmount;
+        }
     }
 }
