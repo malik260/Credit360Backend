@@ -61,7 +61,9 @@ namespace FintrakBanking.ReportObjects.Credit
                                           //  producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                           //customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
                                           offerLetterTitle = b.OFFERLETTERTITLE,
-                                          offerLetterSalutation = b.OFFERLETTERSALUTATION
+                                          offerLetterSalutation = b.OFFERLETTERSALUTATION,
+                                           offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
+                                          offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
 
 
                                       }).FirstOrDefault();

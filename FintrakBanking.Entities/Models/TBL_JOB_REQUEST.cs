@@ -32,6 +32,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? RECEIVERSTAFFID { get; set; }
 
+        public int? RESPONSESTAFFID { get; set; }
+
         public int? REASSIGNEDTO { get; set; }
 
         public bool ISREASSIGNED { get; set; }

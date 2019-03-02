@@ -14,6 +14,7 @@ namespace FintrakBanking.APICore.core
     //[EnableCors(origins: "http://localhost:4200", headers: "*", methods: "*")]
     [EnableCors(origins: "*", headers: "*", methods: "*")]
     //[SimpleRefreshTokenProvider]
+    //[AdministratorLockoutFilter]
     public class ApiControllerBase : ApiController
     {
         protected void ValidateAuthorizedUser(string userRequested)
@@ -24,11 +25,11 @@ namespace FintrakBanking.APICore.core
         }
     }
 
-    public class UnhandledExceptionFilter : ExceptionFilterAttribute
-    {
-        public override void OnException(HttpActionExecutedContext context)
-        {
-            //Log.Error(context.Exception,"OOps");
-        }
-    }
+    //public class UnhandledExceptionFilter : ExceptionFilterAttribute
+    //{
+    //    public override void OnException(HttpActionExecutedContext context)
+    //    {
+    //        //Log.Error(context.Exception,"OOps");
+    //    }
+    //}
 }

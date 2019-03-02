@@ -60,6 +60,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool politicallyExposed = false;
         private bool setResponse = true;
         private bool deferredExecution = false;
+        private bool statusOnly = false;
         private short? vote = null;
         private int? toStaffId = null;
         private bool endProcess = false;
@@ -100,6 +101,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int NewState { get { return newStateId; } }
         public bool KeepPending { set { keepPending = value; } }
         public bool DeferredExecution { set { deferredExecution = value; } }
+        public bool StatusOnly { set { statusOnly = value; } }
         public bool ForcefullyEndProcess { set { endProcess = value; keepPending = false; } } // <----------- this property is deprecated!!!
         public AlertPlaceholders Placeholders { set { placeholders = value; } }
         public WorkflowResponse Response { get { return response; } set { response = value; } }
@@ -183,6 +185,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             SendNotifications();
 
             SetResponseInformation();
+
+            if (statusOnly) return true;
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 

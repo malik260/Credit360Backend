@@ -81,7 +81,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATECREATED { get; set; }
         public string LEGALCONTINGENTCODE { get; set; }
 
-        public int? ISMARKETINDUCED { get; set; }
+        public bool ISMARKETINDUCED { get; set; }
 
         public int? PRODUCTPRICEINDEXGLOBALID { get; set; }
 

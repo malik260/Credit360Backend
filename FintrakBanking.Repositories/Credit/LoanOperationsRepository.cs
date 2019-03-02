@@ -8015,7 +8015,6 @@ namespace FintrakBanking.Repositories.Credit
                         loan.EFFECTIVEDATE = reviewData.EFFECTIVEDATE;
                         loan.INTERESTRATE = (double)reviewData.INTERATERATE;
                         //-------------------------------------------------
-
                     }
                     else
                     {
@@ -8109,6 +8108,9 @@ namespace FintrakBanking.Repositories.Credit
                         this.context.TBL_LOAN_SCHEDULE_DAILY.AddRange(tblDailySchedule); ////change to Temp table
                         context.SaveChanges();
 
+                        //MergeDailySchedule(loanId, applicationDate);
+                        //MergePeriodicSchedule(loanId, applicationDate);
+
                         //----------update loan details -----------------------------------
                         var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
                         loan.MATURITYDATE = (DateTime)reviewData.MATURITYDATE;
@@ -8122,13 +8124,12 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
 
+                    var result = context.SaveChanges() > 0;
 
-                }
-                var result = context.SaveChanges() > 0;
-
-                if (result)
-                {
-                    output = true;
+                    if (result)
+                    {
+                        output = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -14769,6 +14770,7 @@ namespace FintrakBanking.Repositories.Credit
                 //    }
                 //}
 
+                var operationRec = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
 
 
                 TBL_LOAN_CONTINGENT addContingent = new TBL_LOAN_CONTINGENT
@@ -14818,7 +14820,7 @@ namespace FintrakBanking.Repositories.Credit
                     FIELD8 = oldContingent.FIELD8,
                     FIELD9 = oldContingent.FIELD9,
                     FIELD10 = oldContingent.FIELD10,
-
+                    LEGALCONTINGENTCODE = operationRec.LEGALCONTINGENTCODE,
                 };
 
                 int operation;
@@ -18518,7 +18520,7 @@ namespace FintrakBanking.Repositories.Credit
                         LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.TermDisbursedFacility,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
                         OPERATIONTYPEID = (int)OperationsEnum.GlobalInterestRateChange,
                         EFFECTIVEDATE = effectiveDate,
-                        REVIEWDETAILS = string.Empty,//model.reviewDetails,
+                        //REVIEWDETAILS = model.reviewDetails,
                         INTERATERATE = newInterestRate,
                         PREPAYMENT = item.OUTSTANDINGPRINCIPAL,
                         PRINCIPALFREQUENCYTYPEID = item.PRINCIPALFREQUENCYTYPEID,
@@ -18540,15 +18542,7 @@ namespace FintrakBanking.Repositories.Credit
                         DATECREATED = DateTime.Now,
                     });
 
-                    try
-                    {
-                        context.SaveChanges();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw ex;
-                    }
-
+                    context.SaveChanges();
 
                     InterestRateReview((int)loanInput.loanId, loanInput, effectiveDate, staffId);
 
@@ -18562,7 +18556,7 @@ namespace FintrakBanking.Repositories.Credit
                 context.SaveChanges();
         }
 
-        public void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId, int isMarketInduced, int productPriceIndexGlobalId)
+        public void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId, bool isMarketInduced, int productPriceIndexGlobalId)
         {
             var loans = from a in context.TBL_LOAN
                         where a.MATURITYDATE >= effectiveDate && a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTPRICEINDEXID == productPriceIndexID
@@ -19708,7 +19702,7 @@ namespace FintrakBanking.Repositories.Credit
         //public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model)
         public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer)
         {
-            //var record = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
+            var record = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
             //bool validatelegalContingentCode =false;
             if ((int)OperationsEnum.ContingentLiabilityRenewal == model.operationTypeId)
             {

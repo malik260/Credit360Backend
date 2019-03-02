@@ -17,6 +17,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime EFFECTIVEDATE { get; set; }
         public short APPROVALSTATUSID { get; set; }
         public bool HASBEENAPPLIED { get; set; }
+        public bool ISMARKETINDUCED { get; set; }
+
         public int? CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
@@ -30,7 +32,5 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
-
-        public int? ISMARKETINDUCED { get; set; }
     }
 }

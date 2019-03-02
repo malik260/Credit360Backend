@@ -2429,7 +2429,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             globalPriceIndex.DATETIMEUPDATED = DateTime.Now;
                             globalPriceIndex.LASTUPDATEDBY = entity.createdBy;
                             context.SaveChanges();
-                            loanOperations.ProcessGlobalInterestRepricing(globalPriceIndex.EFFECTIVEDATE, globalPriceIndex.PRODUCTPRICEINDEXID, (short)entity.createdBy, (int)globalPriceIndex.ISMARKETINDUCED, globalPriceIndex.PRODUCTPRICEINDEXGLOBALID);
+                            loanOperations.ProcessGlobalInterestRepricing(globalPriceIndex.EFFECTIVEDATE, globalPriceIndex.PRODUCTPRICEINDEXID, (short)entity.createdBy,globalPriceIndex.ISMARKETINDUCED, globalPriceIndex.PRODUCTPRICEINDEXGLOBALID);
                             trans.Commit();
                             return 1;
 
@@ -2524,7 +2524,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         effectiveDate = data.EFFECTIVEDATE,
                         approvalStatusId = data.APPROVALSTATUSID,
                         hasBeenApplied = data.HASBEENAPPLIED,
-
+                        isMarketInduced = data.ISMARKETINDUCED,
                     });
         }
 
@@ -2542,6 +2542,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         effectiveDate = data.EFFECTIVEDATE,
                         approvalStatusId = data.APPROVALSTATUSID,
                         hasBeenApplied = data.HASBEENAPPLIED,
+                        isMarketInduced = data.ISMARKETINDUCED,
                         dateTimeUpdated = data.DATETIMEUPDATED,
                         deleted = data.DELETED,
                         deletedBy = data.DELETEDBY,
@@ -2623,6 +2624,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 EFFECTIVEDATE = prodPriceIndexGlobal.effectiveDate,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 HASBEENAPPLIED = prodPriceIndexGlobal.hasBeenApplied,
+                ISMARKETINDUCED= prodPriceIndexGlobal.isMarketInduced,
                 CREATEDBY = prodPriceIndexGlobal.createdBy,
                 DATETIMECREATED = DateTime.Now,
             };
@@ -2699,6 +2701,8 @@ namespace FintrakBanking.Repositories.Setups.General
             globalInterest.NEWRATE = prodPriceIndexGlobal.newRate;
             globalInterest.EFFECTIVEDATE = prodPriceIndexGlobal.effectiveDate;
             globalInterest.HASBEENAPPLIED = prodPriceIndexGlobal.hasBeenApplied;
+            globalInterest.ISMARKETINDUCED = prodPriceIndexGlobal.isMarketInduced;
+
             globalInterest.LASTUPDATEDBY = prodPriceIndexGlobal.lastUpdatedBy;
             globalInterest.DATETIMEUPDATED = DateTime.Now;
             globalInterest.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;

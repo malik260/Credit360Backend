@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.CreditLimitValidations;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Interfaces.CreditLimitValidations
 {
@@ -41,5 +42,9 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         CreditLimitValidationsModel ValidateApplicationCustomerRating(ObligorLimitViewModel entity);
 
         CustomerEligibility GetCustomerEligibility(string customerCode);
+        bool BranchLimitExceeded(int branchId, decimal applicationAmount);
+        bool SectorLimitExceeded(int sectorId, decimal applicationAmount);
+        TotalExposureLimit GetTotalExposureLimit(ExposureLimitRequestModel model);
+        TotalExposureLimit GetTotalExposureLimitReference(string reference, int getCompanyId);
     }
 }

@@ -97,7 +97,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanReviewIrregularScheduleViewModel> GetLoanReviewOperationIrregularSchedule(int loanReviewOperationId);
 
-        void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId, int isMarketInduced, int productPriceIndexGlobalId);
+        void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId, bool isMarketInduced, int productPriceIndexGlobalId);
 
         bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
         bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer);

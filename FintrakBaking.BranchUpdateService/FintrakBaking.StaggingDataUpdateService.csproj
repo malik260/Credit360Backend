@@ -67,7 +67,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Audit Log\AuditTrail.cs" />
-    <Compile Include="Stagging Logic\ExchangeRate.cs" />
     <Compile Include="Stagging Logic\FintrakStaggingInformationUpdate.cs" />
     <Compile Include="NewBranchService.cs">
       <SubType>Component</SubType>

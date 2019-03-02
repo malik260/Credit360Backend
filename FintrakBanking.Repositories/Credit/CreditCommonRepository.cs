@@ -180,12 +180,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    // branch limits
-                    var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
-                    decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
-                    //decimal applicationAmount = details.Sum(x => x.APPROVEDAMOUNT); // proposedAmount should be approvedAmount after application
-                    var branch = context.TBL_BRANCH.Find(branchId);
-                    if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+                    if (limitValidation.BranchLimitExceeded(branchId,applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
                 }
 
                 if (sectorOverrideRequestId != null)
@@ -204,10 +199,7 @@ namespace FintrakBanking.Repositories.Credit
                     // List<short> sectorIds = details.Select(x => x.SUBSECTORID).ToList();
                     foreach (var sectorId in sectorIds)
                     {
-                        var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
-                        decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
-                        //var sector = context.TBL_SECTOR.Find(sectorId);
-                        if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                        if (limitValidation.SectorLimitExceeded(sectorId, applicationAmount)) throw new SecureException("Sector Limit exceeded!");
                     }
                 }
             }

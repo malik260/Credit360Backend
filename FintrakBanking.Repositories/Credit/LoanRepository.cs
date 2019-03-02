@@ -320,11 +320,25 @@ namespace FintrakBanking.Repositories.Credit
             //...................CHECK IF THE LOAN RECORD IS TERM(SCHEDULED) LOAN..................//
             if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating || entity.productTypeId == (int)LoanProductTypeEnum.SyndicatedTermLoan)
             {
-                if (entity.isInEditMode)
-                    return this.EditTermLoan(entity);
+                //var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+                //var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == entity.companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+                //if (applicationDetail.CURRENCYID != defaultCurrencyId)
+                //{
+                //    if (entity.isInEditMode)
+                //        return this.EditFXLoan(entity);
 
+                //    else
+                //        return this.AddFXLoan(entity,true);
+                //}
+
+                if(entity.isInEditMode)
+                {
+                    return this.EditTermLoan(entity);
+                }
                 else
+                {
                     return this.AddTermLoan(entity);
+                }
             }
             // ...............CHECK IF THE  LOAN RECORD IS A COMMERCIAL LOAN....................//
             else if (entity.productTypeId == (int)LoanProductTypeEnum.CommercialLoan)
@@ -341,7 +355,7 @@ namespace FintrakBanking.Repositories.Credit
                     return this.EditFXLoan(entity);
 
                 else
-                    return AddFXLoan(entity);
+                    return AddFXLoan(entity,false);
             }
             // ...............CHECK IF THE LOAN RECORD IS A NON SCHEDULED LOAN....................//
             else if (entity.productTypeId == (int)LoanProductTypeEnum.RevolvingLoan)
@@ -1187,6 +1201,8 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == entity.companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+          
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var company = context.TBL_COMPANY.Find(entity.companyId);
 
@@ -1253,9 +1269,6 @@ namespace FintrakBanking.Repositories.Credit
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
 
-                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
-                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID ,
-
                 SUBSECTORID = entity.subSectorId,
                 CURRENCYID = (short)entity.currencyId,
                 EXCHANGERATE = currentExchangeRate,
@@ -1316,9 +1329,14 @@ namespace FintrakBanking.Repositories.Credit
                 REPRICINGDURATION = entity.loanScheduleInput.repricingDuration != 0 ? entity.loanScheduleInput.repricingDuration : null,
 
             };
+            if (priceIndex.PRODUCTPRICEINDEXID > 0)
+            {
+                data.PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID;
+                data.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0;
+            }
 
             //FOREIGN LOANS 'NOSTRO - INTEREST-CAP-ACCOUNT' BEHAVIOUR
-            if(entity.currencyId  != company.CURRENCYID && application.PRODUCTCLASSID != (short)ProductClassEnum.InvoiceDiscountingFacility)
+            if (entity.currencyId  != company.CURRENCYID && application.PRODUCTCLASSID != (short)ProductClassEnum.InvoiceDiscountingFacility)
             {
                 var nostroAccount = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Find(entity.casaAccountId2);
                 var nostroAccountNumber = nostroAccount.ACCOUNTID;
@@ -1604,8 +1622,8 @@ namespace FintrakBanking.Repositories.Credit
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
                 //PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
                 //PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
-                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
-                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
+                //PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
+                //PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
                 SUBSECTORID = applicationDetail.SUBSECTORID,
                 CURRENCYID = (short)applicationDetail.CURRENCYID,
                 EXCHANGERATE = currentExchangeRate,
@@ -1653,6 +1671,12 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
             };
+
+            if (priceIndex.PRODUCTPRICEINDEXID > 0)
+            {
+                data.PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID;
+                data.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0;
+            }
 
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -1861,7 +1885,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        private string AddFXLoan(LoanViewModel entity)
+        private string AddFXLoan(LoanViewModel entity, bool isTermLoan)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
@@ -1925,8 +1949,8 @@ namespace FintrakBanking.Repositories.Credit
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
                 //PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
                 //PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
-                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
-                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
+                //PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
+                //PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
                 SUBSECTORID = applicationDetail.SUBSECTORID,
                 CURRENCYID = (short)applicationDetail.CURRENCYID,
                 EXCHANGERATE = currentExchangeRate,
@@ -1978,6 +2002,12 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
             };
+
+            if (priceIndex.PRODUCTPRICEINDEXID > 0)
+            {
+                data.PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID;
+                data.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0;
+            }
 
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -2725,7 +2755,6 @@ namespace FintrakBanking.Repositories.Credit
 
                                 subSectorId = ln.SUBSECTORID,
                                 subSectorName = ln.TBL_SUB_SECTOR.NAME,
-
                                 dischargeLetter = ln.DISCHARGELETTER,
                                 suspendInterest = ln.SUSPENDINTEREST,
 
@@ -6452,7 +6481,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var staff = context.TBL_STAFF.Find(staffId);
             var activities = admin.GetUserActivitiesByUser(staffId);           
-            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
             var cpldStaffLevels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == (int)OperationsEnum.TermLoanBooking
             || x.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
@@ -11961,7 +11990,24 @@ namespace FintrakBanking.Repositories.Credit
             result.CanSeeForeignCurrency = activities.Contains("fcy-user");
             return result;
         }
-
+        public bool VerifyLegalContingentCode(string legalContingentCode, int loanApplicationDetailId)
+        {
+            bool result = false;
+            var record = (from a in context.TBL_LOAN_CONTINGENT
+                              //join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                          where a.LEGALCONTINGENTCODE == legalContingentCode && a.LOANAPPLICATIONDETAILID != loanApplicationDetailId
+                          select a.LEGALCONTINGENTCODE
+                          ).FirstOrDefault();
+            if (string.IsNullOrEmpty(record))
+            {
+                result = false;
+            }
+            else
+            {
+                result = true;
+            }
+            return result;
+        }
         public AccountBalanceViewModel GetLoanBalances(int loanId, int companyId)
         {
             return context.TBL_LOAN.Where(o => o.TERMLOANID == loanId && o.COMPANYID==companyId).Select(o =>  new AccountBalanceViewModel

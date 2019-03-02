@@ -385,6 +385,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string crmsCode { get; set; }
         public string customerEmail { get; set; }
         public object totalRepayment { get; set; }
+        public string loanSystemTypeName { get; set; }
 
 
 
@@ -523,6 +524,7 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public int principalAmount { get; set; }
     }
 
     public class ContingentLoanViewModel : GeneralEntity
@@ -675,6 +677,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanReviewOperationId { get; set; }
 
         public int requestStaffId { get; set; }
+        public int? toApprovalLevelId { get; set; }
 
         public string approvalStatusName { get; set; }
         public string lmsOperationName { get; set; }
@@ -1505,6 +1508,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string subHead { get; set; }
         public string staffCode { get; set; }
         public string teamUnit { get; set; }
+        public string depart { get; set; }
       
     }
     //public class MaturityIntructionViewModel : GeneralEntity

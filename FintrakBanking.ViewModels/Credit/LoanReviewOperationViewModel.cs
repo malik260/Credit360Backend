@@ -330,7 +330,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int? operationId { get; set; }
         public DateTime? timeIn { get; set; }
         public DateTime? timeOut { get; set; }
-
+        public string facilityType { get; set; }
+        public string creditOperationType { get; set; }
 
         public int? currentApprovalLevelTypeId { get; set; }
         public string responsiblePerson { get; set; }

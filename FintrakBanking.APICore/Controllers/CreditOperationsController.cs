@@ -1149,7 +1149,7 @@ namespace FintrakBanking.APICore.Controllers
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
                     }
 
-                    var response = repo.AddOperationReviewContingent(model);
+                    var response = repo.AddOperationReviewContingentWithImage(model, buffer);
                     if (response)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });

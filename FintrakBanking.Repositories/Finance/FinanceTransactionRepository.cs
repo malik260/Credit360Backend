@@ -70,7 +70,6 @@ namespace FintrakBanking.Repositories.Finance
 
         public CasaBalanceViewModel GetCASABalance(int casaAccountId)
         {
-
             var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
             var data = new CasaBalanceViewModel();
             if (USE_THIRD_PARTY_INTEGRATION)
@@ -82,6 +81,26 @@ namespace FintrakBanking.Repositories.Finance
             else
             {
                 return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID, currencyId = account.CURRENCYID, accountNo = account.PRODUCTACCOUNTNUMBER, accountName = account.PRODUCTACCOUNTNAME, hasBalance = true };
+            }
+
+        }
+
+        public CasaBalanceViewModel GetCASABalance(string accountNumber, int companyId)
+        {            
+            var data = new CasaBalanceViewModel();
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                data = integration.GetCustomerAccountBalance(accountNumber);
+                //Task.Run(async () => { data = await customerInfo .GetCustomerAccountBalance(account.PRODUCTACCOUNTNUMBER); }).GetAwaiter().GetResult();
+                return data; //  new CasaBalanceViewModel { availableBalance = data.availableBalance, ledgerBalance = 0,accountStatusId = data.accountStatusId);
+            }
+            else
+            {
+                var account = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTACCOUNTNUMBER == accountNumber && x.COMPANYID == companyId);
+                if (account != null)
+                    return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID, currencyId = account.CURRENCYID, accountNo = account.PRODUCTACCOUNTNUMBER, accountName = account.PRODUCTACCOUNTNAME, hasBalance = true };
+                else
+                    return data;
             }
 
         }
