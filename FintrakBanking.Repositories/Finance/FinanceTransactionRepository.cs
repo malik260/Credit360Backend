@@ -1871,8 +1871,7 @@ namespace FintrakBanking.Repositories.Finance
             return inputTransactions;
 
         }
-
-
+        
         public FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth)
         {
             //*FinanceTransactionViewModel*/ loanTransaction = new FinanceTransactionViewModel();
@@ -2424,9 +2423,7 @@ namespace FintrakBanking.Repositories.Finance
             return null;
 
         }
-
-
-
+        
         public List<FinanceTransactionViewModel> BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
             var loanData = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
@@ -2496,8 +2493,7 @@ namespace FintrakBanking.Repositories.Finance
             return inputTransactions;
 
         }
-
-
+        
         public FinanceTransactionViewModel PostDailyInterestSuspension(DailyInterestAccrualViewModel model, int loanId, DateTime applicationDate, int staffId)
 
         {

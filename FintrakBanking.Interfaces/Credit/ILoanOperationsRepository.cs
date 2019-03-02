@@ -20,6 +20,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddCollateralSearchLien(CasaLienViewModel model);
         string GetCollateralLoanNewRefernceNumber(ApprovalViewModel model);
 
+        bool DailyWrittenOffFacilityAccrual(DateTime applicationDate);
+
         decimal GetCollateralSearchChargeAmount(int stateId);
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
@@ -94,6 +96,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<RevolvingLoanViewModel> OverDraftHistory();
 
         IEnumerable<LoanReviewIrregularScheduleViewModel> GetLoanReviewOperationIrregularSchedule(int loanReviewOperationId);
+
+        void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId, int isMarketInduced, int productPriceIndexGlobalId);
 
         bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
         bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer);

@@ -81,6 +81,9 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATECREATED { get; set; }
         public string LEGALCONTINGENTCODE { get; set; }
 
+        public int? ISMARKETINDUCED { get; set; }
+
+        public int? PRODUCTPRICEINDEXGLOBALID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_REVIEW_OPRATN_IREG_SC> TBL_LOAN_REVIEW_OPRATN_IREG_SC { get; set; }
