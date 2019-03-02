@@ -3405,6 +3405,7 @@ namespace FintrakBanking.ReportObjects
 
                      data = (from x in context.TBL_LOAN_APPLICATION_DETAIL
                                 join a in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                
 
                                 let staffCode = context.TBL_STAFF.Where(s => s.STAFFID == a.RELATIONSHIPMANAGERID).Select(s => s.STAFFCODE).FirstOrDefault()
                              //   let mis = misList.Where(o => o.USERNAME == staffCode).Select(o=>o.DEPT_NAME).FirstOrDefault()
@@ -3412,7 +3413,8 @@ namespace FintrakBanking.ReportObjects
                                 where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                                                   DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                                                   && a.COMPANYID == companyId
-                                select new Form3800BReportViewModel
+                                                  && x.STATUSID == (int)ApprovalStatusEnum.Approved
+                             select new Form3800BReportViewModel
                                 {
                                   date =  a.AVAILMENTDATE,
                                   operativeAccount = "", // x cassaaccountid
@@ -3425,7 +3427,7 @@ namespace FintrakBanking.ReportObjects
                                   purpose = x.LOANPURPOSE,
                                   newApproval =x.APPROVEDAMOUNT,
                                   currency = context.TBL_CURRENCY.Where(o=>o.CURRENCYID==x.CURRENCYID).Select(o=>o.CURRENCYNAME).FirstOrDefault(),
-                                staffCode = staffCode
+                                staffCode = staffCode,
                                 }).ToList().Select(x =>
                                 {
                                     x.businessUnit = misList.Where(o => o.USERNAME == x.staffCode).Select(o => o.DIRECTORATE).FirstOrDefault();
@@ -3446,7 +3448,9 @@ namespace FintrakBanking.ReportObjects
                                where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                                               DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                                               && a.COMPANYID == companyId
-                            select new Form3800BReportViewModel
+                                              && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
+                               select new Form3800BReportViewModel
                             {
                                 date = a.AVAILMENTDATE,
                                 operativeAccount = "", // x cassaaccountid
