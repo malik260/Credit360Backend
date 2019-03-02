@@ -1504,6 +1504,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string subHead { get; set; }
         public string staffCode { get; set; }
         public string teamUnit { get; set; }
+        public string depart { get; set; }
       
     }
     //public class MaturityIntructionViewModel : GeneralEntity
