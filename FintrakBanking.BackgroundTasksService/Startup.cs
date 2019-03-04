@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using Hangfire.Oracle.Core;
 using Microsoft.Owin;
+using Oracle.ManagedDataAccess.Client;
 using Owin;
 
 [assembly: OwinStartup(typeof(FintrakBanking.BackgroundTasksService.Startup))]
@@ -17,20 +18,30 @@ namespace FintrakBanking.BackgroundTasksService
         {
            
             string connectionString = ConfigurationManager.ConnectionStrings["FinTrakBankingContext"].ToString();
+
+            //GlobalConfiguration.Configuration.UseStorage(
+            //    new OracleStorage(
+            //        connectionString,
+            //        new OracleStorageOptions
+            //        {
+            //            TransactionIsolationLevel = IsolationLevel.ReadCommitted,
+            //            QueuePollInterval = TimeSpan.FromSeconds(15),
+            //            JobExpirationCheckInterval = TimeSpan.FromHours(1),
+            //            CountersAggregateInterval = TimeSpan.FromMinutes(5),
+            //            PrepareSchemaIfNecessary = false,
+            //            DashboardJobListLimit = 50000,
+            //            TransactionTimeout = TimeSpan.FromMinutes(1),
+            //            SchemaName = "HANGFIRE"
+            //        }));
+
             GlobalConfiguration.Configuration.UseStorage(
-                new OracleStorage(
-                    connectionString,
-                    new OracleStorageOptions
-                    {
-                        TransactionIsolationLevel = IsolationLevel.ReadCommitted,
-                        QueuePollInterval = TimeSpan.FromSeconds(15),
-                        JobExpirationCheckInterval = TimeSpan.FromHours(1),
-                        CountersAggregateInterval = TimeSpan.FromMinutes(5),
-                        PrepareSchemaIfNecessary = false,
-                        DashboardJobListLimit = 50000,
-                        TransactionTimeout = TimeSpan.FromMinutes(1),
-                        SchemaName = "HANGFIRE"
-                    }));
+    new OracleStorage(
+        () => new OracleConnection(connectionString),
+        new OracleStorageOptions
+        {
+            SchemaName = "HANGFIRE"
+        }));
+
             app.UseHangfireDashboard("/hangfire");
             app.UseHangfireServer();
 
