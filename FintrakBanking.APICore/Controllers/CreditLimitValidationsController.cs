@@ -529,5 +529,14 @@ namespace FintrakBanking.APICore.Controllers
             TotalExposureLimit data = repo.GetTotalExposureLimit(entity);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("total-exposure-limit/reference/{reference}")]
+        public HttpResponseMessage GetTotalExposureLimitReference(string reference)
+        {
+            TotalExposureLimit data = repo.GetTotalExposureLimitReference(reference, token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
     }
 } 

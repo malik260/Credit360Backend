@@ -4,7 +4,6 @@ namespace FintrakBanking.Entities.Models
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("TBL_JOB_REQUEST")]
     public partial class TBL_JOB_REQUEST
@@ -49,6 +48,8 @@ namespace FintrakBanking.Entities.Models
         public int OPERATIONSID { get; set; }
 
         public short REQUESTSTATUSID { get; set; }
+
+        public short? JOBSOURCEID { get; set; }
 
         public short? JOB_STATUS_FEEDBACKID { get; set; }
 

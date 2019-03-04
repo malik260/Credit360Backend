@@ -66,7 +66,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? proposedTenor { get; set; }
         //public int tenor { get { return  }  }
         public short loanChangeType { get; set; }
-        public int loanId { get; set; }
+        //public int loanId { get; set; }
         public Double payAmount { get; set; }
         public Double newAmount { get; set; }
         public int productId { get; set; }

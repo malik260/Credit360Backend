@@ -17,7 +17,8 @@ namespace FintrakBanking.Common.Enum
         ProcessLoanRepaymentPostingPastDue = 7,
         ProcessAutomaticCommercialLoanRollover = 8,
         UpdateLoanApplicationCovenant = 9,
-        UpdateLoanClassification = 10
+        UpdateLoanClassification = 10,
+        DailyWrittenOffFacilityAccrual = 11,
     }
 }
 

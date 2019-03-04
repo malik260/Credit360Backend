@@ -2767,7 +2767,7 @@
           </Border>
           <BackgroundImage>
             <Source>Embedded</Source>
-            <Value>=IIF(First(Fields!isFinal.Value, "OfferLetterBorrowerDetail")=TRUE,nothing, "DRAFT")</Value>
+            <Value>=IIF(First(Fields!isFinal.Value, "OfferLetterDetails"))=TRUE,nothing, "DRAFT")</Value>
             <MIMEType>image/jpeg</MIMEType>
             <BackgroundRepeat>Clip</BackgroundRepeat>
           </BackgroundImage>

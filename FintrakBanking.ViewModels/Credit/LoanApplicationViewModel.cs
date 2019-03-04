@@ -574,6 +574,7 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public string facilityType { get; set; }
     }
 
     public class InvoiceDetailViewModel

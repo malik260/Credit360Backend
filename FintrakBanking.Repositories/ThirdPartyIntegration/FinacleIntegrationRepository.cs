@@ -146,8 +146,7 @@ namespace FintrakBanking.Repositories.ThirdPartyIntegration
 
                     }).ToList();
         }
-
-
+        
         #endregion
 
     }

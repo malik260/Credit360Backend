@@ -12,22 +12,15 @@ using FintrakBanking.Entities.StagingModels;
 
 namespace FintrakBanking.ReportObjects.Credit
 {
-  public  class OfferLetterInfoLMSR
+    public class OfferLetterInfoLMSR
     {
         public static OfferLetterViewModel GenerateOfferLetter(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
             FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
-            var customerExist = context.TBL_LMSR_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x=>x.CUSTOMERID).FirstOrDefault();
-            //if (customerExist != null)
-            //{
-
-            //}
-            //else
-            //{
-
-            //}
+            var customerExist = context.TBL_LMSR_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x => x.CUSTOMERID).FirstOrDefault();
+            var loanDetail = context.TBL_LMSR_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x => x).FirstOrDefault();
 
             var offerLetterDetails = (from a in context.TBL_LMSR_APPLICATION
                                       join d in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
@@ -45,32 +38,39 @@ namespace FintrakBanking.ReportObjects.Credit
                                           //from i in ii.DefaultIfEmpty()
                                           //join j in context.TBL_CUSTOMER_GROUP_MAPPING on c.CUSTOMERGROUPID equals j.CUSTOMERGROUPID into jj
                                           //from j in jj.DefaultIfEmpty()
-                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
+                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                       && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                        && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                       select new OfferLetterViewModel
                                       {
-                                          companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x=>x.NAME).FirstOrDefault(),
-                                          customerName = customerExist != null ? context.TBL_CUSTOMER.Where(x=>x.CUSTOMERID == customerExist).Select(f=>f.TITLE + " " + f.FIRSTNAME + " " + f.LASTNAME).FirstOrDefault(): c.GROUPNAME,
+                                          companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x => x.NAME).FirstOrDefault(),
+                                          customerName = customerExist != null ? context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerExist).Select(f => f.TITLE + " " + f.FIRSTNAME + " " + f.LASTNAME).FirstOrDefault() : c.GROUPNAME,
                                           customerAddress = customerExist != null ? context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == customerExist).Select(f => f.ADDRESS).FirstOrDefault() : e.ADDRESS ?? " ",
-                                         
+                                          loanApplicationId = a.LOANAPPLICATIONID,
                                           customerEmailAddress = customerExist != null ? context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerExist).Select(f => f.EMAILADDRESS).FirstOrDefault() : b.EMAILADDRESS,
                                           customerPhoneNumber = customerExist != null ? context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customerExist).Select(f => f.PHONENUMBER).FirstOrDefault() : g.PHONENUMBER,
                                           isFinal = h.ISFINAL,
-                                          operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
+                                          customerId = b.CUSTOMERID,
+                                          operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                                           //  producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                           //customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
-                                          offerLetterTitle = b.OFFERLETTERTITLE,
-                                          offerLetterSalutation = b.OFFERLETTERSALUTATION,
-                                           offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
-                                          offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
+                                          //offerLetterTitle = b.OFFERLETTERTITLE,
+                                          //offerLetterSalutation = b.OFFERLETTERSALUTATION,
+                                          // offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
+                                          //offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
 
 
                                       }).FirstOrDefault();
 
+           
             //if (offerLetterDetails.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
             //{
-                offerLetterDetails.isFinal = true;
+            offerLetterDetails.isFinal = context.TBL_LOAN_OFFER_LETTER.Where(o=>o.LOANAPPLICATIONID== loanDetail.LOANAPPLICATIONID).Select(o=>o.ISFINAL).FirstOrDefault();
+            offerLetterDetails.offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == loanDetail.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault();
+            offerLetterDetails.offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == loanDetail.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault();
+            offerLetterDetails.offerLetterTitle = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == loanDetail.CUSTOMERID).Select(o => o.OFFERLETTERTITLE).FirstOrDefault();
+            offerLetterDetails.offerLetterSalutation = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == loanDetail.CUSTOMERID).Select(o => o.OFFERLETTERSALUTATION).FirstOrDefault();
+
             //}
 
             //if (offerLetterDetails != null)
@@ -86,15 +86,15 @@ namespace FintrakBanking.ReportObjects.Credit
             FinTrakBankingContext context = new FinTrakBankingContext();
 
             //var managementPosition = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanId).Select(x=>x.MANAGEMENTPOSITION).FirstOrDefault();
-            var managementPosition =  (from a in context.TBL_LMSR_APPLICATION_DETAIL
-                         where a.LOANAPPLICATIONID == loanId
-                         select new OfferLetterViewModel
-                         {
-                             managementPosition = a.MANAGEMENTPOSITION,
-                         }).FirstOrDefault();
+            var managementPosition = (from a in context.TBL_LMSR_APPLICATION_DETAIL
+                                      where a.LOANAPPLICATIONID == loanId
+                                      select new OfferLetterViewModel
+                                      {
+                                          managementPosition = a.MANAGEMENTPOSITION,
+                                      }).FirstOrDefault();
             return managementPosition;
         }
-        
+
         public static List<SignatoryViewModel> GetLoanApplicationSignatory(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -160,7 +160,7 @@ namespace FintrakBanking.ReportObjects.Credit
             return new List<LoanApplicationCollateralViewModel>();
 
         }
-        
+
         public static List<ProductFeeViewModel> GetLoanApplicationFee(string applicationRefNumber)
         {
             if (applicationRefNumber == null) new List<ProductFeeViewModel>();
@@ -207,7 +207,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
             try
             {
-              
+
                 var loanDetails = (from a in context.TBL_LMSR_APPLICATION
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                                    join e in context.TBL_LOAN on b.LOANID equals e.TERMLOANID
@@ -235,8 +235,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                        companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x => x.NAME).FirstOrDefault(),
                                        //customerPhoneNumber = g.PHONENUMBER,
                                        applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                     newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
-                                     operarionId = (short)b.OPERATIONID,
+                                       newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                                       operarionId = (short)b.OPERATIONID,
                                    }).ToList();
 
                 if (loanDetails.Count == 0)
@@ -305,7 +305,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        operarionId = (short)b.OPERATIONID,
                                        offerLetterIntroduction = "",
                                        isRenewal = true,
-                                      // productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
+                                       // productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
 
                                    }).ToList();
                 }
@@ -321,7 +321,7 @@ namespace FintrakBanking.ReportObjects.Credit
                         x.offerLetterIntroduction = "We refer to your application for renewal/enhancement of your Credit Facilities and are pleased to advise approval of same under the following Terms and Conditions:";
                         x.isRenewal = false;
                     }
-                   
+
                 }
                 if (loanDetails != null)
                 {
@@ -370,7 +370,7 @@ namespace FintrakBanking.ReportObjects.Credit
             var conditionSubsequentData = (from a in context.TBL_LMSR_APPLICATION
                                            join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                            join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
-                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
+                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                            && b.ISSUBSEQUENT == true && b.ISEXTERNAL == true
                                            && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
                                            && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -401,14 +401,14 @@ namespace FintrakBanking.ReportObjects.Credit
                                   from b in cc.DefaultIfEmpty()
                                   join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
                                   from c in cg.DefaultIfEmpty()
-                                  where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                                     // && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                                    //   && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                  where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                  // && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                  //   && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                   select new OfferLetterViewModel
                                   {
                                       companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
                                       //customerId = b.CustomerId,
-                                    //  customerName = a.LOANAPPLICATIONTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
+                                      //  customerName = a.LOANAPPLICATIONTYPEID != 3 ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME + " - " + c.GROUPCODE,
                                       customerGroupName = c.GROUPNAME + " - " + c.GROUPCODE,
                                       customerAddress = a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                                       customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
@@ -427,25 +427,25 @@ namespace FintrakBanking.ReportObjects.Credit
                                join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
                                from d in cg.DefaultIfEmpty()
                                where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower()
-                                    //  && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                               //  && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                select new OfferLetterDetailViewModel()
                                {
-                                   productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == b.PRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
+                                   productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == b.PRODUCTID).Select(x => x.PRODUCTNAME).FirstOrDefault(),
                                    customerName = c.FIRSTNAME + " " + c.LASTNAME,
                                    customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
-                                  // currencyName = b.TBL_CURRENCY.CURRENCYNAME,
+                                   // currencyName = b.TBL_CURRENCY.CURRENCYNAME,
                                    tenor = b.APPROVEDTENOR,
                                    interestRate = b.APPROVEDINTERESTRATE,
                                    loanAmount = b.APPROVEDAMOUNT,
-                                  // exchangeRate = b.EXCHANGERATE,
-                                  // loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                   // exchangeRate = b.EXCHANGERATE,
+                                   // loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                }).ToList();
 
-            var facilityType = loanDetails.Select(x=>x.loanTypeName).FirstOrDefault();
+            var facilityType = loanDetails.Select(x => x.loanTypeName).FirstOrDefault();
 
             var totalLoanAmount = $"{loanDetails.Sum(x => x.baseCurrencyLoanAmount):f}";
 
-            var currency = loanDetails.Select(x=>x.currencyName).FirstOrDefault();
+            var currency = loanDetails.Select(x => x.currencyName).FirstOrDefault();
 
             var interestRate = loanDetails.Sum(x => x.interestRate);
 
@@ -468,7 +468,7 @@ namespace FintrakBanking.ReportObjects.Credit
             var conditionPrecedent = (from a in context.TBL_LMSR_APPLICATION
                                       join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISEXTERNAL == true
-                                    //  && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                      //  && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                       select new OfferLetterConditionPrecidentViewModel()
                                       {
                                           conditionPrecident = b.CONDITION,
@@ -524,7 +524,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
         public List<CamProcessedLoanViewModel> Lmsr_LoanDetail(string applicationRefNumber)
         {
-           
+
             FinTrakBankingContext context = new FinTrakBankingContext();
             var k = "";
             var loanDetails = (from a in context.TBL_LMSR_APPLICATION
@@ -589,7 +589,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                    companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x => x.NAME).FirstOrDefault(),
                                    //customerPhoneNumber = g.PHONENUMBER,
                                    loanApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
-                                    applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                    newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,//a.APPLICATIONDATE,
                                }).ToList();
             }
@@ -761,12 +761,12 @@ namespace FintrakBanking.ReportObjects.Credit
                 productName = o.c.TBL_PRODUCT.PRODUCTNAME
             }).GroupBy(o => o.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
 
-           return externalCondition.Union(internalCondition).ToList();
+            return externalCondition.Union(internalCondition).ToList();
 
 
-           
+
         }
-        
+
         public List<TransactionDynamicsViewModel> Lmsr_ConditionDynamics(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -845,17 +845,17 @@ namespace FintrakBanking.ReportObjects.Credit
             FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
             var customers = (from x in context.TBL_LMSR_APPLICATION
-                                join y in context.TBL_CUSTOMER on x.CUSTOMERID equals y.CUSTOMERID
-                                join b in context.TBL_BRANCH on y.BRANCHID equals b.BRANCHID
-                                where x.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                                select new CusotmerInfoViewModel()
-                                {
-                                    customer = y.LASTNAME + " " + y.FIRSTNAME + " " + y.MIDDLENAME,
-                                    date = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
-                                    branch = b.BRANCHNAME,
-                                    rmId = x.CREATEDBY,
-                                   
-                                }).ToList();
+                             join y in context.TBL_CUSTOMER on x.CUSTOMERID equals y.CUSTOMERID
+                             join b in context.TBL_BRANCH on y.BRANCHID equals b.BRANCHID
+                             where x.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                             select new CusotmerInfoViewModel()
+                             {
+                                 customer = y.LASTNAME + " " + y.FIRSTNAME + " " + y.MIDDLENAME,
+                                 date = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                                 branch = b.BRANCHNAME,
+                                 rmId = x.CREATEDBY,
+
+                             }).ToList();
 
             foreach (var x in customers)
             {

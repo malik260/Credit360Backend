@@ -3397,36 +3397,87 @@ namespace FintrakBanking.ReportObjects
         {
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
-               var misList = (from sl in stagecontext.STG_STAFFMIS select new { sl.USERNAME, sl.GROUP_HUB, sl.DEPT_NAME}).ToList();
+               var misList = (from sl in stagecontext.STG_STAFFMIS select new {sl.DIRECTORATE, sl.USERNAME, sl.GROUP_HUB, sl.DEPT_NAME}).ToList();
               var  data = new List<Form3800BReportViewModel>();
+              var  lmsData = new List<Form3800BReportViewModel>();
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
 
                      data = (from x in context.TBL_LOAN_APPLICATION_DETAIL
                                 join a in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                                join tr in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONDETAILID equals tr.TARGETID
-                              //  let staffCode = context.TBL_STAFF.Where(s => s.STAFFID == a.RELATIONSHIPMANAGERID).Select(s => s.STAFFCODE).FirstOrDefault()
-                               // let mis = misList.Where(o => o.USERNAME == staffCode).Select(o=>o).FirstOrDefault()
+                                
+
+                                let staffCode = context.TBL_STAFF.Where(s => s.STAFFID == a.RELATIONSHIPMANAGERID).Select(s => s.STAFFCODE).FirstOrDefault()
+                             //   let mis = misList.Where(o => o.USERNAME == staffCode).Select(o=>o.DEPT_NAME).FirstOrDefault()
+
                                 where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                                                   DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
                                                   && a.COMPANYID == companyId
-                                select new Form3800BReportViewModel
+                                                  && x.STATUSID == (int)ApprovalStatusEnum.Approved
+                             select new Form3800BReportViewModel
                                 {
-                                  date =  x.DATETIMECREATED,
-                                  operativeAccount = "",
-                                 // businessUnit = mis.DEPT_NAME,
+                                  date =  a.AVAILMENTDATE,
+                                  operativeAccount = "", // x cassaaccountid
+                                  businessUnit ="",
+                                    businessGroup = "", //group
                                   branch = a.TBL_BRANCH.BRANCHNAME,
                                   customer = a.TBL_CUSTOMER.FIRSTNAME + "" + a.TBL_CUSTOMER.LASTNAME + "" + a.TBL_CUSTOMER.MIDDLENAME,
-                                  cap = "",
-                                  status = "",
-                                  purpose = "",
-                                  newApproval =""
+                                  cap = "CAP",
+                                  status = "NEW APPROVAL",
+                                  purpose = x.LOANPURPOSE,
+                                  newApproval =x.APPROVEDAMOUNT,
+                                  currency = context.TBL_CURRENCY.Where(o=>o.CURRENCYID==x.CURRENCYID).Select(o=>o.CURRENCYNAME).FirstOrDefault(),
+                                staffCode = staffCode,
+                                }).ToList().Select(x =>
+                                {
+                                    x.businessUnit = misList.Where(o => o.USERNAME == x.staffCode).Select(o => o.DIRECTORATE).FirstOrDefault();
+                                    x.businessGroup = misList.Where(o => o.USERNAME == x.staffCode).Select(o => o.GROUP_HUB).FirstOrDefault();
+                                    return x;
+                                }).ToList(); ;
 
-                                }).ToList();
+                    lmsData = (from x in context.TBL_LMSR_APPLICATION_DETAIL
+                                join a in context.TBL_LMSR_APPLICATION on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                join l in context.TBL_LOAN on x.LOANID equals l.TERMLOANID
+
+                                let loanDetail = context.TBL_LOAN_APPLICATION_DETAIL.Join(
+                                    context.TBL_LOAN,a=>a.LOANAPPLICATIONDETAILID,b=>b.LOANAPPLICATIONDETAILID,(a,b)=>new { a,b}).Join(
+                                    context.TBL_LMSR_APPLICATION_DETAIL,x=>x.b.TERMLOANID,y=>y.LOANID,(x,y) => new { x.b.RELATIONSHIPMANAGERID,x.a.LOANPURPOSE,x.a.CURRENCYID}).FirstOrDefault()
+
+                               let staffCode = context.TBL_STAFF.Where(s => s.STAFFID == loanDetail.RELATIONSHIPMANAGERID).Select(s => s.STAFFCODE).FirstOrDefault()
+
+                               where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                              DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                                              && a.COMPANYID == companyId
+                                              && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
+                               select new Form3800BReportViewModel
+                            {
+                                date = a.AVAILMENTDATE,
+                                operativeAccount = "", // x cassaaccountid
+                                businessUnit ="",
+                                businessGroup = "", //group
+                                branch = a.TBL_BRANCH.BRANCHNAME,
+                                customer = a.TBL_CUSTOMER.FIRSTNAME + "" + a.TBL_CUSTOMER.LASTNAME + "" + a.TBL_CUSTOMER.MIDDLENAME,
+                                cap = "CAP",
+                                status = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==x.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(), //operationId
+                                purpose = loanDetail.LOANPURPOSE,
+                                newApproval = x.APPROVEDAMOUNT,
+                                currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == loanDetail.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
+                                staffCode = staffCode
+
+                            }).ToList().Select(x =>
+                            {
+                                x.businessUnit = misList.Where(o => o.USERNAME == x.staffCode).Select(o => o.DIRECTORATE).FirstOrDefault();
+                                x.businessGroup = misList.Where(o => o.USERNAME == x.staffCode).Select(o => o.GROUP_HUB).FirstOrDefault();
+                                x.status.ToUpper();
+                                return x;
+                            }).ToList(); 
 
                 }
-                return data;
+                return data.Union(lmsData).ToList();
             }
+
+
         }
     }
 

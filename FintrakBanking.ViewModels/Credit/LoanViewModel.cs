@@ -1037,12 +1037,15 @@ namespace FintrakBanking.ViewModels.Credit
         public short dayCountConventionId { get; set; }
 
         public double dailyAccuralAmount { get; set; }
+        
 
         public decimal availableBalance { get; set; }
 
         public int daysInAYear { get; set; }
 
         public int loanChargedFeeId { get; set; }
+
+        public int? loanId { get; set; }
 
     }
 
@@ -1094,7 +1097,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    public class LoanAvailmentApprovalViewModel: ApprovalViewModel
+    public class LoanAvailmentApprovalViewModel : ApprovalViewModel
     {
         public string applicationReferenceNumber { get; set; }
         public short applicationStatusId { get; set; }
@@ -1505,6 +1508,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string subHead { get; set; }
         public string staffCode { get; set; }
         public string teamUnit { get; set; }
+        public string depart { get; set; }
       
     }
     //public class MaturityIntructionViewModel : GeneralEntity

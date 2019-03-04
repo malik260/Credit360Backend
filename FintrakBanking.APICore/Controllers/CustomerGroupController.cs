@@ -391,7 +391,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.AddMultipleCustomerGroupMapping(customerGroups, token.GetStaffId, (short)token.GetBranchId, token.GetCompanyId);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.Created, new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.Created, new { success = true, result = data, message = "The record has been created successfully, now awaiting approval." });
 
                 }
 
