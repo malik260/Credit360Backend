@@ -883,6 +883,14 @@ namespace FintrakBanking.Repositories.Credit
                     requestStaffId = x.b.REQUESTSTAFFID,
                     toApprovalLevelId = x.b.TOAPPROVALLEVELID,
 
+                    creditOperationType = context.TBL_LMSR_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID).Count() > 1
+                    ? "Multiple"
+                    : context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID ==
+                            context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID).OPERATIONID
+                        ).OPERATIONNAME,
+
+                    facilityType = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+
                     applicationDetails = x.a.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
                     .Select(d => new applicationDetails
                     {
