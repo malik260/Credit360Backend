@@ -45,5 +45,6 @@ namespace FintrakBanking.Entities.Models
        // public string TYPE { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+        public decimal? WRITTENOFFACCRUALAMOUNT { get; set; }
     }
 }

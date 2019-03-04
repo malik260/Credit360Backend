@@ -2508,10 +2508,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool ReferBackOneStep(LoanAvailmentApprovalViewModel model)
         {
             int? productClassId = 0;
-            int staffId = 0;
 
-
-            int? currentLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == 38)
+            int? currentLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId)
                 .OrderByDescending(x => x.APPROVALTRAILID)
                 .FirstOrDefault()
                 .TOAPPROVALLEVELID
@@ -2521,17 +2519,15 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var appla = context.TBL_LOAN_APPLICATION.Find(model.targetId);
                 productClassId = appla.PRODUCTCLASSID;
-                staffId = appla.CREATEDBY;
-
             }
-            if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment ||
+                model.operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal ||
+                model.operationId == (int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal)
             {
                 var applb = context.TBL_LMSR_APPLICATION.Find(model.targetId);
                 productClassId = null;
-                staffId = applb.CREATEDBY;
             }
 
-            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
             var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.PRODUCTCLASSID == productClassId)
                  .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
@@ -2556,7 +2552,13 @@ namespace FintrakBanking.Repositories.Credit
                 nextId = level.levelId;
             }
 
-            if (nextId == null) throw new SecureException("Unable to complete refer back. The destination approval level could not be resolved!");
+            int staffId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId && x.FROMAPPROVALLEVELID == nextId)
+                .FirstOrDefault()
+                .REQUESTSTAFFID
+                ;
+
+            var from = context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).FirstOrDefault();
+            
 
             // init
             workflow.StaffId = model.createdBy;
@@ -2565,10 +2567,10 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = model.companyId;
             workflow.ProductClassId = null;
             workflow.ProductId = null;
-            workflow.NextLevelId = nextId;
+            workflow.NextLevelId = nextId ?? throw new SecureException("Unable to complete refer back. The destination approval level could not be resolved!");
             workflow.ToStaffId = staffId;
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
-            workflow.Comment = model.comment;
+            workflow.Comment = "Referred back from " + from.FIRSTNAME + " " + from.MIDDLENAME + " " + from.LASTNAME;
             workflow.DeferredExecution = true;
 
             // log
