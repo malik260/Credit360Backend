@@ -2556,8 +2556,6 @@ namespace FintrakBanking.Repositories.Credit
                 nextId = level.levelId;
             }
 
-            if (nextId == null) throw new SecureException("Unable to complete refer back. The destination approval level could not be resolved!");
-
             // init
             workflow.StaffId = model.createdBy;
             workflow.OperationId = model.operationId;
@@ -2565,7 +2563,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = model.companyId;
             workflow.ProductClassId = null;
             workflow.ProductId = null;
-            workflow.NextLevelId = nextId;
+            workflow.NextLevelId = nextId ?? throw new SecureException("Unable to complete refer back. The destination approval level could not be resolved!");
             workflow.ToStaffId = staffId;
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
