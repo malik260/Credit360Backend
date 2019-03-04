@@ -50,7 +50,7 @@ namespace FintrakBanking.Entities.Models
 
         public short REQUESTSTATUSID { get; set; }
 
-        public short JOBSOURCETYPEID { get; set; }
+        public short? JOBSOURCEID { get; set; }
 
         public short? JOB_STATUS_FEEDBACKID { get; set; }
 
