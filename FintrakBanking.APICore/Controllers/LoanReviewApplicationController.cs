@@ -186,8 +186,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application-detail/loan/{loanId}/loan-type/{loanTypeId}")]
@@ -203,6 +201,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
 
         [HttpGet, Route("lms-regional-loan-application")]
         public HttpResponseMessage GetRegionalLoanApplications([FromUri] int page, [FromUri] int itemsPerPage, [FromUri] string searchString)
