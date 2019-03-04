@@ -12404,6 +12404,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                 customerId = ln.CUSTOMERID,
                                 productId = ln.PRODUCTID,
+                                productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                 casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
@@ -12543,6 +12544,8 @@ namespace FintrakBanking.Repositories.Credit
                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                          customerId = ln.CUSTOMERID,
                                          productId = ln.PRODUCTID,
+                                         productTypeId = pr.PRODUCTTYPEID,
+
                                          casaAccountId = ln.CASAACCOUNTID,
                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
