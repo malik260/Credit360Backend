@@ -29,6 +29,7 @@ namespace FintrakBanking.Entities.Models
         public string CUSTOMERNAME { get; set; }
         public decimal PRINCIPAL { get; set; }
         public decimal INTERESTINSUSPENSE { get; set; }
+        public decimal WRITTENOFFACCRUALAMOUNT { get; set; }
         public int CAMSOLTYPEID { get; set; }
         public string ACCOUNTNUMBER { get; set; }
         public string ACCOUNTNAME { get; set; }
