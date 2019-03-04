@@ -38,7 +38,6 @@ namespace FintrakBanking.Repositories.Credit
         private ICreditLimitValidationsRepository limitValidation;
         private ICustomerCollateralRepository collateral;
         private IFinanceTransactionRepository fina;
-        private CustomerDetails _customerIntegration;
         private IIntegrationWithFinacle integration;
         private IApprovalLevelStaffRepository approvalLevel;
         private CreditCommonRepository creditCommon;
@@ -53,7 +52,6 @@ namespace FintrakBanking.Repositories.Credit
             ICustomerCollateralRepository _collateral,
             IGeneralSetupRepository _genSetup,
             FinTrakBankingContext _context,
-            CustomerDetails _customerIntegration,
             IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
              IIntegrationWithFinacle _integration,
@@ -1157,14 +1155,15 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loan.relationshipOfficerId != 0)
             {
-                var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
+                // var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
                 var loanAmt = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
                 loan.applicationAmount = loanAmt;
-                if (limit != 0)
+                if (validation.maximumAllowedLimit > 0) // && validation.limit != 0)
                 {
-                    if (loanAmt > (decimal)limit)
+                    if (loanAmt > (decimal)validation.limit)
                     {
-                        throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
+                        throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
                     }
                 }
             }

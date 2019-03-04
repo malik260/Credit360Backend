@@ -644,6 +644,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 limit = (double)accountOfficerNPLLimit,
                 limitString = (accountOfficerMaximumNPLExposure == 0) ? "No limit" : string.Format("{0:#,0.00}", accountOfficerNPLLimit),
                 nplExposure = accountOfficerNPLExposure,
+                maximumAllowedLimit = (decimal)accountOfficerMaximumNPLExposure
             };
         }
 
