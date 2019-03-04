@@ -21,6 +21,8 @@ namespace FintrakBanking.Interfaces.Finance
         List<FinanceTransactionViewModel> BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
         CasaBalanceViewModel GetCASABalance(int casaAccountId);
 
+        CasaBalanceViewModel GetCASABalance(string accountNumber, int companyId);
+
         bool PostDailyLoansInterestAccrual(DailyInterestAccrualViewModel model);
 
         FinanceTransactionViewModel PostDailyAuthorisedOverdraftInterestAccrual(DailyInterestAccrualViewModel model);
@@ -75,6 +77,8 @@ namespace FintrakBanking.Interfaces.Finance
         bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model);
 
         string GetCustomerAccountType(string accountNumber);
+
+        
 
     }
 }

@@ -289,6 +289,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string policyinsuranceType { get; set; }
         public DateTime dateOfManufacture { get; set; }
 
+
+        public int collateralPromissoryId { get; set; }
+        public string promissoryNoteRefferenceNumber { get; set; }
+        public decimal promissoryValue { get; set; }
+        public DateTime promissoryEffectiveDate { get; set; }
+        public DateTime promissoryMaturityDate { get; set; }
+
         public bool available
         {
             get

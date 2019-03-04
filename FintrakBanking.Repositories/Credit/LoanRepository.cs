@@ -11990,7 +11990,24 @@ namespace FintrakBanking.Repositories.Credit
             result.CanSeeForeignCurrency = activities.Contains("fcy-user");
             return result;
         }
-
+        public bool VerifyLegalContingentCode(string legalContingentCode, int loanApplicationDetailId)
+        {
+            bool result = false;
+            var record = (from a in context.TBL_LOAN_CONTINGENT
+                              //join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                          where a.LEGALCONTINGENTCODE == legalContingentCode && a.LOANAPPLICATIONDETAILID != loanApplicationDetailId
+                          select a.LEGALCONTINGENTCODE
+                          ).FirstOrDefault();
+            if (string.IsNullOrEmpty(record))
+            {
+                result = false;
+            }
+            else
+            {
+                result = true;
+            }
+            return result;
+        }
         public AccountBalanceViewModel GetLoanBalances(int loanId, int companyId)
         {
             return context.TBL_LOAN.Where(o => o.TERMLOANID == loanId && o.COMPANYID==companyId).Select(o =>  new AccountBalanceViewModel
