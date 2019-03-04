@@ -29,7 +29,6 @@ namespace FintrakBanking.Entities.Models
         public string CUSTOMERNAME { get; set; }
         public decimal PRINCIPAL { get; set; }
         public decimal INTERESTINSUSPENSE { get; set; }
-        public decimal WRITTENOFFACCRUALAMOUNT { get; set; }
         public int CAMSOLTYPEID { get; set; }
         public string ACCOUNTNUMBER { get; set; }
         public string ACCOUNTNAME { get; set; }
@@ -42,10 +41,10 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
-       // public decimal AMOUNTAFFECTED { get; set; }
-       // public string TYPE { get; set; }
+        // public decimal AMOUNTAFFECTED { get; set; }
+        // public string TYPE { get; set; }
+        public decimal? WRITTENOFFACCRUALAMOUNT { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
-        public decimal? WRITTENOFFACCRUALAMOUNT { get; set; }
     }
 }
