@@ -73,29 +73,37 @@ namespace FintrakBanking.Repositories.WorkFlow
                 RESPONSECOMMENT = model.responseComment,
                 ARRIVALDATE = applicationDate,
                 SYSTEMARRIVALDATE = date,
-                BRANCHID = model.branchId
+                BRANCHID = model.branchId,
+                JOBSOURCEID = model.jobSourceId 
             };
-            var job = context.TBL_JOB_REQUEST.Add(data); 
+            try
+            {
+                var job = context.TBL_JOB_REQUEST.Add(data);
 
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.audit.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-            if (context.SaveChanges() > 0)
-            {
-                return job.JOBREQUESTCODE;
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = applicationDate,
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.audit.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+                if (context.SaveChanges() > 0)
+                {
+                    return job.JOBREQUESTCODE;
+                }
+                else return string.Empty;
             }
-            else return string.Empty;
+            catch(Exception ex)
+            {
+                throw new Exception("");
+            }
         }
 
         public string AddGlobalJobRequest(JobRequestViewModel model)
@@ -2511,7 +2519,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
         }
 
-        public IEnumerable<LMSOperationListViewModel> getLMSRDetail(int targetId)
+        public IEnumerable<LMSOperationListViewModel> getLMSRApplicationDetail(int targetId)
         {
             var data =  (from x in this.context.TBL_LMSR_APPLICATION_DETAIL
                     where x.LOANREVIEWAPPLICATIONID == targetId
@@ -2522,6 +2530,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                         loanId = x.LOANID,
                         customerId = x.CUSTOMERID
                     });
+            return data;
+        }
+
+        public IEnumerable<LMSOperationListViewModel> getLMSROperation(int targetId)
+        { 
+            var data = (from x in this.context.TBL_LOAN_REVIEW_OPERATION
+                        where x.LOANREVIEWOPERATIONID == targetId
+                        select new LMSOperationListViewModel
+                        {
+                            loanSystemTypeId = (short) x.LOANSYSTEMTYPEID,
+                            operationId = (short)x.OPERATIONTYPEID,
+                            loanId = x.LOANID,
+                        });
             return data;
         }
 

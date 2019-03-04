@@ -83,7 +83,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("lmsr-application-data/{targetId}")]
         public HttpResponseMessage getLMSRDetail(int targetId)
         {
-            var data = repo.getLMSRDetail(targetId);
+            var data = repo.getLMSRApplicationDetail(targetId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lmsr-operation-data/{targetId}")]
+        public HttpResponseMessage getLMSROperation(int targetId)
+        {
+            var data = repo.getLMSROperation(targetId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 

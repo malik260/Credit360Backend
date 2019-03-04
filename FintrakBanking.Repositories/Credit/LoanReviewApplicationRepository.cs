@@ -782,6 +782,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanApplicationDetailId = detail.LOANAPPLICATIONDETAILID,
                 loanApplicationId = detail.LOANAPPLICATIONID,
+
             };
         }
 
