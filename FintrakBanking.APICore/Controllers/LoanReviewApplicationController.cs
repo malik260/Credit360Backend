@@ -340,5 +340,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("written-off-accrual-amount/loanId/{loanId}/loanSystemTypeId/{loanSystemTypeId}")]
+        public HttpResponseMessage GetWrittenOffAccrualAmount(int loanId, short loanSystemTypeId)
+        {
+            decimal? data = repo.GetWrittenOffAccrualAmount(loanId, loanSystemTypeId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
     }
 }

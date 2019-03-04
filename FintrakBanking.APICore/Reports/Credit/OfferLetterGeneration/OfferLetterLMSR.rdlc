@@ -2793,8 +2793,9 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Label>Offer Letter Clause</Label>
+                    <Label>OfferLetter Clause</Label>
                     <Value>=First(Fields!offerLetterClauses.Value, "OfferLetterDetails")</Value>
+                    <MarkupType>HTML</MarkupType>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -2827,8 +2828,9 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Label>Offer Letter Acceptance</Label>
+                    <Label>OfferLetter Acceptance</Label>
                     <Value>=First(Fields!offerLetteracceptance.Value, "OfferLetterDetails")</Value>
+                    <MarkupType>HTML</MarkupType>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
