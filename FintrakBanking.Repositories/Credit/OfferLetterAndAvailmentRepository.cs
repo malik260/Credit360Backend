@@ -2671,23 +2671,27 @@ namespace FintrakBanking.Repositories.Credit
                 offerLetterDoc.OFFERLETTERSALUTATION = "Attention : " + detail.customerName;
                 offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
 
-                var loanOfferLetter = new TBL_LOAN_OFFER_LETTER
+                if (!context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Any())
                 {
-                    CREATEDBY = staffId,
-                    DATETIMECREATED = DateTime.Now,
-                    DELETED = false,
-                    ISLMS = isLMS,
-                    LOANAPPLICATIONID = applicationId,
-                    OFFERLETTERACCEPTANCE = detail.offerLetteracceptance,
-                    OFFERLETTERCLAUSES = detail.offerLetterClauses,
-                    ISACCEPTED = true,
-                    ISFINAL = false
-                };
 
-                context.TBL_LOAN_OFFER_LETTER.Add(loanOfferLetter);
+                    var loanOfferLetter = new TBL_LOAN_OFFER_LETTER
+                    {
+                        CREATEDBY = staffId,
+                        DATETIMECREATED = DateTime.Now,
+                        DELETED = false,
+                        ISLMS = isLMS,
+                        LOANAPPLICATIONID = applicationId,
+                        OFFERLETTERACCEPTANCE = detail.offerLetteracceptance,
+                        OFFERLETTERCLAUSES = detail.offerLetterClauses,
+                        ISACCEPTED = true,
+                        ISFINAL = false
+                    };
 
-                if (callSaveChanges)
-                    context.SaveChanges();
+                    context.TBL_LOAN_OFFER_LETTER.Add(loanOfferLetter);
+
+                    if (callSaveChanges)
+                        context.SaveChanges();
+                }
             }
            
         }
