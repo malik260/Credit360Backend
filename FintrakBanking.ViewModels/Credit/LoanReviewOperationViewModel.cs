@@ -405,6 +405,9 @@ public int? newInterestFrequencyTypeId { get; set; }
 
     public class LMSOperationListViewModel
     {
+        public int loanId { get; set; }
+        public int customerId { get; set; }
+
         public short operationId { get; set; }
         public string operationName { get; set; }
         public short loanSystemTypeId { get; set; }

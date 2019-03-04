@@ -559,6 +559,35 @@ namespace FintrakBanking.Repositories.Finance
                         eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                         context.SaveChanges();
                     }
+                    else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.DailyWrittenOffFacilityAccrual)
+                    {
+                        eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+                        context.SaveChanges();
+
+                        using (TransactionScope transactionScope = new TransactionScope())
+                        {
+
+                            try
+                            {
+
+                                loanOperation.DailyWrittenOffFacilityAccrual(date);
+
+                                transactionScope.Complete();
+
+                                transactionScope.Dispose();
+                            }
+                            catch (TransactionException ex)
+                            {
+                                transactionScope.Dispose();
+                                throw ex;
+                            }
+
+                        }
+
+                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                        context.SaveChanges();
+                    }
 
                 }
 

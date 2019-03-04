@@ -516,7 +516,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                                 assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                            })).ToList().OrderByDescending(x => x.arrivalDate).Take(40).ToList();
+                            })).ToList().OrderByDescending(x => x.arrivalDate).Take(30).ToList();
             }
 
             List<int> jobRequestIds = new List<int>();
@@ -587,7 +587,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                     to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                                     assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                                })).OrderByDescending(x => x.arrivalDate).Take(40).ToList();
+                                })).OrderByDescending(x => x.arrivalDate).Take(30).ToList();
 
             }
             
@@ -655,7 +655,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                               to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                               assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                          })).OrderByDescending(x => x.arrivalDate).Take(40).ToList();
+                          })).OrderByDescending(x => x.arrivalDate).Take(30).ToList();
 
                 staffData.AddRange(xy);
             }
@@ -719,7 +719,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                  to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                                  assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                             })).OrderByDescending(x => x.arrivalDate).Take(40).ToList();
+                             })).OrderByDescending(x => x.arrivalDate).Take(30).ToList();
             }
 
             allData = adminData.Union(hubStaffData).Union(staffData).Distinct().ToList();
@@ -2509,6 +2509,20 @@ namespace FintrakBanking.Repositories.WorkFlow
                 physicalFileNumber = data.PHYSICALFILENUMBER,
                 physicalLocation = data.PHYSICALLOCATION,
             };
+        }
+
+        public IEnumerable<LMSOperationListViewModel> getLMSRDetail(int targetId)
+        {
+            var data =  (from x in this.context.TBL_LMSR_APPLICATION_DETAIL
+                    where x.LOANREVIEWAPPLICATIONID == targetId
+                    select new LMSOperationListViewModel
+                    {
+                        loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                        operationId = (short)x.OPERATIONID,
+                        loanId = x.LOANID,
+                        customerId = x.CUSTOMERID
+                    });
+            return data;
         }
 
         public bool deleteJobDocument(int documentId, int staffId)

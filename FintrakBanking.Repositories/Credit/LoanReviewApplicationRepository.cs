@@ -1298,5 +1298,13 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
+
+        public decimal? GetWrittenOffAccrualAmount(int loanId, short loanSystemTypeId)
+        {
+            decimal? amount = null;
+            var camsol = context.TBL_LOAN_CAMSOL.FirstOrDefault(x => x.LOANID == loanId && x.LOANSYSTEMTYPEID == loanSystemTypeId);
+            if (camsol != null) amount = camsol.WRITTENOFFACCRUALAMOUNT;
+            return amount;
+        }
     }
 }
