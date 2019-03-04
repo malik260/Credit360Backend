@@ -2552,8 +2552,6 @@ namespace FintrakBanking.Repositories.Credit
                 nextId = level.levelId;
             }
 
-<<<<<<< HEAD
-=======
             int staffId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId && x.FROMAPPROVALLEVELID == nextId)
                 .FirstOrDefault()
                 .REQUESTSTAFFID
@@ -2562,7 +2560,6 @@ namespace FintrakBanking.Repositories.Credit
             var from = context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).FirstOrDefault();
             
 
->>>>>>> 2b5b5845fa4784c84f59f5d81c688e819d7b6bb0
             // init
             workflow.StaffId = model.createdBy;
             workflow.OperationId = model.operationId;
