@@ -7911,7 +7911,7 @@ namespace FintrakBanking.Repositories.Credit
                     ArchiveDailySchedule(loanId, archiveBatchCode);
 
 
-                    if (loanInput.scheduleMethodId == (short)LoanScheduleTypeEnum.IrregularSchedule || loanInput.scheduleMethodId == (short)LoanScheduleTypeEnum.BulletPayment || loanInput.scheduleMethodId == (short)LoanScheduleTypeEnum.ConstantPrincipalAndInterest || loanInput.scheduleMethodId == (short)LoanScheduleTypeEnum.BallonPayment)
+                    if (loanInput.scheduleMethodId == (short)LoanScheduleTypeEnum.ConstantPrincipalAndInterest)
                     {
 
                         //----------generate and save periodic loan schedule -----------------------------------
@@ -8014,6 +8014,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         loan.EFFECTIVEDATE = reviewData.EFFECTIVEDATE;
                         loan.INTERESTRATE = (double)reviewData.INTERATERATE;
+                        context.SaveChanges();
                         //-------------------------------------------------
                     }
                     else
@@ -8119,6 +8120,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         loan.EFFECTIVEDATE = reviewData.EFFECTIVEDATE;
                         loan.INTERESTRATE = (double)reviewData.INTERATERATE;
+                        context.SaveChanges();
                         //-------------------------------------------------
 
                     }
@@ -18501,7 +18503,7 @@ namespace FintrakBanking.Repositories.Credit
         public void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId)
         {
             var loans = from a in context.TBL_LOAN
-                        where a.MATURITYDATE <= effectiveDate && a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTPRICEINDEXID == productPriceIndexID
+                        where a.MATURITYDATE >= effectiveDate && a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTPRICEINDEXID == productPriceIndexID
                         select a;
 
             LoanPaymentRestructureScheduleInputViewModel loanInput = new LoanPaymentRestructureScheduleInputViewModel();
@@ -18565,14 +18567,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId, bool isMarketInduced, int productPriceIndexGlobalId)
         {
-            var loans = from a in context.TBL_LOAN
+            var loans = (from a in context.TBL_LOAN
                         where a.MATURITYDATE >= effectiveDate && a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTPRICEINDEXID == productPriceIndexID
-                        select a;
+                        select a).ToList();
 
             LoanPaymentRestructureScheduleInputViewModel loanInput = new LoanPaymentRestructureScheduleInputViewModel();
 
             foreach (var item in loans)
             {
+
+                //if (item.TERMLOANID == 7967)
+                //{
+                //    int me = 0;
+                //}
+
                 var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.FirstOrDefault(x => x.PRODUCTPRICEINDEXID == item.PRODUCTPRICEINDEXID);
                 if (priceIndex != null)
                 {
@@ -18582,8 +18590,8 @@ namespace FintrakBanking.Repositories.Credit
                     loanInput.operationId = (int)OperationsEnum.InterestRepricing; // item.OPERATIONID;
                     loanInput.loanId = item.TERMLOANID;
                     loanInput.interestRate = newInterestRate;
-                    loanInput.interestFrequencyTypeId = (short)item.INTERESTFREQUENCYTYPEID;
-                    loanInput.principalFrequencyTypeId = (short)item.PRINCIPALFREQUENCYTYPEID;
+                    loanInput.interestFrequencyTypeId = item.INTERESTFREQUENCYTYPEID;
+                    loanInput.principalFrequencyTypeId = item.PRINCIPALFREQUENCYTYPEID;
                     loanInput.principalAmount = (double)item.OUTSTANDINGPRINCIPAL;
                     loanInput.scheduleMethodId = item.SCHEDULETYPEID;
                     loanInput.maturityDate = item.MATURITYDATE;
@@ -18605,37 +18613,46 @@ namespace FintrakBanking.Repositories.Credit
 
                     TBL_LOAN_REVIEW_OPERATION reviewOperation = new TBL_LOAN_REVIEW_OPERATION();
 
-                    reviewOperation = new TBL_LOAN_REVIEW_OPERATION
+                    try
                     {
-                        LOANID = item.TERMLOANID,
-                        LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.TermDisbursedFacility,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
-                        OPERATIONTYPEID = (int)OperationsEnum.InterestRepricing,
-                        EFFECTIVEDATE = effectiveDate,
-                        REVIEWDETAILS = "Global Interest Rate Change",
-                        INTERATERATE = newInterestRate,
-                        PREPAYMENT = item.OUTSTANDINGPRINCIPAL,
-                        PRINCIPALFREQUENCYTYPEID = item.PRINCIPALFREQUENCYTYPEID,
-                        INTERESTFREQUENCYTYPEID = item.INTERESTFREQUENCYTYPEID,
-                        PRINCIPALFIRSTPAYMENTDATE = item.FIRSTPRINCIPALPAYMENTDATE,
-                        INTERESTFIRSTPAYMENTDATE = item.FIRSTINTERESTPAYMENTDATE,
-                        MATURITYDATE = item.MATURITYDATE,
-                        //TENOR = item.,
-                        //CASA_ACCOUNTID = model.cASA_AccountId,
-                        //OVERDRAFTTOPUP = model.overDraftTopup,
-                        //FEE_CHARGES = model.fee_Charges,
-                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
-                        ISMANAGEMENTINTERESTRATE = false,
-                        SCHEDULETYPEID = item.SCHEDULETYPEID,
-                        SCHEDULEDAYINTERESTTYPEID = item.SCHEDULEDAYINTERESTTYPEID,
-                        SCHEDULEDAYCOUNTCONVENTIONID = item.SCHEDULEDAYCOUNTCONVENTIONID,
-                        OPERATIONCOMPLETED = false,
-                        CREATEDBY = staffId,
-                        DATECREATED = DateTime.Now,
-                        ISMARKETINDUCED = isMarketInduced,
-                        PRODUCTPRICEINDEXGLOBALID = productPriceIndexGlobalId,
-                    };
+                        reviewOperation = new TBL_LOAN_REVIEW_OPERATION
+                        {
+                            LOANID = item.TERMLOANID,
+                            LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.TermDisbursedFacility,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
+                            OPERATIONTYPEID = (int)OperationsEnum.InterestRepricing,
+                            EFFECTIVEDATE = effectiveDate,
+                            REVIEWDETAILS = "Global Interest Rate Change",
+                            INTERATERATE = newInterestRate,
+                            PREPAYMENT = item.OUTSTANDINGPRINCIPAL,
+                            PRINCIPALFREQUENCYTYPEID = item.PRINCIPALFREQUENCYTYPEID,
+                            INTERESTFREQUENCYTYPEID = item.INTERESTFREQUENCYTYPEID,
+                            PRINCIPALFIRSTPAYMENTDATE = item.FIRSTPRINCIPALPAYMENTDATE,
+                            INTERESTFIRSTPAYMENTDATE = item.FIRSTINTERESTPAYMENTDATE,
+                            MATURITYDATE = item.MATURITYDATE,
+                            //TENOR = item.,
+                            //CASA_ACCOUNTID = model.cASA_AccountId,
+                            //OVERDRAFTTOPUP = model.overDraftTopup,
+                            //FEE_CHARGES = model.fee_Charges,
+                            APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
+                            ISMANAGEMENTINTERESTRATE = false,
+                            SCHEDULETYPEID = item.SCHEDULETYPEID,
+                            SCHEDULEDAYINTERESTTYPEID = item.SCHEDULEDAYINTERESTTYPEID,
+                            SCHEDULEDAYCOUNTCONVENTIONID = item.SCHEDULEDAYCOUNTCONVENTIONID,
+                            OPERATIONCOMPLETED = false,
+                            CREATEDBY = staffId,
+                            DATECREATED = DateTime.Now,
+                            ISMARKETINDUCED = isMarketInduced,
+                            PRODUCTPRICEINDEXGLOBALID = productPriceIndexGlobalId,
+                        };
 
-                    context.TBL_LOAN_REVIEW_OPERATION.Add(reviewOperation);
+                        context.TBL_LOAN_REVIEW_OPERATION.Add(reviewOperation);
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw ex;
+                    }
+                    
 
                     try
                     {
@@ -18648,7 +18665,16 @@ namespace FintrakBanking.Repositories.Credit
 
                     loanInput.loanReviewOperationsId = reviewOperation.LOANREVIEWOPERATIONID;
 
-                    InterestRateReview((int)loanInput.loanId, loanInput, effectiveDate, staffId);
+                    try
+                    {
+                        InterestRateReview((int)loanInput.loanId, loanInput, effectiveDate, staffId);
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw ex;
+                    }
+                   
 
                     item.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE;
 
