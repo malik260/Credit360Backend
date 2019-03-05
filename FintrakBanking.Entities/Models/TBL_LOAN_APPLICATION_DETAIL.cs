@@ -112,7 +112,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public int? CASAACCOUNTID { get; set; } //CASAACCOUNTID
+        public int? CASAACCOUNTID { get; set; } 
+
+        public int? OPERATINGCASAACCOUNTID { get; set; }
 
         public bool SECUREDBYCOLLATERAL { get; set; }
         public int? CRMSCOLLATERALTYPEID { get; set; }
