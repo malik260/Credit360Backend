@@ -15,8 +15,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanId { get; set; }
         public short? principalFrequency { get; set; } 
         public short? interestFrequency { get; set; }
-        public int principalFrequencyTypeId { get; set; }
-        public int interestFrequencyTypeId { get; set; }
+        public int? principalFrequencyTypeId { get; set; }
+        public int? interestFrequencyTypeId { get; set; }
         public Boolean shouldDisburse { get; set; }
         public DateTime loanDate { get; set; }
         public DateTime firstPaymentDate { get; set; }
