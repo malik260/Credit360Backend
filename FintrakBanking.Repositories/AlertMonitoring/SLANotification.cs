@@ -15,9 +15,14 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 {
     public class SLANotification : ISLANotification
     {
-        private FinTrakBankingContext context = new FinTrakBankingContext();
+        private FinTrakBankingContext context;
+        public SLANotification(FinTrakBankingContext _context)
+        {
+            context = _context;
+        }
+       // private FinTrakBankingContext context = new FinTrakBankingContext();
         private DateTime applDate;
-        public string response = string.Empty;
+      //  public string response = string.Empty;
 
         public IEnumerable<SLANotificationViewModel> RoleBasedApprovalNotification()
         {

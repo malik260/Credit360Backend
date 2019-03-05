@@ -2865,6 +2865,7 @@
                   <TextRun>
                     <Label>Offer Letter Salutation</Label>
                     <Value>=First(Fields!offerLetterSalutation.Value, "OfferLetterDetails")</Value>
+                    <MarkupType>HTML</MarkupType>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -2899,6 +2900,7 @@
                   <TextRun>
                     <Label>Offer Letter Title</Label>
                     <Value>=First(Fields!offerLetterTitle.Value, "OfferLetterDetails")</Value>
+                    <MarkupType>HTML</MarkupType>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
