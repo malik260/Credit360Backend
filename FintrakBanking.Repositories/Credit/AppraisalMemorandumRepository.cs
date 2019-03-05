@@ -1432,6 +1432,7 @@ namespace FintrakBanking.Repositories.Credit
                         operationId = x.a.OPERATIONID,
                         customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                         customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
+                        facilityType = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED != true && s.STATUSID == (int)ApprovalStatusEnum.Approved).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
                         responsiblePerson = context.TBL_STAFF
                                                     .Where(s => s.STAFFID == x.b.TOSTAFFID)

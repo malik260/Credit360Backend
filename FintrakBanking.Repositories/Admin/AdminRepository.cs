@@ -492,7 +492,12 @@ namespace FintrakBanking.Repositories.Admin
                                   select new UserActivities
                                   {
                                       activityId = a.ACTIVITYID,
-                                      userId = a.USERID
+                                      activityName = context.TBL_PROFILE_ACTIVITY.Where(x=>x.ACTIVITYID == a.ACTIVITYID).Select(g=>g.ACTIVITYNAME).FirstOrDefault(),
+                                      userId = a.USERID,
+                                      activityParentId = context.TBL_PROFILE_ACTIVITY.Where(x => x.ACTIVITYID == a.ACTIVITYID).Select(g => g.ACTIVITYPARENTID).FirstOrDefault(),
+                                      activityParentName = context.TBL_PROFILE_ACTIVITY_PARENT.Where(x => x.ACTIVITYPARENTID == context.TBL_PROFILE_ACTIVITY.Where(b => b.ACTIVITYID == a.ACTIVITYID).Select(g => g.ACTIVITYPARENTID).FirstOrDefault()).Select(p => p.ACTIVITYPARENTNAME).FirstOrDefault(),
+
+                                      selected = true,
                                   }).ToList();
                 data.activities = activities;
             }
@@ -819,8 +824,26 @@ namespace FintrakBanking.Repositories.Admin
                                       {
                                           activityId = x.ACTIVITYID,
                                           activityName = x.ACTIVITYNAME,
-                                          activityParentId = x.ACTIVITYPARENTID
+                                          activityParentId = x.ACTIVITYPARENTID,
+                                          selected = false,
                                       }).ToList()
+                   };
+        }
+
+        public IEnumerable<UserActivities> GetActivityDetails(int parentId)
+        {
+            return from x in context.TBL_PROFILE_ACTIVITY
+                   where x.ACTIVITYPARENTID == parentId
+
+                   select new UserActivities
+                   {
+                       activityId = x.ACTIVITYID,
+                        activityName = x.ACTIVITYNAME,
+                        activityParentId = x.ACTIVITYPARENTID,
+                       activityParentName = context.TBL_PROFILE_ACTIVITY_PARENT.Where(k => k.ACTIVITYPARENTID == x.ACTIVITYPARENTID).Select(p => p.ACTIVITYPARENTNAME).FirstOrDefault(),
+
+                       selected = false,
+                     
                    };
         }
         //public IEnumerable<ActivityParent> Get(int staffId)

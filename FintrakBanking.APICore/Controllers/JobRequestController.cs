@@ -78,6 +78,34 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lmsr-application-data/{targetId}")]
+        public HttpResponseMessage getLMSRDetail(int targetId)
+        {
+            var data = repo.getLMSRApplicationDetail(targetId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lmsr-operation-data/{targetId}")]
+        public HttpResponseMessage getLMSROperation(int targetId)
+        {
+            var data = repo.getLMSROperation(targetId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-data/{loanId}/operation/{operationId}")]
+        public HttpResponseMessage getLMSROperation(int loanId, int operationId)
+        {
+            var data = repo.getLOSOperationLoanData(loanId, operationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+        
+
         [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/staff")]
         public HttpResponseMessage getJobRequestByStaffId()
@@ -145,10 +173,10 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet] [ClaimsAuthorization]  
-        [Route("application-detail-job-request/{applicationDetailId}")]
-        public HttpResponseMessage GetApplicationJobRequest(int applicationDetailId)
+        [Route("application-detail-job-request/{targetId}/Operation/{operationId}")]
+        public HttpResponseMessage GetApplicationJobRequest(int targetId, int operationId)
         {
-            var data = repo.GetApplicationJobRequest(applicationDetailId);
+            var data = repo.GetApplicationJobRequest(targetId, operationId);
 
             if (data == null)
             {

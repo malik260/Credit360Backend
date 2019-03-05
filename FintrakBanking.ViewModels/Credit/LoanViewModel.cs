@@ -1097,7 +1097,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    public class LoanAvailmentApprovalViewModel: ApprovalViewModel
+    public class LoanAvailmentApprovalViewModel : ApprovalViewModel
     {
         public string applicationReferenceNumber { get; set; }
         public short applicationStatusId { get; set; }

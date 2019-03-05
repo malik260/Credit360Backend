@@ -68,6 +68,7 @@ namespace FintrakBanking.APICore.Providers
             {
                 string ipAddress = GetIpAddress();
                 UserViewModel user = null;
+                //var profile2 = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == context.UserName.ToLower());// && c.PASSWORD == password);
 
                 var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
                 var exipredMin = int.Parse(ConfigurationManager.AppSettings["tokenExpiryMinute"]);
@@ -82,8 +83,7 @@ namespace FintrakBanking.APICore.Providers
 
                 var authRepo = new AuthenticationRepository(_bankingContext,null);
 
-                appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
-
+               
                 ActiveUserDetails userInfo = authRepo.GetUserAuthenticationInfo(userVm.username);
 
                 if (authRepo.GetRunningEndOfDayProcess(userInfo.countryId))
@@ -97,6 +97,8 @@ namespace FintrakBanking.APICore.Providers
                     context.SetError("invalid_grant", userInfo.grantMessage);
                     return;
                 }
+
+                appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
 
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {
@@ -138,6 +140,7 @@ namespace FintrakBanking.APICore.Providers
                     //    .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
                     //    .Result;
                     user = authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password);
+
                     if (user == null)
                     {
                         context.SetError("invalid_grant", "Login Failure.");

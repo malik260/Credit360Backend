@@ -199,7 +199,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_JOB_REQUEST_STATUS> TBL_JOB_REQUEST_STATUS { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_STATUS_FEEDBAK> TBL_JOB_REQUEST_STATUS_FEEDBAK { get; set; }
         public virtual DbSet<TBL_JOB_TYPE> TBL_JOB_TYPE { get; set; }
-        public virtual DbSet<TBL_JOB_TYPE_HUB> TBL_JOB_TYPE_HUB { get; set; } 
+        public virtual DbSet<TBL_JOB_TYPE_HUB> TBL_JOB_TYPE_HUB { get; set; }
+        public virtual DbSet<TBL_JOB_SOURCE> TBL_JOB_SOURCE { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_UNIT> TBL_JOB_TYPE_UNIT { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_REASSIGNMENT> TBL_JOB_TYPE_REASSIGNMENT { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_DEPARTMENT> TBL_JOB_TYPE_DEPARTMENT { get; set; }

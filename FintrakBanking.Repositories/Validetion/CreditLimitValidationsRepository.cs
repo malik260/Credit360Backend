@@ -643,7 +643,8 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 approved = approved,
                 limit = (double)accountOfficerNPLLimit,
                 limitString = (accountOfficerMaximumNPLExposure == 0) ? "No limit" : string.Format("{0:#,0.00}", accountOfficerNPLLimit),
-                nplExposure = accountOfficerNPLExposure
+                nplExposure = accountOfficerNPLExposure,
+                maximumAllowedLimit = (decimal)accountOfficerMaximumNPLExposure
             };
         }
 
@@ -885,12 +886,12 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 outstandingLoan = (from d in context.TBL_LOAN
                                        where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
                                        (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
-                                       select d.OUTSTANDINGPRINCIPAL).Sum();
+                                       select (decimal?)d.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
                 outstandingRevolving = (from d in context.TBL_LOAN_REVOLVING
                                        where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
                                        (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
-                                       select d.OVERDRAFTLIMIT).Sum();
+                                       select (decimal?)d.OVERDRAFTLIMIT).Sum() ?? 0;
 
                 result.AccountOfficerNPLExposure = outstandingLoan + outstandingRevolving;
 
@@ -907,7 +908,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 outstandingLoan = (from a in context.TBL_LOAN
                                    where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
                                    a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                                   select a.OUTSTANDINGPRINCIPAL).Sum();
+                                   select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
                 outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
                                         where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
@@ -922,7 +923,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 result.BranchNPLLimit = result.BranchMaximumNPLExposure - result.BranchNPLExposure;
             }
 
-            var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.DELETED == false && x.STATUSID == (int)ApprovalStatusEnum.Approved && x.LOANAPPLICATIONID == model.applicationId);
+            var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.DELETED == false && x.STATUSID == (int)ApprovalStatusEnum.Approved && x.LOANAPPLICATIONID == model.applicationId).ToList();
 
             List<RequestExposureLimit> limits = new List<RequestExposureLimit>();
 
@@ -943,7 +944,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                     outstandingLoan = (from a in context.TBL_LOAN
                                        join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && c.SUBSECTORID == sectorId
-                                       select a.OUTSTANDINGPRINCIPAL).Sum();
+                                       select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
                     outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
                                             join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
@@ -964,7 +965,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 {
                     outstandingLoan = (from a in context.TBL_LOAN
                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.CUSTOMERID == customerId
-                                       select a.OUTSTANDINGPRINCIPAL).Sum();
+                                       select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
                     outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
                                             where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.CUSTOMERID == customerId
@@ -1019,14 +1020,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var initiated = (from a in context.TBL_LOAN_APPLICATION
                              join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                              where d.STATUSID == (short)ApprovalStatusEnum.Approved && a.APPROVEDDATE == null
-                             select d.APPROVEDAMOUNT).Sum();
+                             select (decimal?)d.APPROVEDAMOUNT).Sum() ?? 0;
 
             var approved = (from a in context.TBL_LOAN_APPLICATION
                              join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                              where d.STATUSID == (short)ApprovalStatusEnum.Approved && a.APPROVEDDATE != null &&
                              (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestCompleted &&
                              a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestInitiated)
-                             select d.APPROVEDAMOUNT).Sum();
+                             select (decimal?)d.APPROVEDAMOUNT).Sum() ?? 0;
 
             result.InitiatedLoansBalance = initiated;
 

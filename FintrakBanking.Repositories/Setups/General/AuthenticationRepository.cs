@@ -25,14 +25,21 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingContext context;
         private  IAuditTrailRepository _auditTrail;
         private SessionStatusInfo _sessionInfo;
-        TBL_PROFILE_SETTING profile_Setting;
+
+        TBL_PROFILE_SETTING profileSetting = null;
+
         public string LogCode { get; set; }
 
         public AuthenticationRepository(FinTrakBankingContext _context, IAuditTrailRepository auditTrail)
         {
-            this.context = _context;
-            profile_Setting = _context.TBL_PROFILE_SETTING.FirstOrDefault();
+            context = _context;
             _auditTrail = auditTrail != null ? auditTrail : new AuditTrailRepository(_context);
+        }
+
+        private TBL_PROFILE_SETTING GetProfileSettings()
+        {
+            if (profileSetting != null) return profileSetting;
+            return context.TBL_PROFILE_SETTING.FirstOrDefault();
         }
 
         public async Task<bool> CreateUser(UserViewModel user)
@@ -337,9 +344,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             UserViewModel data = null;
             var result = _sessionInfo;
-            data = UserLoginDetails(username, password);
 
-            result.isPasswordExpired = IsPasswordExpired(username);
+            //try { 
+            data = UserLoginDetails(username, password);
+            //}catch(Exception ex)
+               // {
+
+                //}
+    result.isPasswordExpired = IsPasswordExpired(username);
             result.isFirstLogin = IsFirstLogin(username);
             if (result.state > 0)
             {
@@ -546,17 +558,19 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool PasswordStandard(string password)
         {
-            if (profile_Setting.MINREQUIREDPASSWORDLENGTH > password.Length)
-                throw new SecureException($"Password should not be {profile_Setting.MINREQUIREDPASSWORDLENGTH} less characters");
+            var setting = GetProfileSettings();
 
-            if (profile_Setting.MINREQUIREDNONALPHANUMERICCHAR > 0)
+            if (setting.MINREQUIREDPASSWORDLENGTH > password.Length)
+                throw new SecureException($"Password should not be {setting.MINREQUIREDPASSWORDLENGTH} less characters");
+
+            if (setting.MINREQUIREDNONALPHANUMERICCHAR > 0)
             {
                 if (!CommonHelpers.isAlphaNumeric(password))
                 {
                     throw new SecureException($"Password should alphanumeric.");
                 }
                 else
-                    throw new SecureException($"Password should not be {profile_Setting.MINREQUIREDNONALPHANUMERICCHAR} less characters");
+                    throw new SecureException($"Password should not be {setting.MINREQUIREDNONALPHANUMERICCHAR} less characters");
 
             }
 
@@ -565,7 +579,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private UserViewModel UserLoginDetails(string username, string password) // ERROR POINT 3 - underlying provider...
         {
-            var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username.ToLower());// && c.PASSWORD == password);
+            var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToUpper() == username.ToUpper());// && c.PASSWORD == password);
 
             if (profile != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {
@@ -639,7 +653,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         profile.LASTLOCKOUTDATE = DateTime.Now;
                     }
 
-                    //db.Entry(faileddata).State = EntityState.Modified;
+                    context.Entry(profile).State = EntityState.Modified;
+
                     context.SaveChanges();
 
                     throw new SecureException("1001 Login Failure.");
@@ -736,6 +751,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public UserViewModel GetSingleUserByUserName(string userName)
         {
+            var setting = GetProfileSettings();
+
             return (from u in context.TBL_PROFILE_USER
                     join st in context.TBL_STAFF
                     on u.STAFFID equals st.STAFFID
@@ -748,13 +765,15 @@ namespace FintrakBanking.Repositories.Setups.General
                         isActive = u.ISACTIVE,
                         staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
                         email = st.EMAIL,
-                        sessionTimeout = this.profile_Setting.SESSIONTIMEOUT
+                        sessionTimeout = setting.SESSIONTIMEOUT
                     }).FirstOrDefault();
 
         }
 
         public UserViewModel GetUserLoginInfoByUserName(string userName)
         {
+            var setting = GetProfileSettings();
+
             return (from u in context.TBL_PROFILE_USER
                     join st in context.TBL_STAFF
                     on u.STAFFID equals st.STAFFID
@@ -777,7 +796,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                         groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
                                     }).ToList(),
                         isLocked = u.ISLOCKED,
-                        sessionTimeout = this.profile_Setting.SESSIONTIMEOUT
+                        sessionTimeout = setting.SESSIONTIMEOUT
                     }).FirstOrDefault();
 
         }
@@ -840,6 +859,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool PasswordChange(PasswordChangeViewModel pwdChange)
         {
+            var setting = GetProfileSettings();
 
             if (pwdChange.currentPassword != pwdChange.newPassword)
             {
@@ -847,7 +867,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 var daat = context.TBL_PROFILE_PASSWORD_HISTORY.Where(p => p.USERID == data.USERID && p.PASSWORD == pwdChange.newPassword)
                                                             .OrderBy(p => p.DATETIMECREATED)
-                                                            .Take(profile_Setting.ALLOWPASSWORDREUSEAFTER);
+                                                            .Take(setting.ALLOWPASSWORDREUSEAFTER);
                 if (!daat.Any())
                 {
                     if (data != null && data.PASSWORD == pwdChange.currentPassword)
@@ -856,7 +876,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         data.PASSWORD = pwdChange.newPassword;
                         data.DATETIMEUPDATED = DateTime.Now;
                         data.LASTUPDATEDBY = staffId;
-                        data.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);
+                        data.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(setting.EXPIREPASSWORDAFTER);
                         var history = new TBL_PROFILE_PASSWORD_HISTORY
                         {
                             CREATEDBY = staffId,
@@ -872,7 +892,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         throw new SecureException("Password is not valid");
                 }
                 else
-                    throw new SecureException($"You are not allow to re-use the previous {profile_Setting.ALLOWPASSWORDREUSEAFTER} passwords");
+                    throw new SecureException($"You are not allow to re-use the previous {setting.ALLOWPASSWORDREUSEAFTER} passwords");
             }
             else
                 throw new SecureException("New Password should not be same as the Current Password");

@@ -35,6 +35,11 @@ namespace FintrakBanking.ViewModels.Admin
         public int userId { get; set; }
         public int activityId { get; set; }
         public string activityName { get; set; }
+        public int activityParentId { get; set; }
+        public string activityParentName { get; set; }
+
+        public bool selected { get; set; }
+
     }
     public class Users
     {
