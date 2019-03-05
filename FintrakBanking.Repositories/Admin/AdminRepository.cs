@@ -846,6 +846,27 @@ namespace FintrakBanking.Repositories.Admin
                      
                    };
         }
+
+        public IEnumerable<UserActivities> GetActivityDetails(int parentId, int staffId)
+        {
+            var parentActivities = from x in context.TBL_PROFILE_ACTIVITY
+                   where x.ACTIVITYPARENTID == parentId
+
+                   select new UserActivities
+                   {
+                       activityId = x.ACTIVITYID,
+                       activityName = x.ACTIVITYNAME,
+                       activityParentId = x.ACTIVITYPARENTID,
+                       activityParentName = context.TBL_PROFILE_ACTIVITY_PARENT.Where(k => k.ACTIVITYPARENTID == x.ACTIVITYPARENTID).Select(p => p.ACTIVITYPARENTNAME).FirstOrDefault(),
+
+                       selected = false,
+
+                   };
+
+
+
+            return parentActivities;
+        }
         //public IEnumerable<ActivityParent> Get(int staffId)
         //{
         //               activities = context.TBL_PROFILE_ACTIVITY
