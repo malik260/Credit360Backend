@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.WorkFlow;
-using FintrakBanking.Common.Enum;
-using System.Linq;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.Entities.DocumentModels;
-using System.Data.Entity;
-using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Repositories.Setups.General;
 using FintrakBanking.ViewModels;
-using FintrakBanking.Interfaces.Finance;
-using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Repositories.Credit;
-using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Setups.General;
-using FintrakBanking.Common.CustomException;
-using FintrakBanking.Interfaces.Setups.Finance;
+using FintrakBanking.ViewModels.WorkFlow;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
+using System.Linq;
 using System.ServiceModel;
 
 namespace FintrakBanking.Repositories.WorkFlow
@@ -1082,15 +1080,16 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return details.ToList();
         }
-        public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId)
+        public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId, int operationId)
         {
-            var requests = this.context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId);
+            var requests = this.context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId && x.OPERATIONSID == operationId);
 
             if (requests.Count() < 0) return null;
 
             var requestsList = new List<JobRequestViewModel>();
             foreach ( var request in requests)
             {
+                
                 var jobDocumentsList = GetJobRequestDocuments(request.JOBREQUESTCODE).AsEnumerable();
                 TBL_JOB_REQUEST_STATUS_FEEDBAK feedback;
                 
@@ -1102,6 +1101,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobRequestCode = request.JOBREQUESTCODE,
                     targetId = request.TARGETID,
                     jobTypeId = request.JOBTYPEID,
+                    jobTypeName = request.TBL_JOB_TYPE.JOBTYPENAME,
                     senderStaffId = request.SENDERSTAFFID,
                     receiverStaffId = request.RECEIVERSTAFFID ?? 0,
                     reassignedTo = request.REASSIGNEDTO,
@@ -1112,6 +1112,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     requestStatusId = request.REQUESTSTATUSID,
                     senderComment = request.SENDERCOMMENT,
                     responseComment = request.RESPONSECOMMENT,
+                    requestStatusname = request.TBL_JOB_REQUEST_STATUS.STATUSNAME,
 
                     arrivalDate = request.ARRIVALDATE,
                     systemArrivalDate = request.SYSTEMARRIVALDATE,
@@ -1136,6 +1137,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         }).ToList(),
                     jobDocuments = jobDocumentsList,
                 };
+                requestModel.recievingUnitName = request.JOBTYPEUNITID != null && request.JOBTYPEUNITID >0 ? context.TBL_JOB_TYPE_UNIT.FirstOrDefault(x => x.JOBTYPEUNITID == request.JOBTYPEUNITID).UNITNAME : "";
+                requestModel.recievingHub = request.JOBTYPEHUBID != null && request.JOBTYPEHUBID  >0 ? context.TBL_JOB_TYPE_HUB.FirstOrDefault(x => x.JOBTYPEHUBID == request.JOBTYPEHUBID).HUBNAME : "";
+                requestModel.jobSourceName = request.JOBSOURCEID != null && request.JOBSOURCEID  >0 ? context.TBL_JOB_SOURCE.FirstOrDefault(x => x.JOBSOURCEID == request.JOBSOURCEID).JOBSOURCENAME : "";
 
                 var fromData = context.TBL_STAFF.Where(b => b.STAFFID == request.SENDERSTAFFID).FirstOrDefault();
                 requestModel.fromSender = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
@@ -2544,6 +2548,53 @@ namespace FintrakBanking.Repositories.WorkFlow
                             loanId = x.LOANID,
                         });
             return data;
+        }
+
+        public IEnumerable<LMSOperationListViewModel> getLOSOperationLoanData(int loanId, int operationId)
+        {
+            List<LMSOperationListViewModel> data = new List<LMSOperationListViewModel>();
+            if (operationId == (short)OperationsEnum.TermLoanBooking 
+                || operationId == (short)OperationsEnum.CommercialLoanBooking 
+                || operationId == (short)OperationsEnum.ForeignExchangeLoanBooking)
+            {
+                 data = (from x in this.context.TBL_LOAN
+                            where x.TERMLOANID == loanId
+                            select new LMSOperationListViewModel
+                            {
+                                loanSystemTypeId = (short)x.LOANSYSTEMTYPEID,
+                                operationId = (short)operationId,
+                                loanId = x.TERMLOANID,
+                            }).ToList();
+               
+            }
+
+            if (operationId == (short)OperationsEnum.RevolvingLoanBooking)
+            {
+                data = (from x in this.context.TBL_LOAN_REVOLVING
+                        where x.REVOLVINGLOANID == loanId
+                        select new LMSOperationListViewModel
+                        {
+                            loanSystemTypeId = (short)x.LOANSYSTEMTYPEID,
+                            operationId = (short)OperationsEnum.RevolvingLoanBooking,
+                            loanId = x.REVOLVINGLOANID,
+                        }).ToList();
+
+            }
+
+            if (operationId == (short)OperationsEnum.ContigentLoanBooking)
+            {
+                data = (from x in this.context.TBL_LOAN_CONTINGENT
+                        where x.CONTINGENTLOANID == loanId
+                        select new LMSOperationListViewModel
+                        {
+                            loanSystemTypeId = (short)x.LOANSYSTEMTYPEID,
+                            operationId = (short)OperationsEnum.ContigentLoanBooking,
+                            loanId = x.CONTINGENTLOANID,
+                        }).ToList();
+
+            }
+            return data;
+
         }
 
         public bool deleteJobDocument(int documentId, int staffId)
