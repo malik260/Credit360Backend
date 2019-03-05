@@ -913,6 +913,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (application.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
             {
+                entity.productClassId = (short)ProductClassEnum.BondAndGuarantees;
                 bool bAndGRequestSent = false;
                 var applicationfacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == entity.loanApplicationId);
                 foreach(var item in applicationfacilities)
@@ -1022,7 +1023,11 @@ namespace FintrakBanking.Repositories.Credit
                         //if (entity.monitoringTriggers.Count > 0)
                         //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
 
-                        if (!entity.feeOverride) PostLoanFees(entity);
+                        if (!entity.feeOverride && application.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
+                        {
+                            entity.isSuspenseCredit = true;
+                            PostBandGFacilityFees(entity);
+                        }
 
                         context.SaveChanges();
 
@@ -2208,6 +2213,22 @@ namespace FintrakBanking.Repositories.Credit
             {
                 username = entity.username,
                 passcode = entity.passCode,
+            };
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            inputTransactions.AddRange(BuildLoanChargeFeesPosting(entity));
+
+            if (inputTransactions.Count > 0) financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
+        }
+
+        public void PostBandGFacilityFees(LoanViewModel entity)
+        {
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = entity.username,
+                passcode = entity.passCode,
+                skipAuthentication = true,
             };
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
@@ -4381,6 +4402,20 @@ namespace FintrakBanking.Repositories.Credit
                             debit.rateCode = "TTB"; //loanDetails.nostroRateCode;
                             debit.rateUnit = string.Empty;
                             debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                            if(loanDetails.productClassId == (short)ProductClassEnum.BondAndGuarantees)
+                            {
+                                if (!loanDetails.isSuspenseCredit)
+                                {
+                                    var glStore = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
+                                    var prodCasa = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
+                                    if (glStore != null)
+                                    {
+                                        debit.glAccountId = glStore.PRINCIPALBALANCEGL2.Value;
+                                        debit.casaAccountId = prodCasa.CASAACCOUNTID;
+                                    }
+                                    else throw new ConditionNotMetException("Suspense Account to be creditted not defined");
+                                }
+                            }
 
                             inputTransactions.Add(debit);
                         }
@@ -4396,7 +4431,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                             credit.operationId = (int)loanDetails.operationId;
-                            credit.description = feeDescription; // $"Fee charge on {credits.DESCRIPTION}";
+                            credit.description = feeDescription; 
                             credit.valueDate = generalSetup.GetApplicationDate();
                             credit.transactionDate = credit.valueDate;
                             credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanDetails.companyId).CURRENCYID; //(short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, loanDetails.companyId); //casa.CURRENCYID;
@@ -4416,9 +4451,23 @@ namespace FintrakBanking.Repositories.Credit
                             credit.creditAmount = creditAmount;
                             credit.sourceBranchId = loanDetails.branchId;
                             credit.destinationBranchId = loanDetails.branchId;
-                            credit.rateCode = "TTB"; //loanDetails.nostroRateCode;
+                            credit.rateCode = "TTB";
                             credit.rateUnit = string.Empty;
                             credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                            if (loanDetails.productClassId == (short)ProductClassEnum.BondAndGuarantees)
+                            {
+                                if (loanDetails.isSuspenseCredit)
+                                {
+                                    var glStore = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
+                                    var prodCasa = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
+                                    if (glStore != null)
+                                    {
+                                        credit.glAccountId = glStore.PRINCIPALBALANCEGL2.Value;
+                                        credit.casaAccountId = prodCasa.CASAACCOUNTID;
+                                    }
+                                    else throw new ConditionNotMetException("Suspense Account to be creditted not defined");
+                                }
+                            }
 
                             inputTransactions.Add(credit);
                         }
