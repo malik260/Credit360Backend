@@ -7,6 +7,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int activityId { get; set; }
         public int activityParentId { get; set; }
         public string activityName { get; set; }
+        public bool selected { get; set; }
+
     }
 
     public class ActivityParent
