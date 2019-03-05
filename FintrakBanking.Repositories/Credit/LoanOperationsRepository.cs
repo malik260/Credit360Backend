@@ -12520,6 +12520,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                 customerId = ln.CUSTOMERID,
                                 productId = ln.PRODUCTID,
+                                productTypeId = pr.PRODUCTTYPEID,
                                 casaAccountId = ln.CASAACCOUNTID,
                                 casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                 casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
@@ -12659,6 +12660,8 @@ namespace FintrakBanking.Repositories.Credit
                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                          customerId = ln.CUSTOMERID,
                                          productId = ln.PRODUCTID,
+                                         productTypeId = pr.PRODUCTTYPEID,
+
                                          casaAccountId = ln.CASAACCOUNTID,
                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
@@ -15183,6 +15186,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (TBL_STAFF item2 in RMdetail)
                 {
+                    var customername = context.TBL_LOAN_CONTINGENT.Where(a=>a.CONTINGENTLOANID == loanDetails.FirstOrDefault().loanId).Select(w=>w.TBL_CUSTOMER.FIRSTNAME + " " + w.TBL_CUSTOMER.MAIDENNAME + " " + w.TBL_CUSTOMER.LASTNAME).FirstOrDefault();
+                    var bondamount = context.TBL_LOAN_CONTINGENT.Where(a => a.CONTINGENTLOANID == loanDetails.FirstOrDefault().loanId).Select(w => w.TBL_CURRENCY.CURRENCYCODE +""+ w.CONTINGENTAMOUNT).FirstOrDefault();
+
                     var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
                     var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
 
@@ -15190,14 +15196,15 @@ namespace FintrakBanking.Repositories.Credit
                     List<LoanContingentViewModel> mailList = (from x in loanDetails
                                                               where x.relationshipManagerId == item2.STAFFID
                                                               select x).ToList();
-                    string dataTable2 = "<table><tr><th>Loan Ref. No.</th><th>Effective Date</th><th>Maturity Date</th><th>Amount</th><th>Product Name</th></tr>";
+                    string dataTable2 = "<table><tr><th>Name Of Beneficiary</th><th>Type Of Bond</th><th>Bond Amount</th><th>Date Issued</th><th>Ref. Number</th></tr>";
                     foreach (LoanContingentViewModel item3 in mailList)
                     {
-                        dataTable2 = dataTable2 + $"<tr><td>{item3.loanRefNumber}</td><td>{item3.effectiveDate}</td><td>{item3.dueDate}</td>" + $"<td>{item3.contingentAmount}</td><td>{item3.productName}</td></tr>";
+                        var custname = context.TBL_LOAN_CONTINGENT.Where(a => a.CONTINGENTLOANID == item3.loanId).Select(w => w.TBL_CUSTOMER.FIRSTNAME + " " + w.TBL_CUSTOMER.MAIDENNAME + " " + w.TBL_CUSTOMER.LASTNAME).FirstOrDefault();
+                        dataTable2 = dataTable2 + $"<tr><td>{custname}</td><td>APG</td><td>{item3.contingentAmount}</td>" + $"<td>{item3.effectiveDate.ToLongDateString()}</td><td>{item3.loanRefNumber}</td></tr>";
                     }
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
-                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention that the above B & G's has been Terminated on " + $" { DateTime.Today.Date }.<br /> Find Attached File <br /><br />" + $"{dataTable2}";
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "Kindly be Informed that th attached bond with the following detils which was called in, has been cancelled having refunded the APS to the Principal: <br /> <br />" + $"{dataTable2}" + "<br /> <br /> The Bussiness / Relationship Manager should therefore ensure that all parties to the bond instrument are adviced of the development.<br /> <br /> Meanwhile, Kindly acknowledge this mail. <br /> <br />Warm regards.";
                     string additionalRecipient = loanDetails.FirstOrDefault((LoanContingentViewModel x) => x.relationshipManagerId == item2.STAFFID).officerEmail;
                     string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
@@ -15235,15 +15242,17 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 string recipient = alertSetups.RECIPIENTEMAILS2.Trim();
-                string dataTable = "<table><tr><th>Loan Ref. No.</th><th>Effective Date</th><th>Maturity Date</th><th>Amount</th></tr>";
-                foreach (LoanContingentViewModel loanDetail in loanDetails)
+                string dataTable = "<table><tr><th>Name Of Beneficiary</th><th>Type Of Bond</th><th>Bond Amount</th><th>Date Issued</th><th>Ref. Number</th></tr>";
+                foreach (LoanContingentViewModel item3 in loanDetails)
                 {
-                    dataTable = dataTable + $"<tr><td>{loanDetail.loanRefNumber}</td><td>{loanDetail.effectiveDate}</td><td>{loanDetail.dueDate}</td>" + $"<td>{loanDetail.contingentAmount}</td></tr>";
+                    var custname = context.TBL_LOAN_CONTINGENT.Where(a => a.CONTINGENTLOANID == item3.loanId).Select(w => w.TBL_CUSTOMER.FIRSTNAME + " " + w.TBL_CUSTOMER.MAIDENNAME + " " + w.TBL_CUSTOMER.LASTNAME).FirstOrDefault();
+                    dataTable = dataTable + $"<tr><td>{custname}</td><td>APG</td><td>{item3.contingentAmount}</td>" + $"<td>{item3.effectiveDate.ToLongDateString()}</td><td>{item3.loanRefNumber}</td></tr>";
                 }
-
+               
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
-                string messageContent = "Dear Team, <br /><br />his is to bring your attention that the above B & G's has been Terminated on " + $" { DateTime.Today.Date }. <br /> Find Attached File <br /><br />" + $"{dataTable}";
+                string messageContent = string.Format("Dear Team, <br /><br /> Kindly be Informed that th attached bond with the following detils which was called in, has been cancelled having refunded the APS to the Principal: <br /> <br />" + $"{dataTable}" + "<br /> <br /> The Bussiness / Relationship Manager should therefore ensure that all parties to the bond instrument are adviced of the development.<br /> <br /> Meanwhile, Kindly acknowledge this mail. <br /> <br />Warm regards.");
+
                 string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel

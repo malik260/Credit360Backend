@@ -486,7 +486,26 @@ namespace FintrakBanking.APICore.Controllers
 
 
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("activities/parents/details/{parentId}")]
+        public HttpResponseMessage GetAllActivityDetails(int parentId)
+        {
+            try
+            {
+                var groups = repo.GetActivityDetails(parentId).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = groups });
+            }
+            catch (SecureException ex)
+            {
+                // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
+            }
 
+
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("staff-activity/{activity}")]

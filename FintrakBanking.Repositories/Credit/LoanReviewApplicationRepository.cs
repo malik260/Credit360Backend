@@ -112,8 +112,6 @@ namespace FintrakBanking.Repositories.Credit
                 atInitiator = x.application.CREATEDBY == staffId,
                 timeIn = x.trail.SYSTEMARRIVALDATETIME,
 
-
-
                 currentApprovalStateId = x.trail.APPROVALSTATEID,
                 responsiblePerson = context.TBL_STAFF
                                             .Where(s => s.STAFFID == x.trail.TOSTAFFID)
@@ -121,17 +119,14 @@ namespace FintrakBanking.Repositories.Credit
                                             .FirstOrDefault().name ?? "",
                 toApprovalLevelId = x.trail.TOAPPROVALLEVELID,
 
-
-
-
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
-                creditOperationType = context.TBL_LMSR_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).Count() > 1 
+                creditOperationType = context.TBL_LMSR_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Count() > 1 
                     ? "Multiple"
                     : context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID ==
-                            context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).OPERATIONID
+                            context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).OPERATIONID
                         ).OPERATIONNAME,
 
-                facilityType = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                facilityType = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
                 applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
                 .Select(d => new applicationDetails
@@ -154,9 +149,9 @@ namespace FintrakBanking.Repositories.Credit
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
                     statusId = d.APPROVALSTATUSID,
-
+                    terms = d.REPAYMENTTERMS,
+                    schedule = d.REPAYMENTSCHEDULE,
                     //loanReferenceNumber = d.LOANREFERENCENUMBER,
-
                 })
 
             })
@@ -884,13 +879,13 @@ namespace FintrakBanking.Repositories.Credit
                     requestStaffId = x.b.REQUESTSTAFFID,
                     toApprovalLevelId = x.b.TOAPPROVALLEVELID,
 
-                    creditOperationType = context.TBL_LMSR_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID).Count() > 1
+                    creditOperationType = context.TBL_LMSR_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Count() > 1
                     ? "Multiple"
                     : context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID ==
-                            context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID).OPERATIONID
+                            context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).OPERATIONID
                         ).OPERATIONNAME,
 
-                    facilityType = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                    facilityType = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
                     applicationDetails = x.a.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
                     .Select(d => new applicationDetails
