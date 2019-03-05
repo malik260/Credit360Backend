@@ -68,6 +68,7 @@ namespace FintrakBanking.APICore.Providers
             {
                 string ipAddress = GetIpAddress();
                 UserViewModel user = null;
+                //var profile2 = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == context.UserName.ToLower());// && c.PASSWORD == password);
 
                 var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
                 var exipredMin = int.Parse(ConfigurationManager.AppSettings["tokenExpiryMinute"]);

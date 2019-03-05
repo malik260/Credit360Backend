@@ -15186,8 +15186,6 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (TBL_STAFF item2 in RMdetail)
                 {
-                    var customername = context.TBL_LOAN_CONTINGENT.Where(a=>a.CONTINGENTLOANID == loanDetails.FirstOrDefault().loanId).Select(w=>w.TBL_CUSTOMER.FIRSTNAME + " " + w.TBL_CUSTOMER.MAIDENNAME + " " + w.TBL_CUSTOMER.LASTNAME).FirstOrDefault();
-                    var bondamount = context.TBL_LOAN_CONTINGENT.Where(a => a.CONTINGENTLOANID == loanDetails.FirstOrDefault().loanId).Select(w => w.TBL_CURRENCY.CURRENCYCODE +""+ w.CONTINGENTAMOUNT).FirstOrDefault();
 
                     var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
                     var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
