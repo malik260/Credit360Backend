@@ -1608,7 +1608,15 @@ namespace FintrakBanking.APICore.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
         }
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("application-detail-lms/{loanApplicationId}")]
+        //public HttpResponseMessage GetLmsLoanApplicationDetailsById(int loanApplicationId)
+        //{
+        //    var data = repo.GetLmsLoanApplicationDetailsById(loanApplicationId, token.GetCompanyId);
 
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+        //}
 
     }
 }

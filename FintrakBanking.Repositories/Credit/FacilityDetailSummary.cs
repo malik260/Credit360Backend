@@ -51,13 +51,13 @@ namespace FintrakBanking.Repositories.Credit
             transRepo=_transRepo;
         }
 
-        public List<CollateralViewModel> Collateral(int loanId)
+        public List<CollateralViewModel> Collateral(int loanId,int loanSystemTypeId)
         {
             var data = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
                         join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                         join ct in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals ct.COLLATERALTYPEID
                         join cs in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals cs.COLLATERALSUBTYPEID
-                        where x.LOANID == loanId
+                        where x.LOANID == loanId && x.LOANSYSTEMTYPEID == loanSystemTypeId
                         select new CollateralViewModel
                         {
                             collateralType = ct.COLLATERALTYPENAME,
@@ -309,7 +309,7 @@ namespace FintrakBanking.Repositories.Credit
                                    externalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.EXT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
                                    // internalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.INT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
                                    userPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.USER_PRUDENTIAL_GUIDE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
-                                   crmsCode = a.CRMSCODE
+                                   crmsCode = ld.CRMSCODE
                                }).FirstOrDefault();
 
             loanDetails.availableBalance = availableBalance;
@@ -493,7 +493,7 @@ namespace FintrakBanking.Repositories.Credit
                                    istenored = a.ISTENORED ? "Yes" : "No",
                                    isbankFormat = a.ISBANKFORMAT ? "Yes" : "No",
                                    productPriceIndex = ld.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == ld.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
-                                   crmsCode = a.CRMSCODE
+                                   crmsCode = ld.CRMSCODE
                                }).FirstOrDefault();
             return loanDetails;
         }
@@ -615,15 +615,39 @@ namespace FintrakBanking.Repositories.Credit
                                    productPriceIndex = d.PRODUCTPRICEINDEXID != null ? context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == d.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
                                    //accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.TERMLOANID && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault(),  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
                                    //productPriceIndex = d.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == d.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
-                                   crmsCode = a.CRMSCODE
+                                   crmsCode = d.CRMSCODE
                                }).FirstOrDefault();
             var applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
             loanDetails.accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanDetails.loanId && x.DATE == applicationDate).Select(aci => aci.ACCRUEDINTEREST).FirstOrDefault();
+            loanDetails.totalRepayment = PresentRepayments(loanDetails.loanReferenceNumber, loanDetails.companyId);
 
             return loanDetails;
 
-        } 
+        }
+        private decimal PresentRepayments(string loanRefNo, int compoanyId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                decimal repayments = 0;
 
+                List<LoanViewModel> data = (from a in context.TBL_FINANCE_TRANSACTION
+                                            where a.SOURCEREFERENCENUMBER == loanRefNo
+                                            && a.TBL_CHART_OF_ACCOUNT.GLCLASSID == (short)GLClassEnum.CASA
+                                            && a.OPERATIONID != (int)OperationsEnum.TermLoanBooking && a.DEBITAMOUNT > 0
+                                            && a.COMPANYID == compoanyId
+
+                                            select new LoanViewModel()
+                                            {
+                                                debitAmount = a.DEBITAMOUNT,
+
+                                            }).ToList();
+                foreach (var x in data)
+                    repayments = repayments + x.debitAmount;
+
+                return repayments;
+            }
+
+        }
         private LoanViewModel GetLoanArchive(int archiveId)
         {
             var loanDetails = (from a in context.TBL_LOAN_ARCHIVE
@@ -1567,6 +1591,8 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+      
+
         public List<LoanViewModel> ContingentUtilization(int contingentId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -2137,8 +2163,8 @@ namespace FintrakBanking.Repositories.Credit
                            profileLoan = a.PROFILELOAN,
                            dischargeLetter = a.DISCHARGELETTER,
                            suspendInterest = a.SUSPENDINTEREST,
-                           crmsCode = a.CRMSCODE,
-                           crmsDate = a.CRMSDATE,
+                           //crmsCode = a.CRMSCODE,
+                           //crmsDate = a.CRMSDATE,
                            createdBy = a.CREATEDBY,
                            dateTimeCreated = a.DATETIMECREATED,
                            isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
@@ -2188,8 +2214,8 @@ namespace FintrakBanking.Repositories.Credit
                             isDisbursedState = a.ISDISBURSED ? "Yes" : "No",
                             disburserComment = a.DISBURSERCOMMENT,
                             disburseDate = a.DISBURSEDATE,
-                            crmsCode = a.CRMSCODE,
-                            crmsDate = a.CRMSDATE,
+                            //crmsCode = a.CRMSCODE,
+                            //crmsDate = a.CRMSDATE,
                             operationId = a.OPERATIONID,
                             operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
@@ -2232,8 +2258,8 @@ namespace FintrakBanking.Repositories.Credit
                             dateApproved = a.DATEAPPROVED,
                             loanStatusId = a.LOANSTATUSID,
                             isDisbursed = a.ISDISBURSED,
-                            crmsCode = a.CRMSCODE,
-                            crmsDate = a.CRMSDATE,
+                            //crmsCode = a.CRMSCODE,
+                            //crmsDate = a.CRMSDATE,
                             isDisbursedState = a.ISDISBURSED ? "Yes" : "No",
                             disburserComment = a.DISBURSERCOMMENT,
                             disburseDate = a.DISBURSEDATE,

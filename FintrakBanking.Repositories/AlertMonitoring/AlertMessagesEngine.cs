@@ -89,6 +89,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
             logger.SendAlertsForCovenantsOverDue(title, body, alertSetups);
 
+            logger.SendAlertsForExpiredBG(title, body, alertSetups);
+
             logger.SendAlertForExpiredInsurance(title, body, alertSetups);
 
             logger.SendAlertOnAccountWithExeption_Overdrawn(title, body, alertSetups);

@@ -7,7 +7,7 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.Data.Entity.Spatial;
 
     public partial class TBL_DOC_COLLATERAL_VISITATION
-    {
+    { 
         [Key]
         public int DOCUMENTID { get; set; }
 

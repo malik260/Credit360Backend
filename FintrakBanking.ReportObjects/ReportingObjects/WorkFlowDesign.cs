@@ -90,7 +90,7 @@ namespace FintrakBanking.ReportObjects
                  data = (from a in context.TBL_APPROVAL_GROUP
                             join b in context.TBL_APPROVAL_GROUP_MAPPING on a.GROUPID equals b.GROUPID
                             join c in context.TBL_APPROVAL_LEVEL on a.GROUPID equals c.GROUPID
-                         //join c in context.TBL_APPROVAL_LEVEL_STAFF on a.GROUPID equals c.TBL_APPROVAL_LEVEL.GROUPID
+                            //join d in context.TBL_APPROVAL_LEVEL_STAFF on a.GROUPID equals b.TBL_APPROVAL_LEVEL.GROUPID
                          where c.ISACTIVE == true && a.COMPANYID == companyId && b.OPERATIONID == operationId
                          orderby b.POSITION ascending, c.POSITION  ascending                   
                          select new WorkFlowViewModel()
@@ -100,7 +100,7 @@ namespace FintrakBanking.ReportObjects
                                 //vetoPower = c.VETOPOWER == true ? "Yes" : "No",
                                 levelName = c.LEVELNAME,
                                 //username = (c.TBL_STAFF.FIRSTNAME  + " " + c.TBL_STAFF.LASTNAME).ToUpper(),
-                                //scope = c.PROCESSVIEWSCOPEID == 1 ? "Default" : c.PROCESSVIEWSCOPEID == 2 ? "Group" : c.PROCESSVIEWSCOPEID == 3 ? "Global" : null,
+                                //scope = .PROCESSVIEWSCOPEID == 1 ? "Default" : c.PROCESSVIEWSCOPEID == 2 ? "Group" : c.PROCESSVIEWSCOPEID == 3 ? "Global" : null,
                                 grpPosition = b.POSITION,
                                 levelPosition = c.POSITION,
                                 canApprove = c.CANAPPROVE == true ? "Yes" : "No",

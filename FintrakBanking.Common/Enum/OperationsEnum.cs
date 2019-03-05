@@ -15,6 +15,7 @@ namespace FintrakBanking.Common.Enum
         FeeCreation = 10,
 
         //loan origination operations
+
         TermLoanBooking = 1,
         LoanApplication = 2,
         CAM = 6,

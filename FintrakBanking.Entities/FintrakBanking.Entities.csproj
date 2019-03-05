@@ -75,16 +75,23 @@
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
+    <Compile Include="DocumentModels\TBL_JOB_REQUEST_MSG_DOCUMENT.cs" />
+    <Compile Include="DocumentModels\TBL_TEMP_MEDIA_LOAN_DOCUMENTS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
+    <Compile Include="Models\TBL_EOD_OPERATION.cs" />
+    <Compile Include="Models\TBL_EOD_OPERATION_LOG.cs" />
+    <Compile Include="Models\TBL_EOD_STATUS.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_HUB.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_HUB_STAFF.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_REASSIGNMENT.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_SUB_CLASS.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_UNIT.cs" />
     <Compile Include="Models\TBL_LMSR_APPLICATION_DETL_FEE.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_CON.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_TRANS.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_TRANS2.cs" />
     <Compile Include="Models\TBL_LOAN_CONTINGENT_ARCHIVE.cs" />
+    <Compile Include="DocumentModels\TBL_LOAN_CONTINGENT_USAGE_DOCS.cs" />
     <Compile Include="Models\TBL_LOAN_OFFER_LETTER.cs" />
     <Compile Include="Models\TBL_OTHER_OPERATION_ACCOUNT.cs" />
     <Compile Include="Models\TBL_OTHER_OPERATION.cs" />
@@ -949,6 +956,7 @@
     <Compile Include="StagingModels\STG_STAFFMIS.cs" />
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
     <Compile Include="StagingModels\STG_SUB_SECTOR.cs" />
+    <Compile Include="StagingModels\STG_TREASURY_RATE_TBL.cs" />
     <Compile Include="StagingModels\TBL_FINANCE_TRANSACTION_STAGING.cs" />
     <Compile Include="StagingModels\TBL_CUSTOMER_SIGNATORY.cs" />
   </ItemGroup>

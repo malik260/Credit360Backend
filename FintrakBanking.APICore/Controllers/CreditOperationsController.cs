@@ -982,7 +982,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("contingent-for-termination-application")]
+        public HttpResponseMessage GetContingentApprovedExpiredApplication()
+        {
+            try
+            {
+                var data = loanRepo.GetContingentApprovedExpiredApplication(token.GetStaffId, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("approved-contingent-application")]
@@ -1076,11 +1097,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 {
 
-                    //if (model.maturityDate < model.proposedEffectiveDate)
-                    //{
-                    //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Maturity Date cannot be less than Effective date" });
-                    //}
-
+                   
                     //if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
                     //{
                     //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });

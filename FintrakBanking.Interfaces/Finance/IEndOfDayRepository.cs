@@ -12,6 +12,8 @@ namespace FintrakBanking.Interfaces.Finance
         bool RunEndOfDay(EndOfDayViewModel model);
         IEnumerable<FinanceEndofdayViewModel> GetFinanceEndofday(int companyId);
         bool RefreshLoanClassification();
-
+        bool GetRunningEndOfDayProcess(int companyId);
+        IEnumerable<FinanceEndofdayViewModel> GetEndofdayOperationLog(DateTime oedDate, int companyId);
+        IEnumerable<FinanceEndofdayViewModel> GetEndofdayOperationLogMonitoring(int companyId);
     }
 }

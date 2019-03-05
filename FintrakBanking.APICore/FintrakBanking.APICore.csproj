@@ -585,6 +585,13 @@
     <Compile Include="Reports\ReportViews\DailyAccrualReport.aspx.designer.cs">
       <DependentUpon>DailyAccrualReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\DisbursalCreditTurnover.aspx.cs">
+      <DependentUpon>DisbursalCreditTurnover.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DisbursalCreditTurnover.aspx.designer.cs">
+      <DependentUpon>DisbursalCreditTurnover.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ExcessReport.aspx.cs">
       <DependentUpon>ExcessReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -661,6 +668,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.designer.cs">
       <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferred.aspx.cs">
+      <DependentUpon>LoanDocumentDeferred.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferred.aspx.designer.cs">
+      <DependentUpon>LoanDocumentDeferred.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\LoggingStatus.aspx.cs">
       <DependentUpon>LoggingStatus.aspx</DependentUpon>
@@ -1025,6 +1039,7 @@
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
+    <Content Include="Reports\ReportViews\DisbursalCreditTurnover.aspx" />
     <Content Include="Reports\ReportViews\ExcessReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\ReportViews\ExpiredReport.aspx" />
@@ -1036,6 +1051,7 @@
     <Content Include="Reports\ReportViews\Lein.aspx" />
     <Content Include="Reports\ReportViews\LoanClassification.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
+    <Content Include="Reports\ReportViews\LoanDocumentDeferred.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\LoggingStatus.aspx" />
     <Content Include="Reports\ReportViews\MiddleOfficeReport.aspx" />
@@ -1286,10 +1302,10 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter000.rdlc" />
     <Content Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <Content Include="Reports\Report\Blacklist.rdlc" />
-    <Content Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR 060219.rdlc" />
     <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AllCommercialLoanReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashCollaterizedCredits.rdlc" />
@@ -1303,6 +1319,7 @@
     <EmbeddedResource Include="Reports\Report\CreditScheduleReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExcessReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
@@ -1315,7 +1332,8 @@
     <EmbeddedResource Include="Reports\Report\LoanClassification.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
-    <EmbeddedResource Include="Reports\Report\LoanDocumentWaivedOrDeferred.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanDocumentDeferred.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <Content Include="Reports\Report\AuditTrailReports.rdlc">

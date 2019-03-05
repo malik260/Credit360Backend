@@ -83,6 +83,7 @@
     <Compile Include="CASA\OverrideViewModel.cs" />
     <Compile Include="CreditLimitValidations\CreditLimitValidationsModel.cs" />
     <Compile Include="CreditLimitValidations\CustomerEligibilityViewModel.cs" />
+    <Compile Include="Credit\AccountBalanceViewModel.cs" />
     <Compile Include="Credit\AppraisalMemorandumLoanDetailViewModel2.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Credit\CommercialLoanReport.cs" />
     <Compile Include="Credit\CRMSRegulatoryViewModel.cs" />
     <Compile Include="Credit\DashboardViewModel.cs" />
+    <Compile Include="Credit\DisbursalCreditTurnoverViewModel.cs" />
     <Compile Include="Credit\LoanCAMSOLViewModel.cs" />
     <Compile Include="Credit\ChecklistApprovalViewModel.cs" />
     <Compile Include="Credit\CollateralCustomerViewModel.cs" />
@@ -159,6 +161,7 @@
     <Compile Include="CASA\CasaLienViewModel.cs" />
     <Compile Include="Finance\EndOfDayViewModel.cs" />
     <Compile Include="Finance\FinanceTransactionViewModel.cs" />
+    <Compile Include="Finance\IndexRateChangeViewModel.cs" />
     <Compile Include="GenaralEntity.cs" />
     <Compile Include="LookupViewModel.cs" />
     <Compile Include="Notification\NotificationViewModel.cs" />

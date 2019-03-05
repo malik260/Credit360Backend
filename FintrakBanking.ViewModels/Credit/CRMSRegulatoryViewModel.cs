@@ -99,6 +99,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string GUARANTOR_UNIQUE_IDENTIFICATION { get; set; }
         public decimal? AMOUNT_GUARANTEED { get; set; }
         public DateTime? FIRSTPRINCIPALPAYMENTDATE { get; set; }
+        public int? MORATORIUMDURATION { get; set; }
+
         public int LOANID { get; set; }
         public int? CRMSLEGALSTATUSID { get; set; }
         public string ID_TTPE { get; set; }
@@ -145,6 +147,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string CRMSCODE { get; set; }
         public string EMAIL { get; set; }
         public int LOANREVIEWOPERATIONID { get; set; }
+        public int? LOANAPPLICATIONDETAILID { get; set; }
 
     }
 

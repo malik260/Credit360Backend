@@ -2,6 +2,7 @@
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -82,6 +83,14 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+
+        [HttpGet, Route("accredited-solicitors")]
+        public HttpResponseMessage GetAccreditedStateConsultants()
+        {
+            var response = repo.GetAccreditedStateConsultants(token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+        }
+
         [HttpPost, Route("consultant-type-add")]
         public HttpResponseMessage AddConsultantType([FromBody] AccreditedConsultantTypeViewModel entity)
         {
@@ -448,6 +457,91 @@ namespace FintrakBanking.APICore.Controllers
         //}
         #endregion
 
+        #region Loan Consultants
+
+        [HttpGet]
+        [Route("loan-consultant/application/{applicationId}")]
+        public HttpResponseMessage GetLoanConsultant(int applicationId)
+        {
+            try
+            {
+                List<LoanConsultantViewModel> response = repo.GetLoanConsultant(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("loan-consultant")]
+        public HttpResponseMessage AddLoanConsultant([FromBody] LoanConsultantViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                bool response = repo.AddLoanConsultant(entity);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpPut]
+        [Route("loan-consultant/{id}")]
+        public HttpResponseMessage EditLoanConsultant([FromBody] LoanConsultantViewModel entity, int id)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                bool response = repo.EditLoanConsultant(id, entity);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been modified successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpDelete]
+        [Route("loan-consultant/{id}")]
+        public HttpResponseMessage RemoveLoanConsultant(int id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    createdBy = token.GetStaffId,
+                    userIPAddress = Request.RequestUri.Host,
+                };
+                bool response = repo.RemoveLoanConsultant(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been removed successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        #endregion Loan Consultants
 
     }
 }

@@ -31,7 +31,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                       from e in dg.DefaultIfEmpty()
                                       join g in context.TBL_CUSTOMER_PHONECONTACT on d.CUSTOMERID equals g.CUSTOMERID into gg
                                       from g in gg.DefaultIfEmpty()
-                                      join h in context.TBL_OFFERLETTER on a.APPLICATIONREFERENCENUMBER equals h.APPLICATIONREFERENCENUMBER into hh
+                                      join h in context.TBL_LOAN_OFFER_LETTER on a.LOANAPPLICATIONID equals h.LOANAPPLICATIONID into hh
                                       from h in hh.DefaultIfEmpty()
                                           //join i in context.TBL_CUSTOMER_GROUP_MAPPING on b.CUSTOMERID equals i.CUSTOMERID into ii
                                           //from i in ii.DefaultIfEmpty()

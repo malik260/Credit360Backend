@@ -168,6 +168,22 @@ namespace FintrakBanking.Repositories.Setups.General
                     groupId = x.GROUPID
                 });
         }
-       
+
+        public int GetLoggedInUsersNumber(int? userId = null)
+        {
+            if (userId == null)
+            {
+                return context.TBL_PROFILE_USER.Where(x => x.LOGINCODE != null && x.ISACTIVE == true).Count();
+            }
+            return context.TBL_PROFILE_USER.Where(x => x.LOGINCODE != null && x.ISACTIVE == true && x.USERID != userId).Count();
+        }
+
+        public bool LogOutAllUsers(int userId)
+        {
+            var activeUsers = context.TBL_PROFILE_USER.Where(x => x.LOGINCODE != null && x.ISACTIVE == true && x.USERID != userId);
+            foreach (var user in activeUsers) user.LOGINCODE = null;
+            if (!activeUsers.Any()) return true;
+            return context.SaveChanges() > 0;
+        }
     }
 }

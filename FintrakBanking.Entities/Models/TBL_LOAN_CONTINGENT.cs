@@ -125,10 +125,11 @@ namespace FintrakBanking.Entities.Models
 
         public string FIELD10 { get; set; }
 
-        public string CRMSCODE { get; set; }
-        public short? CRMSREPAYMENTAGREEMENTID { get; set; }
+        //public string CRMSCODE { get; set; }
+        //public short? CRMSREPAYMENTAGREEMENTID { get; set; }
 
-        public DateTime? CRMSDATE { get; set; }
+        //public DateTime? CRMSDATE { get; set; }
+        public string LEGALCONTINGENTCODE { get; set; }
 
         public int? LOAN_BOOKING_REQUESTID { get; set; }
 

@@ -23,9 +23,13 @@ namespace FintrakBanking.Repositories.AlertMonitoring
     public class AlertMessageLogger : IAlertMessageLogger
     {
         private ISLANotification sla;
-        public AlertMessageLogger(ISLANotification _sla)
+        private IGeneralSetupRepository generalSetup;
+
+        public AlertMessageLogger(ISLANotification _sla, IGeneralSetupRepository _generalSetup)
         {
              sla =_sla;
+            this.generalSetup = _generalSetup;
+
         }
 
         private FinTrakBankingContext context = new FinTrakBankingContext();
@@ -205,7 +209,171 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
         }
 
+        public bool SendAlertsForExpiredBG(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        {
+            TBL_MONITORING_ALERT_SETUP alertsetupForExpiredBG = (from x in alertSetups
+                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.ExpiredBGAlert
+                                                                        select x).FirstOrDefault();
+            //DateTime currentDate = DateTime.Now;
+            DateTime currentDate = generalSetup.GetApplicationDate();
 
+            List<LoanContingentViewModel> loanDetails = (from a in context.TBL_LOAN_CONTINGENT
+                                                             join c in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals c.STAFFID
+                                                             join d in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals d.STAFFID
+                                                             where currentDate == a.MATURITYDATE
+                                                             select new LoanContingentViewModel
+                                                             {
+                                                                 companyId = a.COMPANYID,
+                                                                 contingentAmount = a.CONTINGENTAMOUNT,
+                                                                 effectiveDate = a.EFFECTIVEDATE,
+                                                                 dueDate = a.MATURITYDATE,
+                                                                 loanId = a.CONTINGENTLOANID,
+                                                                 loanRefNumber = a.LOANREFERENCENUMBER,
+                                                                 relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
+                                                                 managerEmail = c.EMAIL,
+                                                                 relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
+                                                                 officerEmail = d.EMAIL,
+                                                             }).ToList();
+
+
+
+
+            if (loanDetails.Count != 0)
+            {
+                //SendAlertsForExpiredBGRM(loanDetails, alertsetupForExpiredBG.MESSAGE_TITLE);
+                if (alertsetupForExpiredBG.RECIPIENTEMAILS1.Trim() != string.Empty)
+                {
+                    List<LoanContingentViewModel> escalationLevelOne = (from x in loanDetails
+                                                                            where x.notificationDuration <= alertsetupForExpiredBG.NOTIFICATION_PERIOD1
+                                                                            select x).ToList();
+                    if (escalationLevelOne.Count != 0)
+                    {
+                        SendAlertsForExpiredBGMonitoringTeam(loanDetails, alertsetupForExpiredBG);
+                    }
+                }
+                if (alertsetupForExpiredBG.RECIPIENTEMAILS2.Trim() != string.Empty)
+                {
+                    List<LoanContingentViewModel> escalationLevelTwo = (from x in loanDetails
+                                                                            where x.notificationDuration <= alertsetupForExpiredBG.NOTIFICATION_PERIOD2
+                                                                            select x).ToList();
+                    if (escalationLevelTwo.Count != 0)
+                    {
+                        SendAlertsForExpiredBGMonitoringTeam(loanDetails, alertsetupForExpiredBG);
+                    }
+                }
+                if (alertsetupForExpiredBG.RECIPIENTEMAILS3.Trim() != string.Empty)
+                {
+                    List<LoanContingentViewModel> escalationLevelThree = (from x in loanDetails
+                                                                              where x.notificationDuration <= alertsetupForExpiredBG.NOTIFICATION_PERIOD3
+                                                                              select x).ToList();
+                    if (escalationLevelThree.Count != 0)
+                    {
+                        SendAlertsForExpiredBGMonitoringTeam(loanDetails, alertsetupForExpiredBG);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public void SendAlertsForExpiredBGRM(List<LoanContingentViewModel> loanDetails, string title)
+        {
+            try
+            {
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
+                List<int> dataList = (from g in loanDetails
+                                      select g.relationshipManagerId).ToList();
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
+                {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+                    List<LoanContingentViewModel> mailList = (from x in loanDetails
+                                                                  where x.relationshipManagerId == item2.STAFFID
+                                                                  select x).ToList();
+                    string dataTable2 = "<table><tr><th>Loan Ref. No.</th><th>Effective Date</th><th>Maturity Date</th><th>Amount</th></tr>";
+                    foreach (LoanContingentViewModel item3 in mailList)
+                    {
+                        dataTable2 = dataTable2 + $"<tr><td>{item3.loanRefNumber}</td><td>{item3.effectiveDate}</td><td>{item3.dueDate}</td>" + $"<td>{item3.contingentAmount}</td></tr>";
+                    }
+                    dataTable2 += "</table>";
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention that the following B & G's Will Expire on " + $" { loanDetails.FirstOrDefault().dueDate }.<br/> Kindly terminate this B&G's Manually<br /><br />" + $"{dataTable2}";
+                    string additionalRecipient = loanDetails.FirstOrDefault((LoanContingentViewModel x) => x.relationshipManagerId == item2.STAFFID).officerEmail;
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
+                    string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                    MessageLogViewModel messageModel = new MessageLogViewModel
+                    {
+                        MessageSubject = messageSubject,
+                        MessageBody = mailBody,
+                        MessageStatusId = 1,
+                        MessageTypeId = 1,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = $"{recipient};{additionalRecipient}",
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = DateTime.Now
+                    };
+                    if (SaveMessageDetails(messageModel) != 0)
+                    {
+                        response += (response = " Expired B & G data was logged successfully, ");
+                    }
+                    else
+                    {
+                        response += (response = " Expired B & G  data log has failed, ");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
+        public void SendAlertsForExpiredBGMonitoringTeam(List<LoanContingentViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
+        {
+            try
+            {
+                string recipient = alertSetups.RECIPIENTEMAILS2.Trim();
+                string dataTable = "<table><tr><th>Loan Ref. No.</th><th>Effective Date</th><th>Maturity Date</th><th>Amount</th></tr>";
+                foreach (LoanContingentViewModel loanDetail in loanDetails)
+                {
+                    dataTable = dataTable + $"<tr><td>{loanDetail.loanRefNumber}</td><td>{loanDetail.effectiveDate}</td><td>{loanDetail.dueDate}</td>" + $"<td>{loanDetail.contingentAmount}</td></tr>";
+                }
+
+                dataTable += "</table>";
+                string messageSubject = alertSetups.MESSAGE_TITLE;
+                string messageContent = "Dear Team, <br /><br />This is to bring your attention that the following B & G's Will Expire on " + $" { loanDetails.FirstOrDefault().dueDate }. <br/> Kindly terminate this B&G's Manually <br /><br />" + $"{dataTable}";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now
+                };
+                if (SaveMessageDetails(messageModel) != 0)
+                {
+                    response += (response = " Expired B & G data was logged successfully, ");
+                }
+                else
+                {
+                    response += (response = " Expired B & G  data log has failed, ");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
 
 
 
