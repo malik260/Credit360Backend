@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<JobRequestStatusFeedbackViewModel> GetJobRequestStatusFeedback(short statusId, short jobTypeId);
         JobRequestViewModel GetJobRequest(int jobRequestId);
 
-        List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId);
+        List<JobRequestViewModel> GetApplicationJobRequest(int targetId, int operationId);
 
         IEnumerable<ApplicationJobRequest> GetLoanApplicationJobsById(int loanApplicationId, int companyId);
 
@@ -90,6 +90,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         jobRequestCountViewModel GetJobRequestStatusCount(int staffId, int branchId);
         IEnumerable<LMSOperationListViewModel> getLMSRApplicationDetail(int targetId);
         IEnumerable<LMSOperationListViewModel> getLMSROperation(int targetId);
+        IEnumerable<LMSOperationListViewModel> getLOSOperationLoanData(int loanId, int operationId);
 
         #region Job Request Feedback
         IEnumerable<LookupViewModel> GetJobRequestStatus();
