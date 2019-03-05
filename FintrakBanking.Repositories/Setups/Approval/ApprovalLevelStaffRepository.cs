@@ -106,7 +106,41 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = (int)a.CREATEDBY
                         }).ToList();
-            return data;
+
+            var data2 = (from a in context.TBL_STAFF_ROLE
+                        join e in context.TBL_STAFF on a.STAFFROLEID equals e.STAFFROLEID
+                         join b in context.TBL_APPROVAL_LEVEL on e.STAFFROLEID equals b.STAFFROLEID
+                         join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                        join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                        where c.COMPANYID == companyId
+                        && e.DELETED == false
+                        select new ApprovalLevelStaffViewModel
+                        {
+                            groupId = (int)b.GROUPID,
+                            operationId = d.OPERATIONID,
+                            maximumAmount = b.MAXIMUMAMOUNT,
+                            //processViewScope = b.PROCESSVIEWSCOPEID,
+                            //canViewDocument = b.CANVIEWDOCUMENT,
+                            //canViewUploadedFile = b.CANVIEWUPLOAD,
+                            //canViewApproval = b.CANVIEWAPPROVAL,
+                            //canApprove = b.CANAPPROVE,
+                            //canUploadFile = b.CANUPLOAD,
+                            //canSendRequest = a.CANSENDJOBREQUEST,
+                            //canEdit = b.CANEDIT,
+                            //vetoPower = b.VETOPOWER,
+                            //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
+                            position = b.POSITION,
+                            approvalLevelId = b.APPROVALLEVELID,
+                            approvalLevelName = b.LEVELNAME,
+                            staffId = e.STAFFID,
+                            staffLevelId = b.APPROVALLEVELID,
+                            staffRoleId = a.STAFFROLEID,// added
+                            staffLevelName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME,
+                            //dateTimeCreated = e.DATETIMECREATED,
+                            //createdBy = (int)e.CREATEDBY
+                        }).ToList();
+
+            return data.Union(data2);
         }
 
         public IEnumerable<ApprovalLevelStaffViewModel> GetAllApprovalLevelStaff(int companyId)
