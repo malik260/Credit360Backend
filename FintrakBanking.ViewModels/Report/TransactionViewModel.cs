@@ -13,6 +13,12 @@ namespace FintrakBanking.Finance.ViewModels
     {
         public int customerId;
 
+        public string accountNumber { get; set; }
+
+        public int transactionID { get; set; }
+
+        public decimal outstandingBalance { get; set; }
+
         public string branch { get; set; }
         public int branchId { get; set; }
         public string batchNo { get; set; }
