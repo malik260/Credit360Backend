@@ -735,6 +735,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? vote { get; set; }
         public string comment { get; set; }
         public decimal principal { get; set; }
+        public decimal totalExposureAmount { get; set; }
         public double rate { get; set; }
         public int tenor { get; set; }
         public bool investmentGrade { get; set; }

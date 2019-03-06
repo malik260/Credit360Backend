@@ -767,6 +767,18 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
         }
 
+        [HttpPost]
+        [Route("appraisal-memorandum/forward-status-lms")]
+        public HttpResponseMessage GetWorkflowNextStatusLms([FromBody] ForwardReviewViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
+            WorkflowResponse response = repo.GetWorkflowNextStatusLms(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+        }
     }
 }
