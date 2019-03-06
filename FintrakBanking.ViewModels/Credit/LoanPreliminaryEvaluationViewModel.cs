@@ -75,5 +75,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int penId { get; set; }
         public int? capRegionId { get; set; }
         public int? levelTypeId { get; set; }
+
     }
 }
