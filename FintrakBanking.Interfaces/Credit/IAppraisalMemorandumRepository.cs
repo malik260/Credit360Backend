@@ -75,5 +75,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoanApplicationDetailsViewModel GetLMSLoanApplicationDetail(int applicationId);
 
         WorkflowResponse GetWorkflowNextStatus(ForwardViewModel model);
+
+        WorkflowResponse GetWorkflowNextStatusLms(ForwardReviewViewModel model);
     }
 }

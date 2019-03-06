@@ -1161,15 +1161,10 @@ namespace FintrakBanking.Repositories.Credit
             if (loan.relationshipOfficerId != 0)
             {
                 var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
-                // var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                
                 loan.applicationAmount = cumulativeSum + additionalAmount;
-                if (validation.maximumAllowedLimit > 0) // && validation.limit != 0)
+                if (validation.maximumAllowedLimit > 0)
                 {
-                    if ((cumulativeSum + additionalAmount) > (decimal)validation.limit)
-                    {
-                        throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
-                    }
+                    if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
                 }
             }
 
