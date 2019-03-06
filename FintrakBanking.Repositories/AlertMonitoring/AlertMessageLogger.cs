@@ -17,24 +17,17 @@ using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Finance.ViewModels;
+using FintrakBanking.Repositories.Setups.General;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {
-    public class AlertMessageLogger : IAlertMessageLogger
+    public class AlertMessageLogger 
     {
-        private ISLANotification sla;
-        private IGeneralSetupRepository generalSetup;
-
-        public AlertMessageLogger(ISLANotification _sla, IGeneralSetupRepository _generalSetup)
-        {
-             sla =_sla;
-            this.generalSetup = _generalSetup;
-
-        }
-
         private FinTrakBankingContext context = new FinTrakBankingContext();
         private DateTime applDate;
         public string response = string.Empty;
+        SLANotification sla = new SLANotification();
+
 
         private readonly string supportEmail = ConfigurationManager.AppSettings["SupportEmailAddr"];
 
@@ -215,7 +208,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.ExpiredBGAlert
                                                                         select x).FirstOrDefault();
             //DateTime currentDate = DateTime.Now;
-            DateTime currentDate = generalSetup.GetApplicationDate();
+            DateTime currentDate = context.TBL_FINANCECURRENTDATE.Select(o=>o.CURRENTDATE).FirstOrDefault();
 
             List<LoanContingentViewModel> loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                                              join c in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals c.STAFFID

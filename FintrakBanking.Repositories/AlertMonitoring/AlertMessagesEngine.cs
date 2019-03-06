@@ -15,7 +15,6 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 {
     public class AlertMessagesEngine : IAlertMessagesEngine
     {
-        private IAlertMessageLogger logger;
         int mailId = 0;
         private string displayName = ConfigurationManager.AppSettings["emailDisplayName"];
         private string userName = ConfigurationManager.AppSettings["Username"];
@@ -28,12 +27,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         private string exceptionReportingEmails = ConfigurationManager.AppSettings["exceptionReportingEmails"];
 
         private string[] Addy = { };
-
-        public AlertMessagesEngine(IAlertMessageLogger _logger)
-        {
-            logger = _logger;
-        }
-
+        AlertMessageLogger logger = new AlertMessageLogger();
+       
         public bool SendEmailOfException(string body)
         {
             using (SmtpClient client = new SmtpClient())
@@ -88,6 +83,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             logger.SendAlertsForCovenantsApproachingDueDate(title, body, alertSetups);
 
             logger.SendAlertsForCovenantsOverDue(title, body, alertSetups);
+
             logger.SendAlertsForExpiredBG(title, body, alertSetups);
 
             logger.SendAlertForExpiredInsurance(title, body, alertSetups);
