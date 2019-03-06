@@ -6,7 +6,9 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CRMS;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Reports;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
@@ -26,33 +28,34 @@ namespace FintrakBanking.Repositories.CRMS
         private IAuditTrailRepository auditTrail;
         private ILoanScheduleRepository loanSchedule;
         private ICRMSCodeBookRepository codeBook;
+        private IFinacleIntegrationRepository finacleIntegration;
 
         public CRMSRegulatories(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
                                         IAuditTrailRepository _audit,
-                                        ICRMSCodeBookRepository _codeBook)
+                                        ICRMSCodeBookRepository _codeBook, IFinacleIntegrationRepository _finacleIntegration)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
             this.auditTrail = _auditTrail;
             this.codeBook = _codeBook;
-
+            this.finacleIntegration = _finacleIntegration;
         }
 
         public string AddCRMSCode(CRMSViewModel param)
         {
             //if (param.loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
             //{
-                var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == param.loanId).Select(x => x).FirstOrDefault();
-                if (loan == null)
-                    throw new ConditionNotMetException("This Facility does not exist");
+            var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == param.loanId).Select(x => x).FirstOrDefault();
+            if (loan == null)
+                throw new ConditionNotMetException("This Facility does not exist");
 
-                var codeExist = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CRMSCODE == param.crmsCode).Any();
-                if (codeExist == true)
-                    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
+            var codeExist = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CRMSCODE == param.crmsCode).Any();
+            if (codeExist == true)
+                throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
 
-                loan.CRMSCODE = param.crmsCode;
-                loan.CRMSDATE = DateTime.Now;
+            loan.CRMSCODE = param.crmsCode;
+            loan.CRMSDATE = DateTime.Now;
             loan.CRMSVALIDATED = true;
 
             //}
@@ -97,19 +100,19 @@ namespace FintrakBanking.Repositories.CRMS
         {
             var term = from x in context.TBL_LOAN_APPLICATION_DETAIL
                            //join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
-                       //join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
+                           //join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
                        join f in context.TBL_LOAN_APPLICATION_DETL_FEE on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                        join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
-                      where (x.CRMSVALIDATED == false || x.CRMSVALIDATED == null)
+                       where (x.CRMSVALIDATED == false || x.CRMSVALIDATED == null)
                        select new CRMSTemplateViewModel
                        {
-                           ACCOUNT = x.CASAACCOUNTID != null ? context.TBL_CASA.Where(a => a.CASAACCOUNTID == x.CASAACCOUNTID).Select(g => g.PRODUCTACCOUNTNUMBER).FirstOrDefault():"n/a", //c.PRODUCTACCOUNTNUMBER,
+                           ACCOUNT = x.CASAACCOUNTID != null ? context.TBL_CASA.Where(a => a.CASAACCOUNTID == x.CASAACCOUNTID).Select(g => g.PRODUCTACCOUNTNUMBER).FirstOrDefault() : "n/a", //c.PRODUCTACCOUNTNUMBER,
                            FEE_TYPE = cf.CRMSREGULATORYID,
                            FEE_AMOUNT = f.RECOMMENDED_FEERATEVALUE * x.APPROVEDAMOUNT,
                            CRMSLEGALSTATUSID = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == x.CUSTOMERID).Select(q => q.CRMSLEGALSTATUSID).FirstOrDefault() != null ? context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == x.CUSTOMERID).Select(q => q.CRMSLEGALSTATUSID).FirstOrDefault() : 0,// b.CRMSLEGALSTATUSID,
                            DATETIMECREATED = x.DATETIMECREATED,
-                           LOANAPPLICATIONDETAILID =x.LOANAPPLICATIONDETAILID,
-                          
+                           LOANAPPLICATIONDETAILID = x.LOANAPPLICATIONDETAILID,
+
                        };
             //var OD = from x in context.TBL_LOAN_REVOLVING
             //         join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -150,24 +153,24 @@ namespace FintrakBanking.Repositories.CRMS
         }
         private IQueryable<CRMSTemplateViewModel> GetDirectors(CRMSViewModel param)
         {
-             var term = from x in context.TBL_LOAN_APPLICATION_DETAIL
-                       //join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
-                       //join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
+            var term = from x in context.TBL_LOAN_APPLICATION_DETAIL
+                           //join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                           //join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
                        join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
-                        where (x.CRMSVALIDATED == false || x.CRMSVALIDATED == null)
+                       where (x.CRMSVALIDATED == false || x.CRMSVALIDATED == null)
 
-                        select new CRMSTemplateViewModel
+                       select new CRMSTemplateViewModel
                        {
 
                            ACCOUNT = x.CASAACCOUNTID != null ? context.TBL_CASA.Where(a => a.CASAACCOUNTID == x.CASAACCOUNTID).Select(g => g.PRODUCTACCOUNTNUMBER).FirstOrDefault() : "n/a", //c.PRODUCTACCOUNTNUMBER,
                            ID_TTPE = d.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
                            ID_DETAIL = d.TAX_NUMBER != null ? d.TAX_NUMBER : d.CUSTOMERBVN,
-                           CRMSLEGALSTATUSID = context.TBL_CUSTOMER.Where(a=>a.CUSTOMERID == x.CUSTOMERID).Select(q=>q.CRMSLEGALSTATUSID).FirstOrDefault() != null ? context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == x.CUSTOMERID).Select(q => q.CRMSLEGALSTATUSID).FirstOrDefault() : 0,// b.CRMSLEGALSTATUSID,
+                           CRMSLEGALSTATUSID = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == x.CUSTOMERID).Select(q => q.CRMSLEGALSTATUSID).FirstOrDefault() != null ? context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == x.CUSTOMERID).Select(q => q.CRMSLEGALSTATUSID).FirstOrDefault() : 0,// b.CRMSLEGALSTATUSID,
                            EMAIL = d.EMAILADDRESS,
                            DATETIMECREATED = x.DATETIMECREATED,
                            LOANAPPLICATIONDETAILID = x.LOANAPPLICATIONDETAILID,
 
-                        };
+                       };
             //var OD = from x in context.TBL_LOAN_REVOLVING
             //         join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
             //         join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
@@ -453,7 +456,7 @@ namespace FintrakBanking.Repositories.CRMS
                     {
                         var record = loanInput[i - 2];
 
-                       // var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
+                        // var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
 
                         //ws.Cells[i, 1].Value = i - 1;
                         ws.Cells[i, 1].Value = record.UNIQUE_IDENTIFICATION_TYPE;
@@ -490,16 +493,16 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 32].Value = record.SECURITY_TYPE;
                         ws.Cells[i, 33].Value = record.ADDRESS_OF_SECURITY;
                         ws.Cells[i, 34].Value = record.OWNER_OF_SECURITY;
-                        if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 1){  ws.Cells[i, 35].Value = "BVN";}
+                        if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 1) { ws.Cells[i, 35].Value = "BVN"; }
                         else if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 2) { ws.Cells[i, 35].Value = "TIN"; }
-                        else {  ws.Cells[i, 35].Value = ""; }
+                        else { ws.Cells[i, 35].Value = ""; }
                         ws.Cells[i, 36].Value = record.UNIQUE_IDENTIFIER_OF_SECURITY_OWNER;
                         ws.Cells[i, 37].Value = record.GUARANTEE != null ? "YES" : "NO";
-                        if (record.GUARANTEE_TYPE == 1) {  ws.Cells[i, 38].Value = "INDIVIDUAL"; }
-                        else if (record.GUARANTEE_TYPE == 2) {  ws.Cells[i, 38].Value = "NON_INDIVIDUAL"; }
-                        else { ws.Cells[i, 38].Value = "";}
+                        if (record.GUARANTEE_TYPE == 1) { ws.Cells[i, 38].Value = "INDIVIDUAL"; }
+                        else if (record.GUARANTEE_TYPE == 2) { ws.Cells[i, 38].Value = "NON_INDIVIDUAL"; }
+                        else { ws.Cells[i, 38].Value = ""; }
                         ws.Cells[i, 39].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE != null ? "BVN" : "TIN"; //record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE;
-                        ws.Cells[i, 40].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION ;// record.GUARANTOR_UNIQUE_IDENTIFICATION;
+                        ws.Cells[i, 40].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION;// record.GUARANTOR_UNIQUE_IDENTIFICATION;
                         ws.Cells[i, 41].Value = record.AMOUNT_GUARANTEED;// record.AMOUNT_GUARANTEED;
                         ws.Cells[i, 42].Value = record.REFERENCENUMBER; ;
                     }
@@ -508,7 +511,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                     if (forSingle == 1)
                     {
-                        output = GetFee(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList(); 
+                        output = GetFee(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
                     }
                     else
                     {
@@ -541,7 +544,7 @@ namespace FintrakBanking.Repositories.CRMS
                     //var directors = GetDirectors(param);
                     if (forSingle == 1)
                     {
-                        directors = GetDirectors(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList(); 
+                        directors = GetDirectors(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
                     }
                     else
                     {
@@ -639,7 +642,7 @@ namespace FintrakBanking.Repositories.CRMS
                     {
                         var record = loanInput[i - 2];
 
-                      //  var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
+                        //  var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
                         ws.Cells[i, 1].Value = record.UNIQUE_IDENTIFICATION_TYPE;
                         ws.Cells[i, 2].Value = record.UNIQUE_IDENTIFICATION_NO;
                         ws.Cells[i, 3].Value = record.CRMSCODE;
@@ -707,7 +710,7 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 26].Value = record.SECURITY_TYPE;
                         ws.Cells[i, 27].Value = record.ADDRESS_OF_SECURITY;
                         ws.Cells[i, 28].Value = record.OWNER_OF_SECURITY;
-                        if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER==1)
+                        if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 1)
                         {
                             ws.Cells[i, 29].Value = "BVN";
                         }
@@ -715,7 +718,8 @@ namespace FintrakBanking.Repositories.CRMS
                         {
                             ws.Cells[i, 29].Value = "TIN";
                         }
-                        else{
+                        else
+                        {
                             ws.Cells[i, 29].Value = "";
                         }
                         ws.Cells[i, 30].Value = record.UNIQUE_IDENTIFIER_OF_SECURITY_OWNER;
@@ -2094,7 +2098,7 @@ namespace FintrakBanking.Repositories.CRMS
                      {
                          DATETIMECREATED = a.DATETIMECREATED,
                          LOANAPPLICATIONDETAILID = a.LOANAPPLICATIONDETAILID,
-                         BENEFICIARY_ACCOUNT_NUMBER = a.CASAACCOUNTID != null ? context.TBL_CASA.Where(o=>o.CASAACCOUNTID == a.CASAACCOUNTID).Select(q=>q.PRODUCTACCOUNTNUMBER).FirstOrDefault(): "n/a",
+                         BENEFICIARY_ACCOUNT_NUMBER = a.CASAACCOUNTID != null ? context.TBL_CASA.Where(o => o.CASAACCOUNTID == a.CASAACCOUNTID).Select(q => q.PRODUCTACCOUNTNUMBER).FirstOrDefault() : "n/a",
                          EFFECTIVE_DATE = a.EFFECTIVEDATE != null ? (DateTime)a.EFFECTIVEDATE : DateTime.Today.Date,
                          CREDIT_LIMIT = a.APPROVEDAMOUNT,
                          INTEREST_RATE = a.APPROVEDINTERESTRATE,
@@ -2123,7 +2127,7 @@ namespace FintrakBanking.Repositories.CRMS
                          SYNDICATION = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "YES" : "NO",
                          SYNDICATION_STATUS = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "MEMBER" : "NIL",//"IF(product tye is syndicationa by the product type (Austine))",
                          SYNDICATION_REF_NUMBER = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? a.FIELD1 : "NIL",// Pending,
-                         COLLATERAL_PRESENT = collateralMpping != null ? "YES": "NO", //context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.LOANID == x.TERMLOANID).Any() ? "YES" : "NO",
+                         COLLATERAL_PRESENT = collateralMpping != null ? "YES" : "NO", //context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.LOANID == x.TERMLOANID).Any() ? "YES" : "NO",
                          COLLATERAL_SECURE = a.SECUREDBYCOLLATERAL ? "YES" : "NO",
                          SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
                          ADDRESS_OF_SECURITY = collateralMpping.PROPERTYADDRESS,
@@ -2355,7 +2359,7 @@ namespace FintrakBanking.Repositories.CRMS
         {
             int forSingle = 1;
             var record = GenerateCRMSReport(param, forSingle).ToList();
-            var result = record.Where(a=>a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
+            var result = record.Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
             result = result.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).ToList();
             if (result == null)
                 throw new ConditionNotMetException("Record Not Found For T300");
@@ -2402,7 +2406,7 @@ namespace FintrakBanking.Repositories.CRMS
             return GenerateCRMS100Template(result.ToList());
         }
 
-     private CRMSRecord GenerateCRMS200TemplateByLoanAppId(CRMSViewModel param)
+        private CRMSRecord GenerateCRMS200TemplateByLoanAppId(CRMSViewModel param)
         {
             int forSingle = 1;
             var record = GenerateCRMSReport(param, forSingle).ToList();
@@ -2427,7 +2431,7 @@ namespace FintrakBanking.Repositories.CRMS
             return GenerateCRMS200Template(result.ToList());
         }
 
-     private CRMSRecord GenerateCRMS600TemplateByLoanAppId(CRMSViewModel param)
+        private CRMSRecord GenerateCRMS600TemplateByLoanAppId(CRMSViewModel param)
         {
             int forSingle = 1;
             var record = GenerateCRMSReport(param, forSingle).ToList();
@@ -2452,7 +2456,7 @@ namespace FintrakBanking.Repositories.CRMS
             return GenerateCRMS600Template(result.ToList());
         }
 
-         public CRMSRecord GenerateCBNReport(CRMSViewModel param)
+        public CRMSRecord GenerateCBNReport(CRMSViewModel param)
         {
             if (param.templateTypeId == (int)CRMSTemplate.Template100)
             {
@@ -2484,7 +2488,7 @@ namespace FintrakBanking.Repositories.CRMS
             }
             return new CRMSRecord();
         }
-         public CRMSRecord GenerateCBNReportByLoanAppId(CRMSViewModel param)
+        public CRMSRecord GenerateCBNReportByLoanAppId(CRMSViewModel param)
         {
             if (param.templateTypeId == (int)CRMSTemplate.Template100)
             {
@@ -2516,5 +2520,83 @@ namespace FintrakBanking.Repositories.CRMS
             }
             return new CRMSRecord();
         }
+        public CRMSRecord GenerateBatchPosting(DateRange model)
+        {
+
+            var loanInput = finacleIntegration.GetBatchPostingDetailSearch(model.startDate, model.endDate, model.status);
+
+            Byte[] fileBytes = null;
+            CRMSRecord excel = new CRMSRecord();
+            if (loanInput != null)
+            {
+                using (ExcelPackage pck = new ExcelPackage())
+                {
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Batch Posting Data");
+
+
+                    ws.Cells[1, 1].Value = "SID";
+                    ws.Cells[1, 2].Value = "BATCH_ID";
+                    ws.Cells[1, 3].Value = "BATCH_REF_ID";
+                    ws.Cells[1, 4].Value = "TRAN_TYPE";
+                    ws.Cells[1, 5].Value = "FLOW_TYPE";
+                    ws.Cells[1, 6].Value = "AMT";
+                    ws.Cells[1, 7].Value = "DR_ACCT";
+                    ws.Cells[1, 8].Value = "CR_ACCT";
+                    ws.Cells[1, 9].Value = "REF_CRNCY_CODE";
+                    ws.Cells[1, 10].Value = "RATE_CODE";
+                    ws.Cells[1, 11].Value = "PSTD_USR_ID";
+                    ws.Cells[1, 12].Value = "FAIL_FLG";
+                    ws.Cells[1, 13].Value = "DEL_FLG";
+                    ws.Cells[1, 14].Value = "FAILURE_REASON_CODE ";
+                    ws.Cells[1, 15].Value = "FAILURE_REASON";
+                    ws.Cells[1, 16].Value = "AMT_COLLECTED";
+                    ws.Cells[1, 17].Value = "LIEN_AMT";
+                    ws.Cells[1, 18].Value = "LIEN_FLG";
+                    ws.Cells[1, 19].Value = "TOD_FLG";
+                    ws.Cells[1, 20].Value = "VALUE_DATE_NUM";
+                    ws.Cells[1, 21].Value = "LOAN_ACCT";
+                    ws.Cells[1, 22].Value = "FINTRAK_FLG ";
+                    ws.Cells[1, 23].Value = "BANK_ID";
+                    ws.Cells[1, 24].Value = "STATUS";
+
+                    for (int i = 2; i <= loanInput.Count + 1; i++)
+                    {
+                        var record = loanInput[i - 2];
+
+                        ws.Cells[i, 1].Value = record.sid;
+                        ws.Cells[i, 2].Value = record.batchId;
+                        ws.Cells[i, 3].Value = record.batchRefId;
+                        ws.Cells[i, 4].Value = record.trancType;
+                        ws.Cells[i, 5].Value = record.flowType;
+                        ws.Cells[i, 6].Value = record.amt;
+                        ws.Cells[i, 7].Value = record.drAccount;
+                        ws.Cells[i, 8].Value = record.crAccount;
+                        ws.Cells[i, 9].Value = record.currencyCode;
+                        ws.Cells[i, 10].Value = record.rateCode;
+                        ws.Cells[i, 11].Value = record.postedDate;
+                        ws.Cells[i, 12].Value = record.failedFlag;
+                        ws.Cells[i, 13].Value = record.deleteFlag;
+                        ws.Cells[i, 14].Value = record.failureReasonCode;
+                        ws.Cells[i, 15].Value = record.failureReason;
+                        ws.Cells[i, 16].Value = record.amountCollected;
+                        ws.Cells[i, 17].Value = record.lienAmount;
+                        ws.Cells[i, 18].Value = record.lienFlg;
+                        ws.Cells[i, 19].Value = record.TodFlg;
+                        ws.Cells[i, 20].Value = record.valueDateNumber;
+                        ws.Cells[i, 21].Value = record.loanAccount;
+                        ws.Cells[i, 22].Value = record.fintrakFlag;
+                        ws.Cells[i, 23].Value = record.bankId;
+                        ws.Cells[i, 24].Value = record.status;
+
+                    }
+                    fileBytes = pck.GetAsByteArray();
+                    excel.reportData = fileBytes;
+                    excel.templateTypeName = "BatchPostingData";
+                }
+            }
+
+            return excel;
+        }
+
     }
 }

@@ -178,6 +178,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short approvalStatusId { get; set; }
         public bool hasBeenApplied { get; set; }
         public DateTime effectiveDate { get; set; }
+        public bool isMarketInduced { get; set; }
+
 
     }
     public class ProductPriceIndexDailyViewModel : GeneralEntity

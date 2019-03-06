@@ -12,6 +12,7 @@ namespace FintrakBanking.Interfaces.ThridPartyIntegration
         #region
         List<BatchPostingViewModel> GetBatchPostingDetail(DateTime startDate, DateTime endDate, string searchInfo);
         List<BatchPostingViewModel> GetBatchPostingMain(DateTime startDate, DateTime endDate, string searchInfo);
+        List<BatchPostingViewModel> GetBatchPostingDetailSearch(DateTime startDate, DateTime endDate, string status);
         #endregion
     }
 }

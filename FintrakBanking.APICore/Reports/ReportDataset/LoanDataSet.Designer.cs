@@ -24432,22 +24432,71 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string customerId {
-                get {
-                    try {
-                        return ((string)(this[this.tableStakeHolderWithExpiedFTP.customerIdColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'customerId\' in table \'StakeHolderWithExpiedFTP\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableStakeHolderWithExpiedFTP.customerIdColumn] = value;
-                }
-            }
+            //public string nameOfRM {
+            //    get {
+            //        try {
+            //            return ((string)(this[this.tableStakeHolderWithExpiedFTP.nameOfRMColumn]));
+            //        }
+            //        catch (global::System.InvalidCastException e) {
+            //            throw new global::System.Data.StrongTypingException("The value for column \'nameOfRM\' in table \'StakeHolderWithExpiedFTP\' is DBNull.", e);
+            //        }
+            //    }
+            //    set {
+            //        this[this.tableStakeHolderWithExpiedFTP.nameOfRMColumn] = value;
+            //    }
+            //}
             
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            //[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            //public string staffCode {
+            //    get {
+            //        try {
+            //            return ((string)(this[this.tableStakeHolderWithExpiedFTP.staffCodeColumn]));
+            //        }
+            //        catch (global::System.InvalidCastException e) {
+            //            throw new global::System.Data.StrongTypingException("The value for column \'staffCode\' in table \'StakeHolderWithExpiedFTP\' is DBNull.", e);
+            //        }
+            //    }
+            //    set {
+            //        this[this.tableStakeHolderWithExpiedFTP.staffCodeColumn] = value;
+            //    }
+            //}
+            
+            //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            //[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            //public string customerAcct {
+            //    get {
+            //        try {
+            //            return ((string)(this[this.tableStakeHolderWithExpiedFTP.customerAcctColumn]));
+            //        }
+            //        catch (global::System.InvalidCastException e) {
+            //            throw new global::System.Data.StrongTypingException("The value for column \'customerAcct\' in table \'StakeHolderWithExpiedFTP\' is DBNull" +
+            //                    ".", e);
+            //        }
+            //    }
+            //    set {
+            //        this[this.tableStakeHolderWithExpiedFTP.customerAcctColumn] = value;
+            //    }
+            //}
+            
+            //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            //[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            //public string customerId {
+            //    get {
+            //        try {
+            //            return ((string)(this[this.tableStakeHolderWithExpiedFTP.customerIdColumn]));
+            //        }
+            //        catch (global::System.InvalidCastException e) {
+            //            throw new global::System.Data.StrongTypingException("The value for column \'customerId\' in table \'StakeHolderWithExpiedFTP\' is DBNull.", e);
+            //        }
+            //    }
+            //    set {
+            //        this[this.tableStakeHolderWithExpiedFTP.customerIdColumn] = value;
+            //    }
+            //}
+            
+            //[global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            //[global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string businessUnit {
                 get {
                     try {

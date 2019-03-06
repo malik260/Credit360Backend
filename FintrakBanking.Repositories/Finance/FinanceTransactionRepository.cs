@@ -70,7 +70,6 @@ namespace FintrakBanking.Repositories.Finance
 
         public CasaBalanceViewModel GetCASABalance(int casaAccountId)
         {
-
             var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
             var data = new CasaBalanceViewModel();
             if (USE_THIRD_PARTY_INTEGRATION)
@@ -82,6 +81,26 @@ namespace FintrakBanking.Repositories.Finance
             else
             {
                 return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID, currencyId = account.CURRENCYID, accountNo = account.PRODUCTACCOUNTNUMBER, accountName = account.PRODUCTACCOUNTNAME, hasBalance = true };
+            }
+
+        }
+
+        public CasaBalanceViewModel GetCASABalance(string accountNumber, int companyId)
+        {            
+            var data = new CasaBalanceViewModel();
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                data = integration.GetCustomerAccountBalance(accountNumber);
+                //Task.Run(async () => { data = await customerInfo .GetCustomerAccountBalance(account.PRODUCTACCOUNTNUMBER); }).GetAwaiter().GetResult();
+                return data; //  new CasaBalanceViewModel { availableBalance = data.availableBalance, ledgerBalance = 0,accountStatusId = data.accountStatusId);
+            }
+            else
+            {
+                var account = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTACCOUNTNUMBER == accountNumber && x.COMPANYID == companyId);
+                if (account != null)
+                    return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID, currencyId = account.CURRENCYID, accountNo = account.PRODUCTACCOUNTNUMBER, accountName = account.PRODUCTACCOUNTNAME, hasBalance = true };
+                else
+                    return data;
             }
 
         }
@@ -1871,8 +1890,7 @@ namespace FintrakBanking.Repositories.Finance
             return inputTransactions;
 
         }
-
-
+        
         public FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth)
         {
             //*FinanceTransactionViewModel*/ loanTransaction = new FinanceTransactionViewModel();
@@ -2228,8 +2246,8 @@ namespace FintrakBanking.Repositories.Finance
             credit.glAccountId = creditGL; // context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanData.PRODUCTID).PRINCIPALBALANCEGL.Value;
             credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             credit.casaAccountId = null;
-            credit.debitAmount = postedAmount;
-            credit.creditAmount = 0;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
             credit.sourceBranchId = loanData.BRANCHID;
             credit.destinationBranchId = loanData.BRANCHID;
 
@@ -2253,8 +2271,8 @@ namespace FintrakBanking.Repositories.Finance
             debit.glAccountId = debitGL;
             debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             debit.casaAccountId = null;
-            debit.debitAmount = 0;
-            debit.creditAmount = postedAmount;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
             //debit.sourceBranchId = casa.BRANCHID;
             debit.sourceBranchId = loanData.BRANCHID;
             debit.destinationBranchId = loanData.BRANCHID;
@@ -2305,8 +2323,8 @@ namespace FintrakBanking.Repositories.Finance
             credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanData.PRODUCTID).PRINCIPALBALANCEGL.Value;
             credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             credit.casaAccountId = null;
-            credit.debitAmount = postedAmount;
-            credit.creditAmount = 0;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
             credit.sourceBranchId = loanData.BRANCHID;
             credit.destinationBranchId = loanData.BRANCHID;
 
@@ -2330,8 +2348,8 @@ namespace FintrakBanking.Repositories.Finance
             debit.glAccountId = debitGL;
             debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             debit.casaAccountId = null;
-            debit.debitAmount = 0;
-            debit.creditAmount = postedAmount;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
             //debit.sourceBranchId = casa.BRANCHID;
             debit.sourceBranchId = loanData.BRANCHID;
             debit.destinationBranchId = loanData.BRANCHID;
@@ -2424,9 +2442,7 @@ namespace FintrakBanking.Repositories.Finance
             return null;
 
         }
-
-
-
+        
         public List<FinanceTransactionViewModel> BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
             var loanData = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
@@ -2496,8 +2512,7 @@ namespace FintrakBanking.Repositories.Finance
             return inputTransactions;
 
         }
-
-
+        
         public FinanceTransactionViewModel PostDailyInterestSuspension(DailyInterestAccrualViewModel model, int loanId, DateTime applicationDate, int staffId)
 
         {

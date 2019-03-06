@@ -8,7 +8,7 @@ namespace FintrakBanking.Entities.Models
 
     [Table("TBL_PRODUCT_PRICE_INDEX_GLOBAL")]
     public partial class TBL_PRODUCT_PRICE_INDEX_GLOBAL
-    {      
+    {
         [Key]
         public short PRODUCTPRICEINDEXGLOBALID { get; set; }
         public short PRODUCTPRICEINDEXID { get; set; }
@@ -17,6 +17,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime EFFECTIVEDATE { get; set; }
         public short APPROVALSTATUSID { get; set; }
         public bool HASBEENAPPLIED { get; set; }
+        public bool ISMARKETINDUCED { get; set; }
+
         public int? CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
@@ -30,6 +32,5 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
-
     }
 }

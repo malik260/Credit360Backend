@@ -14,7 +14,17 @@ namespace FintrakBanking.Interfaces.Credit
     {
         int CalculateNumberOfInstallments(TenorModeEnum tenorModeId, short frequencyTypeId, int tenor);
 
+        List<LoanPaymentSchedulePeriodicViewModel> BallonInterestRateChangePrepayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate, double prepaymentAmount);
+
+        List<LoanPaymentSchedulePeriodicViewModel> BallonInterestRateChange(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate);
+
         int GetDaysInAYear(DayCountConventionEnum dayCountId);
+
+        List<LoanPaymentSchedulePeriodicViewModel> BulletPrepayments(int loanID, DateTime effectiveDate, double prepaymentAmount);
+
+        List<LoanPaymentSchedulePeriodicViewModel> BulletInterestRateChange(int loanID, DateTime effectiveDate, double interestRate);
+
+        List<LoanPaymentSchedulePeriodicViewModel> EvenPrincipalPaymentsNewAnnuity(int loanID, DateTime effectiveDate);
 
         List<LoanPaymentSchedulePeriodicViewModel> PrepaymentWithKeepExistingAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, double prepaymentAmount, int principalRepaymentFrequency, int interestRepaymentFrequency);
 

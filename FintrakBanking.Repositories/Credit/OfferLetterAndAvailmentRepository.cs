@@ -243,6 +243,8 @@ namespace FintrakBanking.Repositories.Credit
                     isFirstApprover = false,
                     isFinal = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID).Select(o => o.ISFINAL).FirstOrDefault(),
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
+                    currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
+
                 });
 
             data = data.Where(x =>
@@ -324,6 +326,16 @@ namespace FintrakBanking.Repositories.Credit
                     approvalTrailId = x.d.APPROVALTRAILID,
                     currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
                     currentApprovalLevel = x.d.TBL_APPROVAL_LEVEL1.LEVELNAME,
+
+                    responsiblePerson = context.TBL_STAFF
+                                            .Where(s => s.STAFFID == x.d.TOSTAFFID)
+                                            .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
+                                            .FirstOrDefault().name ?? "",
+                    requestStaffId = x.d.REQUESTSTAFFID,
+                    toApprovalLevelId = x.d.TOAPPROVALLEVELID,
+
+
+
 
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
@@ -2493,6 +2505,80 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
+        public bool ReferBackOneStep(LoanAvailmentApprovalViewModel model)
+        {
+            int? productClassId = 0;
+
+            int? currentLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId)
+                .OrderByDescending(x => x.APPROVALTRAILID)
+                .FirstOrDefault()
+                .TOAPPROVALLEVELID
+                ;
+
+            if (model.operationId == (int)OperationsEnum.LoanAvailment)
+            {
+                var appla = context.TBL_LOAN_APPLICATION.Find(model.targetId);
+                productClassId = appla.PRODUCTCLASSID;
+            }
+            if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment ||
+                model.operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal ||
+                model.operationId == (int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal)
+            {
+                var applb = context.TBL_LMSR_APPLICATION.Find(model.targetId);
+                productClassId = null;
+            }
+
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.PRODUCTCLASSID == productClassId)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList()
+                     ;
+
+            int? nextId = null;
+            foreach (var level in levels)
+            {
+                if (level.levelId == currentLevelId) break;
+                nextId = level.levelId;
+            }
+
+            int staffId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId && x.FROMAPPROVALLEVELID == nextId)
+                .FirstOrDefault()
+                .REQUESTSTAFFID
+                ;
+
+            var from = context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).FirstOrDefault();
+            
+
+            // init
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = null;
+            workflow.ProductId = null;
+            workflow.NextLevelId = nextId ?? throw new SecureException("Unable to complete refer back. The destination approval level could not be resolved!");
+            workflow.ToStaffId = staffId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+            workflow.Comment = "Referred back from " + from.FIRSTNAME + " " + from.MIDDLENAME + " " + from.LASTNAME;
+            workflow.DeferredExecution = true;
+
+            // log
+            workflow.LogActivity();
+
+            return context.SaveChanges() > 0;
+        }
+
         private void ChecklistValidation(int applicationId)
         {
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
@@ -2585,23 +2671,27 @@ namespace FintrakBanking.Repositories.Credit
                 offerLetterDoc.OFFERLETTERSALUTATION = "Attention : " + detail.customerName;
                 offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
 
-                var loanOfferLetter = new TBL_LOAN_OFFER_LETTER
+                if (!context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Any())
                 {
-                    CREATEDBY = staffId,
-                    DATETIMECREATED = DateTime.Now,
-                    DELETED = false,
-                    ISLMS = isLMS,
-                    LOANAPPLICATIONID = applicationId,
-                    OFFERLETTERACCEPTANCE = detail.offerLetteracceptance,
-                    OFFERLETTERCLAUSES = detail.offerLetterClauses,
-                    ISACCEPTED = true,
-                    ISFINAL = false
-                };
 
-                context.TBL_LOAN_OFFER_LETTER.Add(loanOfferLetter);
+                    var loanOfferLetter = new TBL_LOAN_OFFER_LETTER
+                    {
+                        CREATEDBY = staffId,
+                        DATETIMECREATED = DateTime.Now,
+                        DELETED = false,
+                        ISLMS = isLMS,
+                        LOANAPPLICATIONID = applicationId,
+                        OFFERLETTERACCEPTANCE = detail.offerLetteracceptance,
+                        OFFERLETTERCLAUSES = detail.offerLetterClauses,
+                        ISACCEPTED = true,
+                        ISFINAL = false
+                    };
 
-                if (callSaveChanges)
-                    context.SaveChanges();
+                    context.TBL_LOAN_OFFER_LETTER.Add(loanOfferLetter);
+
+                    if (callSaveChanges)
+                        context.SaveChanges();
+                }
             }
            
         }

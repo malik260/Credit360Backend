@@ -2369,6 +2369,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             entity.externalInitialization = false;
 
+            
             using (var trans = context.Database.BeginTransaction())
             {
                 try
@@ -2394,58 +2395,61 @@ namespace FintrakBanking.Repositories.Setups.General
                     //    throw new SecureException("Approval Failed");
                     //}
 
-                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
-                    {
-                        var globalPriceIndex = context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Find(entity.targetId);
-                        globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
-                        context.SaveChanges();
-                        trans.Commit();
-                        return 2;
-                    }
+                    var globalPriceIndex = context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Find(entity.targetId);
+
+                    //if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    //{
+                        
+                    //    globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                    //    context.SaveChanges();
+                    //    trans.Commit();
+                    //    return 2;
+                    //}
                     if (workFlow.NewState != (int)ApprovalState.Ended)
                     {
-                        var globalPriceIndex = context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Find(entity.targetId);
                         globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
-                        context.SaveChanges();
+                        context.SaveChanges();                        
                         trans.Commit();
                         return 3;
 
                     }
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    if (workFlow.NewState == (int)ApprovalState.Ended )
                     {
-                        var globalPriceIndex = context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Find(entity.targetId);
-                        var appDate = genSetup.GetApplicationDate();
-                        if (globalPriceIndex.EFFECTIVEDATE == appDate)
+                        if(workFlow.StatusId == (int)ApprovalStatusEnum.Approved)
                         {
-                            var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.Find(globalPriceIndex.PRODUCTPRICEINDEXID);
-                            priceIndex.PRICEINDEXRATE = globalPriceIndex.NEWRATE;
-                            priceIndex.DATETIMEUPDATED = DateTime.Now;
-                            priceIndex.LASTUPDATEDBY = entity.createdBy;
-                        }
-                        globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                        globalPriceIndex.DATETIMEUPDATED = DateTime.Now;
-                        globalPriceIndex.LASTUPDATEDBY = entity.createdBy;
-
-
-                        try
-                        {
+                            var appDate = genSetup.GetApplicationDate();
+                            if (globalPriceIndex.EFFECTIVEDATE == appDate)
+                            {
+                                var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.Find(globalPriceIndex.PRODUCTPRICEINDEXID);
+                                priceIndex.PRICEINDEXRATE = globalPriceIndex.NEWRATE;
+                                priceIndex.DATETIMEUPDATED = DateTime.Now;
+                                priceIndex.LASTUPDATEDBY = entity.createdBy;
+                            }
+                            globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                            globalPriceIndex.DATETIMEUPDATED = DateTime.Now;
+                            globalPriceIndex.LASTUPDATEDBY = entity.createdBy;
                             context.SaveChanges();
-
-                            loanOperations.ProcessGlobalInterestRepricing(globalPriceIndex.EFFECTIVEDATE, globalPriceIndex.PRODUCTPRICEINDEXID, (short)entity.createdBy);
-
+                            loanOperations.ProcessGlobalInterestRepricing(globalPriceIndex.EFFECTIVEDATE, globalPriceIndex.PRODUCTPRICEINDEXID, (short)entity.createdBy,globalPriceIndex.ISMARKETINDUCED, globalPriceIndex.PRODUCTPRICEINDEXGLOBALID);
                             trans.Commit();
-                        }
-                        catch (Exception ex)
-                        {
-                            var EXE = ex;
-                        }
+                            return 1;
 
+                        }
+                        else if (workFlow.StatusId == (int)ApprovalStatusEnum.Disapproved)
+                        {
+                            globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                            globalPriceIndex.DATETIMEUPDATED = DateTime.Now;
+                            globalPriceIndex.LASTUPDATEDBY = entity.createdBy;
+                            context.SaveChanges();
+                            trans.Commit();
+                            return 2;
+                        }
+                        
                     }
                     else
                     {
                         trans.Commit();
                     }
-
+                    
                     return 0;
                 }
                 catch (Exception ex)
@@ -2454,6 +2458,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     throw new SecureException(ex.Message);
                 }
             }
+
+            
+
         }
 
         public List<ProductPriceIndexDailyViewModel> getProductPriceIndexHistory(DateTime startDate, DateTime endDate, int companyId)
@@ -2517,7 +2524,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         effectiveDate = data.EFFECTIVEDATE,
                         approvalStatusId = data.APPROVALSTATUSID,
                         hasBeenApplied = data.HASBEENAPPLIED,
-
+                        isMarketInduced = data.ISMARKETINDUCED,
                     });
         }
 
@@ -2535,6 +2542,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         effectiveDate = data.EFFECTIVEDATE,
                         approvalStatusId = data.APPROVALSTATUSID,
                         hasBeenApplied = data.HASBEENAPPLIED,
+                        isMarketInduced = data.ISMARKETINDUCED,
                         dateTimeUpdated = data.DATETIMEUPDATED,
                         deleted = data.DELETED,
                         deletedBy = data.DELETEDBY,
@@ -2616,6 +2624,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 EFFECTIVEDATE = prodPriceIndexGlobal.effectiveDate,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 HASBEENAPPLIED = prodPriceIndexGlobal.hasBeenApplied,
+                ISMARKETINDUCED= prodPriceIndexGlobal.isMarketInduced,
                 CREATEDBY = prodPriceIndexGlobal.createdBy,
                 DATETIMECREATED = DateTime.Now,
             };
@@ -2692,6 +2701,8 @@ namespace FintrakBanking.Repositories.Setups.General
             globalInterest.NEWRATE = prodPriceIndexGlobal.newRate;
             globalInterest.EFFECTIVEDATE = prodPriceIndexGlobal.effectiveDate;
             globalInterest.HASBEENAPPLIED = prodPriceIndexGlobal.hasBeenApplied;
+            globalInterest.ISMARKETINDUCED = prodPriceIndexGlobal.isMarketInduced;
+
             globalInterest.LASTUPDATEDBY = prodPriceIndexGlobal.lastUpdatedBy;
             globalInterest.DATETIMEUPDATED = DateTime.Now;
             globalInterest.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;

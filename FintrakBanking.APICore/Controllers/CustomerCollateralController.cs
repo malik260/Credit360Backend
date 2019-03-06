@@ -324,6 +324,10 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message ="Approved Successfully"});
             }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
@@ -1096,9 +1100,13 @@ namespace FintrakBanking.APICore.Controllers
                 var response = type.CollateralSubType(id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (SecureException ex)
+            //catch (SecureException ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            //}
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
             }
         }
 
@@ -1488,7 +1496,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetFixedDepositAccountBalance(accountNumber);
+                var response = repo.GetFixedDepositAccountDetail(accountNumber);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }

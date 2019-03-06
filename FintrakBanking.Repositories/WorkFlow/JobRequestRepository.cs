@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Interfaces.Setups.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels.WorkFlow;
-using FintrakBanking.Common.Enum;
-using System.Linq;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.Entities.DocumentModels;
-using System.Data.Entity;
-using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Repositories.Setups.General;
 using FintrakBanking.ViewModels;
-using FintrakBanking.Interfaces.Finance;
-using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Repositories.Credit;
-using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Setups.General;
-using FintrakBanking.Common.CustomException;
-using FintrakBanking.Interfaces.Setups.Finance;
+using FintrakBanking.ViewModels.WorkFlow;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
+using System.Linq;
 using System.ServiceModel;
 
 namespace FintrakBanking.Repositories.WorkFlow
@@ -73,29 +71,37 @@ namespace FintrakBanking.Repositories.WorkFlow
                 RESPONSECOMMENT = model.responseComment,
                 ARRIVALDATE = applicationDate,
                 SYSTEMARRIVALDATE = date,
-                BRANCHID = model.branchId
+                BRANCHID = model.branchId,
+                JOBSOURCEID = model.jobSourceId 
             };
-            var job = context.TBL_JOB_REQUEST.Add(data); 
+            try
+            {
+                var job = context.TBL_JOB_REQUEST.Add(data);
 
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.audit.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-            if (context.SaveChanges() > 0)
-            {
-                return job.JOBREQUESTCODE;
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = applicationDate,
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.audit.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+                if (context.SaveChanges() > 0)
+                {
+                    return job.JOBREQUESTCODE;
+                }
+                else return string.Empty;
             }
-            else return string.Empty;
+            catch(Exception ex)
+            {
+                throw new Exception("");
+            }
         }
 
         public string AddGlobalJobRequest(JobRequestViewModel model)
@@ -164,6 +170,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if(model.rejectionReasonId != null)data.JOB_STATUS_FEEDBACKID = (short)model.rejectionReasonId;
             data.RESPONSECOMMENT = model.responseComment;
             data.RESPONSEDATE = applicationDate;
+            data.RESPONSESTAFFID = model.createdBy;
             data.SYSTEMRESPONSEDATE = DateTime.Now;
 
             // Audit Section ---------------------------
@@ -515,7 +522,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                                 assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                            })).ToList().OrderByDescending(x => x.arrivalDate).Take(40).ToList();
+                            })).ToList().OrderByDescending(x => x.arrivalDate).Take(30).ToList();
             }
 
             List<int> jobRequestIds = new List<int>();
@@ -586,10 +593,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                                     to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                                     assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                                })).OrderByDescending(x => x.arrivalDate).Take(40).ToList();
+                                })).OrderByDescending(x => x.arrivalDate).Take(30).ToList();
 
             }
-
+            
             if (staffHub.Any() && !middleOfficeUnit.Any())
             {
                 List<int> unitIds = new List<int>();
@@ -600,7 +607,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var xy = (from x in context.TBL_JOB_REQUEST
                           join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                           join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                          where (x.SENDERSTAFFID == staffId || x.RECEIVERSTAFFID == staffId || x.REASSIGNEDTO == staffId || unitIds.Contains((int)x.JOBTYPEUNITID))
+                          where ((x.SENDERSTAFFID == staffId) || (x.RECEIVERSTAFFID == staffId) || (x.REASSIGNEDTO == staffId) || (unitIds.Contains((int)x.JOBTYPEUNITID)))
                           && !jobRequestIds.Contains(x.JOBREQUESTID)
                           orderby x.ARRIVALDATE descending
                           select (
@@ -654,17 +661,18 @@ namespace FintrakBanking.Repositories.WorkFlow
                               to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                               assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                          })).OrderByDescending(x => x.arrivalDate).Take(40).ToList();
+                          })).OrderByDescending(x => x.arrivalDate).Take(30).ToList();
 
                 staffData.AddRange(xy);
             }
 
-            if(middleOfficeUnit.Any() && !isTeamLead)
+
+            if ((middleOfficeUnit.Any() && !isTeamLead) || (!staffHub.Any() && !middleOfficeUnit.Any() && !isTeamLead))
             {
                 staffData = (from x in context.TBL_JOB_REQUEST
                              join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                              join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                             where (x.SENDERSTAFFID == staffId || x.RECEIVERSTAFFID == staffId || x.REASSIGNEDTO == staffId) && !jobRequestIds.Contains(x.JOBREQUESTID)
+                             where ((x.SENDERSTAFFID == staffId) || (x.RECEIVERSTAFFID == staffId) || (x.REASSIGNEDTO == staffId)) && !jobRequestIds.Contains(x.JOBREQUESTID)
                              orderby x.ARRIVALDATE descending
                              select (
                              new JobRequestViewModel
@@ -717,10 +725,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                                  to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                                  assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                             })).ToList().OrderByDescending(x => x.arrivalDate).Take(40).ToList();
+                             })).OrderByDescending(x => x.arrivalDate).Take(30).ToList();
             }
 
             allData = adminData.Union(hubStaffData).Union(staffData).Distinct().ToList();
+
+
 
             foreach (var item in allData)
             {
@@ -754,6 +764,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             return allData;
         }
 
+   
         public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId, int branchId)
         {
             return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId);
@@ -848,12 +859,19 @@ namespace FintrakBanking.Repositories.WorkFlow
                             fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
                             to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                             assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
-
+                            responseStaffId = x.RESPONSESTAFFID,
+                           
                         })).ToList().OrderByDescending(x => x.arrivalDate);
 
 
             foreach (var item in data)
             {
+                var responderRecord = context.TBL_STAFF.Find(item.responseStaffId);
+                if (responderRecord != null)
+                {
+                    item.responseStaffName = responderRecord.FIRSTNAME == null ? "n/a" : responderRecord.FIRSTNAME + " " + responderRecord.LASTNAME;
+                }
+
                 var applicationDet = context.TBL_LOAN_APPLICATION_DETAIL.Find(item.targetId);
                 if (applicationDet != null)
                 {
@@ -1062,15 +1080,16 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return details.ToList();
         }
-        public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId)
+        public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId, int operationId)
         {
-            var requests = this.context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId);
+            var requests = this.context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId && x.OPERATIONSID == operationId);
 
             if (requests.Count() < 0) return null;
 
             var requestsList = new List<JobRequestViewModel>();
             foreach ( var request in requests)
             {
+                
                 var jobDocumentsList = GetJobRequestDocuments(request.JOBREQUESTCODE).AsEnumerable();
                 TBL_JOB_REQUEST_STATUS_FEEDBAK feedback;
                 
@@ -1082,6 +1101,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobRequestCode = request.JOBREQUESTCODE,
                     targetId = request.TARGETID,
                     jobTypeId = request.JOBTYPEID,
+                    jobTypeName = request.TBL_JOB_TYPE.JOBTYPENAME,
                     senderStaffId = request.SENDERSTAFFID,
                     receiverStaffId = request.RECEIVERSTAFFID ?? 0,
                     reassignedTo = request.REASSIGNEDTO,
@@ -1092,6 +1112,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     requestStatusId = request.REQUESTSTATUSID,
                     senderComment = request.SENDERCOMMENT,
                     responseComment = request.RESPONSECOMMENT,
+                    requestStatusname = request.TBL_JOB_REQUEST_STATUS.STATUSNAME,
 
                     arrivalDate = request.ARRIVALDATE,
                     systemArrivalDate = request.SYSTEMARRIVALDATE,
@@ -1116,6 +1137,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                                         }).ToList(),
                     jobDocuments = jobDocumentsList,
                 };
+                requestModel.recievingUnitName = request.JOBTYPEUNITID != null && request.JOBTYPEUNITID >0 ? context.TBL_JOB_TYPE_UNIT.FirstOrDefault(x => x.JOBTYPEUNITID == request.JOBTYPEUNITID).UNITNAME : "";
+                requestModel.recievingHub = request.JOBTYPEHUBID != null && request.JOBTYPEHUBID  >0 ? context.TBL_JOB_TYPE_HUB.FirstOrDefault(x => x.JOBTYPEHUBID == request.JOBTYPEHUBID).HUBNAME : "";
+                requestModel.jobSourceName = request.JOBSOURCEID != null && request.JOBSOURCEID  >0 ? context.TBL_JOB_SOURCE.FirstOrDefault(x => x.JOBSOURCEID == request.JOBSOURCEID).JOBSOURCENAME : "";
 
                 var fromData = context.TBL_STAFF.Where(b => b.STAFFID == request.SENDERSTAFFID).FirstOrDefault();
                 requestModel.fromSender = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
@@ -2326,6 +2350,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jb.userBranchId = model.userBranchId;
                 jb.statusId = (short)model?.statusId;
                 jb.rejectionReasonId =  model?.rejectionReasonId;
+                jb.responseStaffId = model.createdBy;
 
                 return ReplyJobRequest(jb, jb.jobRequestId);
             }
@@ -2496,6 +2521,80 @@ namespace FintrakBanking.Repositories.WorkFlow
                 physicalFileNumber = data.PHYSICALFILENUMBER,
                 physicalLocation = data.PHYSICALLOCATION,
             };
+        }
+
+        public IEnumerable<LMSOperationListViewModel> getLMSRApplicationDetail(int targetId)
+        {
+            var data =  (from x in this.context.TBL_LMSR_APPLICATION_DETAIL
+                    where x.LOANREVIEWAPPLICATIONID == targetId
+                    select new LMSOperationListViewModel
+                    {
+                        loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                        operationId = (short)x.OPERATIONID,
+                        loanId = x.LOANID,
+                        customerId = x.CUSTOMERID
+                    });
+            return data;
+        }
+
+        public IEnumerable<LMSOperationListViewModel> getLMSROperation(int targetId)
+        { 
+            var data = (from x in this.context.TBL_LOAN_REVIEW_OPERATION
+                        where x.LOANREVIEWOPERATIONID == targetId
+                        select new LMSOperationListViewModel
+                        {
+                            loanSystemTypeId = (short) x.LOANSYSTEMTYPEID,
+                            operationId = (short)x.OPERATIONTYPEID,
+                            loanId = x.LOANID,
+                        });
+            return data;
+        }
+
+        public IEnumerable<LMSOperationListViewModel> getLOSOperationLoanData(int loanId, int operationId)
+        {
+            List<LMSOperationListViewModel> data = new List<LMSOperationListViewModel>();
+            if (operationId == (short)OperationsEnum.TermLoanBooking 
+                || operationId == (short)OperationsEnum.CommercialLoanBooking 
+                || operationId == (short)OperationsEnum.ForeignExchangeLoanBooking)
+            {
+                 data = (from x in this.context.TBL_LOAN
+                            where x.TERMLOANID == loanId
+                            select new LMSOperationListViewModel
+                            {
+                                loanSystemTypeId = (short)x.LOANSYSTEMTYPEID,
+                                operationId = (short)operationId,
+                                loanId = x.TERMLOANID,
+                            }).ToList();
+               
+            }
+
+            if (operationId == (short)OperationsEnum.RevolvingLoanBooking)
+            {
+                data = (from x in this.context.TBL_LOAN_REVOLVING
+                        where x.REVOLVINGLOANID == loanId
+                        select new LMSOperationListViewModel
+                        {
+                            loanSystemTypeId = (short)x.LOANSYSTEMTYPEID,
+                            operationId = (short)OperationsEnum.RevolvingLoanBooking,
+                            loanId = x.REVOLVINGLOANID,
+                        }).ToList();
+
+            }
+
+            if (operationId == (short)OperationsEnum.ContigentLoanBooking)
+            {
+                data = (from x in this.context.TBL_LOAN_CONTINGENT
+                        where x.CONTINGENTLOANID == loanId
+                        select new LMSOperationListViewModel
+                        {
+                            loanSystemTypeId = (short)x.LOANSYSTEMTYPEID,
+                            operationId = (short)OperationsEnum.ContigentLoanBooking,
+                            loanId = x.CONTINGENTLOANID,
+                        }).ToList();
+
+            }
+            return data;
+
         }
 
         public bool deleteJobDocument(int documentId, int staffId)

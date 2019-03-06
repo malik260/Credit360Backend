@@ -10,6 +10,17 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
+        public string jobSourceName;
+
+        public string recievingHub { get; set; }
+
+        public object recievingUnitName { get; set; }
+
+        public short? jobSourceId { get; set; }
+        public string responseStaffName { get; set; }
+
+        public int? responseStaffId { get; set; }
+
         public bool consultantPaid { get; set; }
 
         public bool isTeamLead { get; set; }

@@ -81,18 +81,22 @@ namespace FintrakBanking.Repositories.CASA
 
         public CasaBalanceViewModel GetCASABalance(string casaAccountNumber, int companyId)
         {
-            CasaBalanceViewModel model = new CasaBalanceViewModel();
+            //CasaBalanceViewModel model = new CasaBalanceViewModel();
 
-            int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
-            var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
+            //int casaAccountId = GetCasaAccountId(casaAccountNumber, companyId);
+            //var account = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == casaAccountId);
 
-            if (account == null) {
-                model.isCasaAccountDetailAvailable=false;
-                throw new ConditionNotMetException("Invalid Account Number");
-                //return model;
+            //if (account == null) {
+            //    model.isCasaAccountDetailAvailable=false;
+            //    throw new ConditionNotMetException("Invalid Account Number");
+            //    //return model;
+            //}
+            if (casaAccountNumber!="")
+            {
+                return transRepo.GetCASABalance(casaAccountNumber, companyId);
+
             }
-                
-            return transRepo.GetCASABalance(account.CASAACCOUNTID);
+            return new CasaBalanceViewModel();
         }
 
         /// TODO: Implement server side filtering due to large number of records that may be returned

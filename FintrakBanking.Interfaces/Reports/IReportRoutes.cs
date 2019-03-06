@@ -95,5 +95,7 @@ namespace FintrakBanking.Interfaces.Reports
 
         string GetDisbursalCreditTurnover(DateRange dateRange);
 
+        string GetLoanBookingReport(DateRange dateRange); 
+        string Form3800BApprovedFacility(DateRange dateRange); 
     }
 }

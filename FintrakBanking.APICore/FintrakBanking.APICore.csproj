@@ -410,6 +410,7 @@
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Filters\AdministratorLockoutFilter.cs" />
     <Compile Include="Filters\AuthorizeActivity.cs" />
     <Compile Include="Filters\SecureExceptionFilterAttribute.cs" />
     <Compile Include="Providers\SimpleRefreshTokenProvider.cs" />
@@ -479,6 +480,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.designer.cs">
       <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx.cs">
+      <DependentUpon>ApprovedForm3800BFacilities.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx.designer.cs">
+      <DependentUpon>ApprovedForm3800BFacilities.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\Blacklist.aspx.cs">
       <DependentUpon>Blacklist.aspx</DependentUpon>
@@ -654,6 +662,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\Lein.aspx.designer.cs">
       <DependentUpon>Lein.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanBookingReport.aspx.cs">
+      <DependentUpon>LoanBookingReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanBookingReport.aspx.designer.cs">
+      <DependentUpon>LoanBookingReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\LoanClassification.aspx.cs">
       <DependentUpon>LoanClassification.aspx</DependentUpon>
@@ -1022,6 +1037,7 @@
     <Content Include="Reports\ReportViews\AgeAnalysisReport.aspx" />
     <Content Include="Reports\ReportViews\AllCommercialLoanReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
+    <Content Include="Reports\ReportViews\ApprovedForm3800BFacilities.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
     <Content Include="Reports\ReportViews\Blacklist.aspx" />
     <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
@@ -1049,6 +1065,7 @@
     <Content Include="Reports\ReportViews\ImpairedWatchListReport.aspx" />
     <Content Include="Reports\ReportViews\InsuranceReport.aspx" />
     <Content Include="Reports\ReportViews\Lein.aspx" />
+    <Content Include="Reports\ReportViews\LoanBookingReport.aspx" />
     <Content Include="Reports\ReportViews\LoanClassification.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferred.aspx" />
@@ -1325,10 +1342,12 @@
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Form3800BFacilityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ImpairedWatchListReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanBookingReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanClassification.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />

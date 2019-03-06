@@ -78,6 +78,9 @@
     <Compile Include="DocumentModels\TBL_JOB_REQUEST_MSG_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_MEDIA_LOAN_DOCUMENTS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
+    <Compile Include="Models\TBL_JOB_SOURCE.cs" />
+    <Compile Include="Models\TBL_TEMP_COLLATERAL_PROMISSORY.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_PROMISSORY.cs" />
     <Compile Include="Models\TBL_EOD_OPERATION.cs" />
     <Compile Include="Models\TBL_EOD_OPERATION_LOG.cs" />
     <Compile Include="Models\TBL_EOD_STATUS.cs" />

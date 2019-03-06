@@ -199,7 +199,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_JOB_REQUEST_STATUS> TBL_JOB_REQUEST_STATUS { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_STATUS_FEEDBAK> TBL_JOB_REQUEST_STATUS_FEEDBAK { get; set; }
         public virtual DbSet<TBL_JOB_TYPE> TBL_JOB_TYPE { get; set; }
-        public virtual DbSet<TBL_JOB_TYPE_HUB> TBL_JOB_TYPE_HUB { get; set; } 
+        public virtual DbSet<TBL_JOB_TYPE_HUB> TBL_JOB_TYPE_HUB { get; set; }
+        public virtual DbSet<TBL_JOB_SOURCE> TBL_JOB_SOURCE { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_UNIT> TBL_JOB_TYPE_UNIT { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_REASSIGNMENT> TBL_JOB_TYPE_REASSIGNMENT { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_DEPARTMENT> TBL_JOB_TYPE_DEPARTMENT { get; set; }
@@ -381,7 +382,10 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_COLLATERAL_PREC_METAL> TBL_TEMP_COLLATERAL_PREC_METAL { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_VEHICLE> TBL_TEMP_COLLATERAL_VEHICLE { get; set; }
-      //  public virtual DbSet<TBL_TEMP_COMPANY_BENEFICIA> TBL_TEMP_COMPANY_BENEFICIA { get; set; }
+        public virtual DbSet<TBL_TEMP_COLLATERAL_PROMISSORY> TBL_TEMP_COLLATERAL_PROMISSORY { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_PROMISSORY> TBL_COLLATERAL_PROMISSORY { get; set; }
+
+        //  public virtual DbSet<TBL_TEMP_COMPANY_BENEFICIA> TBL_TEMP_COMPANY_BENEFICIA { get; set; }
         public virtual DbSet<TBL_TEMP_CUST_CLIENT_SUPPLIER> TBL_TEMP_CUST_CLIENT_SUPPLIER { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER> TBL_TEMP_CUSTOMER { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER_ADDRESS> TBL_TEMP_CUSTOMER_ADDRESS { get; set; }

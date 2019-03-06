@@ -458,7 +458,24 @@ namespace FintrakBanking.APICore.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
         }
-        
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("availment/refer-back-one-step")]
+        public HttpResponseMessage ReferBackOneStep([FromBody] LoanAvailmentApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            bool data = repo.ReferBackOneStep(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application/offer-letter/approval")]

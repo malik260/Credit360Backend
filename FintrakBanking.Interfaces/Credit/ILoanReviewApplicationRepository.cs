@@ -44,5 +44,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool ValidateNewSubAllocationOperation(int loanApplicationDetailId, int customerId, int loanSystemTypeId);
 
         List<LoanReviewOperationViewModel> GetLMSOperation(int loanId, short loansystemTypeId);
+        decimal? GetWrittenOffAccrualAmount(int loanId, short loanSystemTypeId);
     }
 }

@@ -1432,6 +1432,7 @@ namespace FintrakBanking.Repositories.Credit
                         operationId = x.a.OPERATIONID,
                         customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                         customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
+                        facilityType = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED != true && s.STATUSID == (int)ApprovalStatusEnum.Approved).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
                         responsiblePerson = context.TBL_STAFF
                                                     .Where(s => s.STAFFID == x.b.TOSTAFFID)
@@ -1977,7 +1978,42 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             return result;
         }
+
+
+        public WorkflowResponse GetWorkflowNextStatus(ForwardViewModel model)
+        {
+            int operationId = (int)OperationsEnum.CAM;
+            var applicationDate = general.GetApplicationDate();
+            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.Vote = model.vote;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            workflow.Amount = appl.TOTALEXPOSUREAMOUNT; //model.amount;
+            workflow.InvestmentGrade = model.investmentGrade;
+            workflow.Tenor = model.applicationTenor;
+            workflow.PoliticallyExposed = model.politicallyExposed;
+            workflow.Untenored = model.untenored;
+            workflow.InterestRateConcession = model.interestRateConcession;
+            workflow.FeeRateConcession = model.feeRateConcession;
+            workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            return workflow.Response;
+        }
+
+
     }
 
-   
+
 }

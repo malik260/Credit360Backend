@@ -112,7 +112,21 @@ namespace FintrakBanking.Repositories.Credit
                 atInitiator = x.application.CREATEDBY == staffId,
                 timeIn = x.trail.SYSTEMARRIVALDATETIME,
 
+                currentApprovalStateId = x.trail.APPROVALSTATEID,
+                responsiblePerson = context.TBL_STAFF
+                                            .Where(s => s.STAFFID == x.trail.TOSTAFFID)
+                                            .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
+                                            .FirstOrDefault().name ?? "",
+                toApprovalLevelId = x.trail.TOAPPROVALLEVELID,
+
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
+                creditOperationType = context.TBL_LMSR_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Count() > 1 
+                    ? "Multiple"
+                    : context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID ==
+                            context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).OPERATIONID
+                        ).OPERATIONNAME,
+
+                facilityType = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.application.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
                 applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
                 .Select(d => new applicationDetails
@@ -135,9 +149,9 @@ namespace FintrakBanking.Repositories.Credit
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
                     statusId = d.APPROVALSTATUSID,
-
+                    terms = d.REPAYMENTTERMS,
+                    schedule = d.REPAYMENTSCHEDULE,
                     //loanReferenceNumber = d.LOANREFERENCENUMBER,
-
                 })
 
             })
@@ -597,9 +611,6 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
-            //generate offer letter doc
-            offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
-
 
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
@@ -612,6 +623,9 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 if (operationId == lastOperationId/* || model.operationId == 71*/) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
+
+                //generate offer letter doc
+                offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
 
                 context.SaveChanges();
 
@@ -763,6 +777,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanApplicationDetailId = detail.LOANAPPLICATIONDETAILID,
                 loanApplicationId = detail.LOANAPPLICATIONID,
+
             };
         }
 
@@ -836,8 +851,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     approvalState = x.b.TBL_APPROVAL_STATE.APPROVALSTATE,
                     approvalTrailId = x.b.APPROVALTRAILID,
-                    currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
-                    currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
+
                     lastComment = x.b.COMMENT,
                     toStaffId = x.b.TOSTAFFID,
 
@@ -854,6 +868,8 @@ namespace FintrakBanking.Repositories.Credit
                     operationId = x.a.OPERATIONID,
                     customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
 
+                    currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                    currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
                     timeIn = x.b.SYSTEMARRIVALDATETIME,
                     timeOut = x.b.SYSTEMRESPONSEDATETIME,
                     responsiblePerson = context.TBL_STAFF
@@ -862,6 +878,14 @@ namespace FintrakBanking.Repositories.Credit
                                             .FirstOrDefault().name ?? "",
                     requestStaffId = x.b.REQUESTSTAFFID,
                     toApprovalLevelId = x.b.TOAPPROVALLEVELID,
+
+                    creditOperationType = context.TBL_LMSR_APPLICATION_DETAIL.Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Count() > 1
+                    ? "Multiple"
+                    : context.TBL_OPERATIONS.FirstOrDefault(o => o.OPERATIONID ==
+                            context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).OPERATIONID
+                        ).OPERATIONNAME,
+
+                    facilityType = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED != true && s.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
                     applicationDetails = x.a.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
                     .Select(d => new applicationDetails
@@ -899,11 +923,12 @@ namespace FintrakBanking.Repositories.Credit
 
             int[] operations = { (int)OperationsEnum.LoanReviewApprovalAppraisal, (int)OperationsEnum.LoanReviewApprovalOfferLetter, (int)OperationsEnum.LoanReviewApprovalAvailment ,
            (int)OperationsEnum.NPLoanReviewApprovalAppraisal,(int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal};
+            int staffId = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault();
 
             var applications = from a in context.TBL_LMSR_APPLICATION
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
-                               join y in context.TBL_APPROVAL_TRAIL on d.LOANREVIEWAPPLICATIONID equals y.TARGETID
+                               join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals y.TARGETID
                               // let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
                                where y.RESPONSESTAFFID == null
                                && operations.Contains(y.OPERATIONID)
@@ -911,8 +936,8 @@ namespace FintrakBanking.Repositories.Credit
                                || g.FIRSTNAME.ToLower().Contains(searchString)
                                || g.LASTNAME.ToLower().Contains(searchString)
                                || g.MIDDLENAME.ToLower().Contains(searchString)
-                               || d.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
-                               )
+                               || d.CREATEDBY == staffId
+                              )
                                select new LoanApplicationViewModel
                                {
                                    firstName = g.FIRSTNAME,
@@ -1276,6 +1301,14 @@ namespace FintrakBanking.Repositories.Credit
             data.Add("staffId", staffId);
 
             return data;
+        }
+
+        public decimal? GetWrittenOffAccrualAmount(int loanId, short loanSystemTypeId)
+        {
+            decimal? amount = null;
+            var camsol = context.TBL_LOAN_CAMSOL.FirstOrDefault(x => x.LOANID == loanId && x.LOANSYSTEMTYPEID == loanSystemTypeId);
+            if (camsol != null) amount = camsol.WRITTENOFFACCRUALAMOUNT;
+            return amount;
         }
     }
 }
