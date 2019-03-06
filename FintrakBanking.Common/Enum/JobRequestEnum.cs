@@ -49,5 +49,15 @@ namespace FintrakBanking.Common.Enum
         AdditionalCharges =  4,
     }
 
+    public enum JobSourcesEnum
+    {
+        LoanApplicationDetail = 1,
+        LoanBookingAndApproval = 2,
+        OverdraftBookingAndApproval = 3,
+        ContingentLiabilityBookingAndApproval = 4,
+        LMSApplication = 5,
+        LMSOperationAndApproval = 6
+
+    }
 
 }

@@ -345,12 +345,12 @@ namespace FintrakBanking.Repositories.Setups.General
             UserViewModel data = null;
             var result = _sessionInfo;
 
-            try { 
+            //try { 
             data = UserLoginDetails(username, password);
-        }catch(Exception ex)
-                {
+            //}catch(Exception ex)
+               // {
 
-                }
+                //}
     result.isPasswordExpired = IsPasswordExpired(username);
             result.isFirstLogin = IsFirstLogin(username);
             if (result.state > 0)
@@ -579,7 +579,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private UserViewModel UserLoginDetails(string username, string password) // ERROR POINT 3 - underlying provider...
         {
-            var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username.ToLower());// && c.PASSWORD == password);
+            var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToUpper() == username.ToUpper());// && c.PASSWORD == password);
 
             if (profile != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {

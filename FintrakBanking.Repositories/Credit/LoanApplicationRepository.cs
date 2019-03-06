@@ -1153,15 +1153,20 @@ namespace FintrakBanking.Repositories.Credit
         {
             ValidateLoanApplicationLimits(loan); // always
 
+            var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
+            var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId);//.Sum(x => x.PROPOSEDAMOUNT);
+            decimal cumulativeSum = 0;
+            foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
+
             if (loan.relationshipOfficerId != 0)
             {
                 var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
                 // var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                var loanAmt = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
-                loan.applicationAmount = loanAmt;
+                
+                loan.applicationAmount = cumulativeSum + additionalAmount;
                 if (validation.maximumAllowedLimit > 0) // && validation.limit != 0)
                 {
-                    if (loanAmt > (decimal)validation.limit)
+                    if ((cumulativeSum + additionalAmount) > (decimal)validation.limit)
                     {
                         throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
                     }
@@ -1175,6 +1180,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loanDetail.Count() == 0 || loan.isNewApplication)
             {
+                // update
+                var appl = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
+                if (appl != null) appl.APPLICATIONAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
+
                 if (loanData == null)
                 {
                     if (string.IsNullOrEmpty(loan.applicationReferenceNumber))
@@ -1263,7 +1272,7 @@ namespace FintrakBanking.Repositories.Credit
                     productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
                 }
             }
-            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + loan.proposedAmount;
+            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
             var loanStatusId = (short)LoanStatusEnum.Inactive;
 
             loanData = new TBL_LOAN_APPLICATION
@@ -1361,6 +1370,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.PRODUCTPRICEINDEXID = update.productPriceIndexId;
             detail.PRODUCTPRICEINDEXRATE = update.productPriceIndexRate;
             detail.CASAACCOUNTID = update.casaAccountId;
+            detail.OPERATINGCASAACCOUNTID = update.operatingCasaAccountId;
             detail.EQUITYCASAACCOUNTID = update.equityCasaAccountId;
             detail.CURRENCYID = update.currencyId;
             detail.TENORFREQUENCYTYPEID = update.tenorModeId;
@@ -1574,6 +1584,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now,
                     LOANPURPOSE = a.loanPurpose,
                     CASAACCOUNTID = a.casaAccountId,
+                    OPERATINGCASAACCOUNTID = a.operatingCasaAccountId,
                     REPAYMENTTERMS = a.repaymentTerm,
                     CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
                     CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
@@ -2975,7 +2986,7 @@ namespace FintrakBanking.Repositories.Credit
             var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
             foreach (var x in details)
             {
-                context.TBL_LOAN_APPLICATION_DETAIL.Add(new TBL_LOAN_APPLICATION_DETAIL
+                context.TBL_LOAN_APPLICATION_DETAIL.Add(new TBL_LOAN_APPLICATION_DETAIL // TODO update the list below!
                 {
                     LOANAPPLICATIONID = request.LOANAPPLICATIONID,
                     APPROVEDAMOUNT = wasApproved ? x.APPROVEDAMOUNT : x.PROPOSEDAMOUNT,
@@ -2992,6 +3003,8 @@ namespace FintrakBanking.Repositories.Credit
                     PROPOSEDPRODUCTID = x.PROPOSEDPRODUCTID,
                     PROPOSEDTENOR = x.PROPOSEDTENOR,
                     SUBSECTORID = x.SUBSECTORID,
+                    CASAACCOUNTID = x.CASAACCOUNTID,
+                    OPERATINGCASAACCOUNTID = x.OPERATINGCASAACCOUNTID,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = applicationDate,
                 });

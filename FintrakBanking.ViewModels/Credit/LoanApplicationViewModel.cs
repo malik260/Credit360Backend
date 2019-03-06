@@ -294,6 +294,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short statusId { get; set; }
 
         public int? casaAccountId { get; set; }
+        public int? operatingCasaAccountId { get; set; }
 
         public short sectorId { get; set; }
 
