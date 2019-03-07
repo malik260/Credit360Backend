@@ -1041,12 +1041,12 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var outstandingLoan = (from a in context.TBL_LOAN
                                where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
                                a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                               select a.OUTSTANDINGPRINCIPAL).Sum();
+                               select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
             var outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
                                     where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.BRANCHID == branchId &&
                                     a.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                                    select a.OVERDRAFTLIMIT).Sum();
+                                    select (decimal?)a.OVERDRAFTLIMIT).Sum() ?? 0;
 
             var branchNPLExposure = outstandingLoan + outstandingRevolving;
 
