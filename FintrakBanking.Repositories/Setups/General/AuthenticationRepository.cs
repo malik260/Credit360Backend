@@ -255,7 +255,13 @@ namespace FintrakBanking.Repositories.Setups.General
         public SessionStatusInfo CheckSessionState(string username, string ipAddress)
         {
             Guid loginCode = Guid.Empty;
-            var user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
+            TBL_PROFILE_USER user = new TBL_PROFILE_USER();
+            user = (from a in context.TBL_PROFILE_USER
+                    where a.USERNAME.ToLower() == username
+                    select a).FirstOrDefault();
+
+
+            //.FirstOrDefault(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
             SessionStatusInfo result = null;
             string loginCodeStr = null;
             string ipAddressStr = null;
@@ -809,7 +815,12 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool ClearLoginToken(string userName)
         {
             bool result = false;
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == userName);
+           // var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == userName);
+            TBL_PROFILE_USER _user = new TBL_PROFILE_USER();
+            _user = (from a in context.TBL_PROFILE_USER
+                     where a.USERNAME.ToLower() == userName
+                     select a).FirstOrDefault();
+
             if (_user != null)
             {
                 _user.LOGINCODE = null;
