@@ -8,6 +8,15 @@ namespace FintrakBanking.ViewModels.Credit
 {
    public class CashBacked
     {
+        public double exchangeRate { get; set; }
+        public string currencyID { get; set; }
+        public decimal securityValueDollars { get; set; }
+        public decimal securityValuePounds { get; set; }
+
+
+        public int collateralCustomerId { get; set; }
+        public string currencyUnit { get; set; }
+        public string currencySecurityUnit { get; set; }
         public string branch { get; set; }
         public string accountNo { get; set; }
         public string accountName { get; set; }

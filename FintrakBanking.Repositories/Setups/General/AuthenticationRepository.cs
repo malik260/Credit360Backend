@@ -256,9 +256,9 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             Guid loginCode = Guid.Empty;
             TBL_PROFILE_USER user = new TBL_PROFILE_USER();
-            user = (from a in context.TBL_PROFILE_USER
+            var LoginCode = (from a in context.TBL_PROFILE_USER
                     where a.USERNAME.ToLower() == username
-                    select a).FirstOrDefault();
+                    select a.LOGINCODE).FirstOrDefault();
 
 
             //.FirstOrDefault(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
@@ -268,10 +268,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (user != null)
             {
-                if (user.LOGINCODE != null)
+                if (LoginCode != null)
                 {
-                    this.LogCode = user.LOGINCODE;
-                    var gcode = user.LOGINCODE.Split('@');
+                    this.LogCode = LoginCode;
+                    var gcode = LoginCode.Split('@');
                     loginCodeStr = gcode[0];
                     ipAddressStr = gcode[1];
                 }

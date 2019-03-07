@@ -2012,6 +2012,28 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
+        public WorkflowResponse GetWorkflowNextStatusLms(ForwardReviewViewModel model)
+        {
+            var applicationDate = general.GetApplicationDate();
+            var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            workflow.Amount = model.totalExposureAmount; //model.amount;
+            workflow.Tenor = model.applicationTenor;
+
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            return workflow.Response;
+        }
+
 
     }
 
