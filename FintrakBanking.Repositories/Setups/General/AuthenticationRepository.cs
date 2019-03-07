@@ -579,7 +579,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private UserViewModel UserLoginDetails(string username, string password) // ERROR POINT 3 - underlying provider...
         {
-            var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToUpper() == username.ToUpper());// && c.PASSWORD == password);
+            TBL_PROFILE_USER profile = new TBL_PROFILE_USER();
+            profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToUpper() == username.ToUpper());// && c.PASSWORD == password);
 
             if (profile != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {
@@ -641,19 +642,23 @@ namespace FintrakBanking.Repositories.Setups.General
                 // var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
                 if (profile != null)
                 {
-                    profile.LOGINCODE = null;
-                    profile.FAILEDLOGONATTEMPT += 1;
-                    int count = profile.FAILEDLOGONATTEMPT ?? 0;
+                    int count = profile.FAILEDLOGONATTEMPT+1 ?? 0;
                     TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
                     prosett = context.TBL_PROFILE_SETTING.FirstOrDefault();
-                    //if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                    profile.LOGINCODE = null;
+                    profile.FAILEDLOGONATTEMPT += 1;
                     if (count == prosett.MAXINVALIDPASSWORDATTEMPTS)
                     {
+
+                    //if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+
                         profile.ISLOCKED = true;
                         profile.LASTLOCKOUTDATE = DateTime.Now;
+                        profile.FAILEDLOGONATTEMPT = 0;
+
                     }
 
-                    context.Entry(profile).State = EntityState.Modified;
+                   //context.Entry(profile).State = EntityState.Modified;
 
                     context.SaveChanges();
 
