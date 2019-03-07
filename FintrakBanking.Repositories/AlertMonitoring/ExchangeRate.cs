@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.AlertMonitoring
 {
-    public class ExchangeRate : ICurrencyAndRateUpdate
+    public class ExchangeRate 
     {
         FinTrakBankingContext coreContext = new FinTrakBankingContext();
         FinTrakBankingStagingContext stagingContext = new FinTrakBankingStagingContext();
@@ -22,7 +22,15 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
         {
             try
             {
-                DateTime date = stagingContext.STG_TREASURY_RATE_TBL.Select(o => o.DATE).OrderByDescending(o => o.Date).FirstOrDefault();
+                DateTime date =(from o in  stagingContext.STG_TREASURY_RATE_TBL orderby o.DATE descending select o.DATE  ).FirstOrDefault();
+                //DateTime? lastRefreshDate = (from o in coreContext.TBL_PRODUCT_PRICE_INDEX orderby o.LASTREFRESHDATE descending select o.LASTREFRESHDATE).FirstOrDefault();
+               var allDates = (from o in coreContext.TBL_PRODUCT_PRICE_INDEX select o.LASTREFRESHDATE) ;
+               //var lastRefreshDate = allDates.OrderByDescending(o=>o.)
+
+                //if (lastRefreshDate !=null && lastRefreshDate >= date)
+                //    return false;
+
+
                 var indexRate = (from x in stagingContext.STG_TREASURY_RATE_TBL
                                  where x.DATE == date 
                                  select new IndexRateChangeViewModel
@@ -35,8 +43,11 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
 
                                  }).ToList();
 
+
                 if (indexRate != null)
-                {
+                    return false;
+
+
                     foreach (var rate in indexRate)
                     {
                         int currencyId = coreContext.TBL_CURRENCY.Where(o => o.CURRENCYCODE == rate.currency).Select(o => o.CURRENCYID).FirstOrDefault();
@@ -45,12 +56,12 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
                         if (change != null)
                         {
                             change.PRICEINDEXRATE = (double)rate.bidRate;
-                            change.LASTREFRESHDATE = DateTime.Now;
+                            change.LASTREFRESHDATE = date;
                         }
                     }
 
                     return coreContext.SaveChanges() > 0;
-                }
+                
             }catch(Exception ex)
             {
 

@@ -318,47 +318,47 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             var links = new
             {
                 General = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
-                //IDF = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
-                //FirstEdu = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
-                //FirstTrader = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
-                //BondsAndGuarantees = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
-                //ImportFinance = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
-                //CashBackedOnly = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
-                //InvoiceDiscountingFacility = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
+                IDF = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
+                FirstEdu = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
+                FirstTrader = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
+                BondsAndGuarantees = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
+                ImportFinance = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
+                CashBackedOnly = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
+                InvoiceDiscountingFacility = reportPath + "Credit/OfferLetterGeneration/OfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue,
             };
-            return links.General;
-            //if (productClassProcessId == (short)ProductClassProcessEnum.CAMBased)
-            //{
-            //    return links.General;
-            //}
-            //else 
-            //{
-            //    switch (productClassId)
-            //    {
-            //        case (short)ProductClassEnum.BondAndGuarantees:
-            //            return links.BondsAndGuarantees;
 
-            //        case (short)ProductClassEnum.CashBackedOnly:
-            //            return links.CashBackedOnly;
+            if (productClassProcessId == (short)ProductClassProcessEnum.CAMBased)
+            {
+                return links.General;
+            }
+            else 
+            {
+                switch (productClassId)
+                {
+                    case (short)ProductClassEnum.BondAndGuarantees:
+                        return links.BondsAndGuarantees;
 
-            //        case (short)ProductClassEnum.FirstEdu:
-            //            return links.FirstEdu;
+                    case (short)ProductClassEnum.CashBackedOnly:
+                        return links.CashBackedOnly;
 
-            //        case (short)ProductClassEnum.FirstTrader:
-            //            return links.FirstTrader;
+                    case (short)ProductClassEnum.FirstEdu:
+                        return links.FirstEdu;
 
-            //        case (short)ProductClassEnum.ImportFinance:
-            //            return links.ImportFinance;
+                    case (short)ProductClassEnum.FirstTrader:
+                        return links.FirstTrader;
 
-            //        case (short)ProductClassEnum.InvoiceDiscountingFacility:
-            //            return links.InvoiceDiscountingFacility;
+                    case (short)ProductClassEnum.ImportFinance:
+                        return links.ImportFinance;
 
-            //        default:
-            //            return links.General;
-            //    }
+                    case (short)ProductClassEnum.InvoiceDiscountingFacility:
+                        return links.InvoiceDiscountingFacility;
+
+                    default:
+                        return links.General;
+                }
 
                
-            //}
+            }
 
             //templateLink = links.General;
 

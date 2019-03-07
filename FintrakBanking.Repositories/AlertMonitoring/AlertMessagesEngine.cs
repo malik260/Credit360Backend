@@ -15,7 +15,6 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 {
     public class AlertMessagesEngine : IAlertMessagesEngine
     {
-        private IAlertMessageLogger logger;
         int mailId = 0;
         private string displayName = ConfigurationManager.AppSettings["emailDisplayName"];
         private string userName = ConfigurationManager.AppSettings["Username"];
@@ -28,12 +27,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         private string exceptionReportingEmails = ConfigurationManager.AppSettings["exceptionReportingEmails"];
 
         private string[] Addy = { };
-
-        public AlertMessagesEngine(IAlertMessageLogger _logger)
-        {
-            logger = _logger;
-        }
-
+        AlertMessageLogger logger = new AlertMessageLogger();
+       
         public bool SendEmailOfException(string body)
         {
             using (SmtpClient client = new SmtpClient())
@@ -85,43 +80,43 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             string title = string.Empty;
             string body = string.Empty;
 
-            logger.SendAlertsForCovenantsApproachingDueDate(title, body, alertSetups);
+            //logger.SendAlertsForCovenantsApproachingDueDate(title, body, alertSetups);
 
-            logger.SendAlertsForCovenantsOverDue(title, body, alertSetups);
+            //logger.SendAlertsForCovenantsOverDue(title, body, alertSetups);
 
-            logger.SendAlertsForExpiredBG(title, body, alertSetups);
+            //logger.SendAlertsForExpiredBG(title, body, alertSetups);
 
-            logger.SendAlertForExpiredInsurance(title, body, alertSetups);
+            //logger.SendAlertForExpiredInsurance(title, body, alertSetups);
 
-            logger.SendAlertOnAccountWithExeption_Overdrawn(title, body, alertSetups);
+            //logger.SendAlertOnAccountWithExeption_Overdrawn(title, body, alertSetups);
 
-            logger.SendAlertOnAccountWithExeption_Watchist(title, body, alertSetups);
+            //logger.SendAlertOnAccountWithExeption_Watchist(title, body, alertSetups);
 
-            logger.SendAlertOnAccountWithExeption_Unauthorized(title, body, alertSetups);
+            //logger.SendAlertOnAccountWithExeption_Unauthorized(title, body, alertSetups);
 
-            logger.SendAlertOnInsuranceApprochingExpiration(title, body, alertSetups);
+            //logger.SendAlertOnInsuranceApprochingExpiration(title, body, alertSetups);
 
-            logger.SendAlertOnPastDueObligationAccounts(title, body, alertSetups);
+            //logger.SendAlertOnPastDueObligationAccounts(title, body, alertSetups);
 
-            logger.SendAlertOnTurnoverCovenant(title, body, alertSetups);
+            //logger.SendAlertOnTurnoverCovenant(title, body, alertSetups);
 
-            logger.SendAlertsForCollateralPropertyApproachingRevaluation(title, body, alertSetups);
+            //logger.SendAlertsForCollateralPropertyApproachingRevaluation(title, body, alertSetups);
 
-            logger.SendAlertsForCollateralPropertyDueForVisitation(title, body, alertSetups);
+            //logger.SendAlertsForCollateralPropertyDueForVisitation(title, body, alertSetups);
 
-            logger.SendAlertsOnExpiredActiveBondAndGuarantee(title, body, alertSetups);
+            //logger.SendAlertsOnExpiredActiveBondAndGuarantee(title, body, alertSetups);
 
-            logger.SendAlertsOnInActiveBondAndGuarantee(title, body, alertSetups);
+            //logger.SendAlertsOnInActiveBondAndGuarantee(title, body, alertSetups);
 
-            logger.SendAlertsOnLoanCASAwithPND(title, body, alertSetups);
+            //logger.SendAlertsOnLoanCASAwithPND(title, body, alertSetups);
 
-            logger.SendAlertsOnOverDraftLoansAlmostDue(title, body, alertSetups);
+            //logger.SendAlertsOnOverDraftLoansAlmostDue(title, body, alertSetups);
 
-            logger.SendAlertsOnSelfLiquidatingLoanExpiry(title, body, alertSetups);
+            //logger.SendAlertsOnSelfLiquidatingLoanExpiry(title, body, alertSetups);
 
-            logger.SendAlertsForLoanRepayment(title, body, alertSetups);
+            //logger.SendAlertsForLoanRepayment(title, body, alertSetups);
 
-            logger.SendAlertToCustomerForLoanRepaymentApproachingDueDate(title, body, alertSetups);
+            //logger.SendAlertToCustomerForLoanRepaymentApproachingDueDate(title, body, alertSetups);
 
 
             return true;
