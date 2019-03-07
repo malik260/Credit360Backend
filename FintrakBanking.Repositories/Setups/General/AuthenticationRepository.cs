@@ -255,17 +255,23 @@ namespace FintrakBanking.Repositories.Setups.General
         public SessionStatusInfo CheckSessionState(string username, string ipAddress)
         {
             Guid loginCode = Guid.Empty;
-            var user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
+            TBL_PROFILE_USER user = new TBL_PROFILE_USER();
+            var LoginCode = (from a in context.TBL_PROFILE_USER
+                    where a.USERNAME.ToLower() == username
+                    select a.LOGINCODE).FirstOrDefault();
+
+
+            //.FirstOrDefault(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
             SessionStatusInfo result = null;
             string loginCodeStr = null;
             string ipAddressStr = null;
 
             if (user != null)
             {
-                if (user.LOGINCODE != null)
+                if (LoginCode != null)
                 {
-                    this.LogCode = user.LOGINCODE;
-                    var gcode = user.LOGINCODE.Split('@');
+                    this.LogCode = LoginCode;
+                    var gcode = LoginCode.Split('@');
                     loginCodeStr = gcode[0];
                     ipAddressStr = gcode[1];
                 }
@@ -579,7 +585,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private UserViewModel UserLoginDetails(string username, string password) // ERROR POINT 3 - underlying provider...
         {
-            var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToUpper() == username.ToUpper());// && c.PASSWORD == password);
+            TBL_PROFILE_USER profile = new TBL_PROFILE_USER();
+            profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToUpper() == username.ToUpper());// && c.PASSWORD == password);
 
             if (profile != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {
@@ -641,19 +648,23 @@ namespace FintrakBanking.Repositories.Setups.General
                 // var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
                 if (profile != null)
                 {
-                    profile.LOGINCODE = null;
-                    profile.FAILEDLOGONATTEMPT += 1;
-                    int count = profile.FAILEDLOGONATTEMPT ?? 0;
+                    int count = profile.FAILEDLOGONATTEMPT+1 ?? 0;
                     TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
                     prosett = context.TBL_PROFILE_SETTING.FirstOrDefault();
-                    //if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                    profile.LOGINCODE = null;
+                    profile.FAILEDLOGONATTEMPT += 1;
                     if (count == prosett.MAXINVALIDPASSWORDATTEMPTS)
                     {
+
+                    //if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+
                         profile.ISLOCKED = true;
                         profile.LASTLOCKOUTDATE = DateTime.Now;
+                        profile.FAILEDLOGONATTEMPT = 0;
+
                     }
 
-                    context.Entry(profile).State = EntityState.Modified;
+                   //context.Entry(profile).State = EntityState.Modified;
 
                     context.SaveChanges();
 
@@ -804,7 +815,12 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool ClearLoginToken(string userName)
         {
             bool result = false;
-            var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == userName);
+           // var _user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == userName);
+            TBL_PROFILE_USER _user = new TBL_PROFILE_USER();
+            _user = (from a in context.TBL_PROFILE_USER
+                     where a.USERNAME.ToLower() == userName
+                     select a).FirstOrDefault();
+
             if (_user != null)
             {
                 _user.LOGINCODE = null;

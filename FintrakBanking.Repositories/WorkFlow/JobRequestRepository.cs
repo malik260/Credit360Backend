@@ -244,9 +244,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var to = toStaffData != null ? toStaffData.FIRSTNAME + " " + toStaffData.LASTNAME + " (" + toStaffData.STAFFCODE + ")" : "None";
 
                 string messageBoby = $"Attention!, <br /><br />Please note that a job request assignmnet/reassignment occured with the following details:<br /><br /> 'Job Request Code:' " +
-                    $"<br /><br /> {data.JOBREQUESTCODE} <br /><br /> Previously Assigned Staff: {from} " +
-                    $"<br /><br />  Current Staff Assigned: {to} <br /><br />  Regards. <br /><br />";
-                string alertSubject = $"JOB REQUEST ASSIGNMENT NOTICE";
+                    $" {data.JOBREQUESTCODE} <br /><br /> Previously Assigned Staff: {from} " +
+                    $"<br /><br />  Current Staff Assigned: {to} <br /><br />  Regards. ";
+                string alertSubject = $"REQUEST FOR DOCUMENT VERIFICATION";
 
 
                 if (loanDetails != null)
@@ -254,62 +254,62 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var customerInfo = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
                     var facilityInfo = context.TBL_PRODUCT.Find(loanDetails.APPROVEDPRODUCTID);
                     var currencyInfo = context.TBL_CURRENCY.Find(loanDetails.CURRENCYID);
-                    var invoiceInfo = context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == loanDetails.LOANAPPLICATIONDETAILID).FirstOrDefault();
+                    var invoiceInfo = context.TBL_LOAN_APPLICATION_DETL_INV.Where(x=>x.LOANAPPLICATIONDETAILID == loanDetails.LOANAPPLICATIONDETAILID);
                     var casaInfo = context.TBL_CASA.Find(loanDetails.CASAACCOUNTID);
 
-                    var accountLine = casaInfo != null ? $"<br /><br /> 'Account Number: ' {casaInfo.PRODUCTACCOUNTNUMBER} " : null;
-                    var customerNameLine = $"<br /><br /> 'Customer Name: ' {customerInfo.FIRSTNAME} ' ' {customerInfo.LASTNAME}  ";
-                    var loantTypeLine = facilityInfo != null ? $"<br /><br /> 'Facility: ' {facilityInfo.PRODUCTNAME} " : null;
-                    var applicationRef = loanDetails.TBL_LOAN_APPLICATION != null ? $"<br /><br /> 'Application Reference: ' {loanDetails.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER} " : null;
-                    var accountNumberLine = casaInfo != null ? $"<br /><br /> 'Account Number: ' {casaInfo.PRODUCTACCOUNTNUMBER} " : null;
-                    var currencyTypeLine = currencyInfo != null ? $"<br /><br /> 'Currency: ' {currencyInfo.CURRENCYCODE} " : null;
+                    var accountLine = casaInfo != null ? $"<br /><br /> Account Number:  {casaInfo.PRODUCTACCOUNTNUMBER} " : null;
+                    var customerNameLine = $"<br /><br /> Customer Name:  {customerInfo.FIRSTNAME}  {customerInfo.LASTNAME}  ";
+                    var loantTypeLine = facilityInfo != null ? $"<br /><br /> Facility Type:  {facilityInfo.PRODUCTNAME} " : null;
+                    var applicationRef = loanDetails.TBL_LOAN_APPLICATION != null ? $"<br /><br /> Application Reference:  {loanDetails.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER} " : null;
+                    var accountNumberLine = casaInfo != null ? $"<br /><br /> Account Number:  {casaInfo.PRODUCTACCOUNTNUMBER} " : null;
+                    var currencyTypeLine = currencyInfo != null ? $"<br /><br /> Currency:  {currencyInfo.CURRENCYCODE} " : null;
 
-                    var principalNameLine = invoiceInfo != null ? $"<br /><br /> 'Principal Name: ' {invoiceInfo.TBL_LOAN_PRINCIPAL.NAME} " : null;
-                    var rmCommentLine = invoiceInfo != null ? $"<br /><br /> 'Comment: ' {invoiceInfo.APPROVAL_COMMENT}  " : null;
+                    var principalNameLine = invoiceInfo.FirstOrDefault() != null  ? $"<br /><br /> Principal Name:  {invoiceInfo.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME} " : null;
+                    var rmCommentLine = $"<br /><br /><br /> kindly proceed with verification and provide timely feedback ";
                     var NumberLine = string.Empty;
-                    var poAmountLine = invoiceInfo != null ? $"<br /><br /> 'Total Amount on the PO/Contract/Invoice: ' {invoiceInfo.INVOICE_AMOUNT}  " : null;
-                    //if (invoiceInfo != null)
-                    //{
-                    //    var numbers = string.Empty;
-                    //    var amount = string.Empty;
-                    //    foreach (var item in invoiceInfo)
-                    //    {
-                    //        numbers = numbers + item.PURCHASEORDERNUMBER + "/" + item.CONTRACTNO + "/" + item.INVOICENO + ",";
-                    //    }
 
-                    //}
+                    var numbers = string.Empty;
+                    decimal amount =0;
+                    if (invoiceInfo != null)
+                    {   
+                        foreach (var item in invoiceInfo)
+                        {
+                            numbers = numbers + item.PURCHASEORDERNUMBER + "/" + item.CONTRACTNO + "/" + item.INVOICENO ;
+                            amount = amount + item.INVOICE_AMOUNT;
+                        }
+
+                    }
+                    var poAmountLine = invoiceInfo.FirstOrDefault() != null ? $"<br /><br /> Total Amount on PO/Contract/Invoice:  {string.Format("{0:#,0.00}", amount) }  " : null;
+                    var poNumber = invoiceInfo.FirstOrDefault() != null ? $"<br /><br />  PO/Contract/Invoice No:  {numbers }  " : null;
                     messageBoby = $"Attention!, <br /><br />Please note that a job has been assigned with the following details:" +
-                           //$"<br /><br /> 'Job Request Code:' <br /><br /> {data.JOBREQUESTCODE} <br /><br /> " +
                            $"{ principalNameLine} " +
                            $"{ customerNameLine} " +
+                           $"{ accountLine} " +
                            $"{ loantTypeLine} " +
                            $"{applicationRef}" +
-                           $"{ accountLine} " +
                            $"{ currencyTypeLine} " +
                            $"{ NumberLine} " +
-                           //$"{ poAmountLine} " +
-                           $"{ rmCommentLine} " +
-                           $"<br /><br />  Regards. <br /><br />";
-
-                    messageBoby = messageBoby + $"<br /><br />Regards.";
+                           $"{ poNumber} " +
+                           $"{ poAmountLine} " +
+                           $"{ rmCommentLine} ";
                 }
-
+                
                 if (hubCordinatorFullStaffData != null)
-                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, hubCordinatorFullStaffData.EMAIL, data.JOBREQUESTCODE);
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, hubCordinatorFullStaffData.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
 
                 var hubTeamLeadEntry = context.TBL_JOB_TYPE_HUB_STAFF.Where(x => x.JOBTYPEUNITID == data.JOBTYPEUNITID && x.ISTEAMLEAD == true).FirstOrDefault();
                 if(hubTeamLeadEntry != null && fromStaffData != null)
                 {
                     var teamLeadStaff = context.TBL_STAFF.Find(hubTeamLeadEntry.HUBSTAFFID);
-                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, teamLeadStaff.EMAIL, data.JOBREQUESTCODE);
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, teamLeadStaff.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
                 }
                 if (toStaffData != null)
                 {
                     var reciverStaff = context.TBL_STAFF.Find(toStaffData.STAFFID);
-                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, reciverStaff.EMAIL, data.JOBREQUESTCODE);
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, reciverStaff.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
                 }
                 var verificationOfficer = context.TBL_STAFF.Find(model.createdBy);
-                LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, verificationOfficer.EMAIL, data.JOBREQUESTCODE);
+                LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, verificationOfficer.EMAIL, data.JOBREQUESTCODE,data.JOBREQUESTID);
             }
 
             data.REASSIGNEDTO = (int)model.reassignedTo;
@@ -971,7 +971,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public List<JobRequestDetailViewModel> GetLegalJobRequestDetails()
         {
-            var jobRequest = context.TBL_JOB_REQUEST.Where(x => x.REQUESTSTATUSID != (short)ApprovalStatusEnum.Approved && x.JOBTYPEID == (short)JobTypeEnum.legal);
+            var jobRequest = context.TBL_JOB_REQUEST.Where(x => x.REQUESTSTATUSID > (short)ApprovalStatusEnum.Pending && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated);
            
             List<JobRequestDetailViewModel> jobDetailList = new List<JobRequestDetailViewModel>();
             foreach(var i in jobRequest)
@@ -1304,7 +1304,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             });
         }
 
-        private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string alertSubject, string recipients, string jobReQuestCode)
+        private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string alertSubject, string recipients, string jobReQuestCode, int targetId)
         {
             try
             {
@@ -1324,7 +1324,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     ToAddress = $"{recipient}",
                     DateTimeReceived = DateTime.Now,
                     SendOnDateTime = DateTime.Now,
-                    ReferenceCode = jobReQuestCode
+                    ReferenceCode = jobReQuestCode,
+                    targetId = targetId,
                 };
                 SaveMessageDetails(messageModel);
             }
@@ -1349,6 +1350,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 SENDONDATETIME = model.SendOnDateTime,
                 ATTACHMENTCODE = model.ReferenceCode,
                 ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId
             };
 
             context.TBL_MESSAGE_LOG.Add(message);
@@ -1523,7 +1525,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 $"Please acknowledge receipt of this mail.";
 
                             string alertSubject = $"Loan Collateral Search";
-                            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
+                            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE, jobRequestData.JOBREQUESTID);
                         }
                     }
 
@@ -1704,7 +1706,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         string messageBoby = jobRequestDetail.FirstOrDefault().DESCRIPTION2;
 
                         string alertSubject = $"Loan Collateral Search";
-                        LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
+                        LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE, jobRequestData.JOBREQUESTID);
                     }
 
                     // Audit Section ---------------------------
@@ -1922,7 +1924,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
             string messageBoby = $"Dear RM, <br /><br />This is to bring to your attention that legal has specified charges for collaral on job request with code '{jobRequest.JOBREQUESTCODE}'. <br /><br /> You attention is required to effect the charges. <br /><br />";
             string alertSubject = $"Collateral Search Request";
-            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetStaffEmailRecipients(jobRequest.SENDERSTAFFID), jobRequest.JOBREQUESTCODE);
+            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetStaffEmailRecipients(jobRequest.SENDERSTAFFID), jobRequest.JOBREQUESTCODE, jobRequest.JOBREQUESTID);
             //if (baseApplication != null)
             //{
             //    BasicTrasactionSourceInputModel input = new BasicTrasactionSourceInputModel();

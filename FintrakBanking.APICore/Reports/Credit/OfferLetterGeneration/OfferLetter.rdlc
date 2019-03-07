@@ -2611,7 +2611,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Label>Offer Letter Tiltle</Label>
+                    <Label>Offer Letter Title</Label>
                     <Value>=First(Fields!offerLetterTitle.Value, "OfferLetterDetails")</Value>
                     <MarkupType>HTML</MarkupType>
                     <Style>
