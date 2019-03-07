@@ -1,5 +1,4 @@
-﻿using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.AlertMonitoring;
+﻿using FintrakBanking.Interfaces.AlertMonitoring;
 using FintrakBanking.Repositories.AlertMonitoring;
 using Ninject.Modules;
 using System;
@@ -14,12 +13,10 @@ namespace FintrakBanking.MonitoringMessagesSender
     {
         public override void Load()
         {
-            Bind<IEmailSender>().To<EmailSender>().InSingletonScope();
-            Bind<IAlertMessagesEngine>().To<AlertMessagesEngine>().InSingletonScope();
-            Bind<IAlertMessageLogger>().To<AlertMessageLogger>().InSingletonScope();
-            Bind<ISLANotification>().To<SLANotification>().InSingletonScope();
-            Bind<ICurrencyAndRateUpdate>().To<ExchangeRate>().InSingletonScope();
-            Bind<FinTrakBankingContext>().To<FinTrakBankingContext>().InSingletonScope();
+            //Bind<IEmailSender>().To<EmailSender>().InSingletonScope();
+            //Bind<IAlertMessagesEngine>().To<AlertMessagesEngine>().InSingletonScope();
+            //Bind<IAlertMessageLogger>().To<AlertMessageLogger>().InSingletonScope();
+            //Bind<ISLANotification>().To<SLANotification>().InSingletonScope();
         }
     }
 }

@@ -42,6 +42,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(500)]
         public string RECIPIENTEMAILS3 { get; set; }
 
-        public virtual TBL_MESSAGE_LOG_TYPE TBL_MESSAGE_LOG_TYPE { get; set; }
+        //public virtual TBL_MESSAGE_LOG_TYPE TBL_MESSAGE_LOG_TYPE { get; set; }
     }
 }
