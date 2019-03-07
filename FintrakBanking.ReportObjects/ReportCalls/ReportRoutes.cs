@@ -875,6 +875,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string GetDisbursalCreditTurnover(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/DisbursalCreditTurnover.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+
         public string GetLoanBookingReport(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);

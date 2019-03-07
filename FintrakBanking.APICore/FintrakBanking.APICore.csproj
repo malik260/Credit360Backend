@@ -593,6 +593,13 @@
     <Compile Include="Reports\ReportViews\DailyAccrualReport.aspx.designer.cs">
       <DependentUpon>DailyAccrualReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\DisbursalCreditTurnover.aspx.cs">
+      <DependentUpon>DisbursalCreditTurnover.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DisbursalCreditTurnover.aspx.designer.cs">
+      <DependentUpon>DisbursalCreditTurnover.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ExcessReport.aspx.cs">
       <DependentUpon>ExcessReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1048,6 +1055,7 @@
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
+    <Content Include="Reports\ReportViews\DisbursalCreditTurnover.aspx" />
     <Content Include="Reports\ReportViews\ExcessReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\ReportViews\ExpiredReport.aspx" />
@@ -1311,10 +1319,10 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter000.rdlc" />
     <Content Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <Content Include="Reports\Report\Blacklist.rdlc" />
-    <Content Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR 060219.rdlc" />
     <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AllCommercialLoanReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashCollaterizedCredits.rdlc" />
@@ -1328,6 +1336,7 @@
     <EmbeddedResource Include="Reports\Report\CreditScheduleReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExcessReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />

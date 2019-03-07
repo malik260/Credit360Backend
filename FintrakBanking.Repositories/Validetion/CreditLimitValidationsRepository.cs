@@ -641,7 +641,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             {
                 initiated = initiated,
                 approved = approved,
-                limit = (double)accountOfficerNPLLimit,
+                limit = (double)accountOfficerNPLLimit < 0 ? 0 : (double)accountOfficerNPLLimit,
                 limitString = (accountOfficerMaximumNPLExposure == 0) ? "No limit" : string.Format("{0:#,0.00}", accountOfficerNPLLimit),
                 nplExposure = accountOfficerNPLExposure,
                 maximumAllowedLimit = (decimal)accountOfficerMaximumNPLExposure
