@@ -248,24 +248,26 @@ namespace FintrakBanking.Repositories.WorkFlow
                     $"<br /><br />  Current Staff Assigned: {to} <br /><br />  Regards. <br /><br />";
                 string alertSubject = $"JOB REQUEST ASSIGNMENT NOTICE";
 
-                if(loanDetails != null)
+
+                if (loanDetails != null)
                 {
                     var customerInfo = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
                     var facilityInfo = context.TBL_PRODUCT.Find(loanDetails.APPROVEDPRODUCTID);
                     var currencyInfo = context.TBL_CURRENCY.Find(loanDetails.CURRENCYID);
-                    var invoiceInfo = context.TBL_LOAN_APPLICATION_DETL_INV.Find(loanDetails.LOANAPPLICATIONDETAILID);
+                    var invoiceInfo = context.TBL_LOAN_APPLICATION_DETL_INV.Where(x => x.LOANAPPLICATIONDETAILID == loanDetails.LOANAPPLICATIONDETAILID).FirstOrDefault();
                     var casaInfo = context.TBL_CASA.Find(loanDetails.CASAACCOUNTID);
 
-                    var accountLine = casaInfo != null ? $"<br /><br /> 'Account Number:' <br /><br /> {casaInfo.PRODUCTACCOUNTNUMBER}  <br /><br /> " : null;
-                    var customerNameLine = $"<br /><br /> 'Customer Name:' <br /><br /> {customerInfo.FIRSTNAME} ' ' {customerInfo.LASTNAME} <br /><br /> ";
-                    var loantTypeLine = $"<br /><br /> 'Customer Name:' <br /><br /> {customerInfo.FIRSTNAME} ' ' {customerInfo.LASTNAME} <br /><br /> ";
-                    var accountNumberLine = $"<br /><br /> 'Account Number:' <br /><br /> {casaInfo.PRODUCTACCOUNTNUMBER}  <br /><br /> ";
-                    var currencyTypeLine = $"<br /><br /> 'Currency:' <br /><br /> {currencyInfo.CURRENCYCODE}  <br /><br /> ";
+                    var accountLine = casaInfo != null ? $"<br /><br /> 'Account Number: ' {casaInfo.PRODUCTACCOUNTNUMBER} " : null;
+                    var customerNameLine = $"<br /><br /> 'Customer Name: ' {customerInfo.FIRSTNAME} ' ' {customerInfo.LASTNAME}  ";
+                    var loantTypeLine = facilityInfo != null ? $"<br /><br /> 'Facility: ' {facilityInfo.PRODUCTNAME} " : null;
+                    var applicationRef = loanDetails.TBL_LOAN_APPLICATION != null ? $"<br /><br /> 'Application Reference: ' {loanDetails.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER} " : null;
+                    var accountNumberLine = casaInfo != null ? $"<br /><br /> 'Account Number: ' {casaInfo.PRODUCTACCOUNTNUMBER} " : null;
+                    var currencyTypeLine = currencyInfo != null ? $"<br /><br /> 'Currency: ' {currencyInfo.CURRENCYCODE} " : null;
 
-                    var principalNameLine = invoiceInfo != null  ? $"<br /><br /> 'Principal Name:' <br /><br /> {invoiceInfo.TBL_LOAN_PRINCIPAL.NAME}  <br /><br /> " : null;
-                    var rmCommentLine = invoiceInfo != null  ? $"<br /><br /> 'Comment:' <br /><br /> {invoiceInfo.APPROVAL_COMMENT}  <br /><br /> " : null;
+                    var principalNameLine = invoiceInfo != null ? $"<br /><br /> 'Principal Name: ' {invoiceInfo.TBL_LOAN_PRINCIPAL.NAME} " : null;
+                    var rmCommentLine = invoiceInfo != null ? $"<br /><br /> 'Comment: ' {invoiceInfo.APPROVAL_COMMENT}  " : null;
                     var NumberLine = string.Empty;
-                    var poAmountLine = invoiceInfo != null  ? $"<br /><br /> 'TotalAmount on the PO/Contract/Invoice:' <br /><br /> {invoiceInfo.INVOICE_AMOUNT}  <br /><br /> " : null;
+                    var poAmountLine = invoiceInfo != null ? $"<br /><br /> 'Total Amount on the PO/Contract/Invoice: ' {invoiceInfo.INVOICE_AMOUNT}  " : null;
                     //if (invoiceInfo != null)
                     //{
                     //    var numbers = string.Empty;
@@ -281,9 +283,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                            $"{ principalNameLine} " +
                            $"{ customerNameLine} " +
                            $"{ loantTypeLine} " +
+                           $"{applicationRef}" +
                            $"{ accountLine} " +
-                           $"{ currencyTypeLine} " + 
+                           $"{ currencyTypeLine} " +
                            $"{ NumberLine} " +
+                           //$"{ poAmountLine} " +
                            $"{ rmCommentLine} " +
                            $"<br /><br />  Regards. <br /><br />";
 

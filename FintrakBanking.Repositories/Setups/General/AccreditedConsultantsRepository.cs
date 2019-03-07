@@ -1042,7 +1042,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 id = x.LOANAPPLICATIONCONSULTANTID,
                 loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                 accreditedConsultantId = x.ACCREDITEDCONSULTANTID,
-                consultantName = context.TBL_ACCREDITEDCONSULTANT.FirstOrDefault(c => c.ACCREDITEDCONSULTANTID == x.ACCREDITEDCONSULTANTID).NAME,
+                consultantName = context.TBL_ACCREDITEDCONSULTANT.FirstOrDefault(c => c.ACCREDITEDCONSULTANTID == x.ACCREDITEDCONSULTANTID).FIRMNAME,
                 description = x.DESCRIPTION,
                 productCustomerName = x.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
             })
@@ -1056,26 +1056,27 @@ namespace FintrakBanking.Repositories.Setups.General
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
                 ACCREDITEDCONSULTANTID = model.accreditedConsultantId,
                 DESCRIPTION = model.description,
-                DATETIMECREATED = genSetup.GetApplicationDate(),
+                DATETIMECREATED = DateTime.Now,//genSetup.GetApplicationDate(),
                 CREATEDBY = model.createdBy,
+                DELETED = false,
             };
 
             context.TBL_LOAN_APPLICATION_DETL_CON.Add(data);
 
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanConsultantAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added Loan Consultant  ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            auditTrail.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
+            //// Audit Section ---------------------------
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.LoanConsultantAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"Added Loan Consultant  ",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
+            //auditTrail.AddAuditTrail(audit);
+            //// End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
         }
@@ -1092,20 +1093,20 @@ namespace FintrakBanking.Repositories.Setups.General
 
             context.Entry(data).State = System.Data.Entity.EntityState.Modified;
 
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanConsultantUpdated,
-                STAFFID = model.lastUpdatedBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Updated Loan Consultant' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            auditTrail.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
+            //// Audit Section ---------------------------
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.LoanConsultantUpdated,
+            //    STAFFID = model.lastUpdatedBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"Updated Loan Consultant' ",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
+            //auditTrail.AddAuditTrail(audit);
+            //// End of Audit Section ---------------------
 
             return context.SaveChanges() != 0;
         }
