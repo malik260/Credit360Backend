@@ -244,8 +244,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var to = toStaffData != null ? toStaffData.FIRSTNAME + " " + toStaffData.LASTNAME + " (" + toStaffData.STAFFCODE + ")" : "None";
 
                 string messageBoby = $"Attention!, <br /><br />Please note that a job request assignmnet/reassignment occured with the following details:<br /><br /> 'Job Request Code:' " +
-                    $"<br /><br /> {data.JOBREQUESTCODE} <br /><br /> Previously Assigned Staff: {from} " +
-                    $"<br /><br />  Current Staff Assigned: {to} <br /><br />  Regards. <br /><br />";
+                    $" {data.JOBREQUESTCODE} <br /><br /> Previously Assigned Staff: {from} " +
+                    $"<br /><br />  Current Staff Assigned: {to} <br /><br />  Regards. ";
                 string alertSubject = $"REQUEST FOR DOCUMENT VERIFICATION";
 
                 if(loanDetails != null)
@@ -291,7 +291,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                            $"{ poNumber} " +
                            $"{ poAmountLine} " +
                            $"{ rmCommentLine} ";
-
                 }
                 
                 if (hubCordinatorFullStaffData != null)
