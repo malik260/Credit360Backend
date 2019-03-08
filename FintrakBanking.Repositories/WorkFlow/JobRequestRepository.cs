@@ -257,14 +257,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var invoiceInfo = context.TBL_LOAN_APPLICATION_DETL_INV.Where(x=>x.LOANAPPLICATIONDETAILID == loanDetails.LOANAPPLICATIONDETAILID);
                     var casaInfo = context.TBL_CASA.Find(loanDetails.CASAACCOUNTID);
 
-                    var accountLine = casaInfo != null ? $"<br /><br /> Account Number:  {casaInfo.PRODUCTACCOUNTNUMBER} " : null;
-                    var customerNameLine = $"<br /><br /> Customer Name:  {customerInfo.FIRSTNAME}  {customerInfo.LASTNAME}  ";
-                    var loantTypeLine = facilityInfo != null ? $"<br /><br /> Facility Type:  {facilityInfo.PRODUCTNAME} " : null;
-                    var applicationRef = loanDetails.TBL_LOAN_APPLICATION != null ? $"<br /><br /> Application Reference:  {loanDetails.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER} " : null;
-                    var accountNumberLine = casaInfo != null ? $"<br /><br /> Account Number:  {casaInfo.PRODUCTACCOUNTNUMBER} " : null;
-                    var currencyTypeLine = currencyInfo != null ? $"<br /><br /> Currency:  {currencyInfo.CURRENCYCODE} " : null;
+                    var accountLine = casaInfo != null ? $"<br /><br /> <strong>Account Number:</strong>  {casaInfo.PRODUCTACCOUNTNUMBER} " : null;
+                    var customerNameLine = $"<br /><br /> <strong>Customer Name:</strong>  {customerInfo.FIRSTNAME}  {customerInfo.LASTNAME}  ";
+                    var loantTypeLine = facilityInfo != null ? $"<br /><br /> <strong>Facility Type:</strong>  {facilityInfo.PRODUCTNAME} " : null;
+                    var applicationRef = loanDetails.TBL_LOAN_APPLICATION != null ? $"<br /><br /> <strong>Application Reference:</strong>  {loanDetails.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER} " : null;
+                    var accountNumberLine = casaInfo != null ? $"<br /><br /> <strong>Account Number:</strong>  {casaInfo.PRODUCTACCOUNTNUMBER} " : null;
+                    var currencyTypeLine = currencyInfo != null ? $"<br /><br /> <strong>Currency:</strong>  {currencyInfo.CURRENCYCODE} " : null;
 
-                    var principalNameLine = invoiceInfo.FirstOrDefault() != null  ? $"<br /><br /> Principal Name:  {invoiceInfo.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME} " : null;
+                    var principalNameLine = invoiceInfo.FirstOrDefault() != null  ? $"<br /><br /> <strong>Principal Name:</strong>  {invoiceInfo.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME} " : null;
                     var rmCommentLine = $"<br /><br /><br /> kindly proceed with verification and provide timely feedback ";
                     var NumberLine = string.Empty;
 
@@ -279,9 +279,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                         }
 
                     }
-                    var poAmountLine = invoiceInfo.FirstOrDefault() != null ? $"<br /><br /> Total Amount on PO/Contract/Invoice:  {string.Format("{0:#,0.00}", amount) }  " : null;
-                    var poNumber = invoiceInfo.FirstOrDefault() != null ? $"<br /><br />  PO/Contract/Invoice No:  {numbers }  " : null;
-                    messageBoby = $"Attention!, <br /><br />Please note that a job has been assigned with the following details:" +
+                    var poAmountLine = invoiceInfo.FirstOrDefault() != null ? $"<br /><br /> <strong>Total amount on PO/Contract/Invoice:</strong>  {string.Format("{0:#,0.00}", amount) }  " : null;
+                    var poNumber = invoiceInfo.FirstOrDefault() != null ? $"<br /><br />  <strong>PO/Contract/Invoice No:</strong>  {numbers }  " : null;
+                    messageBoby = $"Attention! <br /><br />Please note that a job has been assigned with the following details:" +
                            $"{ principalNameLine} " +
                            $"{ customerNameLine} " +
                            $"{ accountLine} " +
@@ -291,7 +291,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                            $"{ NumberLine} " +
                            $"{ poNumber} " +
                            $"{ poAmountLine} " +
-                           $"{ rmCommentLine} ";
+                           $"{ rmCommentLine} .";
+                    messageBoby = messageBoby + "<br/><br/>";
                 }
                 
                 if (hubCordinatorFullStaffData != null)
@@ -308,7 +309,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var reciverStaff = context.TBL_STAFF.Find(toStaffData.STAFFID);
                     LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, reciverStaff.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
                 }
-                var verificationOfficer = context.TBL_STAFF.Find(model.createdBy);
+                var verificationOfficer = context.TBL_STAFF.Find(model.createdBy); 
                 LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, verificationOfficer.EMAIL, data.JOBREQUESTCODE,data.JOBREQUESTID);
             }
 
