@@ -11,14 +11,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string bdo { get; set; }
         public string groupName { get; set; }
         public string branches { get; set; }
-        public string schemeCode { get; set; }
+      //  public string schemeCode { get; set; }
         public string customerName { get; set; }
         public string operativeAcct { get; set; }
       //  public string sanctionLimit { get; set; }
         public DateTime? dateDisbursed { get; set; }
         public DateTime? expiryDate { get; set; }
         public int daysPastDue { get; set; }
-        public string totalExposure { get; set; }
+        //public string totalExposure { get; set; }
         public string status { get; set; }
         public Decimal? currentBalance { get; set; }
         public string excessAboveLimit { get; set; }
