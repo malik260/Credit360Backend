@@ -2644,8 +2644,9 @@ namespace FintrakBanking.Repositories.Credit
                                   customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
                                   offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                   offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
-                                  customerId = b.CUSTOMERID
-
+                                  customerId = b.CUSTOMERID,
+                                  customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(o=>o.CUSTOMERID==b.CUSTOMERID).Select(o=>o.ADDRESS).FirstOrDefault(),
+                                  title = b.TITLE,
                               }).FirstOrDefault();
 
             } else {
@@ -2659,7 +2660,9 @@ namespace FintrakBanking.Repositories.Credit
                                   customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
                                   offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                   offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
-                                  customerId = b.CUSTOMERID
+                                  customerId = b.CUSTOMERID,
+                                  customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.ADDRESS).FirstOrDefault(),
+                                  title = b.TITLE,
 
                               }).FirstOrDefault();
             }
@@ -2668,8 +2671,8 @@ namespace FintrakBanking.Repositories.Credit
             var offerLetterDoc = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == detail.customerId).Select(o => o).FirstOrDefault();
             if (offerLetterDoc!=null)
             {
-                offerLetterDoc.OFFERLETTERSALUTATION = "Attention : " + detail.customerName;
-                offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
+                offerLetterDoc.OFFERLETTERSALUTATION = "The Managing Director, <br /><br /> " + detail.customerName + "<br /><br />" + detail.customerAddress + "<br /><br /> Attention: " + detail.title + " " + detail.customerName ;
+               // offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
 
                 if (!context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Any())
                 {

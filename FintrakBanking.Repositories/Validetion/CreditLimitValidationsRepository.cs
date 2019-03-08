@@ -1055,7 +1055,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             var branchNPLLimit = branchMaximumNPLExposure - branchNPLExposure;
 
-            return branchNPLLimit < applicationAmount;
+            return branchMaximumNPLExposure > 0 && branchNPLLimit < applicationAmount;
         }
 
         public bool SectorLimitExceeded(int sectorId, decimal applicationAmount)
@@ -1063,12 +1063,12 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var outstandingLoan = (from a in context.TBL_LOAN
                                join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
                                where a.LOANSTATUSID == (short)LoanStatusEnum.Active && c.SUBSECTORID == sectorId
-                               select a.OUTSTANDINGPRINCIPAL).Sum();
+                               select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
             var outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
                                     join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
                                     where a.LOANSTATUSID == (short)LoanStatusEnum.Active && c.SUBSECTORID == sectorId
-                                    select a.OVERDRAFTLIMIT).Sum();
+                                    select (decimal?)a.OVERDRAFTLIMIT).Sum() ?? 0;
 
             var sectorExposure = outstandingLoan + outstandingRevolving;
 
@@ -1078,7 +1078,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             var sectorLimit = sectorMaximumExposure - sectorExposure;
 
-            return sectorLimit < applicationAmount;
+            return sectorMaximumExposure > 0 && sectorLimit < applicationAmount;
         }
 
         public TotalExposureLimit GetTotalExposureLimitReference(string reference, int companyId)
