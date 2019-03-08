@@ -25,14 +25,14 @@ namespace FintrakBanking.APICore.Providers
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
-        private readonly FinTrakBankingContext _bankingContext;
+        //private readonly FinTrakBankingContext _bankingContext;
         private TBL_SETUP_GLOBAL appSetup;
         private const string HttpContext = "MS_HttpContext";
 
         public ApplicationOAuthProvider(string publicClientId)
         {
             if (publicClientId == null) throw new ArgumentNullException("publicClientId");
-            this._bankingContext = new FinTrakBankingContext();
+            // this._bankingContext = new FinTrakBankingContext();
         }
 
 
@@ -81,6 +81,8 @@ namespace FintrakBanking.APICore.Providers
                 };
                 ClaimsIdentity identity;
 
+                FinTrakBankingContext _bankingContext = new FinTrakBankingContext();
+
                 var authRepo = new AuthenticationRepository(_bankingContext,null);
 
                
@@ -103,7 +105,8 @@ namespace FintrakBanking.APICore.Providers
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {
                     if (Task.FromResult(
-                        ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
+                        ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)
+                        ).Result)
                     {
                         authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress);//.GetAwaiter().GetResult();
                         user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username.ToLower())).Result;
@@ -261,7 +264,7 @@ namespace FintrakBanking.APICore.Providers
 
         public bool ValidateActiveDirectoryCredentials(string userName, string password, out ClaimsIdentity identity)
         {
-            appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
+            //appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
 
             if (appSetup != null && appSetup.REQUIRE_ADUSER)
             {

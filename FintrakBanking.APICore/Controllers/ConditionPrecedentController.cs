@@ -492,7 +492,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                List<AdditionalCommentViewModel> response = repo.GetAdditionalComment(applicationId, callerId);
+                List<AdditionalCommentViewModel> response = repo.GetAdditionalComment(applicationId, callerId, token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
