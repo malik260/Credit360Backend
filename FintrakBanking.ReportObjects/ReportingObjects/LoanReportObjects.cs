@@ -1499,7 +1499,7 @@ namespace FintrakBanking.ReportObjects
 
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
-
+                    var currentDate = context.TBL_FINANCECURRENTDATE.Where(x => x.COMPANYID == companyid).Select(d => d.CURRENTDATE).FirstOrDefault();
                     var accruedInterest = (from accr in context.TBL_DAILY_ACCRUAL
                                            join loan in context.TBL_LOAN on accr.REFERENCENUMBER equals loan.LOANREFERENCENUMBER
                                            where loan.COMPANYID == companyid
@@ -1526,25 +1526,25 @@ namespace FintrakBanking.ReportObjects
                                       orderby l.EFFECTIVEDATE descending ,l.MATURITYDATE descending
                                       select new
                                       {
-                                          accountPayTo = cas.PRODUCTACCOUNTNAME,
-                                          accountReceiveFrom = cas.PRODUCTACCOUNTNAME,
+                                          accountPayTo = cas2.PRODUCTACCOUNTNUMBER,
+                                          accountReceiveFrom = cas.PRODUCTACCOUNTNUMBER,
                                           customerName = c.LASTNAME + " " + c.FIRSTNAME,
                                           endDate = l.MATURITYDATE,
                                           startDate = l.EFFECTIVEDATE,
                                           interestRate = l.INTERESTRATE,
                                           //interestRateChange = context.TBL_LOAN.Where(x=>x.TERMLOANID == la.LOANID  && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Select(x=>x.INTERESTRATE - la.INTERESTRATE),
-                                          interestToDate = 0,
-                                          interestType = "",
+                                          interestToDate = l.INTERESTRATE * (int)DbFunctions.DiffDays(l.EFFECTIVEDATE,currentDate),
+                                          interestType = l.TBL_DAY_INTEREST_TYPE.DAYINTERESTTYPENAME,
                                           principalAmount = l.PRINCIPALAMOUNT,
                                           tenor = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, l.MATURITYDATE),
-                                          tenorToDate = (int)DbFunctions.DiffDays(l.MATURITYDATE, DateTime.Now),
+                                          tenorToDate = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, currentDate),
                                           accruedInterestToDate = acc.accruedInterest,
-                                          tenorToMaturity = 0,
-                                          unearnedInterestAsAtDate = 0,
+                                          tenorToMaturity = (int)DbFunctions.DiffDays(l.MATURITYDATE, currentDate),
+                                          unearnedInterestAsAtDate = l.LOANAPPLICATIONDETAILID,
                                           staffcode = sub.STAFFCODE,
                                           businessGroup = " ",
                                           laInterestRate = la.INTERESTRATE,
-                                          laLoanId = la.LOANID,
+                                          laLoanId = la.LOANID
 
 
                                       }).ToList().Select(x => new UnearnedLoanInterestReport
@@ -1556,7 +1556,7 @@ namespace FintrakBanking.ReportObjects
                                           startDate = x.startDate,
                                           interestRate = x.interestRate,
                                           //interestRateChange = x.interestRateChange,
-                                          interestToDate = x.interestToDate,
+                                          interestToDate = Convert.ToDecimal(x.interestToDate),
                                           interestType = x.interestType,
                                           principalAmount = x.principalAmount,
                                           tenor = x.tenor,
@@ -1567,14 +1567,14 @@ namespace FintrakBanking.ReportObjects
                                           staffcode = x.staffcode,
                                           businessGroup = subList.Where(f => f.staffCode == x.staffcode).FirstOrDefault().subHead
 
-                                      }).ToList().Select(x =>
+                                      }).ToList().Distinct().Select(x =>
                                      {
 
                                          x.interestRateChange = context.TBL_LOAN.Where(u => u.TERMLOANID == x.laLoanId && u.LOANSTATUSID == (short)LoanStatusEnum.Active).Select(u => u.INTERESTRATE - x.laInterestRate).FirstOrDefault();
                                          return x;
                                      }).ToList();
 
-                    return reportData;
+                    return reportData.Distinct().ToList();
                 }
 
             }
@@ -1590,7 +1590,7 @@ namespace FintrakBanking.ReportObjects
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
                 subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB }).ToList();
-
+               
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
                     var accruedInterest = (from accr in context.TBL_DAILY_ACCRUAL
@@ -3488,7 +3488,7 @@ namespace FintrakBanking.ReportObjects
                                               status = lpg.STATUSNAME,
                                               currentBalance = l.PASTDUEPRINCIPAL + l.PRINCIPALAMOUNT,
                                               excessAboveLimit = "",
-                                              totalExposure = "",
+                                              totalExposure = l.PASTDUEINTEREST + cas.AVAILABLEBALANCE,
                                               crTurnover = "",
                                              // custId = l.CUSTOMERID,
                                               sanctionLimit = lpd.APPROVEDAMOUNT,

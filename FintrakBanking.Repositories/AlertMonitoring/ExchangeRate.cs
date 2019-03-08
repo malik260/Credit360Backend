@@ -23,12 +23,10 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
             try
             {
                 DateTime date =(from o in  stagingContext.STG_TREASURY_RATE_TBL orderby o.DATE descending select o.DATE  ).FirstOrDefault();
-                //DateTime? lastRefreshDate = (from o in coreContext.TBL_PRODUCT_PRICE_INDEX orderby o.LASTREFRESHDATE descending select o.LASTREFRESHDATE).FirstOrDefault();
-               var allDates = (from o in coreContext.TBL_PRODUCT_PRICE_INDEX select o.LASTREFRESHDATE) ;
-               //var lastRefreshDate = allDates.OrderByDescending(o=>o.)
+                DateTime? lastRefreshDate = (from o in coreContext.TBL_PRODUCT_PRICE_INDEX orderby o.LASTREFRESHDATE descending select o.LASTREFRESHDATE).FirstOrDefault();
 
-                //if (lastRefreshDate !=null && lastRefreshDate >= date)
-                //    return false;
+                if (lastRefreshDate != null && lastRefreshDate >= date)
+                    return false;
 
 
                 var indexRate = (from x in stagingContext.STG_TREASURY_RATE_TBL
