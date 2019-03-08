@@ -303,8 +303,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingTempUser.ISACTIVE = false;
                     existingTempUser.ISLOCKED = true;
                     existingTempUser.FAILEDLOGONATTEMPT = 0;
-                    existingTempUser.SECURITYQUESTION = staffModel.user.securityQuestion;
-                    existingTempUser.SECURITYANSWER = staffModel.user.securityAnswer;
+                    if (staffModel.user.changeSecutirtyQuestion)
+                    {
+                        existingTempUser.SECURITYQUESTION = staffModel.user.securityQuestion;
+                        existingTempUser.SECURITYANSWER = staffModel.user.securityAnswer;
+                    }
+
                     existingTempUser.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);
                     //existingTempUser.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays);
                     existingTempUser.LASTUPDATEDBY = staffModel.createdBy;

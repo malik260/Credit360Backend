@@ -48,6 +48,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public bool isSuspenseCredit { get; set; }
         public decimal bookedAmount { get; set; }
 
         public string productAccountName2 { get; set; }

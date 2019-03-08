@@ -665,14 +665,16 @@ namespace FintrakBanking.ReportObjects
 
 
 
-                                            }).ToList();
-                                            
+
+                                              }).ToList();
 
                     return waivedConditions.OrderBy(u => u.waveredDate).ToList();
 
                 }
             }
         }
+
+       
 
         public IList<LoanDocumentWaivedViewModel> LoanDeferrals(DateTime startDate, DateTime endDate, int companyId, short? branchId)
         {
@@ -1660,65 +1662,285 @@ namespace FintrakBanking.ReportObjects
 
         }
 
+        //public List<CashBacked> CashBackedReport(DateTime startDate, DateTime endDate, int companyid)
+        //{
+
+        //    using (FinTrakBankingContext context = new FinTrakBankingContext())
+        //    {
+        //        var cashbackedData = (from l in context.TBL_LOAN
+        //                              join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
+        //                              join ca in context.TBL_CASA on l.CASAACCOUNTID equals ca.CASAACCOUNTID
+        //                              join cd in context.TBL_COLLATERAL_DEPOSIT on cm.COLLATERALCUSTOMERID equals cd.COLLATERALCUSTOMERID
+        //                              join cust in context.TBL_CUSTOMER on l.CUSTOMERID equals cust.CUSTOMERID
+        //                              join cus in context.TBL_COLLATERAL_CUSTOMER on l.CUSTOMERID equals cus.CUSTOMERID
+        //                              join ct in context.TBL_COLLATERAL_TYPE on cus.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+        //                              join b in context.TBL_BRANCH on ca.BRANCHID equals b.BRANCHID
+        //                              join curr in context.TBL_CURRENCY on l.CURRENCYID equals curr.CURRENCYID
+        //                              where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
+        //                              DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+        //                              && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+        //                              && l.LOANSYSTEMTYPEID == cm.LOANSYSTEMTYPEID
+        //                              orderby l.EFFECTIVEDATE descending
+        //                              select new
+        //                              {
+        //                                  accountName = cust.LASTNAME + " " + cust.FIRSTNAME,
+        //                                  accountNo = ca.PRODUCTACCOUNTNAME,
+        //                                  branch = b.BRANCHNAME,
+        //                                  currencyType = curr.CURRENCYNAME,
+        //                                  depositAccountNo = cd.ACCOUNTNUMBER,
+        //                                  loanBalance = l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL,
+        //                                  loanBalanceForeignCurrency = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL),
+        //                                  loanLimit = l.PRINCIPALAMOUNT,
+        //                                  loanLimitForeignCurrency = 0,
+        //                                  securityInTheNameOf = cus.TBL_CUSTOMER.LASTNAME + " " + cus.TBL_CUSTOMER.FIRSTNAME,
+        //                                  securityType = ct.COLLATERALTYPENAME,
+        //                                  securityValue = cd.SECURITYVALUE,
+        //                                  exchangeRate = l.EXCHANGERATE,
+        //                                  loanReferenceNumber = l.LOANREFERENCENUMBER
+        //                              }).ToList().Select(x => new CashBacked
+        //                              {
+        //                                  accountName = x.accountName,
+        //                                  accountNo = x.accountNo,
+        //                                  branch = x.branch,
+        //                                  currencyType = x.currencyType,
+        //                                  depositAccountNo = x.depositAccountNo,
+        //                                  loanBalance = x.loanBalance,
+        //                                  loanBalanceForeignCurrency = x.loanBalanceForeignCurrency * (decimal)x.exchangeRate,
+        //                                  loanLimit = x.loanLimit,
+        //                                  loanLimitForeignCurrency = x.loanLimit * (decimal)x.exchangeRate,
+        //                                  securityInTheNameOf = x.securityInTheNameOf,
+        //                                  securityType = x.securityType,
+        //                                  securityValue = x.securityValue,
+        //                                  loanReferenceNumber = x.loanReferenceNumber,
+        //                              }).ToList();
+
+
+
+        //        return cashbackedData;
+
+        //    }
+
+
+        //}
+
         public List<CashBacked> CashBackedReport(DateTime startDate, DateTime endDate, int companyid)
         {
-
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var cashbackedData = (from l in context.TBL_LOAN
-                                      join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
-                                      join ca in context.TBL_CASA on l.CASAACCOUNTID equals ca.CASAACCOUNTID
-                                      join cd in context.TBL_COLLATERAL_DEPOSIT on cm.COLLATERALCUSTOMERID equals cd.COLLATERALCUSTOMERID
-                                      join cust in context.TBL_CUSTOMER on l.CUSTOMERID equals cust.CUSTOMERID
-                                      join cus in context.TBL_COLLATERAL_CUSTOMER on l.CUSTOMERID equals cus.CUSTOMERID
-                                      join ct in context.TBL_COLLATERAL_TYPE on cus.COLLATERALTYPEID equals ct.COLLATERALTYPEID
-                                      join b in context.TBL_BRANCH on ca.BRANCHID equals b.BRANCHID
-                                      join curr in context.TBL_CURRENCY on l.CURRENCYID equals curr.CURRENCYID
-                                      where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
-                                      DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
-                                      && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                      && l.LOANSYSTEMTYPEID == cm.LOANSYSTEMTYPEID
-                                      orderby l.EFFECTIVEDATE descending
-                                      select new
+                var FixedDepositLoan = (from l in context.TBL_LOAN
+                                        join cust in context.TBL_CUSTOMER on l.CUSTOMERID equals cust.CUSTOMERID
+                                        join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
+                                        join cc in context.TBL_COLLATERAL_CUSTOMER on l.CUSTOMERID equals cc.CUSTOMERID
+                                        join ct in context.TBL_COLLATERAL_TYPE on cc.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                                        join br in context.TBL_BRANCH on cust.BRANCHID equals br.BRANCHID
+                                        join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
+                                        join cd in context.TBL_COLLATERAL_DEPOSIT on cm.COLLATERALCUSTOMERID equals cd.COLLATERALCUSTOMERID
+                                        join cur2 in context.TBL_CURRENCY on cc.CURRENCYID equals cur2.CURRENCYID
+
+
+                                        select new CashBacked
+                                        {
+                                            collateralCustomerId = cm.COLLATERALCUSTOMERID,
+                                            branch = br.BRANCHNAME,
+                                            loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                            accountName = cust.LASTNAME + " " + cust.FIRSTNAME,
+                                            securityType = ct.COLLATERALTYPENAME,
+                                            depositAccountNo = cd.ACCOUNTNUMBER,
+                                            loanLimit = l.PRINCIPALAMOUNT,
+                                            loanBalance = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL),
+                                            currencyUnit = cur.CURRENCYNAME,
+                                            currencySecurityUnit = cur2.CURRENCYCODE,
+                                            loanLimitForeignCurrency = 0,
+                                            loanBalanceForeignCurrency = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL),
+                                            securityValue = cd.SECURITYVALUE,
+                                            securityInTheNameOf = cust.LASTNAME + " " + cust.FIRSTNAME,
+                                            currencyID = cur.CURRENCYID.ToString(),
+                                            exchangeRate = l.EXCHANGERATE
+
+
+
+                                        }).ToList().Select(o =>
                                       {
-                                          accountName = cust.LASTNAME + " " + cust.FIRSTNAME,
-                                          accountNo = ca.PRODUCTACCOUNTNAME,
-                                          branch = b.BRANCHNAME,
-                                          currencyType = curr.CURRENCYNAME,
-                                          depositAccountNo = cd.ACCOUNTNUMBER,
-                                          loanBalance = l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL,
-                                          loanBalanceForeignCurrency = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL),
-                                          loanLimit = 0,
-                                          loanLimitForeignCurrency = 0,
-                                          securityInTheNameOf = cus.TBL_CUSTOMER.LASTNAME + " " + cus.TBL_CUSTOMER.FIRSTNAME,
-                                          securityType = ct.COLLATERALTYPENAME,
-                                          securityValue = cd.SECURITYVALUE,
-                                          exchangeRate = l.EXCHANGERATE,
-                                          loanReferenceNumber = l.LOANREFERENCENUMBER
-                                      }).ToList().Select(x => new CashBacked
-                                      {
-                                          accountName = x.accountName,
-                                          accountNo = x.accountNo,
-                                          branch = x.branch,
-                                          currencyType = x.currencyType,
-                                          depositAccountNo = x.depositAccountNo,
-                                          loanBalance = x.loanBalance,
-                                          loanBalanceForeignCurrency = x.loanBalanceForeignCurrency * (decimal)x.exchangeRate,
-                                          loanLimit = 0,
-                                          loanLimitForeignCurrency = 0,
-                                          securityInTheNameOf = x.securityInTheNameOf,
-                                          securityType = x.securityType,
-                                          securityValue = x.securityValue,
-                                          loanReferenceNumber = x.loanReferenceNumber,
+                                          if (o.currencyUnit == "USD")
+                                          {
+                                              o.loanBalanceForeignCurrency = o.loanBalance * Convert.ToDecimal(o.exchangeRate);
+                                              o.loanBalance = 0;
+                                          }
+                                          else if (o.currencyUnit == "NGN")
+                                          {
+                                              o.loanBalance = o.loanBalance * Convert.ToDecimal(o.exchangeRate);
+                                              o.loanBalanceForeignCurrency = 0;
+                                          }
+
+
+
+                                          return o;
+
                                       }).ToList();
 
 
+                var casaLoan = (from l in context.TBL_LOAN
+                                        join cust in context.TBL_CUSTOMER on l.CUSTOMERID equals cust.CUSTOMERID
+                                        join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
+                                        join cc in context.TBL_COLLATERAL_CUSTOMER on l.CUSTOMERID equals cc.CUSTOMERID
+                                        join ct in context.TBL_COLLATERAL_TYPE on cc.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                                        join br in context.TBL_BRANCH on cust.BRANCHID equals br.BRANCHID
+                                        join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
+                                        join cd in context.TBL_COLLATERAL_CASA on cm.COLLATERALCUSTOMERID equals cd.COLLATERALCUSTOMERID
+                                        join cur2 in context.TBL_CURRENCY on cc.CURRENCYID equals cur2.CURRENCYID
 
-                return cashbackedData;
+
+                                        select new CashBacked
+                                        {
+                                            collateralCustomerId = cm.COLLATERALCUSTOMERID,
+                                            branch = br.BRANCHNAME,
+                                            loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                            accountName = cust.LASTNAME + " " + cust.FIRSTNAME,
+                                            securityType = ct.COLLATERALTYPENAME,
+                                            depositAccountNo = cd.ACCOUNTNUMBER,
+                                            loanLimit = l.PRINCIPALAMOUNT,
+                                            loanBalance = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL),
+                                            currencyUnit = cur.CURRENCYNAME,
+                                            currencySecurityUnit = cur2.CURRENCYCODE,
+                                            loanLimitForeignCurrency = 0,
+                                            loanBalanceForeignCurrency = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL),
+                                            securityValue = cd.SECURITYVALUE,
+                                            securityInTheNameOf = cust.LASTNAME + " " + cust.FIRSTNAME,
+                                            currencyID = cur.CURRENCYID.ToString(),
+                                            exchangeRate = l.EXCHANGERATE
+
+
+
+                                        }).ToList().Select(o =>
+                                        {
+                                            if (o.currencyUnit == "USD")
+                                            {
+                                                o.loanBalanceForeignCurrency = o.loanBalance * Convert.ToDecimal(o.exchangeRate);
+                                                o.loanBalance = 0;
+                                            }
+                                            else if (o.currencyUnit == "NGN")
+                                            {
+                                                o.loanBalance = o.loanBalance * Convert.ToDecimal(o.exchangeRate);
+                                                o.loanBalanceForeignCurrency = 0;
+                                            }
+
+
+
+                                            return o;
+
+                                        }).ToList();
+
+                var FixedDepositOdLoan = (from l in context.TBL_LOAN_REVOLVING
+                                          join cust in context.TBL_CUSTOMER on l.CUSTOMERID equals cust.CUSTOMERID
+                                        join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.REVOLVINGLOANID equals cm.LOANID
+                                        join cc in context.TBL_COLLATERAL_CUSTOMER on l.CUSTOMERID equals cc.CUSTOMERID
+                                        join ct in context.TBL_COLLATERAL_TYPE on cc.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                                        join br in context.TBL_BRANCH on cust.BRANCHID equals br.BRANCHID
+                                        join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
+                                        join cd in context.TBL_COLLATERAL_DEPOSIT on cm.COLLATERALCUSTOMERID equals cd.COLLATERALCUSTOMERID
+                                        join cur2 in context.TBL_CURRENCY on cc.CURRENCYID equals cur2.CURRENCYID
+
+
+                                        select new CashBacked
+                                        {
+                                            collateralCustomerId = cm.COLLATERALCUSTOMERID,
+                                            branch = br.BRANCHNAME,
+                                            loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                            accountName = cust.LASTNAME + " " + cust.FIRSTNAME,
+                                            securityType = ct.COLLATERALTYPENAME,
+                                            depositAccountNo = cd.ACCOUNTNUMBER,
+                                            loanLimit = l.OVERDRAFTLIMIT,
+                                            loanBalance = (l.OVERDRAFTLIMIT + l.PASTDUEPRINCIPAL),
+                                            currencyUnit = cur.CURRENCYNAME,
+                                            currencySecurityUnit = cur2.CURRENCYCODE,
+                                            loanLimitForeignCurrency = 0,
+                                           // loanBalanceForeignCurrency = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL),
+                                            securityValue = cd.SECURITYVALUE,
+                                            securityInTheNameOf = cust.LASTNAME + " " + cust.FIRSTNAME,
+                                            currencyID = cur.CURRENCYID.ToString(),
+                                            exchangeRate = l.EXCHANGERATE
+
+
+
+                                        }).ToList().Select(o =>
+                                        {
+                                            if (o.currencyUnit == "USD")
+                                            {
+                                                o.loanBalanceForeignCurrency = o.loanBalance * Convert.ToDecimal(o.exchangeRate);
+                                                o.loanBalance = 0;
+                                            }
+                                            else if (o.currencyUnit == "NGN")
+                                            {
+                                                o.loanBalance = o.loanBalance * Convert.ToDecimal(o.exchangeRate);
+                                                o.loanBalanceForeignCurrency = 0;
+                                            }
+
+
+
+                                            return o;
+
+                                        }).ToList();
+
+                var casaOdLoan = (from l in context.TBL_LOAN_REVOLVING
+                                          join cust in context.TBL_CUSTOMER on l.CUSTOMERID equals cust.CUSTOMERID
+                                          join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.REVOLVINGLOANID equals cm.LOANID
+                                          join cc in context.TBL_COLLATERAL_CUSTOMER on l.CUSTOMERID equals cc.CUSTOMERID
+                                          join ct in context.TBL_COLLATERAL_TYPE on cc.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                                          join br in context.TBL_BRANCH on cust.BRANCHID equals br.BRANCHID
+                                          join cur in context.TBL_CURRENCY on l.CURRENCYID equals cur.CURRENCYID
+                                          join cd in context.TBL_COLLATERAL_CASA on cm.COLLATERALCUSTOMERID equals cd.COLLATERALCUSTOMERID
+                                          join cur2 in context.TBL_CURRENCY on cc.CURRENCYID equals cur2.CURRENCYID
+
+
+                                          select new CashBacked
+                                          {
+                                              collateralCustomerId = cm.COLLATERALCUSTOMERID,
+                                              branch = br.BRANCHNAME,
+                                              loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                              accountName = cust.LASTNAME + " " + cust.FIRSTNAME,
+                                              securityType = ct.COLLATERALTYPENAME,
+                                              depositAccountNo = cd.ACCOUNTNUMBER,
+                                              loanLimit = l.OVERDRAFTLIMIT,
+                                              loanBalance = (l.OVERDRAFTLIMIT + l.PASTDUEPRINCIPAL),
+                                              currencyUnit = cur.CURRENCYNAME,
+                                              currencySecurityUnit = cur2.CURRENCYCODE,
+                                              loanLimitForeignCurrency = 0,
+                                              // loanBalanceForeignCurrency = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL),
+                                              securityValue = cd.SECURITYVALUE,
+                                              securityInTheNameOf = cust.LASTNAME + " " + cust.FIRSTNAME,
+                                              currencyID = cur.CURRENCYID.ToString(),
+                                              exchangeRate = l.EXCHANGERATE
+
+
+
+                                          }).ToList().Select(o =>
+                                          {
+                                              if (o.currencyUnit == "USD")
+                                              {
+                                                  o.loanBalanceForeignCurrency = o.loanBalance * Convert.ToDecimal(o.exchangeRate);
+                                                  o.loanBalance = 0;
+                                              }
+                                              else if (o.currencyUnit == "NGN")
+                                              {
+                                                  o.loanBalance = o.loanBalance * Convert.ToDecimal(o.exchangeRate);
+                                                  o.loanBalanceForeignCurrency = 0;
+                                              }
+
+
+
+                                              return o;
+
+                                          }).ToList();
+
+
+                var loanUnion = FixedDepositLoan.Union(casaLoan).Union(FixedDepositOdLoan).Union(casaOdLoan).OrderBy(x => x.collateralCustomerId).ToList();
+
+                return loanUnion;
 
             }
 
 
+         
         }
 
         public List<CashBackedBondAndGuarantee> CashBackedBondAndGuarantee(DateTime startDate, DateTime endDate, int companyid)
@@ -3232,6 +3454,57 @@ namespace FintrakBanking.ReportObjects
                     }
                 }
             }
+
+        public List<DisbursalCreditTurnoverViewModel> DisburseCreditTurnover(DateTime startDate, DateTime endDate, int companyid)
+        {
+            List<DisbursalCreditTurnoverViewModel> disburseCreditList;
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                DateTime dateTime = DateTime.Now;
+                disburseCreditList = (from l in context.TBL_LOAN
+                                          join cu in context.TBL_CUSTOMER on l.CUSTOMERID equals cu.CUSTOMERID
+                                          join br in context.TBL_BRANCH on l.BRANCHID equals br.BRANCHID
+                                          join cas in context.TBL_CASA on l.CASAACCOUNTID equals cas.CASAACCOUNTID
+                                          join lpd in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals lpd.LOANAPPLICATIONDETAILID
+                                          join cusmap in context.TBL_CUSTOMER_GROUP_MAPPING on cu.CUSTOMERID equals cusmap.CUSTOMERID
+                                          join custgr in context.TBL_CUSTOMER_GROUP on cusmap.CUSTOMERGROUPID equals custgr.CUSTOMERGROUPID
+                                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                                          join lpg in context.TBL_LOAN_PRUDENTIALGUIDELINE on l.USER_PRUDENTIAL_GUIDE_STATUSID equals lpg.PRUDENTIALGUIDELINESTATUSID
+                                      where (DbFunctions.TruncateTime(l.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                              DbFunctions.TruncateTime(l.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                           && l.COMPANYID == companyid
+                                      orderby l.DATETIMECREATED descending
+
+                                      select new DisbursalCreditTurnoverViewModel()
+                                          {
+                                              bdo = "",
+                                              customerName = cu.FIRSTNAME + " " + " " + cu.MIDDLENAME + " " + " " + cu.LASTNAME,
+                                              branches = br.BRANCHNAME,
+                                              groupName = custgr.GROUPNAME,
+                                              operativeAcct = cas.PRODUCTACCOUNTNUMBER,
+                                              dateDisbursed = l.DISBURSEDATE,
+                                              expiryDate = l.MATURITYDATE,
+                                              daysPastDue = (int)DbFunctions.DiffDays((l.PASTDUEDATE.Value == null ? default(DateTime) : l.PASTDUEDATE.Value), dateTime),
+                                              status = lpg.STATUSNAME,
+                                              currentBalance = l.PASTDUEPRINCIPAL + l.PRINCIPALAMOUNT,
+                                              excessAboveLimit = "",
+                                              totalExposure = "",
+                                              crTurnover = "",
+                                             // custId = l.CUSTOMERID,
+                                              sanctionLimit = lpd.APPROVEDAMOUNT,
+                                              schemeCode = l.PRODUCTID.ToString()
+
+
+
+                                          }).ToList();
+
+
+                return disburseCreditList.ToList();
+            }
+
+
+            
+        }
 
         public IEnumerable<LoanViewModel> GetLoanBookingReport(int companyId, string searchInfo, DateTime startDate, DateTime endDate)
         {

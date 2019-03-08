@@ -1432,9 +1432,9 @@ namespace FintrakBanking.Repositories.Credit
                         operationId = x.a.OPERATIONID,
                         customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                         customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
-                        facilityType = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                        facilityType = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED != true && s.STATUSID == (int)ApprovalStatusEnum.Approved).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
-                    responsiblePerson = context.TBL_STAFF
+                        responsiblePerson = context.TBL_STAFF
                                                     .Where(s => s.STAFFID == x.b.TOSTAFFID)
                                                     .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
                                                     .FirstOrDefault().name ?? "",
@@ -2005,6 +2005,28 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            return workflow.Response;
+        }
+
+        public WorkflowResponse GetWorkflowNextStatusLms(ForwardReviewViewModel model)
+        {
+            var applicationDate = general.GetApplicationDate();
+            var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            workflow.Amount = model.totalExposureAmount; //model.amount;
+            workflow.Tenor = model.applicationTenor;
 
             workflow.DeferredExecution = true;
             workflow.LogActivity();

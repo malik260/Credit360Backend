@@ -1,5 +1,5 @@
 ﻿using FintrakBanking.Common.Extensions;
-using FintrakBanking.ReportObjects.ReportingObjects;
+using FintrakBanking.ReportObjects;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class BondAndGuarantee : System.Web.UI.Page
+    public partial class DisbursalCreditTurnover : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -21,7 +21,11 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 {
                     DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                     DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
-                    int approvalStatus = int.Parse(Request.QueryString["approvalStatus"]);
+                    int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                    //short branchId = short.Parse(Request.QueryString["branchId"]);
+                    //string loanRefNo = Request.QueryString["loanRefNo"];
+                    //int productClassId = Int32.Parse(Request.QueryString["productClassId"]);
+                    //int staffId = Int32.Parse(Request.QueryString["staffId"]);
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -49,6 +53,14 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
 
+                    LoanReportObjects disbursement = new LoanReportObjects();
+                    var data = disbursement.DisburseCreditTurnover(startDate, endDate, companyId);
+
+                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    ReportDataSource reportDataSource = new ReportDataSource();
+                    reportDataSource.Value = data;
+                    reportDataSource.Name = "DisbursalCreditTurnover";
+
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
                     if (extension != null)
@@ -57,18 +69,13 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         fieldInfo.SetValue(extension, false);
                     }
 
-                    LimitsMonitoringReportsObjects sla = new LimitsMonitoringReportsObjects();
-                    var data = sla.BondAndGuarantee(startDate, endDate, approvalStatus);
-
-                    this.ReportViewer.LocalReport.DataSources.Clear();
-                    ReportDataSource reportDataSource = new ReportDataSource();
-                    reportDataSource.Value = data;
-                    reportDataSource.Name = "ExpiredBondandGuarantee";
-                   // reportDataSource.Name = "DataSet1";
+                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/BondAndGuarantee.rdlc");
-                    this.ReportViewer.LocalReport.Refresh();
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/DisbursalCreditTurnover.rdlc");
+                    //ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+                    ReportViewer.LocalReport.Refresh();
                 }
                 catch (Exception ex)
                 {
