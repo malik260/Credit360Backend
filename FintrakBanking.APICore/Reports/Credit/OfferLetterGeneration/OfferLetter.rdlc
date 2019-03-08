@@ -402,7 +402,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>4.64316cm</Top>
+            <Top>5.27816cm</Top>
             <Left>0.51492cm</Left>
             <Height>1.01528cm</Height>
             <Width>16.73762cm</Width>
@@ -437,44 +437,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>3.9726cm</Top>
+            <Top>4.6076cm</Top>
             <Left>0.51717cm</Left>
             <Height>0.67056cm</Height>
             <Width>9.50516cm</Width>
             <ZIndex>1</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Address">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=StrConv(First(Fields!customerAddress.Value, "OfferLetterDetails"), vbProperCase)</Value>
-                    <Style>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Address</rd:DefaultName>
-            <Top>1.92725cm</Top>
-            <Left>0.51718cm</Left>
-            <Height>1.10845cm</Height>
-            <Width>4.76786cm</Width>
-            <ZIndex>2</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -510,7 +477,7 @@
             <Left>0.51718cm</Left>
             <Height>0.70583cm</Height>
             <Width>5.7897cm</Width>
-            <ZIndex>3</ZIndex>
+            <ZIndex>2</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -665,11 +632,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionPrecident</DataSetName>
-            <Top>7.77766in</Top>
+            <Top>8.02766in</Top>
             <Left>0.20181in</Left>
             <Height>0.53124in</Height>
             <Width>6.59053in</Width>
-            <ZIndex>4</ZIndex>
+            <ZIndex>3</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -820,11 +787,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionSubsequent</DataSetName>
-            <Top>8.37834in</Top>
+            <Top>8.62834in</Top>
             <Left>0.21223in</Left>
             <Height>0.51736in</Height>
             <Width>6.58011in</Width>
-            <ZIndex>5</ZIndex>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1995,11 +1962,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>3.06107in</Top>
+            <Top>3.31107in</Top>
             <Left>0.20361in</Left>
             <Height>3.25in</Height>
             <Width>6.58873in</Width>
-            <ZIndex>6</ZIndex>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2161,11 +2128,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterFee</DataSetName>
-            <Top>6.47774in</Top>
+            <Top>6.72774in</Top>
             <Left>0.20361in</Left>
             <Height>0.25in</Height>
             <Width>6.58873in</Width>
-            <ZIndex>7</ZIndex>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2268,11 +2235,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterCollateral</DataSetName>
-            <Top>7.21042in</Top>
+            <Top>7.46042in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>6.61487in</Width>
-            <ZIndex>8</ZIndex>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2301,11 +2268,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>6.91875in</Top>
+            <Top>7.16875in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
-            <ZIndex>9</ZIndex>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2577,11 +2544,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>2.22336in</Top>
+            <Top>2.47336in</Top>
             <Left>0.22935in</Left>
             <Height>0.75in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>10</ZIndex>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2593,52 +2560,17 @@
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>7.57986in</Top>
+            <Top>7.82986in</Top>
             <Left>0.22935in</Left>
             <Height>0.07479in</Height>
             <Width>6.60354in</Width>
-            <ZIndex>11</ZIndex>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Rectangle>
-          <Textbox Name="Textbox21">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Label>Offer Letter Title</Label>
-                    <Value>=First(Fields!offerLetterTitle.Value, "OfferLetterDetails")</Value>
-                    <MarkupType>HTML</MarkupType>
-                    <Style>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>0.4532in</Top>
-            <Left>0.20006in</Left>
-            <Height>0.25in</Height>
-            <Width>6.21812in</Width>
-            <ZIndex>12</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Textbox Name="Textbox22">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -2647,7 +2579,7 @@
                 <TextRuns>
                   <TextRun>
                     <Label>Offer Letter Salutation</Label>
-                    <Value>=First(Fields!offerLetterSalutation.Value, "OfferLetterDetails")</Value>
+                    <Value>=StrConv(First(Fields!offerLetterSalutation.Value, "OfferLetterDetails"), vbProperCase)</Value>
                     <MarkupType>HTML</MarkupType>
                     <Style>
                       <FontSize>11pt</FontSize>
@@ -2658,11 +2590,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>1.27095in</Top>
+            <Top>0.49209in</Top>
             <Left>0.18628in</Left>
-            <Height>0.25in</Height>
-            <Width>6.2319in</Width>
-            <ZIndex>13</ZIndex>
+            <Height>1.25248in</Height>
+            <Width>6.60606in</Width>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2678,11 +2610,11 @@
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>9.55573in</Top>
+            <Top>9.80573in</Top>
             <Left>0.57892in</Left>
             <Height>0.07292in</Height>
             <Width>5.72917in</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2709,11 +2641,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox33</rd:DefaultName>
-            <Top>9.06597in</Top>
+            <Top>9.31597in</Top>
             <Left>0.22935in</Left>
             <Height>0.25in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2744,11 +2676,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox34</rd:DefaultName>
-            <Top>9.79306in</Top>
+            <Top>10.04306in</Top>
             <Left>0.22935in</Left>
             <Height>0.25in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>16</ZIndex>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2760,14 +2692,14 @@
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>10.16354in</Height>
+        <Height>10.29306in</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
           <BackgroundImage>
             <Source>Embedded</Source>
-            <Value>=IIF(First(Fields!isFinal.Value, "OfferLetterDetails"))=TRUE,nothing, "DRAFT")</Value>
+            <Value>=IIF(First(Fields!isFinal.Value, "OfferLetterBorrowerDetail")=TRUE, nothing, "DRAFT")</Value>
             <MIMEType>image/jpeg</MIMEType>
             <BackgroundRepeat>Clip</BackgroundRepeat>
           </BackgroundImage>

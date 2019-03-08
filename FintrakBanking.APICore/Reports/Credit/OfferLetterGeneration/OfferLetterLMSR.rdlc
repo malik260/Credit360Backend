@@ -419,43 +419,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>3.9726cm</Top>
+            <Top>4.6076cm</Top>
             <Left>0.51717cm</Left>
             <Height>0.67056cm</Height>
             <Width>9.50516cm</Width>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Address">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=StrConv(First(Fields!customerAddress.Value, "OfferLetterDetails"), vbProperCase)</Value>
-                    <Style>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Address</rd:DefaultName>
-            <Top>1.81464cm</Top>
-            <Left>0.51718cm</Left>
-            <Height>1.10845cm</Height>
-            <Width>4.76786cm</Width>
-            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -491,7 +458,7 @@
             <Left>0.47955cm</Left>
             <Height>0.70583cm</Height>
             <Width>5.7897cm</Width>
-            <ZIndex>2</ZIndex>
+            <ZIndex>1</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -646,11 +613,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionPrecident</DataSetName>
-            <Top>7.77766in</Top>
+            <Top>8.02766in</Top>
             <Left>0.20181in</Left>
             <Height>0.53124in</Height>
             <Width>6.59053in</Width>
-            <ZIndex>3</ZIndex>
+            <ZIndex>2</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -801,11 +768,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionSubsequent</DataSetName>
-            <Top>8.37834in</Top>
+            <Top>8.62834in</Top>
             <Left>0.21223in</Left>
             <Height>0.51736in</Height>
             <Width>6.58011in</Width>
-            <ZIndex>4</ZIndex>
+            <ZIndex>3</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1976,11 +1943,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>3.06107in</Top>
+            <Top>3.31107in</Top>
             <Left>0.20361in</Left>
             <Height>3.25in</Height>
             <Width>6.58873in</Width>
-            <ZIndex>5</ZIndex>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2144,11 +2111,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterFee</DataSetName>
-            <Top>6.47774in</Top>
+            <Top>6.72774in</Top>
             <Left>0.20361in</Left>
             <Height>0.25in</Height>
             <Width>6.58873in</Width>
-            <ZIndex>6</ZIndex>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2251,11 +2218,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterCollateral</DataSetName>
-            <Top>7.21042in</Top>
+            <Top>7.46042in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>6.61487in</Width>
-            <ZIndex>7</ZIndex>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2284,11 +2251,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>6.91875in</Top>
+            <Top>7.16875in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
-            <ZIndex>8</ZIndex>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2550,11 +2517,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>2.22336in</Top>
+            <Top>2.47336in</Top>
             <Left>0.22935in</Left>
             <Height>0.75in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>9</ZIndex>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2566,11 +2533,11 @@
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>9.7457in</Top>
+            <Top>9.9957in</Top>
             <Left>0.35599in</Left>
             <Height>0.07292in</Height>
             <Width>5.72917in</Width>
-            <ZIndex>10</ZIndex>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2582,11 +2549,11 @@
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>10.25in</Top>
+            <Top>10.5in</Top>
             <Left>0.1888in</Left>
             <Height>0.07479in</Height>
             <Width>6.60354in</Width>
-            <ZIndex>11</ZIndex>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2598,11 +2565,11 @@
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>7.57986in</Top>
+            <Top>7.82986in</Top>
             <Left>0.22935in</Left>
             <Height>0.07479in</Height>
             <Width>6.60354in</Width>
-            <ZIndex>12</ZIndex>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2631,11 +2598,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>9.02197in</Top>
+            <Top>9.27197in</Top>
             <Left>0.15383in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
-            <ZIndex>13</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2742,11 +2709,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterTransactionDynamics</DataSetName>
-            <Top>9.34141in</Top>
+            <Top>9.59141in</Top>
             <Left>0.14173in</Left>
             <Height>0.25in</Height>
             <Width>6.60354in</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2771,11 +2738,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>offerLetterIntroduction</rd:DefaultName>
-            <Top>1.86968in</Top>
+            <Top>2.11968in</Top>
             <Left>0.20361in</Left>
             <Height>0.25in</Height>
             <Width>6.52431in</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2806,11 +2773,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox21</rd:DefaultName>
-            <Top>9.93056in</Top>
+            <Top>10.18056in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>6.55647in</Width>
-            <ZIndex>16</ZIndex>
+            <ZIndex>15</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2841,11 +2808,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox22</rd:DefaultName>
-            <Top>10.43056in</Top>
+            <Top>10.68056in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>6.55647in</Width>
-            <ZIndex>17</ZIndex>
+            <ZIndex>16</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2865,6 +2832,7 @@
                   <TextRun>
                     <Label>Offer Letter Salutation</Label>
                     <Value>=First(Fields!offerLetterSalutation.Value, "OfferLetterDetails")</Value>
+                    <MarkupType>HTML</MarkupType>
                     <Style>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
@@ -2875,45 +2843,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox23</rd:DefaultName>
-            <Top>1.24457in</Top>
+            <Top>0.40289in</Top>
             <Left>0.20181in</Left>
-            <Height>0.25in</Height>
+            <Height>1.34169in</Height>
             <Width>6.52611in</Width>
-            <ZIndex>18</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox24">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Label>Offer Letter Title</Label>
-                    <Value>=First(Fields!offerLetterTitle.Value, "OfferLetterDetails")</Value>
-                    <Style>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox24</rd:DefaultName>
-            <Top>0.389in</Top>
-            <Left>0.20181in</Left>
-            <Height>0.25in</Height>
-            <Width>6.52611in</Width>
-            <ZIndex>19</ZIndex>
+            <ZIndex>17</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>

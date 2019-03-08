@@ -648,7 +648,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 // var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
                 if (profile != null)
                 {
-                    int count = profile.FAILEDLOGONATTEMPT+1 ?? 0;
+                    int count = profile.FAILEDLOGONATTEMPT ?? 0;
                     TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
                     prosett = context.TBL_PROFILE_SETTING.FirstOrDefault();
                     profile.LOGINCODE = null;
@@ -660,11 +660,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         profile.ISLOCKED = true;
                         profile.LASTLOCKOUTDATE = DateTime.Now;
-                        profile.FAILEDLOGONATTEMPT = 0;
+                        //profile.FAILEDLOGONATTEMPT = 0;
 
                     }
 
-                   //context.Entry(profile).State = EntityState.Modified;
+                   context.Entry(profile).State = EntityState.Modified;
 
                     context.SaveChanges();
 
