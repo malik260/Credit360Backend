@@ -48,6 +48,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private string saveJobRequest(JobRequestViewModel model)
         {
+            if(model.operationsId == 0)
+            {
+                throw new ConditionNotMetException("Job request could not resolve the operation.");
+            }
             var applicationDate = general.GetApplicationDate();
             var date = DateTime.Now;
             var data = new TBL_JOB_REQUEST

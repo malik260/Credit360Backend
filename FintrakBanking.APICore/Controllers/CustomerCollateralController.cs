@@ -218,6 +218,19 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("customer-collateral/searchParam/{searchParam}")]
+        public HttpResponseMessage GetCustomerCollateralReport(string searchParam)
+        {
+            try
+            {
+                var response = repo.GetCustomerCollateralReport(searchParam, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
         [HttpPost, Route("customer-collateral/customer")]
         public HttpResponseMessage GetCustomerCollateralRepo([FromBody]NewCollateralViewModel data)
         {

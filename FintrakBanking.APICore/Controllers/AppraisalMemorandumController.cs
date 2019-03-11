@@ -543,7 +543,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateral(applicationId);
+                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateral(applicationId,token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)

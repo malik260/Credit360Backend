@@ -85,6 +85,7 @@ namespace FintrakBanking.APICore.Providers
 
                
                 ActiveUserDetails userInfo = authRepo.GetUserAuthenticationInfo(userVm.username);
+                ActiveUserDetails userInformation = authRepo.GetUserInformation(userVm.username);
 
                 if (authRepo.GetRunningEndOfDayProcess(userInfo.countryId))
                 {
@@ -98,18 +99,33 @@ namespace FintrakBanking.APICore.Providers
                     return;
                 }
 
+                if (userInformation != null && userInformation.deleted)
+                {
+                    context.SetError("invalid_grant", "User does not exist or have been deactivated!");
+                    return;
+                }
+
+                if (authRepo.ConcurrentUsers() > 2000) // 2000 setup somewhere
+                {
+                    context.SetError("invalid_grant", "Maximum Concurrent Users exceeded!");
+                    return;
+                }
+
                 _bankingContext.TBL_SETUP_GLOBAL.AsNoTracking();
                 _bankingContext.TBL_PROFILE_USER.AsNoTracking();
 
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
 
+                //appSetup.USE_ACTIVE_DIRECTORY = false;
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {
                     if (Task.FromResult(
-                        ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
+                        ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)
+                        ).Result)
                     {
                         authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress);//.GetAwaiter().GetResult();
-                        user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username.ToLower())).Result;
+                        user = authRepo.FindUserByUserName(userVm.username.ToLower());
+                        // user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username.ToLower())).Result;
                     }
                     else
                     {
@@ -143,12 +159,12 @@ namespace FintrakBanking.APICore.Providers
                     //    .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
                     //    .Result;
                     user = authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password);
+                }
 
-                    if (user == null)
-                    {
-                        context.SetError("invalid_grant", "Login Failure.");
-                        return;
-                    }
+                if (user == null)
+                {
+                    context.SetError("invalid_grant", "Login Failure.");
+                    return;
                 }
 
                 bool isUserAccountValid;
