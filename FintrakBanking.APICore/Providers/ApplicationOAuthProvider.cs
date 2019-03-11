@@ -32,9 +32,8 @@ namespace FintrakBanking.APICore.Providers
         public ApplicationOAuthProvider(string publicClientId)
         {
             if (publicClientId == null) throw new ArgumentNullException("publicClientId");
-            // this._bankingContext = new FinTrakBankingContext();
+            //this._bankingContext = new FinTrakBankingContext();
         }
-
 
         public string GetIpAddress(HttpRequestMessage request)
         {
@@ -82,11 +81,11 @@ namespace FintrakBanking.APICore.Providers
                 ClaimsIdentity identity;
 
                 FinTrakBankingContext _bankingContext = new FinTrakBankingContext();
-
                 var authRepo = new AuthenticationRepository(_bankingContext,null);
 
                
                 ActiveUserDetails userInfo = authRepo.GetUserAuthenticationInfo(userVm.username);
+                ActiveUserDetails userInformation = authRepo.GetUserInformation(userVm.username);
 
                 if (authRepo.GetRunningEndOfDayProcess(userInfo.countryId))
                 {
@@ -99,6 +98,21 @@ namespace FintrakBanking.APICore.Providers
                     context.SetError("invalid_grant", userInfo.grantMessage);
                     return;
                 }
+
+                if (userInformation != null && userInformation.deleted)
+                {
+                    context.SetError("invalid_grant", "User does not exist or have been deactivated!");
+                    return;
+                }
+
+                if (authRepo.ConcurrentUsers() > 2000) // 2000 setup somewhere
+                {
+                    context.SetError("invalid_grant", "Maximum Concurrent Users exceeded!");
+                    return;
+                }
+
+                _bankingContext.TBL_SETUP_GLOBAL.AsNoTracking();
+                _bankingContext.TBL_PROFILE_USER.AsNoTracking();
 
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
 
@@ -239,7 +253,7 @@ namespace FintrakBanking.APICore.Providers
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
         {
-            if (context.ClientId == _publicClientId)
+            if (context.ClientId == this._publicClientId)
             {
                 Uri expectedRootUri = new Uri(context.Request.Uri, "/");
 

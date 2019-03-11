@@ -1499,7 +1499,7 @@ namespace FintrakBanking.ReportObjects
 
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
-
+                    var currentDate = context.TBL_FINANCECURRENTDATE.Where(x => x.COMPANYID == companyid).Select(d => d.CURRENTDATE).FirstOrDefault();
                     var accruedInterest = (from accr in context.TBL_DAILY_ACCRUAL
                                            join loan in context.TBL_LOAN on accr.REFERENCENUMBER equals loan.LOANREFERENCENUMBER
                                            where loan.COMPANYID == companyid
@@ -1526,25 +1526,25 @@ namespace FintrakBanking.ReportObjects
                                       orderby l.EFFECTIVEDATE descending ,l.MATURITYDATE descending
                                       select new
                                       {
-                                          accountPayTo = cas.PRODUCTACCOUNTNAME,
-                                          accountReceiveFrom = cas.PRODUCTACCOUNTNAME,
+                                          accountPayTo = cas2.PRODUCTACCOUNTNUMBER,
+                                          accountReceiveFrom = cas.PRODUCTACCOUNTNUMBER,
                                           customerName = c.LASTNAME + " " + c.FIRSTNAME,
                                           endDate = l.MATURITYDATE,
                                           startDate = l.EFFECTIVEDATE,
                                           interestRate = l.INTERESTRATE,
                                           //interestRateChange = context.TBL_LOAN.Where(x=>x.TERMLOANID == la.LOANID  && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Select(x=>x.INTERESTRATE - la.INTERESTRATE),
-                                          interestToDate = 0,
-                                          interestType = "",
+                                          interestToDate = l.INTERESTRATE * (int)DbFunctions.DiffDays(l.EFFECTIVEDATE,currentDate),
+                                          interestType = l.TBL_DAY_INTEREST_TYPE.DAYINTERESTTYPENAME,
                                           principalAmount = l.PRINCIPALAMOUNT,
                                           tenor = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, l.MATURITYDATE),
-                                          tenorToDate = (int)DbFunctions.DiffDays(l.MATURITYDATE, DateTime.Now),
+                                          tenorToDate = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, currentDate),
                                           accruedInterestToDate = acc.accruedInterest,
-                                          tenorToMaturity = 0,
-                                          unearnedInterestAsAtDate = 0,
+                                          tenorToMaturity = (int)DbFunctions.DiffDays(l.MATURITYDATE, currentDate),
+                                          unearnedInterestAsAtDate = l.LOANAPPLICATIONDETAILID,
                                           staffcode = sub.STAFFCODE,
                                           businessGroup = " ",
                                           laInterestRate = la.INTERESTRATE,
-                                          laLoanId = la.LOANID,
+                                          laLoanId = la.LOANID
 
 
                                       }).ToList().Select(x => new UnearnedLoanInterestReport
@@ -1556,7 +1556,7 @@ namespace FintrakBanking.ReportObjects
                                           startDate = x.startDate,
                                           interestRate = x.interestRate,
                                           //interestRateChange = x.interestRateChange,
-                                          interestToDate = x.interestToDate,
+                                          interestToDate = Convert.ToDecimal(x.interestToDate),
                                           interestType = x.interestType,
                                           principalAmount = x.principalAmount,
                                           tenor = x.tenor,
@@ -1567,14 +1567,14 @@ namespace FintrakBanking.ReportObjects
                                           staffcode = x.staffcode,
                                           businessGroup = subList.Where(f => f.staffCode == x.staffcode).FirstOrDefault().subHead
 
-                                      }).ToList().Select(x =>
+                                      }).ToList().Distinct().Select(x =>
                                      {
 
                                          x.interestRateChange = context.TBL_LOAN.Where(u => u.TERMLOANID == x.laLoanId && u.LOANSTATUSID == (short)LoanStatusEnum.Active).Select(u => u.INTERESTRATE - x.laInterestRate).FirstOrDefault();
                                          return x;
                                      }).ToList();
 
-                    return reportData;
+                    return reportData.Distinct().ToList();
                 }
 
             }
@@ -1590,7 +1590,7 @@ namespace FintrakBanking.ReportObjects
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
                 subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB }).ToList();
-
+               
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
                     var accruedInterest = (from accr in context.TBL_DAILY_ACCRUAL
@@ -3488,7 +3488,7 @@ namespace FintrakBanking.ReportObjects
                                               status = lpg.STATUSNAME,
                                               currentBalance = l.PASTDUEPRINCIPAL + l.PRINCIPALAMOUNT,
                                               excessAboveLimit = "",
-                                              totalExposure = "",
+                                              totalExposure = l.PASTDUEINTEREST + cas.AVAILABLEBALANCE,
                                               crTurnover = "",
                                              // custId = l.CUSTOMERID,
                                               sanctionLimit = lpd.APPROVEDAMOUNT,
@@ -3671,26 +3671,28 @@ namespace FintrakBanking.ReportObjects
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
                var misList = (from sl in stagecontext.STG_STAFFMIS select new {sl.DIRECTORATE, sl.USERNAME, sl.GROUP_HUB, sl.DEPT_NAME}).ToList();
-              var  data = new List<Form3800BReportViewModel>();
-              var  lmsData = new List<Form3800BReportViewModel>();
+              var  termLoan = new List<Form3800BReportViewModel>();
+              var  lmsTermLoan = new List<Form3800BReportViewModel>();
+              var     lmsOD = new List<Form3800BReportViewModel>();
+              var     lmsContingent = new List<Form3800BReportViewModel>();
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
 
-                     data = (from x in context.TBL_LOAN_APPLICATION_DETAIL
-                                join a in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                                
+                    termLoan = (from x in context.TBL_LOAN_APPLICATION_DETAIL
+                            join a in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
 
-                                let staffCode = context.TBL_STAFF.Where(s => s.STAFFID == a.RELATIONSHIPMANAGERID).Select(s => s.STAFFCODE).FirstOrDefault()
-                             //   let mis = misList.Where(o => o.USERNAME == staffCode).Select(o=>o.DEPT_NAME).FirstOrDefault()
 
-                                where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
-                                                  DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
-                                                  && a.COMPANYID == companyId
-                                                  && x.STATUSID == (int)ApprovalStatusEnum.Approved
-                             select new Form3800BReportViewModel
-                                {
-                                  date =  a.AVAILMENTDATE,
-                                  operativeAccount = "", // x cassaaccountid
+                            let staffCode = context.TBL_STAFF.Where(s => s.STAFFID == a.RELATIONSHIPMANAGERID).Select(s => s.STAFFCODE).FirstOrDefault()
+                            //   let mis = misList.Where(o => o.USERNAME == staffCode).Select(o=>o.DEPT_NAME).FirstOrDefault()
+
+                            where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                              DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                                              && a.COMPANYID == companyId
+                                              && x.STATUSID == (int)ApprovalStatusEnum.Approved
+                            select new Form3800BReportViewModel
+                            {
+                                date = a.AVAILMENTDATE,
+                                operativeAccount = context.TBL_CASA.Where(o => o.CASAACCOUNTID == x.OPERATINGCASAACCOUNTID).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),  // x cassaaccountid
                                   businessUnit ="",
                                     businessGroup = "", //group
                                   branch = a.TBL_BRANCH.BRANCHNAME,
@@ -3708,7 +3710,7 @@ namespace FintrakBanking.ReportObjects
                                     return x;
                                 }).ToList(); ;
 
-                    lmsData = (from x in context.TBL_LMSR_APPLICATION_DETAIL
+                    lmsTermLoan = (from x in context.TBL_LMSR_APPLICATION_DETAIL
                                 join a in context.TBL_LMSR_APPLICATION on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                 join l in context.TBL_LOAN on x.LOANID equals l.TERMLOANID
 
@@ -3726,8 +3728,8 @@ namespace FintrakBanking.ReportObjects
                                select new Form3800BReportViewModel
                             {
                                 date = a.AVAILMENTDATE,
-                                operativeAccount = "", // x cassaaccountid
-                                businessUnit ="",
+                                   operativeAccount = context.TBL_CASA.Where(o => o.CASAACCOUNTID == l.CASAACCOUNTID).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),  // x cassaaccountid
+                                   businessUnit = "",
                                 businessGroup = "", //group
                                 branch = a.TBL_BRANCH.BRANCHNAME,
                                 customer = a.TBL_CUSTOMER.FIRSTNAME + "" + a.TBL_CUSTOMER.LASTNAME + "" + a.TBL_CUSTOMER.MIDDLENAME,
@@ -3744,10 +3746,86 @@ namespace FintrakBanking.ReportObjects
                                 x.businessGroup = misList.Where(o => o.USERNAME == x.staffCode).Select(o => o.GROUP_HUB).FirstOrDefault();
                                 x.status.ToUpper();
                                 return x;
-                            }).ToList(); 
+                            }).ToList();
+
+                   lmsOD = (from x in context.TBL_LMSR_APPLICATION_DETAIL
+                               join a in context.TBL_LMSR_APPLICATION on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                               join l in context.TBL_LOAN_REVOLVING on x.LOANID equals l.REVOLVINGLOANID
+
+                               let loanDetail = context.TBL_LOAN_APPLICATION_DETAIL.Join(
+                                   context.TBL_LOAN, a => a.LOANAPPLICATIONDETAILID, b => b.LOANAPPLICATIONDETAILID, (a, b) => new { a, b }).Join(
+                                   context.TBL_LMSR_APPLICATION_DETAIL, x => x.b.TERMLOANID, y => y.LOANID, (x, y) => new { x.b.RELATIONSHIPMANAGERID, x.a.LOANPURPOSE, x.a.CURRENCYID }).FirstOrDefault()
+
+                               let staffCode = context.TBL_STAFF.Where(s => s.STAFFID == loanDetail.RELATIONSHIPMANAGERID).Select(s => s.STAFFCODE).FirstOrDefault()
+
+                               where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                              DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                                              && a.COMPANYID == companyId
+                                              && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
+                               select new Form3800BReportViewModel
+                               {
+                                   date = a.AVAILMENTDATE,
+                                   operativeAccount = context.TBL_CASA.Where(o => o.CASAACCOUNTID == l.CASAACCOUNTID).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),  // x cassaaccountid
+                                   businessUnit = "",
+                                   businessGroup = "", //group
+                                   branch = a.TBL_BRANCH.BRANCHNAME,
+                                   customer = a.TBL_CUSTOMER.FIRSTNAME + "" + a.TBL_CUSTOMER.LASTNAME + "" + a.TBL_CUSTOMER.MIDDLENAME,
+                                   cap = "CAP",
+                                   status = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == x.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(), //operationId
+                                   purpose = loanDetail.LOANPURPOSE,
+                                   newApproval = x.APPROVEDAMOUNT,
+                                   currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == loanDetail.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
+                                   staffCode = staffCode
+
+                               }).ToList().Select(x =>
+                               {
+                                   x.businessUnit = misList.Where(o => o.USERNAME == x.staffCode).Select(o => o.DIRECTORATE).FirstOrDefault();
+                                   x.businessGroup = misList.Where(o => o.USERNAME == x.staffCode).Select(o => o.GROUP_HUB).FirstOrDefault();
+                                   x.status.ToUpper();
+                                   return x;
+                               }).ToList();
+
+                    lmsContingent = (from x in context.TBL_LMSR_APPLICATION_DETAIL
+                                 join a in context.TBL_LMSR_APPLICATION on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                 join l in context.TBL_LOAN_CONTINGENT on x.LOANID equals l.CONTINGENTLOANID
+
+                                 let loanDetail = context.TBL_LOAN_APPLICATION_DETAIL.Join(
+                                     context.TBL_LOAN, a => a.LOANAPPLICATIONDETAILID, b => b.LOANAPPLICATIONDETAILID, (a, b) => new { a, b }).Join(
+                                     context.TBL_LMSR_APPLICATION_DETAIL, x => x.b.TERMLOANID, y => y.LOANID, (x, y) => new { x.b.RELATIONSHIPMANAGERID, x.a.LOANPURPOSE, x.a.CURRENCYID }).FirstOrDefault()
+
+                                 let staffCode = context.TBL_STAFF.Where(s => s.STAFFID == loanDetail.RELATIONSHIPMANAGERID).Select(s => s.STAFFCODE).FirstOrDefault()
+
+                                 where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                                DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                                                && a.COMPANYID == companyId
+                                                && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
+                                 select new Form3800BReportViewModel
+                                 {
+                                     date = a.AVAILMENTDATE,
+                                     operativeAccount = context.TBL_CASA.Where(o => o.CASAACCOUNTID == l.CASAACCOUNTID).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),  // x cassaaccountid
+                                     businessUnit = "",
+                                     businessGroup = "", //group
+                                     branch = a.TBL_BRANCH.BRANCHNAME,
+                                     customer = a.TBL_CUSTOMER.FIRSTNAME + "" + a.TBL_CUSTOMER.LASTNAME + "" + a.TBL_CUSTOMER.MIDDLENAME,
+                                     cap = "CAP",
+                                     status = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == x.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(), //operationId
+                                     purpose = loanDetail.LOANPURPOSE,
+                                     newApproval = x.APPROVEDAMOUNT,
+                                     currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == loanDetail.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
+                                     staffCode = staffCode
+
+                                 }).ToList().Select(x =>
+                                 {
+                                     x.businessUnit = misList.Where(o => o.USERNAME == x.staffCode).Select(o => o.DIRECTORATE).FirstOrDefault();
+                                     x.businessGroup = misList.Where(o => o.USERNAME == x.staffCode).Select(o => o.GROUP_HUB).FirstOrDefault();
+                                     x.status.ToUpper();
+                                     return x;
+                                 }).ToList();
 
                 }
-                return data.Union(lmsData).ToList();
+                return termLoan.Union(lmsTermLoan).Union(lmsOD).Union(lmsContingent).ToList();
             }
 
 

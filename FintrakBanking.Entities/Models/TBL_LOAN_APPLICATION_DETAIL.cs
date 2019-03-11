@@ -151,6 +151,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISSPECIALISED { get; set; }
         //public int? TENORFREQUENCYTYPEID { get; set; }
         public int? TENORFREQUENCYTYPEID { get; set; }
+       // public int? OPERATINGCASAACCOUNTID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

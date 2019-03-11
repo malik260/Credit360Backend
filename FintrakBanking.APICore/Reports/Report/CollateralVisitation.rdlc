@@ -254,6 +254,7 @@
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
+                                <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -552,6 +553,7 @@
                               <Value>=Fields!lastVisitationDate.Value</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
+                                <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -570,6 +572,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -616,6 +619,7 @@
                               <Value>=Fields!nextVisitationDate.Value</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
+                                <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
