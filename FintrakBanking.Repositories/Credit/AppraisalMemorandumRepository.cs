@@ -1574,11 +1574,12 @@ namespace FintrakBanking.Repositories.Credit
             return limits;
         }
 
-        public List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId)
+        public List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId, int staffId)
         {
             return context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x => new RecommendedCollateralViewModel
                 {
+                    owner = x.CREATEDBY == staffId,
                     id = x.COLLATERALBASICDETAILID,
                     collateralDetail = x.COLLATERALDETAIL,
                     collateralValue = x.COLLATERALVALUE,
@@ -1616,7 +1617,7 @@ namespace FintrakBanking.Repositories.Credit
             });
 
             context.SaveChanges();
-            return GetRecommendedCollateral(entity.applicationId);
+            return GetRecommendedCollateral(entity.applicationId,entity.createdBy);
         }
 
         public List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity)
@@ -1641,7 +1642,7 @@ namespace FintrakBanking.Repositories.Credit
             });
 
             context.SaveChanges();
-            return GetRecommendedCollateral(entity.applicationId);
+            return GetRecommendedCollateral(entity.applicationId,entity.createdBy);
         }
 
         public List<RecommendedCollateralViewModel> GetRecommendedCollateralHistory(int applicationId)

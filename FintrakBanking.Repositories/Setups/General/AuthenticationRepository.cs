@@ -104,6 +104,22 @@ namespace FintrakBanking.Repositories.Setups.General
             return response != 0;
         }
 
+        public ActiveUserDetails GetUserInformation(string username)
+        {
+            return (from u in context.TBL_PROFILE_USER
+                        join st in context.TBL_STAFF on u.STAFFID equals st.STAFFID
+                        where u.USERNAME.ToLower() == username
+                        select new ActiveUserDetails
+                        {
+                            user_id = u.USERID,
+                            staffId = u.STAFFID,
+                            username = u.USERNAME,
+                            isActive = u.ISACTIVE,
+                            deleted = st.DELETED
+                        })
+                    .FirstOrDefault();
+        }
+
         public async Task<bool> UpdateUser(int userId, UserViewModel user)
         {
             try
@@ -122,6 +138,15 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 throw new SecureException(ex.Message);
             }
+        }
+
+        public int ConcurrentUsers()
+        {
+            return context.TBL_PROFILE_USER.Where(x => 
+                x.ISACTIVE == true &&
+                x.ISLOCKED == false &&
+                x.LOGINCODE != null && 
+                ).Count();
         }
 
         public ActiveUserDetails GetUserAuthenticationInfo(string username)
@@ -648,7 +673,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 // var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
                 if (profile != null)
                 {
-                    int count = profile.FAILEDLOGONATTEMPT+1 ?? 0;
+                    int count = profile.FAILEDLOGONATTEMPT ?? 0;
                     TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
                     prosett = context.TBL_PROFILE_SETTING.FirstOrDefault();
                     profile.LOGINCODE = null;
@@ -660,11 +685,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         profile.ISLOCKED = true;
                         profile.LASTLOCKOUTDATE = DateTime.Now;
-                        profile.FAILEDLOGONATTEMPT = 0;
+                        //profile.FAILEDLOGONATTEMPT = 0;
 
                     }
 
-                   //context.Entry(profile).State = EntityState.Modified;
+                   context.Entry(profile).State = EntityState.Modified;
 
                     context.SaveChanges();
 

@@ -649,7 +649,7 @@ namespace FintrakBanking.Repositories.Credit
 
         #region Additional Comments
 
-        public List<AdditionalCommentViewModel> GetAdditionalComment(int applicationId, int callerId)
+        public List<AdditionalCommentViewModel> GetAdditionalComment(int applicationId, int callerId, int staffId)
         {
             return context.TBL_LOAN_APPLICATION_COMMENT.Where(x => x.DELETED == false && x.LOANAPPLICATIONID == applicationId && x.OPERATIONID == callerId)
             .Select(c => new AdditionalCommentViewModel
@@ -658,6 +658,7 @@ namespace FintrakBanking.Repositories.Credit
                 callerId = c.OPERATIONID,
                 additionalComment = c.COMMENTS,
                 applicationId = c.LOANAPPLICATIONID,
+                owner = c.CREATEDBY == staffId,
             })
             .ToList();
         }
