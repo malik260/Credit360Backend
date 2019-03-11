@@ -116,6 +116,7 @@ namespace FintrakBanking.APICore.Providers
 
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
 
+                //appSetup.USE_ACTIVE_DIRECTORY = false;
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {
                     if (Task.FromResult(
