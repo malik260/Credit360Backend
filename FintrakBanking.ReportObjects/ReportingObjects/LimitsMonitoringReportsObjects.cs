@@ -1,5 +1,6 @@
 ﻿ using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.ViewModels.AlertMonitoring;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Reports;
@@ -13,6 +14,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
     public  class LimitsMonitoringReportsObjects
     {
         FinTrakBankingContext context = new FinTrakBankingContext();
+
+        FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext();
         public IEnumerable<SectorLimitViewModel> GetSectorLoanAmountLimit(int companyId, int operationId)
         {
             
@@ -204,116 +207,194 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return turnoverCovenant;
         } // to do
 
-        public List<LoanViewModel> NPL(DateTime startDate, DateTime endDate, int classification)
-        {
-            //if (classification!=null)
-            //{
-                List<LoanViewModel> termloans = (from a in context.TBL_LOAN_APPLICATION
-                                           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                           join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                                           join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.USER_PRUDENTIAL_GUIDE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID //b.EXT_PRUDENT_GUIDELINE_STATUSID
-                                           join cu in context.TBL_CUSTOMER on b.CUSTOMERID equals  cu.CUSTOMERID
-                                           //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-                                           where e.PRUDENTIALGUIDELINETYPEID  == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
-                                           && DbFunctions.TruncateTime(b.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
-                                                 orderby b.EFFECTIVEDATE descending
+        //public List<LoanViewModel> NPL(DateTime startDate, DateTime endDate, int classification)
+        //{
+            
+        //        var staffmis = (from m in stagecontext.STG_STAFFMIS select new STG_STAFFMIS { REGION = m.REGION, STAFFCODE = m.STAFFCODE, BRANCHCODE = m.BRANCHCODE, USERNAME = m.USERNAME }).ToList();
+        //    List<LoanViewModel> termloans = (from a in context.TBL_LOAN_APPLICATION
+        //                                     join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+        //                                     join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+        //                                     join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.USER_PRUDENTIAL_GUIDE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID //b.EXT_PRUDENT_GUIDELINE_STATUSID
+        //                                     join cu in context.TBL_CUSTOMER on b.CUSTOMERID equals cu.CUSTOMERID
+        //                                     //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+        //                                     where e.PRUDENTIALGUIDELINETYPEID == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
+        //                                     && DbFunctions.TruncateTime(b.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
+        //                                     orderby b.EFFECTIVEDATE descending
 
-                                                 select new LoanViewModel
-                                           {
-                                               applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                               loanReferenceNumber = b.LOANREFERENCENUMBER,
-                                               bookingDate = b.BOOKINGDATE,
-                                               disburseDate = b.DISBURSEDATE,
-                                               nplDate = (DateTime?)b.NPLDATE,
-                                               loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                               externalPrudentialGuidelineStatus = e.STATUSNAME,
-                                               productName = d.TBL_PRODUCT.PRODUCTNAME,
-                                               customerName = cu.FIRSTNAME + " " + cu.LASTNAME
+        //                                     select new LoanViewModel
+        //                                     {
+        //                                         applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+        //                                         loanReferenceNumber = b.LOANREFERENCENUMBER,
+        //                                         bookingDate = b.BOOKINGDATE,
+        //                                         disburseDate = b.DISBURSEDATE,
+        //                                         nplDate = (DateTime?)b.NPLDATE,
+        //                                         loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                                         externalPrudentialGuidelineStatus = e.STATUSNAME,
+        //                                         productName = d.TBL_PRODUCT.PRODUCTNAME,
+        //                                         customerName = cu.FIRSTNAME + " " + cu.LASTNAME,
+        //                                         outstandingInterest = b.OUTSTANDINGINTEREST,
+        //                                         outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+        //                                         //  businessUnit = staffmis.Where(x => x.STAFFCODE == a.TBL_STAFF.STAFFCODE)
 
-                                               
-                                           }).ToList();
 
-               //List<LoanViewModel> overdraft = (from a in context.TBL_LOAN_APPLICATION
-               //                              join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-               //                                 //join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-               //                                 join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-               //                                 join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on c.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID                                             
-               //                              where e.PRUDENTIALGUIDELINETYPEID == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
-               //                              && DbFunctions.TruncateTime(c.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(c.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
-               //                              select new LoanViewModel
-               //                              {
-               //                                  applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-               //                                  loanReferenceNumber = c.LOANREFERENCENUMBER,
-               //                                  bookingDate = c.BOOKINGDATE,
-               //                                  disburseDate = c.DISBURSEDATE,
-               //                                  nplDate = (DateTime?)c.NPLDATE,
-               //                                  //outstandingInterest = b.OUTSTANDINGINTEREST,
-               //                                  outstandingPrincipal = c.OVERDRAFTLIMIT,
-               //                                  loanTypeName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-               //                                  externalPrudentialGuidelineStatus = c.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
-               //                                  productName = d.TBL_PRODUCT.PRODUCTNAME
-               //                              }).ToList();
+        //                                     }).ToList();//.Select(x =>
+        //                                     //{
 
-            return termloans;
-            //}
-            //else
-            //{
-            //    List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
-            //                               join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-            //                               join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-            //                               join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
-            //                               //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-            //                               where e.PRUDENTIALGUIDELINETYPEID != (int)LoanPrudentialStatusEnum.Performing //b.INT_PRUDENT_GUIDELINE_STATUSID
-            //                               && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
-            //                               select new LoanViewModel
-            //                               {
-            //                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-            //                                   loanReferenceNumber = b.LOANREFERENCENUMBER,
-            //                                   bookingDate = b.BOOKINGDATE,
-            //                                   disburseDate = b.DISBURSEDATE,
-            //                                   nplDate = (DateTime?)b.NPLDATE,
-            //                                   outstandingInterest = b.OUTSTANDINGINTEREST,
-            //                                   outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
-            //                                   loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-            //                                   externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
-            //                                   productName = d.TBL_PRODUCT.PRODUCTNAME
-            //                               }).ToList();
-            //    return npl;
-            //}
+        //                                     //    var getBudetails = staffmis.Where(z => z.STAFFCODE == x.staffCode).Select(z => z.REGION).FirstOrDefault();
+
+        //                                     //    if (getBudetails != null)
+        //                                     //    {
+        //                                     //        x.businessUnit = getBudetails;
+        //                                     //    }
+        //                                     //    else if (getBudetails != null)
+        //                                     //    {
+        //                                     //        x.businessUnit = "";
+        //                                     //    }
+        //                                     //    return x;
+        //                                     //}).ToList();
+                                
+
+        //       //List<LoanViewModel> overdraft = (from a in context.TBL_LOAN_APPLICATION
+        //       //                              join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+        //       //                                 //join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+        //       //                                 join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+        //       //                                 join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on c.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID                                             
+        //       //                              where e.PRUDENTIALGUIDELINETYPEID == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
+        //       //                              && DbFunctions.TruncateTime(c.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(c.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
+        //       //                              select new LoanViewModel
+        //       //                              {
+        //       //                                  applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+        //       //                                  loanReferenceNumber = c.LOANREFERENCENUMBER,
+        //       //                                  bookingDate = c.BOOKINGDATE,
+        //       //                                  disburseDate = c.DISBURSEDATE,
+        //       //                                  nplDate = (DateTime?)c.NPLDATE,
+        //       //                                  //outstandingInterest = b.OUTSTANDINGINTEREST,
+        //       //                                  outstandingPrincipal = c.OVERDRAFTLIMIT,
+        //       //                                  loanTypeName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //       //                                  externalPrudentialGuidelineStatus = c.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
+        //       //                                  productName = d.TBL_PRODUCT.PRODUCTNAME
+        //       //                              }).ToList();
+
+        //    return termloans;
+        //    //}
+        //    //else
+        //    //{
+        //    //    List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
+        //    //                               join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+        //    //                               join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+        //    //                               join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
+        //    //                               //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+        //    //                               where e.PRUDENTIALGUIDELINETYPEID != (int)LoanPrudentialStatusEnum.Performing //b.INT_PRUDENT_GUIDELINE_STATUSID
+        //    //                               && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
+        //    //                               select new LoanViewModel
+        //    //                               {
+        //    //                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+        //    //                                   loanReferenceNumber = b.LOANREFERENCENUMBER,
+        //    //                                   bookingDate = b.BOOKINGDATE,
+        //    //                                   disburseDate = b.DISBURSEDATE,
+        //    //                                   nplDate = (DateTime?)b.NPLDATE,
+        //    //                                   outstandingInterest = b.OUTSTANDINGINTEREST,
+        //    //                                   outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+        //    //                                   loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //    //                                   externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
+        //    //                                   productName = d.TBL_PRODUCT.PRODUCTNAME
+        //    //                               }).ToList();
+        //    //    return npl;
+        //    //}
           
             
-        }  //done
+        //}  //done
+
+        public List<LoanViewModel> NPL(DateTime startDate, DateTime endDate, int classification)
+        {
+
+            List<SubHead> staffmisi = new List<SubHead>();
+            using (FinTrakBankingStagingContext stagingContext = new FinTrakBankingStagingContext())
+            {
+                staffmisi = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION }).ToList();
+
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+                    List<LoanViewModel> termloans = (from a in context.TBL_LOAN_APPLICATION
+                                                     join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                                     join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                                     join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.USER_PRUDENTIAL_GUIDE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID //b.EXT_PRUDENT_GUIDELINE_STATUSID
+                                                     join cu in context.TBL_CUSTOMER on b.CUSTOMERID equals cu.CUSTOMERID
+                                                     //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                                                     where e.PRUDENTIALGUIDELINETYPEID == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
+                                                     && DbFunctions.TruncateTime(b.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
+                                                     orderby b.EFFECTIVEDATE descending
+
+                                                     select new LoanViewModel
+                                                     {
+                                                         applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                                         loanReferenceNumber = b.LOANREFERENCENUMBER,
+                                                         bookingDate = b.BOOKINGDATE,
+                                                         disburseDate = b.DISBURSEDATE,
+                                                         nplDate = (DateTime?)b.NPLDATE,
+                                                         loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                                         externalPrudentialGuidelineStatus = e.STATUSNAME,
+                                                         productName = d.TBL_PRODUCT.PRODUCTNAME,
+                                                         customerName = cu.FIRSTNAME + " " + cu.LASTNAME,
+                                                         outstandingInterest = b.OUTSTANDINGINTEREST,
+                                                         outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+                                                         //  businessUnit = staffmis.Where(x => x.STAFFCODE == a.TBL_STAFF.STAFFCODE)
 
 
-        
-            //}
-            //else
-            //{
-            //    List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
-            //                               join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-            //                               join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-            //                               join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
-            //                               //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-            //                               where e.PRUDENTIALGUIDELINETYPEID != (int)LoanPrudentialStatusEnum.Performing //b.INT_PRUDENT_GUIDELINE_STATUSID
-            //                               && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
-            //                               select new LoanViewModel
-            //                               {
-            //                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-            //                                   loanReferenceNumber = b.LOANREFERENCENUMBER,
-            //                                   bookingDate = b.BOOKINGDATE,
-            //                                   disburseDate = b.DISBURSEDATE,
-            //                                   nplDate = (DateTime?)b.NPLDATE,
-            //                                   outstandingInterest = b.OUTSTANDINGINTEREST,
-            //                                   outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
-            //                                   loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-            //                                   externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
-            //                                   productName = d.TBL_PRODUCT.PRODUCTNAME
-            //                               }).ToList();
-            //    return npl;
-            //}
+                                                     }).ToList().Select(x =>
+                                                     {
+
+                                                         var getBudetails = staffmisi.Where(z => z.staffCode == x.staffCode).Select(z => z.region).FirstOrDefault();
+
+                                                         if (getBudetails != null)
+                                                         {
+                                                             x.businessUnit = getBudetails;
+                                                         }
+                                                         else if (getBudetails != null)
+                                                         {
+                                                             x.businessUnit = "";
+                                                         }
+                                                         return x;
+                                                     }).ToList();
+
+                    return termloans;   
+                }
+                
+                
+            }
+            
+        }
 
 
-       
+
+        //}
+        //else
+        //{
+        //    List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
+        //                               join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+        //                               join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+        //                               join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
+        //                               //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+        //                               where e.PRUDENTIALGUIDELINETYPEID != (int)LoanPrudentialStatusEnum.Performing //b.INT_PRUDENT_GUIDELINE_STATUSID
+        //                               && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
+        //                               select new LoanViewModel
+        //                               {
+        //                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+        //                                   loanReferenceNumber = b.LOANREFERENCENUMBER,
+        //                                   bookingDate = b.BOOKINGDATE,
+        //                                   disburseDate = b.DISBURSEDATE,
+        //                                   nplDate = (DateTime?)b.NPLDATE,
+        //                                   outstandingInterest = b.OUTSTANDINGINTEREST,
+        //                                   outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+        //                                   loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                                   externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
+        //                                   productName = d.TBL_PRODUCT.PRODUCTNAME
+        //                               }).ToList();
+        //    return npl;
+        //}
+
+
+
 
 
         public List<LoanViewModel> SelfLiquidatingLoan(DateTime startDate, DateTime endDate)

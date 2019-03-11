@@ -574,6 +574,103 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
+        public IEnumerable<CollateralViewModel> GetCustomerCollateralReport(string searchParam,  int companyId)
+        {
+            var typeIds = new List<int>();
+            var company = context.TBL_COMPANY.Find(companyId);
+            bool disAllowCollateral = false;
+            bool isForiegnCurrencyFacility = false;
+
+
+            var collaterals = (from a in context.TBL_LOAN_COLLATERAL_MAPPING
+                       join l in context.TBL_LOAN on a.LOANID equals l.TERMLOANID
+                       join b in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                       join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                       join d in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals d.COLLATERALCUSTOMERID
+                       join cus in context.TBL_CUSTOMER on d.CUSTOMERID equals cus.CUSTOMERID
+                       where ((cus.CUSTOMERCODE == searchParam) || (cus.FIRSTNAME == searchParam) ||  (l.LOANREFERENCENUMBER == searchParam) )
+
+                             
+            select new CollateralViewModel
+                       {
+                           collateralId = a.COLLATERALCUSTOMERID,
+                           collateralTypeId = d.COLLATERALTYPEID,
+                           collateralSubTypeId = d.COLLATERALSUBTYPEID,
+                           customerId = d.CUSTOMERID,
+                           currencyId = d.CURRENCYID,
+
+                           baseCurrencyId = company.CURRENCYID,
+                           currency = d.TBL_CURRENCY.CURRENCYNAME,            // c.c.TBL_CURRENCY.CURRENCYNAME,
+                           disAllowCollateral = disAllowCollateral && d.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
+                           collateralTypeName = d.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                           collateralSubTypeName = "not implimented",
+                           collateralCode = d.COLLATERALCODE,
+                           collateralValue = d.COLLATERALVALUE,
+                           camRefNumber = d.CAMREFNUMBER,
+                           allowSharing = d.ALLOWSHARING,
+                           isLocationBased = (bool)d.ISLOCATIONBASED,
+                           valuationCycle = d.VALUATIONCYCLE,
+                           haircut = d.HAIRCUT,
+                           approvalStatus = d.APPROVALSTATUS,
+                           allowApplicationMapping = typeIds.Contains((short)d.COLLATERALTYPEID),
+                           requireInsurancePolicy = d.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
+                           exchangeRate = d.EXCHANGERATE,
+                           availableValue = 0,
+                           // accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
+
+
+
+                       }).ToList().GroupBy(x => x.collateralId).Select(g => g.First());
+
+            collaterals = ResolveCollateralValues(collaterals.ToList()); ;
+
+
+            //var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => (x.DELETED == false && x.TBL_CUSTOMER.CUSTOMERCODE == searchParam) || (x.DELETED == false && x.TBL_CUSTOMER.FIRSTNAME == searchParam))
+            //    .GroupJoin(
+            //        context.TBL_LOAN_COLLATERAL_MAPPING,
+            //        c => c.COLLATERALCUSTOMERID,
+            //        lc => lc.COLLATERALCUSTOMERID,
+            //        (c, lc) => new { c, m = lc }
+            //    )
+            //    .SelectMany
+            //    (
+            //        x => x.m.DefaultIfEmpty(),
+            //        (c, m) => new CollateralViewModel
+            //        {
+            //            collateralId = c.c.COLLATERALCUSTOMERID,
+            //            collateralTypeId = c.c.COLLATERALTYPEID,
+            //            collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
+            //            customerId = c.c.CUSTOMERID,
+            //            currencyId = c.c.CURRENCYID,
+            //            baseCurrencyId = company.CURRENCYID,
+            //            currency = c.c.TBL_CURRENCY.CURRENCYNAME,
+            //            disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
+            //            collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+            //            collateralSubTypeName = "not implimented",
+            //            collateralCode = c.c.COLLATERALCODE,
+            //            collateralValue = c.c.COLLATERALVALUE,
+            //            camRefNumber = c.c.CAMREFNUMBER,
+            //            allowSharing = c.c.ALLOWSHARING,
+            //            isLocationBased = (bool)c.c.ISLOCATIONBASED,
+            //            valuationCycle = c.c.VALUATIONCYCLE,
+            //            haircut = c.c.HAIRCUT,
+            //            approvalStatus = c.c.APPROVALSTATUS,
+            //            allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
+            //            requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
+            //            exchangeRate = c.c.EXCHANGERATE,
+            //            availableValue = 0,
+            //           // accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
+            //        })
+            //        .ToList()
+            //        .GroupBy(x => x.collateralId).Select(g => g.First());
+
+            //collaterals = ResolveCollateralValues(collaterals.ToList());
+
+            //var count = collaterals.Count();
+            //var test = collaterals;
+
+            return collaterals;
+        }
         private List<CollateralViewModel> ResolveCollateralValues(List<CollateralViewModel> collaterals)
         {
             decimal usage;

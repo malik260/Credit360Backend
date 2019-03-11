@@ -920,7 +920,7 @@ namespace FintrakBanking.APICore.Controllers
                     {
                         var newRef = repo.GetCollateralLoanNewRefernceNumber(entity);
                         return Request.CreateResponse(HttpStatusCode.OK,
-                          new { success = true, message = "Operation has been approved successfully, With New Reference Number" + newRef });
+                          new { success = true, message = "Operation has been approved successfully, With New Reference Number " + newRef });
                     }
                     
                 }

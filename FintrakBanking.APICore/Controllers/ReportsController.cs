@@ -802,6 +802,7 @@ namespace FintrakBanking.APICore.Controllers
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("collateralestimated/loan/{collateralCode}")]
+       
         public HttpResponseMessage GetCollateralEstimated(string collateralCode)
         {
             var token = new TokenDecryptionHelper();
