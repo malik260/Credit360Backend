@@ -145,7 +145,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.TBL_PROFILE_USER.Where(x => 
                 x.ISACTIVE == true &&
                 x.ISLOCKED == false &&
-                x.LOGINCODE != null && 
+                x.LOGINCODE != null  
                 ).Count();
         }
 
