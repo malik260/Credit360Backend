@@ -897,7 +897,7 @@ namespace FintrakBanking.Repositories.Credit
             var contingentLoanInput = entity.contingentLoanInput;
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)contingentLoanInput.currencyId, entity.companyId).sellingRate;
-
+            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             loanBookingValidation(entity);
 
             var bgData = context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId);
@@ -938,7 +938,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
                 LOANREFERENCENUMBER = loanReferenceNumber,
                 RELATED_LOAN_REFERENCE_NUMBER = loanReferenceNumber,
-                SUBSECTORID = entity.subSectorId,
+                SUBSECTORID = applicationDetail.SUBSECTORID,
                 RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
                 RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID,
                 MISCODE = application.MISCODE,
@@ -948,7 +948,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISBANKFORMAT = isBankFormat,
                 ISTENORED = isTenored,
                 BOOKINGDATE = generalSetup.GetApplicationDate(),
-                //CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
+                LEGALCONTINGENTCODE = entity.legalContingentCode,
 
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.ContingentLiability,
                 CONTINGENTAMOUNT = contingentLoanInput.contingentAmount,
@@ -3453,6 +3453,7 @@ namespace FintrakBanking.Repositories.Credit
                             sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                             sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
                             sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
+                            sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
                             interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
                             sanctionLevel = "003",
                             sanctionAuthorizer = "999"
@@ -3501,6 +3502,7 @@ namespace FintrakBanking.Repositories.Credit
                             TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
                             TemporaryOverDraftNaration = "Normal Temporary Overdraft",
                             TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                            sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
                         };
                         ResponseMessageViewModel res = finacle.TemporaryOverDraftNormal(model, twoFactorAuthDetails);
                         twoFactorAuthDetails.skipAuthentication = true;
@@ -3516,6 +3518,7 @@ namespace FintrakBanking.Repositories.Credit
                             TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
                             TemporaryOverDraftNaration = "Single Limit Temporary Overdraft",
                             TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                            sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
                         };
                         ResponseMessageViewModel res = finacle.TemporaryOverDraftSingle(model, twoFactorAuthDetails);
                         revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
@@ -5866,24 +5869,65 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        private decimal getDisbursableAmount(int operationId,int loanApplicationDetailId)
+        {
+            decimal disbursableAmount = 0;
+            if (operationId == (short)OperationsEnum.TermLoanBooking 
+                || operationId == (short)OperationsEnum.ForeignExchangeLoanBooking 
+                || operationId == (short)OperationsEnum.ContigentLoanBooking)
+            {
+                disbursableAmount =(from l in context.TBL_LOAN
+                where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                select l).Sum(x=>x.PRINCIPALAMOUNT);
+            }
+            if (operationId == (short)OperationsEnum.ContigentLoanBooking)
+            {
+                disbursableAmount = (from l in context.TBL_LOAN_CONTINGENT
+                                     where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                     select l).Sum(x => x.CONTINGENTAMOUNT);
+            }
+            if (operationId == (short)OperationsEnum.RevolvingLoanBooking)
+            {
+                disbursableAmount = (from l in context.TBL_LOAN_REVOLVING
+                                     where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                     select l).Sum(x => x.OVERDRAFTLIMIT);
+            }
+            return disbursableAmount;
+        }
+
         public bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity)
         {
             using (var trans = context.Database.BeginTransaction())
             {
                 var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+                if(entity.amount_Requested > loanApplicationDetails.APPROVEDAMOUNT)
+                {
+                    throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");
+                }
+                
                 var operationId = 0;
                 var productTypeId = loanApplicationDetails.TBL_PRODUCT.PRODUCTTYPEID;
 
                 if (productTypeId == (short)LoanProductTypeEnum.TermLoan || productTypeId == (short)LoanProductTypeEnum.SelfLiquidating || productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                     operationId = (short)OperationsEnum.TermLoanBooking;
+                    
                 if (productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
                     operationId = (short)OperationsEnum.CommercialLoanBooking;
+                    
                 if (productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
                     operationId = (short)OperationsEnum.RevolvingLoanBooking;
+                    
                 if (productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
                     operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
+                    
                 if (productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
                     operationId = (short)OperationsEnum.ContigentLoanBooking;
+
+                if (entity.amount_Requested > getDisbursableAmount(operationId, entity.loanApplicationDetailId))
+                {
+                    throw new ConditionNotMetException("Requested Amount cannot be greater than the disbursable amount");
+                }
+
 
                 try
                 {

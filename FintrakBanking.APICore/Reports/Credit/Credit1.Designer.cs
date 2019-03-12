@@ -3628,7 +3628,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columncompanyName;
             
-            private global::System.Data.DataColumn columnbalance;
+            private global::System.Data.DataColumn columnbalances;
             
             private global::System.Data.DataColumn columnallowOverride;
             
@@ -3741,9 +3741,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn balanceColumn {
+            public global::System.Data.DataColumn balancesColumn {
                 get {
-                    return this.columnbalance;
+                    return this.columnbalances;
                 }
             }
             
@@ -3832,7 +3832,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public SectorialLimitsRow AddSectorialLimitsRow(string sectorName, string subsectorName, string sectorcode, string subsectorCode, string limitMaximumValue, string companyLogo, string usage, string companyName, string balance, string allowOverride, string Name, string Code, string Limit, string Usage1, string Balance1) {
+            public SectorialLimitsRow AddSectorialLimitsRow(string sectorName, string subsectorName, string sectorcode, string subsectorCode, string limitMaximumValue, string companyLogo, string usage, string companyName, string balances, string allowOverride, string Name, string Code, string Limit, string Usage1, string Balance) {
                 SectorialLimitsRow rowSectorialLimitsRow = ((SectorialLimitsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         sectorName,
@@ -3843,13 +3843,13 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         companyLogo,
                         usage,
                         companyName,
-                        balance,
+                        balances,
                         allowOverride,
                         Name,
                         Code,
                         Limit,
                         Usage1,
-                        Balance1};
+                        Balance};
                 rowSectorialLimitsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowSectorialLimitsRow);
                 return rowSectorialLimitsRow;
@@ -3880,7 +3880,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columncompanyLogo = base.Columns["companyLogo"];
                 this.columnusage = base.Columns["usage"];
                 this.columncompanyName = base.Columns["companyName"];
-                this.columnbalance = base.Columns["balance"];
+                this.columnbalances = base.Columns["balances"];
                 this.columnallowOverride = base.Columns["allowOverride"];
                 this.columnName = base.Columns["Name"];
                 this.columnCode = base.Columns["Code"];
@@ -3908,8 +3908,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnusage);
                 this.columncompanyName = new global::System.Data.DataColumn("companyName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncompanyName);
-                this.columnbalance = new global::System.Data.DataColumn("balance", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnbalance);
+                this.columnbalances = new global::System.Data.DataColumn("balances", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbalances);
                 this.columnallowOverride = new global::System.Data.DataColumn("allowOverride", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnallowOverride);
                 this.columnName = new global::System.Data.DataColumn("Name", typeof(string), null, global::System.Data.MappingType.Element);
@@ -17246,17 +17246,17 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string balance {
+            public string balances {
                 get {
                     try {
-                        return ((string)(this[this.tableSectorialLimits.balanceColumn]));
+                        return ((string)(this[this.tableSectorialLimits.balancesColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'balance\' in table \'SectorialLimits\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'balances\' in table \'SectorialLimits\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableSectorialLimits.balanceColumn] = value;
+                    this[this.tableSectorialLimits.balancesColumn] = value;
                 }
             }
             
@@ -17454,14 +17454,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsbalanceNull() {
-                return this.IsNull(this.tableSectorialLimits.balanceColumn);
+            public bool IsbalancesNull() {
+                return this.IsNull(this.tableSectorialLimits.balancesColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetbalanceNull() {
-                this[this.tableSectorialLimits.balanceColumn] = global::System.Convert.DBNull;
+            public void SetbalancesNull() {
+                this[this.tableSectorialLimits.balancesColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]

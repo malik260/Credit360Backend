@@ -124,6 +124,7 @@ public class LienProcessViewModel //: GeneralEntity
 
     public class OverDraftNormalViewModel
     {
+        public string sourceReferenceNumber { get; set; }
         public string accountNumber { get; set; }
         public string sanctionReferenceNumber { get; set; }
          [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
@@ -145,6 +146,7 @@ public class LienProcessViewModel //: GeneralEntity
 
     public class OverDraftTopUpAndRenewViewModel
     {
+        public string sourceReferenceNumber { get; set; }
         public string accountNumber { get; set; }
         public string sanctionReferenceNumber { get; set; } 
         public string sanctionLevel { get; set; }
@@ -164,6 +166,7 @@ public class LienProcessViewModel //: GeneralEntity
 
     public class OverDraftExtendViewModel
     {
+        public string sourceReferenceNumber { get; set; }
         public string accountNumber { get; set; }
         public string sanctionReferenceNumber { get; set; }         
         public string sanctionLimit { get; set; }
@@ -178,6 +181,8 @@ public class LienProcessViewModel //: GeneralEntity
 
     public class TemporaryOverDraftViewModel
     {
+        public string sourceReferenceNumber { get; set; }
+
         public string AccountNumber { get; set; }
         public string TemporaryOverDraftFlag { get; set; }
         public string TemporaryOverDraftAmount { get; set; }
