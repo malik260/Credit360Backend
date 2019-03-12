@@ -208,7 +208,9 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/CollateralEstimated.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&collateralCode=" + collateralCode.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+              path = reportPath + "ReportViews/CollateralEstimated.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&collateralCode=" + collateralCode.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+          //  path = reportPath + "ReportViews/CollateralEstimated.aspx?companyId=" + companyId.ToString()  + "&collateralCode=" + collateralCode.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+
             return path;
         }
 

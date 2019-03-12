@@ -820,7 +820,8 @@ namespace FintrakBanking.ReportObjects
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                            join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                            join d in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals d.COLLATERALCUSTOMERID
-                           where d.COLLATERALCODE == collateralCode
+                           join cus in context.TBL_CUSTOMER on d.CUSTOMERID equals cus.CUSTOMERID
+                           where d.COLLATERALCODE == collateralCode // cus.CUSTOMERID == int.Parse(collateralCode)  //
                            orderby a.DATETIMECREATED descending
                            select new CollateralEstimatedViewModel()
                            {
@@ -1422,7 +1423,7 @@ namespace FintrakBanking.ReportObjects
                                           interestRateChange = 0,
                                           interestToDate = 0,
                                           interestType = "",
-                                          loanReferenceNo = l.LOANREFERENCENUMBER,
+                                          loanReferenceNo =  l.LOANREFERENCENUMBER,
                                           narration = "",
                                           principalAmount = l.PRINCIPALAMOUNT,
                                           status = st.ACCOUNTSTATUS,
@@ -3826,6 +3827,8 @@ namespace FintrakBanking.ReportObjects
 
 
         }
+
+       
     }
 
 

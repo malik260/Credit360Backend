@@ -25,6 +25,7 @@ namespace FintrakBanking.Repositories.Credit
         private CreditCommonRepository creditCommon;
 
         private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // RMU(71), CAM(79)
+        private List<int> apsOperationIds = new List<int> { 307, 308, 309 }; // 
 
         private readonly int classifiedAssetManagementRoleId = 46;
 
@@ -35,7 +36,7 @@ namespace FintrakBanking.Repositories.Credit
             IWorkflow workflow,
             IAdminRepository admin,
             IOfferLetterAndAvailmentRepository _offerLetter,
-        CreditCommonRepository creditCommon
+            CreditCommonRepository creditCommon
             )
         {
             this.context = context;
@@ -60,17 +61,22 @@ namespace FintrakBanking.Repositories.Credit
 
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
+
+            // TODO
             if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
             if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(79);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(307);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(308);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(309);
 
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
             // get approval levels 
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
 
-            var ids = levelIds.ToList();
-            ids.Add(71); // --------------- REMOVE!!!
-            ids.Add(79); // --------------- REMOVE!!!
+            //var ids = levelIds.ToList();
+            //ids.Add(71); // --------------- REMOVE!!!
+            //ids.Add(79); // --------------- REMOVE!!!
 
             // query
             var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == user.BranchId || ignoreBranch)
@@ -290,15 +296,21 @@ namespace FintrakBanking.Repositories.Credit
 
         public string SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
+            if (model.applicationDetails.Count() > 1 &&
+                model.applicationDetails.Any(x => apsOperationIds.Contains(x.operationId)))
+            {
+                throw new SecureException("Only one operation request is allowed for APS release related applications!");
+            }
+
             int staffId = model.createdBy;
             var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
             int camOperationId = GetCamOperation(model.performanceTypeId);
             bool result = true;
 
-
             foreach (var detail in model.applicationDetails)
             {
+                if (apsOperationIds.Contains(detail.operationId)) camOperationId = detail.operationId; // for APS release
 
                 if (detail.operationId == (int)OperationsEnum.CommercialLoanSubAllocation)
                 {
@@ -546,6 +558,13 @@ namespace FintrakBanking.Repositories.Credit
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 operationId = (int)appl.OPERATIONID;
                 nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
+            }
+
+            if (apsOperationIds.Contains(operationId))
+            {
+                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                operationId = (int)appl.OPERATIONID;
+                nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment; // redefine
             }
 
             if (camOperationIds.Contains(operationId) || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))

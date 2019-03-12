@@ -97,7 +97,8 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<LookupViewModel> GetAllProductClass()
         {
             return (from data in context.TBL_PRODUCT_CLASS
-                        //where data.OperationTypeId == operationTypeId
+                    orderby data.PRODUCTCLASSNAME ascending
+                    //where data.OperationTypeId == operationTypeId
                     select new LookupViewModel()
                     {
                         lookupId = (short)data.PRODUCTCLASSID,
@@ -768,6 +769,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var productData = (from data in context.TBL_PRODUCT
                                join g in context.TBL_PRODUCT_TYPE on data.PRODUCTTYPEID equals g.PRODUCTTYPEID
+                               orderby data.PRODUCTNAME ascending
                                select new ProductLiteViewModel()
                                {
                                    productId = data.PRODUCTID,
