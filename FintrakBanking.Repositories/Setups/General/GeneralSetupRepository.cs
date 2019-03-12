@@ -196,6 +196,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<LookupViewModel> GetAllOperationTypes()
         {
             return (from data in context.TBL_OPERATIONS_TYPE
+                    orderby data.OPERATIONTYPENAME ascending
                     select new LookupViewModel()
                     {
                         lookupId = data.OPERATIONTYPEID,
@@ -206,6 +207,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<LookupViewModel> GetAllOperations()
         {
             var data = (from a in context.TBL_OPERATIONS
+                        orderby a.OPERATIONNAME ascending
                         select new LookupViewModel()
                         {
                             lookupId = (short)a.OPERATIONID,

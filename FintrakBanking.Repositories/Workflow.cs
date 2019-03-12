@@ -397,7 +397,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.toStaffId > 0 && this.nextLevelId > 0)
             {
                 valid = general.GetStaffApprovalLevelIds((int)this.toStaffId, this.operationId).ToList().Contains((int)this.nextLevelId);
-                if (valid == false) throw new SecureException("Target Staff is NOT in the destination approval level");
+                if (valid == false) new SecureException("Target Staff is NOT in the destination approval level");
             }
         }
 
