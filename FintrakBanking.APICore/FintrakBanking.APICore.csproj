@@ -1315,6 +1315,7 @@
     <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AllCommercialLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashCollaterizedCredits.rdlc" />
@@ -1360,7 +1361,6 @@
     <EmbeddedResource Include="Reports\Report\LoanScheduleSimulation.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
-    <Content Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoggingStatus.rdlc" />
     <EmbeddedResource Include="Reports\Report\MiddleOfficeReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
