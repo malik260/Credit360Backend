@@ -25,7 +25,7 @@ namespace FintrakBanking.Repositories.Credit
         private CreditCommonRepository creditCommon;
 
         private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // RMU(71), CAM(79)
-        private List<int> apsOperationIds = new List<int> { 307, 308, 309 }; // 
+        private List<int> apsOperationIds = new List<int> { 107, 108, 109 }; // 
 
         private readonly int classifiedAssetManagementRoleId = 46;
 
@@ -65,9 +65,9 @@ namespace FintrakBanking.Repositories.Credit
             // TODO
             if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
             if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(79);
-            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(307);
-            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(308);
-            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(309);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(107);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(108);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(109);
 
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
@@ -630,12 +630,12 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
-
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId/* && model.operationId != 71*/) // jump process OR end flag
                 {
+                    if (apsOperationIds.Contains(operationId)) workflow.NextLevelId = GetFirstReceiverLevel(model.lastUpdatedBy, (int)OperationsEnum.LoanReviewApprovalAvailment, null, true);
                     if (operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter) workflow.NextLevelId = GetFirstReceiverLevel(model.lastUpdatedBy, (int)OperationsEnum.LoanReviewApprovalAvailment, null, true);
                     workflow.SetResponse = false;
                     workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
