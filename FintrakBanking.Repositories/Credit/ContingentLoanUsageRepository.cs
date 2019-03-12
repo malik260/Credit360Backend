@@ -48,11 +48,20 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                int[] operations = { (int)OperationsEnum.APS_RelaseChecklist, (int)OperationsEnum.APS_ReleaseCAP, (int)OperationsEnum.APS_ReleasePrincipaRequest };
+
+
                 List<ContingentLoansViewModel> contingentData = new List<ContingentLoansViewModel>();
                 DateTime currentDate = genSetup.GetApplicationDate();
                 var data = (from a in context.TBL_LOAN_CONTINGENT
+                            join r in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals r.LOANREVIEWAPPLICATIONID
+                            join l in context.TBL_LMSR_APPLICATION on r.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                             join b in context.TBL_PRODUCT_BEHAVIOUR on a.PRODUCTID equals b.PRODUCTID
-                            where currentDate <= a.MATURITYDATE && b.ALLOWFUNDUSAGE == true
+                            where currentDate <= a.MATURITYDATE 
+                            && b.ALLOWFUNDUSAGE == true
+                            && operations.Contains((int)l.OPERATIONID)
+                            && l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
                             select new ContingentLoansViewModel()
                             {
                                 principalName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
@@ -74,35 +83,36 @@ namespace FintrakBanking.Repositories.Credit
                                 maturityDate = a.MATURITYDATE,
                                 productName = a.TBL_PRODUCT.PRODUCTNAME,
                                 loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-                                loanSystemTypeId = a.LOANSYSTEMTYPEID
+                                loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                amountRequested = r.PROPOSEDAMOUNT
                             }).ToList();
 
-                var data2 = context.TBL_LOAN_CONTINGENT
-                    .Where(c => c.MATURITYDATE <= currentDate
-                    && context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == c.PRODUCTID)
-                    .FirstOrDefault().ALLOWFUNDUSAGE == true)
-                    .Select(c => new ContingentLoansViewModel()
-                    {
-                        principalName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
-                        bookingDate = c.BOOKINGDATE,
-                        casaAccountNumber = c.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                        facilityAmount = c.CONTINGENTAMOUNT,
-                        contingentLoanId = c.CONTINGENTLOANID,
-                        currencyCode = c.TBL_CURRENCY.CURRENCYCODE,
-                        currencyId = c.CURRENCYID,
-                        customerId = c.CUSTOMERID,
-                        firstName = c.TBL_CUSTOMER.FIRSTNAME,
-                        lastName = c.TBL_CUSTOMER.LASTNAME,
-                        middleName = c.TBL_CUSTOMER.MIDDLENAME,
-                        productId = c.PRODUCTID,
-                        effectiveDate = c.EFFECTIVEDATE,
-                        exchangeRate = c.EXCHANGERATE,
-                        loanApplicationReferenceNumber = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                        loanReferenceNumber = c.LOANREFERENCENUMBER,
-                        maturityDate = c.MATURITYDATE,
-                        productName = c.TBL_PRODUCT.PRODUCTNAME,
-                        loanStatus = c.TBL_LOAN_STATUS.ACCOUNTSTATUS
-                    });
+                //var data2 = context.TBL_LOAN_CONTINGENT
+                //    .Where(c => c.MATURITYDATE <= currentDate
+                //    && context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == c.PRODUCTID)
+                //    .FirstOrDefault().ALLOWFUNDUSAGE == true)
+                //    .Select(c => new ContingentLoansViewModel()
+                //    {
+                //        principalName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
+                //        bookingDate = c.BOOKINGDATE,
+                //        casaAccountNumber = c.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                //        facilityAmount = c.CONTINGENTAMOUNT,
+                //        contingentLoanId = c.CONTINGENTLOANID,
+                //        currencyCode = c.TBL_CURRENCY.CURRENCYCODE,
+                //        currencyId = c.CURRENCYID,
+                //        customerId = c.CUSTOMERID,
+                //        firstName = c.TBL_CUSTOMER.FIRSTNAME,
+                //        lastName = c.TBL_CUSTOMER.LASTNAME,
+                //        middleName = c.TBL_CUSTOMER.MIDDLENAME,
+                //        productId = c.PRODUCTID,
+                //        effectiveDate = c.EFFECTIVEDATE,
+                //        exchangeRate = c.EXCHANGERATE,
+                //        loanApplicationReferenceNumber = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                //        loanReferenceNumber = c.LOANREFERENCENUMBER,
+                //        maturityDate = c.MATURITYDATE,
+                //        productName = c.TBL_PRODUCT.PRODUCTNAME,
+                //        loanStatus = c.TBL_LOAN_STATUS.ACCOUNTSTATUS
+                //    });
 
                 foreach (var item in data)
                 {

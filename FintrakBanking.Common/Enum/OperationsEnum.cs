@@ -114,6 +114,11 @@ namespace FintrakBanking.Common.Enum
         CancelContingentLiability = 105,
         UserAccountStatusChange = 103,
         ContingentLiabilityAmountAddition = 106,
+        APS_RelaseChecklist = 107,
+        APS_ReleaseCAP =108,
+        APS_ReleasePrincipaRequest =109
+
+
 
     }
 }
