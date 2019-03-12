@@ -11765,9 +11765,12 @@ namespace FintrakBanking.Repositories.Credit
             var nextPeriodicInterestPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loanInput.loanId && x.PAYMENTDATE > loanInput.effectiveDate && x.PERIODINTERESTAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
             loanInput.interestFirstpaymentDate = nextPeriodicInterestPaymentDate.PAYMENTDATE;
 
-
-            loanInput.interestFrequencyTypeId = (int)loanInfo.INTERESTFREQUENCYTYPEID;
-            loanInput.principalFrequencyTypeId = (int)loanInfo.PRINCIPALFREQUENCYTYPEID;
+            if(loanInput.scheduleMethodId != (short)LoanScheduleTypeEnum.BulletPayment)
+            {
+                loanInput.interestFrequencyTypeId = (int)loanInfo.INTERESTFREQUENCYTYPEID;
+                loanInput.principalFrequencyTypeId = (int)loanInfo.PRINCIPALFREQUENCYTYPEID;
+            }
+            
             loanInput.maturityDate = loanInfo.MATURITYDATE;
             loanInput.interestRate = loanInfo.INTERESTRATE;
 
