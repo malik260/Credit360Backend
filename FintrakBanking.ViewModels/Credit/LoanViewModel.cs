@@ -1531,4 +1531,6 @@ namespace FintrakBanking.ViewModels.Credit
     //    public short loanSystemTypeId { get; set; }
     //    public short approvalStatusId { get; set; }
     //}
+
+    //public class Accrual
 }
