@@ -74,10 +74,14 @@
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
+    <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_RELEASE.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
     <Compile Include="DocumentModels\TBL_JOB_REQUEST_MSG_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_MEDIA_LOAN_DOCUMENTS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_RELEASE_TYPE.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_RELEASE_STATUS.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_RELEASE.cs" />
     <Compile Include="Models\TBL_JOB_SOURCE.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_PROMISSORY.cs" />
     <Compile Include="Models\TBL_COLLATERAL_PROMISSORY.cs" />

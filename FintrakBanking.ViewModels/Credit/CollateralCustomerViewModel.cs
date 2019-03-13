@@ -129,6 +129,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short? valuerId { get; set; }
         public string valuerReferenceNumber { get; set; }
         public short propertyValueBaseTypeId { get; set; }
+        public string propertyValueBaseTypeName { get; set; }
+
         public decimal? openMarketValue { get; set; }
         public decimal? collateralValue { get; set; }
         public decimal? forcedSaleValue { get; set; }
@@ -142,6 +144,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double? longitude { get; set; }
         public double? latitude { get; set; }
         public byte? perfectionStatusId { get; set; }
+
         public string perfectionStatusReason { get; set; }
         public bool? isOwnerOccupied { get; set; }
         public bool? isResidential { get; set; }
@@ -172,6 +175,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime policyStartDate { get; set; }
         public DateTime assignDate { get; set; }
         public short? renewalFrequencyTypeId { get; set; }
+        public string renewalFrequencyTypeName { get; set; }
+
         public string insurerDetails { get; set; }
         public DateTime policyRenewalDate { get; set; }
 
@@ -262,6 +267,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int stateId { get; set; }
 
         //File Upload
+        public int documentId { get; set; }
+
         public string documentTitle { get; set; }
         public string fileName { get; set; }
         public string fileExtension { get; set; }
@@ -271,6 +278,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isPrimaryDocument { get; set; }
         public string formData { get; set; }
         public string collateralPrimaryDocumentTitle { get; set; }
+        public string comment { get; set; }
+        public int? releaseType { get; set; }
 
         public DateTime nextVisitationDate { get { return lastVisitationDate.AddDays((double)(visitationCycle)); } set { } }
         public DateTime lastVisitationDate { get; set; }
@@ -295,6 +304,14 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal promissoryValue { get; set; }
         public DateTime promissoryEffectiveDate { get; set; }
         public DateTime promissoryMaturityDate { get; set; }
+
+       public int collateralReleaseId { get; set; }
+        public int collateralReleaseTypeId { get; set; }
+        public string collateralReleaseTypeName { get; set; }
+        public bool? jobRequestSent { get; set; }
+
+
+
 
         public bool available
         {
