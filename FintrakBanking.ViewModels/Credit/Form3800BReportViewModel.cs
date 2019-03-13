@@ -20,6 +20,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal newApproval { get; set; }
         public string currency { get; set; }
         public string staffCode { get; set; }
+        public DateTime systemDate { get; set; }
     }
 
 }

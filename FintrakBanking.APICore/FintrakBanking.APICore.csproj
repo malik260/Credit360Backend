@@ -788,13 +788,6 @@
     <Compile Include="Reports\Collateral\ScheduledCollateralReport.aspx.designer.cs">
       <DependentUpon>ScheduledCollateralReport.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx.cs">
-      <DependentUpon>OfferLetterCAMbase.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx.designer.cs">
-      <DependentUpon>OfferLetterCAMbase.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx.cs">
       <DependentUpon>OfferLetter.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1030,7 +1023,6 @@
     <Content Include="Reports\Collateral\ScheduledCollateralReport.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS.aspx" />
-    <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
@@ -1323,6 +1315,7 @@
     <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AllCommercialLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashCollaterizedCredits.rdlc" />
@@ -1368,7 +1361,6 @@
     <EmbeddedResource Include="Reports\Report\LoanScheduleSimulation.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
-    <Content Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoggingStatus.rdlc" />
     <EmbeddedResource Include="Reports\Report\MiddleOfficeReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />

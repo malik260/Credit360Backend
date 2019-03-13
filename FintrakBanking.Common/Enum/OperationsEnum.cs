@@ -116,6 +116,11 @@ namespace FintrakBanking.Common.Enum
         ContingentLiabilityAmountAddition = 106,
         FinalCollateralRelease = 110,
         TemporalCollateralRelease = 111,
+        APS_RelaseChecklist = 107,
+        APS_ReleaseCAP =108,
+        APS_ReleasePrincipaRequest =109
+
+
 
     }
 }

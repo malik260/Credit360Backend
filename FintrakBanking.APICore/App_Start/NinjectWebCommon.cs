@@ -240,6 +240,15 @@ namespace FintrakBanking.APICore.App_Start
 
             kernel.Bind<IFinacleIntegrationRepository>().To<FinacleIntegrationRepository>();
             kernel.Bind<IEmailAlertLogger>().To<EmailAlertLogger>();
+
+
+            //kernel.Bind<IEmailSender>().To<EmailSender>();
+            //kernel.Bind<IAlertMessagesEngine>().To<AlertMessagesEngine>();
+            //kernel.Bind<IAlertMessageLogger>().To<AlertMessageLogger>();
+
+            //kernel.Bind<ISLANotification>().To<SLANotification>();
+            //kernel.Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
+            //kernel.Bind<FinTrakBankingContext>().To<FinTrakBankingContext>();
         }
 
     }

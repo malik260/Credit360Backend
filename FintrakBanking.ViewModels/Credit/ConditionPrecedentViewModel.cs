@@ -80,6 +80,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int callerId { get; set; }
         public int applicationId { get; set; }
         public string additionalComment { get; set; }
+        public bool owner { get; set; }
     }
 
 

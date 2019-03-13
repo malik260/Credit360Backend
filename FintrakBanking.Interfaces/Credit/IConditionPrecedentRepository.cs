@@ -44,7 +44,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteConditionPrecedentTemplate(UserInfo user, int id);
 
         // additional comment condition
-        List<AdditionalCommentViewModel> GetAdditionalComment(int applicationId, int callerId);
+        List<AdditionalCommentViewModel> GetAdditionalComment(int applicationId, int callerId, int userId);
         bool AddAdditionalComment(AdditionalCommentViewModel entity);
         bool EditAdditionalComment(int id, AdditionalCommentViewModel entity);
         bool RemoveAdditionalComment(int id, UserInfo user);

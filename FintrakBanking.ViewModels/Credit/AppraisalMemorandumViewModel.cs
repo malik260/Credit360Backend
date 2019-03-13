@@ -360,6 +360,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productCustomerName { get; set; }
         public string staffName { get; set; }
         public int applicationId { get; set; }
+        public bool owner { get; set; }
     }
 
     public class TranchDisbursmentViewModel

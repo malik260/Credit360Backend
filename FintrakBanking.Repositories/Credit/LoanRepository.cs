@@ -897,7 +897,7 @@ namespace FintrakBanking.Repositories.Credit
             var contingentLoanInput = entity.contingentLoanInput;
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)contingentLoanInput.currencyId, entity.companyId).sellingRate;
-
+            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             loanBookingValidation(entity);
 
             var bgData = context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId);
@@ -938,7 +938,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
                 LOANREFERENCENUMBER = loanReferenceNumber,
                 RELATED_LOAN_REFERENCE_NUMBER = loanReferenceNumber,
-                SUBSECTORID = entity.subSectorId,
+                SUBSECTORID = applicationDetail.SUBSECTORID,
                 RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
                 RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID,
                 MISCODE = application.MISCODE,
@@ -948,7 +948,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISBANKFORMAT = isBankFormat,
                 ISTENORED = isTenored,
                 BOOKINGDATE = generalSetup.GetApplicationDate(),
-                //CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
+                LEGALCONTINGENTCODE = entity.legalContingentCode,
 
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.ContingentLiability,
                 CONTINGENTAMOUNT = contingentLoanInput.contingentAmount,
@@ -2262,13 +2262,18 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.OperationId = entity.operationId;
                     workflow.DeferredExecution = true;
                     workflow.ExternalInitialization = false;
-                    workflow.FinalLevel = application.TRANCHEAPPROVAL_LEVELID;
+                    //workflow.FinalLevel = application.TRANCHEAPPROVAL_LEVELID;
+
+                    if (GetCurrentApprovalLevelId(entity.companyId, entity.operationId, entity.targetId) == application.TRANCHEAPPROVAL_LEVELID)
+                    {
+                        workflow.NextLevelId = GetFirstAvailmentLevelId(entity.operationId);
+                    }
 
                     workflow.LogActivity();
 
                     context.SaveChanges();
 
-                    if ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                    if (entity.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                     {
                         request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
                         trans.Commit();
@@ -2334,12 +2339,59 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
         }
-        /// <summary>
-        /// Gets the term loan booking awaiting approval.
-        /// </summary>
-        /// <param name="staffId">The staff identifier.</param>
-        /// <param name="companyId">The company identifier.</param>
-        /// <returns></returns>
+
+        private int? GetCurrentApprovalLevelId(int companyId, int operationId, int targetId)
+        {
+            var trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == companyId
+                                && x.OPERATIONID == operationId
+                                && x.TARGETID == targetId
+                                && x.RESPONSESTAFFID == null
+                                && x.TOAPPROVALLEVELID != null // check in workflow
+                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                            ).ToList();
+
+            var request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault() ?? null;
+
+            return request.TOAPPROVALLEVELID ?? null;
+        }
+
+        private int GetFirstAvailmentLevelId(int operationId)
+        {
+            int nextGroupId = 20; // ------------------------HARDCODING!!!!!!
+            var operation = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == operationId);
+            // if (operation != null) nextGroupId = operation.NEXTAPPROVALGROUPID;
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.GROUPID == nextGroupId)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         levelTypeId = l.LEVELTYPEID,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList()
+                     ;
+
+            var level = levels.FirstOrDefault(x => x.levelTypeId == (int)ApprovalLevelType.Routing); // routing
+            if (level == null) level = levels.FirstOrDefault(x => x.levelPosition == 1);
+
+            return level.levelId;
+
+            /*select l.POSITION, m.GROUPID, g.GROUPNAME,l.APPROVALLEVELID,l.LEVELNAME from TBL_APPROVAL_GROUP_MAPPING m 
+            join TBL_APPROVAL_GROUP g on (m.GROUPID=g.GROUPID)
+            join TBL_APPROVAL_LEVEL l on (g.GROUPID=l.GROUPID)
+            where m.OPERATIONID=39 and m.GROUPID=20
+            order by l.POSITION;*/
+        }
+
+
         public IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId)
         {
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanTrancheBookingRequest).ToList();
@@ -2364,6 +2416,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                                   && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || ids2.Contains((int)atrail.TOAPPROVALLEVELID))
+                                  && (atrail.TOSTAFFID == null || atrail.TOSTAFFID == staffId)
                                   && atrail.RESPONSESTAFFID == null
                             orderby d.LOANAPPLICATIONDETAILID descending
 
@@ -3453,6 +3506,7 @@ namespace FintrakBanking.Repositories.Credit
                             sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                             sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
                             sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
+                            sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
                             interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
                             sanctionLevel = "003",
                             sanctionAuthorizer = "999"
@@ -3501,6 +3555,7 @@ namespace FintrakBanking.Repositories.Credit
                             TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
                             TemporaryOverDraftNaration = "Normal Temporary Overdraft",
                             TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                            sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
                         };
                         ResponseMessageViewModel res = finacle.TemporaryOverDraftNormal(model, twoFactorAuthDetails);
                         twoFactorAuthDetails.skipAuthentication = true;
@@ -3516,6 +3571,7 @@ namespace FintrakBanking.Repositories.Credit
                             TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
                             TemporaryOverDraftNaration = "Single Limit Temporary Overdraft",
                             TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                            sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
                         };
                         ResponseMessageViewModel res = finacle.TemporaryOverDraftSingle(model, twoFactorAuthDetails);
                         revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
@@ -5866,24 +5922,65 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        private decimal getDisbursableAmount(int operationId,int loanApplicationDetailId)
+        {
+            decimal disbursableAmount = 0;
+            if (operationId == (short)OperationsEnum.TermLoanBooking 
+                || operationId == (short)OperationsEnum.ForeignExchangeLoanBooking 
+                || operationId == (short)OperationsEnum.ContigentLoanBooking)
+            {
+                disbursableAmount =(from l in context.TBL_LOAN
+                where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                select l).Sum(x=>x.PRINCIPALAMOUNT);
+            }
+            if (operationId == (short)OperationsEnum.ContigentLoanBooking)
+            {
+                disbursableAmount = (from l in context.TBL_LOAN_CONTINGENT
+                                     where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                     select l).Sum(x => x.CONTINGENTAMOUNT);
+            }
+            if (operationId == (short)OperationsEnum.RevolvingLoanBooking)
+            {
+                disbursableAmount = (from l in context.TBL_LOAN_REVOLVING
+                                     where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                     select l).Sum(x => x.OVERDRAFTLIMIT);
+            }
+            return disbursableAmount;
+        }
+
         public bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity)
         {
             using (var trans = context.Database.BeginTransaction())
             {
                 var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+                if(entity.amount_Requested > loanApplicationDetails.APPROVEDAMOUNT)
+                {
+                    throw new ConditionNotMetException("Requested Amount cannot be greater than the approved amount");
+                }
+                
                 var operationId = 0;
                 var productTypeId = loanApplicationDetails.TBL_PRODUCT.PRODUCTTYPEID;
 
                 if (productTypeId == (short)LoanProductTypeEnum.TermLoan || productTypeId == (short)LoanProductTypeEnum.SelfLiquidating || productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                     operationId = (short)OperationsEnum.TermLoanBooking;
+                    
                 if (productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
                     operationId = (short)OperationsEnum.CommercialLoanBooking;
+                    
                 if (productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
                     operationId = (short)OperationsEnum.RevolvingLoanBooking;
+                    
                 if (productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
                     operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
+                    
                 if (productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
                     operationId = (short)OperationsEnum.ContigentLoanBooking;
+
+                if (entity.amount_Requested > getDisbursableAmount(operationId, entity.loanApplicationDetailId))
+                {
+                    throw new ConditionNotMetException("Requested Amount cannot be greater than the disbursable amount");
+                }
+
 
                 try
                 {

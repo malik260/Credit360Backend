@@ -66,6 +66,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                    join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.LOANREFERENCENUMBER
                                                    join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
                                                    join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                                                   
                                                    where DbFunctions.TruncateTime(a.POSTEDDATE) >= DbFunctions.TruncateTime(startDate)
                                                     && DbFunctions.TruncateTime(a.POSTEDDATE) <= DbFunctions.TruncateTime(endDate)
                                                                            && a.COMPANYID == companyId
@@ -103,6 +104,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                        sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
                                                        operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
                                                        transactionID = a.TRANSACTIONID
+                                                       
+                                                      
                                                    }).ToList();
 
                 

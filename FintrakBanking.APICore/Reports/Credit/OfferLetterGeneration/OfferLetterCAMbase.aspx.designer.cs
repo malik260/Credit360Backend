@@ -10,8 +10,7 @@
 namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
     
     
-    public partial class OfferLetterCAMbase
-    {
+    public partial class OfferLetter {
         
         /// <summary>
         /// form1 control.

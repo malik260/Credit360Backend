@@ -6333,48 +6333,48 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.DESCRIPTION)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG>()
-                .Property(e => e.FROMADDRESS)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG>()
+            //    .Property(e => e.FROMADDRESS)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG>()
-                .Property(e => e.TOADDRESS)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG>()
+            //    .Property(e => e.TOADDRESS)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG>()
-                .Property(e => e.MESSAGEBODY)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG>()
+            //    .Property(e => e.MESSAGEBODY)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG>()
-                .Property(e => e.MESSAGESUBJECT)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG>()
+            //    .Property(e => e.MESSAGESUBJECT)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG>()
-                .Property(e => e.GATEWAYRESPONSE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG>()
+            //    .Property(e => e.GATEWAYRESPONSE)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG_STATUS>()
-                .Property(e => e.MESSAGESTATUSNAME)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG_STATUS>()
+            //    .Property(e => e.MESSAGESTATUSNAME)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG_STATUS>()
-                .HasMany(e => e.TBL_MESSAGE_LOG)
-                .WithRequired(e => e.TBL_MESSAGE_LOG_STATUS)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG_STATUS>()
+            //    .HasMany(e => e.TBL_MESSAGE_LOG)
+            //    .WithRequired(e => e.TBL_MESSAGE_LOG_STATUS)
+            //    .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
-                .Property(e => e.MESSAGETYPENAME)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
+            //    .Property(e => e.MESSAGETYPENAME)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
-                .HasMany(e => e.TBL_MESSAGE_LOG)
-                .WithRequired(e => e.TBL_MESSAGE_LOG_TYPE)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
+            //    .HasMany(e => e.TBL_MESSAGE_LOG)
+            //    .WithRequired(e => e.TBL_MESSAGE_LOG_TYPE)
+            //    .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
-                .HasMany(e => e.TBL_MONITORING_ALERT_SETUP)
-                .WithRequired(e => e.TBL_MESSAGE_LOG_TYPE)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
+            //    .HasMany(e => e.TBL_MONITORING_ALERT_SETUP)
+            //    .WithRequired(e => e.TBL_MESSAGE_LOG_TYPE)
+            //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_MIS_INFO>()
                 .Property(e => e.MISCODE)

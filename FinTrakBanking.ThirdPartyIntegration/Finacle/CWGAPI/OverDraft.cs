@@ -488,7 +488,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 {
                     APIURL = "api/TemporaryOverDraft/Normal",
                     LOGTYPEID = 15,
-                    REFERENCENUMBER = model.TemporaryOverDraftNaration,
+                    REFERENCENUMBER = model.sourceReferenceNumber,
                     REQUESTDATETIME = requestDatetime,
                     REQUESTMESSAGE = objData,
                     RESPONSEDATETIME = responseDateTime,
@@ -574,7 +574,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 {
                     APIURL = "api/TemporaryOverDraft/Running",
                     LOGTYPEID = 16,
-                    REFERENCENUMBER = model.TemporaryOverDraftNaration,
+                    REFERENCENUMBER = model.sourceReferenceNumber,
                     REQUESTDATETIME = requestDatetime,
                     REQUESTMESSAGE = objData,
                     RESPONSEDATETIME = responseDateTime,
@@ -662,7 +662,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 {
                     APIURL = "api/TemporaryOverDraft/Single",
                     LOGTYPEID = 17,
-                    REFERENCENUMBER = model.TemporaryOverDraftNaration,
+                    REFERENCENUMBER = model.sourceReferenceNumber,
                     REQUESTDATETIME = requestDatetime,
                     REQUESTMESSAGE = objData,
                     RESPONSEDATETIME = responseDateTime,

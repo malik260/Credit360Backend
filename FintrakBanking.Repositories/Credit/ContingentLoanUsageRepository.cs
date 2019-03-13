@@ -48,11 +48,21 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+                int[] operations = { (int)OperationsEnum.APS_RelaseChecklist, (int)OperationsEnum.APS_ReleaseCAP, (int)OperationsEnum.APS_ReleasePrincipaRequest };
+
+
                 List<ContingentLoansViewModel> contingentData = new List<ContingentLoansViewModel>();
                 DateTime currentDate = genSetup.GetApplicationDate();
                 var data = (from a in context.TBL_LOAN_CONTINGENT
+                            join r in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals r.LOANID
+                            join l in context.TBL_LMSR_APPLICATION on r.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                             join b in context.TBL_PRODUCT_BEHAVIOUR on a.PRODUCTID equals b.PRODUCTID
-                            where currentDate <= a.MATURITYDATE && b.ALLOWFUNDUSAGE == true
+                            where l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
+                            //&& currentDate <= a.MATURITYDATE 
+                            && operations.Contains(l.OPERATIONID) 
+                            && r.OPERATIONPERFORMED == false
+                            && r.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
+
                             select new ContingentLoansViewModel()
                             {
                                 principalName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
@@ -74,36 +84,14 @@ namespace FintrakBanking.Repositories.Credit
                                 maturityDate = a.MATURITYDATE,
                                 productName = a.TBL_PRODUCT.PRODUCTNAME,
                                 loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-                                loanSystemTypeId = a.LOANSYSTEMTYPEID
-                            }).ToList();
+                                loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                amountRequested = r.PROPOSEDAMOUNT,
+                                loanReviewApplicationId = r.LOANREVIEWAPPLICATIONID,
+                                operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==l.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
 
-                var data2 = context.TBL_LOAN_CONTINGENT
-                    .Where(c => c.MATURITYDATE <= currentDate
-                    && context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == c.PRODUCTID)
-                    .FirstOrDefault().ALLOWFUNDUSAGE == true)
-                    .Select(c => new ContingentLoansViewModel()
-                    {
-                        principalName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
-                        bookingDate = c.BOOKINGDATE,
-                        casaAccountNumber = c.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                        facilityAmount = c.CONTINGENTAMOUNT,
-                        contingentLoanId = c.CONTINGENTLOANID,
-                        currencyCode = c.TBL_CURRENCY.CURRENCYCODE,
-                        currencyId = c.CURRENCYID,
-                        customerId = c.CUSTOMERID,
-                        firstName = c.TBL_CUSTOMER.FIRSTNAME,
-                        lastName = c.TBL_CUSTOMER.LASTNAME,
-                        middleName = c.TBL_CUSTOMER.MIDDLENAME,
-                        productId = c.PRODUCTID,
-                        effectiveDate = c.EFFECTIVEDATE,
-                        exchangeRate = c.EXCHANGERATE,
-                        loanApplicationReferenceNumber = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                        loanReferenceNumber = c.LOANREFERENCENUMBER,
-                        maturityDate = c.MATURITYDATE,
-                        productName = c.TBL_PRODUCT.PRODUCTNAME,
-                        loanStatus = c.TBL_LOAN_STATUS.ACCOUNTSTATUS
-                    });
+                            });
 
+                
                 foreach (var item in data)
                 {
                     var usedData = context.TBL_LOAN_CONTINGENT_USAGE.Where(d => d.CONTINGENTLOANID == item.contingentLoanId);
@@ -141,11 +129,11 @@ namespace FintrakBanking.Repositories.Credit
            
         }
 
-        public bool SaveContigentLoans(ContingentLoanUsageViewModel entity, byte[] buffer)
+        public bool SaveContigentLoans(ContingentLoanUsageViewModel entity)
         {
             var data = new TBL_LOAN_CONTINGENT_USAGE
             {
-                AMOUNTREQUESTED = entity.amountRequuested,
+                AMOUNTREQUESTED = entity.amountRequested,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing,
                 CONTINGENTLOANID = entity.contingentLoanId,
                 CREATEDBY = entity.createdBy,
@@ -153,7 +141,11 @@ namespace FintrakBanking.Repositories.Credit
                 DELETED = false,
                 REMARK = entity.remark
             };
-            context.TBL_LOAN_CONTINGENT_USAGE.Add(data);
+
+         var model =   context.TBL_LOAN_CONTINGENT_USAGE.Add(data);
+
+            var application = context.TBL_LMSR_APPLICATION_DETAIL.Where(o => o.LOANREVIEWAPPLICATIONID == entity.loanReviewApplicationId).Select(o => o).FirstOrDefault();
+            application.OPERATIONPERFORMED = true;
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -166,44 +158,30 @@ namespace FintrakBanking.Repositories.Credit
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = data.CONTINGENTLOANUSAGEID
+                TARGETID = model.CONTINGENTLOANUSAGEID
             };
-
+          var a =  data.CONTINGENTLOANUSAGEID;
             this.auditTrail.AddAuditTrail(audit);
             bool response = false;
             //--------------------------------------------------
             response = context.SaveChanges() > 0;
-            int contingentUsedId = data.CONTINGENTLOANUSAGEID;
-
-            var file = new TBL_LOAN_CONTINGENT_USAGE_DOCS
-            {
-                CONTINGENTLOANUSAGEID = contingentUsedId,
-                CREATEDBY = entity.createdBy,
-                DATECREATED = genSetup.GetApplicationDate(),
-                FILEDATA = buffer,
-                FILEEXTENSION = entity.fileExtension,
-                SYSTEMDATETIME = DateTime.Now,
-                PHYSICALFILENUMBER = entity.fileName,
-                PHYSICALLOCATION = entity.documentTitle,
-                FILENAME = entity.fileName
-            };
+            
             if (response)
             {
                 // ----------------Drop into CAM-------------------
-                if (data.CONTINGENTLOANUSAGEID > 0)
+                if (model.CONTINGENTLOANUSAGEID > 0)
                 {
                     var log = new ApproveAPSRequestViewModel
                     {
                         staffId = entity.staffId,
                         operationId = (int)OperationsEnum.ContingentLiabilityUsage,
-                        targetId = data.CONTINGENTLOANUSAGEID,
+                        targetId = model.CONTINGENTLOANUSAGEID,
                         companyId = entity.companyId,
                         approvalStatusId = (int)ApprovalStatusEnum.Pending,
                         comment = "New APS Request",
                         deferredExecution = false,
                     };
 
-                    documentsContext.TBL_LOAN_CONTINGENT_USAGE_DOCS.Add(file);
                     documentsContext.SaveChanges();
                     var mail = SendEmailToBGDesk( entity.companyId,  entity.staffId,  entity.userBranchId, entity.loanReferenceNumber);
                     response = LogForApproval(log);
@@ -302,8 +280,9 @@ namespace FintrakBanking.Repositories.Credit
                                    maturityDate = lcu.TBL_LOAN_CONTINGENT.MATURITYDATE,
                                    productName = lcu.TBL_LOAN_CONTINGENT.TBL_PRODUCT.PRODUCTNAME,
                                    loanStatus = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-
+                                   operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==atrail.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
                                    amountRequested = lcu.AMOUNTREQUESTED,
+                                   timeIn = atrail.SYSTEMARRIVALDATETIME,
                                };
             return applications;
         }

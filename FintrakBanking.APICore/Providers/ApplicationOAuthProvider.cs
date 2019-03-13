@@ -25,16 +25,15 @@ namespace FintrakBanking.APICore.Providers
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
-        private readonly FinTrakBankingContext _bankingContext;
+        //private readonly FinTrakBankingContext _bankingContext;
         private TBL_SETUP_GLOBAL appSetup;
         private const string HttpContext = "MS_HttpContext";
 
         public ApplicationOAuthProvider(string publicClientId)
         {
             if (publicClientId == null) throw new ArgumentNullException("publicClientId");
-            this._bankingContext = new FinTrakBankingContext();
+            //this._bankingContext = new FinTrakBankingContext();
         }
-
 
         public string GetIpAddress(HttpRequestMessage request)
         {
@@ -81,10 +80,12 @@ namespace FintrakBanking.APICore.Providers
                 };
                 ClaimsIdentity identity;
 
+                FinTrakBankingContext _bankingContext = new FinTrakBankingContext();
                 var authRepo = new AuthenticationRepository(_bankingContext,null);
 
                
                 ActiveUserDetails userInfo = authRepo.GetUserAuthenticationInfo(userVm.username);
+                ActiveUserDetails userInformation = authRepo.GetUserInformation(userVm.username);
 
                 if (authRepo.GetRunningEndOfDayProcess(userInfo.countryId))
                 {
@@ -98,15 +99,33 @@ namespace FintrakBanking.APICore.Providers
                     return;
                 }
 
+                if (userInformation != null && userInformation.deleted)
+                {
+                    context.SetError("invalid_grant", "User does not exist or have been deactivated!");
+                    return;
+                }
+
+                if (authRepo.ConcurrentUsers() > 2000) // 2000 setup somewhere
+                {
+                    context.SetError("invalid_grant", "Maximum Concurrent Users exceeded!");
+                    return;
+                }
+
+                _bankingContext.TBL_SETUP_GLOBAL.AsNoTracking();
+                _bankingContext.TBL_PROFILE_USER.AsNoTracking();
+
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
 
+                //appSetup.USE_ACTIVE_DIRECTORY = false;
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {
                     if (Task.FromResult(
-                        ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
+                        ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)
+                        ).Result)
                     {
                         authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress);//.GetAwaiter().GetResult();
-                        user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username.ToLower())).Result;
+                        user = authRepo.FindUserByUserName(userVm.username.ToLower());
+                        // user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username.ToLower())).Result;
                     }
                     else
                     {
@@ -140,12 +159,12 @@ namespace FintrakBanking.APICore.Providers
                     //    .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
                     //    .Result;
                     user = authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password);
+                }
 
-                    if (user == null)
-                    {
-                        context.SetError("invalid_grant", "Login Failure.");
-                        return;
-                    }
+                if (user == null)
+                {
+                    context.SetError("invalid_grant", "Login Failure.");
+                    return;
                 }
 
                 bool isUserAccountValid;
@@ -236,7 +255,7 @@ namespace FintrakBanking.APICore.Providers
 
         public override Task ValidateClientRedirectUri(OAuthValidateClientRedirectUriContext context)
         {
-            if (context.ClientId == _publicClientId)
+            if (context.ClientId == this._publicClientId)
             {
                 Uri expectedRootUri = new Uri(context.Request.Uri, "/");
 
@@ -261,7 +280,7 @@ namespace FintrakBanking.APICore.Providers
 
         public bool ValidateActiveDirectoryCredentials(string userName, string password, out ClaimsIdentity identity)
         {
-            appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
+            //appSetup = _bankingContext.TBL_SETUP_GLOBAL.FirstOrDefault();
 
             if (appSetup != null && appSetup.REQUIRE_ADUSER)
             {
