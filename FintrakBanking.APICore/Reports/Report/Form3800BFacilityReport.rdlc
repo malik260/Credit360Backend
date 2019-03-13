@@ -6,25 +6,25 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1in</Width>
+              <Width>0.71875in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.42708in</Width>
+              <Width>1.98958in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>4.14583in</Width>
+              <Width>1.63418in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.92708in</Width>
+              <Width>2.54166in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.5in</Width>
+              <Width>2.03125in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>2.23958in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.35417in</Width>
+              <Width>0.80209in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.58333in</Width>
@@ -736,7 +736,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -801,7 +800,7 @@
         <DataSetName>Form3800B</DataSetName>
         <Top>0.92583in</Top>
         <Height>0.55208in</Height>
-        <Width>21.24998in</Width>
+        <Width>17.61333in</Width>
         <Style>
           <Border>
             <Style>None</Style>
