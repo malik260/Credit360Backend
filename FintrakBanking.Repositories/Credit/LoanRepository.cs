@@ -8638,10 +8638,10 @@ namespace FintrakBanking.Repositories.Credit
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                        //join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
-                                       //join f in context.TBL_LOAN_CAMSOL on a.TERMLOANID equals f.LOANID
+                                       join f in context.TBL_LOAN_CAMSOL on a.TERMLOANID equals f.LOANID
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanRecovery
-                                      && b.OPERATIONPERFORMED == false
+                                      && b.OPERATIONPERFORMED == false && a.LOANSTATUSID == (short)LoanStatusEnum.WriteOff
                                        //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
