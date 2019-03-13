@@ -12157,10 +12157,10 @@ namespace FintrakBanking.Repositories.Credit
                 //}
             }
 
-
+            short loanSystemTypeId = reviewApplicationDetail != null ? (short)reviewApplicationDetail.LOANSYSTEMTYPEID : (short)model.loanSystemTypeId;
             if ((int)OperationsEnum.Prepayment != model.operationTypeId)
             {
-                if (DoesOperationExist(model.loanId, model.operationTypeId, (short)reviewApplicationDetail.LOANSYSTEMTYPEID))
+                if (DoesOperationExist(model.loanId, model.operationTypeId, loanSystemTypeId))
                 {
                     throw new ConditionNotMetException("The requested operation already exist and going through approval");
                 }
@@ -12241,10 +12241,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.loanReviewOperationsId == 0)
             {
-                int loanSystemTypeId = 0;
+                //int loanSystemTypeId = 0;
                 if (reviewApplicationDetail == null)
                 {
-                    loanSystemTypeId = model.loanSystemTypeId;
+                    loanSystemTypeId = (short)model.loanSystemTypeId;
                 }
                 else
                 {
