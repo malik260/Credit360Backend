@@ -114,6 +114,8 @@ namespace FintrakBanking.Common.Enum
         CancelContingentLiability = 105,
         UserAccountStatusChange = 103,
         ContingentLiabilityAmountAddition = 106,
+        FinalCollateralRelease = 110,
+        TemporalCollateralRelease = 111,
 
     }
 }
