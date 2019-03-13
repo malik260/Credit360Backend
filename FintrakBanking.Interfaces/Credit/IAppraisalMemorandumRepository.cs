@@ -59,7 +59,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity);
         List<ProductLimitValidationViewModel> GetProductLimitValidation(int applicationId, int classId);
 
-        List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId);
+        List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId, int staffId);
         List<RecommendedCollateralViewModel> AddRecommendedCollateral(RecommendedCollateralViewModel entity);
         List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity);
         IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersLms(int applicationId);
@@ -75,5 +75,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoanApplicationDetailsViewModel GetLMSLoanApplicationDetail(int applicationId);
 
         WorkflowResponse GetWorkflowNextStatus(ForwardViewModel model);
+
+        WorkflowResponse GetWorkflowNextStatusLms(ForwardReviewViewModel model);
     }
 }

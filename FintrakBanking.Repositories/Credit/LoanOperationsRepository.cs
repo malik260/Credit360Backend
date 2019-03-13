@@ -12095,9 +12095,12 @@ namespace FintrakBanking.Repositories.Credit
             var nextPeriodicInterestPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loanInput.loanId && x.PAYMENTDATE > loanInput.effectiveDate && x.PERIODINTERESTAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
             loanInput.interestFirstpaymentDate = nextPeriodicInterestPaymentDate.PAYMENTDATE;
 
-
-            loanInput.interestFrequencyTypeId = (int)loanInfo.INTERESTFREQUENCYTYPEID;
-            loanInput.principalFrequencyTypeId = (int)loanInfo.PRINCIPALFREQUENCYTYPEID;
+            if(loanInput.scheduleMethodId != (short)LoanScheduleTypeEnum.BulletPayment)
+            {
+                loanInput.interestFrequencyTypeId = (int)loanInfo.INTERESTFREQUENCYTYPEID;
+                loanInput.principalFrequencyTypeId = (int)loanInfo.PRINCIPALFREQUENCYTYPEID;
+            }
+            
             loanInput.maturityDate = loanInfo.MATURITYDATE;
             loanInput.interestRate = loanInfo.INTERESTRATE;
 
@@ -12484,10 +12487,10 @@ namespace FintrakBanking.Repositories.Credit
                 //}
             }
 
-
+            short loanSystemTypeId = reviewApplicationDetail != null ? (short)reviewApplicationDetail.LOANSYSTEMTYPEID : (short)model.loanSystemTypeId;
             if ((int)OperationsEnum.Prepayment != model.operationTypeId)
             {
-                if (DoesOperationExist(model.loanId, model.operationTypeId, (short)reviewApplicationDetail.LOANSYSTEMTYPEID))
+                if (DoesOperationExist(model.loanId, model.operationTypeId, loanSystemTypeId))
                 {
                     throw new ConditionNotMetException("The requested operation already exist and going through approval");
                 }
@@ -12568,10 +12571,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.loanReviewOperationsId == 0)
             {
-                int loanSystemTypeId = 0;
+                //int loanSystemTypeId = 0;
                 if (reviewApplicationDetail == null)
                 {
-                    loanSystemTypeId = model.loanSystemTypeId;
+                    loanSystemTypeId = (short)model.loanSystemTypeId;
                 }
                 else
                 {

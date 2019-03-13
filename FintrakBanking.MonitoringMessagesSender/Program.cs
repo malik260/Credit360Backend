@@ -12,7 +12,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                 HostFactory.Run(serviceConfig =>
                 {
                     serviceConfig.UseNinject(new NinjectBinding());
-                    serviceConfig.UseNLog();
+                   // serviceConfig.UseNLog();
 
                     serviceConfig.Service<WindowService>(serviceInstance =>
                     {

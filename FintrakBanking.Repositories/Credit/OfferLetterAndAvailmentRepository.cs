@@ -2509,7 +2509,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             int? productClassId = 0;
 
-            int? currentLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId)
+            // int? currentLevelId = GetCurrentApprovalLevelId(model.companyId, model.operationId, model.targetId);
+            // int? currentLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId)
+            int? currentLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId
+            && x.RESPONSESTAFFID == null && x.APPROVALSTATEID != 3)
                 .OrderByDescending(x => x.APPROVALTRAILID)
                 .FirstOrDefault()
                 .TOAPPROVALLEVELID
@@ -2552,9 +2555,10 @@ namespace FintrakBanking.Repositories.Credit
                 nextId = level.levelId;
             }
 
-            int staffId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId && x.FROMAPPROVALLEVELID == nextId)
+            
+            int? staffId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId && x.TOAPPROVALLEVELID == nextId)
                 .FirstOrDefault()
-                .REQUESTSTAFFID
+                .TOSTAFFID
                 ;
 
             var from = context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).FirstOrDefault();
@@ -2577,6 +2581,22 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
 
             return context.SaveChanges() > 0;
+        }
+
+        private int? GetCurrentApprovalLevelId(int companyId, int operationId, int targetId)
+        {
+            var trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == companyId
+                                && x.OPERATIONID == operationId
+                                && x.TARGETID == targetId
+                                && x.RESPONSESTAFFID == null
+                                && x.TOAPPROVALLEVELID != null // check in workflow
+                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                            ).ToList();
+
+            var request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault() ?? null;
+
+            return request.TOAPPROVALLEVELID ?? null;
         }
 
         private void ChecklistValidation(int applicationId)
@@ -2644,8 +2664,9 @@ namespace FintrakBanking.Repositories.Credit
                                   customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
                                   offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                   offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
-                                  customerId = b.CUSTOMERID
-
+                                  customerId = b.CUSTOMERID,
+                                  customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(o=>o.CUSTOMERID==b.CUSTOMERID).Select(o=>o.ADDRESS).FirstOrDefault(),
+                                  title = b.TITLE,
                               }).FirstOrDefault();
 
             } else {
@@ -2659,7 +2680,9 @@ namespace FintrakBanking.Repositories.Credit
                                   customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
                                   offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                   offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
-                                  customerId = b.CUSTOMERID
+                                  customerId = b.CUSTOMERID,
+                                  customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.ADDRESS).FirstOrDefault(),
+                                  title = b.TITLE,
 
                               }).FirstOrDefault();
             }
@@ -2668,8 +2691,8 @@ namespace FintrakBanking.Repositories.Credit
             var offerLetterDoc = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == detail.customerId).Select(o => o).FirstOrDefault();
             if (offerLetterDoc!=null)
             {
-                offerLetterDoc.OFFERLETTERSALUTATION = "Attention : " + detail.customerName;
-                offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
+                offerLetterDoc.OFFERLETTERSALUTATION = "The Managing Director, <br /><br /> " + detail.customerName + "<br /><br />" + detail.customerAddress + "<br /><br /> Attention: " + detail.title + " " + detail.customerName ;
+               // offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
 
                 if (!context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Any())
                 {

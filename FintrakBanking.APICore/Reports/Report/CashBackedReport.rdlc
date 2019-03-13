@@ -26,8 +26,8 @@
         <rd:DefaultName>Textbox1</rd:DefaultName>
         <Top>0.04167in</Top>
         <Left>1.61542in</Left>
-        <Height>0.325in</Height>
-        <Width>11.88334in</Width>
+        <Height>0.42098in</Height>
+        <Width>12.01875in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -48,7 +48,7 @@
               <Width>1.3125in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.09375in</Width>
+              <Width>1.54167in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.21875in</Width>
@@ -60,7 +60,7 @@
               <Width>1.20833in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.45833in</Width>
+              <Width>1.82291in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.22917in</Width>
@@ -75,10 +75,10 @@
               <Width>2in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.625in</Width>
+              <Width>1.375in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.38542in</Width>
+              <Width>1in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.5in</Width>
@@ -128,7 +128,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Branch</Value>
+                              <Value>branch</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -152,21 +152,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox10">
+                    <Textbox Name="Textbox2">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Account No</Value>
+                              <Value>Collateral Customer ID</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox10</rd:DefaultName>
+                      <rd:DefaultName>Textbox2</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -190,7 +190,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Account Name</Value>
+                              <Value>account Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -221,7 +221,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Loan Reference Number</Value>
+                              <Value>loan Reference Number</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -252,7 +252,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Security Type</Value>
+                              <Value>security Type</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -283,7 +283,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Deposit Account No</Value>
+                              <Value>Savings/Fixed deposit Account No</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -462,21 +462,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox28">
+                    <Textbox Name="Textbox3">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Currency Type</Value>
+                              <Value>Currency Unit</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox28</rd:DefaultName>
+                      <rd:DefaultName>Textbox3</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -589,21 +589,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="accountNo">
+                    <Textbox Name="collateralCustomerId">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!accountNo.Value</Value>
+                              <Value>=Fields!collateralCustomerId.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>accountNo</rd:DefaultName>
+                      <rd:DefaultName>collateralCustomerId</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -889,21 +889,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="currencyType">
+                    <Textbox Name="currencyUnit">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!currencyType.Value</Value>
+                              <Value>=Fields!currencyUnit.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>currencyType</rd:DefaultName>
+                      <rd:DefaultName>currencyUnit</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -983,7 +983,7 @@
         <Top>0.53209in</Top>
         <Left>1.25917in</Left>
         <Height>0.5in</Height>
-        <Width>19.83334in</Width>
+        <Width>20.01042in</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -995,7 +995,7 @@
     <Height>1.34167in</Height>
     <Style />
   </Body>
-  <Width>21.68626in</Width>
+  <Width>21.90501in</Width>
   <Page>
     <PageHeader>
       <Height>0.50833in</Height>
@@ -1044,8 +1044,8 @@
           <DataField>branch</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="accountNo">
-          <DataField>accountNo</DataField>
+        <Field Name="collateralCustomerId">
+          <DataField>collateralCustomerId</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="accountName">
@@ -1080,8 +1080,8 @@
           <DataField>securityValue</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="currencyType">
-          <DataField>currencyType</DataField>
+        <Field Name="currencyUnit">
+          <DataField>currencyUnit</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="securityInTheNameOf">
@@ -1095,7 +1095,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>LoanDataSet</rd:DataSetName>
-        <rd:SchemaPath>C:\FintrakProjects\ReportDeveloper\ReportDeveloper\ReportDataset\LoanDataSet.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\FinTrak\ReportDeveloper\ReportDeveloper\ReportDataset\LoanDataSet.xsd</rd:SchemaPath>
         <rd:TableName>CashBacked</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />

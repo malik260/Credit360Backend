@@ -28,7 +28,9 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(2000)]
-        public string PASSWORD { get; set; }
+        public string PASSWORD
+        { get;
+            set; }
 
         public bool? ISFIRSTLOGINATTEMPT { get; set; }
 

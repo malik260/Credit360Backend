@@ -45,5 +45,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanReviewOperationViewModel> GetLMSOperation(int loanId, short loansystemTypeId);
         decimal? GetWrittenOffAccrualAmount(int loanId, short loanSystemTypeId);
+        decimal GetMaximumApplicationOutstandingBalance(int applicationId);
     }
 }

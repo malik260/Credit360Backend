@@ -348,5 +348,16 @@ namespace FintrakBanking.APICore.Controllers
             decimal? data = repo.GetWrittenOffAccrualAmount(loanId, loanSystemTypeId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("maximum-application-outstanding-balance/{applicationId}")]
+        public HttpResponseMessage GetMaximumApplicationOutstandingBalance(int applicationId)
+        {
+            decimal data = repo.GetMaximumApplicationOutstandingBalance(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        
     }
 }

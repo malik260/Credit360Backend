@@ -1574,11 +1574,12 @@ namespace FintrakBanking.Repositories.Credit
             return limits;
         }
 
-        public List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId)
+        public List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId, int staffId)
         {
             return context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x => new RecommendedCollateralViewModel
                 {
+                    owner = x.CREATEDBY == staffId,
                     id = x.COLLATERALBASICDETAILID,
                     collateralDetail = x.COLLATERALDETAIL,
                     collateralValue = x.COLLATERALVALUE,
@@ -1616,7 +1617,7 @@ namespace FintrakBanking.Repositories.Credit
             });
 
             context.SaveChanges();
-            return GetRecommendedCollateral(entity.applicationId);
+            return GetRecommendedCollateral(entity.applicationId,entity.createdBy);
         }
 
         public List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity)
@@ -1641,7 +1642,7 @@ namespace FintrakBanking.Repositories.Credit
             });
 
             context.SaveChanges();
-            return GetRecommendedCollateral(entity.applicationId);
+            return GetRecommendedCollateral(entity.applicationId,entity.createdBy);
         }
 
         public List<RecommendedCollateralViewModel> GetRecommendedCollateralHistory(int applicationId)
@@ -2005,6 +2006,28 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            return workflow.Response;
+        }
+
+        public WorkflowResponse GetWorkflowNextStatusLms(ForwardReviewViewModel model)
+        {
+            var applicationDate = general.GetApplicationDate();
+            var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            workflow.Amount = model.totalExposureAmount; //model.amount;
+            workflow.Tenor = model.applicationTenor;
 
             workflow.DeferredExecution = true;
             workflow.LogActivity();

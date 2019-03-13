@@ -48,6 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+
+        public bool isSuspenseCredit { get; set; }
         public decimal bookedAmount { get; set; }
 
         public string productAccountName2 { get; set; }
@@ -133,6 +135,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime maturityDate { get; set; }
         public DateTime bookingDate { get; set; }
         public decimal principalAmount { get; set; }
+        public decimal? principalAmountz { get; set; }
         public int principalInstallmentLeft { get; set; }
         public int interestInstallmentLeft { get; set; }
         public int approvalStatusId { get; set; }
@@ -1529,4 +1532,6 @@ namespace FintrakBanking.ViewModels.Credit
     //    public short loanSystemTypeId { get; set; }
     //    public short approvalStatusId { get; set; }
     //}
+
+    //public class Accrual
 }

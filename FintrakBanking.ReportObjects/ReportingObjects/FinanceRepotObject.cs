@@ -66,6 +66,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                    join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.LOANREFERENCENUMBER
                                                    join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
                                                    join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                                                   
                                                    where DbFunctions.TruncateTime(a.POSTEDDATE) >= DbFunctions.TruncateTime(startDate)
                                                     && DbFunctions.TruncateTime(a.POSTEDDATE) <= DbFunctions.TruncateTime(endDate)
                                                                            && a.COMPANYID == companyId
@@ -95,13 +96,19 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                        casaAccountNumber = context.TBL_CASA.Where(x => x.CASAACCOUNTID == a.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                                        branchName = context.TBL_BRANCH.Where(x => x.BRANCHID == a.SOURCEBRANCHID).Select(x => x.BRANCHNAME).FirstOrDefault(),
                                                        productCode = p.PRODUCTCODE,
+                                                       outstandingBalance = l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL,
                                                        productName = p.PRODUCTNAME,
                                                        customerCode = c.CUSTOMERCODE,
                                                        customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                                                        branchCode = context.TBL_BRANCH.Where(x => x.BRANCHID == l.BRANCHID).Select(x => x.BRANCHCODE).FirstOrDefault(),
                                                        sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
-                                                       operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault()
+                                                       operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
+                                                       transactionID = a.TRANSACTIONID
+                                                       
+                                                      
                                                    }).ToList();
+
+                
                 return data;
             }
 

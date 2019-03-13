@@ -110,7 +110,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CollateralViewModel> GetCollateralStampToCoverValues(int customerId);
 
         TDAccountRecordViewModel GetFixedDepositAccountDetail(string AccpuntNumber);
-
+        IEnumerable<CollateralViewModel> GetCustomerCollateralReport(string searchParam, int companyId);
 
     }
 }

@@ -112,7 +112,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public int? CASAACCOUNTID { get; set; } //CASAACCOUNTID
+        public int? CASAACCOUNTID { get; set; } 
+
+        public int? OPERATINGCASAACCOUNTID { get; set; }
 
         public bool SECUREDBYCOLLATERAL { get; set; }
         public int? CRMSCOLLATERALTYPEID { get; set; }
@@ -149,6 +151,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISSPECIALISED { get; set; }
         //public int? TENORFREQUENCYTYPEID { get; set; }
         public int? TENORFREQUENCYTYPEID { get; set; }
+       // public int? OPERATINGCASAACCOUNTID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

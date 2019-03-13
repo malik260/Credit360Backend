@@ -2393,5 +2393,22 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("legal-contingent-code-validation/{legalContingentCode}/{loanApplicationDetailId}")]
+        public HttpResponseMessage VerifyLegalContingentCode(string legalContingentCode, int loanApplicationDetailId)
+        {
+            try
+            {
+                var response = repo.VerifyLegalContingentCode(legalContingentCode, loanApplicationDetailId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
 }

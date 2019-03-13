@@ -1,5 +1,6 @@
-﻿using FintrakBanking.Common.Enum;
+﻿ using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.ViewModels.AlertMonitoring;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Reports;
@@ -13,6 +14,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
     public  class LimitsMonitoringReportsObjects
     {
         FinTrakBankingContext context = new FinTrakBankingContext();
+
+        FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext();
         public IEnumerable<SectorLimitViewModel> GetSectorLoanAmountLimit(int companyId, int operationId)
         {
             
@@ -59,16 +62,17 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 join branch in context.TBL_BRANCH
                 on Loan.BRANCHID equals branch.BRANCHID into cc
                 from branch in cc.DefaultIfEmpty()
-                group Loan by new { branch.BRANCHCODE, branch.BRANCHNAME, branch.NPL_LIMIT} into groupedQ
+                group Loan by new { branch.BRANCHCODE, branch.BRANCHNAME, branch.NPL_LIMIT } into groupedQ
                 select new SectorLimitViewModel()
                 {
                     companyLogo = company.LOGOPATH,
                     companyName = company.NAME,
-
+                    balances = groupedQ.Sum(z => z.OUTSTANDINGPRINCIPAL + z.PASTDUEPRINCIPAL),
                     subsectorCode = (groupedQ.Key.BRANCHCODE ?? "NOT DEFINED"),
                     sectorName = groupedQ.Key.BRANCHNAME,
                     limitMaximumValue = (decimal?)groupedQ.Key.NPL_LIMIT ?? 0,
                     usage = groupedQ.Sum(i => i.OUTSTANDINGPRINCIPAL),
+                    
                 }).ToList();
 
                 return output;
@@ -83,7 +87,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                              join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                                                              join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals (short?)f.FREQUENCYTYPEID
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
-                                                             where DbFunctions.TruncateTime(a.NEXTCOVENANTDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.NEXTCOVENANTDATE)<= DbFunctions.TruncateTime(endDate)
+                                                            // where DbFunctions.TruncateTime(a.NEXTCOVENANTDATE ) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.NEXTCOVENANTDATE)<= DbFunctions.TruncateTime(endDate)
+                                                             where DbFunctions.TruncateTime(a.COVENANTDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.COVENANTDATE) <= DbFunctions.TruncateTime(endDate)
                                                              && a.COMPANYID == companyId
                                                              orderby a.NEXTCOVENANTDATE descending
                                                              select new LoanCovenantDetailViewModel
@@ -105,7 +110,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                  //relationshipOfficerId = d.STAFFID,
                                                                  //relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
                                                                  //officerEmail = d.EMAIL,
-                                                             }).ToList();
+                                                             }).Distinct().ToList();
 
             return loanDetails;
         } //done
@@ -204,112 +209,194 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return turnoverCovenant;
         } // to do
 
-        public List<LoanViewModel> NPL(DateTime startDate, DateTime endDate, int classification)
-        {
-            //if (classification!=null)
-            //{
-                List<LoanViewModel> termloans = (from a in context.TBL_LOAN_APPLICATION
-                                           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                           join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                                           join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.USER_PRUDENTIAL_GUIDE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID //b.EXT_PRUDENT_GUIDELINE_STATUSID
-                                           //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-                                           where e.PRUDENTIALGUIDELINETYPEID  == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
-                                           && DbFunctions.TruncateTime(b.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
-                                                 orderby b.EFFECTIVEDATE descending
+        //public List<LoanViewModel> NPL(DateTime startDate, DateTime endDate, int classification)
+        //{
+            
+        //        var staffmis = (from m in stagecontext.STG_STAFFMIS select new STG_STAFFMIS { REGION = m.REGION, STAFFCODE = m.STAFFCODE, BRANCHCODE = m.BRANCHCODE, USERNAME = m.USERNAME }).ToList();
+        //    List<LoanViewModel> termloans = (from a in context.TBL_LOAN_APPLICATION
+        //                                     join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+        //                                     join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+        //                                     join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.USER_PRUDENTIAL_GUIDE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID //b.EXT_PRUDENT_GUIDELINE_STATUSID
+        //                                     join cu in context.TBL_CUSTOMER on b.CUSTOMERID equals cu.CUSTOMERID
+        //                                     //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+        //                                     where e.PRUDENTIALGUIDELINETYPEID == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
+        //                                     && DbFunctions.TruncateTime(b.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
+        //                                     orderby b.EFFECTIVEDATE descending
 
-                                                 select new LoanViewModel
-                                           {
-                                               applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                               loanReferenceNumber = b.LOANREFERENCENUMBER,
-                                               bookingDate = b.BOOKINGDATE,
-                                               disburseDate = b.DISBURSEDATE,
-                                               nplDate = (DateTime?)b.NPLDATE,
-                                               loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                               externalPrudentialGuidelineStatus = e.STATUSNAME,
-                                               productName = d.TBL_PRODUCT.PRODUCTNAME
-                                           }).ToList();
+        //                                     select new LoanViewModel
+        //                                     {
+        //                                         applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+        //                                         loanReferenceNumber = b.LOANREFERENCENUMBER,
+        //                                         bookingDate = b.BOOKINGDATE,
+        //                                         disburseDate = b.DISBURSEDATE,
+        //                                         nplDate = (DateTime?)b.NPLDATE,
+        //                                         loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                                         externalPrudentialGuidelineStatus = e.STATUSNAME,
+        //                                         productName = d.TBL_PRODUCT.PRODUCTNAME,
+        //                                         customerName = cu.FIRSTNAME + " " + cu.LASTNAME,
+        //                                         outstandingInterest = b.OUTSTANDINGINTEREST,
+        //                                         outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+        //                                         //  businessUnit = staffmis.Where(x => x.STAFFCODE == a.TBL_STAFF.STAFFCODE)
 
-               //List<LoanViewModel> overdraft = (from a in context.TBL_LOAN_APPLICATION
-               //                              join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-               //                                 //join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-               //                                 join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-               //                                 join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on c.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID                                             
-               //                              where e.PRUDENTIALGUIDELINETYPEID == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
-               //                              && DbFunctions.TruncateTime(c.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(c.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
-               //                              select new LoanViewModel
-               //                              {
-               //                                  applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-               //                                  loanReferenceNumber = c.LOANREFERENCENUMBER,
-               //                                  bookingDate = c.BOOKINGDATE,
-               //                                  disburseDate = c.DISBURSEDATE,
-               //                                  nplDate = (DateTime?)c.NPLDATE,
-               //                                  //outstandingInterest = b.OUTSTANDINGINTEREST,
-               //                                  outstandingPrincipal = c.OVERDRAFTLIMIT,
-               //                                  loanTypeName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-               //                                  externalPrudentialGuidelineStatus = c.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
-               //                                  productName = d.TBL_PRODUCT.PRODUCTNAME
-               //                              }).ToList();
 
-            return termloans;
-            //}
-            //else
-            //{
-            //    List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
-            //                               join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-            //                               join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-            //                               join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
-            //                               //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-            //                               where e.PRUDENTIALGUIDELINETYPEID != (int)LoanPrudentialStatusEnum.Performing //b.INT_PRUDENT_GUIDELINE_STATUSID
-            //                               && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
-            //                               select new LoanViewModel
-            //                               {
-            //                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-            //                                   loanReferenceNumber = b.LOANREFERENCENUMBER,
-            //                                   bookingDate = b.BOOKINGDATE,
-            //                                   disburseDate = b.DISBURSEDATE,
-            //                                   nplDate = (DateTime?)b.NPLDATE,
-            //                                   outstandingInterest = b.OUTSTANDINGINTEREST,
-            //                                   outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
-            //                                   loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-            //                                   externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
-            //                                   productName = d.TBL_PRODUCT.PRODUCTNAME
-            //                               }).ToList();
-            //    return npl;
-            //}
+        //                                     }).ToList();//.Select(x =>
+        //                                     //{
+
+        //                                     //    var getBudetails = staffmis.Where(z => z.STAFFCODE == x.staffCode).Select(z => z.REGION).FirstOrDefault();
+
+        //                                     //    if (getBudetails != null)
+        //                                     //    {
+        //                                     //        x.businessUnit = getBudetails;
+        //                                     //    }
+        //                                     //    else if (getBudetails != null)
+        //                                     //    {
+        //                                     //        x.businessUnit = "";
+        //                                     //    }
+        //                                     //    return x;
+        //                                     //}).ToList();
+                                
+
+        //       //List<LoanViewModel> overdraft = (from a in context.TBL_LOAN_APPLICATION
+        //       //                              join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+        //       //                                 //join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+        //       //                                 join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+        //       //                                 join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on c.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID                                             
+        //       //                              where e.PRUDENTIALGUIDELINETYPEID == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
+        //       //                              && DbFunctions.TruncateTime(c.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(c.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
+        //       //                              select new LoanViewModel
+        //       //                              {
+        //       //                                  applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+        //       //                                  loanReferenceNumber = c.LOANREFERENCENUMBER,
+        //       //                                  bookingDate = c.BOOKINGDATE,
+        //       //                                  disburseDate = c.DISBURSEDATE,
+        //       //                                  nplDate = (DateTime?)c.NPLDATE,
+        //       //                                  //outstandingInterest = b.OUTSTANDINGINTEREST,
+        //       //                                  outstandingPrincipal = c.OVERDRAFTLIMIT,
+        //       //                                  loanTypeName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //       //                                  externalPrudentialGuidelineStatus = c.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
+        //       //                                  productName = d.TBL_PRODUCT.PRODUCTNAME
+        //       //                              }).ToList();
+
+        //    return termloans;
+        //    //}
+        //    //else
+        //    //{
+        //    //    List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
+        //    //                               join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+        //    //                               join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+        //    //                               join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
+        //    //                               //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+        //    //                               where e.PRUDENTIALGUIDELINETYPEID != (int)LoanPrudentialStatusEnum.Performing //b.INT_PRUDENT_GUIDELINE_STATUSID
+        //    //                               && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
+        //    //                               select new LoanViewModel
+        //    //                               {
+        //    //                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+        //    //                                   loanReferenceNumber = b.LOANREFERENCENUMBER,
+        //    //                                   bookingDate = b.BOOKINGDATE,
+        //    //                                   disburseDate = b.DISBURSEDATE,
+        //    //                                   nplDate = (DateTime?)b.NPLDATE,
+        //    //                                   outstandingInterest = b.OUTSTANDINGINTEREST,
+        //    //                                   outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+        //    //                                   loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //    //                                   externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
+        //    //                                   productName = d.TBL_PRODUCT.PRODUCTNAME
+        //    //                               }).ToList();
+        //    //    return npl;
+        //    //}
           
             
-        }  //done
+        //}  //done
+
+        public List<LoanViewModel> NPL(DateTime startDate, DateTime endDate, int classification)
+        {
+
+            List<SubHead> staffmisi = new List<SubHead>();
+            using (FinTrakBankingStagingContext stagingContext = new FinTrakBankingStagingContext())
+            {
+                staffmisi = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION }).ToList();
+
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+                    List<LoanViewModel> termloans = (from a in context.TBL_LOAN_APPLICATION
+                                                     join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                                     join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                                     join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.USER_PRUDENTIAL_GUIDE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID //b.EXT_PRUDENT_GUIDELINE_STATUSID
+                                                     join cu in context.TBL_CUSTOMER on b.CUSTOMERID equals cu.CUSTOMERID
+                                                     //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                                                     where e.PRUDENTIALGUIDELINETYPEID == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
+                                                     && DbFunctions.TruncateTime(b.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
+                                                     orderby b.EFFECTIVEDATE descending
+
+                                                     select new LoanViewModel
+                                                     {
+                                                         applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                                         loanReferenceNumber = b.LOANREFERENCENUMBER,
+                                                         bookingDate = b.BOOKINGDATE,
+                                                         disburseDate = b.DISBURSEDATE,
+                                                         nplDate = (DateTime?)b.NPLDATE,
+                                                         loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                                         externalPrudentialGuidelineStatus = e.STATUSNAME,
+                                                         productName = d.TBL_PRODUCT.PRODUCTNAME,
+                                                         customerName = cu.FIRSTNAME + " " + cu.LASTNAME,
+                                                         outstandingInterest = b.OUTSTANDINGINTEREST,
+                                                         outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+                                                         //  businessUnit = staffmis.Where(x => x.STAFFCODE == a.TBL_STAFF.STAFFCODE)
 
 
-        
-            //}
-            //else
-            //{
-            //    List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
-            //                               join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-            //                               join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-            //                               join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
-            //                               //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-            //                               where e.PRUDENTIALGUIDELINETYPEID != (int)LoanPrudentialStatusEnum.Performing //b.INT_PRUDENT_GUIDELINE_STATUSID
-            //                               && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
-            //                               select new LoanViewModel
-            //                               {
-            //                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-            //                                   loanReferenceNumber = b.LOANREFERENCENUMBER,
-            //                                   bookingDate = b.BOOKINGDATE,
-            //                                   disburseDate = b.DISBURSEDATE,
-            //                                   nplDate = (DateTime?)b.NPLDATE,
-            //                                   outstandingInterest = b.OUTSTANDINGINTEREST,
-            //                                   outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
-            //                                   loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-            //                                   externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
-            //                                   productName = d.TBL_PRODUCT.PRODUCTNAME
-            //                               }).ToList();
-            //    return npl;
-            //}
+                                                     }).ToList().Select(x =>
+                                                     {
+
+                                                         var getBudetails = staffmisi.Where(z => z.staffCode == x.staffCode).Select(z => z.region).FirstOrDefault();
+
+                                                         if (getBudetails != null)
+                                                         {
+                                                             x.businessUnit = getBudetails;
+                                                         }
+                                                         else if (getBudetails != null)
+                                                         {
+                                                             x.businessUnit = "";
+                                                         }
+                                                         return x;
+                                                     }).ToList();
+
+                    return termloans;   
+                }
+                
+                
+            }
+            
+        }
 
 
-       
+
+        //}
+        //else
+        //{
+        //    List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
+        //                               join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+        //                               join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+        //                               join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
+        //                               //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+        //                               where e.PRUDENTIALGUIDELINETYPEID != (int)LoanPrudentialStatusEnum.Performing //b.INT_PRUDENT_GUIDELINE_STATUSID
+        //                               && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
+        //                               select new LoanViewModel
+        //                               {
+        //                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+        //                                   loanReferenceNumber = b.LOANREFERENCENUMBER,
+        //                                   bookingDate = b.BOOKINGDATE,
+        //                                   disburseDate = b.DISBURSEDATE,
+        //                                   nplDate = (DateTime?)b.NPLDATE,
+        //                                   outstandingInterest = b.OUTSTANDINGINTEREST,
+        //                                   outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+        //                                   loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                                   externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
+        //                                   productName = d.TBL_PRODUCT.PRODUCTNAME
+        //                               }).ToList();
+        //    return npl;
+        //}
+
+
+
 
 
         public List<LoanViewModel> SelfLiquidatingLoan(DateTime startDate, DateTime endDate)
@@ -378,43 +465,56 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public List<LoanViewModel> BondAndGuarantee(DateTime startDate, DateTime endDate , int approvalStatus)
         {
+            List<LoanViewModel> bondAndGuarantee = new List<LoanViewModel>();
             if (approvalStatus == (int)LoanStatusEnum.Expired)
             {
-                List<LoanViewModel> bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
-                                                        join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
-                                                        join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
-                                                        join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                                        where a.ISTENORED == false && a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate
-                                                        && a.LOANSTATUSID == (int)LoanStatusEnum.Active && a.RELATED_LOAN_REFERENCE_NUMBER != string.Empty
-                                                        orderby a.MATURITYDATE descending
+                bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
+                                    join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                                    join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                    join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                                    join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
+                                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+                                    where a.ISTENORED == false && a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate
+                                    && a.LOANSTATUSID == (int)LoanStatusEnum.Active && a.RELATED_LOAN_REFERENCE_NUMBER != string.Empty
+                                    orderby a.MATURITYDATE descending
 
-                                                        select new LoanViewModel
-                                                        {
-                                                            applicationReferenceNumber = a.LOANREFERENCENUMBER,
-                                                            loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                                            bookingDate = a.BOOKINGDATE,
-                                                            disburseDate = a.DISBURSEDATE,
-                                                            maturityDate = a.MATURITYDATE,
-                                                            principalAmount = a.CONTINGENTAMOUNT,
-                                                            exchangeRate = a.EXCHANGERATE,
-                                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                            relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                            relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
-                                                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                                                            relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-                                                            relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
-                                                            branchId = a.BRANCHID,
-                                                            branchName = br.BRANCHNAME,
-                                                            customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
-                                                            loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS
+                                    select new LoanViewModel
+                                    {
+
+                                        applicationReferenceNumber = a.LOANREFERENCENUMBER,
+                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                        bookingDate = a.BOOKINGDATE,
+                                        disburseDate = a.DISBURSEDATE,
+                                        maturityDate = a.MATURITYDATE,
+                                        principalAmount = a.CONTINGENTAMOUNT,
+                                        exchangeRate = a.EXCHANGERATE,
+                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                        relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                        relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                                        relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                        relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                        relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                        relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+                                        branchId = a.BRANCHID,
+                                        branchName = br.BRANCHNAME,
+                                        customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+                                        loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                                        productName = p.PRODUCTNAME,
+                                        productTypeName = pt.PRODUCTTYPENAME,
+                                        outstandingPrincipal = a.CONTINGENTAMOUNT
+
+                                       
+                                                            
+
+
                                                         }).ToList();
+
                 return bondAndGuarantee;
             }
             else
             {
 
-                List<LoanViewModel> bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
+                 bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
                                                         join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                         join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                         join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
@@ -595,118 +695,186 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return collaterals;
         }
 
-
-        public IEnumerable<SLANotificationViewModel> SLAMonitoring(DateTime startDate, DateTime endDate, int approvalStatus,int operationId)
+        //Saheed
+        public IEnumerable<SLANotificationViewModel> SLAMonitoring(DateTime startDate, DateTime endDate, int approvalStatus, int operationId)
         {
-
             int[] operations = { (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.CAM, (int)OperationsEnum.ContigentLoanBooking ,
            (int)OperationsEnum.ContingentLiabilityRenewal,(int)OperationsEnum.ContingentLiabilityUsage,(int)OperationsEnum.ContingentRequestBooking,
             (int)OperationsEnum.CommercialLoanBooking};
 
+            var approvalStatusIdentity = context.TBL_APPROVAL_TRAIL.Where(x => x.APPROVALSTATUSID == approvalStatus).Select(x=> x.APPROVALSTATUSID).FirstOrDefault();
+
+            var operationIdentity = context.TBL_OPERATIONS.Where(x => x.OPERATIONID == operationId).Select(x => x.OPERATIONID).FirstOrDefault();
+
+
+
+
             var list = new List<SLANotificationViewModel>();
-            var notificationList = from a in context.TBL_APPROVAL_TRAIL
-                                   join b in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals b.APPROVALLEVELID
-                                   join s in context.TBL_STAFF on a.TOSTAFFID equals s.STAFFID
-                                   join o in context.TBL_OPERATIONS on a.OPERATIONID equals o.OPERATIONID
-                                   where a.SYSTEMARRIVALDATETIME >= startDate && a.SYSTEMARRIVALDATETIME <= endDate 
-                                   && ( a.APPROVALSTATUSID == approvalStatus || approvalStatus == 0)
-                                   && (a.OPERATIONID == operationId || operationId ==0)
+            var notificationList = (from a in context.TBL_APPROVAL_TRAIL
+                                     join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                                     join s in context.TBL_STAFF on a.REQUESTSTAFFID equals s.STAFFID
+                                     join o in context.TBL_OPERATIONS on a.OPERATIONID equals o.OPERATIONID
+                                     where a.SYSTEMARRIVALDATETIME >= startDate && a.SYSTEMARRIVALDATETIME <= endDate
+                                     orderby a.SYSTEMARRIVALDATETIME descending
 
-                                   orderby a.SYSTEMARRIVALDATETIME descending
+                                     select new SLANotificationViewModel
+                                     {
+                                         approvalTrailId = a.APPROVALTRAILID,
+                                         arrivalDate = a.ARRIVALDATE,
+                                         fromApprovalLevelId = a.FROMAPPROVALLEVELID,
+                                         operationId = a.OPERATIONID,
+                                         requestStaffId = a.REQUESTSTAFFID,
+                                         salDateLine = a.SYSTEMARRIVALDATETIME,//.AddHours(b.SLAINTERVAL),
+                                         salInterval = b.SLAINTERVAL,
+                                         systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                                        // ressponseTime = a.SYSTEMRESPONSEDATETIME,
+                                         systemResponseDate = a.SYSTEMRESPONSEDATETIME, 
+                                         targetId = a.TARGETID,
+                                         toApprovalLevelId = a.TOAPPROVALLEVELID,
+                                         toStaffId = a.TOSTAFFID,
+                                         staffEmail = s.EMAIL,
+                                         operationName = o.OPERATIONNAME,
+                                         //responseDefaultTime =a.SYSTEMRESPONSEDATETIME == null ? 0 : a.SYSTEMARRIVALDATETIME.AddHours(b.SLAINTERVAL).Subtract(a.SYSTEMRESPONSEDATETIME.Value).TotalHours,
+                                         //TOSTAFFID
+                                         slaNotificationInterval = b.SLANOTIFICATIONINTERVAL,
+                                         approvalStatusId = a.APPROVALSTATUSID,
+                                          requestFrom = context.TBL_STAFF.Where(s => s.STAFFID == a.REQUESTSTAFFID).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+                                         emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == a.REQUESTSTAFFID).Select(s => s.EMAIL).FirstOrDefault(),
+                                          requestTo = context.TBL_STAFF.Where(s => s.STAFFID == a.TOSTAFFID).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+                                          approvalStatus = context.TBL_APPROVAL_STATUS.Where(p => p.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(p => p.APPROVALSTATUSNAME).FirstOrDefault(),
+                                        ReferenceNumber = context.TBL_LOAN_APPLICATION.Where(o=>o.LOANAPPLICATIONID==a.TARGETID).Select(o=>o.APPLICATIONREFERENCENUMBER).FirstOrDefault()
+                                     });
 
-                                   //&& a.RESPONSESTAFFID == null
-                                   //&& a.TOSTAFFID != null
-                                   //&& b.SLAINTERVAL > 0
+                           if(!(approvalStatusIdentity.Equals(0)) && operationIdentity.Equals(0) )
+                           {
+                             list = notificationList.Where(x => x.approvalStatusId.Equals(approvalStatus)).ToList();
 
-                                   select new SLANotificationViewModel
-                                   {
-                                       approvalTrailId = a.APPROVALTRAILID,
-                                       arrivalDate = a.ARRIVALDATE,
-                                       fromApprovalLevelId = a.FROMAPPROVALLEVELID,
-                                       operationId = a.OPERATIONID,
-                                       requestStaffId = a.REQUESTSTAFFID,
-                                       salInterval = b.SLAINTERVAL,
-                                       systemArrivalDate = a.SYSTEMARRIVALDATETIME,
-                                       ressponseTime = a.SYSTEMRESPONSEDATETIME,
-                                       systemResponseDate = a.SYSTEMRESPONSEDATETIME,
-                                       targetId = a.TARGETID,
-                                       toApprovalLevelId = a.TOAPPROVALLEVELID,
-                                       toStaffId = a.TOSTAFFID,
-                                       staffEmail = s.EMAIL,
-                                       operationName = o.OPERATIONNAME,
-                                       slaNotificationInterval = b.SLANOTIFICATIONINTERVAL,
-                                       approvalStatusId = a.APPROVALSTATUSID
-                                   };
+                           }
+                           else if(!(approvalStatusIdentity.Equals(0)) && !(operationIdentity.Equals(0)))
+                           {
+                list = notificationList.Where(x => x.approvalStatusId.Equals(approvalStatus) && x.operationId.Equals(operationId)).ToList();
+                           }
 
-
-            var data = new SLANotificationViewModel();
-
-            foreach (var x in notificationList)
-            {
-                if (operations.Contains(x.operationId))
-                {
-                    data = new SLANotificationViewModel
-                    {
-                        approvalTrailId = x.approvalTrailId,
-                        arrivalDate = x.arrivalDate,
-                        fromApprovalLevelId = x.fromApprovalLevelId,
-                        operationId = x.operationId,
-                        requestStaffId = x.requestStaffId,
-                        salDateLine = x.systemArrivalDate.AddHours(x.salInterval),
-                        slaNotificationDate = x.systemArrivalDate.AddHours(x.slaNotificationInterval),
-                        salInterval = x.salInterval,
-                        systemArrivalDate = x.systemArrivalDate,
-                        systemResponseDate = x.systemResponseDate,
-                        targetId = x.targetId,
-                        toApprovalLevelId = x.toApprovalLevelId,
-                        toStaffId = x.toStaffId,
-                        staffEmail = x.staffEmail,
-                        operationName = x.operationName,
-                        responseDefaultTime = x.systemResponseDate == null ? 0 : x.systemArrivalDate.AddHours(x.salInterval).Subtract(x.systemResponseDate.Value).TotalHours,
-                        // responseDefaultTime = x.salDateLine == null ? 0 : x.salDateLine.Value.Subtract(x.systemArrivalDate).TotalHours,
-                        slaNotificationInterval = x.slaNotificationInterval,
-                        requestFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
-                        emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.EMAIL).FirstOrDefault(),
-                        requestTo = context.TBL_STAFF.Where(s => s.STAFFID == x.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
-                        approvalStatus = context.TBL_APPROVAL_STATUS.Where(p => p.APPROVALSTATUSID == x.approvalStatusId).Select(p => p.APPROVALSTATUSNAME).FirstOrDefault(),
-                        ReferenceNumber = context.TBL_LOAN_APPLICATION.Where(o=>o.LOANAPPLICATIONID==x.targetId).Select(o=>o.APPLICATIONREFERENCENUMBER).FirstOrDefault()
-                    };
-                    list.Add(data);
-                }
-                else {
-                    data = new SLANotificationViewModel
-                    {
-                        approvalTrailId = x.approvalTrailId,
-                        arrivalDate = x.arrivalDate,
-                        fromApprovalLevelId = x.fromApprovalLevelId,
-                        operationId = x.operationId,
-                        requestStaffId = x.requestStaffId,
-                        salDateLine = x.systemArrivalDate.AddHours(x.salInterval),
-                        slaNotificationDate = x.systemArrivalDate.AddHours(x.slaNotificationInterval),
-                        salInterval = x.salInterval,
-                        systemArrivalDate = x.systemArrivalDate,
-                        systemResponseDate = x.systemResponseDate,
-                        targetId = x.targetId,
-                        toApprovalLevelId = x.toApprovalLevelId,
-                        toStaffId = x.toStaffId,
-                        staffEmail = x.staffEmail,
-                        operationName = x.operationName,
-                        responseDefaultTime = x.systemResponseDate == null ? 0 : x.systemArrivalDate.AddHours(x.salInterval).Subtract(x.systemResponseDate.Value).TotalHours,
-                        // responseDefaultTime = x.salDateLine == null ? 0 : x.salDateLine.Value.Subtract(x.systemArrivalDate).TotalHours,
-                        slaNotificationInterval = x.slaNotificationInterval,
-                        requestFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
-                        emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.EMAIL).FirstOrDefault(),
-                        requestTo = context.TBL_STAFF.Where(s => s.STAFFID == x.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
-                        approvalStatus = context.TBL_APPROVAL_STATUS.Where(p => p.APPROVALSTATUSID == x.approvalStatusId).Select(p => p.APPROVALSTATUSNAME).FirstOrDefault()
-                    };
-                    list.Add(data);
-                }
-                    
-            }
-            return list.ToList(); 
+                           return list.ToList(); 
         }
+        //public IEnumerable<SLANotificationViewModel> SLAMonitoring(DateTime startDate, DateTime endDate, int approvalStatus,int operationId)
+        //{
 
-        public List<Blacklist> Blacklist(DateTime startDate, DateTime endDate, string customercode)
+        //    int[] operations = { (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.CAM, (int)OperationsEnum.ContigentLoanBooking ,
+        //   (int)OperationsEnum.ContingentLiabilityRenewal,(int)OperationsEnum.ContingentLiabilityUsage,(int)OperationsEnum.ContingentRequestBooking,
+        //    (int)OperationsEnum.CommercialLoanBooking};
+
+           
+
+        //    var list = new List<SLANotificationViewModel>();
+                          
+        //    var notificationList  = (from a in context.TBL_APPROVAL_TRAIL
+        //                           join b in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals b.APPROVALLEVELID
+        //                           join s in context.TBL_STAFF on a.TOSTAFFID equals s.STAFFID
+        //                           join o in context.TBL_OPERATIONS on a.OPERATIONID equals o.OPERATIONID
+        //                           where a.SYSTEMARRIVALDATETIME >= startDate && a.SYSTEMARRIVALDATETIME <= endDate 
+        //                           && ( a.APPROVALSTATUSID == approvalStatus || approvalStatus == 0)
+        //                           && (a.OPERATIONID == operationId || operationId ==0)
+
+        //                           orderby a.SYSTEMARRIVALDATETIME descending
+
+        //                           //&& a.RESPONSESTAFFID == null
+        //                           //&& a.TOSTAFFID != null
+        //                           //&& b.SLAINTERVAL > 0
+
+        //                           select new SLANotificationViewModel
+        //                           {
+        //                               approvalTrailId = a.APPROVALTRAILID,
+        //                               arrivalDate = a.ARRIVALDATE,
+        //                               fromApprovalLevelId = a.FROMAPPROVALLEVELID,
+        //                               operationId = a.OPERATIONID,
+        //                               requestStaffId = a.REQUESTSTAFFID,
+        //                               salInterval = b.SLAINTERVAL,
+        //                               systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+        //                               ressponseTime = a.SYSTEMRESPONSEDATETIME,
+        //                               systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+        //                               targetId = a.TARGETID,
+        //                               toApprovalLevelId = a.TOAPPROVALLEVELID,
+        //                               toStaffId = a.TOSTAFFID,
+        //                               staffEmail = s.EMAIL,
+        //                               operationName = o.OPERATIONNAME,
+        //                               slaNotificationInterval = b.SLANOTIFICATIONINTERVAL,
+        //                               approvalStatusId = a.APPROVALSTATUSID
+        //                           }).ToList();
+
+        //    var result = notificationList;
+
+        
+        //    var data = new SLANotificationViewModel();
+
+        //    foreach (var x in notificationList)
+        //    {
+        //        if (operations.Contains(x.operationId))
+        //        {
+        //            data = new SLANotificationViewModel
+        //            {
+        //                approvalTrailId = x.approvalTrailId,
+        //                arrivalDate = x.arrivalDate,
+        //                fromApprovalLevelId = x.fromApprovalLevelId,
+        //                operationId = x.operationId,
+        //                requestStaffId = x.requestStaffId,
+        //                salDateLine = x.systemArrivalDate.AddHours(x.salInterval),
+        //                slaNotificationDate = x.systemArrivalDate.AddHours(x.slaNotificationInterval),
+        //                salInterval = x.salInterval,
+        //                systemArrivalDate = x.systemArrivalDate,
+        //                systemResponseDate = x.systemResponseDate,
+        //                targetId = x.targetId,
+        //                toApprovalLevelId = x.toApprovalLevelId,
+        //                toStaffId = x.toStaffId,
+        //                staffEmail = x.staffEmail,
+        //                operationName = x.operationName,
+        //                responseDefaultTime = x.systemResponseDate == null ? 0 : x.systemArrivalDate.AddHours(x.salInterval).Subtract(x.systemResponseDate.Value).TotalHours,
+        //                // responseDefaultTime = x.salDateLine == null ? 0 : x.salDateLine.Value.Subtract(x.systemArrivalDate).TotalHours,
+        //                slaNotificationInterval = x.slaNotificationInterval,
+        //                requestFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+        //                emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.EMAIL).FirstOrDefault(),
+        //                requestTo = context.TBL_STAFF.Where(s => s.STAFFID == x.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+        //                approvalStatus = context.TBL_APPROVAL_STATUS.Where(p => p.APPROVALSTATUSID == x.approvalStatusId).Select(p => p.APPROVALSTATUSNAME).FirstOrDefault(),
+        //                ReferenceNumber = context.TBL_LOAN_APPLICATION.Where(o=>o.LOANAPPLICATIONID==x.targetId).Select(o=>o.APPLICATIONREFERENCENUMBER).FirstOrDefault()
+        //            };
+        //            list.Add(data);
+        //        }
+        //        else {
+        //            data = new SLANotificationViewModel
+        //            {
+        //                approvalTrailId = x.approvalTrailId,
+        //                arrivalDate = x.arrivalDate,
+        //                fromApprovalLevelId = x.fromApprovalLevelId,
+        //                operationId = x.operationId,
+        //                requestStaffId = x.requestStaffId,
+        //                salDateLine = x.systemArrivalDate.AddHours(x.salInterval),
+        //                slaNotificationDate = x.systemArrivalDate.AddHours(x.slaNotificationInterval),
+        //                salInterval = x.salInterval,
+        //                systemArrivalDate = x.systemArrivalDate,
+        //                systemResponseDate = x.systemResponseDate,
+        //                targetId = x.targetId,
+        //                toApprovalLevelId = x.toApprovalLevelId,
+        //                toStaffId = x.toStaffId,
+        //                staffEmail = x.staffEmail,
+        //                operationName = x.operationName,
+        //                responseDefaultTime = x.systemResponseDate == null ? 0 : x.systemArrivalDate.AddHours(x.salInterval).Subtract(x.systemResponseDate.Value).TotalHours,
+        //                // responseDefaultTime = x.salDateLine == null ? 0 : x.salDateLine.Value.Subtract(x.systemArrivalDate).TotalHours,
+        //                slaNotificationInterval = x.slaNotificationInterval,
+        //                requestFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+        //                emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.EMAIL).FirstOrDefault(),
+        //                requestTo = context.TBL_STAFF.Where(s => s.STAFFID == x.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+        //                approvalStatus = context.TBL_APPROVAL_STATUS.Where(p => p.APPROVALSTATUSID == x.approvalStatusId).Select(p => p.APPROVALSTATUSNAME).FirstOrDefault()
+        //            };
+        //            list.Add(data);
+        //        }
+                    
+        //    }
+        //    return list.ToList(); 
+        //}
+
+
+       
+            public List<Blacklist> Blacklist(DateTime startDate, DateTime endDate, string customercode)
         {
             var data = (from camsol in context.TBL_LOAN_CAMSOL
                         where DbFunctions.TruncateTime(camsol.DATE) >= DbFunctions.TruncateTime(startDate) 
@@ -729,8 +897,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                             principal = camsol.PRINCIPAL,
                             remark = camsol.REMARK,
                         });
-
           
+
             return data.ToList();
         }
     }
