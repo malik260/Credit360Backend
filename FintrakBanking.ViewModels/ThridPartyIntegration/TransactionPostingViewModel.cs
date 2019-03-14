@@ -158,6 +158,7 @@ public class LienProcessViewModel //: GeneralEntity
         public string applicationDate { get; set; }
         [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string expiryDate { get; set; }
+        public string sanctionDate { get; set; }
         public int overdraftExtendId { get; set; }
         public string apiUrl { get; set; }
         public DateTime createdDate { get; set; }
