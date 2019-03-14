@@ -384,6 +384,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_COLLATERAL_VEHICLE> TBL_TEMP_COLLATERAL_VEHICLE { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_PROMISSORY> TBL_TEMP_COLLATERAL_PROMISSORY { get; set; }
         public virtual DbSet<TBL_COLLATERAL_PROMISSORY> TBL_COLLATERAL_PROMISSORY { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_RELEASE_TYPE> TBL_COLLATERAL_RELEASE_TYPE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_RELEASE_STATUS> TBL_COLLATERAL_RELEASE_STATUS { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_RELEASE> TBL_COLLATERAL_RELEASE { get; set; }
 
         //  public virtual DbSet<TBL_TEMP_COMPANY_BENEFICIA> TBL_TEMP_COMPANY_BENEFICIA { get; set; }
         public virtual DbSet<TBL_TEMP_CUST_CLIENT_SUPPLIER> TBL_TEMP_CUST_CLIENT_SUPPLIER { get; set; }

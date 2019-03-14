@@ -25,6 +25,7 @@ namespace FintrakBanking.Repositories.Credit
         private CreditCommonRepository creditCommon;
 
         private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // RMU(71), CAM(79)
+        private List<int> apsOperationIds = new List<int> { 107, 108, 109 }; // 
 
         private readonly int classifiedAssetManagementRoleId = 46;
 
@@ -35,7 +36,7 @@ namespace FintrakBanking.Repositories.Credit
             IWorkflow workflow,
             IAdminRepository admin,
             IOfferLetterAndAvailmentRepository _offerLetter,
-        CreditCommonRepository creditCommon
+            CreditCommonRepository creditCommon
             )
         {
             this.context = context;
@@ -60,17 +61,22 @@ namespace FintrakBanking.Repositories.Credit
 
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
+
+            // TODO
             if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
             if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(79);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(107);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(108);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(109);
 
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
             // get approval levels 
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
 
-            var ids = levelIds.ToList();
-            ids.Add(71); // --------------- REMOVE!!!
-            ids.Add(79); // --------------- REMOVE!!!
+            //var ids = levelIds.ToList();
+            //ids.Add(71); // --------------- REMOVE!!!
+            //ids.Add(79); // --------------- REMOVE!!!
 
             // query
             var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == user.BranchId || ignoreBranch)
@@ -290,15 +296,21 @@ namespace FintrakBanking.Repositories.Credit
 
         public string SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
+            if (model.applicationDetails.Count() > 1 &&
+                model.applicationDetails.Any(x => apsOperationIds.Contains(x.operationId)))
+            {
+                throw new SecureException("Only one operation request is allowed for APS release related applications!");
+            }
+
             int staffId = model.createdBy;
             var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
             int camOperationId = GetCamOperation(model.performanceTypeId);
             bool result = true;
 
-
             foreach (var detail in model.applicationDetails)
             {
+                if (apsOperationIds.Contains(detail.operationId)) camOperationId = detail.operationId; // for APS release
 
                 if (detail.operationId == (int)OperationsEnum.CommercialLoanSubAllocation)
                 {
@@ -404,7 +416,7 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0)
             {
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                if (setup.USE_THIRD_PARTY_INTEGRATION) creditCommon.LoadCustomerTurnover(application.LOANAPPLICATIONID,customerIds,staffId, true);
+               // if (setup.USE_THIRD_PARTY_INTEGRATION) creditCommon.LoadCustomerTurnover(application.LOANAPPLICATIONID,customerIds,staffId, true);
 
                 return "Application with reference number " + referenceNumber + " created.";
             }
@@ -548,6 +560,13 @@ namespace FintrakBanking.Repositories.Credit
                 nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
             }
 
+            if (apsOperationIds.Contains(operationId))
+            {
+                appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                operationId = (int)appl.OPERATIONID;
+                nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment; // redefine
+            }
+
             if (camOperationIds.Contains(operationId) || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))
             {
                 workflow.Amount = GetMaximumApplicationOutstandingBalance(appl.LOANAPPLICATIONID);
@@ -611,13 +630,13 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
-
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId/* && model.operationId != 71*/) // jump process OR end flag
                 {
-                    if (operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter) workflow.NextLevelId = GetFirstReceiverLevel(model.lastUpdatedBy, (int)OperationsEnum.LoanReviewApprovalAvailment, null, true);
+                    if (apsOperationIds.Contains(operationId)) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
+                    if (operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
                     workflow.SetResponse = false;
                     workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
@@ -636,7 +655,7 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
-        private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        /*private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
         {
             var staff = context.TBL_STAFF.Find(staffId);
 
@@ -665,7 +684,34 @@ namespace FintrakBanking.Repositories.Credit
             var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
 
             return nextLevelId;
+        }*/
+
+
+        private int GetFirstAvailmentLevelId(int operationId)
+        {
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         levelTypeId = l.LEVELTYPEID,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList()
+                     ;
+
+            var level = levels.FirstOrDefault(x => x.levelTypeId == (int)ApprovalLevelType.Routing); // routing
+            if (level == null) level = levels.FirstOrDefault(x => x.levelPosition == 1);
+
+            return level.levelId;
         }
+
 
         public decimal GetCustomerTotalOutstandingBalance(int customerId)
         {

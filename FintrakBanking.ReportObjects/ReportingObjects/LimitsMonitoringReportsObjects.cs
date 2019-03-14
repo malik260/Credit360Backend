@@ -62,16 +62,17 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 join branch in context.TBL_BRANCH
                 on Loan.BRANCHID equals branch.BRANCHID into cc
                 from branch in cc.DefaultIfEmpty()
-                group Loan by new { branch.BRANCHCODE, branch.BRANCHNAME, branch.NPL_LIMIT} into groupedQ
+                group Loan by new { branch.BRANCHCODE, branch.BRANCHNAME, branch.NPL_LIMIT } into groupedQ
                 select new SectorLimitViewModel()
                 {
                     companyLogo = company.LOGOPATH,
                     companyName = company.NAME,
-
+                    balances = groupedQ.Sum(z => z.OUTSTANDINGPRINCIPAL + z.PASTDUEPRINCIPAL),
                     subsectorCode = (groupedQ.Key.BRANCHCODE ?? "NOT DEFINED"),
                     sectorName = groupedQ.Key.BRANCHNAME,
                     limitMaximumValue = (decimal?)groupedQ.Key.NPL_LIMIT ?? 0,
                     usage = groupedQ.Sum(i => i.OUTSTANDINGPRINCIPAL),
+                    
                 }).ToList();
 
                 return output;
@@ -86,7 +87,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                              join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                                                              join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals (short?)f.FREQUENCYTYPEID
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
-                                                             where DbFunctions.TruncateTime(a.NEXTCOVENANTDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.NEXTCOVENANTDATE)<= DbFunctions.TruncateTime(endDate)
+                                                            // where DbFunctions.TruncateTime(a.NEXTCOVENANTDATE ) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.NEXTCOVENANTDATE)<= DbFunctions.TruncateTime(endDate)
+                                                             where DbFunctions.TruncateTime(a.COVENANTDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.COVENANTDATE) <= DbFunctions.TruncateTime(endDate)
                                                              && a.COMPANYID == companyId
                                                              orderby a.NEXTCOVENANTDATE descending
                                                              select new LoanCovenantDetailViewModel
@@ -108,7 +110,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                  //relationshipOfficerId = d.STAFFID,
                                                                  //relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
                                                                  //officerEmail = d.EMAIL,
-                                                             }).ToList();
+                                                             }).Distinct().ToList();
 
             return loanDetails;
         } //done

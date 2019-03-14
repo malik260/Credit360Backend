@@ -8,6 +8,8 @@ namespace FintrakBanking.ViewModels
     {
         public int companyId { get; set; }
         public string companyName { get; set; }
+        public string company { get; set; }
+
         public int createdBy { get; set; }
         public int lastUpdatedBy { get; set; }
         public DateTime dateTimeCreated { get; set; }

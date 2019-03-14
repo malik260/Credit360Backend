@@ -48,41 +48,11 @@ namespace FintrakBanking.APICore.Controllers
 
          [HttpPost] [ClaimsAuthorization]
         [Route("loanusage")]
-        public async Task<HttpResponseMessage> SaveContigentLoans()
+        public async Task<HttpResponseMessage> SaveContigentLoans(ContingentLoanUsageViewModel incomingData)
         {
 
             try
             {
-                if (!Request.Content.IsMimeMultipartContent())
-                {
-                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
-                }
-
-                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
-
-                var formData = provider.FormData["formData"];
-
-                var errors = new List<string>();
-                ContingentLoanUsageViewModel incomingData = JsonConvert.DeserializeObject<ContingentLoanUsageViewModel>(formData,
-                    new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Include,
-                        Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs earg)
-                        {
-                            errors.Add(earg.ErrorContext.Member.ToString());
-                            earg.ErrorContext.Handled = true;
-                        }
-                    });
-
-
-                if (!provider.FileStreams.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
-                }
-
-                var file = provider.Contents.FirstOrDefault();
-                var buffer = await file.ReadAsByteArrayAsync();
 
                 incomingData.applicationUrl = HttpContext.Current.Request.Path;
                 incomingData.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -92,7 +62,7 @@ namespace FintrakBanking.APICore.Controllers
                 incomingData.staffId = token.GetStaffId;
                 incomingData.userBranchId = (short)token.GetBranchId;
 
-                var data = repo.SaveContigentLoans(incomingData, buffer);
+                var data = repo.SaveContigentLoans(incomingData);
 
                 if (data)
                 {

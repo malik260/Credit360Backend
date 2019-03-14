@@ -2240,13 +2240,18 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.OperationId = entity.operationId;
                     workflow.DeferredExecution = true;
                     workflow.ExternalInitialization = false;
-                    workflow.FinalLevel = application.TRANCHEAPPROVAL_LEVELID;
+                    //workflow.FinalLevel = application.TRANCHEAPPROVAL_LEVELID;
+
+                    if (GetCurrentApprovalLevelId(entity.companyId, entity.operationId, entity.targetId) == application.TRANCHEAPPROVAL_LEVELID)
+                    {
+                        workflow.NextLevelId = GetFirstAvailmentLevelId(entity.operationId);
+                    }
 
                     workflow.LogActivity();
 
                     context.SaveChanges();
 
-                    if ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                    if (entity.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                     {
                         request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
                         trans.Commit();
@@ -2312,12 +2317,59 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
         }
-        /// <summary>
-        /// Gets the term loan booking awaiting approval.
-        /// </summary>
-        /// <param name="staffId">The staff identifier.</param>
-        /// <param name="companyId">The company identifier.</param>
-        /// <returns></returns>
+
+        private int? GetCurrentApprovalLevelId(int companyId, int operationId, int targetId)
+        {
+            var trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == companyId
+                                && x.OPERATIONID == operationId
+                                && x.TARGETID == targetId
+                                && x.RESPONSESTAFFID == null
+                                && x.TOAPPROVALLEVELID != null // check in workflow
+                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                            ).ToList();
+
+            var request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault() ?? null;
+
+            return request.TOAPPROVALLEVELID ?? null;
+        }
+
+        private int GetFirstAvailmentLevelId(int operationId)
+        {
+            int nextGroupId = 20; // ------------------------HARDCODING!!!!!!
+            var operation = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == operationId);
+            // if (operation != null) nextGroupId = operation.NEXTAPPROVALGROUPID;
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.GROUPID == nextGroupId)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         levelTypeId = l.LEVELTYPEID,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList()
+                     ;
+
+            var level = levels.FirstOrDefault(x => x.levelTypeId == (int)ApprovalLevelType.Routing); // routing
+            if (level == null) level = levels.FirstOrDefault(x => x.levelPosition == 1);
+
+            return level.levelId;
+
+            /*select l.POSITION, m.GROUPID, g.GROUPNAME,l.APPROVALLEVELID,l.LEVELNAME from TBL_APPROVAL_GROUP_MAPPING m 
+            join TBL_APPROVAL_GROUP g on (m.GROUPID=g.GROUPID)
+            join TBL_APPROVAL_LEVEL l on (g.GROUPID=l.GROUPID)
+            where m.OPERATIONID=39 and m.GROUPID=20
+            order by l.POSITION;*/
+        }
+
+
         public IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId)
         {
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanTrancheBookingRequest).ToList();
@@ -2342,6 +2394,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                                   && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || ids2.Contains((int)atrail.TOAPPROVALLEVELID))
+                                  && (atrail.TOSTAFFID == null || atrail.TOSTAFFID == staffId)
                                   && atrail.RESPONSESTAFFID == null
                             orderby d.LOANAPPLICATIONDETAILID descending
 
@@ -8570,10 +8623,10 @@ namespace FintrakBanking.Repositories.Credit
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                        //join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
-                                       //join f in context.TBL_LOAN_CAMSOL on a.TERMLOANID equals f.LOANID
+                                       join f in context.TBL_LOAN_CAMSOL on a.TERMLOANID equals f.LOANID
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanRecovery
-                                      && b.OPERATIONPERFORMED == false
+                                      && b.OPERATIONPERFORMED == false && a.LOANSTATUSID == (short)LoanStatusEnum.WriteOff
                                        //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel

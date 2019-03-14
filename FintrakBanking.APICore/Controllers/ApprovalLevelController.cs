@@ -78,7 +78,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("approval-levels/operation/{operationId}/product-class/{classId}")]
         public HttpResponseMessage GetApprovalLevelByOperationIdAndProductClassId(int operationId, int? classId)
         {
@@ -93,8 +94,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("tranch-disbursment-approval-level")]
+        public HttpResponseMessage GetTranchDisbursmentApprovalLevels()
+        {
+            try
+            {
+                List<FintrakDropDownSelectList> data = repo.GetTranchDisbursmentApprovalLevels();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level-detailed/all")]
         public HttpResponseMessage GetAllDetailedApprovalLevel()
         {
