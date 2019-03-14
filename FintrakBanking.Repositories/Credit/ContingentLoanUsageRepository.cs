@@ -221,13 +221,13 @@ namespace FintrakBanking.Repositories.Credit
             return GetRequestWaitingApprovalByOperation(staffId).ToList();
         }
 
-        public IQueryable<ContingentLoansViewModel> GetRequestWaitingApprovalByOperation(int staffId)
+        public List<ContingentLoansViewModel> GetRequestWaitingApprovalByOperation(int staffId)
         {
             int[] operations = { (int)OperationsEnum.APS_RelaseChecklist, (int)OperationsEnum.APS_ReleaseCAP, (int)OperationsEnum.APS_ReleasePrincipaRequest };
 
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContingentLiabilityUsage).ToList();
 
-            var applications = from lcu in context.TBL_LOAN_CONTINGENT_USAGE
+            var applications = (from lcu in context.TBL_LOAN_CONTINGENT_USAGE
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on lcu.CONTINGENTLOANID equals d.LOANID
                                join l in context.TBL_LMSR_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                                join atrail in context.TBL_APPROVAL_TRAIL on lcu.CONTINGENTLOANUSAGEID equals atrail.TARGETID
@@ -268,7 +268,17 @@ namespace FintrakBanking.Repositories.Credit
                                    amountRequested = lcu.AMOUNTREQUESTED,
                                    timeIn = atrail.SYSTEMARRIVALDATETIME,
                                    loanApplicationNumber = l.APPLICATIONREFERENCENUMBER,
-                               };
+                               }).ToList();
+
+            foreach (var item in applications)
+            {
+                var usedData = context.TBL_LOAN_CONTINGENT_USAGE.Where(d => d.CONTINGENTLOANID == item.contingentLoanId);
+                if (usedData.Any())
+                {
+                    item.usedAmount = usedData.Sum(c => c.AMOUNTREQUESTED);
+                }
+            }
+
             return applications;
         }
 
