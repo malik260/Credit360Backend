@@ -5864,7 +5864,7 @@ namespace FintrakBanking.Repositories.Credit
                     var reviewDate = model.maturityDate;
                     var data = new OverDraftTopUpAndRenewViewModel
                     {
-                        reviewedDate = loan.effectiveDate.AddMonths(1).ToString("dd-MMM-yyyy", null),
+                        //reviewedDate = loan.effectiveDate.AddMonths(1).ToString("dd-MMM-yyyy", null),
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
                         applicationDate = systemDate.ToString("dd-MMM-yyyy", null), // loan.effectiveDate.ToString("dd-MMM-yyyy", null),
                         sanctionReferenceNumber = loan.serialNumber,
