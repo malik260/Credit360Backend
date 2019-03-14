@@ -1177,6 +1177,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 // update
                 var appl = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
+                if (appl != null) appl.TOTALEXPOSUREAMOUNT = cumulativeSum + GetCustomerTotalOutstandingBalance((int)loan.customerId);
                 if (appl != null) appl.APPLICATIONAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
 
                 if (loanData == null)
