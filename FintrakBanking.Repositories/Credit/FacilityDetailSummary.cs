@@ -8,6 +8,7 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,6 +70,64 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
+
+        public List<ProductFeeViewModel> GetLoanProductFeesByFacilityId(int loanApplicationDeatilId)
+        {
+            var facilityDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDeatilId);
+
+
+            var loanAppProdFee = (from fa in context.TBL_LOAN_APPLICATION_DETL_FEE
+                                  where fa.LOANAPPLICATIONDETAILID == loanApplicationDeatilId
+                                  && fa.DELETED == false
+                                  select new ProductFeeViewModel
+                                  {
+                                      feeName = fa.TBL_CHARGE_FEE.CHARGEFEENAME,
+                                      loanApplicationDetailId = fa.LOANAPPLICATIONDETAILID,
+                                      chargeFeeId = fa.CHARGEFEEID,
+                                      consessionReason = fa.CONSESSIONREASON,
+                                      approvalStatusId = fa.APPROVALSTATUSID,
+                                      defaultfeeRateValue = fa.DEFAULT_FEERATEVALUE,
+                                      recommededFeeRateValue = fa.RECOMMENDED_FEERATEVALUE,
+                                      feeRateValue = fa.RECOMMENDED_FEERATEVALUE,
+                                      feeAmount = (facilityDetail.APPROVEDAMOUNT * fa.RECOMMENDED_FEERATEVALUE) / 100,
+                                      feeIntervalName = fa.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                                      isIntegralFee = fa.TBL_CHARGE_FEE.ISINTEGRALFEE,
+                                      isRecurring = fa.TBL_CHARGE_FEE.RECURRING,
+                                      valueBase = "Rate(%)",
+                                      dealTypeId = 0
+                                  }).ToList();
+
+            var lisProdFeeViewModel = new List<ProductFeeViewModel>();
+            foreach (var item in loanAppProdFee)
+            {
+                var chargeFeeDetail = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == item.chargeFeeId && x.DETAILTYPEID == (short)ChargeFeeDetailTypeEnum.Tax).FirstOrDefault();
+                if (chargeFeeDetail != null)
+                {
+                    var prodFeeView = new ProductFeeViewModel()
+                    {
+                        feeName = chargeFeeDetail.DESCRIPTION,
+                        loanApplicationDetailId = loanApplicationDeatilId,
+                        chargeFeeId = chargeFeeDetail.CHARGEFEEID,
+                        recommededFeeRateValue = (decimal)chargeFeeDetail.VALUE,
+                        feeRateValue = (decimal)chargeFeeDetail.VALUE,
+                        feeAmount = (item.feeAmount * (decimal)chargeFeeDetail.VALUE) / 100,
+                        feeIntervalName = chargeFeeDetail.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                        isIntegralFee = chargeFeeDetail.TBL_CHARGE_FEE.ISINTEGRALFEE,
+                        isRecurring = chargeFeeDetail.TBL_CHARGE_FEE.RECURRING,
+                        valueBase = "Rate(%)",
+                        dealTypeId = (short)ChargeFeeDetailTypeEnum.Tax
+                    };
+
+                    lisProdFeeViewModel.Add(prodFeeView);
+                }
+            }
+
+            loanAppProdFee = loanAppProdFee.Union(lisProdFeeViewModel).OrderBy(x => x.feeName).ToList();
+
+            return loanAppProdFee;
+        }
+
+
 
         public LoanViewModel FacilityDetail(int loanId)
         {
@@ -856,7 +915,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.FIRSTNAME.ToUpper().Contains(searchQuery) ||
                                    b.LASTNAME.ToUpper().Contains(searchQuery) ||
                                    c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery))
-                                   
+
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -865,8 +924,9 @@ namespace FintrakBanking.Repositories.Credit
                                        RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                        customerName = b.FIRSTNAME + " " + b.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                      // applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                       // applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                        loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                                       loanApplicationDetailId  = a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONDETAILID,
                                        interestRate = a.INTERESTRATE,
                                        principalAmount = a.PRINCIPALAMOUNT,
                                        effectiveDate = a.EFFECTIVEDATE,
@@ -1060,6 +1120,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                        loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                                       loanApplicationDetailId = a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONDETAILID,
                                        interestRate = a.INTERESTRATE,
                                        principalAmount = a.OVERDRAFTLIMIT,
                                        effectiveDate = a.EFFECTIVEDATE,
@@ -1115,6 +1176,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                        loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                                       loanApplicationDetailId = a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONDETAILID,
                                        interestRate = 1,
                                        principalAmount = a.CONTINGENTAMOUNT,
                                        effectiveDate = a.EFFECTIVEDATE,
@@ -1149,6 +1211,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                        applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                        loanApplicationId = d.LOANAPPLICATIONID,
+                                       loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                        interestRate = 1,
                                        principalAmount = d.APPROVEDAMOUNT,
                                        //effectiveDate = a.EFFECTIVEDATE,

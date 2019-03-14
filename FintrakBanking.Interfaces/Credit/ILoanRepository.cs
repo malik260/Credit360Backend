@@ -27,6 +27,7 @@ namespace FintrakBanking.Interfaces.Credit
         decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear);
 
         List<ProductFeeViewModel> GetLoanProductFees(int loanBookingRequestId);
+        
 
         CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode);
 
@@ -150,6 +151,7 @@ namespace FintrakBanking.Interfaces.Credit
         //void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
 
         IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery);
+        //IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanReviewFeeCharge(int loanSystemTypeId, string searchQuery);
         IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanFeeCharge(int loanSystemTypeId, string searchQuery);
 
         string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId);

@@ -247,7 +247,7 @@ namespace FintrakBanking.Repositories.Credit
             return loanAppProdFee;
         }
 
-
+       
         public string GenerateLoanReferenceNumber(int branchId, int productId, int loanSystemTypeId)
         {
             var branch = this.context.TBL_BRANCH.Find(branchId);
@@ -656,6 +656,7 @@ namespace FintrakBanking.Repositories.Credit
         private string addRevolvingLoan(LoanViewModel model)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
+            var applicationdetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.loanApplicationDetailId);
             var revolvingLoanInput = model.revolvingLoanInput;
             var systemDate = generalSetup.GetApplicationDate();
 
@@ -792,7 +793,7 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Covenant..........
                         AddLoanCovenant(model, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
                         //............save Loan Fees..........
-                        AddLoanFees(model.loanChargeFee, model.createdBy, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model.companyId, model.feeOverride);
+                        AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail, true);
 
                         model.loanReferenceNumber = loanReferenceNumber;
 
@@ -1012,7 +1013,7 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Covenant..........
                         AddLoanCovenant(entity, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
                         //............save Loan Fees..........
-                        AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity.companyId, entity.feeOverride);
+                        AddLoanFees(entity.loanChargeFee,  loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity, applicationDetail, true);
                         entity.loanReferenceNumber = loanReferenceNumber;
 
                         //...................Saving Loan Collaterals Mapping.......................
@@ -1084,13 +1085,15 @@ namespace FintrakBanking.Repositories.Credit
                                   let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
                                   select sumPrincipalAmount;
 
-            var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == applicationDetail.CURRENCYID).FirstOrDefault();
-            var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
-
-            var interestRate = Convert.ToDouble(entity.interestRate);
-            if (priceIndex != null)
+            var interestRate = Convert.ToDouble(applicationDetail.APPROVEDINTERESTRATE);
+            var priceIndex = new TBL_PRODUCT_PRICE_INDEX();
+            if (entity.productPriceIndexId > 0)
             {
-                interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == entity.productPriceIndexId select a).FirstOrDefault();
+                if (priceIndex != null)
+                {
+                    interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                }
             }
 
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)entity.currencyId, entity.companyId).sellingRate;
@@ -1413,7 +1416,7 @@ namespace FintrakBanking.Repositories.Credit
                                 }
                             }
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
+                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail, true);
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
@@ -1473,31 +1476,8 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             var systemDate = generalSetup.GetApplicationDate();
 
-            //var loanTenorDays = (entity.maturityDate - entity.effectiveDate).Days;
-            //if (loanTenorDays > applicationDetail.APPROVEDTENOR)
-            //    throw new ConditionNotMetException("The loan tenor cannot be more than the tenor of its line");
-
-            //if (entity.casaAccountId2 == null || entity.casaAccountId2 == 0)
-            //    throw new ConditionNotMetException("Specify the recieving account.");
-
-            //if (entity.effectiveDate == entity.maturityDate)
-            //    throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
-
-            //if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
-            //    throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
-
-            //if (entity.effectiveDate > entity.maturityDate)
-            //    throw new ConditionNotMetException("The effective cannot be greater than maturity date");
-
-            //if (entity.effectiveDate > systemDate)
-            //    throw new ConditionNotMetException("You effective date cannot be post-dated.");
-
-            //if (applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
-            //    throw new ConditionNotMetException($"Commercial Loan maturity date should not exceed the line expiry date [{Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}]. ");
 
             loanBookingValidation(entity);
-
-            //var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
 
             var principalAmount = from a in context.TBL_LOAN
                                   where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
@@ -1506,12 +1486,11 @@ namespace FintrakBanking.Repositories.Credit
 
             double? priceIndex = (from a in context.TBL_PRODUCT where a.PRODUCTID == entity.productId select a.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE).FirstOrDefault();
 
+
+
             var approvedAmount = applicationDetail.APPROVEDAMOUNT;
             var totalPreviouslyBookedAmount = principalAmount.FirstOrDefault();
             var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.principalAmount);
-
-            //if (totalPrincipalAmount > (decimal)approvedAmount)
-            //    throw new ConditionNotMetException("The loan amount cannot be greater than the available amount");
 
             var loanData = context.TBL_LOAN.Find(entity.loanId);
             loanData.CASAACCOUNTID = entity.casaAccountId;
@@ -1521,7 +1500,6 @@ namespace FintrakBanking.Repositories.Credit
             loanData.SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount;
             loanData.PRINCIPALAMOUNT = Convert.ToDecimal(entity.loanPrincipal);
             loanData.OUTSTANDINGPRINCIPAL = Convert.ToDecimal(entity.loanPrincipal);
-            //loanData.CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId;
             loanData.EFFECTIVEDATE = entity.effectiveDate;
             loanData.MATURITYDATE = entity.maturityDate;
             loanData.INTERESTRATE = Convert.ToInt32(applicationDetail.APPROVEDINTERESTRATE);
@@ -1730,7 +1708,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (LogApproval(approvalModel, (int)OperationsEnum.CommercialLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                         {
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
+                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail, true);
 
                             //...................Saving Commercial Loan Collaterals Mapping.......................
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
@@ -2062,7 +2040,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (LogApproval(approvalModel, (int)OperationsEnum.ForeignExchangeLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                         {
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
+                            AddLoanFees(entity.loanChargeFee,  loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity,applicationDetail,true);
 
                             //...................Saving FX Loan Collaterals Mapping.......................
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
@@ -2416,6 +2394,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                                   && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || ids2.Contains((int)atrail.TOAPPROVALLEVELID))
+                                  && (atrail.TOSTAFFID == null || atrail.TOSTAFFID == staffId)
                                   && atrail.RESPONSESTAFFID == null
                             orderby d.LOANAPPLICATIONDETAILID descending
 
@@ -4652,8 +4631,15 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short loanSystemTypeId, int companyId, bool feeOverride)
+        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short loanSystemTypeId, LoanViewModel loanModel, TBL_LOAN_APPLICATION_DETAIL facilityDetail, bool chargeByFacility)
         {
+            if (chargeByFacility)
+            {
+               if( context.TBL_LOAN_FEE.Where(x=>x.LOANID == facilityDetail.LOANAPPLICATIONDETAILID && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).Any())
+                {
+                    return;
+                }
+            }
             foreach (var ent in feeModel)
             {
                 if(ent.dealTypeId != (short)ChargeFeeDealTypeEnum.Tax)
@@ -4661,19 +4647,19 @@ namespace FintrakBanking.Repositories.Credit
                     var fee = new TBL_LOAN_FEE
                     {
                         CHARGEFEEID = ent.chargeFeeId,
-                        FEEAMOUNT = ent.feeAmount,
-                        FEEDEPENDENTAMOUNT = ent.feeDependentAmount,
+                        FEEAMOUNT = chargeByFacility ? facilityDetail.APPROVEDAMOUNT : ent.feeAmount,
+                        FEEDEPENDENTAMOUNT = chargeByFacility ? facilityDetail.APPROVEDAMOUNT : ent.feeDependentAmount,
                         FEERATEVALUE = ent.feeRateValue,
                         ISINTEGRALFEE = ent.isIntegralFee,
                         LOANID = loanId,
-                        LOANSYSTEMTYPEID = loanSystemTypeId,
+                        LOANSYSTEMTYPEID = chargeByFacility ? (short)LoanSystemTypeEnum.LineFacility : loanSystemTypeId,
                         ISRECURRING = ent.recurring,
                         RECURRINGPAYMENTDAY = 28,
-                        CREATEDBY = staffId,
+                        CREATEDBY = loanModel.createdBy,
                         DATETIMECREATED = DateTime.Now.Date,
                         ISPOSTED = ent.isPosted
                     };
-                    if (feeOverride)
+                    if (loanModel.feeOverride)
                     {
                         fee.ISPOSTED = false;
                     }
@@ -8637,10 +8623,10 @@ namespace FintrakBanking.Repositories.Credit
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                        //join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
-                                       //join f in context.TBL_LOAN_CAMSOL on a.TERMLOANID equals f.LOANID
+                                       join f in context.TBL_LOAN_CAMSOL on a.TERMLOANID equals f.LOANID
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONID == (int)OperationsEnum.LoanRecovery
-                                      && b.OPERATIONPERFORMED == false
+                                      && b.OPERATIONPERFORMED == false && a.LOANSTATUSID == (short)LoanStatusEnum.WriteOff
                                        //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
@@ -10572,6 +10558,60 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
         }
 
+        private IQueryable<LoanViewModel> SearchTermLoanReviewFeeCharge(string searchQuery)
+        {
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToUpper();
+            }
+
+
+            List<short> productTypes = new List<short>();
+            productTypes.Add((short)LoanProductTypeEnum.CommercialLoan);
+            productTypes.Add((short)LoanProductTypeEnum.ForeignXRevolving);
+
+
+            var allFilteredLoan = (from a in context.TBL_LOAN
+                                   join f in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals f.LOANID
+                                       //join lm in context.TBL_LMSR_APPLICATION on f.LOANAPPLICATIONID equals lm.LOANAPPLICATIONID
+                                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                   join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                                   where a.ISDISBURSED == true && f.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility &&   // a.MATURITYDATE >=      &&  //a.LOANSTATUSID != 7 &&
+                                   (a.LOANREFERENCENUMBER.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
+                                   //&& a.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                                   // && a.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
+                                   && !productTypes.Contains(a.TBL_PRODUCT.PRODUCTTYPEID)
+                                   select new LoanViewModel
+                                   {
+                                       loanId = a.TERMLOANID,
+                                       customerId = a.CUSTOMERID,
+                                       productId = a.PRODUCTID,
+                                       customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                                       loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                       loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                       applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                       interestRate = a.INTERESTRATE,
+                                       principalAmount = a.PRINCIPALAMOUNT,
+                                       effectiveDate = a.EFFECTIVEDATE,
+                                       maturityDate = a.MATURITYDATE,
+                                       //loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+                                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
+                                       writtenOff = a.LOANSTATUSID == 7,
+                                       loanStatusId = a.LOANSTATUSID,
+                                       loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                       lmsApplicationDetailId = f.LOANREVIEWAPPLICATIONID
+                                   });
+            var j = allFilteredLoan.ToList();
+            return allFilteredLoan;
+        }
+
         private IQueryable<LoanViewModel> SearchRevolvingLoanFeeCharge(string searchQuery)
         {
             if (!string.IsNullOrWhiteSpace(searchQuery))
@@ -10697,6 +10737,46 @@ namespace FintrakBanking.Repositories.Credit
 
             return allFilteredLoan;
         }
+
+        //public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanReviewFeeCharge(int loanSystemTypeId, string searchQuery)
+        //{
+
+        //    var applicationDate = generalSetup.GetApplicationDate();
+
+        //    IEnumerable<LoanViewModel> allFilteredLoan = null;
+        //    if (!string.IsNullOrWhiteSpace(searchQuery))
+        //    {
+        //        searchQuery = searchQuery.ToLower();
+        //    }
+
+        //    if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+        //    {
+        //        if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+        //        {
+        //            allFilteredLoan = SearchTermLoanReviewFeeCharge(searchQuery);//.Where(x => x.isPerforming == performing || all);
+        //        }
+        //        else if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
+        //        {
+        //            allFilteredLoan = SearchRevolvingLoanFeeCharge(searchQuery);//.Where(x => x.isPerforming == performing || all);
+        //        }
+        //        else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
+        //        {
+        //            allFilteredLoan = SearchContigentLoanFeeCharge(searchQuery);
+        //        }
+        //        else if (loanSystemTypeId == (int)LoanSystemTypeEnum.LineFacility)
+        //        {
+        //            allFilteredLoan = SearchLoanLine(searchQuery);
+        //        }
+        //        else
+        //        {
+        //            throw new SecureException("Not Implemented!");
+        //        }
+
+        //    }
+
+
+        //    return allFilteredLoan;
+        //}
 
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery)
         {

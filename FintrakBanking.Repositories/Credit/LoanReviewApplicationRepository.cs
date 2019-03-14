@@ -416,7 +416,7 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0)
             {
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                if (setup.USE_THIRD_PARTY_INTEGRATION) creditCommon.LoadCustomerTurnover(application.LOANAPPLICATIONID,customerIds,staffId, true);
+               // if (setup.USE_THIRD_PARTY_INTEGRATION) creditCommon.LoadCustomerTurnover(application.LOANAPPLICATIONID,customerIds,staffId, true);
 
                 return "Application with reference number " + referenceNumber + " created.";
             }
@@ -635,8 +635,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId/* && model.operationId != 71*/) // jump process OR end flag
                 {
-                    if (apsOperationIds.Contains(operationId)) workflow.NextLevelId = GetFirstReceiverLevel(model.lastUpdatedBy, (int)OperationsEnum.LoanReviewApprovalAvailment, null, true);
-                    if (operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter) workflow.NextLevelId = GetFirstReceiverLevel(model.lastUpdatedBy, (int)OperationsEnum.LoanReviewApprovalAvailment, null, true);
+                    if (apsOperationIds.Contains(operationId)) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
+                    if (operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
                     workflow.SetResponse = false;
                     workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
@@ -655,7 +655,7 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
-        private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        /*private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
         {
             var staff = context.TBL_STAFF.Find(staffId);
 
@@ -684,7 +684,34 @@ namespace FintrakBanking.Repositories.Credit
             var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
 
             return nextLevelId;
+        }*/
+
+
+        private int GetFirstAvailmentLevelId(int operationId)
+        {
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         levelTypeId = l.LEVELTYPEID,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList()
+                     ;
+
+            var level = levels.FirstOrDefault(x => x.levelTypeId == (int)ApprovalLevelType.Routing); // routing
+            if (level == null) level = levels.FirstOrDefault(x => x.levelPosition == 1);
+
+            return level.levelId;
         }
+
 
         public decimal GetCustomerTotalOutstandingBalance(int customerId)
         {

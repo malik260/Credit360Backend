@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -45,6 +46,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan-product-fees/application/{loanApplicationDeatilId}")]
+        public HttpResponseMessage GetLoanProductFeesByFacilityId(int loanApplicationDeatilId)
+        {
+            var response = repo.GetLoanProductFeesByFacilityId(loanApplicationDeatilId);
+            if (response == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        }
+
+        
         [HttpGet]
         [ClaimsAuthorization]
         [Route("facilty-details/{loanId}")]

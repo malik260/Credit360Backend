@@ -318,6 +318,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
+       
+
         [HttpGet]
         [Route("loan-schedule-category")]
         public HttpResponseMessage GetAllLoanScheduleCategory()
