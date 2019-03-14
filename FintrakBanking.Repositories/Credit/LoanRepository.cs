@@ -5909,28 +5909,33 @@ namespace FintrakBanking.Repositories.Credit
 
         private decimal getDisbursableAmount(int operationId,int loanApplicationDetailId)
         {
-            decimal disbursableAmount = 0;
+            var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
+            var approvedAmount = appDetail.APPROVEDAMOUNT;
+            decimal? disbursableAmount = 0;
             if (operationId == (short)OperationsEnum.TermLoanBooking 
                 || operationId == (short)OperationsEnum.ForeignExchangeLoanBooking 
                 || operationId == (short)OperationsEnum.ContigentLoanBooking)
             {
-                disbursableAmount =(from l in context.TBL_LOAN
-                where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                select l).Sum(x=>x.PRINCIPALAMOUNT);
+                var summedPrincipal =  (from l in context.TBL_LOAN
+                                     where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                     select (decimal?)l.PRINCIPALAMOUNT).Sum() ?? 0;
+                disbursableAmount = approvedAmount - summedPrincipal;
             }
             if (operationId == (short)OperationsEnum.ContigentLoanBooking)
             {
-                disbursableAmount = (from l in context.TBL_LOAN_CONTINGENT
+                var summedPrincipal = approvedAmount - (from l in context.TBL_LOAN_CONTINGENT
                                      where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                                     select l).Sum(x => x.CONTINGENTAMOUNT);
+                                     select (decimal?)l.CONTINGENTAMOUNT).Sum() ?? 0;
+                disbursableAmount = approvedAmount - summedPrincipal;
             }
             if (operationId == (short)OperationsEnum.RevolvingLoanBooking)
             {
-                disbursableAmount = (from l in context.TBL_LOAN_REVOLVING
+                var summedPrincipal = approvedAmount - (from l in context.TBL_LOAN_REVOLVING
                                      where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                                     select l).Sum(x => x.OVERDRAFTLIMIT);
+                                     select (decimal?)l.OVERDRAFTLIMIT).Sum() ?? 0;
+                disbursableAmount = approvedAmount - summedPrincipal;
             }
-            return disbursableAmount;
+            return disbursableAmount ?? 0;
         }
 
         public bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity)
