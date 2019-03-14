@@ -57,9 +57,9 @@ namespace FintrakBanking.Repositories.Credit
                             join r in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals r.LOANID
                             join l in context.TBL_LMSR_APPLICATION on r.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                             join b in context.TBL_PRODUCT_BEHAVIOUR on a.PRODUCTID equals b.PRODUCTID
-                            where l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
+                            where l.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                             //&& currentDate <= a.MATURITYDATE 
-                            && operations.Contains(l.OPERATIONID) 
+                            && operations.Contains(l.OPERATIONID)
                             && r.OPERATIONPERFORMED == false
                             && r.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
 
@@ -85,13 +85,14 @@ namespace FintrakBanking.Repositories.Credit
                                 productName = a.TBL_PRODUCT.PRODUCTNAME,
                                 loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
                                 loanSystemTypeId = a.LOANSYSTEMTYPEID,
-                                amountRequested = r.PROPOSEDAMOUNT,
+                                amountRequested = (decimal)r.CUSTOMERPROPOSEDAMOUNT,
                                 loanReviewApplicationId = r.LOANREVIEWAPPLICATIONID,
-                                operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==l.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
+                                operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == l.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
+                                loanApplicationNumber=l.APPLICATIONREFERENCENUMBER
 
-                            });
+                            }).ToList();
 
-                
+
                 foreach (var item in data)
                 {
                     var usedData = context.TBL_LOAN_CONTINGENT_USAGE.Where(d => d.CONTINGENTLOANID == item.contingentLoanId);
@@ -104,8 +105,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
-
-                return contingentData.Where(c => c.percentageUsed < 100).OrderByDescending(d => d.contingentLoanId).ToList();
+                var dat = contingentData.ToList();
+                // var dat = contingentData.Where(c => c.percentageUsed < 100).OrderByDescending(d => d.contingentLoanId).ToList();
+                return dat;
             }
             catch (Exception ex)
             {
@@ -126,11 +128,12 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ExternalInitialization = entity.externalInitialization;
             workflow.DeferredExecution = entity.deferredExecution;
             return response = workflow.LogActivity();
-           
+
         }
 
         public bool SaveContigentLoans(ContingentLoanUsageViewModel entity)
         {
+
             var data = new TBL_LOAN_CONTINGENT_USAGE
             {
                 AMOUNTREQUESTED = entity.amountRequested,
@@ -141,60 +144,32 @@ namespace FintrakBanking.Repositories.Credit
                 DELETED = false,
                 REMARK = entity.remark
             };
-
-         var model =   context.TBL_LOAN_CONTINGENT_USAGE.Add(data);
-
-            var application = context.TBL_LMSR_APPLICATION_DETAIL.Where(o => o.LOANREVIEWAPPLICATIONID == entity.loanReviewApplicationId).Select(o => o).FirstOrDefault();
-            application.OPERATIONPERFORMED = true;
-
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
+            var model = context.TBL_LOAN_CONTINGENT_USAGE.Add(data);
+            if (context.SaveChanges() > 0)
             {
-                AUDITTYPEID = (short)AuditTypeEnum.ContingentLoanUsageAdd,
-                STAFFID = entity.createdBy,
-                BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Applied for APS for {entity.productName} with reference number: {entity.loanReferenceNumber}",
-                IPADDRESS = entity.userIPAddress,
-                URL = entity.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = model.CONTINGENTLOANUSAGEID
-            };
-          var a =  data.CONTINGENTLOANUSAGEID;
-            this.auditTrail.AddAuditTrail(audit);
-            bool response = false;
-            //--------------------------------------------------
-            response = context.SaveChanges() > 0;
-            
-            if (response)
-            {
-                // ----------------Drop into CAM-------------------
-                if (model.CONTINGENTLOANUSAGEID > 0)
-                {
-                    var log = new ApproveAPSRequestViewModel
-                    {
-                        staffId = entity.staffId,
-                        operationId = (int)OperationsEnum.ContingentLiabilityUsage,
-                        targetId = model.CONTINGENTLOANUSAGEID,
-                        companyId = entity.companyId,
-                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        comment = "New APS Request",
-                        deferredExecution = false,
-                    };
+                var application = context.TBL_LMSR_APPLICATION_DETAIL.Where(o => o.LOANREVIEWAPPLICATIONID == entity.loanReviewApplicationId).Select(o => o).FirstOrDefault();
+                application.OPERATIONPERFORMED = true;
 
-                    documentsContext.SaveChanges();
-                    var mail = SendEmailToBGDesk( entity.companyId,  entity.staffId,  entity.userBranchId, entity.loanReferenceNumber);
-                    response = LogForApproval(log);
+                workflow.StaffId = entity.createdBy;
+                workflow.CompanyId = entity.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = model.CONTINGENTLOANUSAGEID;
+                workflow.Comment = "APS Request approval";
+                workflow.OperationId = (int)OperationsEnum.ContingentLiabilityUsage;
+                //workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
 
-                }
+                return true;
             }
-            return response;
+
+            return false;
         }
         public bool SendEmailToBGDesk(int companyId, int staffId, short branchId, string facilityRefNumber)
         {
             TBL_MONITORING_ALERT_SETUP alertsetupForBGDesk = (from x in context.TBL_MONITORING_ALERT_SETUP
-                                                                    where x.MONITORING_ITEMID == (int)AlertMessageEnum.BGDesk
-                                                                    select x).FirstOrDefault();
+                                                              where x.MONITORING_ITEMID == (int)AlertMessageEnum.BGDesk
+                                                              select x).FirstOrDefault();
             //var messageBody = "A recovery email";
             string messageBody = "Dear Team, <br /><br />This is to bring your attention that an APS Release has Been Initiated on " + $" { DateTime.Today.Date }. with Facility Reference Number" + $"{ facilityRefNumber }  <br /> <br />";
 
@@ -210,7 +185,7 @@ namespace FintrakBanking.Repositories.Credit
             var emailLog = new TBL_MESSAGE_LOG
             {
                 DATETIMERECEIVED = DateTime.Now,
-                TOADDRESS  = $"{alertsetupForBGDesk.RECIPIENTEMAILS1.Trim()}",
+                TOADDRESS = $"{alertsetupForBGDesk.RECIPIENTEMAILS1.Trim()}",
                 FROMADDRESS = ConfigurationManager.AppSettings["SupportEmailAddr"],
                 MESSAGEBODY = mailBody,
                 MESSAGESUBJECT = subject,
@@ -248,14 +223,22 @@ namespace FintrakBanking.Repositories.Credit
 
         public IQueryable<ContingentLoansViewModel> GetRequestWaitingApprovalByOperation(int staffId)
         {
+            int[] operations = { (int)OperationsEnum.APS_RelaseChecklist, (int)OperationsEnum.APS_ReleaseCAP, (int)OperationsEnum.APS_ReleasePrincipaRequest };
+
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContingentLiabilityUsage).ToList();
 
             var applications = from lcu in context.TBL_LOAN_CONTINGENT_USAGE
+                               join d in context.TBL_LMSR_APPLICATION_DETAIL on lcu.CONTINGENTLOANID equals d.LOANID
+                               join l in context.TBL_LMSR_APPLICATION on d.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                                join atrail in context.TBL_APPROVAL_TRAIL on lcu.CONTINGENTLOANUSAGEID equals atrail.TARGETID
                                where atrail.OPERATIONID == (int)OperationsEnum.ContingentLiabilityUsage
-                                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                                     && atrail.RESPONSESTAFFID == null
-                                     && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                               && atrail.RESPONSESTAFFID == null
+                    && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
+                        atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised ||
+                        atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                    && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                    && atrail.APPROVALSTATEID != (int)ApprovalState.Ended
+                    && d.OPERATIONPERFORMED == true
                                orderby lcu.CONTINGENTLOANUSAGEID descending
 
                                select new ContingentLoansViewModel
@@ -280,9 +263,11 @@ namespace FintrakBanking.Repositories.Credit
                                    maturityDate = lcu.TBL_LOAN_CONTINGENT.MATURITYDATE,
                                    productName = lcu.TBL_LOAN_CONTINGENT.TBL_PRODUCT.PRODUCTNAME,
                                    loanStatus = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-                                   operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==atrail.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
+                                   //operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==atrail.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
+                                   operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == d.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                                    amountRequested = lcu.AMOUNTREQUESTED,
                                    timeIn = atrail.SYSTEMARRIVALDATETIME,
+                                   loanApplicationNumber = l.APPLICATIONREFERENCENUMBER,
                                };
             return applications;
         }
@@ -379,6 +364,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
+
             var usage = context.TBL_LOAN_CONTINGENT_USAGE.FirstOrDefault(d => d.CONTINGENTLOANUSAGEID == entity.targetId);
 
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
@@ -399,7 +385,7 @@ namespace FintrakBanking.Repositories.Credit
                     branchId = (short)entity.BranchId,
                     companyId = entity.companyId,
                     lienAmount = oldLien,
-                    description = "Release Lien for APS Fund",
+                    description = lien.DESCRIPTION,
                     lienTypeId = (short)LienTypeEnum.APSRequest,
                     createdBy = entity.createdBy,
                     userIPAddress = entity.userIPAddress,
@@ -417,7 +403,7 @@ namespace FintrakBanking.Repositories.Credit
                     branchId = (short)entity.BranchId,
                     companyId = entity.companyId,
                     lienAmount = newLienAmount,
-                    description = "Place Lien on APG Fund",
+                    description = lien.DESCRIPTION,
                     lienTypeId = (short)LienTypeEnum.APSRequest,
                     createdBy = entity.createdBy,
                     userIPAddress = entity.userIPAddress,

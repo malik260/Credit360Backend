@@ -74,6 +74,8 @@ namespace FintrakBanking.ViewModels.Credit
                 return count.ToString() + units;
             }
         }
+
+        public string loanApplicationNumber { get; set; }
     }
 
 

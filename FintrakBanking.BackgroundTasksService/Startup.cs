@@ -53,24 +53,24 @@ namespace FintrakBanking.BackgroundTasksService
             RecurringJob.AddOrUpdate(() => exchangeRate.MigrateExchangeRate(), Cron.Minutely);
 
             RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForCovenantsApproachingDueDate(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForCovenantsOverDue(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForExpiredBG(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertForExpiredInsurance(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnAccountWithExeption_Overdrawn(title, body), Cron.Minutely);
-           //// RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnAccountWithExeption_Watchist(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnAccountWithExeption_Unauthorized(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnInsuranceApprochingExpiration(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnPastDueObligationAccounts(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnTurnoverCovenant(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForCollateralPropertyApproachingRevaluation(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForCollateralPropertyDueForVisitation(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsOnExpiredActiveBondAndGuarantee(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsOnInActiveBondAndGuarantee(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsOnLoanCASAwithPND(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsOnOverDraftLoansAlmostDue(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsOnSelfLiquidatingLoanExpiry(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForLoanRepayment(title, body), Cron.Minutely);
-           // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertToCustomerForLoanRepaymentApproachingDueDate(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForCovenantsOverDue(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForExpiredBG(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertForExpiredInsurance(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnAccountWithExeption_Overdrawn(title, body), Cron.Minutely);
+            // RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnAccountWithExeption_Watchist(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnAccountWithExeption_Unauthorized(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnInsuranceApprochingExpiration(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnPastDueObligationAccounts(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertOnTurnoverCovenant(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForCollateralPropertyApproachingRevaluation(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForCollateralPropertyDueForVisitation(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsOnExpiredActiveBondAndGuarantee(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsOnInActiveBondAndGuarantee(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsOnLoanCASAwithPND(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsOnOverDraftLoansAlmostDue(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsOnSelfLiquidatingLoanExpiry(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForLoanRepayment(title, body), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertToCustomerForLoanRepaymentApproachingDueDate(title, body), Cron.Minutely);
 
         }
     }
