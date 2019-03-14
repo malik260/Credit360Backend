@@ -318,6 +318,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
+       
+
         [HttpGet]
         [Route("loan-schedule-category")]
         public HttpResponseMessage GetAllLoanScheduleCategory()
@@ -2026,40 +2028,21 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [Route("loan-application/request-booking/{applicationId}")]
         public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] LoanBookingRequestViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
-                entity.companyId = token.GetCompanyId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
 
-                var data = repo.AddLoanBookingRequest(applicationId, entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, data = data, message = "Booking successfully initiated!" });
-                }
+            var data = repo.AddLoanBookingRequest(applicationId, entity);
+            if (data)
+            {
                 return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Booking successfully initiated!" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
 
-                    new { success = false, message = "Initiating Booking was unsuccessful!" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message =  ex.Message });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
+                new { success = false, message = "Initiating Booking was unsuccessful!" });
+           
         }
 
         [HttpGet]

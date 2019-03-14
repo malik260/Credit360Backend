@@ -325,7 +325,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PRODUCT_CURRENCY> TBL_PRODUCT_CURRENCY { get; set; }
         public virtual DbSet<TBL_PRODUCT_GROUP> TBL_PRODUCT_GROUP { get; set; }
         public virtual DbSet<TBL_PRODUCT_PRICE_INDEX> TBL_PRODUCT_PRICE_INDEX { get; set; }
-        public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_CURNCY> TBL_PRODUCT_PRICE_INDEX_CURNCY { get; set; }
+        //public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_CURNCY> TBL_PRODUCT_PRICE_INDEX_CURNCY { get; set; }
         public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_GLOBAL> TBL_PRODUCT_PRICE_INDEX_GLOBAL { get; set; }
 
         public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_DAILY> TBL_PRODUCT_PRICE_INDEX_DAILY { get; set; }

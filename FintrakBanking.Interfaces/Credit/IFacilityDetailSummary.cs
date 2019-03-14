@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Finance.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,5 +41,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanCovenantDetailViewModel> LMSLoanCovenantDetail(int loanId);
         IEnumerable<CamProcessedLoanViewModel> GetLoanFacilityUtilization(int companyId, int staffId, int branchId, string searchValue = null);
         List<LoanViewModel> GetLoanFacilityDetail(int loanApplicationDetilId);
+        List<ProductFeeViewModel> GetLoanProductFeesByFacilityId(int loanApplicationDeatilId);
     }
 }

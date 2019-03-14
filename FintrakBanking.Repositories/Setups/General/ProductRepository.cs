@@ -2551,24 +2551,24 @@ namespace FintrakBanking.Repositories.Setups.General
                         dateTimeDeleted = data.DATETIMEDELETED
                     });
         }
-        public IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId)
-        {
-            var productIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX
-                                join b in context.TBL_PRODUCT_PRICE_INDEX_CURNCY
-                                on a.PRODUCTPRICEINDEXID equals b.PRODUCTPRICEINDEXID
-                                where b.CURRENCYID == currencyId && a.DELETED == false
-                                select new ProductPriceIndexViewModel
-                                {
-                                    productPriceIndexId = a.PRODUCTPRICEINDEXID,
-                                    priceIndexDescription = a.PRICEINDEXDESCRIPTION,
-                                    companyId = a.COMPANYID,
-                                    priceIndexName = a.PRICEINDEXNAME,
-                                    priceIndexRate = a.PRICEINDEXRATE,
-                                    dateTimeUpdated = a.DATETIMEUPDATED,
-                                    currencyId = a.CURRENCYID,
-                                }).ToList();
-            return productIndex;
-        }
+        //public IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId)
+        //{
+        //    var productIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX
+        //                        join b in context.TBL_PRODUCT_PRICE_INDEX_CURNCY
+        //                        on a.PRODUCTPRICEINDEXID equals b.PRODUCTPRICEINDEXID
+        //                        where b.CURRENCYID == currencyId && a.DELETED == false
+        //                        select new ProductPriceIndexViewModel
+        //                        {
+        //                            productPriceIndexId = a.PRODUCTPRICEINDEXID,
+        //                            priceIndexDescription = a.PRICEINDEXDESCRIPTION,
+        //                            companyId = a.COMPANYID,
+        //                            priceIndexName = a.PRICEINDEXNAME,
+        //                            priceIndexRate = a.PRICEINDEXRATE,
+        //                            dateTimeUpdated = a.DATETIMEUPDATED,
+        //                            currencyId = a.CURRENCYID,
+        //                        }).ToList();
+        //    return productIndex;
+        //}
 
         public ProductPriceIndexViewModel GetProductPriceIndexByProductId(int productId)
         {
@@ -2896,13 +2896,14 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return GetAllProductPriceIndexCurrency(productPriceIndexId).ToList();
         }
+
         private IEnumerable<ProductPriceIndexCurrencyViewModel> GetAllProductPriceIndexCurrency(int productPriceIndexId)
         {
-            return (from data in context.TBL_PRODUCT_PRICE_INDEX_CURNCY
+            return (from data in context.TBL_PRODUCT_PRICE_INDEX
                     where data.DELETED == false && data.PRODUCTPRICEINDEXID == productPriceIndexId
                     select new ProductPriceIndexCurrencyViewModel()
                     {
-                        priceIndexCurrencyId = data.PRICEINDEXCURRENCYID,
+                        //priceIndexCurrencyId = data.PRICEINDEXCURRENCYID,
                         productPriceIndexId = (short)data.PRODUCTPRICEINDEXID,
                         currencyId = (short)data.CURRENCYID,
                         dateTimeUpdated = data.DATETIMEUPDATED,
@@ -2915,8 +2916,8 @@ namespace FintrakBanking.Repositories.Setups.General
         public List<ProductPriceIndexViewModel> GetProductPriceIndexByCurrencyId(int currencyId)
         {
             return (from p in context.TBL_PRODUCT_PRICE_INDEX
-                    join pc in context.TBL_PRODUCT_PRICE_INDEX_CURNCY on p.PRODUCTPRICEINDEXID equals pc.PRODUCTPRICEINDEXID
-                    where p.DELETED == false && pc.CURRENCYID == currencyId && pc.DELETED == false
+                   // join pc in context.TBL_PRODUCT_PRICE_INDEX_CURNCY on p.PRODUCTPRICEINDEXID equals pc.PRODUCTPRICEINDEXID
+                    where p.DELETED == false && p.CURRENCYID == currencyId 
                     select new ProductPriceIndexViewModel
                     {
                         priceIndexDescription = p.PRICEINDEXDESCRIPTION,
@@ -2928,124 +2929,124 @@ namespace FintrakBanking.Repositories.Setups.General
                     }).ToList();
         }
 
-        public ProductPriceIndexCurrencyViewModel AddProductPriceIndexCurrency(ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency)
-        {
-            var isProductPriceIndexCurrencyExist = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.PRODUCTPRICEINDEXID == prodPriceIndexCurrency.productPriceIndexId && x.CURRENCYID == prodPriceIndexCurrency.currencyId).FirstOrDefault();
+        //public ProductPriceIndexCurrencyViewModel AddProductPriceIndexCurrency(ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency)
+        //{
+        //    var isProductPriceIndexCurrencyExist = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.PRODUCTPRICEINDEXID == prodPriceIndexCurrency.productPriceIndexId && x.CURRENCYID == prodPriceIndexCurrency.currencyId).FirstOrDefault();
 
-            if (isProductPriceIndexCurrencyExist != null)
-            {
-                throw new SecureException("Product price Currency already exists!");
-            }
-            var data = new TBL_PRODUCT_PRICE_INDEX_CURNCY()
-            {
-                PRODUCTPRICEINDEXID = prodPriceIndexCurrency.productPriceIndexId,
-                CURRENCYID = prodPriceIndexCurrency.currencyId,
-                CREATEDBY = prodPriceIndexCurrency.createdBy,
-                DATETIMECREATED = DateTime.Now,
-            };
+        //    if (isProductPriceIndexCurrencyExist != null)
+        //    {
+        //        throw new SecureException("Product price Currency already exists!");
+        //    }
+        //    var data = new TBL_PRODUCT_PRICE_INDEX_CURNCY()
+        //    {
+        //        PRODUCTPRICEINDEXID = prodPriceIndexCurrency.productPriceIndexId,
+        //        CURRENCYID = prodPriceIndexCurrency.currencyId,
+        //        CREATEDBY = prodPriceIndexCurrency.createdBy,
+        //        DATETIMECREATED = DateTime.Now,
+        //    };
 
-            this.context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Add(data);
-            var isProductPriceIndexExist = context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == prodPriceIndexCurrency.productPriceIndexId).FirstOrDefault();
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexAdded,
-                STAFFID = (int)prodPriceIndexCurrency.createdBy,
-                BRANCHID = (short)prodPriceIndexCurrency.userBranchId,
-                DETAIL = $"Added  Currency For tbl_Product Price Index: '{isProductPriceIndexExist.PRICEINDEXNAME}' ",
-                IPADDRESS = prodPriceIndexCurrency.userIPAddress,
-                URL = prodPriceIndexCurrency.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
+        //    this.context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Add(data);
+        //    var isProductPriceIndexExist = context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == prodPriceIndexCurrency.productPriceIndexId).FirstOrDefault();
+        //    // Audit Section ---------------------------
+        //    var audit = new TBL_AUDIT
+        //    {
+        //        AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexAdded,
+        //        STAFFID = (int)prodPriceIndexCurrency.createdBy,
+        //        BRANCHID = (short)prodPriceIndexCurrency.userBranchId,
+        //        DETAIL = $"Added  Currency For tbl_Product Price Index: '{isProductPriceIndexExist.PRICEINDEXNAME}' ",
+        //        IPADDRESS = prodPriceIndexCurrency.userIPAddress,
+        //        URL = prodPriceIndexCurrency.applicationUrl,
+        //        APPLICATIONDATE = genSetup.GetApplicationDate(),
+        //        SYSTEMDATETIME = DateTime.Now
+        //    };
 
-            this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------
-            bool status;
+        //    this.auditTrail.AddAuditTrail(audit);
+        //    //end of Audit section -------------------------------
+        //    bool status;
 
-            try
-            {
-                status = this.context.SaveChanges() > 0;
-                if (status) { return prodPriceIndexCurrency; }
-                else
-                    return null;
-            }
-            catch (Exception ex)
-            {
-                var det = ex;
-            }
-            //var status = this.SaveAll();
+        //    try
+        //    {
+        //        status = this.context.SaveChanges() > 0;
+        //        if (status) { return prodPriceIndexCurrency; }
+        //        else
+        //            return null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        var det = ex;
+        //    }
+        //    //var status = this.SaveAll();
 
-            //if (status)
-            //{
+        //    //if (status)
+        //    //{
 
-            //}
-            //else
-            return null;
-        }
+        //    //}
+        //    //else
+        //    return null;
+        //}
 
-        public bool UpdateProductPriceIndexCurrency(int priceIndexCurrencyId, ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency)
-        {
-            var data = this.context.TBL_PRODUCT_PRICE_INDEX_CURNCY.FirstOrDefault(x => x.PRICEINDEXCURRENCYID == priceIndexCurrencyId);
+        //public bool UpdateProductPriceIndexCurrency(int priceIndexCurrencyId, ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency)
+        //{
+        //    var data = this.context.TBL_PRODUCT_PRICE_INDEX_CURNCY.FirstOrDefault(x => x.PRICEINDEXCURRENCYID == priceIndexCurrencyId);
 
-            if (data == null)
-                return false;
+        //    if (data == null)
+        //        return false;
 
-            data.CURRENCYID = (int)prodPriceIndexCurrency.currencyId;
-            data.LASTUPDATEDBY = prodPriceIndexCurrency.lastUpdatedBy;
-            data.DATETIMEUPDATED = DateTime.Now;
-            var isProductPriceIndexExist = context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == prodPriceIndexCurrency.productPriceIndexId).FirstOrDefault();
+        //    data.CURRENCYID = (int)prodPriceIndexCurrency.currencyId;
+        //    data.LASTUPDATEDBY = prodPriceIndexCurrency.lastUpdatedBy;
+        //    data.DATETIMEUPDATED = DateTime.Now;
+        //    var isProductPriceIndexExist = context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == prodPriceIndexCurrency.productPriceIndexId).FirstOrDefault();
 
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
+        //    // Audit Section ---------------------------
+        //    var audit = new TBL_AUDIT
+        //    {
 
-                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexUpdated,
-                STAFFID = (int)prodPriceIndexCurrency.createdBy,
-                BRANCHID = (short)prodPriceIndexCurrency.userBranchId,
-                DETAIL = $"Updated  Currency For tbl_Product Price Index: '{isProductPriceIndexExist.PRICEINDEXNAME}' with CurrencyId: '{ prodPriceIndexCurrency.priceIndexCurrencyId}' ",
-                IPADDRESS = prodPriceIndexCurrency.userIPAddress,
-                URL = prodPriceIndexCurrency.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = priceIndexCurrencyId
-            };
+        //        AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexUpdated,
+        //        STAFFID = (int)prodPriceIndexCurrency.createdBy,
+        //        BRANCHID = (short)prodPriceIndexCurrency.userBranchId,
+        //        DETAIL = $"Updated  Currency For tbl_Product Price Index: '{isProductPriceIndexExist.PRICEINDEXNAME}' with CurrencyId: '{ prodPriceIndexCurrency.priceIndexCurrencyId}' ",
+        //        IPADDRESS = prodPriceIndexCurrency.userIPAddress,
+        //        URL = prodPriceIndexCurrency.applicationUrl,
+        //        APPLICATIONDATE = genSetup.GetApplicationDate(),
+        //        SYSTEMDATETIME = DateTime.Now,
+        //        TARGETID = priceIndexCurrencyId
+        //    };
 
-            this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------
-            return this.SaveAll();
-        }
+        //    this.auditTrail.AddAuditTrail(audit);
+        //    //end of Audit section -------------------------------
+        //    return this.SaveAll();
+        //}
 
-        public bool DeleteProductPriceIndexCurrency(int priceIndexCurrencyId, UserInfo user)
-        {
-            var data = this.context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Find(priceIndexCurrencyId);
+        //public bool DeleteProductPriceIndexCurrency(int priceIndexCurrencyId, UserInfo user)
+        //{
+        //    var data = this.context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Find(priceIndexCurrencyId);
 
-            if (data == null)
-                return false;
+        //    if (data == null)
+        //        return false;
 
-            data.DELETED = true;
-            data.DATETIMEDELETED = genSetup.GetApplicationDate();
+        //    data.DELETED = true;
+        //    data.DATETIMEDELETED = genSetup.GetApplicationDate();
 
-            // Audit Section ---------------------------
-            var productPriceIndex = this.context.TBL_PRODUCT_PRICE_INDEX.FirstOrDefault(x => x.PRODUCTPRICEINDEXID == data.PRODUCTPRICEINDEXID);
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexDeleted,
-                STAFFID = user.staffId,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"Deleted Currency For tbl_Product Price Index: '{productPriceIndex.PRICEINDEXNAME}' with rate '{productPriceIndex.PRICEINDEXRATE}' ",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = priceIndexCurrencyId
-            };
+        //    // Audit Section ---------------------------
+        //    var productPriceIndex = this.context.TBL_PRODUCT_PRICE_INDEX.FirstOrDefault(x => x.PRODUCTPRICEINDEXID == data.PRODUCTPRICEINDEXID);
+        //    var audit = new TBL_AUDIT
+        //    {
+        //        AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexDeleted,
+        //        STAFFID = user.staffId,
+        //        BRANCHID = (short)user.BranchId,
+        //        DETAIL = $"Deleted Currency For tbl_Product Price Index: '{productPriceIndex.PRICEINDEXNAME}' with rate '{productPriceIndex.PRICEINDEXRATE}' ",
+        //        IPADDRESS = user.userIPAddress,
+        //        URL = user.applicationUrl,
+        //        APPLICATIONDATE = genSetup.GetApplicationDate(),
+        //        SYSTEMDATETIME = DateTime.Now,
+        //        TARGETID = priceIndexCurrencyId
+        //    };
 
-            this.auditTrail.AddAuditTrail(audit);
+        //    this.auditTrail.AddAuditTrail(audit);
 
-            //end of Audit section -------------------------------
-            return this.SaveAll();
-        }
+        //    //end of Audit section -------------------------------
+        //    return this.SaveAll();
+        //}
 
 
         #endregion product Price Index

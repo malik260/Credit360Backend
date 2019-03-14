@@ -5245,7 +5245,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool ProcessChargeReversal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, int operationId, int staffId)
+        public bool ProcessChargeReversal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, int operationId, int staffId, int loanReviewOperationsId)
         {
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
             try
@@ -5271,131 +5271,198 @@ namespace FintrakBanking.Repositories.Credit
                 int chargeTypeId = 0;
                 LoanPaymentRestructureScheduleInputViewModel model = new LoanPaymentRestructureScheduleInputViewModel();
 
+                DeleteLoanExist(loanId, systemDate);
+                ArchiveLoan(loanId, operationId, archiveBatchCode);
+
+                model = (
+                from a in context.TBL_LOAN_REVIEW_OPERATION
+                join c in context.TBL_LOAN_FEE on a.LOANID equals c.LOANID
+                where a.LOANREVIEWOPERATIONID == loanReviewOperationsId
+
+                    select new LoanPaymentRestructureScheduleInputViewModel()
+                {
+                       loanId = a.LOANID,
+                        //principalAmount = (double)b.PRINCIPALAMOUNT,
+                    //interestRate = b.INTERESTRATE,
+                    //effectiveDate = b.EFFECTIVEDATE,//(DateTime)b.LASTRESTRUCTUREDATE
+                        //operationId = a.OPERATIONTYPEID,
+                   // companyId = b.COMPANYID,
+                    staffId = staffId,
+                    createdBy = staffId,
+                   // customerId = b.CUSTOMERID,
+                    payAmount = (double)a.PREPAYMENT,
+                    feeRate = c.FEERATEVALUE,
+                    earnedFeeAmount = c.EARNEDFEEAMOUNT,
+                    feeAmount = c.FEEAMOUNT,
+                    newInterest = (double)a.INTERATERATE,
+                    chargeFeeId = (int)a.PRINCIPALFREQUENCYTYPEID,
+                    chargeFeeTypeId = (int)a.INTERESTFREQUENCYTYPEID,
+
+
+                }).FirstOrDefault();
                 if (productType == (int)LoanSystemTypeEnum.TermDisbursedFacility)
                 {
-                    DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, operationId, archiveBatchCode);
-
-                    model = (
-                    from a in context.TBL_LOAN_REVIEW_OPERATION
-                    join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                    join c in context.TBL_LOAN_FEE on a.LOANID equals c.LOANID
-                    where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
-
-                    select new LoanPaymentRestructureScheduleInputViewModel()
-                    {
-                        loanId = b.TERMLOANID,
-                        principalAmount = (double)b.PRINCIPALAMOUNT,
-                        interestRate = b.INTERESTRATE,
-                        effectiveDate = b.EFFECTIVEDATE,//(DateTime)b.LASTRESTRUCTUREDATE
-                        operationId = a.OPERATIONTYPEID,
-                        companyId = b.COMPANYID,
-                        staffId = staffId,
-                        createdBy = staffId,
-                        customerId = b.CUSTOMERID,
-                        payAmount = (double)a.PREPAYMENT,
-                        feeRate = c.FEERATEVALUE,
-                        earnedFeeAmount = c.EARNEDFEEAMOUNT,
-                        feeAmount = c.FEEAMOUNT,
-                        newInterest = (double)a.INTERATERATE,
-                        chargeFeeId = (int)a.PRINCIPALFREQUENCYTYPEID,
-                        chargeFeeTypeId = (int)a.INTERESTFREQUENCYTYPEID,
-
-
-                    }).FirstOrDefault();
-                    EarnedFeeAmount = model.earnedFeeAmount;
-                    chargeTypeId = model.chargeFeeTypeId;
-                    NewFeeAmount = (decimal)model.payAmount;
-                    NewTaxAmount = NewFeeAmount * (NewTaxRate / 100);
-                    DateDiff = (int)(systemDate - model.effectiveDate).TotalDays;
-                    DailyAccruedFee = DailyAccruedInterest(model.effectiveDate, systemDate, NewFeeAmount);
-                    AccruedFeeToDate = DateDiff * DailyAccruedFee;
-                    DailyAccruedTax = DailyAccruedInterest(model.effectiveDate, systemDate, NewTaxAmount);
-                    AccruedTaxToDate = DateDiff * DailyAccruedTax;
-                    model.feeAmountDiff = EarnedFeeAmount - AccruedFeeToDate;
+                    var runningFacility = context.TBL_LOAN.Find(model.loanId);
+                    model.interestRate = runningFacility.INTERESTRATE;
+                    model.effectiveDate = runningFacility.EFFECTIVEDATE;
+                    operationId = runningFacility.OPERATIONID ?? 0;
+                    model.companyId = runningFacility.COMPANYID;
+                    model.principalAmount = (double)runningFacility.PRINCIPALAMOUNT;
                 }
-
                 if (productType == (int)LoanSystemTypeEnum.OverdraftFacility)
                 {
-                    DeleteLoanExist(loanId, systemDate);
-                    ArchiveOverDraft(loanId, archiveBatchCode);
-                    model = (
-                   from a in context.TBL_LOAN_REVIEW_OPERATION
-                   join b in context.TBL_LOAN_REVOLVING on a.LOANID equals b.REVOLVINGLOANID
-                   join c in context.TBL_LOAN_FEE on a.LOANID equals c.LOANID
-                   where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
-
-                   select new LoanPaymentRestructureScheduleInputViewModel()
-                   {
-                       loanId = b.REVOLVINGLOANID,
-                       principalAmount = (double)b.OVERDRAFTLIMIT,
-                       interestRate = b.INTERESTRATE,
-                       effectiveDate = b.EFFECTIVEDATE,//change to (DateTime)b.LASTRESTRUCTUREDATE
-                       operationId = a.OPERATIONTYPEID,
-                       companyId = b.COMPANYID,
-                       staffId = staffId,
-                       createdBy = staffId,
-                       customerId = b.CUSTOMERID,
-                       payAmount = (double)a.PREPAYMENT,
-                       feeRate = c.FEERATEVALUE,
-                       earnedFeeAmount = c.EARNEDFEEAMOUNT,
-                       feeAmount = c.FEEAMOUNT,
-                       newInterest = (double)a.INTERATERATE,
-                       chargeFeeId = (int)a.PRINCIPALFREQUENCYTYPEID,
-                       chargeFeeTypeId = (int)a.INTERESTFREQUENCYTYPEID,
-
-                   }).FirstOrDefault();
-                    EarnedFeeAmount = model.earnedFeeAmount;
-                    chargeTypeId = model.chargeFeeTypeId;
-                    NewFeeAmount = (decimal)model.payAmount;
-                    NewTaxAmount = NewFeeAmount * (NewTaxRate / 100);
-                    DateDiff = (int)(systemDate - model.effectiveDate).TotalDays;
-                    DailyAccruedFee = DailyAccruedInterest(model.effectiveDate, systemDate, NewFeeAmount);
-                    AccruedFeeToDate = DateDiff * DailyAccruedFee;
-                    DailyAccruedTax = DailyAccruedInterest(model.effectiveDate, systemDate, NewTaxAmount);
-                    AccruedTaxToDate = DateDiff * DailyAccruedTax;
-                    model.feeAmountDiff = EarnedFeeAmount - AccruedFeeToDate;
+                    var runningFacility = context.TBL_LOAN_REVOLVING.Find(model.loanId);
+                    model.interestRate = runningFacility.INTERESTRATE;
+                    model.effectiveDate = runningFacility.EFFECTIVEDATE;
+                    operationId = runningFacility.OPERATIONID ?? 0;
+                    model.companyId = runningFacility.COMPANYID;
+                    model.principalAmount = (double)runningFacility.OVERDRAFTLIMIT;
                 }
-
                 if (productType == (int)LoanSystemTypeEnum.ContingentLiability)
                 {
-                    model = (
-                    from a in context.TBL_LOAN_REVIEW_OPERATION
-                    join b in context.TBL_LOAN_CONTINGENT on a.LOANID equals b.CONTINGENTLOANID
-                    join c in context.TBL_LOAN_FEE on a.LOANID equals c.LOANID
-                    where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
-
-                    select new LoanPaymentRestructureScheduleInputViewModel()
-                    {
-                        loanId = b.CONTINGENTLOANID,
-                        principalAmount = (double)b.CONTINGENTAMOUNT,
-                        interestRate = 1,
-                        effectiveDate = b.EFFECTIVEDATE,//change to (DateTime)b.LASTRESTRUCTUREDATE
-                        operationId = a.OPERATIONTYPEID,
-                        companyId = b.COMPANYID,
-                        staffId = staffId,
-                        createdBy = staffId,
-                        customerId = b.CUSTOMERID,
-                        payAmount = (double)a.PREPAYMENT,
-                        feeRate = c.FEERATEVALUE,
-                        earnedFeeAmount = c.EARNEDFEEAMOUNT,
-                        feeAmount = c.FEEAMOUNT,
-                        newInterest = (double)a.INTERATERATE,
-                        chargeFeeId = (int)a.PRINCIPALFREQUENCYTYPEID,
-                        chargeFeeTypeId = (int)a.INTERESTFREQUENCYTYPEID,
-
-                    }).FirstOrDefault();
-                    EarnedFeeAmount = model.earnedFeeAmount;
-                    chargeTypeId = model.chargeFeeTypeId;
-                    NewFeeAmount = (decimal)model.payAmount;
-                    NewTaxAmount = NewFeeAmount * (NewTaxRate / 100);
-                    DateDiff = (int)(systemDate - model.effectiveDate).TotalDays;
-                    DailyAccruedFee = DailyAccruedInterest(model.effectiveDate, systemDate, NewFeeAmount);
-                    AccruedFeeToDate = DateDiff * DailyAccruedFee;
-                    DailyAccruedTax = DailyAccruedInterest(model.effectiveDate, systemDate, NewTaxAmount);
-                    AccruedTaxToDate = DateDiff * DailyAccruedTax;
-                    model.feeAmountDiff = EarnedFeeAmount - AccruedFeeToDate;
+                    var runningFacility = context.TBL_LOAN_CONTINGENT.Find(model.loanId);
+                    model.interestRate =1;
+                    model.effectiveDate = runningFacility.EFFECTIVEDATE;
+                    operationId = runningFacility.OPERATIONID ?? 0;
+                    model.companyId = runningFacility.COMPANYID;
+                    model.principalAmount = (double)runningFacility.CONTINGENTAMOUNT;
                 }
+                EarnedFeeAmount = model.earnedFeeAmount;
+                chargeTypeId = model.chargeFeeTypeId;
+                NewFeeAmount = (decimal)model.payAmount;
+                NewTaxAmount = NewFeeAmount * (NewTaxRate / 100);
+                DateDiff = (int)(systemDate - model.effectiveDate).TotalDays;
+                DailyAccruedFee = DailyAccruedInterest(model.effectiveDate, systemDate, NewFeeAmount);
+                AccruedFeeToDate = DateDiff * DailyAccruedFee;
+                DailyAccruedTax = DailyAccruedInterest(model.effectiveDate, systemDate, NewTaxAmount);
+                AccruedTaxToDate = DateDiff * DailyAccruedTax;
+                model.feeAmountDiff = EarnedFeeAmount - AccruedFeeToDate;
+
+                //if (productType == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+                //{
+                //    DeleteLoanExist(loanId, systemDate);
+                //    ArchiveLoan(loanId, operationId, archiveBatchCode);
+
+                //    model = (
+                //    from a in context.TBL_LOAN_REVIEW_OPERATION
+                //    join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                //    join c in context.TBL_LOAN_FEE on a.LOANID equals c.LOANID
+                //    where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
+
+                //    select new LoanPaymentRestructureScheduleInputViewModel()
+                //    {
+                //        loanId = b.TERMLOANID,
+                //        principalAmount = (double)b.PRINCIPALAMOUNT,
+                //        interestRate = b.INTERESTRATE,
+                //        effectiveDate = b.EFFECTIVEDATE,//(DateTime)b.LASTRESTRUCTUREDATE
+                //        operationId = a.OPERATIONTYPEID,
+                //        companyId = b.COMPANYID,
+                //        staffId = staffId,
+                //        createdBy = staffId,
+                //        customerId = b.CUSTOMERID,
+                //        payAmount = (double)a.PREPAYMENT,
+                //        feeRate = c.FEERATEVALUE,
+                //        earnedFeeAmount = c.EARNEDFEEAMOUNT,
+                //        feeAmount = c.FEEAMOUNT,
+                //        newInterest = (double)a.INTERATERATE,
+                //        chargeFeeId = (int)a.PRINCIPALFREQUENCYTYPEID,
+                //        chargeFeeTypeId = (int)a.INTERESTFREQUENCYTYPEID,
+
+
+                //    }).FirstOrDefault();
+                //    EarnedFeeAmount = model.earnedFeeAmount;
+                //    chargeTypeId = model.chargeFeeTypeId;
+                //    NewFeeAmount = (decimal)model.payAmount;
+                //    NewTaxAmount = NewFeeAmount * (NewTaxRate / 100);
+                //    DateDiff = (int)(systemDate - model.effectiveDate).TotalDays;
+                //    DailyAccruedFee = DailyAccruedInterest(model.effectiveDate, systemDate, NewFeeAmount);
+                //    AccruedFeeToDate = DateDiff * DailyAccruedFee;
+                //    DailyAccruedTax = DailyAccruedInterest(model.effectiveDate, systemDate, NewTaxAmount);
+                //    AccruedTaxToDate = DateDiff * DailyAccruedTax;
+                //    model.feeAmountDiff = EarnedFeeAmount - AccruedFeeToDate;
+                //}
+
+                //if (productType == (int)LoanSystemTypeEnum.OverdraftFacility)
+                //{
+                //    DeleteLoanExist(loanId, systemDate);
+                //    ArchiveOverDraft(loanId, archiveBatchCode);
+                //    model = (
+                //   from a in context.TBL_LOAN_REVIEW_OPERATION
+                //   join b in context.TBL_LOAN_REVOLVING on a.LOANID equals b.REVOLVINGLOANID
+                //   join c in context.TBL_LOAN_FEE on a.LOANID equals c.LOANID
+                //   where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
+
+                //   select new LoanPaymentRestructureScheduleInputViewModel()
+                //   {
+                //       loanId = b.REVOLVINGLOANID,
+                //       principalAmount = (double)b.OVERDRAFTLIMIT,
+                //       interestRate = b.INTERESTRATE,
+                //       effectiveDate = b.EFFECTIVEDATE,//change to (DateTime)b.LASTRESTRUCTUREDATE
+                //       operationId = a.OPERATIONTYPEID,
+                //       companyId = b.COMPANYID,
+                //       staffId = staffId,
+                //       createdBy = staffId,
+                //       customerId = b.CUSTOMERID,
+                //       payAmount = (double)a.PREPAYMENT,
+                //       feeRate = c.FEERATEVALUE,
+                //       earnedFeeAmount = c.EARNEDFEEAMOUNT,
+                //       feeAmount = c.FEEAMOUNT,
+                //       newInterest = (double)a.INTERATERATE,
+                //       chargeFeeId = (int)a.PRINCIPALFREQUENCYTYPEID,
+                //       chargeFeeTypeId = (int)a.INTERESTFREQUENCYTYPEID,
+
+                //   }).FirstOrDefault();
+                //    EarnedFeeAmount = model.earnedFeeAmount;
+                //    chargeTypeId = model.chargeFeeTypeId;
+                //    NewFeeAmount = (decimal)model.payAmount;
+                //    NewTaxAmount = NewFeeAmount * (NewTaxRate / 100);
+                //    DateDiff = (int)(systemDate - model.effectiveDate).TotalDays;
+                //    DailyAccruedFee = DailyAccruedInterest(model.effectiveDate, systemDate, NewFeeAmount);
+                //    AccruedFeeToDate = DateDiff * DailyAccruedFee;
+                //    DailyAccruedTax = DailyAccruedInterest(model.effectiveDate, systemDate, NewTaxAmount);
+                //    AccruedTaxToDate = DateDiff * DailyAccruedTax;
+                //    model.feeAmountDiff = EarnedFeeAmount - AccruedFeeToDate;
+                //}
+
+                //if (productType == (int)LoanSystemTypeEnum.ContingentLiability)
+                //{
+                //    model = (
+                //    from a in context.TBL_LOAN_REVIEW_OPERATION
+                //    join b in context.TBL_LOAN_CONTINGENT on a.LOANID equals b.CONTINGENTLOANID
+                //    join c in context.TBL_LOAN_FEE on a.LOANID equals c.LOANID
+                //    where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
+
+                //    select new LoanPaymentRestructureScheduleInputViewModel()
+                //    {
+                //        loanId = b.CONTINGENTLOANID,
+                //        principalAmount = (double)b.CONTINGENTAMOUNT,
+                //        interestRate = 1,
+                //        effectiveDate = b.EFFECTIVEDATE,//change to (DateTime)b.LASTRESTRUCTUREDATE
+                //        operationId = a.OPERATIONTYPEID,
+                //        companyId = b.COMPANYID,
+                //        staffId = staffId,
+                //        createdBy = staffId,
+                //        customerId = b.CUSTOMERID,
+                //        payAmount = (double)a.PREPAYMENT,
+                //        feeRate = c.FEERATEVALUE,
+                //        earnedFeeAmount = c.EARNEDFEEAMOUNT,
+                //        feeAmount = c.FEEAMOUNT,
+                //        newInterest = (double)a.INTERATERATE,
+                //        chargeFeeId = (int)a.PRINCIPALFREQUENCYTYPEID,
+                //        chargeFeeTypeId = (int)a.INTERESTFREQUENCYTYPEID,
+
+                //    }).FirstOrDefault();
+                //    EarnedFeeAmount = model.earnedFeeAmount;
+                //    chargeTypeId = model.chargeFeeTypeId;
+                //    NewFeeAmount = (decimal)model.payAmount;
+                //    NewTaxAmount = NewFeeAmount * (NewTaxRate / 100);
+                //    DateDiff = (int)(systemDate - model.effectiveDate).TotalDays;
+                //    DailyAccruedFee = DailyAccruedInterest(model.effectiveDate, systemDate, NewFeeAmount);
+                //    AccruedFeeToDate = DateDiff * DailyAccruedFee;
+                //    DailyAccruedTax = DailyAccruedInterest(model.effectiveDate, systemDate, NewTaxAmount);
+                //    AccruedTaxToDate = DateDiff * DailyAccruedTax;
+                //    model.feeAmountDiff = EarnedFeeAmount - AccruedFeeToDate;
+                //}
 
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
                 if (EarnedFeeAmount > AccruedFeeToDate)
@@ -5797,14 +5864,17 @@ namespace FintrakBanking.Repositories.Credit
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
                     var loan = model;
+                    var reviewDate = model.maturityDate;
                     var data = new OverDraftTopUpAndRenewViewModel
                     {
-                        reviewedDate = loan.effectiveDate.AddMonths(1).ToString("dd-MMM-yyyy", null),
+                        //reviewedDate = loan.effectiveDate.AddMonths(1).ToString("dd-MMM-yyyy", null),
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        applicationDate = loan.effectiveDate.ToString("dd-MMM-yyyy", null),
+                        applicationDate = systemDate.ToString("dd-MMM-yyyy", null), // loan.effectiveDate.ToString("dd-MMM-yyyy", null),
                         sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
+                        reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
+                        sanctionDate = model.effectiveDate.ToString("dd-MMM-yyyy", null),
                         createdDate = systemDate,
                     };
                     renewalResult = finacle.OverDraftRenew(data, twoFactorAuth);
@@ -13003,12 +13073,12 @@ namespace FintrakBanking.Repositories.Credit
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                            //where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                            //&& atrail.OPERATIONID == op.OPERATIONTYPEID
-                            //&& ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                            //&& atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                            //&& op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
-                            //&& (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId) // currency filter
+                            where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            && atrail.OPERATIONID == op.OPERATIONTYPEID
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
+                            && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
+                            && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId) // currency filter
 
                             orderby op.DATECREATED descending
 
@@ -16528,7 +16598,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if ((int)OperationsEnum.Fee_chargeChange == model.operationId)
                     {
-                        result = ProcessChargeReversal(twoFactorAuth, loanId, model.operationId, staffId);
+                        result = ProcessChargeReversal(twoFactorAuth, loanId, model.operationId, staffId, loanReviewOperationsId);
                         if (result == true)
                         {
                             output = true;
