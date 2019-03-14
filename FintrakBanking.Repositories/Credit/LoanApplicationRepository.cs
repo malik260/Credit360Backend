@@ -1149,88 +1149,64 @@ namespace FintrakBanking.Repositories.Credit
             return refnumber.ToString();
         }
 
+
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            ValidateLoanApplicationLimits(loan); // always
-
+            ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
-            var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId);//.Sum(x => x.PROPOSEDAMOUNT);
+            var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId);
+
             decimal cumulativeSum = 0;
             foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
 
             if (loan.relationshipOfficerId != 0)
             {
                 var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
-                loan.applicationAmount = cumulativeSum + additionalAmount;
-                if (validation.maximumAllowedLimit > 0)
-                {
-                    if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
-                }
+                if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
             }
 
-            loanData = context.TBL_LOAN_APPLICATION.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).FirstOrDefault();
-            var loanDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId);
+            loan.applicationAmount = cumulativeSum + additionalAmount;
 
             if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) return loan;
 
-            if (loanDetail.Count() == 0 || loan.isNewApplication)
+            loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
+
+            if (savedDetails.Count() == 0 || loan.isNewApplication)
             {
-                // update
-                var appl = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
-                if (appl != null) appl.TOTALEXPOSUREAMOUNT = cumulativeSum + GetCustomerTotalOutstandingBalance((int)loan.customerId);
-                if (appl != null) appl.APPLICATIONAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
 
-                if (loanData == null)
+                if (loanData != null)
                 {
-                    if (string.IsNullOrEmpty(loan.applicationReferenceNumber))
-                    {
-                        loan.applicationReferenceNumber = GetRefrenceNumber();
-                    }
-                    //loan.applicationReferenceNumber = GetRefrenceNumber();
-                    // CommonHelpers.GetLoanReferanceNumber().ToString();
+                    loanData.APPLICATIONAMOUNT = loan.applicationAmount;
+                    loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
+                }
 
+                if (loanData == null) // first time
+                {
+                    if (string.IsNullOrEmpty(loan.applicationReferenceNumber)) loan.applicationReferenceNumber = GetRefrenceNumber();
                     AddloanApplicationSub(loan);
                 }
 
-                if (loan.LoanApplicationDetail.Count > 0)
-                {
-                    AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
-                }
-
+                if (loan.LoanApplicationDetail.Count > 0) AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
             }
             else
             {
                 var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
-                var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
-
-                // var totalAmount = tdata.Sum(o => (o.PROPOSEDAMOUNT * o.EXCHANGERATE));
-                //loan.applicationAmount = totalAmount;
-                if (limit != 0)
-                {
-                    if (total != 0)
-                    {
-                        if (total > (decimal)limit)
-                        {
-                            throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
-                        }
-                    }
-                }
-
+                if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
                 UpdateLoanApplication(loan);
             }
 
-            response = context.SaveChanges();
+            try
+            {
+                response = context.SaveChanges();
+            }catch(Exception e)
+            {
 
+            }
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
-            if (response > 0 && !loan.isNewApplication)
-            {
-                returndate.closeApplication = true;
-                return returndate;
-            }
-            return returndate;
+            if (response > 0 && !loan.isNewApplication) returndate.closeApplication = true;
 
+            return returndate;
         }
 
         private void AddloanApplicationSub(LoanApplicationViewModel loan)
@@ -1551,7 +1527,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("Tenor can not be ZERO (0)");
                 }
-                int applicationId = this.loanData == null ? 0 : this.loanData.LOANAPPLICATIONID;
+                int applicationId = this.loanData == null ? 0 : this.loanData.LOANAPPLICATIONID; // ?
                 int tenor = ConvertTenorToDays(a.proposedTenor, a.tenorModeId);
 
                 var data = new TBL_LOAN_APPLICATION_DETAIL
