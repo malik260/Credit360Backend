@@ -609,7 +609,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             debit.companyId = model.companyId;
             debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
-            debit.sourceReferenceNumber = product.PRODUCTCODE;
+            debit.sourceReferenceNumber = model.referenceNumber; //product.PRODUCTCODE;
             debit.casaAccountId = null;
             debit.debitAmount = (decimal)model.dailyAccuralAmount;
             debit.creditAmount = 0;
@@ -632,7 +632,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.companyId = model.companyId;
             credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value;
 
-            credit.sourceReferenceNumber = product.PRODUCTCODE;
+            credit.sourceReferenceNumber = model.referenceNumber;  //product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = (decimal)model.dailyAccuralAmount;
