@@ -5523,7 +5523,18 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-                inputTransactions.Add(financeTransaction.BuildChargeReversalPosting(model, twoFactorAuth));
+
+                inputTransactions.AddRange(financeTransaction.BuildChargeReversalPosting(model, twoFactorAuth,"Main"));
+
+                var feeVATRecord = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == model.chargeFeeId && x.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax && x.DELETED == false).FirstOrDefault();
+                if(feeVATRecord  != null)
+                {
+                    
+                    inputTransactions.AddRange(financeTransaction.BuildChargeReversalPosting(model, twoFactorAuth, "VAT"));
+                }
+                financeTransaction.PostTransaction(inputTransactions,false,twoFactorAuth);
+
+
                 var feeResult = context.TBL_LOAN_FEE.Where(x => x.LOANID == loanId && x.CHARGEFEEID == model.chargeFeeId && x.LOANSYSTEMTYPEID == chargeDetails.LOANSYSTEMTYPEID).ToList();
                 ArchiveLoanFee(feeResult, model);
 
