@@ -1901,7 +1901,7 @@ namespace FintrakBanking.Repositories.Finance
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            decimal debitAmount = (decimal)model.feeAmountDiff;
+            decimal debitAmount = (decimal)model.payAmount;
 
             //if (debits.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax)
             //{
@@ -1942,7 +1942,7 @@ namespace FintrakBanking.Repositories.Finance
             inputTransactions.Add(debit);
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            decimal creditAmount = (decimal)model.feeAmountDiff;
+            decimal creditAmount = (decimal)model.payAmount;
             //if (credits.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax)
             //{
             //    feeDescription = "VAT Reversal";
