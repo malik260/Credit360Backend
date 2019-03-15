@@ -185,8 +185,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                              join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                                                              join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals (short?)f.FREQUENCYTYPEID
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
-                                                             where a.NEXTCOVENANTDATE >= startDate && a.NEXTCOVENANTDATE <= endDate && (decimal?)ca.AVAILABLEBALANCE < a.COVENANTAMOUNT
-                                                                  orderby a.NEXTCOVENANTDATE descending
+                                                            // where a.NEXTCOVENANTDATE >= startDate && a.NEXTCOVENANTDATE <= endDate && (decimal?)ca.AVAILABLEBALANCE < a.COVENANTAMOUNT
+                                                             where a.COVENANTDATE >= startDate && a.COVENANTDATE <= endDate && (decimal?)ca.AVAILABLEBALANCE < a.COVENANTAMOUNT
+                                                                  orderby a.COVENANTDATE descending
 
                                                                   select new LoanCovenantDetailViewModel
                                                              {
@@ -200,7 +201,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                  frequencyTypeId = a.FREQUENCYTYPEID,
                                                                  frequencyTypeName = f.MODE,
                                                                  loanId = a.LOANID,
-                                                                 loanRefNumber = e.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                                              // loanRefNumber = e.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                                                 loanRefNumber = b.LOANREFERENCENUMBER,
                                                                  relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
                                                                  managerEmail = c.EMAIL,
                                                                  relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
@@ -437,6 +439,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
                                                join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                                               //join l in context.TBL_LOAN on a.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID
                                                where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.RevolvingLoan 
                                                && a.MATURITYDATE >= startDate && a.MATURITYDATE<= endDate
                                              orderby a.MATURITYDATE descending
@@ -458,6 +461,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL
+                                                  // outstandingInterest = l.OUTSTANDINGINTEREST,
+                                                  // outstandingPrincipal = l.OUTSTANDINGPRINCIPAL
                                                }).ToList();
 
             return overDraft;
