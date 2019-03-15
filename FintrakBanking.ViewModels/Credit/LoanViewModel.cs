@@ -1051,6 +1051,14 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int? loanId { get; set; }
 
+        public string productCode { get; set; }
+        public string currencyCode { get; set; }
+
+        public string branchCode { get; set; }
+
+        //public string currencyCode { get; set; }
+        //referenceNumber = groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString(),
+
     }
 
 

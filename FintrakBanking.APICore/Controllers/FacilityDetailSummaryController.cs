@@ -47,10 +47,10 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("loan-product-fees/application/{loanApplicationDeatilId}")]
-        public HttpResponseMessage GetLoanProductFeesByFacilityId(int loanApplicationDeatilId)
+        [Route("loan-product-fees/application/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetLoanProductFeesByFacilityId(int loanApplicationDetailId)
         {
-            var response = repo.GetLoanProductFeesByFacilityId(loanApplicationDeatilId);
+            var response = repo.GetLoanProductFeesByFacilityId(loanApplicationDetailId);
             if (response == null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -420,12 +420,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-chargefee/{loanId}")]
-        public HttpResponseMessage GetLoanChargeFee(int loanId)
+        [Route("loan-chargefee/{loanId}/{loanSystemTypeId}")]
+        public HttpResponseMessage GetLoanChargeFee(int loanId, short loanSystemTypeId)
         {
             try
             {
-                var data = repo.LoanChargeFee(loanId);
+                var data = repo.LoanChargeFee(loanId, loanSystemTypeId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

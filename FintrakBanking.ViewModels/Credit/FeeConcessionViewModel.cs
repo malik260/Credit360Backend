@@ -50,6 +50,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal feeAmount { get; set; }
         public int? casaAccount { get; set; }
         public string casaAccountName { get; set; }
+        public decimal feeRate { get; set; }
 
         //public decimal earnedFeeAmount { get; set; }
         //public decimal taxAmount { get; set; }

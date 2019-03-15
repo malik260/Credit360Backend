@@ -61,6 +61,9 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanPaymentRestructureScheduleInputViewModel : LoanPaymentScheduleInputViewModel
 
     {
+        public string sourceReferenceNumber { get; set; }
+        public int casaAccountId { get; set; }
+
         public int? loanReviewOperationsId { get; set; }
 
         public int? proposedTenor { get; set; }

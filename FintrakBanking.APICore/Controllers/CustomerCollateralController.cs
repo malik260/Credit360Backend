@@ -74,10 +74,10 @@ namespace FintrakBanking.APICore.Controllers
                 await Request.Content.ReadAsMultipartAsync(provider);
 
                 int uploadType;
-                if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
-                }
+                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                //}
 
                 var entity = new CollateralViewModel
                 {
@@ -219,6 +219,38 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+
+
+        [HttpPost, Route("customer-collateral/go-for-approval-release-collateral")]
+        public HttpResponseMessage ReleaseCollateralGoForApproval([FromBody] ApprovalViewModel entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.BranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var response = repo.ReleaseCollateralGoForApproval(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Approval successfull" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+
 
         [HttpGet, Route("customer-collateral/release-collateral-awaiting-job-request")]
         public HttpResponseMessage GetCollateralReleaseAwaitingJobRequest()
