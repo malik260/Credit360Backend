@@ -105,5 +105,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int productId { get; set; }
         public short userBranchId { get; set; }
         public string loanReferenceNumber { get; set; }
+        public decimal amountRequested { get; set; }
     }
 }

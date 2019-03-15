@@ -259,14 +259,14 @@ namespace FintrakBanking.Repositories.Credit
                              join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
                              join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE,c.BRANCHCODE,d.CURRENCYCODE } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE,c.BRANCHCODE,d.CURRENCYCODE, a.CATEGORYID } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
-                                 
+                                 categoryId = groupedQ.Key.CATEGORYID,
                                  productCode = groupedQ.Key.PRODUCTCODE,
                                  currencyCode = groupedQ.Key.CURRENCYCODE,
                                  branchCode = groupedQ.Key.BRANCHCODE,
@@ -275,7 +275,7 @@ namespace FintrakBanking.Repositories.Credit
 
                              }).ToList().Select(x =>
                              {
-                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString();
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
                                  return x;
                              }).ToList();
 
@@ -1067,13 +1067,14 @@ namespace FintrakBanking.Repositories.Credit
                              join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
                              join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
+                                 categoryId = groupedQ.Key.CATEGORYID,
                                  productCode = groupedQ.Key.PRODUCTCODE,
                                  currencyCode = groupedQ.Key.CURRENCYCODE,
                                  branchCode = groupedQ.Key.BRANCHCODE,
@@ -1081,7 +1082,7 @@ namespace FintrakBanking.Repositories.Credit
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                              }).Where(x => x.dailyAccuralAmount > 0).ToList().Select(x =>
                              {
-                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString();
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
                                  return x;
                              }).ToList();
 
@@ -1231,13 +1232,14 @@ namespace FintrakBanking.Repositories.Credit
                              join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
                              join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.PastDuePrincipal
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
+                                 categoryId = groupedQ.Key.CATEGORYID,
                                  productCode = groupedQ.Key.PRODUCTCODE,
                                  currencyCode = groupedQ.Key.CURRENCYCODE,
                                  branchCode = groupedQ.Key.BRANCHCODE,
@@ -1246,7 +1248,7 @@ namespace FintrakBanking.Repositories.Credit
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                              }).Where(x => x.dailyAccuralAmount > 0).ToList().Select(x =>
                              {
-                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString();
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
                                  return x;
                              }).ToList(); 
 
@@ -5278,7 +5280,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool ProcessChargeReversal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, int operationId, int staffId, int loanReviewOperationsId)
+        public bool ProcessChargeReversal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, int operationId, int staffId,  int loanReviewOperationsId)
         {
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
             try
@@ -5335,10 +5337,11 @@ namespace FintrakBanking.Repositories.Credit
                     var runningFacility = context.TBL_LOAN.Find(model.loanId);
                     model.interestRate = runningFacility.INTERESTRATE;
                     model.effectiveDate = runningFacility.EFFECTIVEDATE;
-                    operationId = runningFacility.OPERATIONID ?? 0;
+                    model.operationId = runningFacility.OPERATIONID ?? 0;
                     model.companyId = runningFacility.COMPANYID;
                     model.principalAmount = (double)runningFacility.PRINCIPALAMOUNT;
                     model.casaAccountId = runningFacility.CASAACCOUNTID;
+                    model.sourceBranchId = runningFacility.BRANCHID;
                     model.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
                 }
                 if (productType == (int)LoanSystemTypeEnum.OverdraftFacility)
@@ -5346,10 +5349,11 @@ namespace FintrakBanking.Repositories.Credit
                     var runningFacility = context.TBL_LOAN_REVOLVING.Find(model.loanId);
                     model.interestRate = runningFacility.INTERESTRATE;
                     model.effectiveDate = runningFacility.EFFECTIVEDATE;
-                    operationId = runningFacility.OPERATIONID ?? 0;
+                    model.operationId = runningFacility.OPERATIONID ?? 0;
                     model.companyId = runningFacility.COMPANYID;
                     model.principalAmount = (double)runningFacility.OVERDRAFTLIMIT;
                     model.casaAccountId = runningFacility.CASAACCOUNTID;
+                    model.sourceBranchId = runningFacility.BRANCHID;
                     model.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
                 }
                 if (productType == (int)LoanSystemTypeEnum.ContingentLiability)
@@ -5357,11 +5361,13 @@ namespace FintrakBanking.Repositories.Credit
                     var runningFacility = context.TBL_LOAN_CONTINGENT.Find(model.loanId);
                     model.interestRate =1;
                     model.effectiveDate = runningFacility.EFFECTIVEDATE;
-                    operationId = runningFacility.OPERATIONID ?? 0;
+                    model.operationId = runningFacility.OPERATIONID ?? 0;
                     model.companyId = runningFacility.COMPANYID;
                     model.principalAmount = (double)runningFacility.CONTINGENTAMOUNT;
                     model.casaAccountId = runningFacility.CASAACCOUNTID;
+                    model.sourceBranchId = runningFacility.BRANCHID;
                     model.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
+                    
                 }
                 //EarnedFeeAmount = model.earnedFeeAmount;
                 //chargeTypeId = model.chargeFeeTypeId;
@@ -5517,7 +5523,18 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-                inputTransactions.Add(financeTransaction.BuildChargeReversalPosting(model, twoFactorAuth));
+
+                inputTransactions.AddRange(financeTransaction.BuildChargeReversalPosting(model, twoFactorAuth,"Main"));
+
+                var feeVATRecord = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == model.chargeFeeId && x.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax && x.DELETED == false).FirstOrDefault();
+                if(feeVATRecord  != null)
+                {
+                    
+                    inputTransactions.AddRange(financeTransaction.BuildChargeReversalPosting(model, twoFactorAuth, "VAT"));
+                }
+                financeTransaction.PostTransaction(inputTransactions,false,twoFactorAuth);
+
+
                 var feeResult = context.TBL_LOAN_FEE.Where(x => x.LOANID == loanId && x.CHARGEFEEID == model.chargeFeeId && x.LOANSYSTEMTYPEID == chargeDetails.LOANSYSTEMTYPEID).ToList();
                 ArchiveLoanFee(feeResult, model);
 
@@ -12334,8 +12351,9 @@ namespace FintrakBanking.Repositories.Credit
             //decimal pastDuePrincipal = decimal.Round((data.PASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
 
             //decimal totalamount = (accruedInterest + outStandingBalance + pastDue + pastDuePrincipal);
-            decimal totalamount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.BALANCE).FirstOrDefault();
+            decimal balance = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.BALANCE).FirstOrDefault();
             decimal? writtenOffAccruedAmount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.WRITTENOFFACCRUALAMOUNT).FirstOrDefault();
+            decimal totalamount = balance + (decimal)writtenOffAccruedAmount;
 
             var runningLoan = (from l in context.TBL_LOAN
                                where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo //&& l.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -12363,6 +12381,7 @@ namespace FintrakBanking.Repositories.Credit
                                    maturityDate = l.MATURITYDATE,
                                    scheduleTypeId = l.SCHEDULETYPEID,
                                    scheduleTypeCategoryId = l.TBL_LOAN_SCHEDULE_TYPE.SCHEDULECATEGORYID,
+                                   writtenOffAmount = balance,
                                    teno = days,
                                    //newTenor = 0,
                                    //accrualedAmount = accruedInterest,

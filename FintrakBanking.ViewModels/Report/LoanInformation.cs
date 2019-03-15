@@ -105,6 +105,7 @@ namespace FintrakBanking.ViewModels.Reports
     public class DateRange
     {
         public DateTime startDate { get; set; }
+        public DateTime date { get; set; }
         public DateTime endDate { get; set; }
         public short branchId { get; set; }
         public string loanRefNo { get; set; }
@@ -123,6 +124,7 @@ namespace FintrakBanking.ViewModels.Reports
         public short waivedOrDeferred { get; set; }
         public string searchParameter { get; set; }
         public string status { get; set; }
+        public string loanAcct { get; set; }
 
     }
 

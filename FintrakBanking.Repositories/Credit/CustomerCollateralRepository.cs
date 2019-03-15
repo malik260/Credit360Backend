@@ -258,8 +258,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool FinalReleaseCollateralApproval(ApprovalViewModel entity, int staffId)
         {
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.FinalCollateralRelease).ToList();
-            //var ids2 = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TemporalCollateralRelease).ToList();
+            //var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.FinalCollateralRelease).ToList();
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TemporalCollateralRelease).ToList();
            
 
 
@@ -296,7 +296,7 @@ namespace FintrakBanking.Repositories.Credit
                         AUDITTYPEID = (short)AuditTypeEnum.CollateralReleaseApproval,
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.BranchId,
-                        DETAIL = $"Collateral Release Approval '{ customerCollateral.COLLATERALCODE }' ",
+                        DETAIL = $"Collateral Release Approval '{ collateralRecord.COLLATERALCODE }' ",
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = genSetup.GetApplicationDate(),
