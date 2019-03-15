@@ -241,6 +241,9 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
             public async Task<ResponseMessage> APIOverDraftRenew(OverDraftTopUpAndRenewViewModel model)
             {
+                model.sanctionLevel = "003";
+                model.sanctionAuthorizer = "999";
+
                 HttpClientHandler _handler = new HttpClientHandler();
                 HttpClient client = new HttpClient(_handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
@@ -248,8 +251,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
-                model.sanctionLevel = "003";
-                model.sanctionAuthorizer = "999";
+                
 
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 

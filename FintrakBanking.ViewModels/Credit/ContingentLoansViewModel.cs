@@ -59,6 +59,23 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal amountRequested { get; set; }
         public short loanSystemTypeId { get; set; }
         public string remark { get; set; }
+        public int loanReviewApplicationId { get; set; }
+        public string operationName { get; set; }
+        public DateTime timeIn { get; set; }
+
+        public string timeLapse
+        {
+            get
+            {
+                if (timeIn == null) return "n/a";
+                int count = (int)Math.Round((DateTime.Now - (DateTime)timeIn).TotalDays);
+                string units = count == 1 ? " day" : " days";
+                if ((DateTime.Now - (DateTime)timeIn).TotalHours < 24) return timeIn.ToString();
+                return count.ToString() + units;
+            }
+        }
+
+        public string loanApplicationNumber { get; set; }
     }
 
 
@@ -67,7 +84,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int contingentLoanId { get; set; }
 
-        public decimal amountRequuested { get; set; }
+        public decimal amountRequested { get; set; }
 
         public string loanReferenceNumber { get; set; }
 
@@ -79,6 +96,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string fileExtension { get; set; }
         public string fileName { get; set; }
         public string documentTitle { get; set; }
+        public int loanReviewApplicationId { get; set; }
     }
 
     public class ApproveAPSRequestViewModel : ApprovalViewModel

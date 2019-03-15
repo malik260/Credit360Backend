@@ -235,7 +235,7 @@ namespace FintrakBanking.Repositories.Credit
                         else if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.UseExistingRepayment)
                             output = PrepaymentWithKeepExistingAnnuity((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution);
                         else if (loanInput.prepaymentMethodId == null || loanInput.prepaymentMethodId == 0)
-                            output = InterestRateChangeWithNewAnnuity((int)loanInput.loanId, loanInput.effectiveDate, loanInput.interestRate, (int)loanInput.interestFrequencyTypeId);
+                            output = InterestRateChangeWithNewAnnuity((int)loanInput.loanId, loanInput.effectiveDate, loanInput.interestRate, (int)loanInput.interestFrequencyTypeId, loanInput.maturityDate);
                     }
                     else
                     {
@@ -244,7 +244,7 @@ namespace FintrakBanking.Repositories.Credit
                         else if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.UseExistingRepayment)
                             output = PrepaymentWithKeepExistingAnnuityAndUnEqualPayment((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution, (int)loanInput.principalFrequencyTypeId, (int)loanInput.interestFrequencyTypeId);
                         else
-                            output = InterestRateChangeWithNewAnnuityAndUnEqualPayment((int)loanInput.loanId, loanInput.effectiveDate, (int)loanInput.principalFrequencyTypeId, (int)loanInput.interestFrequencyTypeId, loanInput.interestRate);
+                            output = InterestRateChangeWithNewAnnuityAndUnEqualPayment((int)loanInput.loanId, loanInput.effectiveDate, (int)loanInput.principalFrequencyTypeId, (int)loanInput.interestFrequencyTypeId, loanInput.interestRate, loanInput.maturityDate);
                     }
 
                 }
@@ -267,7 +267,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        output = BulletInterestRateChange((int)loanInput.loanId, loanInput.effectiveDate, loanInput.interestRate);
+                        output = BulletInterestRateChange((int)loanInput.loanId, loanInput.effectiveDate, loanInput.interestRate, loanInput.maturityDate);
                     }
                 }
 
@@ -284,10 +284,10 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        output = BallonInterestRateChange((int)loanInput.loanId, loanInput.effectiveDate, 0, (int)loanInput.interestFrequencyTypeId, loanInput.interestRate);
+                        output = BallonInterestRateChange((int)loanInput.loanId, loanInput.effectiveDate, 0, (int)loanInput.interestFrequencyTypeId, loanInput.interestRate, loanInput.maturityDate);
                     }
                 }
-                
+
             }
 
             return output;
@@ -712,7 +712,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanInput.interestFrequency = (short)loanInput.interestFrequencyTypeId;
             }
-            
+
             if (loanInput.principalAmount <= 0)
                 throw new ConditionNotMetException("Please Enter Loan Amount");
             if (loanInput.interestFrequencyTypeId <= 0)
@@ -1701,6 +1701,8 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
+            //var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
 
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
@@ -1714,6 +1716,11 @@ namespace FintrakBanking.Repositories.Credit
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
 
             double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
 
@@ -1978,6 +1985,11 @@ namespace FintrakBanking.Repositories.Credit
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
 
             double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
 
@@ -2292,6 +2304,11 @@ namespace FintrakBanking.Repositories.Credit
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
 
             double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
 
@@ -2624,6 +2641,12 @@ namespace FintrakBanking.Repositories.Credit
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+
+            if (interestRepaymentFrequency == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
 
             double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
 
@@ -3014,6 +3037,11 @@ namespace FintrakBanking.Repositories.Credit
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
+
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
             double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
@@ -3215,7 +3243,7 @@ namespace FintrakBanking.Repositories.Credit
             return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithNewAnnuity(int loanID, DateTime effectiveDate, double interestRate, int frequencyId)
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithNewAnnuity(int loanID, DateTime effectiveDate, double interestRate, int frequencyId, DateTime maturityDate)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -3242,7 +3270,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate).OrderBy(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
-            int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)frequencyId);
+            int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, maturityDate, (FrequencyTypeEnum)frequencyId);
 
             int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
@@ -3250,6 +3278,10 @@ namespace FintrakBanking.Repositories.Credit
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
+            if (frequencyId == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
 
             double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
@@ -3343,7 +3375,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (loanPeriodic.ENDPRINCIPALAMOUNT >= loanPeriodic.PERIODPAYMENTAMOUNT)
                         {
-                            if (loan.MATURITYDATE != nextPaymentDate)
+                            if (maturityDate != nextPaymentDate)
                             {
                                 loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
                                 loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
@@ -3549,6 +3581,11 @@ namespace FintrakBanking.Repositories.Credit
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
 
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
 
@@ -3849,6 +3886,11 @@ namespace FintrakBanking.Repositories.Credit
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
+
             double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
 
             double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
@@ -4125,6 +4167,11 @@ namespace FintrakBanking.Repositories.Credit
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
 
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
 
@@ -4432,6 +4479,11 @@ namespace FintrakBanking.Repositories.Credit
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            if ((int)(FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
 
             double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
 
@@ -4751,7 +4803,7 @@ namespace FintrakBanking.Repositories.Credit
             return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuity(int loanID, DateTime effectiveDate, double interestRate, int frequencyId)
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuity(int loanID, DateTime effectiveDate, double interestRate, int frequencyId, DateTime maturityDate)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -4784,13 +4836,18 @@ namespace FintrakBanking.Repositories.Credit
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
+            if ((int)(FrequencyTypeEnum)frequencyId == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
+
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
 
             double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
 
             double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
-            int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)frequencyId);
+            int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, maturityDate, (FrequencyTypeEnum)frequencyId);
 
             double annuity = nextOpeningBalance / numberOfPayments;
 
@@ -5103,6 +5160,11 @@ namespace FintrakBanking.Repositories.Credit
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
+
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
 
             double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
@@ -5372,7 +5434,7 @@ namespace FintrakBanking.Repositories.Credit
             return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithNewAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate)
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithNewAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate, DateTime maturityDate)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -5405,6 +5467,11 @@ namespace FintrakBanking.Repositories.Credit
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
+            if (interestRepaymentFrequency == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
+
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
 
             double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
@@ -5419,7 +5486,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)principalRepaymentFrequency);
+                numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, maturityDate, (FrequencyTypeEnum)principalRepaymentFrequency);
             }
 
 
@@ -5453,7 +5520,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                nextPrincipalPeriodicDate = loan.MATURITYDATE;
+                nextPrincipalPeriodicDate = maturityDate;
             }
 
 
@@ -5778,6 +5845,11 @@ namespace FintrakBanking.Repositories.Credit
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
 
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
 
@@ -6133,7 +6205,7 @@ namespace FintrakBanking.Repositories.Credit
             return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        public List<LoanPaymentSchedulePeriodicViewModel> EvenPrincipalPaymentsNewAnnuity(int loanID, DateTime effectiveDate)
+        public List<LoanPaymentSchedulePeriodicViewModel> EvenPrincipalPaymentsNewAnnuity(int loanID, DateTime effectiveDate, DateTime maturityDate)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -6166,13 +6238,18 @@ namespace FintrakBanking.Repositories.Credit
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
+            if ((int)(FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
+
             double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
 
             double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
 
             double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
-            int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID);
+            int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, maturityDate, (FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID);
 
             double annuity = nextOpeningBalance / numberOfPayments;
 
@@ -6528,7 +6605,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public List<LoanPaymentSchedulePeriodicViewModel> BulletInterestRateChange(int loanID, DateTime effectiveDate, double interestRate)
+        public List<LoanPaymentSchedulePeriodicViewModel> BulletInterestRateChange(int loanID, DateTime effectiveDate, double interestRate, DateTime maturityDate)
         {
 
             var loanData = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -6558,11 +6635,11 @@ namespace FintrakBanking.Repositories.Credit
 
             LoanPaymentSchedulePeriodicViewModel loanPeriod = new LoanPaymentSchedulePeriodicViewModel();
             loanPeriod.paymentNumber = 1;
-            loanPeriod.paymentDate = loanData.MATURITYDATE;
+            loanPeriod.paymentDate = maturityDate;
             loanPeriod.startPrincipalAmount = (double)bulletNextData.STARTPRINCIPALAMOUNT;
             loanPeriod.periodPrincipalAmount = (double)bulletNextData.STARTPRINCIPALAMOUNT;
 
-            var dateDifferenceCount = (loanData.MATURITYDATE - effectiveDate).TotalDays;
+            var dateDifferenceCount = (maturityDate - effectiveDate).TotalDays;
 
             loanPeriod.periodInterestAmount = (((double)bulletNextData.STARTPRINCIPALAMOUNT) * (interestRate / 100.0)) * (dateDifferenceCount / daysInAYear);
             loanPeriod.periodPaymentAmount = loanPeriod.periodPrincipalAmount + loanPeriod.periodInterestAmount;
@@ -6605,6 +6682,11 @@ namespace FintrakBanking.Repositories.Credit
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
 
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
 
@@ -6904,7 +6986,7 @@ namespace FintrakBanking.Repositories.Credit
             return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        public List<LoanPaymentSchedulePeriodicViewModel> BallonInterestRateChange(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate)
+        public List<LoanPaymentSchedulePeriodicViewModel> BallonInterestRateChange(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate, DateTime maturityDate)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -6937,6 +7019,11 @@ namespace FintrakBanking.Repositories.Credit
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
+            if (interestRepaymentFrequency == 8)
+            {
+                accruedInterestBeforeEffectiveDate = 0;
+            }
+
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
 
             double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
@@ -6951,7 +7038,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)principalRepaymentFrequency);
+                numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, maturityDate, (FrequencyTypeEnum)principalRepaymentFrequency);
             }
 
 
@@ -6982,7 +7069,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                nextPrincipalPeriodicDate = loan.MATURITYDATE;
+                nextPrincipalPeriodicDate = maturityDate;
             }
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();

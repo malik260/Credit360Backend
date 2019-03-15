@@ -609,7 +609,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             debit.companyId = model.companyId;
             debit.glAccountId = product.INTERESTRECEIVABLEPAYABLEGL.Value;
-            debit.sourceReferenceNumber = product.PRODUCTCODE;
+            debit.sourceReferenceNumber = model.referenceNumber; //product.PRODUCTCODE;
             debit.casaAccountId = null;
             debit.debitAmount = (decimal)model.dailyAccuralAmount;
             debit.creditAmount = 0;
@@ -632,7 +632,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.companyId = model.companyId;
             credit.glAccountId = product.INTERESTINCOMEEXPENSEGL.Value;
 
-            credit.sourceReferenceNumber = product.PRODUCTCODE;
+            credit.sourceReferenceNumber = model.referenceNumber;  //product.PRODUCTCODE;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = (decimal)model.dailyAccuralAmount;
@@ -1898,10 +1898,12 @@ namespace FintrakBanking.Repositories.Finance
 
             var loanData = this.context.TBL_LOAN.FirstOrDefault(x => x.CASAACCOUNTID == x.TBL_CASA.CASAACCOUNTID && x.COMPANYID == model.companyId);
 
-            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanData.CASAACCOUNTID && x.COMPANYID == model.companyId);
+            //var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanData.CASAACCOUNTID && x.COMPANYID == model.companyId);
+            var details = this.context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == model.chargeFeeId);
+
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId);
 
             if (model.feeAmountDiff > 0)
-
             {
 
                 FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -1919,14 +1921,18 @@ namespace FintrakBanking.Repositories.Finance
                 debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                 debit.companyId = model.companyId;
                 debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
-                debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
+                debit.sourceReferenceNumber = model.sourceReferenceNumber; //loanData.LOANREFERENCENUMBER;
                 debit.casaAccountId = null;
                 debit.debitAmount = Math.Abs(model.feeAmountDiff);
                 debit.creditAmount = 0;
                 debit.sourceBranchId = loanData.BRANCHID;
                 debit.destinationBranchId = casa.BRANCHID;
 
-                var feeGL = 1;//this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == model.chargeFeeId).Select(x => x.GLACCOUNTID).FirstOrDefault();
+                var b = this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == model.chargeFeeId);
+                
+
+                //var feeGL = this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == model.chargeFeeId).Select(x => x.TBL_CHARGE_FEE_DETAIL.FirstOrDefault().GLACCOUNTID1.Value).FirstOrDefault();
+                //var feeGL = b.FirstOrDefault().TBL_CHARGE_FEE_DETAIL.FirstOrDefault().GLACCOUNTID1.Value;
                 FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
                 credit.operationId = (int)OperationsEnum.Fee_chargeChange;
                 credit.description = "Charge Reversal";
@@ -1941,7 +1947,7 @@ namespace FintrakBanking.Repositories.Finance
                 credit.approvedDateTime = DateTime.Now;
                 credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                 credit.companyId = model.companyId;
-                credit.glAccountId = feeGL;
+                credit.glAccountId = details.FirstOrDefault().GLACCOUNTID1.Value;
                 credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
                 credit.casaAccountId = casa.CASAACCOUNTID;
                 credit.debitAmount = 0;
@@ -1980,7 +1986,7 @@ namespace FintrakBanking.Repositories.Finance
                 debit.sourceBranchId = loanData.BRANCHID;
                 debit.destinationBranchId = casa.BRANCHID;
 
-                var feeGL = 1;//this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == model.chargeFeeId).Select(x => x.GLACCOUNTID).FirstOrDefault();
+                var feeGL = this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == model.chargeFeeId).Select( x=> x.TBL_CHARGE_FEE_DETAIL.FirstOrDefault().GLACCOUNTID1.Value).FirstOrDefault();
                 FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
                 credit.operationId = (int)OperationsEnum.Fee_chargeChange;
                 credit.description = "Charge Addition";
