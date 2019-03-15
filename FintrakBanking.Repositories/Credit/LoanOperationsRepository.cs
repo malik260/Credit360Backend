@@ -6342,6 +6342,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             return (from data in context.TBL_OPERATIONS
                     where data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountAddition || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension
+                     || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
@@ -12760,7 +12761,7 @@ namespace FintrakBanking.Repositories.Credit
                     CHARGEFEEID = detail.chargeFeeId, // refactor to operationId from ui!
                     ISPOSTED = false,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,// REMOVE DUPLICATE [STATUSID]
-                    FEERATEVALUE = 0,
+                    FEERATEVALUE = detail.feeRate,
                     FEEDEPENDENTAMOUNT = 0,
                     FEEAMOUNT = detail.feeAmount,
                     EARNEDFEEAMOUNT = 0,
@@ -15515,6 +15516,8 @@ namespace FintrakBanking.Repositories.Credit
                 List<int> dataList = (from g in loanDetails
                                       select g.relationshipManagerId).ToList();
 
+                var review = context.TBL_LOAN_REVIEW_OPERATION.Find(loanReviewOperationsId);
+
                 var RMdetail = (from x in staffList
                                 where dataList.Contains(x.STAFFID)
                                 select x).ToList();
@@ -15537,7 +15540,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
-                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "Kindly be Informed that th attached bond with the following detils which was called in, has been cancelled having refunded the APS to the Principal: <br /> <br />" + $"{dataTable2}" + "<br /> <br /> The Bussiness / Relationship Manager should therefore ensure that all parties to the bond instrument are adviced of the development.<br /> <br /> Meanwhile, Kindly acknowledge this mail. <br /> <br />Warm regards.";
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "Kindly be Informed that th attached bond with the following detils which was called in, has been cancelled,<br /> Reason: " + review.REVIEWDETAILS + " <br /> <br />" + $"{dataTable2}" + "<br /> <br /> The Bussiness / Relationship Manager should therefore ensure that all parties to the bond instrument are adviced of the development.<br /> <br /> Meanwhile, Kindly acknowledge this mail. <br /> <br />Warm regards.";
                     string additionalRecipient = loanDetails.FirstOrDefault((LoanContingentViewModel x) => x.relationshipManagerId == item2.STAFFID).officerEmail;
                     string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
@@ -15581,10 +15584,11 @@ namespace FintrakBanking.Repositories.Credit
                     var custname = context.TBL_LOAN_CONTINGENT.Where(a => a.CONTINGENTLOANID == item3.loanId).Select(w => w.TBL_CUSTOMER.FIRSTNAME + " " + w.TBL_CUSTOMER.MAIDENNAME + " " + w.TBL_CUSTOMER.LASTNAME).FirstOrDefault();
                     dataTable = dataTable + $"<tr><td>{custname}</td><td>APG</td><td>{item3.contingentAmount}</td>" + $"<td>{item3.effectiveDate.ToLongDateString()}</td><td>{item3.loanRefNumber}</td></tr>";
                 }
+                var review = context.TBL_LOAN_REVIEW_OPERATION.Find(loanReviewOperationsId);
 
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
-                string messageContent = string.Format("Dear Team, <br /><br /> Kindly be Informed that th attached bond with the following detils which was called in, has been cancelled having refunded the APS to the Principal: <br /> <br />" + $"{dataTable}" + "<br /> <br /> The Bussiness / Relationship Manager should therefore ensure that all parties to the bond instrument are adviced of the development.<br /> <br /> Meanwhile, Kindly acknowledge this mail. <br /> <br />Warm regards.");
+                string messageContent = string.Format("Dear Team, <br /><br /> Kindly be Informed that th attached bond with the following detils which was called in, has been cancelled, <br /> Reason: " + review.REVIEWDETAILS + " <br /> <br />" + $"{dataTable}" + "<br /> <br /> The Bussiness / Relationship Manager should therefore ensure that all parties to the bond instrument are adviced of the development.<br /> <br /> Meanwhile, Kindly acknowledge this mail. <br /> <br />Warm regards.");
 
                 string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);

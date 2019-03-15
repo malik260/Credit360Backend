@@ -36,6 +36,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string metalType { get; set; }
         public string machineType { get; set; }
         public double exchangeRate { get; set; }
+        public string capturedBy { get; set; }
 
         // presentation
         public int approvalStatus { get; set; }
@@ -280,6 +281,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralPrimaryDocumentTitle { get; set; }
         public string comment { get; set; }
         public int? releaseType { get; set; }
+        public int approvalStatusId { get; set; }
 
         public DateTime nextVisitationDate { get { return lastVisitationDate.AddDays((double)(visitationCycle)); } set { } }
         public DateTime lastVisitationDate { get; set; }
