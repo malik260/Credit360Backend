@@ -255,16 +255,28 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 var model = (from a in context.TBL_DAILY_ACCRUAL
+                             join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                             join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
+                             join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE,c.BRANCHCODE,d.CURRENCYCODE } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
-                                 referenceNumber = context.TBL_PRODUCT.Where(x => x.PRODUCTID == groupedQ.Key.PRODUCTID).Select(x => x.PRODUCTCODE).FirstOrDefault() + '-' + context.TBL_BRANCH.Where(x => x.BRANCHID == groupedQ.Key.BRANCHID).Select(x => x.BRANCHCODE).FirstOrDefault() + '-' + context.TBL_COMPANY.Where(x => x.COMPANYID == groupedQ.Key.COMPANYID).Select(x => x.COMPANYID).FirstOrDefault() + '-' + context.TBL_CURRENCY.Where(x => x.CURRENCYID == groupedQ.Key.CURRENCYID).Select(x => x.CURRENCYCODE).FirstOrDefault(),
+                                 
+                                 productCode = groupedQ.Key.PRODUCTCODE,
+                                 currencyCode = groupedQ.Key.CURRENCYCODE,
+                                 branchCode = groupedQ.Key.BRANCHCODE,
+                                 
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => (double)i.DAILYACCURALAMOUNT * i.EXCHANGERATE),
+
+                             }).ToList().Select(x =>
+                             {
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString();
+                                 return x;
                              }).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -1051,17 +1063,27 @@ namespace FintrakBanking.Repositories.Credit
                 context.SaveChanges();
 
                 var model = (from a in context.TBL_DAILY_ACCRUAL
+                             join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                             join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
+                             join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
-                                 referenceNumber = context.TBL_PRODUCT.Where(x => x.PRODUCTID == groupedQ.Key.PRODUCTID).Select(x => x.PRODUCTCODE).FirstOrDefault() + '-' + context.TBL_BRANCH.Where(x => x.BRANCHID == groupedQ.Key.BRANCHID).Select(x => x.BRANCHCODE).FirstOrDefault() + '-' + context.TBL_COMPANY.Where(x => x.COMPANYID == groupedQ.Key.COMPANYID).Select(x => x.COMPANYID).FirstOrDefault() + '-' + context.TBL_CURRENCY.Where(x => x.CURRENCYID == groupedQ.Key.CURRENCYID).Select(x => x.CURRENCYCODE).FirstOrDefault(),
+                                 productCode = groupedQ.Key.PRODUCTCODE,
+                                 currencyCode = groupedQ.Key.CURRENCYCODE,
+                                 branchCode = groupedQ.Key.BRANCHCODE,
+                                 //referenceNumber = groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString(),
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
-                             }).Where(x => x.dailyAccuralAmount > 0).ToList();
+                             }).Where(x => x.dailyAccuralAmount > 0).ToList().Select(x =>
+                             {
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString();
+                                 return x;
+                             }).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
@@ -1205,17 +1227,28 @@ namespace FintrakBanking.Repositories.Credit
                 context.SaveChanges();
 
                 var model = (from a in context.TBL_DAILY_ACCRUAL
+                             join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                             join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
+                             join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.PastDuePrincipal
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
-                                 referenceNumber = context.TBL_PRODUCT.Where(x => x.PRODUCTID == groupedQ.Key.PRODUCTID).Select(x => x.PRODUCTCODE).FirstOrDefault() + '-' + context.TBL_BRANCH.Where(x => x.BRANCHID == groupedQ.Key.BRANCHID).Select(x => x.BRANCHCODE).FirstOrDefault() + '-' + context.TBL_COMPANY.Where(x => x.COMPANYID == groupedQ.Key.COMPANYID).Select(x => x.COMPANYID).FirstOrDefault() + '-' + context.TBL_CURRENCY.Where(x => x.CURRENCYID == groupedQ.Key.CURRENCYID).Select(x => x.CURRENCYCODE).FirstOrDefault(),
+                                 productCode = groupedQ.Key.PRODUCTCODE,
+                                 currencyCode = groupedQ.Key.CURRENCYCODE,
+                                 branchCode = groupedQ.Key.BRANCHCODE,
+
+                                 //referenceNumber = groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString(),
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
-                             }).Where(x => x.dailyAccuralAmount > 0).ToList();
+                             }).Where(x => x.dailyAccuralAmount > 0).ToList().Select(x =>
+                             {
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString();
+                                 return x;
+                             }).ToList(); 
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
