@@ -390,6 +390,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerEmail { get; set; }
         public object totalRepayment { get; set; }
         public string loanSystemTypeName { get; set; }
+        public decimal writtenOffAmount { get; set; }
 
 
 
