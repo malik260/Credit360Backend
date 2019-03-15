@@ -437,65 +437,69 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [Route("loan-booking")]
         public HttpResponseMessage AddLoanBooking([FromBody] LoanViewModel entity)
         {
-            try
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+
+
+            var data = repo.AddLoanBooking(entity);
+            if (data != "")
             {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
-                entity.companyId = token.GetCompanyId;
-
-                var data = repo.AddLoanBooking(entity);
-                if (data != "")
+                if (entity.productTypeId == (short)LoanProductTypeEnum.CommercialLoan
+                    || entity.productTypeId == (short)LoanProductTypeEnum.TermLoan
+                    || entity.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating
+                    || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving
+                    || entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                 {
-                    if(entity.productTypeId ==(short)LoanProductTypeEnum.CommercialLoan 
-                        || entity.productTypeId == (short)LoanProductTypeEnum.TermLoan 
-                        || entity.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating 
-                        || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving
-                        || entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
-                    {
-                        if(entity.isInEditMode)
-                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Loan Loan with Account Number: '{ data}' was successfully modified."  });
-                        else
-                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successfully initiated and is waiting authorization.\r\n Loan Account Number: " + data });
-                    }
-
-                    if(entity.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
-                    {
-                        if (entity.isInEditMode)
-                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Overdaft with Account Number: '{ data}' was successfully modified." });
-                        else
-                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successfully initiated and is awaiting authorization.\r\n Facility Account Number: " + data });
-                    }
-
-                    if (entity.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
-                    {
-                        if (entity.isInEditMode)
-                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"contigent facility with Account Number: '{ data}' was successfully modified." });
-                        else
-                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successfully initiated and is awaiting authorization.\r\n Facility Account Number: " + data });
-                    }
+                    if (entity.isInEditMode)
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Loan Loan with Account Number: '{ data}' was successfully modified." });
+                    else
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successfully initiated and is waiting authorization.\r\n Loan Account Number: " + data });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                if (entity.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                {
+                    if (entity.isInEditMode)
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Overdaft with Account Number: '{ data}' was successfully modified." });
+                    else
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successfully initiated and is awaiting authorization.\r\n Facility Account Number: " + data });
+                }
+
+                if (entity.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                {
+                    if (entity.isInEditMode)
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"contigent facility with Account Number: '{ data}' was successfully modified." });
+                    else
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successfully initiated and is awaiting authorization.\r\n Facility Account Number: " + data });
+                }
             }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $" {ce.Message}" });
-            }
-            catch (APIErrorException ae)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
-            }
-            catch (TwoFactorAuthenticationException fa)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            //try
+            //{
+            //    //TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+
+
+            //}
+            //catch (ConditionNotMetException ce)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $" {ce.Message}" });
+            //}
+            //catch (APIErrorException ae)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
+            //}
+            //catch (TwoFactorAuthenticationException fa)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
+            //}
+            //catch (SecureException ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            //}
         }
 
         [HttpGet]
