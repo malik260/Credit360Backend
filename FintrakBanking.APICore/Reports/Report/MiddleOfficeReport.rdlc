@@ -15,7 +15,7 @@
               <Width>1.69792in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.34375in</Width>
+              <Width>1.55208in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.61458in</Width>
@@ -24,10 +24,10 @@
               <Width>1.38542in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.45833in</Width>
+              <Width>1.72917in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.70833in</Width>
+              <Width>1.66729in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.45833in</Width>
@@ -42,9 +42,6 @@
               <Width>1.4375in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1in</Width>
-            </TablixColumn>
-            <TablixColumn>
               <Width>1.39583in</Width>
             </TablixColumn>
             <TablixColumn>
@@ -54,7 +51,10 @@
               <Width>2.27083in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.60417in</Width>
+              <Width>1.70833in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.14584in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.39583in</Width>
@@ -438,37 +438,6 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox18">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>Loan Type</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox18</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
-                        <BackgroundColor>Peru</BackgroundColor>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
                     <Textbox Name="Textbox19">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -546,6 +515,37 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox23</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>Peru</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox6">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Middle Office Comment</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox6</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -667,9 +667,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!dateTimeCreated.Value</Value>
-                              <Style>
-                                <Format>dd/MM/yyyy HH:MM:ss tt</Format>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -970,7 +968,7 @@
                             <TextRun>
                               <Value>=Fields!invoiceDate.Value</Value>
                               <Style>
-                                <Format>dd/MM/yyyy HH:MM:ss tt</Format>
+                                <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -989,36 +987,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="loanType">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!loanType.Value</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>loanType</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Color>LightGrey</Color>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -1113,6 +1082,36 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
+                    <Textbox Name="middleOfficeComment">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!middleOfficeComment.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>middleOfficeComment</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
                     <Textbox Name="status">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -1151,9 +1150,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!dateTimeUpdated.Value</Value>
-                              <Style>
-                                <Format>dd/MM/yyyy HH:MM:ss tt</Format>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1213,7 +1210,7 @@
         <Top>0.80083in</Top>
         <Left>0.4675in</Left>
         <Height>0.5in</Height>
-        <Width>26.20832in</Width>
+        <Width>27.89645in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1224,7 +1221,7 @@
     <Height>2in</Height>
     <Style />
   </Body>
-  <Width>26.67583in</Width>
+  <Width>28.36395in</Width>
   <Page>
     <PageHeader>
       <Height>1in</Height>
@@ -1375,10 +1372,14 @@
           <DataField>loanType</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="middleOfficeComment">
+          <DataField>middleOfficeComment</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>LoanDataSet</rd:DataSetName>
-        <rd:SchemaPath>C:\FintrakProjects\ReportDeveloper\ReportDeveloper\ReportDataset\LoanDataSet.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\FinTrak\ReportDeveloper\ReportDeveloper\ReportDataset\LoanDataSet.xsd</rd:SchemaPath>
         <rd:TableName>MiddleOfficeReport</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
