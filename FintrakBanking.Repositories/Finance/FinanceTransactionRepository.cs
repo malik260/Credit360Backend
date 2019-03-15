@@ -1891,7 +1891,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
         
-        public FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth)
+        public List<FinanceTransactionViewModel> BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth, string postType)
         {
 
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -1901,7 +1901,7 @@ namespace FintrakBanking.Repositories.Finance
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            decimal debitAmount = (decimal)model.feeAmountDiff;
+            decimal debitAmount = (decimal)model.payAmount;
 
             //if (debits.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax)
             //{
@@ -1909,6 +1909,13 @@ namespace FintrakBanking.Repositories.Finance
             //    debitAmount = (decimal)model.feeAmountDiff * (decimal)(debits.VALUE / 100.0);
             //}
 
+            var feeVATRecord = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == model.chargeFeeId && x.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax && x.DELETED == false).FirstOrDefault();
+
+            if (postType == "VAT")
+            {
+                feeDescription = "Charge Reversal (" + feeVATRecord.DESCRIPTION + ")";
+                debitAmount = (decimal)model.payAmount * (decimal)(feeVATRecord.VALUE / 100.0);
+            }
             debit.operationId = (int)model.operationId;
             debit.description = feeDescription; //feeDescription; // $"Fee charge on {debits.DESCRIPTION}";
             debit.valueDate = generalSetup.GetApplicationDate();
@@ -1942,13 +1949,13 @@ namespace FintrakBanking.Repositories.Finance
             inputTransactions.Add(debit);
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            decimal creditAmount = (decimal)model.feeAmountDiff;
-            //if (credits.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax)
-            //{
-            //    feeDescription = "VAT Reversal";
-            //    creditAmount = (decimal)model.feeAmountDiff * (decimal)(credits.VALUE / 100.0);
-            //}
+            decimal creditAmount = (decimal)model.payAmount;
 
+            if (postType == "VAT")
+            {
+                feeDescription = "Charge Reversal (" + feeVATRecord.DESCRIPTION + ")";
+                creditAmount = (decimal)model.payAmount * (decimal)(feeVATRecord.VALUE / 100.0);
+            }
             //if (credits.TBL_CHARGE_FEE_DETAIL_TYPE.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax) { feeDescription = "VAT Reversal"; }
             credit.operationId = (int)model.operationId;
             credit.description = feeDescription;
@@ -1970,12 +1977,15 @@ namespace FintrakBanking.Repositories.Finance
             credit.debitAmount = 0;
             credit.creditAmount = creditAmount;
             credit.sourceBranchId = model.sourceBranchId;
-            credit.destinationBranchId = casa.BRANCHID ;
+            credit.destinationBranchId = casa.BRANCHID;
             credit.rateCode = "TTB";
             credit.rateUnit = string.Empty;
             credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
             inputTransactions.Add(credit);
+
+
+
 
             //foreach (var post in postingGroups)
             //{
@@ -1985,7 +1995,7 @@ namespace FintrakBanking.Repositories.Finance
             //    {
             //        FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             //        decimal debitAmount = (decimal)model.feeAmountDiff;
-                    
+
             //        if(debits.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax ) {
             //            feeDescription = "VAT Reversal";
             //            debitAmount = (decimal)model.feeAmountDiff * (decimal)(debits.VALUE / 100.0);
@@ -2061,11 +2071,11 @@ namespace FintrakBanking.Repositories.Finance
             //        credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
             //        inputTransactions.Add(credit);
-                    
+
             //    }
-                
+
             //}
-            PostTransaction(inputTransactions, false, twoFactorAuth);
+           // PostTransaction(inputTransactions, false, twoFactorAuth);
 
             //var b = this.context.TBL_CHARGE_FEE.Where(x => x.CHARGEFEEID == model.chargeFeeId);
 
@@ -2184,7 +2194,7 @@ namespace FintrakBanking.Repositories.Finance
             // Audit Section ---------------------------            
 
 
-            return null;
+            return inputTransactions;
 
         }
 
