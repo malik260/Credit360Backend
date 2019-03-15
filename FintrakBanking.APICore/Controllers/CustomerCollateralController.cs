@@ -57,6 +57,19 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region New
+        [HttpGet, Route("collateral-document-release/{collateralId}")]
+        public HttpResponseMessage GetCollateralReleaseDocumentByCollateral(int collateralId)
+        {
+            try
+            {
+                var data = document.GetCustomerCollateralReleaseDocument(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpPost]
         [ClaimsAuthorization]

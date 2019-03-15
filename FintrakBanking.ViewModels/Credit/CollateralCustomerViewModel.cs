@@ -51,6 +51,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int policyId { get; set; }
 
         public List<InsurancePolicies> insurancePolicy { get; set; }
+        public List<CollateralDocumentViewModel> documents { get; set; }
 
         public List<CollateralDocumentViewModel> collateralVisitation { get; set; }
         // deposit

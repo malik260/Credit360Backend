@@ -14,6 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CollateralDocumentViewModel> GetAllCollateralDocument();
 
         IEnumerable<CollateralDocumentViewModel> GetCustomerCollateralDocument(int collateralId);
+        IEnumerable<CollateralDocumentViewModel> GetCustomerCollateralReleaseDocument(int collateralId);
 
         bool AddCollateralDocument(CollateralDocumentViewModel model, byte[] file);
         bool AddTempCollateralDocument(CollateralDocumentViewModel model, byte[] file);

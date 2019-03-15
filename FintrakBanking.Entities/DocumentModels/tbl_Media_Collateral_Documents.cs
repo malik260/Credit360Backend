@@ -38,6 +38,8 @@ namespace FintrakBanking.Entities.DocumentModels
 
         public int CREATEDBY { get; set; }
         public int? DOCUMENTTYPEID { get; set; }
+        public int? COLLATERALRELEASESTATUSID { get; set; }
+
 
     }
 }
