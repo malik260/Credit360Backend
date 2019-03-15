@@ -259,14 +259,14 @@ namespace FintrakBanking.Repositories.Credit
                              join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
                              join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE,c.BRANCHCODE,d.CURRENCYCODE } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE,c.BRANCHCODE,d.CURRENCYCODE, a.CATEGORYID } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
-                                 
+                                 categoryId = groupedQ.Key.CATEGORYID,
                                  productCode = groupedQ.Key.PRODUCTCODE,
                                  currencyCode = groupedQ.Key.CURRENCYCODE,
                                  branchCode = groupedQ.Key.BRANCHCODE,
@@ -275,7 +275,7 @@ namespace FintrakBanking.Repositories.Credit
 
                              }).ToList().Select(x =>
                              {
-                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString();
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
                                  return x;
                              }).ToList();
 
@@ -1067,13 +1067,14 @@ namespace FintrakBanking.Repositories.Credit
                              join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
                              join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
+                                 categoryId = groupedQ.Key.CATEGORYID,
                                  productCode = groupedQ.Key.PRODUCTCODE,
                                  currencyCode = groupedQ.Key.CURRENCYCODE,
                                  branchCode = groupedQ.Key.BRANCHCODE,
@@ -1081,7 +1082,7 @@ namespace FintrakBanking.Repositories.Credit
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                              }).Where(x => x.dailyAccuralAmount > 0).ToList().Select(x =>
                              {
-                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString();
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
                                  return x;
                              }).ToList();
 
@@ -1231,13 +1232,14 @@ namespace FintrakBanking.Repositories.Credit
                              join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
                              join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.PastDuePrincipal
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
+                                 categoryId = groupedQ.Key.CATEGORYID,
                                  productCode = groupedQ.Key.PRODUCTCODE,
                                  currencyCode = groupedQ.Key.CURRENCYCODE,
                                  branchCode = groupedQ.Key.BRANCHCODE,
@@ -1246,7 +1248,7 @@ namespace FintrakBanking.Repositories.Credit
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
                              }).Where(x => x.dailyAccuralAmount > 0).ToList().Select(x =>
                              {
-                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString();
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
                                  return x;
                              }).ToList(); 
 
