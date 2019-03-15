@@ -5278,7 +5278,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool ProcessChargeReversal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, int operationId, int staffId, int loanReviewOperationsId)
+        public bool ProcessChargeReversal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, int operationId, int staffId,  int loanReviewOperationsId)
         {
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
             try
@@ -5335,10 +5335,11 @@ namespace FintrakBanking.Repositories.Credit
                     var runningFacility = context.TBL_LOAN.Find(model.loanId);
                     model.interestRate = runningFacility.INTERESTRATE;
                     model.effectiveDate = runningFacility.EFFECTIVEDATE;
-                    operationId = runningFacility.OPERATIONID ?? 0;
+                    model.operationId = runningFacility.OPERATIONID ?? 0;
                     model.companyId = runningFacility.COMPANYID;
                     model.principalAmount = (double)runningFacility.PRINCIPALAMOUNT;
                     model.casaAccountId = runningFacility.CASAACCOUNTID;
+                    model.sourceBranchId = runningFacility.BRANCHID;
                     model.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
                 }
                 if (productType == (int)LoanSystemTypeEnum.OverdraftFacility)
@@ -5346,10 +5347,11 @@ namespace FintrakBanking.Repositories.Credit
                     var runningFacility = context.TBL_LOAN_REVOLVING.Find(model.loanId);
                     model.interestRate = runningFacility.INTERESTRATE;
                     model.effectiveDate = runningFacility.EFFECTIVEDATE;
-                    operationId = runningFacility.OPERATIONID ?? 0;
+                    model.operationId = runningFacility.OPERATIONID ?? 0;
                     model.companyId = runningFacility.COMPANYID;
                     model.principalAmount = (double)runningFacility.OVERDRAFTLIMIT;
                     model.casaAccountId = runningFacility.CASAACCOUNTID;
+                    model.sourceBranchId = runningFacility.BRANCHID;
                     model.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
                 }
                 if (productType == (int)LoanSystemTypeEnum.ContingentLiability)
@@ -5357,11 +5359,13 @@ namespace FintrakBanking.Repositories.Credit
                     var runningFacility = context.TBL_LOAN_CONTINGENT.Find(model.loanId);
                     model.interestRate =1;
                     model.effectiveDate = runningFacility.EFFECTIVEDATE;
-                    operationId = runningFacility.OPERATIONID ?? 0;
+                    model.operationId = runningFacility.OPERATIONID ?? 0;
                     model.companyId = runningFacility.COMPANYID;
                     model.principalAmount = (double)runningFacility.CONTINGENTAMOUNT;
                     model.casaAccountId = runningFacility.CASAACCOUNTID;
+                    model.sourceBranchId = runningFacility.BRANCHID;
                     model.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
+                    
                 }
                 //EarnedFeeAmount = model.earnedFeeAmount;
                 //chargeTypeId = model.chargeFeeTypeId;
