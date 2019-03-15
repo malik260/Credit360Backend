@@ -8,6 +8,7 @@ namespace FintrakBanking.ViewModels.Credit
 {
    public class CommercialLoanReport
     {
+        public int termLoanId { get; set; }
         public DateTime capturesDate { get; set; }
         public DateTime dealDate { get; set; }
         public DateTime startDate { get; set; }
