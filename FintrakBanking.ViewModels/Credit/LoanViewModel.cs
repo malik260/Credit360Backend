@@ -135,6 +135,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime maturityDate { get; set; }
         public DateTime bookingDate { get; set; }
         public decimal principalAmount { get; set; }
+        public decimal? writtenOffAccruedAmount { get; set; }
         public decimal? principalAmountz { get; set; }
         public int principalInstallmentLeft { get; set; }
         public int interestInstallmentLeft { get; set; }
@@ -1049,6 +1050,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanChargedFeeId { get; set; }
 
         public int? loanId { get; set; }
+
+        public string productCode { get; set; }
+        public string currencyCode { get; set; }
+
+        public string branchCode { get; set; }
+
+        //public string currencyCode { get; set; }
+        //referenceNumber = groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString(),
 
     }
 

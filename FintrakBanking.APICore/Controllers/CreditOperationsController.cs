@@ -297,6 +297,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("term-and-revolving-loan-review-search/")]
+        //public HttpResponseMessage SearchForLoanAndRevolvingLoanReviewFeeCharge(int productTypeId, string searchQuery)
+        //{
+        //    try
+        //    {
+        //        var data = loanRepo.SearchForLoanAndRevolvingLoanReviewFeeCharge(productTypeId, searchQuery);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -907,6 +923,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.createdBy = token.GetStaffId;
+
                 var data = repo.GoForApproval(entity);
 
                 if (data == 1)
