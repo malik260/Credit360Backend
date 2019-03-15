@@ -162,7 +162,7 @@ namespace FintrakBanking.Repositories.ThirdPartyIntegration
             if (searchValues.Count() < 5 )
                 throw new Exception("Invalid Loan Account");
 
-            string productId = searchValues[0] == null ? "" : searchValues[0];
+            string productCode = searchValues[0] == null ? "" : searchValues[0];
             string currencyCode = searchValues[1] == null ? "" : searchValues[1];
             string branchCode = searchValues[2] == null ? "" : searchValues[2];
             int companyId = searchValues[3] == null ? 0 : Convert.ToInt32(searchValues[3]);
@@ -170,10 +170,12 @@ namespace FintrakBanking.Repositories.ThirdPartyIntegration
 
             var branchId = _context.TBL_BRANCH.Where(o => o.BRANCHCODE == branchCode).Select(o => o.BRANCHID).FirstOrDefault();
             var currencyId = _context.TBL_CURRENCY.Where(o => o.CURRENCYCODE == currencyCode).Select(o => o.CURRENCYID).FirstOrDefault();
+            var productId = _context.TBL_PRODUCT.Where(o => o.PRODUCTCODE == productCode).Select(o => o.PRODUCTID).FirstOrDefault();
+
 
             var record = (from a in _context.TBL_DAILY_ACCRUAL
                           where a.BRANCHID == branchId
-                          && a.PRODUCTID == currencyId
+                          && a.PRODUCTID == productId
                           && a.COMPANYID == companyId
                           && a.CURRENCYID == currencyId
                           && a.CATEGORYID == categoryId
