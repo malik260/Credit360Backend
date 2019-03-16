@@ -12334,8 +12334,9 @@ namespace FintrakBanking.Repositories.Credit
             //decimal pastDuePrincipal = decimal.Round((data.PASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
 
             //decimal totalamount = (accruedInterest + outStandingBalance + pastDue + pastDuePrincipal);
-            decimal totalamount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.BALANCE).FirstOrDefault();
+            decimal balance = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.BALANCE).FirstOrDefault();
             decimal? writtenOffAccruedAmount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.WRITTENOFFACCRUALAMOUNT).FirstOrDefault();
+            decimal totalamount = balance + (decimal)writtenOffAccruedAmount;
 
             var runningLoan = (from l in context.TBL_LOAN
                                where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo //&& l.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -12363,6 +12364,7 @@ namespace FintrakBanking.Repositories.Credit
                                    maturityDate = l.MATURITYDATE,
                                    scheduleTypeId = l.SCHEDULETYPEID,
                                    scheduleTypeCategoryId = l.TBL_LOAN_SCHEDULE_TYPE.SCHEDULECATEGORYID,
+                                   writtenOffAmount = balance,
                                    teno = days,
                                    //newTenor = 0,
                                    //accrualedAmount = accruedInterest,
