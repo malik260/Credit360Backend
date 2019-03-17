@@ -390,6 +390,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerEmail { get; set; }
         public object totalRepayment { get; set; }
         public string loanSystemTypeName { get; set; }
+        public decimal writtenOffAmount { get; set; }
 
 
 
@@ -1041,7 +1042,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short dayCountConventionId { get; set; }
 
         public double dailyAccuralAmount { get; set; }
-        
+
+        public short accuralTypeId { get; set; }
 
         public decimal availableBalance { get; set; }
 
@@ -1050,6 +1052,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanChargedFeeId { get; set; }
 
         public int? loanId { get; set; }
+
+        public string productCode { get; set; }
+        public string currencyCode { get; set; }
+
+        public string branchCode { get; set; }
+
+        //public string currencyCode { get; set; }
+        //referenceNumber = groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString(),
 
     }
 

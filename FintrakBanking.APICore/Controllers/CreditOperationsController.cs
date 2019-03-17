@@ -923,6 +923,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.createdBy = token.GetStaffId;
+
                 var data = repo.GoForApproval(entity);
 
                 if (data == 1)

@@ -1397,14 +1397,19 @@ namespace FintrakBanking.ReportObjects
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
                     var reportData = (from l in context.TBL_LOAN
+                                          // join h in context.TBL_LOAN_REVIEW_OPERATION on d.LOANAPPLICATIONDETAILID equals h.LOANID
                                       join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                                       join cu in context.TBL_CURRENCY on l.CURRENCYID equals cu.CURRENCYID
-                                      join st in context.TBL_LOAN_STATUS on l.LOANSTATUSID equals st.LOANSTATUSID
                                       join cas in context.TBL_CASA on l.CASAACCOUNTID equals cas.CASAACCOUNTID
                                       join cas2 in context.TBL_CASA on l.CASAACCOUNTID2 equals cas2.CASAACCOUNTID
+                                      join st in context.TBL_LOAN_STATUS on l.LOANSTATUSID equals st.LOANSTATUSID
                                       join sta in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sta.STAFFID
                                       join prod in context.TBL_PRODUCT on l.PRODUCTID equals prod.PRODUCTID
-                                      //join pc in context.TBL_PRODUCT_CLASS on prod.PRODUCTCLASSID equals pc.PRODUCTCLASSID
+                                      //  join la in context.TBL_LOAN_ARCHIVE on l.TERMLOANID equals la.LOANID
+                                      join pc in context.TBL_PRODUCT_CLASS on prod.PRODUCTCLASSID equals pc.PRODUCTCLASSID
+                                      //where h.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
+                                      //&& h.OPERATIONTYPEID == (short) OperationsEnum.ContractualInterestRateChange
+                                      //&&
                                       where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
                                       DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
                                       && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active && prod.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan
@@ -1420,20 +1425,22 @@ namespace FintrakBanking.ReportObjects
                                           endDate = l.MATURITYDATE,
                                           startDate = l.EFFECTIVEDATE,
                                           interestRate = l.INTERESTRATE,
-                                          interestRateChange = 0,
-                                          interestToDate = 0,
-                                          interestType = "",
-                                          loanReferenceNo =  l.LOANREFERENCENUMBER,
-                                          narration = "",
+                                          //  laInterestRate = la.INTERESTRATE,
+                                         // interestRateChange =  ,
+                                         // interestToDate = 0,
+                                          interestType = l.TBL_DAY_INTEREST_TYPE.DAYINTERESTTYPENAME,
+                                          loanReferenceNo = l.LOANREFERENCENUMBER,
+                                          // narration = ,
                                           principalAmount = l.PRINCIPALAMOUNT,
                                           status = st.ACCOUNTSTATUS,
-                                          tenor = (int)DbFunctions.DiffDays(l.MATURITYDATE, l.EFFECTIVEDATE),
+                                          tenor = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, l.MATURITYDATE),
                                           tenorToDate = (int)DbFunctions.DiffDays(l.MATURITYDATE, DateTime.Now),
-                                          staffcode = sta.STAFFCODE
+                                          staffcode = sta.STAFFCODE,
+                                          termloanId = l.TERMLOANID
 
                                       }).ToList().Select(x => new CommercialLoanReport
                                       {
-
+                                          
                                           accountPayTo = x.accountPayTo,
                                           accountReceiveFrom = x.accountReceiveFrom,
                                           capturesDate = x.capturesDate,
@@ -1443,24 +1450,53 @@ namespace FintrakBanking.ReportObjects
                                           endDate = x.endDate,
                                           startDate = x.startDate,
                                           interestRate = x.interestRate,
-                                          interestRateChange = x.interestRateChange,
-                                          interestToDate = x.interestToDate,
+                                        // interestRateChange = (Decimal)x.interestRateChange,
+                                        
+                                        //  interestToDate = x.interestToDate,
                                           // interestType = x.interestType,
                                           loanReferenceNo = x.loanReferenceNo,
-                                          // narration = x.narration,
+                                         //  narration = x.narration,
                                           principalAmount = x.principalAmount,
                                           status = x.status,
                                           tenor = x.tenor,
                                           tenorToDate = x.tenorToDate,
                                           staffcode = x.staffcode,
+                                          termLoanId = x.termloanId
+                                          
 
                                       }).ToList().Select(y =>
                                       {
+                                          var interextRateChanged = context.TBL_LOAN_REVIEW_OPERATION.Where(z => z.LOANID == y.termLoanId).Select(z => z.INTERATERATE).FirstOrDefault().ToString();
+                                          var interestToDat = context.TBL_LOAN_REVIEW_OPERATION.Where(z => z.LOANID == y.termLoanId).Sum(z => z.INTERATERATE);
+                                          var narration = context.TBL_LOAN_REVIEW_OPERATION.Where(z => z.LOANID == y.termLoanId).Select(z => z.REVIEWDETAILS).FirstOrDefault();
+
+                                          if (!string.IsNullOrEmpty(interextRateChanged))
+                                          {
+                                              y.interestRateChange = Convert.ToDecimal(interextRateChanged);
+                                          }
+                                          else if(string.IsNullOrEmpty(interextRateChanged))
+                                          {
+                                              y.interestRateChange = 0.0M;
+                                          }
+
+                                          if (interestToDat != 0 || interestToDat != 0.0)
+                                          {
+                                              y.interestToDate = Convert.ToDecimal(interestToDat);
+                                          }
+                                          else if (interestToDat == 0 || interestToDat == 0.0)
+                                          {
+                                              y.interestToDate = 0.0M;
+                                          }
+
                                           if (y.interestType == null)
                                           {
                                               y.interestType = "";
                                           }
-                                          if (y.narration == null)
+                                          if (!string.IsNullOrEmpty(narration))
+                                          {
+                                              y.narration = narration;
+                                          }
+                                          else if(string.IsNullOrEmpty(narration))
                                           {
                                               y.narration = "";
                                           }
@@ -1524,7 +1560,7 @@ namespace FintrakBanking.ReportObjects
                                       where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
                                       DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
                                        && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                      orderby l.EFFECTIVEDATE descending ,l.MATURITYDATE descending
+                                      orderby l.EFFECTIVEDATE descending, l.MATURITYDATE descending
                                       select new
                                       {
                                           accountPayTo = cas2.PRODUCTACCOUNTNUMBER,
@@ -1533,8 +1569,8 @@ namespace FintrakBanking.ReportObjects
                                           endDate = l.MATURITYDATE,
                                           startDate = l.EFFECTIVEDATE,
                                           interestRate = l.INTERESTRATE,
-                                          //interestRateChange = context.TBL_LOAN.Where(x=>x.TERMLOANID == la.LOANID  && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Select(x=>x.INTERESTRATE - la.INTERESTRATE),
-                                          interestToDate = l.INTERESTRATE * (int)DbFunctions.DiffDays(l.EFFECTIVEDATE,currentDate),
+                                          //  interestRateChange = context.TBL_LOAN.Where(x=>x.TERMLOANID == la.LOANID  && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Select(x=>x.INTERESTRATE - la.INTERESTRATE),
+                                          interestToDate = l.INTERESTRATE * (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, currentDate),
                                           interestType = l.TBL_DAY_INTEREST_TYPE.DAYINTERESTTYPENAME,
                                           principalAmount = l.PRINCIPALAMOUNT,
                                           tenor = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE, l.MATURITYDATE),
@@ -1545,10 +1581,12 @@ namespace FintrakBanking.ReportObjects
                                           staffcode = sub.STAFFCODE,
                                           businessGroup = " ",
                                           laInterestRate = la.INTERESTRATE,
+                                          interestRateChange = la.INTERESTRATE - l.INTERESTRATE,
+
                                           laLoanId = la.LOANID
 
 
-                                      }).ToList().Select(x => new UnearnedLoanInterestReport
+                                      }).Distinct().ToList().Select(x => new UnearnedLoanInterestReport
                                       {
                                           accountPayTo = x.accountPayTo,
                                           accountReceiveFrom = x.accountReceiveFrom,
@@ -1556,7 +1594,7 @@ namespace FintrakBanking.ReportObjects
                                           endDate = x.endDate,
                                           startDate = x.startDate,
                                           interestRate = x.interestRate,
-                                          //interestRateChange = x.interestRateChange,
+                                          interestRateChange = x.interestRateChange,
                                           interestToDate = Convert.ToDecimal(x.interestToDate),
                                           interestType = x.interestType,
                                           principalAmount = x.principalAmount,
@@ -1567,13 +1605,14 @@ namespace FintrakBanking.ReportObjects
                                           unearnedInterestAsAtDate = x.unearnedInterestAsAtDate,
                                           staffcode = x.staffcode,
                                           businessGroup = subList.Where(f => f.staffCode == x.staffcode).FirstOrDefault().subHead
+                                      }).ToList();
+                                     // }).ToList().Distinct().Select(x =>
+                                     //{
 
-                                      }).ToList().Distinct().Select(x =>
-                                     {
-
-                                         x.interestRateChange = context.TBL_LOAN.Where(u => u.TERMLOANID == x.laLoanId && u.LOANSTATUSID == (short)LoanStatusEnum.Active).Select(u => u.INTERESTRATE - x.laInterestRate).FirstOrDefault();
-                                         return x;
-                                     }).ToList();
+                    //    //   x.interestRateChange = context.TBL_LOAN.Where(u => u.TERMLOANID == x.laLoanId && u.LOANSTATUSID == (short)LoanStatusEnum.Active).Select(u => u.INTERESTRATE - x.laInterestRate).FirstOrDefault();
+                    //    x.interestRateChange = x.interestRateChange;
+                    //    return x;
+                    //}).Distinct().ToList();
 
                     return reportData.Distinct().ToList();
                 }
@@ -2249,7 +2288,8 @@ namespace FintrakBanking.ReportObjects
                                         where (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
                                                DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                             && cb.COMPANYID == companyid
-                                        orderby a.DATETIMECREATED descending
+                                       // orderby a.DATETIMECREATED descending
+                                        orderby a.INVOICE_DATE descending
 
                                         select new MiddleOfficeViewModel
                                         {

@@ -2545,19 +2545,20 @@ namespace FintrakBanking.Repositories.CRMS
                     ws.Cells[1, 9].Value = "REF_CRNCY_CODE";
                     ws.Cells[1, 10].Value = "RATE_CODE";
                     ws.Cells[1, 11].Value = "PSTD_USR_ID";
-                    ws.Cells[1, 12].Value = "FAIL_FLG";
-                    ws.Cells[1, 13].Value = "DEL_FLG";
-                    ws.Cells[1, 14].Value = "FAILURE_REASON_CODE ";
-                    ws.Cells[1, 15].Value = "FAILURE_REASON";
-                    ws.Cells[1, 16].Value = "AMT_COLLECTED";
-                    ws.Cells[1, 17].Value = "LIEN_AMT";
-                    ws.Cells[1, 18].Value = "LIEN_FLG";
-                    ws.Cells[1, 19].Value = "TOD_FLG";
-                    ws.Cells[1, 20].Value = "VALUE_DATE_NUM";
-                    ws.Cells[1, 21].Value = "LOAN_ACCT";
-                    ws.Cells[1, 22].Value = "FINTRAK_FLG ";
-                    ws.Cells[1, 23].Value = "BANK_ID";
-                    ws.Cells[1, 24].Value = "STATUS";
+                    ws.Cells[1, 12].Value = "NARRATION";
+                    ws.Cells[1, 13].Value = "FAIL_FLG";
+                    ws.Cells[1, 14].Value = "DEL_FLG";
+                    ws.Cells[1, 15].Value = "FAILURE_REASON_CODE ";
+                    ws.Cells[1, 16].Value = "FAILURE_REASON";
+                    ws.Cells[1, 17].Value = "AMT_COLLECTED";
+                    ws.Cells[1, 18].Value = "LIEN_AMT";
+                    ws.Cells[1, 19].Value = "LIEN_FLG";
+                    ws.Cells[1, 20].Value = "TOD_FLG";
+                    ws.Cells[1, 21].Value = "VALUE_DATE_NUM";
+                    ws.Cells[1, 22].Value = "LOAN_ACCT";
+                    ws.Cells[1, 23].Value = "FINTRAK_FLG ";
+                    ws.Cells[1, 24].Value = "BANK_ID";
+                    ws.Cells[1, 25].Value = "STATUS";
 
                     for (int i = 2; i <= loanInput.Count + 1; i++)
                     {
@@ -2574,19 +2575,20 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 9].Value = record.currencyCode;
                         ws.Cells[i, 10].Value = record.rateCode;
                         ws.Cells[i, 11].Value = record.postedDate;
-                        ws.Cells[i, 12].Value = record.failedFlag;
-                        ws.Cells[i, 13].Value = record.deleteFlag;
-                        ws.Cells[i, 14].Value = record.failureReasonCode;
-                        ws.Cells[i, 15].Value = record.failureReason;
-                        ws.Cells[i, 16].Value = record.amountCollected;
-                        ws.Cells[i, 17].Value = record.lienAmount;
-                        ws.Cells[i, 18].Value = record.lienFlg;
-                        ws.Cells[i, 19].Value = record.TodFlg;
-                        ws.Cells[i, 20].Value = record.valueDateNumber;
-                        ws.Cells[i, 21].Value = record.loanAccount;
-                        ws.Cells[i, 22].Value = record.fintrakFlag;
-                        ws.Cells[i, 23].Value = record.bankId;
-                        ws.Cells[i, 24].Value = record.status;
+                        ws.Cells[i, 12].Value = record.naration;
+                        ws.Cells[i, 13].Value = record.failedFlag;
+                        ws.Cells[i, 14].Value = record.deleteFlag;
+                        ws.Cells[i, 15].Value = record.failureReasonCode;
+                        ws.Cells[i, 16].Value = record.failureReason;
+                        ws.Cells[i, 17].Value = record.amountCollected;
+                        ws.Cells[i, 18].Value = record.lienAmount;
+                        ws.Cells[i, 19].Value = record.lienFlg;
+                        ws.Cells[i, 20].Value = record.TodFlg;
+                        ws.Cells[i, 21].Value = record.valueDateNumber;
+                        ws.Cells[i, 22].Value = record.loanAccount;
+                        ws.Cells[i, 23].Value = record.fintrakFlag;
+                        ws.Cells[i, 24].Value = record.bankId;
+                        ws.Cells[i, 25].Value = record.status;
 
                     }
                     fileBytes = pck.GetAsByteArray();

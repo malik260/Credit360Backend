@@ -71,61 +71,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public List<ProductFeeViewModel> GetLoanProductFeesByFacilityId(int loanApplicationDeatilId)
-        {
-            var facilityDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDeatilId);
 
-
-            var loanAppProdFee = (from fa in context.TBL_LOAN_APPLICATION_DETL_FEE
-                                  where fa.LOANAPPLICATIONDETAILID == loanApplicationDeatilId
-                                  && fa.DELETED == false
-                                  select new ProductFeeViewModel
-                                  {
-                                      feeName = fa.TBL_CHARGE_FEE.CHARGEFEENAME,
-                                      loanApplicationDetailId = fa.LOANAPPLICATIONDETAILID,
-                                      chargeFeeId = fa.CHARGEFEEID,
-                                      consessionReason = fa.CONSESSIONREASON,
-                                      approvalStatusId = fa.APPROVALSTATUSID,
-                                      defaultfeeRateValue = fa.DEFAULT_FEERATEVALUE,
-                                      recommededFeeRateValue = fa.RECOMMENDED_FEERATEVALUE,
-                                      feeRateValue = fa.RECOMMENDED_FEERATEVALUE,
-                                      feeAmount = (facilityDetail.APPROVEDAMOUNT * fa.RECOMMENDED_FEERATEVALUE) / 100,
-                                      feeIntervalName = fa.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
-                                      isIntegralFee = fa.TBL_CHARGE_FEE.ISINTEGRALFEE,
-                                      isRecurring = fa.TBL_CHARGE_FEE.RECURRING,
-                                      valueBase = "Rate(%)",
-                                      dealTypeId = 0
-                                  }).ToList();
-
-            var lisProdFeeViewModel = new List<ProductFeeViewModel>();
-            foreach (var item in loanAppProdFee)
-            {
-                var chargeFeeDetail = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == item.chargeFeeId && x.DETAILTYPEID == (short)ChargeFeeDetailTypeEnum.Tax).FirstOrDefault();
-                if (chargeFeeDetail != null)
-                {
-                    var prodFeeView = new ProductFeeViewModel()
-                    {
-                        feeName = chargeFeeDetail.DESCRIPTION,
-                        loanApplicationDetailId = loanApplicationDeatilId,
-                        chargeFeeId = chargeFeeDetail.CHARGEFEEID,
-                        recommededFeeRateValue = (decimal)chargeFeeDetail.VALUE,
-                        feeRateValue = (decimal)chargeFeeDetail.VALUE,
-                        feeAmount = (item.feeAmount * (decimal)chargeFeeDetail.VALUE) / 100,
-                        feeIntervalName = chargeFeeDetail.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
-                        isIntegralFee = chargeFeeDetail.TBL_CHARGE_FEE.ISINTEGRALFEE,
-                        isRecurring = chargeFeeDetail.TBL_CHARGE_FEE.RECURRING,
-                        valueBase = "Rate(%)",
-                        dealTypeId = (short)ChargeFeeDetailTypeEnum.Tax
-                    };
-
-                    lisProdFeeViewModel.Add(prodFeeView);
-                }
-            }
-
-            loanAppProdFee = loanAppProdFee.Union(lisProdFeeViewModel).OrderBy(x => x.feeName).ToList();
-
-            return loanAppProdFee;
-        }
 
 
 
@@ -174,10 +120,10 @@ namespace FintrakBanking.Repositories.Credit
             throw new NotImplementedException();
         }
 
-        public List<LoanChargeFeeViewModel> LoanChargeFee(int loanId)
+        public List<LoanChargeFeeViewModel> LoanChargeFee(int loanId, short loanSystemTypeId)
         {
             var data = (from c in context.TBL_LOAN_FEE
-                        where c.LOANID == loanId //&& c.Deleted == false
+                        where c.LOANID == loanId && c.LOANSYSTEMTYPEID == loanSystemTypeId && c.DELETED == false
                         select new LoanChargeFeeViewModel
                         {
                             loanChargeFeeId = c.LOANCHARGEFEEID,
@@ -191,7 +137,92 @@ namespace FintrakBanking.Repositories.Credit
                             feeIntervalName = c.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
                             feeRate = c.FEERATEVALUE
                         }).ToList();
+
+            var lisProdFeeViewModel = new List<LoanChargeFeeViewModel>();
+            foreach (var item in data)
+            {
+                var chargeFeeDetail = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == item.chargeFeeId && x.DETAILTYPEID == (short)ChargeFeeDetailTypeEnum.Tax).FirstOrDefault();
+                if (chargeFeeDetail != null)
+                {
+                    var prodFeeView = new LoanChargeFeeViewModel()
+                    {
+                        //feeName = chargeFeeDetail.DESCRIPTION,
+                        chargeFeeName = chargeFeeDetail.DESCRIPTION, // chargeFeeDetail.TBL_CHARGE_FEE.CHARGEFEENAME,
+                        //loanApplicationDetailId = loanApplicationDetailId,
+                        chargeFeeId = chargeFeeDetail.CHARGEFEEID,
+                        //feeDependentAmount = chargeFeeDetail.,
+                        feeRateValue = (decimal)chargeFeeDetail.VALUE,
+                        feeAmount = (item.feeAmount * (decimal)chargeFeeDetail.VALUE) / 100,
+                        feeIntervalName = chargeFeeDetail.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                        isIntegralFee = chargeFeeDetail.TBL_CHARGE_FEE.ISINTEGRALFEE,
+                        feeIntervalId = chargeFeeDetail.TBL_CHARGE_FEE.FEEINTERVALID,
+                        feeRate = (decimal)chargeFeeDetail.VALUE,
+                        //valueBase = "Rate(%)",
+                        dealTypeId = (short)ChargeFeeDetailTypeEnum.Tax
+                    };
+
+                    lisProdFeeViewModel.Add(prodFeeView);
+                }
+            }
+
+            data = data.Union(lisProdFeeViewModel).OrderBy(x => x.chargeFeeName).ToList();
             return data;
+        }
+
+        public List<ProductFeeViewModel> GetLoanProductFeesByFacilityId(int loanApplicationDetailId)
+        {
+            var facilityDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
+
+
+            var loanAppProdFee = (from fa in context.TBL_LOAN_APPLICATION_DETL_FEE
+                                  where fa.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                  && fa.DELETED == false
+                                  select new ProductFeeViewModel
+                                  {
+                                      feeName = fa.TBL_CHARGE_FEE.CHARGEFEENAME,
+                                      loanApplicationDetailId = fa.LOANAPPLICATIONDETAILID,
+                                      chargeFeeId = fa.CHARGEFEEID,
+                                      consessionReason = fa.CONSESSIONREASON,
+                                      approvalStatusId = fa.APPROVALSTATUSID,
+                                      defaultfeeRateValue = fa.DEFAULT_FEERATEVALUE,
+                                      recommededFeeRateValue = fa.RECOMMENDED_FEERATEVALUE,
+                                      feeRateValue = fa.RECOMMENDED_FEERATEVALUE,
+                                      feeAmount = (facilityDetail.APPROVEDAMOUNT * fa.RECOMMENDED_FEERATEVALUE) / 100,
+                                      feeIntervalName = fa.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                                      isIntegralFee = fa.TBL_CHARGE_FEE.ISINTEGRALFEE,
+                                      isRecurring = fa.TBL_CHARGE_FEE.RECURRING,
+                                      valueBase = "Rate(%)",
+                                      dealTypeId = 0
+                                  }).ToList();
+
+            var lisProdFeeViewModel = new List<ProductFeeViewModel>();
+            foreach (var item in loanAppProdFee)
+            {
+                var chargeFeeDetail = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == item.chargeFeeId && x.DETAILTYPEID == (short)ChargeFeeDetailTypeEnum.Tax).FirstOrDefault();
+                if (chargeFeeDetail != null)
+                {
+                    var prodFeeView = new ProductFeeViewModel()
+                    {
+                        feeName = chargeFeeDetail.DESCRIPTION,
+                        loanApplicationDetailId = loanApplicationDetailId,
+                        chargeFeeId = chargeFeeDetail.CHARGEFEEID,
+                        recommededFeeRateValue = (decimal)chargeFeeDetail.VALUE,
+                        feeRateValue = (decimal)chargeFeeDetail.VALUE,
+                        feeAmount = (item.feeAmount * (decimal)chargeFeeDetail.VALUE) / 100,
+                        feeIntervalName = chargeFeeDetail.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                        isIntegralFee = chargeFeeDetail.TBL_CHARGE_FEE.ISINTEGRALFEE,
+                        isRecurring = chargeFeeDetail.TBL_CHARGE_FEE.RECURRING,
+                        valueBase = "Rate(%)",
+                        dealTypeId = (short)ChargeFeeDetailTypeEnum.Tax
+                    };
+
+                    lisProdFeeViewModel.Add(prodFeeView);
+                }
+            }
+
+            loanAppProdFee = loanAppProdFee.Union(lisProdFeeViewModel).OrderBy(x => x.feeName).ToList();
+
+            return loanAppProdFee;
         }
 
         public List<LoanCovenantDetailViewModel> LoanCovenantDetail(int loanId)

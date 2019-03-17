@@ -17,7 +17,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoanViewModel ContingentLMSFacilityDetail(int loanId);
         LoanViewModel RelatedFacilityDetail(string relatedLaonRefNo);
         List<LoanCovenantDetailViewModel> LoanCovenantDetail(int loanId);
-        List<LoanChargeFeeViewModel> LoanChargeFee(int loanId);
+        List<LoanChargeFeeViewModel> LoanChargeFee(int loanId, short loanSystemTypeId);
         List<LoanChargeFeeViewModel> GuarantorDetail(int loanId);
         List<LoanPaymentSchedulePeriodicViewModel> LoanSchedule(int loanId);
         List<CollateralViewModel> Collateral(int loanId, int loanSystemTypeId);
@@ -41,6 +41,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanCovenantDetailViewModel> LMSLoanCovenantDetail(int loanId);
         IEnumerable<CamProcessedLoanViewModel> GetLoanFacilityUtilization(int companyId, int staffId, int branchId, string searchValue = null);
         List<LoanViewModel> GetLoanFacilityDetail(int loanApplicationDetilId);
-        List<ProductFeeViewModel> GetLoanProductFeesByFacilityId(int loanApplicationDeatilId);
+        List<ProductFeeViewModel> GetLoanProductFeesByFacilityId(int loanApplicationDetailId);
     }
 }

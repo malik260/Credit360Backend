@@ -13,6 +13,9 @@ namespace FintrakBanking.Interfaces.ThridPartyIntegration
         List<BatchPostingViewModel> GetBatchPostingDetail(DateTime startDate, DateTime endDate, string searchInfo);
         List<BatchPostingViewModel> GetBatchPostingMain(DateTime startDate, DateTime endDate, string searchInfo);
         List<BatchPostingViewModel> GetBatchPostingDetailSearch(DateTime startDate, DateTime endDate, string status);
+         CRMSRecord GenerateExcell(DateTime date, string loanAcct);
+
+
         #endregion
     }
 }

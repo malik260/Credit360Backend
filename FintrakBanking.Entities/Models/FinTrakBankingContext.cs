@@ -450,6 +450,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_SYNDICATION_PARTY_TYP> TBL_LOAN_SYNDICATION_PARTY_TYP { get; set; }
 
         public virtual DbSet<TBL_LOAN_REPRICING_MODE> TBL_LOAN_REPRICING_MODE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_RELEASE_DOC> TBL_COLLATERAL_RELEASE_DOC { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
