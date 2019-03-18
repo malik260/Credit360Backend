@@ -361,7 +361,7 @@
                     handler.UseDefaultCredentials = true;
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.Timeout = TimeSpan.FromSeconds(180);
                     client.DefaultRequestHeaders.Authorization = token;
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
