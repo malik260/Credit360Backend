@@ -1694,7 +1694,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.glAccountId = product.PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = sourceReferenceNumber;
             debit.casaAccountId = null;
-            debit.debitAmount = loan.CONTINGENTAMOUNT;
+            debit.debitAmount = postedAmount;
             debit.creditAmount = 0;
             debit.sourceBranchId = loan.BRANCHID;
             debit.destinationBranchId = loan.BRANCHID;
@@ -1724,7 +1724,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.sourceReferenceNumber = sourceReferenceNumber;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
-            credit.creditAmount = loan.CONTINGENTAMOUNT;
+            credit.creditAmount = postedAmount;
             credit.sourceBranchId = loan.BRANCHID;
             credit.destinationBranchId = loan.BRANCHID;
 
