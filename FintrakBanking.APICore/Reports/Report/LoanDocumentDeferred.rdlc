@@ -225,7 +225,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Customer's CIF ID</Value>
+                              <Value>       CIF</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -411,7 +411,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Current Defferal Date</Value>
+                              <Value>Current DeferralDate</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
