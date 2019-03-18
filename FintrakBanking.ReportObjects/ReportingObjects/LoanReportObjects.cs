@@ -579,6 +579,7 @@ namespace FintrakBanking.ReportObjects
                                                   facilityAmount = b.APPROVEDAMOUNT,
                                                   facilityExpirationDate = e.MATURITYDATE,
                                                   facilityGrantedDate = e.EFFECTIVEDATE,
+
                                                   //companyName = b.TBL_CUSTOMER.TBL_COMPANY.NAME, //b.TBL_LOAN.Select(p => p.TBL_COMPANY.NAME).FirstOrDefault(),
                                                                                                  //waveredDate = c.DEFERREDDATE,
                                                   //branchName = b.TBL_CUSTOMER.TBL_BRANCH.BRANCHNAME,
