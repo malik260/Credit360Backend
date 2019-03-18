@@ -533,7 +533,7 @@ namespace FintrakBanking.ReportObjects
 
         }
 
-        public IList<LoanDocumentWaivedViewModel> LoanDocumentDeferred(DateTime startDate, DateTime endDate, int companyId, short? branchId,string searchParameter)
+        public IList<LoanDocumentWaivedViewModel> LoanDocumentDeferred(DateTime startDate, DateTime endDate, int companyId, short? branchId)
         {
             List<SbHead> subList = new List<SbHead>();
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
@@ -559,17 +559,17 @@ namespace FintrakBanking.ReportObjects
                                                && b.TBL_LOAN_APPLICATION.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                                && c.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                                && (b.TBL_CUSTOMER.BRANCHID == branchId || branchId == null || branchId == 0)
-                                               && (context.TBL_STAFF.Where(o => o.STAFFID == e.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault().StartsWith(searchParameter.Trim()) 
-                                               || context.TBL_STAFF.Where(o => o.STAFFID == e.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault().Contains(searchParameter.Trim()) 
-                                               || b.APPROVEDAMOUNT.ToString().Contains(searchParameter.Trim())
-                                               || b.TBL_PRODUCT.PRODUCTNAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.CUSTOMERCODE.Contains(searchParameter.Trim()) 
-                                               || b.TBL_CUSTOMER.FIRSTNAME.StartsWith(searchParameter.Trim()) || b.TBL_CUSTOMER.MIDDLENAME.StartsWith(searchParameter.Trim()) || b.TBL_CUSTOMER.LASTNAME.StartsWith(searchParameter.Trim())
-                                               || b.TBL_CUSTOMER.FIRSTNAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.MIDDLENAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.LASTNAME.Contains(searchParameter.Trim())
-                                               || a.CONDITION.Contains(searchParameter.Trim()) 
+                                               //&& (context.TBL_STAFF.Where(o => o.STAFFID == e.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault().StartsWith(searchParameter.Trim()) 
+                                               //|| context.TBL_STAFF.Where(o => o.STAFFID == e.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault().Contains(searchParameter.Trim()) 
+                                               //|| b.APPROVEDAMOUNT.ToString().Contains(searchParameter.Trim())
+                                               //|| b.TBL_PRODUCT.PRODUCTNAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.CUSTOMERCODE.Contains(searchParameter.Trim()) 
+                                               //|| b.TBL_CUSTOMER.FIRSTNAME.StartsWith(searchParameter.Trim()) || b.TBL_CUSTOMER.MIDDLENAME.StartsWith(searchParameter.Trim()) || b.TBL_CUSTOMER.LASTNAME.StartsWith(searchParameter.Trim())
+                                               //|| b.TBL_CUSTOMER.FIRSTNAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.MIDDLENAME.Contains(searchParameter.Trim()) || b.TBL_CUSTOMER.LASTNAME.Contains(searchParameter.Trim())
+                                               //|| a.CONDITION.Contains(searchParameter.Trim()) 
                                            
-                                               || context.TBL_STAFF.Where(o => o.STAFFID == o.SUPERVISOR_STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault().Contains(searchParameter.Trim())
-                                               || context.TBL_STAFF.Where(o => o.STAFFID == o.SUPERVISOR_STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault().StartsWith(searchParameter.Trim())
-                                               || p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME.Contains(searchParameter.Trim()) || searchParameter == "" || searchParameter == null)
+                                               //|| context.TBL_STAFF.Where(o => o.STAFFID == o.SUPERVISOR_STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault().Contains(searchParameter.Trim())
+                                               //|| context.TBL_STAFF.Where(o => o.STAFFID == o.SUPERVISOR_STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault().StartsWith(searchParameter.Trim())
+                                               //|| p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME.Contains(searchParameter.Trim()) || searchParameter == "" || searchParameter == null)
                                               orderby e.EFFECTIVEDATE descending
                                               select new LoanDocumentWaivedViewModel()
                                               {
@@ -616,10 +616,11 @@ namespace FintrakBanking.ReportObjects
 
         public IList<LoanDocumentWaivedViewModel> LoanDocumentWaived(DateTime startDate, DateTime endDate, int companyId, short? branchId,string searchParameter)
         {
-            List<SbHead> subList = new List<SbHead>();
+            List<SubHead> subList = new List<SubHead>();
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
-                subList = (from sl in stagecontext.STG_STAFFMIS select new SbHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, teamUnit = sl.TEAM_UNIT }).ToList();
+                subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION }).ToList();
+
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
 
@@ -666,9 +667,22 @@ namespace FintrakBanking.ReportObjects
 
 
 
-                                              }).ToList();
+                                            }).ToList().Select(x=> {
 
-                    return waivedConditions.OrderBy(u => u.waveredDate).ToList();
+                                                var buDescription = subList.Where(f => f.staffCode == x.staffCode).Select(f => f.region).FirstOrDefault();
+                                                if(buDescription != null)
+                                                {
+                                                    x.buDescription = buDescription;
+                                                } 
+                                                else if(buDescription == null)
+                                                {
+                                                    x.buDescription = "";
+                                                }
+
+                                                return x;
+                                              });
+
+                    return waivedConditions.Distinct().OrderBy(u => u.waveredDate).ToList();
 
                 }
             }

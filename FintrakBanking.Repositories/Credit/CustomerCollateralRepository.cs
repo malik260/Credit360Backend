@@ -1283,7 +1283,11 @@ namespace FintrakBanking.Repositories.Credit
                        join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                        join d in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals d.COLLATERALCUSTOMERID
                        join cus in context.TBL_CUSTOMER on d.CUSTOMERID equals cus.CUSTOMERID
-                       where ((cus.CUSTOMERCODE == searchParam) || (cus.FIRSTNAME == searchParam) ||  (l.LOANREFERENCENUMBER == searchParam) )
+                       where (cus.CUSTOMERCODE == searchParam 
+                       ||  cus.FIRSTNAME.StartsWith(searchParam.ToUpper()) 
+                       || cus.MIDDLENAME.StartsWith(searchParam.ToUpper()) 
+                       || cus.LASTNAME.StartsWith(searchParam.ToUpper()) 
+                       || l.LOANREFERENCENUMBER == searchParam)
 
                              
             select new CollateralViewModel
