@@ -51,6 +51,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId, int loanType);
 
+        IQueryable<LoanViewModel> SearchForFullAndFinalLoan(string searchQuery);
+
+        bool CancelFullAndFinal(int loanId);
+
         List<LoanViewModel> getDisbursedCommercialLoanTrancheDetailsById(int loanId);
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId);
