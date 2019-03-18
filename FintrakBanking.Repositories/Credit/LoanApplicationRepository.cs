@@ -1429,7 +1429,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var exchangeValue = ((decimal)item.PROPOSEDAMOUNT * (decimal)item.EXCHANGERATE);
                     totalApplicationAmount = totalApplicationAmount + exchangeValue;
-
             }
 
             this.loanData.REQUIRECOLLATERAL = loan.requireCollateral;

@@ -12,4 +12,9 @@ namespace FintrakBanking.Common.Enum
         ReleasedToBM = 2,
         ReleasedToCustomer = 3
     }
+    public enum CollateralReleaseType
+    {
+        FinalRelease = 1,
+        TemporaryRelease = 2,
+    }
 }

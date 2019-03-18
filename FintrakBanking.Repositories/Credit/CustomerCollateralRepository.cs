@@ -378,13 +378,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
             }
-            if (ids.Contains(31))//Legal
-            {
-                //customerCollateral.COLLATERALRELEASESTATUSID = (int)CollateralReleaseStatus.ReleasedToCustomer;
-                //context.Entry(customerCollateral).State = EntityState.Modified;
-
-            }
-
+           
             release.APPROVALSTATUSID = (short)entity.approvalStatusId;
             context.Entry(release).State = EntityState.Modified;
 
@@ -420,25 +414,23 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = (short)model.approvalStatusId;
                 workflow.TargetId = model.targetId;
                 workflow.Comment = model.comment;
-                workflow.OperationId = (int)release.COLLATERALRELEASETYPEID == 1 ? (int)OperationsEnum.FinalCollateralRelease : (int)OperationsEnum.TemporalCollateralRelease;
+                workflow.OperationId = (int)release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.FinalRelease ? (int)OperationsEnum.FinalCollateralRelease : (int)OperationsEnum.TemporalCollateralRelease;
                 workflow.DeferredExecution = true;
                 workflow.LogActivity();
 
             if (workflow.NewState != (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
             {
-                if (release.COLLATERALRELEASETYPEID == 1) //OperationsEnum.FinalCollateralRelease
+                if (release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.FinalRelease) //OperationsEnum.FinalCollateralRelease
                 {
                     if (ids.Contains(63))//Credit Control Officer
                     {
                         customerCollateral.COLLATERALRELEASESTATUSID = (int)CollateralReleaseStatus.ReleasedToBM;
                         context.Entry(customerCollateral).State = EntityState.Modified;
-
-
                     }
                     output = true;
 
                 }
-                else if (release.COLLATERALRELEASETYPEID == 2) //OperationsEnum.TemporalCollateralRelease
+                else if (release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.TemporaryRelease) //OperationsEnum.TemporalCollateralRelease
                 {
                     if (ids.Contains(31))//Legal
                     {
@@ -452,14 +444,14 @@ namespace FintrakBanking.Repositories.Credit
             }
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
             {
-                if (release.COLLATERALRELEASETYPEID == 1) //OperationsEnum.FinalCollateralRelease
+                if (release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.FinalRelease) //OperationsEnum.FinalCollateralRelease
                 {
                     output = FinalReleaseCollateralApproval(model, model.createdBy);
 
                }
-                else if (release.COLLATERALRELEASETYPEID == 2) //OperationsEnum.TemporalCollateralRelease
+                else if (release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.TemporaryRelease) //OperationsEnum.TemporalCollateralRelease
                 {
-                    //output = TemporaryReleaseCollateralApproval(model, model.createdBy);
+                    output = TemporaryReleaseCollateralApproval(model, model.createdBy);
 
                 }
             }
