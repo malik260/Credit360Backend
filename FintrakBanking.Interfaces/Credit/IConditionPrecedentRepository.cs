@@ -48,5 +48,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddAdditionalComment(AdditionalCommentViewModel entity);
         bool EditAdditionalComment(int id, AdditionalCommentViewModel entity);
         bool RemoveAdditionalComment(int id, UserInfo user);
+
+        List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByApplicationIdAndOperationLms(int detailId, int? operationId);
     }
 }

@@ -311,11 +311,22 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationDetailId = c.PRODUCTID,
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
-                isExternal = c.ISEXTERNAL
-
+                isExternal = c.ISEXTERNAL,
+                operationId = c.OPERATIONID
             });
 
             return dynamics.ToList();
+        }
+
+        public List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByApplicationIdAndOperationLms(int detailId, int? operationId)
+        {
+            var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(detailId);
+            if (operationId != null)
+            {
+                var operation = context.TBL_OPERATIONS.Find(operationId);
+                if (operation.ISCHECKLISTSPECIFIC) return GetTransactionDynamicsDefaultByDetailIdLms(applicationDetail.PRODUCTID).Where(x => x.operationId == operationId).ToList();
+            }
+            return GetTransactionDynamicsDefaultByDetailIdLms(applicationDetail.PRODUCTID);
         }
 
         #endregion CP Template

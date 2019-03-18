@@ -33,6 +33,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanConditionId { get; set; }
         public bool isLMSChecklist { get; set; }
         public int checklistDifinitionId { get; set; }
+        public int? operationId { get; set; }
     }
 
     public class TransactionDynamicsViewModel : GeneralEntity
@@ -56,7 +57,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double SN { get; set; }
         public int? position { get; set; }
         public bool? isExternal { get; set; }
-
+        public int? operationId { get; set; }
     }
 
     public class ComplianceTimelineViewModel : GeneralEntity
