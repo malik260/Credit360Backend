@@ -145,6 +145,33 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpPost]
+        [Route("daily-accrual-detail")]
+        [ClaimsAuthorization]
+        public HttpResponseMessage GetDailyAccrualDetails(DateRange model )
+        {
+
+            try
+            {
+                var fileBytes = _repo.GenerateExcell(model.date, model.loanAcct);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { data = "no-record", success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
+            }
+
+        }
+
 
         #endregion
     }

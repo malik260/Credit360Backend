@@ -95,6 +95,7 @@
     <Compile Include="Enum\AttachmentTypeEnum.cs" />
     <Compile Include="Enum\CamsolTypeEnum.cs" />
     <Compile Include="Enum\ChargeTypeEnum.cs" />
+    <Compile Include="Enum\CollateralReleaseStatus.cs" />
     <Compile Include="Enum\CurrencyEnum.cs" />
     <Compile Include="Enum\EodOperationEnum.cs" />
     <Compile Include="Enum\EodOperationStatusEnum.cs" />

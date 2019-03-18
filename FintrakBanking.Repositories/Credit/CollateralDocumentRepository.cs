@@ -195,6 +195,30 @@ namespace FintrakBanking.Repositories.Credit
                 fileExtension = data.FILEEXTENSION,
             };
         }
+        public IEnumerable<CollateralDocumentViewModel> GetCustomerCollateralReleaseDocument(int collateralId)
+        {
+            List<int> record = new List<int>();
+            var data2 = (from a in bankingContext.TBL_COLLATERAL_RELEASE
+                         join b in bankingContext.TBL_COLLATERAL_RELEASE_DOC on a.COLLATERALRELEASEID equals b.COLLATERALRELEASEID
+                         where a.COLLATERALCUSTOMERID == collateralId
+                         select new { b.DOCUMENTID }
+                         ).ToList();
+            foreach (var rec in data2)
+            {
+                record.Add(rec.DOCUMENTID);
+            }
+            var data = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(x => x.COLLATERALCUSTOMERID == collateralId && record.Contains(x.DOCUMENTID)).Select(x => new CollateralDocumentViewModel
+            {
+                collateralId = x.COLLATERALCUSTOMERID,
+                documentId = x.DOCUMENTID,
+                documentTitle = x.DOCUMENTCODE,
+                fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                targetId = x.TARGETID
+            });
+            return data.ToList();
+        }
 
         public IEnumerable<CollateralDocumentViewModel> GetCustomerCollateralDocument(int collateralId)
         {

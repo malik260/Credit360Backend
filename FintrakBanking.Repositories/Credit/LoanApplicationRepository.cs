@@ -1424,11 +1424,12 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
 
-            decimal totalApplicationAmount = loan.applicationAmount;
+            decimal totalApplicationAmount = 0; //loan.applicationAmount;
             foreach (var item in application)
             {
                 var exchangeValue = ((decimal)item.PROPOSEDAMOUNT * (decimal)item.EXCHANGERATE);
-                totalApplicationAmount = totalApplicationAmount + exchangeValue;
+                    totalApplicationAmount = totalApplicationAmount + exchangeValue;
+
             }
 
             this.loanData.REQUIRECOLLATERAL = loan.requireCollateral;

@@ -83,7 +83,7 @@ namespace FintrakBanking.Repositories.Credit
                     CHARGEFEEID = detail.chargeFeeId, // refactor to operationId from ui!
                     ISPOSTED = false,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,// REMOVE DUPLICATE [STATUSID]
-                    FEERATEVALUE = 0,
+                    FEERATEVALUE = detail.feeRate,
                     FEEDEPENDENTAMOUNT = 0,
                     FEEAMOUNT = detail.feeAmount,
                     EARNEDFEEAMOUNT = 0,

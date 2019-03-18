@@ -903,6 +903,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var numberOfPeriods = periodicSchedule.Count() - 1;
 
+            //var numberOfPeriods = periodicSchedule.Count();
+
             DateTime previousPaymentDate = loanInput.effectiveDate;
 
             int dailyScheduleRowCount = 0;
