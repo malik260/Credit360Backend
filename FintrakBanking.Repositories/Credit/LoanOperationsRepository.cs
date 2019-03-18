@@ -3204,7 +3204,7 @@ namespace FintrakBanking.Repositories.Credit
                                   return x;
                               }).ToList();
 
-            var commercialLoanMaturityDate = applicationDate.AddDays(1);
+            var commercialLoanMaturityDate = applicationDate; // applicationDate.AddDays(1);
 
             var commercialLoans = (from b in context.TBL_LOAN
                                    where b.MATURITYDATE == DbFunctions.TruncateTime(commercialLoanMaturityDate)
