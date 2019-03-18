@@ -275,6 +275,15 @@ namespace FintrakBanking.ViewModels.Reports
        
         public int deferralDuration { get { return (this.initialDefferalDate - this.dateCreated).Days; } }
         public int cumulativeDays { get { return (DateTime.Now - this.dateCreated).Days; } }
+
+        public decimal loanBalanceForeignCurrency { get; set; }
+        public string groupDescription { get; set; }
+        public string teamDescription { get; set; }
+        public string deskDescription { get; set; }
+        public string buDescription { get; set; }
+        public string teamCode { get; set; }
+        public string groupCode { get; set; }
+        public string deskCode { get; set; }
     }
 
     public class FCYScheuledLoanViewModel

@@ -105,7 +105,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("limitmonitoring/sector")]
         public HttpResponseMessage GetSectorLimitMonitoringReport()
         {
@@ -1831,19 +1832,15 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpPost]
+        [HttpGet]
         [ClaimsAuthorization]
         [Route("impaired-watch-list-report")]
-        public HttpResponseMessage GetImpairedWatchListReport([FromBody]DateRange param)
+        public HttpResponseMessage GetImpairedWatchListReport()
         {
             var token = new TokenDecryptionHelper();
             try
             {
-
-
-                param.companyId = token.GetCompanyId;
-
-                var data = repo.GetImpairedWatchListReport(param);
+                var data = repo.GetImpairedWatchListReport(token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1858,19 +1855,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [ClaimsAuthorization]
         [Route("insurance-report")]
-        public HttpResponseMessage GetInsuranceReport([FromBody]DateRange param)
+        public HttpResponseMessage GetInsuranceReport()
         {
             var token = new TokenDecryptionHelper();
             try
             {
-
-
-                param.companyId = token.GetCompanyId;
-
-                var data = repo.GetInsuranceReport(param);
+                var data = repo.GetInsuranceReport(token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1913,19 +1906,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [ClaimsAuthorization]
         [Route("excess-report")]
-        public HttpResponseMessage GetExcessReport([FromBody]DateRange param)
+        public HttpResponseMessage GetExcessReport()
         {
             var token = new TokenDecryptionHelper();
             try
             {
-
-
-                param.companyId = token.GetCompanyId;
-
-                var data = repo.GetExcessReport(param);
+                var data = repo.GetExcessReport(token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1938,6 +1927,32 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("runining-loan-report")]
+        public HttpResponseMessage GetRuniningLoanReport()
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetRuniningLoanReport(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
         }
     }
 }

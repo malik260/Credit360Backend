@@ -1017,21 +1017,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="accountName">
+                    <Textbox Name="customerName">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!accountName.Value</Value>
+                              <Value>=Fields!customerName.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>accountName</rd:DefaultName>
+                      <rd:DefaultName>customerName</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1047,21 +1047,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="account">
+                    <Textbox Name="loanRefNo">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!account.Value</Value>
+                              <Value>=Fields!loanRefNo.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>account</rd:DefaultName>
+                      <rd:DefaultName>loanRefNo</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1673,7 +1673,7 @@
     <Height>1.97917in</Height>
     <Style />
   </Body>
-  <Width>29.75979in</Width>
+  <Width>29.7598in</Width>
   <Page>
     <PageHeader>
       <Height>1in</Height>
@@ -1776,12 +1776,12 @@
           <DataField>deskDescription</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="accountName">
-          <DataField>accountName</DataField>
+        <Field Name="customerName">
+          <DataField>customerName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="account">
-          <DataField>account</DataField>
+        <Field Name="loanRefNo">
+          <DataField>loanRefNo</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="customerId">
