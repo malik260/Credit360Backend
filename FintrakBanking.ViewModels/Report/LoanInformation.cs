@@ -237,7 +237,7 @@ namespace FintrakBanking.ViewModels.Reports
     public class LoanDocumentWaivedViewModel
     {
         public DateTime deferralExpiryDate { get; set; }
-
+        public string buDescription { get; set; }
         public string checkListStatusName { get; set; }
         public int cummulativeDays { get; set; }
         public int deferralDurration { get; set; }
