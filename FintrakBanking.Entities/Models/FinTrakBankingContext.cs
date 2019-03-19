@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_APPROVAL_GROUP> TBL_APPROVAL_GROUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_GRP_MAPPING> TBL_TEMP_APPROVAL_GRP_MAPPING { get; set; }
+        public virtual DbSet<TBL_APPROVAL_LEVEL_SETTING> TBL_APPROVAL_LEVEL_SETTING { get; set; }
+
         public virtual DbSet<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL> TBL_TEMP_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
@@ -450,6 +452,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_SYNDICATION_PARTY_TYP> TBL_LOAN_SYNDICATION_PARTY_TYP { get; set; }
 
         public virtual DbSet<TBL_LOAN_REPRICING_MODE> TBL_LOAN_REPRICING_MODE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_RELEASE_DOC> TBL_COLLATERAL_RELEASE_DOC { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

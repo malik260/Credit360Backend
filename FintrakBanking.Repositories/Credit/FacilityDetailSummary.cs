@@ -1189,14 +1189,40 @@ namespace FintrakBanking.Repositories.Credit
 
         private List<LoanViewModel> SearchContigentLoan(string searchQuery)
         {
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+            List<short> loanStatus = new List<short>();
+            loanStatus.Add((short)LoanStatusEnum.Cancelled);
+            loanStatus.Add((short)LoanStatusEnum.Terminated);
+
+
+            //var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
+            //                       join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+            //                       join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+            //                       where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 && 
+            //                       (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
+            //                       b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
+            //                       b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
+            //                       b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+            //                       c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
+            //                       && !loanStatus.Contains(a.LOANSTATUSID)
+
+            //                       )
+
+
+
+
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
-                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
-                                   b.FIRSTNAME.ToLower().Contains(searchQuery) ||
-                                   b.LASTNAME.ToLower().Contains(searchQuery) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery))
+                                   where a.ISDISBURSED == true && 
+                                   (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
                                    select new LoanViewModel
                                    {
                                        loanId = a.CONTINGENTLOANID,

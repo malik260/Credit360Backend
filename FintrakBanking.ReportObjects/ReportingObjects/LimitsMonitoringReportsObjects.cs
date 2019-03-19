@@ -435,13 +435,17 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public List<LoanViewModel> OverDraft(DateTime startDate, DateTime endDate)
         {
+
+            var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+
+
             List<LoanViewModel> overDraft = (from a in context.TBL_LOAN_REVOLVING
                                                join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
                                                join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                                //join l in context.TBL_LOAN on a.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID
                                                where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.RevolvingLoan 
-                                               && a.MATURITYDATE >= startDate && a.MATURITYDATE<= endDate
+                                               && a.MATURITYDATE < applDate// && a.MATURITYDATE<= endDate
                                              orderby a.MATURITYDATE descending
 
                                              select new LoanViewModel
@@ -886,6 +890,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         && DbFunctions.TruncateTime(camsol.DATE) <= DbFunctions.TruncateTime(endDate) 
                         && (camsol.CUSTOMERNAME.ToLower().Contains(customercode.ToLower())
                         || camsol.CUSTOMERCODE == customercode || customercode == null ||  customercode == "")
+                        && camsol.CAMSOLTYPEID == (int)CamsolTypeEnum.blackbook
                         orderby camsol.DATE descending
                         select new Blacklist
                         {

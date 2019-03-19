@@ -524,6 +524,52 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-search/full-and-final/{searchQuery}")]
+        public HttpResponseMessage SearchForFullAndFinalLoan(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchForFullAndFinalLoan(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("cancel-full-and-final")]
+        public HttpResponseMessage CancelFullAndFinal(int loanId)
+        {
+            try
+            {
+                var data = loanRepo.CancelFullAndFinal(loanId);
+                if (data == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("undisbursed-loan-details/")]
         public HttpResponseMessage SearchForLoansUnDisbursed(int loanId, int loanType)
         {
@@ -1114,13 +1160,13 @@ namespace FintrakBanking.APICore.Controllers
 
                 {
 
-                   
+
                     //if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
                     //{
                     //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
                     //}
-
-                    var response = repo.AddOperationReviewContingentWithImage(model, buffer);
+                    var response = repo.SaveDocument(model, buffer);
+                    //var response = repo.AddOperationReviewContingentWithImage(model, buffer);
                     if (response)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
@@ -1130,14 +1176,14 @@ namespace FintrakBanking.APICore.Controllers
                 else if ((int)OperationsEnum.ContingentLiabilityTermination == model.operationTypeId)
                 {
 
-                    model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+                    //model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
 
-                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
-                    }
-
-                    var response = repo.AddOperationReviewContingentWithImage(model,buffer);
+                    //if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
+                    //{
+                    //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+                    //}
+                    var response = repo.SaveDocument(model, buffer);
+                    //var response = repo.AddOperationReviewContingentWithImage(model,buffer);
                     if (response)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
@@ -1159,14 +1205,14 @@ namespace FintrakBanking.APICore.Controllers
                 else if ((int)OperationsEnum.ContingentLiabilityTerminateAndRebook == model.operationTypeId)
                 {
 
-                    model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+                    //model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
 
-                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
-                    }
+                    //if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
+                    //{
+                    //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+                    //}
 
-                    var response = repo.AddOperationReviewContingentWithImage(model, buffer);
+                    var response = repo.SaveDocument(model, buffer);//AddOperationReviewContingentWithImage(model, buffer);
                     if (response)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
