@@ -293,7 +293,19 @@ namespace FintrakBanking.Repositories.Credit
             list.feeCharges = context.TBL_CHARGE_FEE.Select(x => new DropDownSelect { id = x.CHARGEFEEID, name = x.CHARGEFEENAME }).ToList();
             return list;
         }
+        public LoanChargeFeeViewModel GetChargeFeeDetails(int id)
+        {
+            var list = new LoanChargeFeeViewModel();
+             list = context.TBL_CHARGE_FEE.Where(a=>a.CHARGEFEEID == id).Select(x => new LoanChargeFeeViewModel {
+                 chargeFeeId = x.CHARGEFEEID,
+                 chargeFeeName = x.CHARGEFEENAME,
+                 rate = x.RATE==null? 0 : x.RATE,
+                 amount = x.AMOUNT,
+                 feeTypeId = x.FEETYPEID
 
+             }).FirstOrDefault();
+            return list;
+        }
         public string SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
             if (model.applicationDetails.Count() > 1 &&
