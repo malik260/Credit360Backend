@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Setups.General;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace FintrakBanking.Interfaces.Setups.General
    public interface IAccreditedConsultantsRepository
     {
         //Solicitor
+        IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultants(int getCompanyId);
         IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId);
         IEnumerable<AccreditedConsultantTypeViewModel> GetAccreditedConsultantType();
         IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId, int accreditedConsultantId);
@@ -26,6 +28,10 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<AccreditedPrincipalsViewModel> GetAccreditedPrincipals(int companyId);
         Task<bool> AddAccreditedPrincipals(AccreditedPrincipalsViewModel entity);
         Task<bool> UpdateAccreditedPrincipals(AccreditedPrincipalsViewModel entity, int id);
+        bool AddLoanConsultant(LoanConsultantViewModel entity);
+        bool EditLoanConsultant(int id, LoanConsultantViewModel entity);
+        bool RemoveLoanConsultant(int id, UserInfo user);
+        List<LoanConsultantViewModel> GetLoanConsultant(int applicationId);
 
         ////Recovery Agent
         //IEnumerable<AccreditedRecoveryAgentViewModel> GetAccreditedRecoveryAgent(int companyId);

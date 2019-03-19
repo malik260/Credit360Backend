@@ -12974,6 +12974,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnloanType;
             
+            private global::System.Data.DataColumn columnmiddleOfficeComment;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public MiddleOfficeReportDataTable() {
@@ -13145,6 +13147,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn middleOfficeCommentColumn {
+                get {
+                    return this.columnmiddleOfficeComment;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -13197,7 +13207,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string createdByName, 
                         string businessGroup, 
                         string businessUnit, 
-                        string loanType) {
+                        string loanType, 
+                        string middleOfficeComment) {
                 MiddleOfficeReportRow rowMiddleOfficeReportRow = ((MiddleOfficeReportRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         dateTimeCreated,
@@ -13216,7 +13227,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         createdByName,
                         businessGroup,
                         businessUnit,
-                        loanType};
+                        loanType,
+                        middleOfficeComment};
                 rowMiddleOfficeReportRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowMiddleOfficeReportRow);
                 return rowMiddleOfficeReportRow;
@@ -13256,6 +13268,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnbusinessGroup = base.Columns["businessGroup"];
                 this.columnbusinessUnit = base.Columns["businessUnit"];
                 this.columnloanType = base.Columns["loanType"];
+                this.columnmiddleOfficeComment = base.Columns["middleOfficeComment"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -13295,6 +13308,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnbusinessUnit);
                 this.columnloanType = new global::System.Data.DataColumn("loanType", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnloanType);
+                this.columnmiddleOfficeComment = new global::System.Data.DataColumn("middleOfficeComment", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnmiddleOfficeComment);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -19131,6 +19146,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnfacilityExpirationDate;
             
+            private global::System.Data.DataColumn columnbuDescription;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public LoanDocumentWaivedDataTable() {
@@ -19230,6 +19247,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn buDescriptionColumn {
+                get {
+                    return this.columnbuDescription;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -19265,7 +19290,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public LoanDocumentWaivedRow AddLoanDocumentWaivedRow(string waivedDocument, string facilityAmount, string facilityGrantedDate, string facilityType, string customerName, string customerCode, string businessUnit, string facilityExpirationDate) {
+            public LoanDocumentWaivedRow AddLoanDocumentWaivedRow(string waivedDocument, string facilityAmount, string facilityGrantedDate, string facilityType, string customerName, string customerCode, string businessUnit, string facilityExpirationDate, string buDescription) {
                 LoanDocumentWaivedRow rowLoanDocumentWaivedRow = ((LoanDocumentWaivedRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         waivedDocument,
@@ -19275,7 +19300,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         customerName,
                         customerCode,
                         businessUnit,
-                        facilityExpirationDate};
+                        facilityExpirationDate,
+                        buDescription};
                 rowLoanDocumentWaivedRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowLoanDocumentWaivedRow);
                 return rowLoanDocumentWaivedRow;
@@ -19306,6 +19332,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columncustomerCode = base.Columns["customerCode"];
                 this.columnbusinessUnit = base.Columns["businessUnit"];
                 this.columnfacilityExpirationDate = base.Columns["facilityExpirationDate"];
+                this.columnbuDescription = base.Columns["buDescription"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -19327,6 +19354,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnbusinessUnit);
                 this.columnfacilityExpirationDate = new global::System.Data.DataColumn("facilityExpirationDate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnfacilityExpirationDate);
+                this.columnbuDescription = new global::System.Data.DataColumn("buDescription", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbuDescription);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -32741,6 +32770,23 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string middleOfficeComment {
+                get {
+                    try {
+                        return ((string)(this[this.tableMiddleOfficeReport.middleOfficeCommentColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'middleOfficeComment\' in table \'MiddleOfficeReport\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableMiddleOfficeReport.middleOfficeCommentColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsdateTimeCreatedNull() {
                 return this.IsNull(this.tableMiddleOfficeReport.dateTimeCreatedColumn);
             }
@@ -32941,6 +32987,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetloanTypeNull() {
                 this[this.tableMiddleOfficeReport.loanTypeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsmiddleOfficeCommentNull() {
+                return this.IsNull(this.tableMiddleOfficeReport.middleOfficeCommentColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetmiddleOfficeCommentNull() {
+                this[this.tableMiddleOfficeReport.middleOfficeCommentColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -39607,6 +39665,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string buDescription {
+                get {
+                    try {
+                        return ((string)(this[this.tableLoanDocumentWaived.buDescriptionColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'buDescription\' in table \'LoanDocumentWaived\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableLoanDocumentWaived.buDescriptionColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IswaivedDocumentNull() {
                 return this.IsNull(this.tableLoanDocumentWaived.waivedDocumentColumn);
             }
@@ -39699,6 +39773,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetfacilityExpirationDateNull() {
                 this[this.tableLoanDocumentWaived.facilityExpirationDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbuDescriptionNull() {
+                return this.IsNull(this.tableLoanDocumentWaived.buDescriptionColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbuDescriptionNull() {
+                this[this.tableLoanDocumentWaived.buDescriptionColumn] = global::System.Convert.DBNull;
             }
         }
         

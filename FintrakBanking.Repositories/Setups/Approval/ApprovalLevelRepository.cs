@@ -189,6 +189,37 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return levels;
         }
 
+        public List<FintrakDropDownSelectList> GetTranchDisbursmentApprovalLevels()
+        {
+            var operationId = (int)OperationsEnum.LoanTrancheBookingRequest;
+            List<FintrakDropDownSelectList> tranchLevels = new List<FintrakDropDownSelectList>();
+            int nextGroupId = 20; // ------------------------HARDCODING!!!!!!
+            var operation = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == operationId);
+            // if (operation != null) nextGroupId = operation.NEXTAPPROVALGROUPID;
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == null)
+                .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL, mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                {
+                    levelId = l.APPROVALLEVELID,
+                    levelName = l.LEVELNAME,
+                    groupId = mg.g.GROUPID
+                })
+                .ToList();
+
+            foreach (var level in levels)
+            {
+                if (nextGroupId == level.groupId) break;
+                tranchLevels.Add(new FintrakDropDownSelectList
+                {
+                    id = level.levelId,
+                    name = level.levelName
+                });
+            }
+
+            return tranchLevels;
+        }
+
         public bool AddApprovalLevel(ApprovalLevelViewModel model)
         {
             if (admin.IsSuperAdmin(model.createdBy) == true)

@@ -24,36 +24,48 @@ namespace FintrakBanking.Repositories.Notification
             levelStaffRepo = _levelStaffRepo;
         }
 
+
+
+ 
         public IEnumerable<NotificationViewModel> GetWorkflowNotifications(int staffId, int companyId)
         {
             List<NotificationViewModel> logs = new List<NotificationViewModel>();
-            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId).ToList();
-            if (approvalLevel.Any())
+            var staffRole = context.TBL_STAFF.Where(a => a.STAFFID == staffId).Select(w => w.STAFFROLEID).FirstOrDefault();
+
+            var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId || c.staffRoleId == staffRole).ToList();
+
+            var staffApprovalLevels = approvalLevel.Select(x => x.approvalLevelId).Distinct();
+
+            var result = (from a in context.TBL_APPROVAL_TRAIL
+                          join b in context.TBL_OPERATIONS on a.OPERATIONID equals b.OPERATIONID
+                          //join c in context.TBL_APPROVAL_LEVEL_STAFF  on a.TOAPPROVALLEVELID equals c.APPROVALLEVELID
+                          where 
+                          staffApprovalLevels.ToList().Contains((int)a.TOAPPROVALLEVELID)
+                          && a.APPROVALSTATEID != (int)ApprovalState.Ended
+                          //( a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
+                          //a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ) 
+                          && a.RESPONSESTAFFID == null
+                          //&& c.STAFFID == staffId
+                          group b by new { b.OPERATIONID, b.OPERATIONNAME, b.OPERATIONURL } into p
+                          select new
+                          {
+                                operationId = p.FirstOrDefault().OPERATIONID,
+                                count = p.ToList().Count(),
+                          }
+                       ).ToList();
+            var operations = (from a in context.TBL_OPERATIONS select a).ToList();
+            if (result != null)
             {
-                var operations = (from a in context.TBL_OPERATIONS select a).ToList();
-                foreach (var level in approvalLevel)
-                {
-                    var trail = (from c in context.TBL_APPROVAL_TRAIL
-                                 join op in context.TBL_OPERATIONS on c.OPERATIONID equals op.OPERATIONID
-                                 where c.COMPANYID == companyId &&
-                                       c.OPERATIONID == level.operationId &&
-                                       c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
-                                        c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                                       && c.RESPONSESTAFFID == null &&
-                                       c.TOAPPROVALLEVELID == level.approvalLevelId
-                                 group c by c.OPERATIONID into d
-                                 select new
-                                 {
-                                     count = d.Count(),
-                                     opreationId = d.FirstOrDefault().OPERATIONID
-                                 }).FirstOrDefault();
-                    if (trail != null)
+
+                foreach (var t in result)
                     {
-                        var filteredOp = operations.FirstOrDefault(x => x.OPERATIONID == trail.opreationId);
+                        var filteredOp = operations.FirstOrDefault(x => x.OPERATIONID == t.operationId);
                         var log = new NotificationViewModel
                         {
-                            messageCount = trail.count,
-                            message = "You have " + trail.count.ToString() + " " + filteredOp.OPERATIONNAME + " request awaiting your action",
+                            messageCount = t.count,
+                            //message = "You have Pending " + filteredOp.OPERATIONNAME + " request(s) awaiting your action",
+
+                            message = "You have " + t.count.ToString() + " " + filteredOp.OPERATIONNAME + " request awaiting your action",
                             operationURL = filteredOp.OPERATIONURL
                         };
 
@@ -62,10 +74,54 @@ namespace FintrakBanking.Repositories.Notification
                             logs.Add(log);
                         }
                     }
-            
-                }
 
             }
+
+
+
+
+            //if (approvalLevel.Any())
+            //{
+            //     var operations = (from a in context.TBL_OPERATIONS select a).ToList();
+
+
+
+            //    foreach (var level in approvalLevel)
+            //    {
+ 
+            //        var trail = (from c in context.TBL_APPROVAL_TRAIL
+            //                     join op in context.TBL_OPERATIONS on c.OPERATIONID equals op.OPERATIONID
+            //                     where c.COMPANYID == companyId &&
+            //                           c.OPERATIONID == level.operationId &&
+            //                           c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
+            //                            c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+            //                           && c.RESPONSESTAFFID == null &&
+            //                           c.TOAPPROVALLEVELID == level.approvalLevelId
+            //                     group c by c.OPERATIONID into d
+            //                     select new
+            //                     {
+            //                         count = d.Count(),
+            //                         opreationId = d.FirstOrDefault().OPERATIONID
+            //                     }).FirstOrDefault();
+            //        if (trail != null)
+            //        {
+            //            var filteredOp = operations.FirstOrDefault(x => x.OPERATIONID == trail.opreationId);
+            //            var log = new NotificationViewModel
+            //            {
+            //                messageCount = trail.count,
+            //                message = "You have " + trail.count.ToString() + " " + filteredOp.OPERATIONNAME + " request awaiting your action",
+            //                operationURL = filteredOp.OPERATIONURL
+            //            };
+
+            //            if (log != null)
+            //            {
+            //                logs.Add(log);
+            //            }
+            //        }
+
+            //    }
+
+            //}
             return logs;
         }
 

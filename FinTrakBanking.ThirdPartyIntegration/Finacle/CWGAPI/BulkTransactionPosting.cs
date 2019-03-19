@@ -191,7 +191,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.POSTEDBY = "SYSTEM";
                 addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.branchId;
-                addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                addStaging.SOURCEREFERENCENUMBER = item.referenceNumber; // groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString();//product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
                 addStaging.TRANSACTIONTYPE = "BP";
                 addStaging.BANKID = "01";
@@ -506,7 +506,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.POSTEDBY = "SYSTEM";
                 addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.branchId;
-                addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                addStaging.SOURCEREFERENCENUMBER = item.referenceNumber;//product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
                 addStaging.TRANSACTIONTYPE = "BP";
                 addStaging.BANKID = "01";

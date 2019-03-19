@@ -100,7 +100,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                  // notificationPeriod = d.NOTIFICATION_PERIOD,
                                   messageTypeId = d.MESSAGETYPEID,
                                   messageTemplate = d.MESSAGE_TEMPLATE,
-                                  messageTypeName = d.TBL_MESSAGE_LOG_TYPE.MESSAGETYPENAME,
+                                  messageTypeName = context.TBL_MESSAGE_LOG_TYPE.Where(o=>o.MESSAGETYPEID==d.MESSAGETYPEID).Select(o=>o.MESSAGETYPENAME).FirstOrDefault(),
                                 ///  productId = d.TBL_PRODUCT.PRODUCTID,
                                  // productName = d.TBL_PRODUCT.PRODUCTDESCRIPTION,
 

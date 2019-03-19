@@ -632,7 +632,7 @@
                                 <TextRun>
                                   <Value>=Fields!covenantDate.Value</Value>
                                   <Style>
-                                    <Format>dd/MM/yyyy HH:MM:ss tt</Format>
+                                    <Format>d MMM yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -651,6 +651,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -664,7 +665,7 @@
                                 <TextRun>
                                   <Value>=Fields!dueDate.Value</Value>
                                   <Style>
-                                    <Format>dd/MM/yyyy HH:MM:ss tt</Format>
+                                    <Format>d MMM yyyy</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>

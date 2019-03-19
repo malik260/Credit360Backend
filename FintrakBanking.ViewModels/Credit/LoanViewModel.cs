@@ -48,6 +48,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+
+        public bool isSuspenseCredit { get; set; }
+        public decimal bookedAmount { get; set; }
+
         public string productAccountName2 { get; set; }
         public string businessUnit { get; set; }
         public string nameOfRM { get; set; }
@@ -136,6 +140,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime maturityDate { get; set; }
         public DateTime bookingDate { get; set; }
         public decimal principalAmount { get; set; }
+        public decimal? writtenOffAccruedAmount { get; set; }
+        public decimal? principalAmountz { get; set; }
         public int principalInstallmentLeft { get; set; }
         public int interestInstallmentLeft { get; set; }
         public int approvalStatusId { get; set; }
@@ -388,6 +394,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalExistingLimitAmount { get; set; }
         public string crmsCode { get; set; }
         public string customerEmail { get; set; }
+        public object totalRepayment { get; set; }
+        public string loanSystemTypeName { get; set; }
+        public decimal writtenOffAmount { get; set; }
 
 
 
@@ -396,6 +405,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public decimal bookedAmount { get; set; }
+
         public short scheduleDayCountConventionId { get; set; }
 
         public short? crmsRepaymentAgreementTypeId { get; set; }
@@ -524,6 +535,7 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public int principalAmount { get; set; }
     }
 
     public class ContingentLoanViewModel : GeneralEntity
@@ -676,6 +688,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanReviewOperationId { get; set; }
 
         public int requestStaffId { get; set; }
+        public int? toApprovalLevelId { get; set; }
 
         public string approvalStatusName { get; set; }
         public string lmsOperationName { get; set; }
@@ -825,12 +838,13 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanChargeFeeViewModel : ChargeRangeViewModel //GeneralEntity //ChargeRangeViewModel
 
     {
-        public string productName;
-        public string casaAccountName;
-        public decimal casaAccountBalance;
-        public string productTypeName;
-        public string customerName;
-        public string loanReferenceNumber;
+        public int dealTypeId { get; set; }
+        public string productName { get; set; }
+        public string casaAccountName { get; set; }
+        public decimal casaAccountBalance { get; set; }
+        public string productTypeName { get; set; }
+        public string customerName { get; set; }
+        public string loanReferenceNumber { get; set; }
 
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
@@ -1035,11 +1049,23 @@ namespace FintrakBanking.ViewModels.Credit
 
         public double dailyAccuralAmount { get; set; }
 
+        public short accuralTypeId { get; set; }
+
         public decimal availableBalance { get; set; }
 
         public int daysInAYear { get; set; }
 
         public int loanChargedFeeId { get; set; }
+
+        public int? loanId { get; set; }
+
+        public string productCode { get; set; }
+        public string currencyCode { get; set; }
+
+        public string branchCode { get; set; }
+
+        //public string currencyCode { get; set; }
+        //referenceNumber = groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString(),
 
     }
 
@@ -1091,7 +1117,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    public class LoanAvailmentApprovalViewModel: ApprovalViewModel
+    public class LoanAvailmentApprovalViewModel : ApprovalViewModel
     {
         public string applicationReferenceNumber { get; set; }
         public short applicationStatusId { get; set; }
@@ -1534,6 +1560,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string subHead { get; set; }
         public string staffCode { get; set; }
         public string teamUnit { get; set; }
+        public string depart { get; set; }
+      
         public string region { get; set; }
         public string deptName { get; set; }
     }
@@ -1571,4 +1599,6 @@ namespace FintrakBanking.ViewModels.Credit
     //    public short loanSystemTypeId { get; set; }
     //    public short approvalStatusId { get; set; }
     //}
+
+    //public class Accrual
 }

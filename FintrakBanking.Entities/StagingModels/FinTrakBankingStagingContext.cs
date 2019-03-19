@@ -27,6 +27,7 @@ namespace FintrakBanking.Entities.StagingModels
         public virtual DbSet<STG_LOAN_WATCHLIST> STG_LOAN_WATCHLIST { get; set; }
         public virtual DbSet<STG_PRICE_INDEX_RATE> STG_PRICE_INDEX_RATE { get; set; }
         public virtual DbSet<STG_STAFF_RAW2> STG_STAFF_RAW2 { get; set; }
+        public virtual DbSet<STG_TREASURY_RATE_TBL> STG_TREASURY_RATE_TBL { get; set; }
 
         public virtual DbSet<STG_CASA_DAILY_BALANCE_INPUT> STG_CASA_DAILY_BALANCE_INPUT { get; set; }
 

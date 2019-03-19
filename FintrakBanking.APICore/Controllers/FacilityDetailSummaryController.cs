@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -45,6 +46,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("loan-product-fees/application/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetLoanProductFeesByFacilityId(int loanApplicationDetailId)
+        {
+            var response = repo.GetLoanProductFeesByFacilityId(loanApplicationDetailId);
+            if (response == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        }
+
+        
         [HttpGet]
         [ClaimsAuthorization]
         [Route("facilty-details/{loanId}")]
@@ -405,12 +420,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-chargefee/{loanId}")]
-        public HttpResponseMessage GetLoanChargeFee(int loanId)
+        [Route("loan-chargefee/{loanId}/{loanSystemTypeId}")]
+        public HttpResponseMessage GetLoanChargeFee(int loanId, short loanSystemTypeId)
         {
             try
             {
-                var data = repo.LoanChargeFee(loanId);
+                var data = repo.LoanChargeFee(loanId, loanSystemTypeId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

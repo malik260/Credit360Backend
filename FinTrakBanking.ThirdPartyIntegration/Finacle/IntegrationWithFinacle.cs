@@ -371,7 +371,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             if (data == "" || data == "NO-MATCH" || data == "NOT AVAIABLE")
                 result = false;
-            if (data == "Match")
+            if (data == "MATCH")
                 result = true;
 
             return result;

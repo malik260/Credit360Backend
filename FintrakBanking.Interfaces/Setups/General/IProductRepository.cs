@@ -19,8 +19,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetAllRiskRatingType(int companyId);
 
         ProductBehaviourViewModel GetProductBehaviour(int productId);
-
-        IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId);
+        
+       // IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId);
         ProductPriceIndexViewModel GetProductPriceIndexByProductId(int productId);
         IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId);
         #region Product
@@ -63,14 +63,14 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool DeleteProductPriceIndex(int productPriceIndexId, UserInfo user);
         IEnumerable<ProductPriceIndexCurrencyViewModel> GetProductPriceIndexCurrencyById(int productPriceIndexId);
-        ProductPriceIndexCurrencyViewModel AddProductPriceIndexCurrency(ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency);
+        //ProductPriceIndexCurrencyViewModel AddProductPriceIndexCurrency(ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency);
 
-        bool UpdateProductPriceIndexCurrency(int priceIndexCurrencyId, ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency);
+        //bool UpdateProductPriceIndexCurrency(int priceIndexCurrencyId, ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency);
 
-        bool DeleteProductPriceIndexCurrency(int priceIndexCurrencyId, UserInfo user);
+        //bool DeleteProductPriceIndexCurrency(int priceIndexCurrencyId, UserInfo user);
         List<ProductPriceIndexDailyViewModel> getProductPriceIndexHistory(DateTime startDate, DateTime endDate, int companyId);
 
-        List<ProductPriceIndexViewModel> GetProductPriceIndexByCurrencyId( int currencyId);
+        List<ProductPriceIndexViewModel> GetProductPriceIndexByCurrencyId(int currencyId);
 
         #endregion Product Price Index
 

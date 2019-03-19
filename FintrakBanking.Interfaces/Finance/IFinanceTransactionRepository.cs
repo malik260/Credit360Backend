@@ -21,6 +21,8 @@ namespace FintrakBanking.Interfaces.Finance
         List<FinanceTransactionViewModel> BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
         CasaBalanceViewModel GetCASABalance(int casaAccountId);
 
+        CasaBalanceViewModel GetCASABalance(string accountNumber, int companyId);
+
         bool PostDailyLoansInterestAccrual(DailyInterestAccrualViewModel model);
 
         FinanceTransactionViewModel PostDailyAuthorisedOverdraftInterestAccrual(DailyInterestAccrualViewModel model);
@@ -46,9 +48,9 @@ namespace FintrakBanking.Interfaces.Finance
         bool PostBuildLoanChargeFeesPosting(LoanViewModel model);
         // FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId, TwoFactorAutheticationViewModel twoFactorAuth);
         List<FinanceTransactionViewModel> BuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth, decimal postedAmount, int creditGL, string description, int operationId);
-        
+
         // FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId);
-        FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth);
+        List<FinanceTransactionViewModel> BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth, string postType);
 
         //FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model);
 
@@ -75,6 +77,8 @@ namespace FintrakBanking.Interfaces.Finance
         bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model);
 
         string GetCustomerAccountType(string accountNumber);
+
+        
 
     }
 }

@@ -18,7 +18,7 @@ namespace FintrakBanking.ViewModels.Finance
 
         public DateTime date { get; set; }
 
-        public DateTime startDateTime { get; set; }
+        public DateTime? startDateTime { get; set; }
 
         public DateTime? endDateTime { get; set; }
         

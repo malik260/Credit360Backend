@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_APPROVAL_GROUP> TBL_APPROVAL_GROUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_GRP_MAPPING> TBL_TEMP_APPROVAL_GRP_MAPPING { get; set; }
+        public virtual DbSet<TBL_APPROVAL_LEVEL_SETTING> TBL_APPROVAL_LEVEL_SETTING { get; set; }
+
         public virtual DbSet<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL> TBL_TEMP_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
@@ -199,7 +201,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_JOB_REQUEST_STATUS> TBL_JOB_REQUEST_STATUS { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_STATUS_FEEDBAK> TBL_JOB_REQUEST_STATUS_FEEDBAK { get; set; }
         public virtual DbSet<TBL_JOB_TYPE> TBL_JOB_TYPE { get; set; }
-        public virtual DbSet<TBL_JOB_TYPE_HUB> TBL_JOB_TYPE_HUB { get; set; } 
+        public virtual DbSet<TBL_JOB_TYPE_HUB> TBL_JOB_TYPE_HUB { get; set; }
+        public virtual DbSet<TBL_JOB_SOURCE> TBL_JOB_SOURCE { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_UNIT> TBL_JOB_TYPE_UNIT { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_REASSIGNMENT> TBL_JOB_TYPE_REASSIGNMENT { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_DEPARTMENT> TBL_JOB_TYPE_DEPARTMENT { get; set; }
@@ -226,6 +229,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_LOG> TBL_LOAN_APPLICATION_DETL_LOG { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_STA> TBL_LOAN_APPLICATION_DETL_STA { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_TRA> TBL_LOAN_APPLICATION_DETL_TRA { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_DETL_CON> TBL_LOAN_APPLICATION_DETL_CON { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_STATUS> TBL_LOAN_APPLICATION_STATUS { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_TYPE> TBL_LOAN_APPLICATION_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COMMENT> TBL_LOAN_APPLICATION_COMMENT { get; set; }
@@ -323,7 +327,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PRODUCT_CURRENCY> TBL_PRODUCT_CURRENCY { get; set; }
         public virtual DbSet<TBL_PRODUCT_GROUP> TBL_PRODUCT_GROUP { get; set; }
         public virtual DbSet<TBL_PRODUCT_PRICE_INDEX> TBL_PRODUCT_PRICE_INDEX { get; set; }
-        public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_CURNCY> TBL_PRODUCT_PRICE_INDEX_CURNCY { get; set; }
+        //public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_CURNCY> TBL_PRODUCT_PRICE_INDEX_CURNCY { get; set; }
         public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_GLOBAL> TBL_PRODUCT_PRICE_INDEX_GLOBAL { get; set; }
 
         public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_DAILY> TBL_PRODUCT_PRICE_INDEX_DAILY { get; set; }
@@ -380,7 +384,13 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_COLLATERAL_PREC_METAL> TBL_TEMP_COLLATERAL_PREC_METAL { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_VEHICLE> TBL_TEMP_COLLATERAL_VEHICLE { get; set; }
-      //  public virtual DbSet<TBL_TEMP_COMPANY_BENEFICIA> TBL_TEMP_COMPANY_BENEFICIA { get; set; }
+        public virtual DbSet<TBL_TEMP_COLLATERAL_PROMISSORY> TBL_TEMP_COLLATERAL_PROMISSORY { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_PROMISSORY> TBL_COLLATERAL_PROMISSORY { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_RELEASE_TYPE> TBL_COLLATERAL_RELEASE_TYPE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_RELEASE_STATUS> TBL_COLLATERAL_RELEASE_STATUS { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_RELEASE> TBL_COLLATERAL_RELEASE { get; set; }
+
+        //  public virtual DbSet<TBL_TEMP_COMPANY_BENEFICIA> TBL_TEMP_COMPANY_BENEFICIA { get; set; }
         public virtual DbSet<TBL_TEMP_CUST_CLIENT_SUPPLIER> TBL_TEMP_CUST_CLIENT_SUPPLIER { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER> TBL_TEMP_CUSTOMER { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER_ADDRESS> TBL_TEMP_CUSTOMER_ADDRESS { get; set; }
@@ -442,6 +452,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_SYNDICATION_PARTY_TYP> TBL_LOAN_SYNDICATION_PARTY_TYP { get; set; }
 
         public virtual DbSet<TBL_LOAN_REPRICING_MODE> TBL_LOAN_REPRICING_MODE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_RELEASE_DOC> TBL_COLLATERAL_RELEASE_DOC { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -4653,6 +4664,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_CON)
+                .WithRequired(e => e.TBL_LOAN_APPLICATION_DETAIL)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_EDU)
                 .WithRequired(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WillCascadeOnDelete(false);
@@ -6320,48 +6336,48 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.DESCRIPTION)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG>()
-                .Property(e => e.FROMADDRESS)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG>()
+            //    .Property(e => e.FROMADDRESS)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG>()
-                .Property(e => e.TOADDRESS)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG>()
+            //    .Property(e => e.TOADDRESS)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG>()
-                .Property(e => e.MESSAGEBODY)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG>()
+            //    .Property(e => e.MESSAGEBODY)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG>()
-                .Property(e => e.MESSAGESUBJECT)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG>()
+            //    .Property(e => e.MESSAGESUBJECT)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG>()
-                .Property(e => e.GATEWAYRESPONSE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG>()
+            //    .Property(e => e.GATEWAYRESPONSE)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG_STATUS>()
-                .Property(e => e.MESSAGESTATUSNAME)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG_STATUS>()
+            //    .Property(e => e.MESSAGESTATUSNAME)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG_STATUS>()
-                .HasMany(e => e.TBL_MESSAGE_LOG)
-                .WithRequired(e => e.TBL_MESSAGE_LOG_STATUS)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG_STATUS>()
+            //    .HasMany(e => e.TBL_MESSAGE_LOG)
+            //    .WithRequired(e => e.TBL_MESSAGE_LOG_STATUS)
+            //    .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
-                .Property(e => e.MESSAGETYPENAME)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
+            //    .Property(e => e.MESSAGETYPENAME)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
-                .HasMany(e => e.TBL_MESSAGE_LOG)
-                .WithRequired(e => e.TBL_MESSAGE_LOG_TYPE)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
+            //    .HasMany(e => e.TBL_MESSAGE_LOG)
+            //    .WithRequired(e => e.TBL_MESSAGE_LOG_TYPE)
+            //    .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
-                .HasMany(e => e.TBL_MONITORING_ALERT_SETUP)
-                .WithRequired(e => e.TBL_MESSAGE_LOG_TYPE)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_MESSAGE_LOG_TYPE>()
+            //    .HasMany(e => e.TBL_MONITORING_ALERT_SETUP)
+            //    .WithRequired(e => e.TBL_MESSAGE_LOG_TYPE)
+            //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_MIS_INFO>()
                 .Property(e => e.MISCODE)

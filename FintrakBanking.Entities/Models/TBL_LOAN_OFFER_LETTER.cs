@@ -35,5 +35,10 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public bool? ISACCEPTED { get; set; }
+
+        public bool ISFINAL { get; set; }
+
     }
 }

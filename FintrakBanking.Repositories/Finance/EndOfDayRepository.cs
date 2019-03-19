@@ -7,11 +7,14 @@ using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.Entities.StagingModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Transactions;
+using System.Data.Entity;
+using FintrakBanking.Interfaces.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Finance
 {
@@ -22,12 +25,14 @@ namespace FintrakBanking.Repositories.Finance
         private IAuditTrailRepository auditTrail;
         private ILoanOperationsRepository loanOperation;
         private IPublicHolidayRepository publicHoliday;
+        private FinTrakBankingStagingContext stagingContext;
         private ICustomerCollateralRepository collateralItemPolicy;
         private ILoanCovenantRepository loanCovenantRepository;
+        private IFinacleIntegrationRepository finacleIntegration;
 
         public EndOfDayRepository(FinTrakBankingContext _context, IGeneralSetupRepository _generalSetup,
                                     ILoanOperationsRepository _loanOperation, IPublicHolidayRepository _publicHoliday,
-                                    IAuditTrailRepository _auditTrail, ICustomerCollateralRepository _collateralItemPolicy, ILoanCovenantRepository _loanCovenantRepository)
+                                    IAuditTrailRepository _auditTrail, ICustomerCollateralRepository _collateralItemPolicy, ILoanCovenantRepository _loanCovenantRepository, FinTrakBankingStagingContext _stagingContext, IFinacleIntegrationRepository _finacleIntegration)
         {
             this.context = _context;
             this.generalSetup = _generalSetup;
@@ -36,13 +41,15 @@ namespace FintrakBanking.Repositories.Finance
             this.loanOperation = _loanOperation;
             this.collateralItemPolicy = _collateralItemPolicy;
             this.loanCovenantRepository = _loanCovenantRepository;
+            this.stagingContext = _stagingContext;
+            this.finacleIntegration = _finacleIntegration;
         }
 
-        
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool RunEndOfDay(EndOfDayViewModel model)
         {
-            
+
             var applicationDate = generalSetup.GetApplicationDate();
 
             var financeEod = (from e in context.TBL_FINANCE_ENDOFDAY
@@ -121,7 +128,7 @@ namespace FintrakBanking.Repositories.Finance
                                   eodStatus = context.TBL_EOD_STATUS.Where(x => x.EODSTATUSID == e.EODSTATUSID).Select(x => x.EODSTATUSNAME).FirstOrDefault(),
 
                                   // (decimal?)b.OVERDRAFTTOPUP ?? 0,
-                              });
+                              }).OrderByDescending(x => x.date);
             return financeEod;
         }
 
@@ -129,7 +136,7 @@ namespace FintrakBanking.Repositories.Finance
         {
             var financeEod = (from e in context.TBL_EOD_OPERATION_LOG
                               join f in context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION) on e.EODOPERATIONID equals f.EODOPERATIONID
-                              where e.COMPANYID == companyId && e.EODDATE == oedDate 
+                              where e.COMPANYID == companyId && e.EODDATE == oedDate
                               select new FinanceEndofdayViewModel()
                               {
                                   eodOperationLogId = e.EODOPERATIONLOGID,
@@ -145,7 +152,7 @@ namespace FintrakBanking.Repositories.Finance
                               }).ToList();
             return financeEod;
         }
-        
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public void ProcessEndOfDay(DateTime date, int companyId, int staffId)
         {
@@ -158,8 +165,8 @@ namespace FintrakBanking.Repositories.Finance
             TBL_FINANCE_ENDOFDAY endOfDay = new TBL_FINANCE_ENDOFDAY();
 
             var eod = context.TBL_FINANCE_ENDOFDAY.Where(x => x.DATE == date && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).FirstOrDefault();
-            
-            if(eod == null)
+
+            if (eod == null)
             {
                 endOfDay.COMPANYID = companyId;
                 endOfDay.DATE = date;
@@ -168,11 +175,12 @@ namespace FintrakBanking.Repositories.Finance
                 endOfDay.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
             }
 
-            context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
 
-            context.SaveChanges();
-
-
+            if (endOfDay.COMPANYID != 0)
+            {
+                context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
+                context.SaveChanges();
+            }
 
             using (TransactionScope transactionScope = new TransactionScope())
             {
@@ -181,7 +189,7 @@ namespace FintrakBanking.Repositories.Finance
                 {
                     var eodOperationProcess = context.TBL_EOD_OPERATION_LOG.Where(x => x.EODDATE == date && x.COMPANYID == companyId).FirstOrDefault();
 
-                    
+
                     List<TBL_EOD_OPERATION_LOG> eod_Operation_Log_List = new List<TBL_EOD_OPERATION_LOG>();
 
                     if (eodOperationProcess == null)
@@ -211,7 +219,7 @@ namespace FintrakBanking.Repositories.Finance
                                 eod_Operation_Log.COMPANYID = companyId;
                                 eod_Operation_Log_List.Add(eod_Operation_Log);
                             }
-                            
+
                         }
 
                         context.TBL_EOD_OPERATION_LOG.AddRange(eod_Operation_Log_List);
@@ -276,6 +284,7 @@ namespace FintrakBanking.Repositories.Finance
                             {
                                 transactionScope.Dispose();
                                 throw ex;
+
                             }
 
                         }
@@ -443,7 +452,7 @@ namespace FintrakBanking.Repositories.Finance
 
                                 loanOperation.ProcessLoanRepaymentPostingPastDue(date);
 
-            loanOperation.ProcessAutomaticCommercialLoanRollover(date);
+
 
                                 transactionScope.Complete();
 
@@ -490,6 +499,96 @@ namespace FintrakBanking.Repositories.Finance
                         eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                         context.SaveChanges();
                     }
+                    else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover)
+                    {
+                        eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+                        context.SaveChanges();
+
+                        using (TransactionScope transactionScope = new TransactionScope())
+                        {
+
+                            try
+                            {
+
+                                loanOperation.ProcessAutomaticCommercialLoanRollover(date);
+
+
+
+                                transactionScope.Complete();
+
+                                transactionScope.Dispose();
+                            }
+                            catch (TransactionException ex)
+                            {
+                                transactionScope.Dispose();
+                                throw ex;
+                            }
+
+                        }
+
+                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                        context.SaveChanges();
+                    }
+                    else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.UpdateLoanApplicationCovenant)
+                    {
+                        eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+                        context.SaveChanges();
+
+                        using (TransactionScope transactionScope = new TransactionScope())
+                        {
+
+                            try
+                            {
+
+                                loanCovenantRepository.UpdateLoanApplicationCovenant(date);
+
+                                transactionScope.Complete();
+
+                                transactionScope.Dispose();
+                            }
+                            catch (TransactionException ex)
+                            {
+                                transactionScope.Dispose();
+                                throw ex;
+                            }
+
+                        }
+
+                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                        context.SaveChanges();
+                    }
+                    else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.DailyWrittenOffFacilityAccrual)
+                    {
+                        eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+                        context.SaveChanges();
+
+                        using (TransactionScope transactionScope = new TransactionScope())
+                        {
+
+                            try
+                            {
+
+                                loanOperation.DailyWrittenOffFacilityAccrual(date);
+
+                                transactionScope.Complete();
+
+                                transactionScope.Dispose();
+                            }
+                            catch (TransactionException ex)
+                            {
+                                transactionScope.Dispose();
+                                throw ex;
+                            }
+
+                        }
+
+                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                        context.SaveChanges();
+                    }
+
                 }
 
 
@@ -563,7 +662,7 @@ namespace FintrakBanking.Repositories.Finance
             var result = loanOperation.UpdateLoanClassification(applicationDate);
             return result;
         }
-        
+
         public bool GetRunningEndOfDayProcess(int companyId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
@@ -578,6 +677,47 @@ namespace FintrakBanking.Repositories.Finance
             {
                 return true;
             }
+        }
+
+        public IEnumerable<FinanceEndofdayViewModel> GetEndofdayOperationLogMonitoring(int companyId)
+        {
+            var financeEodNew = (from e in context.TBL_FINANCE_ENDOFDAY
+                                 where e.COMPANYID == companyId && e.EODSTATUSID == (int)EodOperationStatusEnum.Processing
+                                 select e.DATE).FirstOrDefault();
+
+            var financeEod = (from e in context.TBL_EOD_OPERATION_LOG
+                              join f in context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION) on e.EODOPERATIONID equals f.EODOPERATIONID
+                              where e.COMPANYID == companyId && e.EODDATE == financeEodNew.Date
+                              select new FinanceEndofdayViewModel()
+                              {
+                                  eodOperationLogId = e.EODOPERATIONLOGID,
+                                  eodOperationId = e.EODOPERATIONID,
+                                  eodOperation = context.TBL_EOD_OPERATION.Where(x => x.EODOPERATIONID == e.EODOPERATIONID).Select(x => x.EODOPERATIONNAME).FirstOrDefault(),
+                                  startDateTime = e.STARTDATETIME,
+                                  endDateTime = e.ENDDATETIME,
+                                  eodDate = e.EODDATE,
+                                  eodStatusId = e.EODSTATUSID,
+                                  eodStatus = context.TBL_EOD_STATUS.Where(x => x.EODSTATUSID == e.EODSTATUSID).Select(x => x.EODSTATUSNAME).FirstOrDefault(),
+                                  companyId = e.COMPANYID,
+                                  companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == companyId).Select(x => x.NAME).FirstOrDefault(),
+                              }).ToList();
+            return financeEod;
+        }
+
+        public IEnumerable<RefreshStagingMonitoringModel> RefreshStagingMonitoring(DateTime stateDate, DateTime endDate)
+        {
+
+            var financeEod = (from e in stagingContext.FINTRAK_TRAN_PROC_DETAILS
+                              where DbFunctions.TruncateTime(e.RCRE_DATE) >= stateDate && DbFunctions.TruncateTime(e.RCRE_DATE) <= endDate
+                              group e by e.STATUS into g
+                              select new RefreshStagingMonitoringModel()
+                              {
+                                  status = g.Key,
+                                  count = g.Count()
+                              }).ToList();
+
+            return financeEod;
+
         }
 
     }

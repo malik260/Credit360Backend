@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,23 @@ namespace FintrakBanking.Interfaces.Credit
         #region Collateral
 
         int AddCollateral(CollateralViewModel entity, byte[] file);
-     //   bool AddCollateral(CollateralViewModel entity);
+        //   bool AddCollateral(CollateralViewModel entity);
+        int AddReleaseDocument(CollateralViewModel model, byte[] file);
+        IEnumerable<CollateralViewModel> GetCollateralReleaseDocument(int releaseId);
+        CollateralViewModel GetReleaseSupportingDocument(int documentId);
+
+        bool ReleaseCollateral(CollateralViewModel entity);
+        bool ReleaseCollateralJobRequest(CollateralViewModel entity);
+        bool ReleaseCollateralGoForApproval(ApprovalViewModel entity);
+
+        IQueryable<CollateralViewModel> GetCollateralReleaseAwaitingApproval(int companyId, int staffId);
+
+        IQueryable<CollateralViewModel> GetCollateralReleaseAwaitingJobRequest(int companyId, int branchId);
 
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
+        CollateralViewModel GetCustomerCollateralInformation(int collateralCustomerId, int companyId);
+
         IEnumerable<CollateralViewModel> GetTempCustomerCollateralForApproval(int companyId,int staffId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId);
         CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId);
@@ -107,6 +121,9 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId);
 
         IEnumerable<CollateralViewModel> GetCollateralStampToCoverValues(int customerId);
-        
+
+        TDAccountRecordViewModel GetFixedDepositAccountDetail(string AccpuntNumber);
+        IEnumerable<CollateralViewModel> GetCustomerCollateralReport(string searchParam, int companyId);
+
     }
 }

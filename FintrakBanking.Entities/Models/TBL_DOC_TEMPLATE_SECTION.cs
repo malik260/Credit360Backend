@@ -39,6 +39,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-      //  public string TEMPLATESECTIONCODE { get; set; }
+        public string TEMPLATESECTIONCODE { get; set; }
     }
 }

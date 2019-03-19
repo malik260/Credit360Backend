@@ -63,7 +63,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "DataSet1";
+                    reportDataSource.Name = "ExpiredBondandGuarantee";
+                   // reportDataSource.Name = "DataSet1";
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/BondAndGuarantee.rdlc");

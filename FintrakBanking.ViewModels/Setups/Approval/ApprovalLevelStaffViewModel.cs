@@ -7,6 +7,8 @@ namespace FintrakBanking.Interfaces.Setups.Approval
 {
     public class ApprovalLevelStaffViewModel : GeneralEntity
     {
+        public int staffRoleId;
+
         public int staffLevelId { get; set; }
         public int groupId { get; set; }
         public int position { get; set; }

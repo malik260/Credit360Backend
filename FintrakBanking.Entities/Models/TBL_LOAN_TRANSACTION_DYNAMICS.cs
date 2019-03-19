@@ -24,6 +24,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? LASTUPDATEDBY { get; set; }
         public int? POSITION { get; set; }
+        public bool? ISEXTERNAL { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
 

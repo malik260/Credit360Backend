@@ -49,9 +49,9 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 
                     FinTrakBankingContext context = new FinTrakBankingContext();
                     GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
-                    ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToString("dd/MM/yyyy"));
+                    //ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToString("dd/MM/yyyy"));
 
-                    offerLetterReport.LocalReport.SetParameters(new ReportParameter[] { date });
+                  //  offerLetterReport.LocalReport.SetParameters(new ReportParameter[] { date });
                     offerLetterReport.LocalReport.Refresh();
 
                 }catch(Exception ex)

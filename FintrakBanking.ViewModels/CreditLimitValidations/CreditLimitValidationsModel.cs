@@ -12,5 +12,9 @@
         public decimal maximumAllowedLimit { get; set; }
         public double obligorExposure { get; set; }
         public bool validated { get; set; }
+        public decimal initiated { get; set; }
+        public decimal approved { get; set; }
+        public string limitString { get; set; }
+        public decimal nplExposure { get; set; }
     }
 }

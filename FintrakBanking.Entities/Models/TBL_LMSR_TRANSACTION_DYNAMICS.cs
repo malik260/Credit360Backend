@@ -23,6 +23,7 @@
         public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
+        public bool? ISEXTERNAL { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
 

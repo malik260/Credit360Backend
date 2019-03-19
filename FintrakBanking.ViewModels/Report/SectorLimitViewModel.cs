@@ -11,6 +11,7 @@
         public decimal? limitMaximumValue { get; set; }
         public decimal? usage { get; set; }
         public decimal balance { get { return (decimal)((limitMaximumValue.HasValue ? limitMaximumValue : 0) - (usage.HasValue ? usage : 0)); } }
+        public decimal balances { get; set; }
         public bool allowOverride { get; set; }
     }
 }

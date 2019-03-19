@@ -15,8 +15,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanId { get; set; }
         public short? principalFrequency { get; set; } 
         public short? interestFrequency { get; set; }
-        public int principalFrequencyTypeId { get; set; }
-        public int interestFrequencyTypeId { get; set; }
+        public int? principalFrequencyTypeId { get; set; }
+        public int? interestFrequencyTypeId { get; set; }
         public Boolean shouldDisburse { get; set; }
         public DateTime loanDate { get; set; }
         public DateTime firstPaymentDate { get; set; }
@@ -61,12 +61,15 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanPaymentRestructureScheduleInputViewModel : LoanPaymentScheduleInputViewModel
 
     {
+        public string sourceReferenceNumber { get; set; }
+        public int casaAccountId { get; set; }
+
         public int? loanReviewOperationsId { get; set; }
 
         public int? proposedTenor { get; set; }
         //public int tenor { get { return  }  }
         public short loanChangeType { get; set; }
-        public int loanId { get; set; }
+        //public int loanId { get; set; }
         public Double payAmount { get; set; }
         public Double newAmount { get; set; }
         public int productId { get; set; }

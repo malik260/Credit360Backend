@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_APPLICATION_DETL_EDU = new HashSet<TBL_LOAN_APPLICATION_DETL_EDU>();
             TBL_LOAN_APPLICATION_DETL_INV = new HashSet<TBL_LOAN_APPLICATION_DETL_INV>();
             TBL_LOAN_APPLICATION_DETL_TRA = new HashSet<TBL_LOAN_APPLICATION_DETL_TRA>();
+            TBL_LOAN_APPLICATION_DETL_CON = new HashSet<TBL_LOAN_APPLICATION_DETL_CON>();
             TBL_LOAN_APPLICATION_DETL_ARCH = new HashSet<TBL_LOAN_APPLICATION_DETL_ARCH>();
             TBL_LOAN_APPLICATION_DETL_BG = new HashSet<TBL_LOAN_APPLICATION_DETL_BG>();
             TBL_LOAN_APPLICATION_DETL_FEE = new HashSet<TBL_LOAN_APPLICATION_DETL_FEE>();
@@ -111,10 +112,13 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public int? CASAACCOUNTID { get; set; } //CASAACCOUNTID
+        public int? CASAACCOUNTID { get; set; } 
+
+        public int? OPERATINGCASAACCOUNTID { get; set; }
 
         public bool SECUREDBYCOLLATERAL { get; set; }
         public int? CRMSCOLLATERALTYPEID { get; set; }
+        public int? MORATORIUMDURATION { get; set; }
 
         public int? CRMSFUNDINGSOURCEID { get; set; }
 
@@ -123,6 +127,12 @@ namespace FintrakBanking.Entities.Models
         public string CRMSFUNDINGSOURCECATEGORY { get; set; }
 
         public string CRMS_ECCI_NUMBER { get; set; }
+
+        public string CRMSCODE { get; set; }
+        public short? CRMSREPAYMENTAGREEMENTID { get; set; }
+        public bool? CRMSVALIDATED { get; set; }
+
+        public DateTime? CRMSDATE { get; set; }
 
         public string TRANSACTIONDYNAMICS { get; set; }
 
@@ -141,6 +151,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISSPECIALISED { get; set; }
         //public int? TENORFREQUENCYTYPEID { get; set; }
         public int? TENORFREQUENCYTYPEID { get; set; }
+       // public int? OPERATINGCASAACCOUNTID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
@@ -194,6 +205,9 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_APPLICATION_DETL_LOG> TBL_LOAN_APPLICATION_DETL_LOG { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TBL_LOAN_APPLICATION_DETL_CON> TBL_LOAN_APPLICATION_DETL_CON { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_APPLICATN_DETL_MTRIG> TBL_LOAN_APPLICATN_DETL_MTRIG { get; set; }

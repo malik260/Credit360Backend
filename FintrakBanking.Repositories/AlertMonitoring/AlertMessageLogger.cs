@@ -17,29 +17,24 @@ using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Finance.ViewModels;
+using FintrakBanking.Repositories.Setups.General;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {
-    public class AlertMessageLogger : IAlertMessageLogger
+    public class AlertMessageLogger 
     {
-        private ISLANotification sla;
-        private IGeneralSetupRepository generalSetup;
-
-        public AlertMessageLogger(ISLANotification _sla, IGeneralSetupRepository _generalSetup)
-        {
-             sla =_sla;
-            this.generalSetup = _generalSetup;
-
-        }
-
         private FinTrakBankingContext context = new FinTrakBankingContext();
         private DateTime applDate;
         public string response = string.Empty;
+        SLANotification sla = new SLANotification();
+
 
         private readonly string supportEmail = ConfigurationManager.AppSettings["SupportEmailAddr"];
 
-        public bool SendAlertsForCovenantsApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsForCovenantsApproachingDueDate(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP alertsetupForCovenantsApproachingDueDate = (from x in alertSetups
                                                                                    where x.MONITORING_ITEMID == (int)AlertMessageEnum.LoanCovenantApproachingDueDates
                                                                                    select x).FirstOrDefault();
@@ -209,13 +204,15 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
         }
 
-        public bool SendAlertsForExpiredBG(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsForExpiredBG(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP alertsetupForExpiredBG = (from x in alertSetups
                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.ExpiredBGAlert
                                                                         select x).FirstOrDefault();
             //DateTime currentDate = DateTime.Now;
-            DateTime currentDate = generalSetup.GetApplicationDate();
+            DateTime currentDate = context.TBL_FINANCECURRENTDATE.Select(o=>o.CURRENTDATE).FirstOrDefault();
 
             List<LoanContingentViewModel> loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                                              join c in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals c.STAFFID
@@ -378,8 +375,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertsForCovenantsOverDue(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsForCovenantsOverDue(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP alertsetupForCovenantsOverDue = (from x in alertSetups
                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.LoanCoveantOverdue
                                                                         select x).FirstOrDefault();
@@ -551,8 +550,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertsForCollateralPropertyApproachingRevaluation(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsForCollateralPropertyApproachingRevaluation(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP alertsetupForCovenantsOverDue = (from x in alertSetups
                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.CollateralApproachingRevaluation
                                                                         select x).FirstOrDefault();
@@ -906,8 +907,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                    outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
                                                    loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                                    relationshipManagerId = b.RELATIONSHIPMANAGERID,
-                                                   relationshipManagerName = b.TBL_STAFF1.FIRSTNAME + " " + b.TBL_STAFF1.LASTNAME,
-                                                   relationshipManagerEmail = b.TBL_STAFF1.EMAIL,
+                                                   relationshipManagerName = b.TBL_STAFF.FIRSTNAME + " " + b.TBL_STAFF.LASTNAME,
+                                                   relationshipManagerEmail = b.TBL_STAFF.EMAIL,
                                                    relationshipOfficerId = b.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = b.TBL_STAFF.FIRSTNAME + " " + b.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = b.TBL_STAFF.EMAIL
@@ -1024,8 +1025,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertsOnSelfLiquidatingLoanExpiry(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsOnSelfLiquidatingLoanExpiry(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP alertOnSelfLiquidatingLoanExpiry = (from x in alertSetups
                                                                            where x.MONITORING_ITEMID == (int)AlertMessageEnum.SelfLiquidatingLoanExpiry
                                                                            select x).FirstOrDefault();
@@ -1048,8 +1051,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                    loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                                    productTypeName = b.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                   relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                   relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                                   relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                   relationshipManagerEmail = a.TBL_STAFF.EMAIL,
                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL
@@ -1198,8 +1201,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertsOnOverDraftLoansAlmostDue(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsOnOverDraftLoansAlmostDue(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP alertOnOverDraftLoansAlmostDue = (from x in alertSetups
                                                                          where x.MONITORING_ITEMID == (int)AlertMessageEnum.OverdraftLoansAlmostDue
                                                                          select x).FirstOrDefault();
@@ -1221,8 +1226,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                    productTypeName = b.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                                                    overdraftLimit = a.OVERDRAFTLIMIT,
                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                   relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                   relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                                   relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                   relationshipManagerEmail = a.TBL_STAFF.EMAIL,
                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL
@@ -1367,8 +1372,11 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertsOnLoanCASAwithPND(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsOnLoanCASAwithPND(string title, string messageBody)
         {
+
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP CASAwithPND = (from x in alertSetups
                                                       where x.MONITORING_ITEMID == 2
                                                       select x).FirstOrDefault();
@@ -1391,8 +1399,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                    outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
                                                    loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                   relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                   relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                                   relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                   relationshipManagerEmail = a.TBL_STAFF.EMAIL,
                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
@@ -1539,8 +1547,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertsOnInActiveBondAndGuarantee(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsOnInActiveBondAndGuarantee(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP InActiveBondAndGuarantee = (from x in alertSetups
                                                                    where x.MONITORING_ITEMID == (int)AlertMessageEnum.InactiveBondAndGuarantee
                                                                    select x).FirstOrDefault();
@@ -1561,8 +1571,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                    exchangeRate = a.EXCHANGERATE,
                                                    loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                   relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                   relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                                   relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                   relationshipManagerEmail = a.TBL_STAFF.EMAIL,
                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
@@ -1713,8 +1723,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertsOnExpiredActiveBondAndGuarantee(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsOnExpiredActiveBondAndGuarantee(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP ExpiredActiveBondAndGuarantee = (from x in alertSetups
                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.ExpiredActiveBondAndGuarantee
                                                                         select x).FirstOrDefault();
@@ -1735,8 +1747,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                    exchangeRate = a.EXCHANGERATE,
                                                    loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                   relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                   relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                                   relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                   relationshipManagerEmail = a.TBL_STAFF.EMAIL,
                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
@@ -1856,8 +1868,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertOnAccountWithExeption_Overdrawn(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertOnAccountWithExeption_Overdrawn(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP AccountWithExeption = (from x in alertSetups
                                                               where x.MONITORING_ITEMID == (int)AlertMessageEnum.OverdrawnAccount
                                                               select x).FirstOrDefault();
@@ -1878,8 +1892,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                    exchangeRate = a.EXCHANGERATE,
                                                    loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                   relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                   relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                                   relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                   relationshipManagerEmail = a.TBL_STAFF.EMAIL,
                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
@@ -1926,8 +1940,11 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             return false;
         }
-        public bool SendAlertOnAccountWithExeption_Watchist(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertOnAccountWithExeption_Watchist(string title, string messageBody)
+
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP AccountWithExeption = (from x in alertSetups
                                                               where x.MONITORING_ITEMID == (int)AlertMessageEnum.WatchListedAccount
                                                               select x).FirstOrDefault();
@@ -1945,12 +1962,12 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                    bookingDate = a.BOOKINGDATE,
                                                    disburseDate = a.DISBURSEDATE,
                                                    maturityDate = a.MATURITYDATE,
-                                                   principalAmount = (decimal)s.OVERDRAFTAMOUNT,
+                                                   principalAmountz = s.OVERDRAFTAMOUNT,
                                                    exchangeRate = a.EXCHANGERATE,
                                                    loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                   relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                   relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                                   relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                   relationshipManagerEmail = a.TBL_STAFF.EMAIL,
                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
@@ -1969,74 +1986,76 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             return false;
         }
-        public bool SendAlertOnAccountWithExeption_Unauthorized(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertOnAccountWithExeption_Unauthorized(string title, string messageBody)
         {
-            TBL_MONITORING_ALERT_SETUP AccountWithExeption = (from x in alertSetups
-                                                              where x.MONITORING_ITEMID == (int)AlertMessageEnum.AuathorizedAccount
-                                                              select x).FirstOrDefault();
-            DateTime currentDate = DateTime.Now;
+            //var alertSetups = getAlertMessageSetting();
 
-            List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_REVOLVING
-                                               join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
-                                               join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
-                                               join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0
-                                               select new LoanViewModel
-                                               {
-                                                   applicationReferenceNumber = a.LOANREFERENCENUMBER,
-                                                   loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                                   bookingDate = a.BOOKINGDATE,
-                                                   disburseDate = a.DISBURSEDATE,
-                                                   maturityDate = a.MATURITYDATE,
-                                                   principalAmount = (decimal)s.OVERDRAFTAMOUNT,
-                                                   exchangeRate = a.EXCHANGERATE,
-                                                   loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                                   relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                   relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                   relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
-                                                   relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                                                   relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-                                                   relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
-                                                   branchId = a.BRANCHID,
-                                                   branchName = br.BRANCHNAME,
-                                                   customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
-                                                   notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
-                                               }).ToList();
-            if (loanDetails.Count != 0)
-            {
-                SendAlertsOnAccountWithExeptionRM(loanDetails.ToList(), AccountWithExeption.MESSAGE_TITLE);
-                if (AccountWithExeption.RECIPIENTEMAILS1.Trim() != string.Empty)
-                {
-                    List<LoanViewModel> escalationLevelOne = (from x in loanDetails
-                                                              where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD1
-                                                              select x).ToList();
-                    if (escalationLevelOne != null)
-                    {
-                        SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelOne, AccountWithExeption);
-                    }
-                }
-                if (AccountWithExeption.RECIPIENTEMAILS2.Trim() != string.Empty)
-                {
-                    List<LoanViewModel> escalationLevelTwo = (from x in loanDetails
-                                                              where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD2
-                                                              select x).ToList();
-                    if (escalationLevelTwo != null)
-                    {
-                        SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelTwo, AccountWithExeption);
-                    }
-                }
-                if (AccountWithExeption.RECIPIENTEMAILS3.Trim() != string.Empty)
-                {
-                    List<LoanViewModel> escalationLevelThree = (from x in loanDetails
-                                                                where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD3
-                                                                select x).ToList();
-                    if (escalationLevelThree != null)
-                    {
-                        SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelThree, AccountWithExeption);
-                    }
-                }
-                return true;
-            }
+            //TBL_MONITORING_ALERT_SETUP AccountWithExeption = (from x in alertSetups
+            //                                                  where x.MONITORING_ITEMID == (int)AlertMessageEnum.AuathorizedAccount
+            //                                                  select x).FirstOrDefault();
+            //DateTime currentDate = DateTime.Now;
+
+            //List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_REVOLVING
+            //                                   join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+            //                                   join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+            //                                   join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+            //                                   where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0
+            //                                   select new LoanViewModel
+            //                                   {
+            //                                      // applicationReferenceNumber = a.LOANREFERENCENUMBER,
+            //                                      // loanReferenceNumber = a.LOANREFERENCENUMBER,
+            //                                      // bookingDate = a.BOOKINGDATE,
+            //                                      // disburseDate = a.DISBURSEDATE,
+            //                                      // maturityDate = a.MATURITYDATE,
+            //                                      // principalAmountz = s.OVERDRAFTAMOUNT,
+            //                                      // exchangeRate = a.EXCHANGERATE,
+            //                                      // loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+            //                                      // relationshipManagerId = a.RELATIONSHIPMANAGERID,
+            //                                      // //relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+            //                                      // relationshipManagerEmail = a.TBL_STAFF.EMAIL,
+            //                                      // relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+            //                                      //// relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+            //                                      // relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+            //                                      // branchId = a.BRANCHID,
+            //                                      // branchName = br.BRANCHNAME,
+            //                                      // customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+            //                                      // notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
+            //                                   }).ToList();
+            //if (loanDetails.Count != 0)
+            //{
+            //    SendAlertsOnAccountWithExeptionRM(loanDetails.ToList(), AccountWithExeption.MESSAGE_TITLE);
+            //    if (AccountWithExeption.RECIPIENTEMAILS1.Trim() != string.Empty)
+            //    {
+            //        List<LoanViewModel> escalationLevelOne = (from x in loanDetails
+            //                                                  where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD1
+            //                                                  select x).ToList();
+            //        if (escalationLevelOne != null)
+            //        {
+            //            SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelOne, AccountWithExeption);
+            //        }
+            //    }
+            //    if (AccountWithExeption.RECIPIENTEMAILS2.Trim() != string.Empty)
+            //    {
+            //        List<LoanViewModel> escalationLevelTwo = (from x in loanDetails
+            //                                                  where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD2
+            //                                                  select x).ToList();
+            //        if (escalationLevelTwo != null)
+            //        {
+            //            SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelTwo, AccountWithExeption);
+            //        }
+            //    }
+            //    if (AccountWithExeption.RECIPIENTEMAILS3.Trim() != string.Empty)
+            //    {
+            //        List<LoanViewModel> escalationLevelThree = (from x in loanDetails
+            //                                                    where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD3
+            //                                                    select x).ToList();
+            //        if (escalationLevelThree != null)
+            //        {
+            //            SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelThree, AccountWithExeption);
+            //        }
+            //    }
+            //    return true;
+            //}
             return false;
         }
         public void SendAlertsOnAccountWithExeptionRM(List<LoanViewModel> loanDetails, string title)
@@ -2064,7 +2083,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                     select x).ToList();
                     foreach (LoanViewModel item3 in mailList)
                     {
-                        dataTable2 = dataTable2 + $"<tr><td>{item3.loanReferenceNumber}</td><td>{item3.customerName}</td><td>{item3.principalAmount}</td><td>{item3.exchangeRate}</td>" + $"<td style='text-align:right;'>{item3.tenor:f}</td>" + $"<td style='text-align:right;'>{item3.interestRate:f}</td>" + $"<td>{item3.bookingDate:d}</td><td>{item3.effectiveDate:d}</td><td>{item3.maturityDate:d}</td></tr>";
+                        dataTable2 = dataTable2 + $"<tr><td>{item3.loanReferenceNumber}</td><td>{item3.customerName}</td><td>{item3.principalAmountz}</td><td>{item3.exchangeRate}</td>" + $"<td style='text-align:right;'>{item3.tenor:f}</td>" + $"<td style='text-align:right;'>{item3.interestRate:f}</td>" + $"<td>{item3.bookingDate:d}</td><td>{item3.effectiveDate:d}</td><td>{item3.maturityDate:d}</td></tr>";
                     }
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
@@ -2106,7 +2125,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 string dataTable2 = "<table><tr><th>Loan Ref #</th><th>Customer Name</th><th>Contingent Amount</th><th>exchange Rate</th><th>Booking Date</th><th>Effective Date</th><th>Maturity Date</th></tr>";
                 foreach (LoanViewModel loanDetail in loanDetails)
                 {
-                    dataTable2 = dataTable2 + $"<tr><td>{loanDetail.loanReferenceNumber}</td><td>{loanDetail.customerName}</td><td>{loanDetail.principalAmount}</td><td>{loanDetail.exchangeRate}</td>" + $"<td style='text-align:right;'>{loanDetail.tenor:f}</td>" + $"<td style='text-align:right;'>{loanDetail.interestRate:f}</td>" + $"<td>{loanDetail.bookingDate:d}</td><td>{loanDetail.effectiveDate:d}</td><td>{loanDetail.maturityDate:d}</td></tr>";
+                    dataTable2 = dataTable2 + $"<tr><td>{loanDetail.loanReferenceNumber}</td><td>{loanDetail.customerName}</td><td>{loanDetail.principalAmountz}</td><td>{loanDetail.exchangeRate}</td>" + $"<td style='text-align:right;'>{loanDetail.tenor:f}</td>" + $"<td style='text-align:right;'>{loanDetail.interestRate:f}</td>" + $"<td>{loanDetail.bookingDate:d}</td><td>{loanDetail.effectiveDate:d}</td><td>{loanDetail.maturityDate:d}</td></tr>";
                 }
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
@@ -2144,8 +2163,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertOnPastDueObligationAccounts(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertOnPastDueObligationAccounts(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP PastDueObligationAccounts = (from x in alertSetups
                                                                     where x.MONITORING_ITEMID == (int)AlertMessageEnum.PastDueObligations
                                                                     select x).FirstOrDefault();
@@ -2166,8 +2187,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                    exchangeRate = a.EXCHANGERATE,
                                                    loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                   relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                   relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                                   relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                   relationshipManagerEmail = a.TBL_STAFF.EMAIL,
                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
@@ -2274,6 +2295,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         }
         public void SendAlertsOnPastDueObligationAccountsMonitoringTeam(List<LoanViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
+
             try
             {
                 string recipient = alertSetups.RECIPIENTEMAILS2.Trim();
@@ -2318,8 +2340,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertOnInsuranceApprochingExpiration(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertOnInsuranceApprochingExpiration(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP InsuranceApprochingExpiration = (from x in alertSetups
                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.CovenantsInsuranceApproachingDueDate
                                                                         select x).FirstOrDefault();
@@ -2488,8 +2512,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertForExpiredInsurance(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertForExpiredInsurance(string title, string messageBody )
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP ExpiredInsurance = (from x in alertSetups
                                                            where x.MONITORING_ITEMID == (int)AlertMessageEnum.ExpiredInsurance
                                                            select x).FirstOrDefault();
@@ -2613,6 +2639,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         }
         public void SendAlertOnExpiredInsuranceMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
         {
+
             try
             {
                 string recipient = alertSetups.RECIPIENTEMAILS2.Trim();
@@ -2657,8 +2684,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertOnTurnoverCovenant(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertOnTurnoverCovenant(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP TurnoverCovenant = (from x in alertSetups
                                                            where x.MONITORING_ITEMID == (int)AlertMessageEnum.TurnoverCovenantNotMet
                                                            select x).FirstOrDefault();
@@ -2828,8 +2857,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertsForLoanRepayment(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsForLoanRepayment(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP alertsetupForLoanRepayment = (from x in alertSetups
                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.LoanRepayment
                                                                      select x).FirstOrDefault();
@@ -2954,6 +2985,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         {
             try
             {
+
                 string recipient = alertSetups.RECIPIENTEMAILS2.Trim();
                 string dataTable = "<table><tr><th>Loan Reference Number</th><th>Customer Name</th><th>Start Principal Amount</th><th>Interest Rate</th><th>Available Balance</th><th>Period Payment Amount</th><th>Next Payment Date</th></tr>";
                 foreach (LoanPaymentSchedulePeriodicViewModel item3 in loanDetails)
@@ -2993,8 +3025,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
 
 
-        public bool SendAlertsForCollateralPropertyDueForVisitation(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertsForCollateralPropertyDueForVisitation(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP alertsetupForCovenantsOverDue = (from x in alertSetups
                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.CollateralApproachingRevaluation
                                                                         select x).FirstOrDefault();
@@ -3159,8 +3193,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
         }
 
-        public bool SendAlertToCustomerForLoanRepaymentApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertToCustomerForLoanRepaymentApproachingDueDate(string title, string messageBody)
         {
+            var alertSetups = getAlertMessageSetting();
+
             TBL_MONITORING_ALERT_SETUP alertsetupForLoanRepayment = (from x in alertSetups
                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.CustomerAlertForLoanRepaymentApproachingDueDate
                                                                      select x).FirstOrDefault();
@@ -3243,6 +3279,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             {
                 throw new SecureException(ex.Message);
             }
+
+            return 1;
         }
 
         public List<TBL_MONITORING_ALERT_SETUP> getAlertMessageSetting()

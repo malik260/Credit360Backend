@@ -27,6 +27,7 @@ namespace FintrakBanking.Interfaces.Credit
         decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear);
 
         List<ProductFeeViewModel> GetLoanProductFees(int loanBookingRequestId);
+        
 
         CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode);
 
@@ -49,6 +50,10 @@ namespace FintrakBanking.Interfaces.Credit
         LoanViewModel GetUnDisbursedLoanByLoanId(int loanId, int loanType);
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId, int loanType);
+
+        IQueryable<LoanViewModel> SearchForFullAndFinalLoan(string searchQuery);
+
+        bool CancelFullAndFinal(int loanId);
 
         List<LoanViewModel> getDisbursedCommercialLoanTrancheDetailsById(int loanId);
 
@@ -76,6 +81,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId);
+        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForCrmsCode(int companyId, int staffId);
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId);
         IEnumerable<CamProcessedLoanViewModel> GetAvailedContingentFacilityBooking(int companyId, int staffId);
@@ -136,6 +142,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<CollateralLoanApplication> GetLoanCollateral(int loanId, int loanType);
         List<LoanDisbursementViewModel> GetForeignLoanBeneficiaryNaration(int loanId);
         List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTriggers(int loanId, int loanSystemTypeId);
+        bool VerifyLegalContingentCode(string legalContingentCode, int loanApplicationDetailId);
 
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
         List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId);
@@ -148,6 +155,7 @@ namespace FintrakBanking.Interfaces.Credit
         //void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
 
         IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery);
+        //IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanReviewFeeCharge(int loanSystemTypeId, string searchQuery);
         IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanFeeCharge(int loanSystemTypeId, string searchQuery);
 
         string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId);

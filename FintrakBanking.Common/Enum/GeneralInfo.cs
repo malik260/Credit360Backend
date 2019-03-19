@@ -287,7 +287,8 @@ namespace FintrakBanking.Common.Enum
         CollateralDocumentType = 264,
         CancelContingentLiability = 265,
         ContingentLiabilityAmountAddition = 267,
-
+        LoanConsultantAdded = 268,
+        LoanConsultantUpdated = 269,
     };
    public enum RegulatoryTypeEnum
     {

@@ -863,6 +863,7 @@ namespace FintrakBanking.Repositories.Credit
                         schedule = x.d.REPAYMENTSCHEDULE,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                         crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
+                        crmsRepaymentTypeId = x.d.CRMSREPAYMENTAGREEMENTID,
                         isSpecialised = (bool)x.d.ISSPECIALISED,
 
                         priceIndexId = x.d.PRODUCTPRICEINDEXID,
@@ -1431,6 +1432,7 @@ namespace FintrakBanking.Repositories.Credit
                         operationId = x.a.OPERATIONID,
                         customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                         customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
+                        facilityType = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED != true && s.STATUSID == (int)ApprovalStatusEnum.Approved).TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
 
                         responsiblePerson = context.TBL_STAFF
                                                     .Where(s => s.STAFFID == x.b.TOSTAFFID)
@@ -1572,11 +1574,12 @@ namespace FintrakBanking.Repositories.Credit
             return limits;
         }
 
-        public List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId)
+        public List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId, int staffId)
         {
             return context.TBL_LOAN_APPLICATION_COLLATRL2.Where(x => x.LOANAPPLICATIONID == applicationId)
                 .Select(x => new RecommendedCollateralViewModel
                 {
+                    owner = x.CREATEDBY == staffId,
                     id = x.COLLATERALBASICDETAILID,
                     collateralDetail = x.COLLATERALDETAIL,
                     collateralValue = x.COLLATERALVALUE,
@@ -1614,7 +1617,7 @@ namespace FintrakBanking.Repositories.Credit
             });
 
             context.SaveChanges();
-            return GetRecommendedCollateral(entity.applicationId);
+            return GetRecommendedCollateral(entity.applicationId,entity.createdBy);
         }
 
         public List<RecommendedCollateralViewModel> UpdateRecommendedCollateral(RecommendedCollateralViewModel entity)
@@ -1639,7 +1642,7 @@ namespace FintrakBanking.Repositories.Credit
             });
 
             context.SaveChanges();
-            return GetRecommendedCollateral(entity.applicationId);
+            return GetRecommendedCollateral(entity.applicationId,entity.createdBy);
         }
 
         public List<RecommendedCollateralViewModel> GetRecommendedCollateralHistory(int applicationId)
@@ -1976,7 +1979,64 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             return result;
         }
+
+
+        public WorkflowResponse GetWorkflowNextStatus(ForwardViewModel model)
+        {
+            int operationId = (int)OperationsEnum.CAM;
+            var applicationDate = general.GetApplicationDate();
+            var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.Vote = model.vote;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            workflow.Amount = appl.TOTALEXPOSUREAMOUNT; //model.amount;
+            workflow.InvestmentGrade = model.investmentGrade;
+            workflow.Tenor = model.applicationTenor;
+            workflow.PoliticallyExposed = model.politicallyExposed;
+            workflow.Untenored = model.untenored;
+            workflow.InterestRateConcession = model.interestRateConcession;
+            workflow.FeeRateConcession = model.feeRateConcession;
+            workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            return workflow.Response;
+        }
+
+        public WorkflowResponse GetWorkflowNextStatusLms(ForwardReviewViewModel model)
+        {
+            var applicationDate = general.GetApplicationDate();
+            var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            workflow.Amount = model.totalExposureAmount; //model.amount;
+            workflow.Tenor = model.applicationTenor;
+
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            return workflow.Response;
+        }
+
+
     }
 
-   
+
 }

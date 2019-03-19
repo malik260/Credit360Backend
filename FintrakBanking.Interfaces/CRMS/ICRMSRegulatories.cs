@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,11 @@ namespace FintrakBanking.Interfaces.CRMS
         string AddCRMSCode(CRMSViewModel code);
         List<CRMSRegulatoryViewModel> GetAllLoansForCRMS(CRMSViewModel data);
         CRMSRecord GenerateCBNReport(CRMSViewModel param);
+        CRMSRecord GenerateCBNReportByLoanAppId(CRMSViewModel param);
+
         List<LoansCount> LoanCountsByLegalStatus(List<CRMSRegulatoryViewModel> loans);
+        CRMSRecord GenerateBatchPosting(DateRange model);
+
+
     }
 }

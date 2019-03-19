@@ -14,12 +14,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 {
     public class EmailAlertLogger : IEmailAlertLogger
     {
-        private FinTrakBankingContext context;
-        public EmailAlertLogger(FinTrakBankingContext _context)
-        {
-            context = _context;
-        }
-
+         FinTrakBankingContext context = new FinTrakBankingContext();
         public void ComposeEmail(string referenceNumber, string emailBody, string emailSubject, string recipientEmail, bool callSaveChanges)
         {
             string referenceNo = referenceNumber;

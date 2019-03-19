@@ -57,6 +57,255 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region New
+        [HttpGet, Route("collateral-document-release/{collateralId}")]
+        public HttpResponseMessage GetCollateralReleaseDocumentByCollateral(int collateralId)
+        {
+            try
+            {
+                var data = document.GetCustomerCollateralReleaseDocument(collateralId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("customer-collateral/supporting-document-upload")]
+        public async Task<HttpResponseMessage> AddCollateralSupportingDocument() // DEPRECATED
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                int uploadType;
+                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                //}
+
+                var entity = new CollateralViewModel
+                {
+                    collateralCode = provider.FormData["collateralCode"],
+                    collateralReleaseId = Convert.ToInt32(provider.FormData["collateralReleaseId"]),
+                    collateralCustomerId = Convert.ToInt32(provider.FormData["collateralCustomerId"]),
+                    //SourceId = Convert.ToInt32( provider.FormData["sourceId"]),
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = repo.AddReleaseDocument(entity, buffer);
+
+                if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-collateral/releaseId/{releaseId}")]
+        public HttpResponseMessage GetCollateralReleaseDocumentByReleaseId(int releaseId)
+        {
+            try
+            {
+                var data = repo.GetCollateralReleaseDocument(releaseId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-collateral/{documentId}")]
+        public HttpResponseMessage GetReleaseSupportingDocumentDocument(int documentId)
+        {
+            try
+            {
+                var data = repo.GetReleaseSupportingDocument(documentId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost, Route("customer-collateral/release-collateral")]
+        public HttpResponseMessage ReleaseCollateral([FromBody] CollateralViewModel entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var response =  repo.ReleaseCollateral(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+        [HttpGet, Route("customer-collateral/release-collateral-awaiting-approval")]
+        public HttpResponseMessage GetCollateralReleaseAwaitingApproval()
+        {
+            try
+            {
+                var response = repo.GetCollateralReleaseAwaitingApproval(token.GetCompanyId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+        [HttpPost, Route("customer-collateral/complete-job-request-release-collateral")]
+        public HttpResponseMessage ReleaseCollateralJobRequest([FromBody] CollateralViewModel entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var response = repo.ReleaseCollateralJobRequest(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Sent For Approval successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+
+        [HttpPost, Route("customer-collateral/go-for-approval-release-collateral")]
+        public HttpResponseMessage ReleaseCollateralGoForApproval([FromBody] ApprovalViewModel entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.BranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var response = repo.ReleaseCollateralGoForApproval(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Approval successfull" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+
+
+        [HttpGet, Route("customer-collateral/release-collateral-awaiting-job-request")]
+        public HttpResponseMessage GetCollateralReleaseAwaitingJobRequest()
+        {
+            try
+            {
+                var response = repo.GetCollateralReleaseAwaitingJobRequest(token.GetCompanyId, token.GetBranchId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("customer-collateral/release-collateral-awaiting-job-request/collateralId/{collateralId}")]
+        public HttpResponseMessage GetCollateralReleaseAwaitingJobRequest(int collateralId)
+        {
+            try
+            {
+                var response = repo.GetCollateralReleaseAwaitingJobRequest(token.GetCompanyId, token.GetBranchId).Where(a=>a.collateralCustomerId == collateralId); ;
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("customer-collateral/get-collateral-information/colateralcustomerId/{colateralcustomerId}")]
+        public HttpResponseMessage GetCollateralInformation(int colateralcustomerId)
+        {
+            try
+            {
+                var response = repo.GetCustomerCollateralInformation(colateralcustomerId, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
 
         [HttpPost, Route("customer-collateral")]
         public async Task<HttpResponseMessage> AddCollateral()
@@ -218,6 +467,19 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("customer-collateral/searchParam/{searchParam}")]
+        public HttpResponseMessage GetCustomerCollateralReport(string searchParam)
+        {
+            try
+            {
+                var response = repo.GetCustomerCollateralReport(searchParam, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
         [HttpPost, Route("customer-collateral/customer")]
         public HttpResponseMessage GetCustomerCollateralRepo([FromBody]NewCollateralViewModel data)
         {
@@ -323,6 +585,10 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Approval has failed" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message ="Approved Successfully"});
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
             catch (SecureException ex)
             {
@@ -1096,9 +1362,13 @@ namespace FintrakBanking.APICore.Controllers
                 var response = type.CollateralSubType(id);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (SecureException ex)
+            //catch (SecureException ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            //}
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
             }
         }
 
@@ -1473,6 +1743,23 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.GetCollateralStampToCoverValues(customerId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-casa-balance/{accountNumber}")]
+        public HttpResponseMessage GetCollateralStampToCoverValues(string accountNumber)
+        {
+            try
+            {
+                var response = repo.GetFixedDepositAccountDetail(accountNumber);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)

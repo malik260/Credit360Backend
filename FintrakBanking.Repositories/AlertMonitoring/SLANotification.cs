@@ -13,11 +13,13 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {
-    public class SLANotification : ISLANotification
+    public class SLANotification 
     {
-        private FinTrakBankingContext context = new FinTrakBankingContext();
+         FinTrakBankingContext context = new FinTrakBankingContext();
+       
+       // private FinTrakBankingContext context = new FinTrakBankingContext();
         private DateTime applDate;
-        public string response = string.Empty;
+      //  public string response = string.Empty;
 
         public IEnumerable<SLANotificationViewModel> RoleBasedApprovalNotification()
         {

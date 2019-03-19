@@ -15,7 +15,7 @@ using FintrakBanking.Entities.DocumentModels;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {
-    public class EmailSender : IEmailSender
+    public class EmailSender 
     {
         int mailId = 0;
         private string displayName = ConfigurationManager.AppSettings["emailDisplayName"];
@@ -28,15 +28,11 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         private string isTestEmail = ConfigurationManager.AppSettings["isTestEmail"];
         private string requireCredential = ConfigurationManager.AppSettings["requireCredential"];
         private string exceptionReportingEmails = ConfigurationManager.AppSettings["exceptionReportingEmails"];
-        private IAlertMessagesEngine logger;
         private  string[] Addy = { };
 
         FinTrakBankingContext dbContext = new FinTrakBankingContext();
         FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
-        public EmailSender(IAlertMessagesEngine _logger)
-        {
-            logger = _logger;
-        }
+       
         public List<TBL_MESSAGE_LOG> GetMaillingList()
         {
             try
@@ -63,14 +59,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
         }
 
-        public void LogMonitorringAlert()
-        {
-            logger.Start();
-        }
-        public bool SendEmailCompleted()
-        {
-            return true;
-        }
+       
 
         public bool SendEmailOfException(string body)
         {
@@ -180,17 +169,9 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
                     }
 
-                    Console.WriteLine("");
-                    Console.WriteLine("Log all app settings");
-                    Console.WriteLine("");
-
                     var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending 
                     || o.MESSAGESTATUSID == (int)MessageStatusEnum.Attempted).ToList();
 
-
-                    Console.WriteLine("");
-                    Console.WriteLine("Returned records from database : " + listOfMails.Count());
-                    Console.WriteLine("");
 
                     if (listOfMails!=null)
                     {
@@ -272,17 +253,13 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
                             }
 
-                            Console.WriteLine("");
-                            Console.WriteLine("Email Sending started ~~~~~~~~");
-                            Console.WriteLine("");
-
                             try
                             {
                                 client.Send(mail);
 
                             }catch(Exception ex)
                             {
-                                throw new SecureException("Error : " + ex);
+                              ///  throw new SecureException("Error : " + ex);
                             }
 
                             UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");
@@ -295,13 +272,10 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             catch (Exception ex)
             {
 
-                Console.WriteLine("");
-                Console.WriteLine("Failed with error ");
-                Console.WriteLine("");
-
                 UpdateMailDeliveryStatus(mailId, (int)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
 
-                throw new SecureException("Failed with error : " + ex.Message);
+                //throw new SecureException("Failed with error : " + ex.Message);
+                return false;
             }
         }
 
@@ -357,7 +331,9 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 if (innerException != null)
                     innerMessage = innerException.Message;
 
-                throw new SecureException("Failed with error : " + innerMessage);
+              //  throw new SecureException("Failed with error : " + innerMessage);
+                return false;
+
             }
         }
     }

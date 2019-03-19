@@ -297,6 +297,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("term-and-revolving-loan-review-search/")]
+        //public HttpResponseMessage SearchForLoanAndRevolvingLoanReviewFeeCharge(int productTypeId, string searchQuery)
+        //{
+        //    try
+        //    {
+        //        var data = loanRepo.SearchForLoanAndRevolvingLoanReviewFeeCharge(productTypeId, searchQuery);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -492,6 +508,52 @@ namespace FintrakBanking.APICore.Controllers
 
                 var data = loanRepo.GetApprovedLoanReviewRemedial(userId, token.GetCompanyId);
                 if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-search/full-and-final/{searchQuery}")]
+        public HttpResponseMessage SearchForFullAndFinalLoan(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchForFullAndFinalLoan(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("cancel-full-and-final")]
+        public HttpResponseMessage CancelFullAndFinal(int loanId)
+        {
+            try
+            {
+                var data = loanRepo.CancelFullAndFinal(loanId);
+                if (data == false)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });
@@ -907,6 +969,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.createdBy = token.GetStaffId;
+
                 var data = repo.GoForApproval(entity);
 
                 if (data == 1)
@@ -920,7 +983,7 @@ namespace FintrakBanking.APICore.Controllers
                     {
                         var newRef = repo.GetCollateralLoanNewRefernceNumber(entity);
                         return Request.CreateResponse(HttpStatusCode.OK,
-                          new { success = true, message = "Operation has been approved successfully, With New Reference Number" + newRef });
+                          new { success = true, message = "Operation has been approved successfully, With New Reference Number " + newRef });
                     }
                     
                 }
@@ -1149,7 +1212,7 @@ namespace FintrakBanking.APICore.Controllers
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
                     }
 
-                    var response = repo.AddOperationReviewContingent(model);
+                    var response = repo.AddOperationReviewContingentWithImage(model, buffer);
                     if (response)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });

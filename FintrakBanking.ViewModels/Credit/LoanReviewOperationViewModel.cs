@@ -330,7 +330,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int? operationId { get; set; }
         public DateTime? timeIn { get; set; }
         public DateTime? timeOut { get; set; }
-
+        public string facilityType { get; set; }
+        public string creditOperationType { get; set; }
 
         public int? currentApprovalLevelTypeId { get; set; }
         public string responsiblePerson { get; set; }
@@ -400,10 +401,16 @@ public int? newInterestFrequencyTypeId { get; set; }
 
         public string loanReferenceNumber { get; set; }
         public int statusId { get; set; }
+        public string terms { get; set; }
+        public string schedule { get; set; }
+        public int loanApplicationDetailId { get; set; }
     }
 
     public class LMSOperationListViewModel
     {
+        public int loanId { get; set; }
+        public int customerId { get; set; }
+
         public short operationId { get; set; }
         public string operationName { get; set; }
         public short loanSystemTypeId { get; set; }

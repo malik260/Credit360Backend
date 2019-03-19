@@ -83,7 +83,7 @@ namespace FintrakBanking.Repositories.Credit
                     CHARGEFEEID = detail.chargeFeeId, // refactor to operationId from ui!
                     ISPOSTED = false,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,// REMOVE DUPLICATE [STATUSID]
-                    FEERATEVALUE = 0,
+                    FEERATEVALUE = detail.feeRate,
                     FEEDEPENDENTAMOUNT = 0,
                     FEEAMOUNT = detail.feeAmount,
                     EARNEDFEEAMOUNT = 0,
@@ -422,9 +422,9 @@ namespace FintrakBanking.Repositories.Credit
                                       }).ToList();
 
 
-            var termLoanData = dataLoan.OrderByDescending(x => x.dateTimeCreated);
-            var revolvingLoanData = dataRevolvingLoan.OrderByDescending(x => x.dateTimeCreated);
-            var contingentLoanData = dataContingentLoan.OrderByDescending(x => x.dateTimeCreated);
+            var termLoanData = dataLoan.OrderByDescending(x => x.dateTimeCreated).ToList();
+            var revolvingLoanData = dataRevolvingLoan.OrderByDescending(x => x.dateTimeCreated).ToList();
+            var contingentLoanData = dataContingentLoan.OrderByDescending(x => x.dateTimeCreated).ToList();
             var unionAll = termLoanData.Union(revolvingLoanData);
 
             var data = unionAll.Union(contingentLoanData);

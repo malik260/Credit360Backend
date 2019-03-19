@@ -182,6 +182,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application-detail/application/{loanApplicationId}")]

@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_MESSAGE_LOG_STATUS()
         {
-            TBL_MESSAGE_LOG = new HashSet<TBL_MESSAGE_LOG>();
+            //TBL_MESSAGE_LOG = new HashSet<TBL_MESSAGE_LOG>();
         }
 
         [Key]
@@ -23,7 +23,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string MESSAGESTATUSNAME { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_MESSAGE_LOG> TBL_MESSAGE_LOG { get; set; }
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        //public virtual ICollection<TBL_MESSAGE_LOG> TBL_MESSAGE_LOG { get; set; }
     }
 }

@@ -105,6 +105,7 @@ namespace FintrakBanking.ViewModels.Reports
     public class DateRange
     {
         public DateTime startDate { get; set; }
+        public DateTime date { get; set; }
         public DateTime endDate { get; set; }
         public short branchId { get; set; }
         public string loanRefNo { get; set; }
@@ -122,6 +123,8 @@ namespace FintrakBanking.ViewModels.Reports
         public short loanStatusId { get; set; }
         public short waivedOrDeferred { get; set; }
         public string searchParameter { get; set; }
+        public string status { get; set; }
+        public string loanAcct { get; set; }
 
     }
 
@@ -236,7 +239,7 @@ namespace FintrakBanking.ViewModels.Reports
     public class LoanDocumentWaivedViewModel
     {
         public DateTime deferralExpiryDate { get; set; }
-
+        public string buDescription { get; set; }
         public string checkListStatusName { get; set; }
         public int cummulativeDays { get; set; }
         public int deferralDurration { get; set; }
@@ -280,7 +283,7 @@ namespace FintrakBanking.ViewModels.Reports
         public string groupDescription { get; set; }
         public string teamDescription { get; set; }
         public string deskDescription { get; set; }
-        public string buDescription { get; set; }
+        //public string buDescription { get; set; }
         public string teamCode { get; set; }
         public string groupCode { get; set; }
         public string deskCode { get; set; }
@@ -318,4 +321,5 @@ namespace FintrakBanking.ViewModels.Reports
 
 
     }
+
 }

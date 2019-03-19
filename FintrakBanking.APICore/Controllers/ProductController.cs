@@ -1112,25 +1112,25 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("product-price-index-by-currencyId")]
-        public HttpResponseMessage GetAllProductPriceIndex(int currencyId)
-        {
-            try
-            {
-                var response = repo.GetAllProductPriceIndexByCurrencyId(currencyId);
-                if (response != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No Record Found" });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("product-price-index-by-currencyId")]
+        //public HttpResponseMessage GetAllProductPriceIndex(int currencyId)
+        //{
+        //    try
+        //    {
+        //        var response = repo.GetAllProductPriceIndexByCurrencyId(currencyId);
+        //        if (response != null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No Record Found" });
+        //    }
+        //    catch (SecureException e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("product-price-index/{productPriceIndexId}")]
@@ -1455,93 +1455,93 @@ namespace FintrakBanking.APICore.Controllers
         }
         // GetProductPriceIndexByCurrencyId(int loanApplicationDetailId, int currencyId)
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("product-price-index-currency")]
-        public HttpResponseMessage AddProductPriceIndexCurrency([FromBody] ProductPriceIndexCurrencyViewModel model)
-        {
-            try
-            {
-                var token = new TokenDecryptionHelper();
-                model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                model.applicationUrl = HttpContext.Current.Request.Path;
-                model.createdBy = token.GetStaffId;
-                model.companyId = token.GetCompanyId;
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("product-price-index-currency")]
+        //public HttpResponseMessage AddProductPriceIndexCurrency([FromBody] ProductPriceIndexCurrencyViewModel model)
+        //{
+        //    try
+        //    {
+        //        var token = new TokenDecryptionHelper();
+        //        model.userBranchId = (short)token.GetBranchId;
+        //        model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+        //        model.applicationUrl = HttpContext.Current.Request.Path;
+        //        model.createdBy = token.GetStaffId;
+        //        model.companyId = token.GetCompanyId;
 
-                var record = repo.AddProductPriceIndexCurrency(model);
-                if (record != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = record, message = "product has been created successfully" });
-                }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "product not created" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        //        var record = repo.AddProductPriceIndexCurrency(model);
+        //        if (record != null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = true, result = record, message = "product has been created successfully" });
+        //        }
+        //        else
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "product not created" });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
-        [HttpPut]
-        [ClaimsAuthorization]
-        [Route("product-price-index-currency")]
-        public HttpResponseMessage UpdateProductPriceIndexCurrency([FromBody] ProductPriceIndexCurrencyViewModel model)
-        {
-            if (model == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "product price index currency not found" });
-            }
+        //[HttpPut]
+        //[ClaimsAuthorization]
+        //[Route("product-price-index-currency")]
+        //public HttpResponseMessage UpdateProductPriceIndexCurrency([FromBody] ProductPriceIndexCurrencyViewModel model)
+        //{
+        //    if (model == null)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "product price index currency not found" });
+        //    }
 
-            try
-            {
-                var token = new TokenDecryptionHelper();
-                model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                model.applicationUrl = HttpContext.Current.Request.Path;
-                model.createdBy = token.GetStaffId;
-                model.companyId = token.GetCompanyId;
+        //    try
+        //    {
+        //        var token = new TokenDecryptionHelper();
+        //        model.userBranchId = (short)token.GetBranchId;
+        //        model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+        //        model.applicationUrl = HttpContext.Current.Request.Path;
+        //        model.createdBy = token.GetStaffId;
+        //        model.companyId = token.GetCompanyId;
 
-                repo.UpdateProductPriceIndexCurrency(model.priceIndexCurrencyId, model);
+        //        repo.UpdateProductPriceIndexCurrency(model.priceIndexCurrencyId, model);
 
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = model.priceIndexCurrencyId, message = "product Price Index currency has been updated successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = model.priceIndexCurrencyId, message = "product Price Index currency has been updated successfully" });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
-        [HttpDelete]
-        [ClaimsAuthorization]
-        [Route("product-price-index-currency/{id}")]
-        public HttpResponseMessage DeleteProductPriceIndexCurrency(int id)
-        {
-            try
-            {
-                var token = new TokenDecryptionHelper();
+        //[HttpDelete]
+        //[ClaimsAuthorization]
+        //[Route("product-price-index-currency/{id}")]
+        //public HttpResponseMessage DeleteProductPriceIndexCurrency(int id)
+        //{
+        //    try
+        //    {
+        //        var token = new TokenDecryptionHelper();
 
-                UserInfo user = new UserInfo()
-                {
-                    BranchId = token.GetBranchId,
-                    companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
-                    applicationUrl = HttpContext.Current.Request.Path,
-                    userIPAddress = HttpContext.Current.Request.UserHostAddress
-                };
-                repo.DeleteProductPriceIndexCurrency(id, user);
+        //        UserInfo user = new UserInfo()
+        //        {
+        //            BranchId = token.GetBranchId,
+        //            companyId = token.GetCompanyId,
+        //            staffId = token.GetStaffId,
+        //            applicationUrl = HttpContext.Current.Request.Path,
+        //            userIPAddress = HttpContext.Current.Request.UserHostAddress
+        //        };
+        //        repo.DeleteProductPriceIndexCurrency(id, user);
 
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = id, message = "product Price Index currency has been deleted successfully" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = id, message = "product Price Index currency has been deleted successfully" });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
         #endregion Product Price Index
 

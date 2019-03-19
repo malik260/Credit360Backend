@@ -109,5 +109,34 @@ namespace FintrakBanking.APICore.Controllers
             }
 
             }
+        
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("postingdetail/export")]
+        public HttpResponseMessage ExportPostingDetailToExcel([FromBody] CRMSViewModel model)
+        {
+            try
+            {
+                model.companyId = token.GetCompanyId;
+                var fileBytes = repo.GenerateCBNReport(model);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { data = "no-record", success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
+            }
+
+        }
+
     }
 }

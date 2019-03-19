@@ -19,8 +19,8 @@ namespace FintrakBanking.APICore.Filters
         }
     }
 
-    public class TokenValidation : AuthorizeAttribute
-    {
+    //public class TokenValidation : AuthorizeAttribute
+    //{
 
-    }
+    //}
 }

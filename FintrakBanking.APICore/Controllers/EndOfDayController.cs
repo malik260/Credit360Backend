@@ -4,6 +4,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Interfaces.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Finance;
 using System;
 using System.Net;
@@ -18,12 +19,14 @@ namespace FintrakBanking.APICore.Controllers
         private IEndOfDayRepository repoEOD;
         private ILoanOperationsRepository repoLoanOP;
         private IAdminRepository adminRepo;
+        private IFinacleIntegrationRepository finacleIntegration;
 
-        public EndOfDayController(IEndOfDayRepository _repoEOD, ILoanOperationsRepository _repoLoanOP, IAdminRepository _adminRepo)
+        public EndOfDayController(IEndOfDayRepository _repoEOD, ILoanOperationsRepository _repoLoanOP, IAdminRepository _adminRepo, IFinacleIntegrationRepository _finacleIntegration)
         {
             this.repoEOD = _repoEOD;
             this.repoLoanOP = _repoLoanOP;
             this.adminRepo = _adminRepo;
+            this.finacleIntegration = _finacleIntegration;
         }
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
@@ -151,13 +154,31 @@ namespace FintrakBanking.APICore.Controllers
             //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
             //}
         }
-        
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("get_endofday_operation_log")]
         public HttpResponseMessage GetEndofdayOperationLog([FromBody] FinanceEndofdayViewModel model)
         {
-            var  data = repoEOD.GetEndofdayOperationLog((DateTime)model.eodDate, token.GetCompanyId);
+            var data = repoEOD.GetEndofdayOperationLog((DateTime)model.eodDate, token.GetCompanyId);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "An unknown error has occured" });
+
+        }
+        
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("get_endofday_operation_log_monitoring")]
+        public HttpResponseMessage GetEndofdayOperationLogMonitoring([FromBody] FinanceEndofdayViewModel model)
+        {
+            var data = repoEOD.GetEndofdayOperationLogMonitoring(token.GetCompanyId);
 
             if (data != null)
             {

@@ -241,6 +241,9 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
             public async Task<ResponseMessage> APIOverDraftRenew(OverDraftTopUpAndRenewViewModel model)
             {
+                model.sanctionLevel = "003";
+                model.sanctionAuthorizer = "999";
+
                 HttpClientHandler _handler = new HttpClientHandler();
                 HttpClient client = new HttpClient(_handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
@@ -248,8 +251,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
-                model.sanctionLevel = "003";
-                model.sanctionAuthorizer = "999";
+                
 
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
@@ -488,7 +490,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 {
                     APIURL = "api/TemporaryOverDraft/Normal",
                     LOGTYPEID = 15,
-                    REFERENCENUMBER = model.TemporaryOverDraftNaration,
+                    REFERENCENUMBER = model.sourceReferenceNumber,
                     REQUESTDATETIME = requestDatetime,
                     REQUESTMESSAGE = objData,
                     RESPONSEDATETIME = responseDateTime,
@@ -574,7 +576,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 {
                     APIURL = "api/TemporaryOverDraft/Running",
                     LOGTYPEID = 16,
-                    REFERENCENUMBER = model.TemporaryOverDraftNaration,
+                    REFERENCENUMBER = model.sourceReferenceNumber,
                     REQUESTDATETIME = requestDatetime,
                     REQUESTMESSAGE = objData,
                     RESPONSEDATETIME = responseDateTime,
@@ -662,7 +664,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 {
                     APIURL = "api/TemporaryOverDraft/Single",
                     LOGTYPEID = 17,
-                    REFERENCENUMBER = model.TemporaryOverDraftNaration,
+                    REFERENCENUMBER = model.sourceReferenceNumber,
                     REQUESTDATETIME = requestDatetime,
                     REQUESTMESSAGE = objData,
                     RESPONSEDATETIME = responseDateTime,

@@ -42,5 +42,6 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         List<ApprovalLevelViewModel> GetRerouteApprovalLevels(int operationId);
         bool RerouteOperation(ForwardViewModel entity);
         IEnumerable<ApprovalTrailViewModel> GenericApprovalTrail(ApprovalTrailRequestViewModel entity);
+        List<FintrakDropDownSelectList> GetTranchDisbursmentApprovalLevels();
     }    
 }

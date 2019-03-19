@@ -13,10 +13,10 @@ namespace FintrakBanking.MonitoringMessagesSender
     {
         public override void Load()
         {
-            Bind<IEmailSender>().To<EmailSender>().InSingletonScope();
-            Bind<IAlertMessagesEngine>().To<AlertMessagesEngine>().InSingletonScope();
-            Bind<IAlertMessageLogger>().To<AlertMessageLogger>().InSingletonScope();
-            Bind<ISLANotification>().To<SLANotification>().InSingletonScope();
+            //Bind<IEmailSender>().To<EmailSender>().InSingletonScope();
+            //Bind<IAlertMessagesEngine>().To<AlertMessagesEngine>().InSingletonScope();
+            //Bind<IAlertMessageLogger>().To<AlertMessageLogger>().InSingletonScope();
+            //Bind<ISLANotification>().To<SLANotification>().InSingletonScope();
         }
     }
 }

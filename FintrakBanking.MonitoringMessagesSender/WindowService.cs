@@ -21,10 +21,12 @@ namespace FintrakBanking.MonitoringMessagesSender
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
         private IAlertMessageLogger logger;
-        public WindowService(IEmailSender _emailSender, IAlertMessageLogger _logger)
+        private ICurrencyAndRateUpdate currencyAndRateUpdate;
+        public WindowService(IEmailSender _emailSender, IAlertMessageLogger _logger, ICurrencyAndRateUpdate _currencyAndRateUpdate)
         {
             emailSender = _emailSender;
             logger = _logger;
+            currencyAndRateUpdate = _currencyAndRateUpdate;
         }
         public bool Start(HostControl hostControl)
         {
@@ -115,11 +117,14 @@ namespace FintrakBanking.MonitoringMessagesSender
                         _log.Info("Monitoring alert has started successfully");
 
                        emailSender.LogMonitorringAlert();
+                        currencyAndRateUpdate.MigrateExchangeRate();
 
                         _log.Info("");
                         _log.Info("==================================================================");
                         _log.Info("Monitoring alert has finished logging successfully ");
                     }
+
+
 
                 }
                 catch (DbEntityValidationException ee)

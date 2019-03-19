@@ -17,7 +17,9 @@ namespace FintrakBanking.ViewModels.Admin
         public string password { get; set; }
         public string confirmPassword { get; set; }
         public string securityQuestion { get; set; }
-        public string securityAnswer { get; set; } 
+        public string securityAnswer { get; set; }
+        public bool changePassword { get; set; }
+        public bool changeSecutirtyQuestion { get; set; }
 
         public List<UserGroup> group { get; set; }
         public List<UserActivities> activities { get; set; }
@@ -35,6 +37,11 @@ namespace FintrakBanking.ViewModels.Admin
         public int userId { get; set; }
         public int activityId { get; set; }
         public string activityName { get; set; }
+        public int activityParentId { get; set; }
+        public string activityParentName { get; set; }
+
+        public bool selected { get; set; }
+
     }
     public class Users
     {

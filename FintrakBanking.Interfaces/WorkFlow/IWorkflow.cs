@@ -29,6 +29,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool SmsNotification { set; }
         bool ExternalInitialization { set; }
         bool DeferredExecution { set; }
+        bool StatusOnly { set; }
         bool KeepPending { set; }
         bool Saved { get; }
         float? InterestRateConcession { set; }

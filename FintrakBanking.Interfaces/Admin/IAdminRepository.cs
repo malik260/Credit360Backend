@@ -71,6 +71,7 @@ namespace FintrakBanking.Interfaces.Admin
         #region Activity
 
         IEnumerable<ActivityParent> GetActivities();
+        IEnumerable<UserActivities> GetActivityDetails(int parentId);
 
         IEnumerable<GroupVModel> GetGroupActivities();
 

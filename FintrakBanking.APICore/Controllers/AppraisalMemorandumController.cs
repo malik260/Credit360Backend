@@ -543,7 +543,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateral(applicationId);
+                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateral(applicationId,token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -753,8 +753,32 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-    
+        [HttpPost]
+        [Route("appraisal-memorandum/forward-status")]
+        public HttpResponseMessage GetWorkflowNextStatus([FromBody] ForwardViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
+            WorkflowResponse response = repo.GetWorkflowNextStatus(entity);
 
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+        }
+
+        [HttpPost]
+        [Route("appraisal-memorandum/forward-status-lms")]
+        public HttpResponseMessage GetWorkflowNextStatusLms([FromBody] ForwardReviewViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.GetWorkflowNextStatusLms(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+        }
     }
 }

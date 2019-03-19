@@ -63,7 +63,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
                     LoanReportObjects dispursement = new LoanReportObjects();
-                    var data = dispursement.LoanDocumentDeferred(startDate, endDate, companyId, branchId,searchParameter);
+                   // var data = dispursement.LoanDocumentDeferred(startDate, endDate, companyId, branchId,searchParameter);
+                    var data = dispursement.LoanDocumentDeferred(startDate, endDate, companyId, branchId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();

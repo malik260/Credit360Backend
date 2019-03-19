@@ -27,8 +27,8 @@ namespace FintrakBanking.Common.AlertMonitoring
         LoanRepayment = 17,
         CustomerAlertForLoanRepaymentApproachingDueDate = 18,
         ExpiredBGAlert = 20,
-        TerminatedBG = 21
-
+        TerminatedBG = 21,
+       BGDesk = 22
 
     }
 }

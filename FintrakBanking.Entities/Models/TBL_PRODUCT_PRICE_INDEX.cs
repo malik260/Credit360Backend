@@ -53,6 +53,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
         public int? CURRENCYID { get; set; }
 
+        public DateTime? LASTREFRESHDATE { get; set; }
+
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

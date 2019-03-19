@@ -86,6 +86,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short approvedProductId { get; set; }
         public decimal convertedApprovedAmount { get { return this.approvedAmount * (decimal)this.exchangeRate; } }
+        public int? moratoriumPeriod { get; set; }
 
         public int customerId { get; set; }
         public string terms { get; set; }
@@ -93,6 +94,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool securedByCollateral { get; set; }
         public int? crmsCollateralTypeId { get; set; }
         public bool isSpecialised { get; set; }
+        public short? crmsRepaymentTypeId { get; set; }
 
         public string proposedTenorString
         {
@@ -358,6 +360,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productCustomerName { get; set; }
         public string staffName { get; set; }
         public int applicationId { get; set; }
+        public bool owner { get; set; }
     }
 
     public class TranchDisbursmentViewModel
