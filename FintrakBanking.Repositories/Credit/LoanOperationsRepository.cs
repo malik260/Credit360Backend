@@ -5944,7 +5944,8 @@ namespace FintrakBanking.Repositories.Credit
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
                     var loan = model;
-                    var reviewDate = model.maturityDate;
+                    var reviewDate = model.maturityDate.AddMonths(1);
+
                     var data = new OverDraftTopUpAndRenewViewModel
                     {
                         //reviewedDate = loan.effectiveDate.AddMonths(1).ToString("dd-MMM-yyyy", null),
