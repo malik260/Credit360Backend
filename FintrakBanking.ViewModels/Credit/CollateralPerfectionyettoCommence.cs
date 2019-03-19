@@ -41,6 +41,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string middleName { get; set; }
         public string businessDevelopmentManger { get; set; }
         public string businessUnit { get; set; }
+        public string deptName { get; set; }
     }
 
 

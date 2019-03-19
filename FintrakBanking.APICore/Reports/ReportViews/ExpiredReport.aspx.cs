@@ -52,7 +52,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
                     LoanReportObjects expiredReport = new LoanReportObjects();
-                    var data = expiredReport.ExpiredReport(startDate, endDate, companyId);
+                    var data = expiredReport.ExpiredReport(companyId,startDate,endDate);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
@@ -63,7 +63,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/InsuranceReport.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/ExpiredReport.rdlc");
                     //ReportViewer1.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }

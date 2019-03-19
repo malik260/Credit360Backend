@@ -1296,6 +1296,8 @@ namespace FintrakBanking.Repositories.Credit
                         requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                         exchangeRate = c.c.EXCHANGERATE,
                         availableValue = 0,
+                        collateralReleaseStatusId = c.c.COLLATERALRELEASESTATUSID,
+                        collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q=>q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
                         accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
         })
                     .ToList()
