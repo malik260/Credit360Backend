@@ -16,6 +16,7 @@ namespace FintrakBanking.Interfaces.Finance
         // string PostTransaction(List<FinanceTransactionViewModel> transaction, bool isBulkPosting = false);
         string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false, TwoFactorAutheticationViewModel twoFADetails = null);
 
+        FinanceTransactionViewModel PostTerminateAndRebookEntries(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int debitGL, int creditGL, string description, TwoFactorAutheticationViewModel twoFactorAuth);
         CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId);
 
         List<FinanceTransactionViewModel> BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
