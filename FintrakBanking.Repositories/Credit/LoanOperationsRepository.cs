@@ -5820,7 +5820,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public bool OverdraftRenewal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, decimal amount)
+        public bool OverdraftRenewal(TwoFactorAutheticationViewModel twoFactorAuth, int loanReviewOperationsId, int loanId, decimal amount)
         {
 
             bool output = false;
@@ -5834,6 +5834,7 @@ namespace FintrakBanking.Repositories.Credit
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                             && b.LOANREVIEWOPERATIONID == loanReviewOperationsId
                              select new RevolvingLoanViewModel()
                              {
                                  loanId = a.REVOLVINGLOANID,
@@ -16675,7 +16676,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if ((int)OperationsEnum.OverdraftRenewal == model.operationId)
                     {
-                        result = OverdraftRenewal(twoFactorAuth, loanId, (decimal)model.newAmount);
+                        result = OverdraftRenewal(twoFactorAuth, loanReviewOperationsId, loanId, (decimal)model.newAmount);
                         if (result == true)
                         {
                             updateLoanReviewOperation(loanReviewOperationsId, loanId);
