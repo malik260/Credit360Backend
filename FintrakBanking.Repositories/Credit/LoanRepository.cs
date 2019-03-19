@@ -10960,7 +10960,7 @@ namespace FintrakBanking.Repositories.Credit
                          && (l.LOANREFERENCENUMBER == param.param.Trim() || param.param.Trim() == null || param.param.Trim() == "" || l.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(param.param.Trim().ToLower())  //&& param.branchId == 0
                          || l.TBL_CUSTOMER.LASTNAME.ToLower().Contains(param.param.Trim().ToLower())  // && param.branchId == 0
                          || l.TBL_CUSTOMER.MAIDENNAME.ToLower().Contains(param.param.Trim().ToLower())) // && param.branchId == 0
-                         && !loanStatus.Contains(l.LOANSTATUSID)
+                         && !loanStatus.Contains(l.LOANSTATUSID) && l.CURRENCYID != 1
 
                         orderby l.BOOKINGDATE descending
                         select new LoanViewModel
