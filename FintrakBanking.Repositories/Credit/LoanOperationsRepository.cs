@@ -15839,8 +15839,8 @@ namespace FintrakBanking.Repositories.Credit
                     MISCODE = oldContingent.MISCODE,
                     TEAMMISCODE = oldContingent.TEAMMISCODE,
                     //INTERESTRATE = oldContingent.INTERESTRATE,
-                    EFFECTIVEDATE = model.effectiveDate,
-                    MATURITYDATE = model.maturityDate,
+                    EFFECTIVEDATE = operationRec.EFFECTIVEDATE,// model.effectiveDate,
+                    MATURITYDATE = Convert.ToDateTime(operationRec.MATURITYDATE) , // model.maturityDate,
                     BOOKINGDATE = currentDate.Date,
                     //OVERDRAFTLIMIT = oldContingent.OVERDRAFTLIMIT,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
@@ -15893,37 +15893,39 @@ namespace FintrakBanking.Repositories.Credit
                 var result = context.SaveChanges() > 0;
 
 
-                if (renewalResult != null && result)
+                if (result)//renewalResult != null && result)
                 {
 
                     var tempmedia = documentContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Where(x => x.TEMPLOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
-
-                    var data = new TBL_MEDIA_LOAN_DOCUMENTS
+                    if (tempmedia != null)
                     {
-                        FILEDATA = tempmedia.FILEDATA,
-                        DOCUMENTTITLE = tempmedia.DOCUMENTTITLE,
-                        FILENAME = tempmedia.FILENAME,
-                        FILEEXTENSION = tempmedia.FILEEXTENSION,
-                        LOANREFERENCENUMBER = tempmedia.LOANREFERENCENUMBER,
-                        LOANAPPLICATIONNUMBER = tempmedia.LOANAPPLICATIONNUMBER,
-                        SYSTEMDATETIME = tempmedia.SYSTEMDATETIME,
-                        CREATEDBY = tempmedia.CREATEDBY,
-                        ISPRIMARYDOCUMENT = tempmedia.ISPRIMARYDOCUMENT,
-                        COMPANYID = tempmedia.COMPANYID,
-                        LOANSYSTEMTYPEID = tempmedia.LOANSYSTEMTYPEID,
-                        LOANREVIEWOPERATIONID = tempmedia.TEMPLOANREVIEWOPERATIONID,
-                        PHYSICALLOCATION = tempmedia.PHYSICALLOCATION,
-                        DOCUMENTTYPEID = tempmedia.DOCUMENTTYPEID,
+                        var data = new TBL_MEDIA_LOAN_DOCUMENTS
+                        {
+                            FILEDATA = tempmedia.FILEDATA,
+                            DOCUMENTTITLE = tempmedia.DOCUMENTTITLE,
+                            FILENAME = tempmedia.FILENAME,
+                            FILEEXTENSION = tempmedia.FILEEXTENSION,
+                            LOANREFERENCENUMBER = tempmedia.LOANREFERENCENUMBER,
+                            LOANAPPLICATIONNUMBER = tempmedia.LOANAPPLICATIONNUMBER,
+                            SYSTEMDATETIME = tempmedia.SYSTEMDATETIME,
+                            CREATEDBY = tempmedia.CREATEDBY,
+                            ISPRIMARYDOCUMENT = tempmedia.ISPRIMARYDOCUMENT,
+                            COMPANYID = tempmedia.COMPANYID,
+                            LOANSYSTEMTYPEID = tempmedia.LOANSYSTEMTYPEID,
+                            LOANREVIEWOPERATIONID = tempmedia.TEMPLOANREVIEWOPERATIONID,
+                            PHYSICALLOCATION = tempmedia.PHYSICALLOCATION,
+                            DOCUMENTTYPEID = tempmedia.DOCUMENTTYPEID,
 
-                    };
+                        };
 
-                    documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
-                    try
-                    {
-                        documentContext.SaveChanges();
+                        documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+
+                        try
+                        {
+                            documentContext.SaveChanges();
+                        }
+                        catch (Exception ex) { }
                     }
-                    catch (Exception ex) { }
-
 
 
 
@@ -16093,37 +16095,39 @@ namespace FintrakBanking.Repositories.Credit
 
                 var result = context.SaveChanges() > 0;
 
-                if (renewalResult != null && result)
+                if (result)//(renewalResult != null && result)
                 {
                     var tempmedia = documentContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Where(x => x.TEMPLOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
-
-                    var data = new TBL_MEDIA_LOAN_DOCUMENTS
+                    if (tempmedia != null)
                     {
-                        FILEDATA = tempmedia.FILEDATA,
-                        DOCUMENTTITLE = tempmedia.DOCUMENTTITLE,
-                        FILENAME = tempmedia.FILENAME,
-                        FILEEXTENSION = tempmedia.FILEEXTENSION,
-                        LOANREFERENCENUMBER = tempmedia.LOANREFERENCENUMBER,
-                        LOANAPPLICATIONNUMBER = tempmedia.LOANAPPLICATIONNUMBER,
-                        SYSTEMDATETIME = tempmedia.SYSTEMDATETIME,
-                        CREATEDBY = tempmedia.CREATEDBY,
-                        ISPRIMARYDOCUMENT = tempmedia.ISPRIMARYDOCUMENT,
-                        COMPANYID = tempmedia.COMPANYID,
-                        LOANSYSTEMTYPEID = tempmedia.LOANSYSTEMTYPEID,
-                        LOANREVIEWOPERATIONID = tempmedia.TEMPLOANREVIEWOPERATIONID,
-                        PHYSICALLOCATION = tempmedia.PHYSICALLOCATION,
-                        DOCUMENTTYPEID = tempmedia.DOCUMENTTYPEID,
+                        var data = new TBL_MEDIA_LOAN_DOCUMENTS
+                        {
+                            FILEDATA = tempmedia.FILEDATA,
+                            DOCUMENTTITLE = tempmedia.DOCUMENTTITLE,
+                            FILENAME = tempmedia.FILENAME,
+                            FILEEXTENSION = tempmedia.FILEEXTENSION,
+                            LOANREFERENCENUMBER = tempmedia.LOANREFERENCENUMBER,
+                            LOANAPPLICATIONNUMBER = tempmedia.LOANAPPLICATIONNUMBER,
+                            SYSTEMDATETIME = tempmedia.SYSTEMDATETIME,
+                            CREATEDBY = tempmedia.CREATEDBY,
+                            ISPRIMARYDOCUMENT = tempmedia.ISPRIMARYDOCUMENT,
+                            COMPANYID = tempmedia.COMPANYID,
+                            LOANSYSTEMTYPEID = tempmedia.LOANSYSTEMTYPEID,
+                            LOANREVIEWOPERATIONID = tempmedia.TEMPLOANREVIEWOPERATIONID,
+                            PHYSICALLOCATION = tempmedia.PHYSICALLOCATION,
+                            DOCUMENTTYPEID = tempmedia.DOCUMENTTYPEID,
 
-                    };
+                        };
 
-                    documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
-                    try
-                    {
-                        documentContext.SaveChanges();
+                        documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+                        try
+                        {
+                            documentContext.SaveChanges();
+                        }
+                        catch (Exception ex) { }
+                        var outcome = SendNotification((int)model.loanId, data.LOANREVIEWOPERATIONID);
+
                     }
-                    catch (Exception ex) { }
-
-                    var outcome = SendNotification((int)model.loanId, data.LOANREVIEWOPERATIONID);
                     output = true;
                 }
             }
