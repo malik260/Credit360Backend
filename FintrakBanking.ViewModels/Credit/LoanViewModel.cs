@@ -1568,6 +1568,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class UnutilizedFacilityViewModel
     {
+        public decimal utilizedAmount { get; set; }
+        public decimal amountDisbursed { get; set; }
+        public decimal approvedAmount { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public short productTypeId { get; set; }
+        public decimal undisbursedAmount { get; set; }
+
         public DateTime dateTimeCreated { get; set; }
         public string businessUnits { get; set; }
         public string group { get; set; }
@@ -1580,6 +1587,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string newApprovalInNaira{ get; set; }
         public string newApprovalInDollar { get; set; }
         public string staffCode { get; set; }
+        public string cap { get; set; }
     }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{

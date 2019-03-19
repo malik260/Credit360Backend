@@ -876,6 +876,14 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/ExcessReport.aspx?companyId=" + companyId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
+        public string GetUnutilizedFacilityReport(int companyId)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/UnutilizedFacilityReport.aspx?companyId=" + companyId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
 
         public string GetDisbursalCreditTurnover(DateRange dateRange)
         {

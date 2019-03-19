@@ -90,6 +90,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetInsuranceReport(int companyId);
         string GetExpiredReport(DateRange dateRange);
         string GetExcessReport(int companyId);
+        string GetUnutilizedFacilityReport(int companyId);
 
         string GetLoanDocumentDeferred(int companyId, DateRange dateRange, int staffId);
         string GetRuniningLoanReport(int companyId);

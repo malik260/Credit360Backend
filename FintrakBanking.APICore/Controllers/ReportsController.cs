@@ -1930,6 +1930,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("unutilized-facility-report")]
+        public HttpResponseMessage GetUnutilizedFacilityReport()
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetUnutilizedFacilityReport(token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
