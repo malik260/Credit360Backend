@@ -839,22 +839,22 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetImpairedWatchListReport(DateRange dateRange)
+        public string GetImpairedWatchListReport(int companyId)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/ImpairedWatchListReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            path = reportPath + "ReportViews/ImpairedWatchListReport.aspx?companyId=" + companyId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
 
 
-        public string GetInsuranceReport(DateRange dateRange)
+        public string GetInsuranceReport(int companyId)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/InsuranceReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            path = reportPath + "ReportViews/InsuranceReport.aspx?companyId=" + companyId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
 
@@ -868,23 +868,33 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetExcessReport(DateRange dateRange)
+        public string GetExcessReport(int companyId)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/ExcessReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            path = reportPath + "ReportViews/ExcessReport.aspx?companyId=" + companyId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
 
         public string GetDisbursalCreditTurnover(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
-
             string path = string.Empty;
             path = reportPath + "ReportViews/DisbursalCreditTurnover.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
+
+        public string GetRuniningLoanReport(int companyId)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RunningLoanReport.aspx?companyId=" + companyId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+
+            
 
         public string GetLoanBookingReport(DateRange dateRange)
         {

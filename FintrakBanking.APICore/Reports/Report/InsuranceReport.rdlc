@@ -1227,7 +1227,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!startDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1257,7 +1259,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!maturityDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1429,21 +1433,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="subHead">
+                    <Textbox Name="groupDescription1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!subHead.Value</Value>
+                              <Value>=Fields!groupDescription.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>subHead</rd:DefaultName>
+                      <rd:DefaultName>groupDescription1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1455,6 +1459,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>

@@ -52,7 +52,7 @@
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(
@@ -193,7 +193,7 @@
 
             //    httpClientInstance = new HttpClient();
             //    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-            //    client.Timeout = TimeSpan.FromSeconds(60);
+            //    client.Timeout = TimeSpan.FromSeconds(180);
             //    client.DefaultRequestHeaders.Authorization = token;
             //    client.BaseAddress = new Uri(API_URL);
             //    client.DefaultRequestHeaders.Accept.Clear();
@@ -257,7 +257,7 @@
 
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.Timeout = TimeSpan.FromSeconds(180);
                     client.DefaultRequestHeaders.Authorization = token;
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
@@ -361,7 +361,7 @@
                     handler.UseDefaultCredentials = true;
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.Timeout = TimeSpan.FromSeconds(180);
                     client.DefaultRequestHeaders.Authorization = token;
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
@@ -429,6 +429,7 @@
                     var innerExceptionMessage = "";
                     if (ex.InnerException != null)
                         innerExceptionMessage = ex.InnerException.Message;
+                    //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
 
                     throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
                 }
@@ -504,7 +505,7 @@
 
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
 
@@ -642,7 +643,7 @@
 
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
 

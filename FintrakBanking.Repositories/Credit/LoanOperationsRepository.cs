@@ -5944,16 +5944,20 @@ namespace FintrakBanking.Repositories.Credit
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
                     var loan = model;
-                    var reviewDate = model.maturityDate;
-                    var data = new OverDraftTopUpAndRenewViewModel
+                    var reviewDate = model.effectiveDate.AddDays(31);
+                    if(reviewDate >= model.maturityDate)
                     {
-                        //reviewedDate = loan.effectiveDate.AddMonths(1).ToString("dd-MMM-yyyy", null),
+                        throw new ConditionNotMetException("The review date must be prior to the expiry date. Review date is equal to effective date plus one month.");
+                    }
+
+                    var data = new OverDraftTopUpAndRenewViewModel
+                    {   
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
                         applicationDate = systemDate.ToString("dd-MMM-yyyy", null), // loan.effectiveDate.ToString("dd-MMM-yyyy", null),
                         sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
-                        expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
+                        expiryDate = model.maturityDate.ToString("dd-MMM-yyyy", null),
                         sanctionDate = model.effectiveDate.ToString("dd-MMM-yyyy", null),
                         createdDate = systemDate,
                     };
@@ -13147,6 +13151,20 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (model.principalFirstPaymentDate < model.proposedEffectiveDate)
                     throw new ConditionNotMetException("Principal First Payment Date must be greater than efffective date");
+            }
+            if(model.operationTypeId == (short)OperationsEnum.OverdraftRenewal)
+            {
+
+                if ((model.maturityDate.Value - model.proposedEffectiveDate).Days < 30)
+                {
+                   throw new ConditionNotMetException("The Overdraft renewal period is too short for normal OD");
+                }
+               
+                var reviewDate = model.proposedEffectiveDate.AddDays(31);
+                if(reviewDate > model.maturityDate)
+                {
+                    throw new ConditionNotMetException("The review date must be prior to expiry date. Review date equals effective date plus one month");
+                }
             }
 
             if ((int)OperationsEnum.Prepayment == model.operationTypeId)
