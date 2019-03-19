@@ -545,9 +545,9 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet]
         [ClaimsAuthorization]
-        [Route("cancel-full-and-final")]
+        [Route("cancel-full-and-final/{loanId}")]
         public HttpResponseMessage CancelFullAndFinal(int loanId)
         {
             try
