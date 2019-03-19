@@ -17363,7 +17363,9 @@ namespace FintrakBanking.Repositories.Credit
                     var model = (
                                 from a in context.TBL_LOAN_REVIEW_OPERATION
                                 join b in context.TBL_LOAN_CONTINGENT on a.LOANID equals b.CONTINGENTLOANID
-                                where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
+                                where 
+                                //b.LOANSTATUSID == (short)LoanStatusEnum.Active && 
+                                a.LOANID == loanId && a.OPERATIONCOMPLETED == false
                                 && a.LOANREVIEWOPERATIONID == loanReviewOperationsId
 
                                 select new LoanPaymentRestructureScheduleInputViewModel()
