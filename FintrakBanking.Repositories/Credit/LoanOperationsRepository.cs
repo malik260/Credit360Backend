@@ -5944,17 +5944,20 @@ namespace FintrakBanking.Repositories.Credit
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
                     var loan = model;
-                    var reviewDate = model.maturityDate.AddMonths(1);
+                    var reviewDate = model.effectiveDate.AddDays(31);
+                    if(reviewDate >= model.maturityDate)
+                    {
+                        throw new ConditionNotMetException("The review date must be prior to the expiry date. Review date is equal to effective date plus one month.");
+                    }
 
                     var data = new OverDraftTopUpAndRenewViewModel
-                    {
-                        //reviewedDate = loan.effectiveDate.AddMonths(1).ToString("dd-MMM-yyyy", null),
+                    {   
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
                         applicationDate = systemDate.ToString("dd-MMM-yyyy", null), // loan.effectiveDate.ToString("dd-MMM-yyyy", null),
                         sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
-                        expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
+                        expiryDate = model.maturityDate.ToString("dd-MMM-yyyy", null),
                         sanctionDate = model.effectiveDate.ToString("dd-MMM-yyyy", null),
                         createdDate = systemDate,
                     };
@@ -13149,6 +13152,20 @@ namespace FintrakBanking.Repositories.Credit
                 if (model.principalFirstPaymentDate < model.proposedEffectiveDate)
                     throw new ConditionNotMetException("Principal First Payment Date must be greater than efffective date");
             }
+            if(model.operationTypeId == (short)OperationsEnum.OverdraftRenewal)
+            {
+
+                if ((model.maturityDate.Value - model.proposedEffectiveDate).Days < 30)
+                {
+                   throw new ConditionNotMetException("The Overdraft renewal period is too short for normal OD");
+                }
+               
+                var reviewDate = model.proposedEffectiveDate.AddDays(31);
+                if(reviewDate > model.maturityDate)
+                {
+                    throw new ConditionNotMetException("The review date must be prior to expiry date. Review date equals effective date plus one month");
+                }
+            }
 
             if ((int)OperationsEnum.Prepayment == model.operationTypeId)
             {
@@ -16225,11 +16242,11 @@ namespace FintrakBanking.Repositories.Credit
                     foreach (LoanContingentViewModel item3 in mailList)
                     {
                         var custname = context.TBL_LOAN_CONTINGENT.Where(a => a.CONTINGENTLOANID == item3.loanId).Select(w => w.TBL_CUSTOMER.FIRSTNAME + " " + w.TBL_CUSTOMER.MAIDENNAME + " " + w.TBL_CUSTOMER.LASTNAME).FirstOrDefault();
-                        dataTable2 = dataTable2 + $"<tr><td>{custname}</td><td>APG</td><td>{item3.contingentAmount}</td>" + $"<td>{item3.effectiveDate.ToLongDateString()}</td><td>{item3.loanRefNumber}</td></tr>";
+                        dataTable2 = dataTable2 + $"<tr><td>{custname}</td><td>APG</td><td>{String.Format("{0:#,##0.##}", item3.contingentAmount)}</td>" + $"<td>{item3.effectiveDate.ToLongDateString()}</td><td>{item3.loanRefNumber}</td></tr>";
                     }
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
-                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "Kindly be Informed that th attached bond with the following detils which was called in, has been cancelled,<br /> Reason: " + review.REVIEWDETAILS + " <br /> <br />" + $"{dataTable2}" + "<br /> <br /> The Bussiness / Relationship Manager should therefore ensure that all parties to the bond instrument are adviced of the development.<br /> <br /> Meanwhile, Kindly acknowledge this mail. <br /> <br />Warm regards.";
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "Kindly be Informed that the attached bond with the following details which was called in, has been cancelled,<br /> Reason: " + review.REVIEWDETAILS + " <br /> <br />" + $"{dataTable2}" + "<br /> <br /> The Business / Relationship Manager should therefore ensure that all parties to the bond instrument are adviced of the development.<br /> <br /> Meanwhile, Kindly acknowledge this mail. <br /> <br />";
                     string additionalRecipient = loanDetails.FirstOrDefault((LoanContingentViewModel x) => x.relationshipManagerId == item2.STAFFID).officerEmail;
                     string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
@@ -16271,13 +16288,13 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (LoanContingentViewModel item3 in loanDetails)
                 {
                     var custname = context.TBL_LOAN_CONTINGENT.Where(a => a.CONTINGENTLOANID == item3.loanId).Select(w => w.TBL_CUSTOMER.FIRSTNAME + " " + w.TBL_CUSTOMER.MAIDENNAME + " " + w.TBL_CUSTOMER.LASTNAME).FirstOrDefault();
-                    dataTable = dataTable + $"<tr><td>{custname}</td><td>APG</td><td>{item3.contingentAmount}</td>" + $"<td>{item3.effectiveDate.ToLongDateString()}</td><td>{item3.loanRefNumber}</td></tr>";
+                    dataTable = dataTable + $"<tr><td>{custname}</td><td>APG</td><td>{String.Format("{0:#,##0.##}", item3.contingentAmount)}</td>" + $"<td>{item3.effectiveDate.ToLongDateString()}</td><td>{item3.loanRefNumber}</td></tr>";
                 }
                 var review = context.TBL_LOAN_REVIEW_OPERATION.Find(loanReviewOperationsId);
 
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
-                string messageContent = string.Format("Dear Team, <br /><br /> Kindly be Informed that th attached bond with the following detils which was called in, has been cancelled, <br /> Reason: " + review.REVIEWDETAILS + " <br /> <br />" + $"{dataTable}" + "<br /> <br /> The Bussiness / Relationship Manager should therefore ensure that all parties to the bond instrument are adviced of the development.<br /> <br /> Meanwhile, Kindly acknowledge this mail. <br /> <br />Warm regards.");
+                string messageContent = string.Format("Dear Team, <br /><br /> Kindly be Informed that the attached bond with the following details which was called in, has been cancelled, <br /> Reason: " + review.REVIEWDETAILS + " <br /> <br />" + $"{dataTable}" + "<br /> <br /> The Business / Relationship Manager should therefore ensure that all parties to the bond instrument are adviced of the development.<br /> <br /> Meanwhile, Kindly acknowledge this mail. <br /> <br />");
 
                 string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
@@ -20714,6 +20731,45 @@ namespace FintrakBanking.Repositories.Credit
             return overDraftDetail;
 
         }
+
+        public bool SaveDocument(LoanReviewOperationViewModel model, byte[] file)
+        {
+            var review = context.TBL_LOAN_REVIEW_OPERATION.Where(a => a.LOANID == model.loanId && a.OPERATIONCOMPLETED == false && a.LOANSYSTEMTYPEID == model.loanSystemTypeId).FirstOrDefault();
+
+
+
+            var rec = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
+
+            var data = new TBL_TEMP_MEDIA_LOAN_DOCUMENTS
+            {
+                FILEDATA = file,
+                DOCUMENTTITLE = model.documentTitle,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                LOANREFERENCENUMBER = rec.LOANREFERENCENUMBER,
+                LOANAPPLICATIONNUMBER = rec.LOANREFERENCENUMBER,
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = (int)model.createdBy,
+                ISPRIMARYDOCUMENT = true,
+                COMPANYID = model.companyId,
+                LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.ContingentLiability,
+                TEMPLOANREVIEWOPERATIONID = review.LOANREVIEWOPERATIONID,
+                PHYSICALLOCATION = "N/A",
+                DOCUMENTTYPEID = 4,
+
+            };
+
+            documentContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Add(data);
+            try
+            {
+                return documentContext.SaveChanges() != 0;
+            }
+            catch (Exception ex) { }
+
+            return documentContext.SaveChanges() != 0;
+        }
+
+
         public bool SaveMainDocument(LoanReviewOperationViewModel model, int loanId, byte[] file, int loanreviewoperationId)
         {
             var rec = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId).FirstOrDefault();

@@ -67,7 +67,7 @@
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(60);
+                client.Timeout = TimeSpan.FromSeconds(180);
                 client.BaseAddress = new Uri(API_URL);
                 client.DefaultRequestHeaders.Authorization = token;
                 client.DefaultRequestHeaders.Accept.Clear();
