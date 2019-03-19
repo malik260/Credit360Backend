@@ -787,21 +787,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="customerName">
+                    <Textbox Name="accountName">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!customerName.Value</Value>
+                              <Value>=Fields!accountName.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>customerName</rd:DefaultName>
+                      <rd:DefaultName>accountName</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -975,7 +975,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!endDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1035,7 +1037,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!expiryDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1125,7 +1129,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!classificationDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1143,6 +1149,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>

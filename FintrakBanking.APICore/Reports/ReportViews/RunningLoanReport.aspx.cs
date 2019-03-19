@@ -11,7 +11,7 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class ImpairedWatchListReport : System.Web.UI.Page
+    public partial class RuniningLoanReport : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -49,19 +49,20 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         this.ReportViewer.LocalReport.Refresh();
                         return;
                     }
-                    LoanReportObjects impairedWatchListReport = new LoanReportObjects();
-                    var data = impairedWatchListReport.ImpairedWatchListReport(companyId);
+
+                    LoanReportObjects runiningLoanReport = new LoanReportObjects();
+                    var data = runiningLoanReport.RunningLoanReport(companyId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "ImpairedWatchListReport";
+                    reportDataSource.Name = "RunningLoanReport";
 
                     //ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
                     //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/ImpairedWatchListReport.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/RunningLoanReport.rdlc");
                     //ReportViewer1.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }

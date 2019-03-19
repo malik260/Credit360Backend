@@ -100,7 +100,7 @@ namespace FintrakBanking.ReportObjects
                                 //vetoPower = c.VETOPOWER == true ? "Yes" : "No",
                                 levelName = c.LEVELNAME,
                                 //username = (c.TBL_STAFF.FIRSTNAME  + " " + c.TBL_STAFF.LASTNAME).ToUpper(),
-                                //scope = .PROCESSVIEWSCOPEID == 1 ? "Default" : c.PROCESSVIEWSCOPEID == 2 ? "Group" : c.PROCESSVIEWSCOPEID == 3 ? "Global" : null,
+                                //scope = c.PROCESSVIEWSCOPEID == 1 ? "Default" : c.PROCESSVIEWSCOPEID == 2 ? "Group" : c.PROCESSVIEWSCOPEID == 3 ? "Global" : null,
                                 grpPosition = b.POSITION,
                                 levelPosition = c.POSITION,
                                 canApprove = c.CANAPPROVE == true ? "Yes" : "No",
