@@ -876,6 +876,8 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
         public DateTime date  { get; set; }
         public decimal feeRate { get; set; }
+        public double? rate { get; set; }
+
     }
 
     public class LoanCollateralMappingViewModel : CollateralViewModel
