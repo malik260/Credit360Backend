@@ -33,6 +33,8 @@ namespace FintrakBanking.ViewModels.Credit
         public double securityValue { get { return decimal.ToDouble(collateralValue) - (haircut * 0.01 * decimal.ToDouble(collateralValue)); } }
 
         public int customerId { get; set; }
+        public string collateralReleaseStatusName { get; set; }
+        public int? collateralReleaseStatusId { get; set; }
 
 
         public string collateralDetail { get; set; }
