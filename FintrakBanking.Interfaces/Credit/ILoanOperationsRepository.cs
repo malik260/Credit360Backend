@@ -22,6 +22,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool DailyWrittenOffFacilityAccrual(DateTime applicationDate);
 
+        bool GetRepaymentDate(int loanId);
+
         decimal GetCollateralSearchChargeAmount(int stateId);
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
