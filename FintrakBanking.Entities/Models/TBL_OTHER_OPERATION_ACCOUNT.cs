@@ -19,6 +19,8 @@ namespace FintrakBanking.Entities.Models
         [Required]
         public int GLACCOUNTID { get; set; }
 
+        public int? GLACCOUNTID2 { get; set; }
+
         [Required]
         public int COMPANYID { get; set; }
 

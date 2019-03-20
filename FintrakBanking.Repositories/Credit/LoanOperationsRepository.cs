@@ -259,7 +259,7 @@ namespace FintrakBanking.Repositories.Credit
                              join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
                              join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE,c.BRANCHCODE,d.CURRENCYCODE, a.CATEGORYID } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
@@ -270,7 +270,7 @@ namespace FintrakBanking.Repositories.Credit
                                  productCode = groupedQ.Key.PRODUCTCODE,
                                  currencyCode = groupedQ.Key.CURRENCYCODE,
                                  branchCode = groupedQ.Key.BRANCHCODE,
-                                 
+
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => (double)i.DAILYACCURALAMOUNT * i.EXCHANGERATE),
 
                              }).ToList().Select(x =>
@@ -1250,7 +1250,7 @@ namespace FintrakBanking.Repositories.Credit
                              {
                                  x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
                                  return x;
-                             }).ToList(); 
+                             }).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
@@ -3204,7 +3204,7 @@ namespace FintrakBanking.Repositories.Credit
                                   return x;
                               }).ToList();
 
-            var commercialLoanMaturityDate = applicationDate.AddDays(1);
+            var commercialLoanMaturityDate = applicationDate; // applicationDate.AddDays(1);
 
             var commercialLoans = (from b in context.TBL_LOAN
                                    where b.MATURITYDATE == DbFunctions.TruncateTime(commercialLoanMaturityDate)
@@ -5280,7 +5280,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool ProcessChargeReversal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, int operationId, int staffId,  int loanReviewOperationsId)
+        public bool ProcessChargeReversal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, int operationId, int staffId, int loanReviewOperationsId)
         {
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
             try
@@ -5367,7 +5367,7 @@ namespace FintrakBanking.Repositories.Credit
                     model.casaAccountId = runningFacility.CASAACCOUNTID;
                     model.sourceBranchId = runningFacility.BRANCHID;
                     model.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
-                    
+
                 }
                 //EarnedFeeAmount = model.earnedFeeAmount;
                 //chargeTypeId = model.chargeFeeTypeId;
@@ -5380,7 +5380,7 @@ namespace FintrakBanking.Repositories.Credit
                 //AccruedTaxToDate = DateDiff * DailyAccruedTax;
                 //model.feeAmountDiff = EarnedFeeAmount - AccruedFeeToDate;
 
-                if((decimal)model.feeAmount < (decimal)model.payAmount)
+                if ((decimal)model.feeAmount < (decimal)model.payAmount)
                 {
                     throw new ConditionNotMetException("Transaction Failed. The screen is for fee reduction only. Use Manual Fee page for addition. ");
                 }
@@ -5524,15 +5524,15 @@ namespace FintrakBanking.Repositories.Credit
 
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                inputTransactions.AddRange(financeTransaction.BuildChargeReversalPosting(model, twoFactorAuth,"Main"));
+                inputTransactions.AddRange(financeTransaction.BuildChargeReversalPosting(model, twoFactorAuth, "Main"));
 
                 var feeVATRecord = context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == model.chargeFeeId && x.DETAILTYPEID == (short)ChargeFeeDealTypeEnum.Tax && x.DELETED == false).FirstOrDefault();
-                if(feeVATRecord  != null)
+                if (feeVATRecord != null)
                 {
-                    
+
                     inputTransactions.AddRange(financeTransaction.BuildChargeReversalPosting(model, twoFactorAuth, "VAT"));
                 }
-                financeTransaction.PostTransaction(inputTransactions,false,twoFactorAuth);
+                financeTransaction.PostTransaction(inputTransactions, false, twoFactorAuth);
 
 
                 var feeResult = context.TBL_LOAN_FEE.Where(x => x.LOANID == loanId && x.CHARGEFEEID == model.chargeFeeId && x.LOANSYSTEMTYPEID == chargeDetails.LOANSYSTEMTYPEID).ToList();
@@ -5567,7 +5567,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool ArchiveLoanFee(List<TBL_LOAN_FEE> existingLoanFee, LoanPaymentRestructureScheduleInputViewModel model)
         {
-           foreach(var existingItem in existingLoanFee)
+            foreach (var existingItem in existingLoanFee)
             {
                 TBL_LOAN_FEE newFeeRecord = new TBL_LOAN_FEE();
                 newFeeRecord = existingItem;
@@ -11150,6 +11150,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 var _otherOperationAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.WriteOffLoanFacilities).FirstOrDefault();
 
+                var otherOperationAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.OffBalansheetCompleteWriteOffAccount).FirstOrDefault();
+
                 //if (_otherOperationEnum == null)
 
 
@@ -11162,35 +11164,56 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (principalOutStandingBalance != 0)
                 {
-                    financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off", twoFactorAuth);
+
+                    financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, principalOutStandingBalance, sllp, "Principal On Complete Write off", twoFactorAuth);
+
+                    financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, principalOutStandingBalance, otherOperationAccount.GLACCOUNTID, (int)otherOperationAccount.GLACCOUNTID2, "Principal Write off", twoFactorAuth);
+
                 }
 
                 if (pastDueInterest != 0)
                 {
                     twoFactorAuth.skipAuthentication = true;
 
-                    //financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, pastDueInterest, sllp, "past due interest write off", twoFactorAuth);
+                    ////financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, pastDueInterest, sllp, "past due interest write off", twoFactorAuth);
 
-                    var debitGL = product.INTERESTINCOMEEXPENSEGL.Value;
-                    var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                    //var debitGL = product.INTERESTINCOMEEXPENSEGL.Value;
+                    //var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
 
-                    financeTransaction.PostLoanGLEntries(loanInput, pastDueInterest, debitGL, creditGL, "past due interest write off", loanInput.operationId);
+                    //financeTransaction.PostLoanGLEntries(loanInput, pastDueInterest, debitGL, creditGL, "past due interest write off", loanInput.operationId);
+
+                    financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, pastDueInterest, sllp, "Past Due Interest On Write off", twoFactorAuth);
+
+                    financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, pastDueInterest, otherOperationAccount.GLACCOUNTID, (int)otherOperationAccount.GLACCOUNTID2, "principal Write off", twoFactorAuth);
+
                 }
 
                 if (accruedInterest != 0)
                 {
-                    var debitGL = product.INTERESTINCOMEEXPENSEGL.Value;
-                    var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                    //var debitGL = product.INTERESTINCOMEEXPENSEGL.Value;
+                    //var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
 
-                    financeTransaction.PostLoanGLEntries(loanInput, accruedInterest, debitGL, creditGL, "Accrued Interest Reversal", loanInput.operationId);
+                    //financeTransaction.PostLoanGLEntries(loanInput, accruedInterest, debitGL, creditGL, "Accrued Interest Reversal", loanInput.operationId);
+
+                    financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, accruedInterest, sllp, "Accrued Interest On Complete Write off", twoFactorAuth);
+
+                    financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, accruedInterest, otherOperationAccount.GLACCOUNTID, (int)otherOperationAccount.GLACCOUNTID2, "principal Write off", twoFactorAuth);
+
+
                 }
 
                 if (interestOnPastDue > 0)
                 {
-                    var debitGL = product.PENALCHARGEGL.Value;
-                    var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                    //var debitGL = product.PENALCHARGEGL.Value;
+                    //var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
 
-                    financeTransaction.PostLoanGLEntries(loanInput, interestOnPastDue, debitGL, creditGL, "interest on past due write off", loanInput.operationId);
+                    //financeTransaction.PostLoanGLEntries(loanInput, interestOnPastDue, debitGL, creditGL, "interest on past due write off", loanInput.operationId);
+
+                    financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, interestOnPastDue, sllp, "Interest On Past Due Complete Write off", twoFactorAuth);
+
+                    financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, interestOnPastDue, otherOperationAccount.GLACCOUNTID, (int)otherOperationAccount.GLACCOUNTID2, "principal Write off", twoFactorAuth);
+
+
                 }
 
 
@@ -21626,10 +21649,59 @@ namespace FintrakBanking.Repositories.Credit
                 this.context.TBL_DAILY_ACCRUAL.AddRange(allAccrual);
                 context.SaveChanges();
 
+                var model = (from a in context.TBL_DAILY_ACCRUAL
+                             join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                             join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
+                             join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
+                             where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.WrittenOffTermLoanInterestAccural
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID } into groupedQ
+                             select new DailyInterestAccrualViewModel()
+                             {
+                                 productId = groupedQ.Key.PRODUCTID,
+                                 branchId = groupedQ.Key.BRANCHID,
+                                 companyId = groupedQ.Key.COMPANYID,
+                                 currencyId = groupedQ.Key.CURRENCYID,
+                                 categoryId = groupedQ.Key.CATEGORYID,
+                                 productCode = groupedQ.Key.PRODUCTCODE,
+                                 currencyCode = groupedQ.Key.CURRENCYCODE,
+                                 branchCode = groupedQ.Key.BRANCHCODE,
+
+                                 //referenceNumber = groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString(),
+                                 dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
+                             }).Where(x => x.dailyAccuralAmount > 0).ToList().Select(x =>
+                             {
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
+                                 return x;
+                             }).ToList();
+
+                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
+
+                    result = bulkPosting.WriteBulkDailyCompleteWriteOffInterestAccuralToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+
+                }
+                else
+                {
+                    foreach (var item in model)
+                    {
+                        item.date = applicationDate;
+
+                        result = financeTransaction.PostDailyLoansInterestAccrual(item);
+                    }
+                }
+
+                //if (result)
+                //{
+                //    return model;
+                //}
+                //return null;
 
                 result = true;
 
                 return result;
+
             }
             catch (Exception ex)
             {
