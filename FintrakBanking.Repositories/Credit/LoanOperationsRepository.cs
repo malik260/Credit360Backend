@@ -8550,7 +8550,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     result = context.SaveChanges() > 0;
 
-                    if (reviewData.EFFECTIVEDATE < applicationDate)
+                    if (reviewData.EFFECTIVEDATE < systemDate)
                     {
                         result = LoanBackDateFunction(loanId, applicationDate, systemDate, (decimal)product.PENALCHARGERATE, loanInput);
                     }
@@ -15830,7 +15830,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool result;
             var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
-            oldContingent.LOANSTATUSID = (int)OperationsEnum.CancelContingentLiability;
+            oldContingent.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;//.CancelContingentLiability;
             result = context.SaveChanges() > 0;
 
             if (result)
