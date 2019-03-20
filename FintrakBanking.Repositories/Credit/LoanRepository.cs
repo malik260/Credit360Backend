@@ -463,7 +463,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
                 if (entity.effectiveDate > systemDate)
-                    throw new ConditionNotMetException("You effective date cannot be post-dated.");
+                    throw new ConditionNotMetException("The effective date cannot be post-dated.");
 
                 if (entity.effectiveDate == entity.maturityDate)
                     throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
@@ -491,7 +491,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
                 if (entity.effectiveDate > systemDate)
-                    throw new ConditionNotMetException("You effective date cannot be post-dated.");
+                   throw new ConditionNotMetException("The effective date cannot be post-dated.");
 
                 if (application.TBL_PRODUCT_CLASS != null && application.TBL_PRODUCT_CLASS.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
                 {
@@ -531,7 +531,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
                 if (entity.effectiveDate > systemDate)
-                    throw new ConditionNotMetException("You effective date cannot be post-dated.");
+                    throw new ConditionNotMetException("The effective date cannot be post-dated.");
 
                 if (product.MAXIMUMTENOR > 0 && product.MAXIMUMTENOR < (entity.maturityDate - entity.effectiveDate).Days)
                     throw new ConditionNotMetException("You have exceeded the maximun tenor of the product. The maximun tenor is " + product.MAXIMUMTENOR);
@@ -559,7 +559,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
                 if (entity.effectiveDate > systemDate)
-                    throw new ConditionNotMetException("You effective date cannot be post-dated.");
+                    throw new ConditionNotMetException("The effective date cannot be post-dated.");
 
                 if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                     throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
@@ -4642,6 +4642,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (context.TBL_LOAN_FEE.Where(x => x.LOANID == facilityDetail.LOANAPPLICATIONDETAILID && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).Any())
                     {
+                        chargeByApprovedAmount = false;
                         continue;
                     }
                     else { chargeByApprovedAmount = true; }
@@ -4650,6 +4651,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (ent.dealTypeId != (short)ChargeFeeDealTypeEnum.Tax)
                 {
+
                     var fee = new TBL_LOAN_FEE
                     {
                         CHARGEFEEID = ent.chargeFeeId,
