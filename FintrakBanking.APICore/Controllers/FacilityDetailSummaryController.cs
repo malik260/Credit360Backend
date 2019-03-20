@@ -107,12 +107,12 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("related-facilty-details/{relatedloanReferenceNumber}")]
-        public HttpResponseMessage GetRelatedFacilityDetail(string relatedloanReferenceNumber)
+        [Route("related-facilty-details/{loanId}")]
+        public HttpResponseMessage GetRelatedFacilityDetail(int loanId)
         {
             try
             {
-                var data = repo.RelatedFacilityDetail(relatedloanReferenceNumber);
+                var data = repo.RelatedFacilityDetail(loanId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -152,12 +152,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("related-overdraft-facilty-details/{relatedLoanRefNo}")]
-        public HttpResponseMessage GetRelatedOverdraftFacilityDetail(string relatedLoanRefNo)
+        [Route("related-overdraft-facilty-details/{loanId}")]
+        public HttpResponseMessage GetRelatedOverdraftFacilityDetail(int loanId)
         {
             try
             {
-                var data = repo.RelatedOverdraftFacilityDetail(relatedLoanRefNo);
+                var data = repo.RelatedOverdraftFacilityDetail(loanId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -375,12 +375,12 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("related-contingent-facilty-details/{relatedLoanRefNo}")]
-        public HttpResponseMessage GetRelatedContingentFacilityDetail(string relatedLoanRefNo)
+        [Route("related-contingent-facilty-details/{loanId}")]
+        public HttpResponseMessage GetRelatedContingentFacilityDetail(int loanId)
         {
             try
             {
-                var data = repo.RelatedContingentFacilityDetail(relatedLoanRefNo);
+                var data = repo.RelatedContingentFacilityDetail(loanId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
