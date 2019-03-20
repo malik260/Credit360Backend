@@ -66,33 +66,33 @@ namespace FintrakBanking.Repositories.Finance
 
             //if (applicationDate.AddDays(1) == nextWorkDay)
             //{
-                
+
 
             //    ProcessEndOfDay(applicationDate, model.companyId, model.createdBy);
 
             //}
             //else
             //{
-                DateTime runDate = applicationDate;
+            DateTime runDate = applicationDate;
 
-                do
-                {
-                    ProcessEndOfDay(runDate, model.companyId, model.createdBy);
+            do
+            {
+                ProcessEndOfDay(runDate, model.companyId, model.createdBy);
 
-                    runDate = runDate.AddDays(1);
+                runDate = runDate.AddDays(1);
 
-                    var currentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
-                    currentDate.CURRENTDATE = runDate;
-                    currentDate.REFRESHSTATUS = false;
+                var currentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
+                currentDate.CURRENTDATE = runDate;
+                currentDate.REFRESHSTATUS = false;
                 //begin of day //
 
-                    ProcessBeginOfDay(runDate, model.companyId, model.createdBy);
+                ProcessBeginOfDay(runDate, model.companyId, model.createdBy);
 
-                    context.SaveChanges();
+                context.SaveChanges();
 
-                    
-                }
-                while (runDate < nextWorkDay);
+
+            }
+            while (runDate < nextWorkDay);
             //}
 
             //var financeCurrentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
@@ -594,11 +594,11 @@ namespace FintrakBanking.Repositories.Finance
         [OperationBehavior(TransactionScopeRequired = true)]
         public void ProcessBeginOfDay(DateTime date, int companyId, int staffId)
         {
-            
+
             DateTime dateChange = date;
 
             dateChange = dateChange.AddDays(-1);
-            
+
             var eodOperationProcesses = (from e in context.TBL_EOD_OPERATION_LOG
                                          join f in context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION) on e.EODOPERATIONID equals f.EODOPERATIONID
                                          where e.COMPANYID == companyId && e.EODDATE == dateChange && (e.EODSTATUSID == (int)EodOperationStatusEnum.Processing
@@ -717,7 +717,7 @@ namespace FintrakBanking.Repositories.Finance
                 }
 
             }
-            
+
             var eodNew = context.TBL_FINANCE_ENDOFDAY.Where(x => x.DATE == dateChange && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).FirstOrDefault();
 
             eodNew.ENDDATETIME = DateTime.Now;

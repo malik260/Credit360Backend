@@ -5946,13 +5946,13 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var loan = model;
                     var reviewDate = model.effectiveDate.AddDays(31);
-                    if(reviewDate >= model.maturityDate)
+                    if (reviewDate >= model.maturityDate)
                     {
                         throw new ConditionNotMetException("The review date must be prior to the expiry date. Review date is equal to effective date plus one month.");
                     }
 
                     var data = new OverDraftTopUpAndRenewViewModel
-                    {   
+                    {
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
                         applicationDate = systemDate.ToString("dd-MMM-yyyy", null), // loan.effectiveDate.ToString("dd-MMM-yyyy", null),
                         sanctionReferenceNumber = loan.serialNumber,
@@ -13269,16 +13269,16 @@ namespace FintrakBanking.Repositories.Credit
                 if (model.principalFirstPaymentDate < model.proposedEffectiveDate)
                     throw new ConditionNotMetException("Principal First Payment Date must be greater than efffective date");
             }
-            if(model.operationTypeId == (short)OperationsEnum.OverdraftRenewal)
+            if (model.operationTypeId == (short)OperationsEnum.OverdraftRenewal)
             {
 
                 if ((model.maturityDate.Value - model.proposedEffectiveDate).Days < 30)
                 {
-                   throw new ConditionNotMetException("The Overdraft renewal period is too short for normal OD");
+                    throw new ConditionNotMetException("The Overdraft renewal period is too short for normal OD");
                 }
-               
+
                 var reviewDate = model.proposedEffectiveDate.AddDays(31);
-                if(reviewDate > model.maturityDate)
+                if (reviewDate > model.maturityDate)
                 {
                     throw new ConditionNotMetException("The review date must be prior to expiry date. Review date equals effective date plus one month");
                 }
@@ -15956,7 +15956,7 @@ namespace FintrakBanking.Repositories.Credit
                     TEAMMISCODE = oldContingent.TEAMMISCODE,
                     //INTERESTRATE = oldContingent.INTERESTRATE,
                     EFFECTIVEDATE = operationRec.EFFECTIVEDATE,// model.effectiveDate,
-                    MATURITYDATE = Convert.ToDateTime(operationRec.MATURITYDATE) , // model.maturityDate,
+                    MATURITYDATE = Convert.ToDateTime(operationRec.MATURITYDATE), // model.maturityDate,
                     BOOKINGDATE = currentDate.Date,
                     //OVERDRAFTLIMIT = oldContingent.OVERDRAFTLIMIT,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
@@ -16864,7 +16864,6 @@ namespace FintrakBanking.Repositories.Credit
                              //b.LOANSTATUSID == (short)LoanStatusEnum.Active && 
                              a.LOANID == loanId && a.OPERATIONCOMPLETED == false
                              && a.LOANREVIEWOPERATIONID == loanReviewOperationsId
-
                              select new LoanPaymentRestructureScheduleInputViewModel()
                              {
                                  loanId = b.TERMLOANID,
@@ -17485,7 +17484,7 @@ namespace FintrakBanking.Repositories.Credit
                     var model = (
                                 from a in context.TBL_LOAN_REVIEW_OPERATION
                                 join b in context.TBL_LOAN_CONTINGENT on a.LOANID equals b.CONTINGENTLOANID
-                                where 
+                                where
                                 //b.LOANSTATUSID == (short)LoanStatusEnum.Active && 
                                 a.LOANID == loanId && a.OPERATIONCOMPLETED == false
                                 && a.LOANREVIEWOPERATIONID == loanReviewOperationsId
@@ -17496,8 +17495,8 @@ namespace FintrakBanking.Repositories.Credit
                                     loanId = b.CONTINGENTLOANID,
                                     principalAmount = (double)a.PREPAYMENT,
                                     loanSystemTypeId = a.LOANSYSTEMTYPEID,
-                                    //interestRate = b.INTERESTRATE,
-                                    effectiveDate = b.EFFECTIVEDATE,
+                                //interestRate = b.INTERESTRATE,
+                                effectiveDate = b.EFFECTIVEDATE,
                                     maturityDate = b.MATURITYDATE,
                                     integralFeeAmount = 0,
                                     newEffectiveDate = a.EFFECTIVEDATE,
@@ -21704,8 +21703,8 @@ namespace FintrakBanking.Repositories.Credit
                                      {
                                          x.exchangeRate = financeTransaction.GetExchangeRate(applicationDate, x.currencyId, x.companyId).sellingRate;
                                          x.dailyAccuralAmount = ((x.interestRate / 100) * (double)x.mainAmount * (1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId)));
-                                         //x.dailyAccuralAmount = ((x.interestRate / 100) * (double)x.availableBalance * (1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId)));
-                                         return x;
+                                 //x.dailyAccuralAmount = ((x.interestRate / 100) * (double)x.availableBalance * (1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId)));
+                                 return x;
                                      });
 
 
