@@ -793,7 +793,7 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Covenant..........
                         AddLoanCovenant(model, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
                         //............save Loan Fees..........
-                        AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail, false);
+                        AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail);
 
                         model.loanReferenceNumber = loanReferenceNumber;
 
@@ -1013,7 +1013,7 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Covenant..........
                         AddLoanCovenant(entity, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
                         //............save Loan Fees..........
-                        AddLoanFees(entity.loanChargeFee,  loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity, applicationDetail, false);
+                        AddLoanFees(entity.loanChargeFee,  loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity, applicationDetail);
                         entity.loanReferenceNumber = loanReferenceNumber;
 
                         //...................Saving Loan Collaterals Mapping.......................
@@ -1417,7 +1417,7 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
                             
-                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail, false);
+                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
@@ -1709,7 +1709,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (LogApproval(approvalModel, (int)OperationsEnum.CommercialLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                         {
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail, false);
+                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
 
                             //...................Saving Commercial Loan Collaterals Mapping.......................
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
@@ -2041,7 +2041,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (LogApproval(approvalModel, (int)OperationsEnum.ForeignExchangeLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                         {
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee,  loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity,applicationDetail,false);
+                            AddLoanFees(entity.loanChargeFee,  loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity,applicationDetail);
 
                             //...................Saving FX Loan Collaterals Mapping.......................
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
