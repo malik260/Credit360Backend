@@ -12701,7 +12701,7 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion
 
-        public LoanViewModel GetRunningLoans(int companyId, string refNo)
+        public LoanViewModel GetWriteOffLoans(int companyId, string refNo)
         {
             var applicationDate = generalSetup.GetApplicationDate();
             var data = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId);
@@ -12796,7 +12796,100 @@ namespace FintrakBanking.Repositories.Credit
 
             return runningLoan;
         }
+        public LoanViewModel GetRunningLoans(int companyId, string refNo)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            var data = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId);
+            DateTime maturityDate = data.MATURITYDATE;
+            DateTime effectiveDate = data.EFFECTIVEDATE;
+            //decimal outStandingBalance = data.OUTSTANDINGPRINCIPAL;
+            TimeSpan difference = maturityDate - applicationDate;
+            int days = (int)difference.TotalDays;
+            //decimal accruedInterest = 0;
+            //var accInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY
+            //                   where a.TBL_LOAN.TERMLOANID == data.TERMLOANID && a.DATE == applicationDate
+            //                   select a).FirstOrDefault();
+            //if (accInterest != null)
+            //{
+            //    accruedInterest = accInterest.ACCRUEDINTEREST;
+            //}
+            //else
+            //{
+            //    //throw new SecureException("Application Date not found in Payment Schedule");
+            //    //accruedInterest = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select();
+            //}
 
+            //accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
+            //DateTime nextPaymentDate = DateTime.Now;
+            //var paymentDate = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
+            //                   where a.TBL_LOAN.TERMLOANID == data.TERMLOANID && a.PAYMENTDATE >= applicationDate
+            //                   select a).FirstOrDefault();
+
+            //if (paymentDate != null)
+            //{
+            //    nextPaymentDate = paymentDate.PAYMENTDATE;
+            //}
+            //else
+            //{
+            //    throw new SecureException("Application Date not found in Payment Schedule");
+            //}
+
+
+            //outStandingBalance = decimal.Round(outStandingBalance, 2, MidpointRounding.AwayFromZero);
+
+            //decimal pastDue = decimal.Round((data.PASTDUEINTEREST + data.INTERESTONPASTDUEINTEREST + data.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
+            //decimal pastDuePrincipal = decimal.Round((data.PASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
+
+            //decimal totalamount = (accruedInterest + outStandingBalance + pastDue + pastDuePrincipal);
+            decimal totalamount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.BALANCE).FirstOrDefault();
+            decimal? writtenOffAccruedAmount = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == data.TERMLOANID).Select(x => x.WRITTENOFFACCRUALAMOUNT).FirstOrDefault();
+
+            var runningLoan = (from l in context.TBL_LOAN
+                               where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo //&& l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                               select new LoanViewModel()
+                               {
+                                   loanId = l.TERMLOANID,
+                                   writtenOffAccruedAmount = writtenOffAccruedAmount,
+                                   companyName = l.TBL_COMPANY.NAME,
+                                   companyId = l.COMPANYID,
+                                   customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.MIDDLENAME + " " + l.TBL_CUSTOMER.LASTNAME,
+                                   customerId = l.CUSTOMERID,
+                                   approvedAmount = l.PRINCIPALAMOUNT,
+                                   branchId = l.BRANCHID,
+                                   branchName = l.TBL_BRANCH.BRANCHNAME,
+                                   interestRate = l.INTERESTRATE,
+                                   outstandingInterest = l.OUTSTANDINGINTEREST,
+                                   outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
+                                   principalAmount = l.PRINCIPALAMOUNT,
+                                   currency = l.TBL_CURRENCY.CURRENCYNAME,
+                                   loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                   effectiveDate = applicationDate,
+                                   previousEffectiveDate = l.EFFECTIVEDATE,
+                                   equityContribution = 0,
+                                   maintainTenor = true,
+                                   maturityDate = l.MATURITYDATE,
+                                   scheduleTypeId = l.SCHEDULETYPEID,
+                                   scheduleTypeCategoryId = l.TBL_LOAN_SCHEDULE_TYPE.SCHEDULECATEGORYID,
+                                  // writtenOffAmount = balance,
+                                   teno = days,
+                                   //newTenor = 0,
+                                   //accrualedAmount = accruedInterest,
+                                   totalAmount = totalamount,
+                                   //firstPrincipalPaymentDate = nextPaymentDate,
+                                   //firstInterestPaymentDate = nextPaymentDate,
+                                   //principalFrequencyTypeId = l.PRINCIPALFREQUENCYTYPEID,
+                                   //interestFrequencyTypeId = l.INTERESTFREQUENCYTYPEID,
+                                   //pastDueTotal = pastDue,
+                                   //pastDuePrincipal = pastDuePrincipal, //TODO
+                                   relationshipManagerId = l.RELATIONSHIPMANAGERID,
+                                   relationshipOfficerId = l.RELATIONSHIPOFFICERID,
+                                   productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID,
+                                   systemCurrentDate = applicationDate,
+                                   loanSystemTypeId = l.LOANSYSTEMTYPEID,
+                               }).FirstOrDefault();
+
+            return runningLoan;
+        }
         public List<LoanPaymentSchedulePeriodicViewModel> GeneratePrepaymentSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
             var loanInfo = context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
@@ -16520,7 +16613,7 @@ namespace FintrakBanking.Repositories.Credit
                 };
 
 
-                chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPosting(model, oldContingent.LOANREFERENCENUMBER, (decimal)model.principalAmount, "Contingent Liability posting", (int)OperationsEnum.ContingentLiabilityAmountReduction));
+                chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPostingReduction(model, oldContingent.LOANREFERENCENUMBER, (decimal)model.principalAmount, "Contingent Liability posting", (int)OperationsEnum.ContingentLiabilityAmountReduction));
 
                 financeTransaction.PostTransaction(chargeDetails, false, twoFactorAuth);
 
@@ -16780,8 +16873,8 @@ namespace FintrakBanking.Repositories.Credit
                                  interestFrequency = b.INTERESTFREQUENCYTYPEID,
                                  principalFirstpaymentDate = (DateTime)b.FIRSTPRINCIPALPAYMENTDATE,
                                  interestFirstpaymentDate = (DateTime)b.FIRSTINTERESTPAYMENTDATE,
-                                 interestFrequencyTypeId = b.INTERESTFREQUENCYTYPEID,
                                  principalFrequencyTypeId = b.PRINCIPALFREQUENCYTYPEID,
+                                 interestFrequencyTypeId = b.INTERESTFREQUENCYTYPEID,
                                  interestRate = b.INTERESTRATE,
                                  effectiveDate = b.EFFECTIVEDATE,
                                  maturityDate = b.MATURITYDATE,
