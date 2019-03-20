@@ -10958,7 +10958,7 @@ namespace FintrakBanking.Repositories.Credit
                              exchangeRate = a.EXCHANGERATE,
                              loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                              loanReferenceNumber = refNo,
-                             RelatedloanReferenceNumber = a.LOANREFERENCENUMBER,
+                             relatedloanReferenceNumber = a.LOANREFERENCENUMBER,
                              subSectorId = a.SUBSECTORID,
                              principalFrequencyTypeId = (short)b.PRINCIPALFREQUENCYTYPEID,
                              interestFrequencyTypeId = (short)b.INTERESTFREQUENCYTYPEID,
@@ -11039,7 +11039,7 @@ namespace FintrakBanking.Repositories.Credit
             addLoan.EXCHANGERATE = model.exchangeRate;
             addLoan.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
             addLoan.LOANREFERENCENUMBER = model.loanReferenceNumber;
-            addLoan.RELATED_LOAN_REFERENCE_NUMBER = model.RelatedloanReferenceNumber;
+            addLoan.RELATED_LOAN_REFERENCE_NUMBER = model.relatedloanReferenceNumber;
             addLoan.SUBSECTORID = model.subSectorId;
             addLoan.PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId;
             addLoan.INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId;
@@ -19995,7 +19995,7 @@ namespace FintrakBanking.Repositories.Credit
                 var loanModel = GetCommercialLoanViewModel(newCommercialLoanLineEntry);
                 loanModel.loanId = xloan.TERMLOANID;
                 loanModel.loanReferenceNumber = xloan.LOANREFERENCENUMBER;
-                loanModel.RelatedloanReferenceNumber = xloan.RELATED_LOAN_REFERENCE_NUMBER;
+                loanModel.relatedloanReferenceNumber = xloan.RELATED_LOAN_REFERENCE_NUMBER;
 
                 // *** Post Product Fee charges *** //
                 //application.
@@ -20055,7 +20055,7 @@ namespace FintrakBanking.Repositories.Credit
                 currencyId = newCommercialLoanLineEntry.CURRENCYID,
                 exchangeRate = newCommercialLoanLineEntry.EXCHANGERATE,
                 loanReferenceNumber = newCommercialLoanLineEntry.LOANREFERENCENUMBER,
-                RelatedloanReferenceNumber = newCommercialLoanLineEntry.RELATED_LOAN_REFERENCE_NUMBER,
+                relatedloanReferenceNumber = newCommercialLoanLineEntry.RELATED_LOAN_REFERENCE_NUMBER,
                 principalNumberOfInstallment = newCommercialLoanLineEntry.PRINCIPALNUMBEROFINSTALLMENT,
                 interestNumberOfInstallment = newCommercialLoanLineEntry.INTERESTINSTALLMENTLEFT,
                 interestRate = newCommercialLoanLineEntry.INTERESTRATE,

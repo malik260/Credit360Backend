@@ -121,7 +121,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
-        public string RelatedloanReferenceNumber { get; set; }
+        public string relatedloanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public string lmsApplicationReferenceNumber { get; set; }
 
