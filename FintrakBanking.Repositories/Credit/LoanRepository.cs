@@ -1416,6 +1416,7 @@ namespace FintrakBanking.Repositories.Credit
                                 }
                             }
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            
                             AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail, false);
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
@@ -4631,18 +4632,23 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short loanSystemTypeId, LoanViewModel loanModel, TBL_LOAN_APPLICATION_DETAIL facilityDetail, bool chargeByApprovedAmount)
+        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short loanSystemTypeId, LoanViewModel loanModel, TBL_LOAN_APPLICATION_DETAIL facilityDetail)
         {
-            if (chargeByApprovedAmount)
-            {
-               if( context.TBL_LOAN_FEE.Where(x=>x.LOANID == facilityDetail.LOANAPPLICATIONDETAILID && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).Any())
-                {
-                    return;
-                }
-            }
+            var chargeByApprovedAmount = false;
             foreach (var ent in feeModel)
             {
-                if(ent.dealTypeId != (short)ChargeFeeDealTypeEnum.Tax)
+                var chargeFee = context.TBL_CHARGE_FEE.Find(ent.chargeFeeId);
+                if(chargeFee != null & chargeFee.FEETARGETID == (short)ChargeFeeTargetEnum.ApprovedLoanAmount)
+                {
+                    if (context.TBL_LOAN_FEE.Where(x => x.LOANID == facilityDetail.LOANAPPLICATIONDETAILID && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).Any())
+                    {
+                        continue;
+                    }
+                    else { chargeByApprovedAmount = true; }
+                }
+               
+
+                if (ent.dealTypeId != (short)ChargeFeeDealTypeEnum.Tax)
                 {
                     var fee = new TBL_LOAN_FEE
                     {
