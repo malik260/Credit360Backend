@@ -387,7 +387,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
 
                                    revolvingType = context.TBL_LOAN_REVOLVING_TYPE.Where(x => x.REVOLVINGTYPEID == a.REVOLVINGTYPEID).Select(x => x.REVOLVINGTYPENAME).FirstOrDefault(),
-                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                    pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                    pastDueInterest = a.PASTDUEINTEREST,
                                    interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
@@ -489,7 +489,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
 
                                    revolvingType = context.TBL_LOAN_REVOLVING_TYPE.Where(x => x.REVOLVINGTYPEID == a.REVOLVINGTYPEID).Select(x => x.REVOLVINGTYPENAME).FirstOrDefault(),
-                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                    pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                    pastDueInterest = a.PASTDUEINTEREST,
                                    interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
@@ -577,7 +577,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
 
-                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                    ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                                    loanStatus = context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == a.LOANSTATUSID).Select(x => x.ACCOUNTSTATUS).FirstOrDefault(),
                                    istenored = a.ISTENORED ? "Yes" : "No",
@@ -684,7 +684,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = cur.CURRENCYNAME,
                                    productPriceIndexRate = a.PRODUCTPRICEINDEXRATE,
-                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                    ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                                    approvedByName = context.TBL_STAFF.Where(x => x.STAFFID == a.APPROVEDBY).Select(x => x.FIRSTNAME + "" + x.LASTNAME).FirstOrDefault(),
                                    approvedComment = a.APPROVERCOMMENT,
@@ -952,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
-                                       RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                       relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                        customerName = b.FIRSTNAME + " " + b.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        // applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
@@ -990,7 +990,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
-                                       RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                       relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                        customerName = b.FIRSTNAME + " " + b.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        // applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
@@ -1026,7 +1026,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanId = a.CONTINGENTLOANID,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
-                                       RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                       relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
@@ -1059,7 +1059,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanId = a.REVOLVINGLOANID,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
-                                       RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                       relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
@@ -1088,7 +1088,7 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        loanId = a.TERMLOANID,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                       RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                       relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        principalAmount = a.PRINCIPALAMOUNT,
                                        outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
@@ -1146,7 +1146,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanId = a.REVOLVINGLOANID,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
-                                       RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                       relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
@@ -1176,7 +1176,7 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        loanId = a.REVOLVINGLOANID,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                       RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                       relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        principalAmount = a.OVERDRAFTLIMIT,
                                        interestRate = a.INTERESTRATE,
@@ -1228,7 +1228,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanId = a.CONTINGENTLOANID,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
-                                       RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                       relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
@@ -1292,7 +1292,7 @@ namespace FintrakBanking.Repositories.Credit
                                    select new LoanViewModel
                                    {
                                        loanId = a.CONTINGENTLOANID,
-                                       RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                       relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        principalAmount = a.CONTINGENTAMOUNT,
@@ -1397,7 +1397,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public LoanViewModel RelatedFacilityDetail(string relatedLaonRefNo)
+        public LoanViewModel RelatedFacilityDetail(int loanId)
         {
             var loanDetails = (from a in context.TBL_LOAN
                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -1412,7 +1412,7 @@ namespace FintrakBanking.Repositories.Credit
                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                join ro in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals ro.STAFFID
                                join rm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals rm.STAFFID
-                               where a.RELATED_LOAN_REFERENCE_NUMBER == relatedLaonRefNo && a.ISDISBURSED == true
+                               where a.TERMLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
                                    loanId = a.TERMLOANID,
@@ -1490,7 +1490,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = cur.CURRENCYNAME,
                                    productPriceIndexRate = a.PRODUCTPRICEINDEXRATE,
-                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                    ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                                    approvedByName = context.TBL_STAFF.Where(x => x.STAFFID == a.APPROVEDBY).Select(x => x.FIRSTNAME + "" + x.LASTNAME).FirstOrDefault(),
                                    approvedComment = a.APPROVERCOMMENT,
@@ -1510,7 +1510,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public LoanViewModel RelatedOverdraftFacilityDetail(string RelatedLoanRefNo)
+        public LoanViewModel RelatedOverdraftFacilityDetail(int loanId)
         {
             var loanDetails = (from a in context.TBL_LOAN_REVOLVING
                                join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
@@ -1522,7 +1522,7 @@ namespace FintrakBanking.Repositories.Credit
                                join pr in context.TBL_PRODUCT on a.PRODUCTID equals pr.PRODUCTID
                                join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
                                join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
-                               where a.RELATED_LOAN_REFERENCE_NUMBER== RelatedLoanRefNo
+                               where a.REVOLVINGLOANID== loanId
                                select new LoanViewModel
                                {
                                    loanId = a.REVOLVINGLOANID,
@@ -1581,7 +1581,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
 
                                    revolvingType = context.TBL_LOAN_REVOLVING_TYPE.Where(x => x.REVOLVINGTYPEID == a.REVOLVINGTYPEID).Select(x => x.REVOLVINGTYPENAME).FirstOrDefault(),
-                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                    pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                    pastDueInterest = a.PASTDUEINTEREST,
                                    interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
@@ -1597,7 +1597,7 @@ namespace FintrakBanking.Repositories.Credit
             return loanDetails;
         }
 
-        public LoanViewModel RelatedContingentFacilityDetail(string RelatedLoanRefNo)
+        public LoanViewModel RelatedContingentFacilityDetail(int loanId)
         {
             var loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
@@ -1609,7 +1609,7 @@ namespace FintrakBanking.Repositories.Credit
                                join pr in context.TBL_PRODUCT on a.PRODUCTID equals pr.PRODUCTID
                                join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
                                join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
-                               where a.RELATED_LOAN_REFERENCE_NUMBER == RelatedLoanRefNo && a.ISDISBURSED == true
+                               where a.CONTINGENTLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
                                    loanId = a.CONTINGENTLOANID,
@@ -1665,7 +1665,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
 
-                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                    ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                                    loanStatus = context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == a.LOANSTATUSID).Select(x => x.ACCOUNTSTATUS).FirstOrDefault(),
                                    istenored = a.ISTENORED ? "Yes" : "No",
@@ -1851,7 +1851,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = cur.CURRENCYNAME,
                                    productPriceIndexRate = a.PRODUCTPRICEINDEXRATE,
-                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                    ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                                    approvedByName = context.TBL_STAFF.Where(x => x.STAFFID == a.APPROVEDBY).Select(x => x.FIRSTNAME + "" + x.LASTNAME).FirstOrDefault(),
                                    approvedComment = a.APPROVERCOMMENT,
@@ -1945,7 +1945,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
 
-                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                    ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                                    loanStatus = context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == a.LOANSTATUSID).Select(x => x.ACCOUNTSTATUS).FirstOrDefault(),
                                    istenored = a.ISTENORED ? "Yes" : "No",
@@ -2026,7 +2026,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
 
                                    revolvingType = context.TBL_LOAN_REVOLVING_TYPE.Where(x => x.REVOLVINGTYPEID == a.REVOLVINGTYPEID).Select(x => x.REVOLVINGTYPENAME).FirstOrDefault(),
-                                   RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                   relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                                    pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                    pastDueInterest = a.PASTDUEINTEREST,
                                    interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
@@ -2291,7 +2291,7 @@ namespace FintrakBanking.Repositories.Credit
                            exchangeRate = a.EXCHANGERATE,
                            currencyId = a.CURRENCYID,
                            productPriceIndexRate = a.PRODUCTPRICEINDEXRATE,
-                           RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                           relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                            ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                            approvedByName = context.TBL_STAFF.Where(x => x.STAFFID == a.APPROVEDBY).Select(x => x.FIRSTNAME + "" + x.LASTNAME).FirstOrDefault(),
                            approvedComment = a.APPROVERCOMMENT,
@@ -2345,7 +2345,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = a.DATETIMECREATED,
                             exchangeRate = a.EXCHANGERATE,
                             currencyId = a.CURRENCYID,
-                            RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                            relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                             ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                             approvedByName = context.TBL_STAFF.Where(x => x.STAFFID == a.APPROVEDBY).Select(x => x.FIRSTNAME + "" + x.LASTNAME).FirstOrDefault(),
                             approvedComment = a.APPROVERCOMMENT,
@@ -2393,7 +2393,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = a.DATETIMECREATED,
                             exchangeRate = a.EXCHANGERATE,
                             currencyId = a.CURRENCYID,
-                            RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                            relatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
                             ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                             approvedByName = context.TBL_STAFF.Where(x => x.STAFFID == a.APPROVEDBY).Select(x => x.FIRSTNAME + "" + x.LASTNAME).FirstOrDefault(),
                             approvedComment = a.APPROVERCOMMENT,
