@@ -7970,7 +7970,7 @@ namespace FintrakBanking.Repositories.Credit
                                  //currency = a.TBL_CURRENCY.CURRENCYNAME
                              });
 
-                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) ||
+                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.customerCode.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.firstName.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.lastName.ToLower().Contains(searchQuery.ToLower()) ||
@@ -8013,7 +8013,7 @@ namespace FintrakBanking.Repositories.Credit
                                  currencyCode = a.TBL_CURRENCY.CURRENCYCODE
                              });
 
-                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) ||
+                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.customerCode.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.firstName.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.lastName.ToLower().Contains(searchQuery.ToLower()) ||
@@ -8056,7 +8056,7 @@ namespace FintrakBanking.Repositories.Credit
                                  systemCurrentDate = applicationDate,
                              });
 
-                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) ||
+                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.customerCode.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.firstName.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.lastName.ToLower().Contains(searchQuery.ToLower()) ||
@@ -8133,7 +8133,7 @@ namespace FintrakBanking.Repositories.Credit
                                  }).FirstOrDefault(),
                              });
 
-                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) ||
+                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.customerCode.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.firstName.ToLower().Contains(searchQuery.ToLower()) ||
                                                    x.lastName.ToLower().Contains(searchQuery.ToLower()) ||
@@ -8242,7 +8242,7 @@ namespace FintrakBanking.Repositories.Credit
                                      //currencyId = a.CURRENCYID,
                                      //currency = a.TBL_CURRENCY.CURRENCYNAME
                                  });
-                    allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) || x.customerCode.ToLower().Contains(searchQuery) ||
+                    allFilteredLoan = loans.Where(x => x.loanReferenceNumber.ToLower().Contains(searchQuery) || x.customerCode.ToLower().Contains(searchQuery) ||
                                        x.firstName.ToLower().Contains(searchQuery) ||
                                        x.lastName.ToLower().Contains(searchQuery) ||
                                        x.currencyCode.ToLower().Contains(searchQuery) ||
@@ -8276,7 +8276,7 @@ namespace FintrakBanking.Repositories.Credit
                                        where a.ISDISBURSED == true
                                        && ((a.OPERATIONID == (short)OperationsEnum.CommercialLoanBooking) || (a.OPERATIONID == (short)OperationsEnum.ForeignExchangeLoanBooking))
                                        && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                       && ((a.LOANREFERENCENUMBER.Contains(searchQuery)) ||
+                                       && ((a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.ToLower())) ||
                                             (b.CUSTOMERCODE.ToLower().Contains(searchQuery)) ||
                                             (b.FIRSTNAME.ToLower().Contains(searchQuery)) ||
                                             (b.LASTNAME.ToLower().Contains(searchQuery)) ||
