@@ -231,7 +231,7 @@ namespace FintrakBanking.ViewModels.Reports
         public string customerName { get { return lastName + " " + firstName + " " + middleName; } }
         public string applicationRefrenceNumber { get; set; }
         public string emailAddress { get; set; }
-
+       
         public decimal totalOutstanding { get { return outstandingPrincipal + outstandingIntrestAmt; } }
         public decimal recoveredAmount { get { return grantedAmount - outstandingPrincipal; } } 
     }
@@ -282,6 +282,7 @@ namespace FintrakBanking.ViewModels.Reports
 
     public class FCYScheuledLoanViewModel
     {
+        public decimal loanGlBalance { set; get; }
         public string loanRefrenceNumber { set; get; }
         public string accountNumber { set; get; }
         public string loanTypeName { set; get; }
@@ -297,6 +298,8 @@ namespace FintrakBanking.ViewModels.Reports
         public string middleName { set; get; }
         public string customerName { get { return firstName + " " + middleName + " " + lastName; } }
         public int tenorDays { get; set; }
+        public int tenorToDate { get; set; }
+        public int tenorToMaturity { get; set; }
         public string companyName { get; set; }
         public string logoPath { get; set; }
         public string applicationRefrenceNumber { get; set; }

@@ -72,7 +72,7 @@ namespace FintrakBanking.ReportObjects
                         join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
                         where a.COMPANYID == companyId && a.TERMLOANID == tearmLoanId
-                        orderby a.BOOKINGDATE descending//&& c.CUSTOMERSENSITIVITYLEVELID <= staffSensitivityLevelId
+                        orderby b.PAYMENTDATE // a.BOOKINGDATE descending//&& c.CUSTOMERSENSITIVITYLEVELID <= staffSensitivityLevelId
                         select new LoanInformation()
                         {
                             accountNumber = context.TBL_CASA.Where(c => c.CASAACCOUNTID == a.CASAACCOUNTID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
@@ -524,7 +524,8 @@ namespace FintrakBanking.ReportObjects
                                paymentdate = b.PAYMENTDATE,
                                intrestrate = b.INTERESTRATE,
                                emailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
-                               phoneNumber = c.PHONENUMBER
+                               phoneNumber = c.PHONENUMBER,
+                               
 
                            };
 
@@ -863,8 +864,10 @@ namespace FintrakBanking.ReportObjects
 
         public IList<FCYScheuledLoanViewModel> FCYScheuledLoan(int companyId, int loanId)
         {
+
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
+                var currentDate = context.TBL_FINANCECURRENTDATE.Where(x => x.COMPANYID == companyId).Select(d => d.CURRENTDATE).FirstOrDefault();
                 var currdata = from a in context.TBL_LOAN
                                where a.COMPANYID == companyId
                                && a.TERMLOANID == loanId
@@ -879,6 +882,7 @@ namespace FintrakBanking.ReportObjects
                                    lastName = a.TBL_CUSTOMER.LASTNAME,
                                    middleName = a.TBL_CUSTOMER.MIDDLENAME,
                                    loanCurrency = a.TBL_CURRENCY.CURRENCYCODE,
+                                   loanGlBalance = a.PRINCIPALAMOUNT,
                                    //scheduleTypeId = a.SCHEDULETYPEID,
                                    //scheduleTypeName = a.TBL_LOAN_SCHEDULE_type.SCHEDULETYPENAME,
                                    interestRate = a.INTERESTRATE,
@@ -889,11 +893,13 @@ namespace FintrakBanking.ReportObjects
                                    exchangeRate = a.EXCHANGERATE,
                                    //tenorDays = a.MATURITYDATE.Subtract(a.EFFECTIVEDATE)
                                    tenorDays = (a.MATURITYDATE.Day - a.EFFECTIVEDATE.Day),
-                                   //tenorToDate =(DateTime.Now - a.EFFECTIVEDATE.Day),
+                                   tenorToDate =  (int)DbFunctions.DiffDays(a.EFFECTIVEDATE, currentDate),
+                                   tenorToMaturity = (int)DbFunctions.DiffDays(currentDate, a.MATURITYDATE),
                                    logoPath = a.TBL_COMPANY.LOGOPATH,
                                    companyName = a.TBL_COMPANY.NAME,
                                    applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                    loanFigure = a.PRINCIPALAMOUNT,
+                                   
 
                                    //tenorToDate = DbFunctions.DiffDays(DateTime.Now,(a.EFFECTIVEDATE.Day))
 
