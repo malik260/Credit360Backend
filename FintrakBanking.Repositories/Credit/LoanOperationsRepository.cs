@@ -16497,7 +16497,7 @@ namespace FintrakBanking.Repositories.Credit
                 };
 
 
-                chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPosting(model, oldContingent.LOANREFERENCENUMBER, (decimal)model.principalAmount, "Contingent Liability posting", (int)OperationsEnum.ContingentLiabilityAmountReduction));
+                chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPostingReduction(model, oldContingent.LOANREFERENCENUMBER, (decimal)model.principalAmount, "Contingent Liability posting", (int)OperationsEnum.ContingentLiabilityAmountReduction));
 
                 financeTransaction.PostTransaction(chargeDetails, false, twoFactorAuth);
 
