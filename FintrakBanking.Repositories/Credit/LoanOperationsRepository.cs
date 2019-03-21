@@ -12914,6 +12914,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel GetRunningLoans(int companyId, string refNo)
         {
             var applicationDate = generalSetup.GetApplicationDate();
+            
             var data = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId);
             DateTime maturityDate = data.MATURITYDATE;
             DateTime effectiveDate = data.EFFECTIVEDATE;
@@ -13002,6 +13003,14 @@ namespace FintrakBanking.Repositories.Credit
                                    systemCurrentDate = applicationDate,
                                    loanSystemTypeId = l.LOANSYSTEMTYPEID,
                                }).FirstOrDefault();
+
+
+            var validate = GetRepaymentDate(runningLoan.loanId);
+
+            if(validate == true)
+            {
+                runningLoan.previousEffectiveDate = runningLoan.previousEffectiveDate.AddDays(1);
+            }
 
             return runningLoan;
         }
@@ -13743,6 +13752,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId)
         {
+          var applicationDate =  generalSetup.GetApplicationDate();
             var activities = admin.GetUserActivitiesByUser(staffId);
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
@@ -13884,7 +13894,7 @@ namespace FintrakBanking.Repositories.Credit
                                 approvedAmount = ld.APPROVEDAMOUNT,
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
                                 lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
-                               // pastDueInterest = 
+
                                 //lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.TERMLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                 // lmsLoanReferenceNumber = mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 dateTimeCreated = op.DATECREATED,
