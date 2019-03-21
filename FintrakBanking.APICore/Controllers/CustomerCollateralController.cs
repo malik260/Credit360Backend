@@ -56,7 +56,7 @@ namespace FintrakBanking.APICore.Controllers
           //  this.guaratee = guaratee;
         }
 
-        #region New
+        #region
         [HttpGet, Route("collateral-document-release/{collateralId}")]
         public HttpResponseMessage GetCollateralReleaseDocumentByCollateral(int collateralId)
         {

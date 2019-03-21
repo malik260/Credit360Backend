@@ -121,7 +121,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
-        public string RelatedloanReferenceNumber { get; set; }
+        public string relatedloanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public string lmsApplicationReferenceNumber { get; set; }
 
@@ -876,6 +876,8 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
         public DateTime date  { get; set; }
         public decimal feeRate { get; set; }
+        public double? rate { get; set; }
+
     }
 
     public class LoanCollateralMappingViewModel : CollateralViewModel
