@@ -5354,6 +5354,7 @@ namespace FintrakBanking.Repositories.Credit
                     model.sourceBranchId = runningFacility.BRANCHID;
                     model.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
                     model.loanId = runningFacility.TERMLOANID;
+                    model.loanSystemTypeId = runningFacility.LOANSYSTEMTYPEID;
 
                     loanModel.interestRate = runningFacility.INTERESTRATE;
                     loanModel.effectiveDate = runningFacility.EFFECTIVEDATE;
@@ -5379,6 +5380,7 @@ namespace FintrakBanking.Repositories.Credit
                     model.sourceBranchId = runningFacility.BRANCHID;
                     model.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
                     model.loanId = runningFacility.REVOLVINGLOANID;
+                    model.loanSystemTypeId = runningFacility.LOANSYSTEMTYPEID;
 
                     loanModel.interestRate = runningFacility.INTERESTRATE;
                     loanModel.effectiveDate = runningFacility.EFFECTIVEDATE;
@@ -5391,6 +5393,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanModel.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
                     loanModel.loanReferenceNumber = runningFacility.LOANREFERENCENUMBER;
                     loanModel.loanId = runningFacility.REVOLVINGLOANID;
+
                 }
                 if (productType == (int)LoanSystemTypeEnum.ContingentLiability)
                 {
@@ -5404,6 +5407,7 @@ namespace FintrakBanking.Repositories.Credit
                     model.sourceBranchId = runningFacility.BRANCHID;
                     model.sourceReferenceNumber = runningFacility.LOANREFERENCENUMBER;
                     model.loanId = runningFacility.CONTINGENTLOANID;
+                    model.loanSystemTypeId = runningFacility.LOANSYSTEMTYPEID;
 
                     loanModel.interestRate = 1;
                     loanModel.effectiveDate = runningFacility.EFFECTIVEDATE;
@@ -5450,7 +5454,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 financeTransaction.PostTransaction(inputTransactions, false, twoFactorAuth);
 
-                var feeResult = context.TBL_LOAN_FEE.Where(x => x.LOANID == loanId && x.CHARGEFEEID == model.chargeFeeId && x.LOANSYSTEMTYPEID == chargeDetails.LOANSYSTEMTYPEID).ToList();
+                var feeResult = context.TBL_LOAN_FEE.Where(x => x.LOANID == loanId && x.CHARGEFEEID == model.chargeFeeId && x.LOANSYSTEMTYPEID == model.loanSystemTypeId).ToList();
                 ArchiveLoanFee(feeResult, model);
                 feeResult.FirstOrDefault().FEEAMOUNT = (decimal)model.payAmount;
 
