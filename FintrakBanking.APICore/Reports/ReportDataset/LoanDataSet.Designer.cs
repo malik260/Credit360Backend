@@ -18186,6 +18186,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnaccount;
             
+            private global::System.Data.DataColumn columncustomerId;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public ExcessReportDataTable() {
@@ -18389,6 +18391,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerIdColumn {
+                get {
+                    return this.columncustomerId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -18445,7 +18455,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string classificationDate, 
                         string expiryDate, 
                         string groupDescription, 
-                        string account) {
+                        string account, 
+                        string customerId) {
                 ExcessReportRow rowExcessReportRow = ((ExcessReportRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         branchName,
@@ -18468,7 +18479,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         classificationDate,
                         expiryDate,
                         groupDescription,
-                        account};
+                        account,
+                        customerId};
                 rowExcessReportRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowExcessReportRow);
                 return rowExcessReportRow;
@@ -18512,6 +18524,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnexpiryDate = base.Columns["expiryDate"];
                 this.columngroupDescription = base.Columns["groupDescription"];
                 this.columnaccount = base.Columns["account"];
+                this.columncustomerId = base.Columns["customerId"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -18559,6 +18572,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columngroupDescription);
                 this.columnaccount = new global::System.Data.DataColumn("account", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnaccount);
+                this.columncustomerId = new global::System.Data.DataColumn("customerId", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerId);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -39216,6 +39231,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerId {
+                get {
+                    try {
+                        return ((string)(this[this.tableExcessReport.customerIdColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerId\' in table \'ExcessReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExcessReport.customerIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsbranchNameNull() {
                 return this.IsNull(this.tableExcessReport.branchNameColumn);
             }
@@ -39464,6 +39495,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetaccountNull() {
                 this[this.tableExcessReport.accountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerIdNull() {
+                return this.IsNull(this.tableExcessReport.customerIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerIdNull() {
+                this[this.tableExcessReport.customerIdColumn] = global::System.Convert.DBNull;
             }
         }
         

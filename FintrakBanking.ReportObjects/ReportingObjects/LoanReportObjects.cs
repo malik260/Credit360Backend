@@ -2772,7 +2772,7 @@ namespace FintrakBanking.ReportObjects
                                           customerName = cus.FIRSTNAME + " " + " " + cus.MIDDLENAME + " " + " " + cus.LASTNAME,
                                           rmCode = rm.STAFFCODE,
                                           rmName = rm.FIRSTNAME + " " + " " + rm.MIDDLENAME + " " + " " + rm.LASTNAME,
-                                          excess = (cas.AVAILABLEBALANCE > l.OVERDRAFTLIMIT ? (cas.AVAILABLEBALANCE - l.OVERDRAFTLIMIT) : 0),
+                                          excess = cas.AVAILABLEBALANCE - l.OVERDRAFTLIMIT,
                                           endDate = DateTime.Now,
                                           staffCode = st.STAFFCODE,
                                           buCode = "",
