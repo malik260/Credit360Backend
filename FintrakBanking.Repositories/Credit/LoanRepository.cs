@@ -9265,6 +9265,10 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = cur.CURRENCYNAME,
                                    currencyCode = cur.CURRENCYCODE,
+                                   interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                                   interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                                   pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                                   pastDueInterest = a.PASTDUEINTEREST,
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.TERMLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
                                        loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
