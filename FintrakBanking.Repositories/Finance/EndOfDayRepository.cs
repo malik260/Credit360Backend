@@ -434,7 +434,6 @@ namespace FintrakBanking.Repositories.Finance
                         eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                         context.SaveChanges();
                     }
-
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.UpdateLoanClassification)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
@@ -464,7 +463,6 @@ namespace FintrakBanking.Repositories.Finance
                         eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
                         context.SaveChanges();
                     }
-
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.UpdateLoanApplicationCovenant)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;

@@ -118,8 +118,8 @@ namespace FintrakBanking.Common.Enum
         TemporalCollateralRelease = 111,
         APS_RelaseChecklist = 107,
         APS_ReleaseCAP =108,
-        APS_ReleasePrincipaRequest =109
-
+        APS_ReleasePrincipaRequest =109,
+        DailyWriteoffInterestAccural = 112,
 
 
     }
