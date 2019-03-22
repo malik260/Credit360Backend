@@ -25,6 +25,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     //if (branch != null && branch != "")
                     //    branchId = short.Parse(Request.QueryString["branchId"]);
 
+                    string searchParameter = Request.QueryString["searchParameter"];
+
                     short branchId = short.Parse(Request.QueryString["branchId"]);
                     string customerName = Request.QueryString["customerName"];
                     string inputDateInfo = Request.QueryString["key1"];
@@ -54,7 +56,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
                     LoanReportObjects sla = new LoanReportObjects();
-                    var data = sla.GetStakeHolderOnExperationOfFTP(branchId, customerName, startDate);
+                    var data = sla.GetStakeHolderOnExperationOfFTP(branchId, customerName, startDate, searchParameter);
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));

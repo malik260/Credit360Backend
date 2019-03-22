@@ -222,7 +222,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CollateralDocumentViewModel> GetCustomerCollateralDocument(int collateralId)
         {
-          var data = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(x => x.COLLATERALCUSTOMERID == collateralId).Select(x => new CollateralDocumentViewModel
+           var inVaultNAme=  bankingContext.TBL_COLLATERAL_RELEASE_STATUS.Find((int)CollateralReleaseStatus.InVault).COLLATERALRELEASESTATUSNAME;
+            var releasetoBM = bankingContext.TBL_COLLATERAL_RELEASE_STATUS.Find((int)CollateralReleaseStatus.ReleasedToBM).COLLATERALRELEASESTATUSNAME;
+            var ReleasedToCustomerNAme = bankingContext.TBL_COLLATERAL_RELEASE_STATUS.Find((int)CollateralReleaseStatus.ReleasedToCustomer).COLLATERALRELEASESTATUSNAME;
+            var ReleasedToLegalNAme = bankingContext.TBL_COLLATERAL_RELEASE_STATUS.Find((int)CollateralReleaseStatus.ReleasedToLegal).COLLATERALRELEASESTATUSNAME;
+
+
+            var data = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(x => x.COLLATERALCUSTOMERID == collateralId).Select(x => new CollateralDocumentViewModel
             {
                 collateralId = x.COLLATERALCUSTOMERID,
                 documentId = x.DOCUMENTID,
@@ -230,8 +236,10 @@ namespace FintrakBanking.Repositories.Credit
                 fileData = x.FILEDATA,
                 fileName = x.FILENAME,
                 fileExtension = x.FILEEXTENSION,
-                targetId = x.TARGETID
-            });
+                targetId = x.TARGETID,
+                collateralReleaseStatusId =x.COLLATERALRELEASESTATUSID,
+              collateralReleaseStatusName = x.COLLATERALRELEASESTATUSID == null ? inVaultNAme : x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault ? inVaultNAme : x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.ReleasedToBM ? releasetoBM : x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.ReleasedToCustomer ? ReleasedToCustomerNAme: x.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.ReleasedToLegal ? ReleasedToLegalNAme : inVaultNAme,
+          });
             return data.ToList();
         }
 

@@ -313,6 +313,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralReleaseTypeName { get; set; }
         public bool? jobRequestSent { get; set; }
 
+        public int? collateralReleaseStatusId { get; set; }
+        public string collateralReleaseStatusName { get; set; }
 
 
 

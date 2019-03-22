@@ -66,7 +66,7 @@
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(60);
+                client.Timeout = TimeSpan.FromSeconds(180);
                 client.BaseAddress = new Uri(API_URL);
                 client.DefaultRequestHeaders.Authorization = token;
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -141,7 +141,7 @@
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Authorization = token;
@@ -248,7 +248,7 @@
 
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Authorization = token;
                     client.DefaultRequestHeaders.Accept.Clear();
@@ -339,7 +339,7 @@
 
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.Timeout = TimeSpan.FromSeconds(180);
                     client.DefaultRequestHeaders.Authorization = token;
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
@@ -406,7 +406,7 @@
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(60);
+                client.Timeout = TimeSpan.FromSeconds(180);
                 client.DefaultRequestHeaders.Authorization = token;
                 client.BaseAddress = new Uri(API_URL);
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -481,7 +481,7 @@
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.Timeout = TimeSpan.FromSeconds(180);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Authorization = token;
@@ -566,7 +566,7 @@
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 HttpClient client = new HttpClient(handler);
-                client.Timeout = TimeSpan.FromSeconds(60);
+                client.Timeout = TimeSpan.FromSeconds(180);
                 client.BaseAddress = new Uri(API_URL);
                 client.DefaultRequestHeaders.Authorization = token;
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -678,7 +678,7 @@
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 HttpClient client = new HttpClient(handler);
-                client.Timeout = TimeSpan.FromSeconds(60);
+                client.Timeout = TimeSpan.FromSeconds(180);
                 client.BaseAddress = new Uri(API_URL);
                 client.DefaultRequestHeaders.Authorization = token;
                 client.DefaultRequestHeaders.Accept.Clear();

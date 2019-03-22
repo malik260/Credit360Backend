@@ -65,7 +65,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string payingAccountNumber { get; set; }
 
         public string legalContingentCode { get; set; }
-
+        public int zeroToThirtyDays { get; set; }
+        public int ThirtyOneToNinety { get; set; }
+        public int ninetyOneToOneEightyDays { get; set; }
+        public int OneEightyDaysToThreeSixtyDays { get; set; }
+        public int overOneToThreeYears { get; set; }
+        public int overThreeYears { get; set; }
         public double? newInterestRate { get; set; }
         public decimal? newLineAmount { get; set; }
         public int? loanReviewOperationId { get; set; }
@@ -328,6 +333,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string baseReferenceNumber { get; set; }
         public string categoryName { get; set; }
         public string currencyName { get; set; }
+        public int tenorToMaturity { get; set; }
         public decimal dailyAccrualAmount { get; set; }
         public DateTime date { get; set; }
         public decimal mainAmount { get; set; }
@@ -1402,15 +1408,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    public class ExpiredViewModel: ImpairedWatchListViewModel
+    public class ExpiredViewModel : RuniningLoanViewModel
     {
-        public DateTime expiryDate { get; set; }
-        public decimal transactionDateBalance { get; set; }
-        public string userClassification { get; set; }
         public string subClassification { get; set; }
-        public DateTime classificationDate { get; set; }
-        public string customerName { get; set; }
-        public string rmName { get; set; }
     }
 
 
@@ -1420,7 +1420,7 @@ namespace FintrakBanking.ViewModels.Credit
         
        
         public string currencyType { get; set; }
-        
+        public string staffCode { get; set; }
         public decimal clrBalance { get; set; }
         public decimal interestOverDue { get; set; }
         public decimal principalOverDue { get; set; }
@@ -1437,12 +1437,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string deskDescription { get; set; }
         public string buDescription { get; set; }
         public decimal sanctionLimit { get; set; }
-        public decimal pastDueDate { get; set; }
+        public DateTime pastDueDate { get; set; }
+        public decimal pastDueDat { get; set; }
         public string groupDescription { get; set; }
         public string accountName { get; set; }
         public string account { get; set; }
         public DateTime limitExpiryDate { get; set; }
-        public string customerId { get; set; }
+        public int customerId { get; set; }
+        public string customerI { get; set; }
 
         public string branchCode { get; set; }
 
@@ -1452,7 +1454,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string groupCode { get; set; }
 
         public string glSubHeadCode { get; set; }
-       
+        public string loanRefNo { get; set; }
+        public string customerName { get; set; }
+        public int loanId { get; set; }
+        public short loanSystemTypeId { get; set; }
     }
 
 
@@ -1473,23 +1478,13 @@ namespace FintrakBanking.ViewModels.Credit
         
 
     }
-    public class ExcessViewModel: ImpairedWatchListViewModel
+    public class ExcessViewModel: RuniningLoanViewModel
     {
-        public string excess { get; set; }
-        public DateTime endDate { get; set; }
-        public string rmName { get; set; }
-        public string customerName { get; set; }
-
-        public decimal transactionDateBalance { get; set; }
-        public string userClassification { get; set; }
+        public decimal excess { get; set; }
         public string subClassification { get; set; }
-        public DateTime classificationDate { get; set; }
-
-        public DateTime expiryDate { get; set; }
-       
     }
 
-    public class InsuranceViewModel : ImpairedWatchListViewModel
+    public class InsuranceViewModel : RuniningLoanViewModel
     {
         public short branchId { get; set; }
         public string collateralType { get; set; }
@@ -1500,18 +1495,61 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal premiumPaid { get; set; }
         public decimal insuredValue { get; set; }
         public DateTime startDate { get; set; }
-        public DateTime endDate { get; set; }
-        public DateTime maturityDate { get; set; }
+        
         public int days { get; set; }
         public string workFlowID { get; set; }
         public string  status { get; set; }
-        public string businessDevelopmentManger { get; set; }
+        
         public string remarks { get; set; }
-        public string staffCode  { get; set; }
-        public string rmName { get; set; }
+        
+        
         public string subHead { get; set; }
-        public int customerId { get; set; }
+        
     }
+
+    public class RuniningLoanViewModel : ImpairedWatchListViewModel
+    {
+
+
+        public string rmName { get; set; }
+        public DateTime endDate { get; set; }
+        public string userClassification { get; set; }
+        public decimal receivableAmount { get; set; }
+        public decimal  pastDueInterest { get; set; }
+        public decimal transactionDateBalance { get; set; }
+        public DateTime sanctionLimitDate { get; set; }
+        public string schemeDescription  { get; set; }
+        public string securityDetails { get; set; }
+        
+        public string sector { get; set; }
+        public DateTime bookingDate { get; set; }
+        public decimal interestInSupense { get; set; }
+        public DateTime expiryDate { get; set; }
+        public DateTime maturityDate { get; set; }
+        public decimal facilityGrantedAmount { get; set; }
+        public string subSectorCode { get; set; }
+        public decimal otherCharges { get; set; }
+        public decimal finalBalance { get; set; }
+        public string subUserClassification { get; set; }
+        public decimal subStandard { get; set; }
+        public decimal doubtfull { get; set; }
+        public decimal lost { get; set; }
+        public DateTime classificationDate { get; set; }
+        public DateTime applicationDate { get; set; }
+        public DateTime lastCreditDate { get; set; }
+        public decimal lastCreditAmount { get; set; }
+        public DateTime limitExpiryyDate { get; set; }
+        public decimal fxRate { get; set; }
+        public string insiderFlag { get; set; }
+        public decimal otherIncome { get; set; }
+        
+        public int pastDueDays { get; set; }
+        public int loanId { get; set; }
+        public short loanSytemTypeId { get; set; }
+        public string businessDevelopmentManger { get; set; }
+    }
+
+
 
     public class LoanMartWatchList : ImpairedWatchListViewModel
     {
@@ -1524,6 +1562,24 @@ namespace FintrakBanking.ViewModels.Credit
         public string teamUnit { get; set; }
         public string depart { get; set; }
       
+        public string region { get; set; }
+        public string deptName { get; set; }
+    }
+
+    public class UnutilizedFacilityViewModel
+    {
+        public DateTime dateTimeCreated { get; set; }
+        public string businessUnits { get; set; }
+        public string group { get; set; }
+        public string branch { get; set; }
+        public string customerName { get; set; }
+        public string capSld { get; set; }
+        public DateTime reviwedDate { get; set; }
+        public string status { get; set; }
+        public string purpose { get; set; }
+        public string newApprovalInNaira{ get; set; }
+        public string newApprovalInDollar { get; set; }
+        public string staffCode { get; set; }
     }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{

@@ -101,7 +101,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
         bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer);
-
+        bool SaveMainDocument(LoanReviewOperationViewModel model, int loanId, byte[] file, int loanreviewoperationId);
+        bool SaveDocument(LoanReviewOperationViewModel model, byte[] file);
         bool DeleteLoanExistingOnDailyAndPeriodicSchedule(int loanId);
 
         bool SendEmailToRecoveryAgent(int companyId, int staffId, short branchId, int accreditedConsultantId);

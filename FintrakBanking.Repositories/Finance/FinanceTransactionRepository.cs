@@ -1691,7 +1691,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.approvedDateTime = DateTime.Now;
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             debit.companyId = model.companyId;
-            debit.glAccountId = product.PRINCIPALBALANCEGL.Value;
+            debit.glAccountId = product.PRINCIPALBALANCEGL2.Value;
             debit.sourceReferenceNumber = sourceReferenceNumber;
             debit.casaAccountId = null;
             debit.debitAmount = postedAmount;
@@ -1720,7 +1720,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
-            credit.glAccountId = product.PRINCIPALBALANCEGL2.Value;
+            credit.glAccountId = product.PRINCIPALBALANCEGL.Value;
             credit.sourceReferenceNumber = sourceReferenceNumber;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
