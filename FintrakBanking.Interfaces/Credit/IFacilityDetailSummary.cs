@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoanViewModel FacilityDetail(int loanId);
         LoanViewModel LMSFacilityDetail(int loanId);
         LoanViewModel ContingentLMSFacilityDetail(int loanId);
-        LoanViewModel RelatedFacilityDetail(string relatedLaonRefNo);
+        LoanViewModel RelatedFacilityDetail(int loanId);
         List<LoanCovenantDetailViewModel> LoanCovenantDetail(int loanId);
         List<LoanChargeFeeViewModel> LoanChargeFee(int loanId, short loanSystemTypeId);
         List<LoanChargeFeeViewModel> GuarantorDetail(int loanId);
@@ -24,9 +24,9 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanViewModel> LoanSearch(int productTypeId, string searchQuery);
         List<ProductType> ProductType();
         LoanViewModel OverdraftFacilityDetail(int loanId);
-        LoanViewModel RelatedOverdraftFacilityDetail(string RelatedLoanRefNo);
+        LoanViewModel RelatedOverdraftFacilityDetail(int loanId);
         LoanViewModel ContingentFacilityDetail(int loanId);
-        LoanViewModel RelatedContingentFacilityDetail(string RelatedLoanRefNo);
+        LoanViewModel RelatedContingentFacilityDetail(int loanId);
         LoanViewModel OverdraftFacilityDetailArchive(int archiveId);
         LoanViewModel FacilityDetailArchive(int loanId);
         List<LoanViewModel> ArchiveLoanFacilityDetail(int archiveId);

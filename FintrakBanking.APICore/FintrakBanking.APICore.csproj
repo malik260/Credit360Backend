@@ -1008,6 +1008,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\first-bank-logo.png" />
     <Content Include="Content\first-bank-new-logo.jpg" />
+    <Content Include="Content\first-bank-new1.jpg" />
     <Content Include="Content\firstbank.png" />
     <Content Include="Content\Icons\Draft.png" />
     <Content Include="Content\Icons\firstbank-logo.jpg" />

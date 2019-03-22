@@ -463,7 +463,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
                 if (entity.effectiveDate > systemDate)
-                    throw new ConditionNotMetException("You effective date cannot be post-dated.");
+                    throw new ConditionNotMetException("The effective date cannot be post-dated.");
 
                 if (entity.effectiveDate == entity.maturityDate)
                     throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
@@ -491,7 +491,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
                 if (entity.effectiveDate > systemDate)
-                    throw new ConditionNotMetException("You effective date cannot be post-dated.");
+                   throw new ConditionNotMetException("The effective date cannot be post-dated.");
 
                 if (application.TBL_PRODUCT_CLASS != null && application.TBL_PRODUCT_CLASS.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
                 {
@@ -531,7 +531,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
                 if (entity.effectiveDate > systemDate)
-                    throw new ConditionNotMetException("You effective date cannot be post-dated.");
+                    throw new ConditionNotMetException("The effective date cannot be post-dated.");
 
                 if (product.MAXIMUMTENOR > 0 && product.MAXIMUMTENOR < (entity.maturityDate - entity.effectiveDate).Days)
                     throw new ConditionNotMetException("You have exceeded the maximun tenor of the product. The maximun tenor is " + product.MAXIMUMTENOR);
@@ -559,7 +559,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
                 if (entity.effectiveDate > systemDate)
-                    throw new ConditionNotMetException("You effective date cannot be post-dated.");
+                    throw new ConditionNotMetException("The effective date cannot be post-dated.");
 
                 if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                     throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
@@ -793,7 +793,7 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Covenant..........
                         AddLoanCovenant(model, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
                         //............save Loan Fees..........
-                        AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail, false);
+                        AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail);
 
                         model.loanReferenceNumber = loanReferenceNumber;
 
@@ -1013,7 +1013,7 @@ namespace FintrakBanking.Repositories.Credit
                         //............save Loan Covenant..........
                         AddLoanCovenant(entity, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
                         //............save Loan Fees..........
-                        AddLoanFees(entity.loanChargeFee,  loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity, applicationDetail, false);
+                        AddLoanFees(entity.loanChargeFee,  loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity, applicationDetail);
                         entity.loanReferenceNumber = loanReferenceNumber;
 
                         //...................Saving Loan Collaterals Mapping.......................
@@ -1416,7 +1416,8 @@ namespace FintrakBanking.Repositories.Credit
                                 }
                             }
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail, false);
+                            
+                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
@@ -1708,7 +1709,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (LogApproval(approvalModel, (int)OperationsEnum.CommercialLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                         {
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail, false);
+                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
 
                             //...................Saving Commercial Loan Collaterals Mapping.......................
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
@@ -2040,7 +2041,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (LogApproval(approvalModel, (int)OperationsEnum.ForeignExchangeLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                         {
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee,  loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity,applicationDetail,false);
+                            AddLoanFees(entity.loanChargeFee,  loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity,applicationDetail);
 
                             //...................Saving FX Loan Collaterals Mapping.......................
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
@@ -4631,19 +4632,26 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short loanSystemTypeId, LoanViewModel loanModel, TBL_LOAN_APPLICATION_DETAIL facilityDetail, bool chargeByApprovedAmount)
+        private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int loanId, short loanSystemTypeId, LoanViewModel loanModel, TBL_LOAN_APPLICATION_DETAIL facilityDetail)
         {
-            if (chargeByApprovedAmount)
-            {
-               if( context.TBL_LOAN_FEE.Where(x=>x.LOANID == facilityDetail.LOANAPPLICATIONDETAILID && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).Any())
-                {
-                    return;
-                }
-            }
+            var chargeByApprovedAmount = false;
             foreach (var ent in feeModel)
             {
-                if(ent.dealTypeId != (short)ChargeFeeDealTypeEnum.Tax)
+                var chargeFee = context.TBL_CHARGE_FEE.Find(ent.chargeFeeId);
+                if(chargeFee != null & chargeFee.FEETARGETID == (short)ChargeFeeTargetEnum.ApprovedLoanAmount)
                 {
+                    if (context.TBL_LOAN_FEE.Where(x => x.LOANID == facilityDetail.LOANAPPLICATIONDETAILID && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).Any())
+                    {
+                        chargeByApprovedAmount = false;
+                        continue;
+                    }
+                    else { chargeByApprovedAmount = true; }
+                }
+               
+
+                if (ent.dealTypeId != (short)ChargeFeeDealTypeEnum.Tax)
+                {
+
                     var fee = new TBL_LOAN_FEE
                     {
                         CHARGEFEEID = ent.chargeFeeId,
@@ -9257,6 +9265,10 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = cur.CURRENCYNAME,
                                    currencyCode = cur.CURRENCYCODE,
+                                   interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                                   interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                                   pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                                   pastDueInterest = a.PASTDUEINTEREST,
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.TERMLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
                                        loanReviewOperationsId = op.LOANREVIEWOPERATIONID,

@@ -22,6 +22,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool DailyWrittenOffFacilityAccrual(DateTime applicationDate);
 
+        bool GetRepaymentDate(int loanId);
+
         decimal GetCollateralSearchChargeAmount(int stateId);
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
@@ -106,6 +108,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteLoanExistingOnDailyAndPeriodicSchedule(int loanId);
 
         bool SendEmailToRecoveryAgent(int companyId, int staffId, short branchId, int accreditedConsultantId);
+
+        LoanViewModel GetWriteOffLoans(int companyId, string refNo);
 
         #region COMMERCIAL PAPER LOANS
         bool SubAllocateCommercialLoanPrincipal(subAllocationViewModel models);
