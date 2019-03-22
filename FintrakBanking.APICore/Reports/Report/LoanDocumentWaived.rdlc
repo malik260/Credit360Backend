@@ -44,7 +44,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>S/N</Value>
-                              <Style />
+                              <Style>
+                                <Color>White</Color>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -75,7 +77,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Name of Customer</Value>
-                              <Style />
+                              <Style>
+                                <Color>White</Color>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -106,7 +110,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Facility Type</Value>
-                              <Style />
+                              <Style>
+                                <Color>White</Color>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -137,7 +143,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Facility Amount</Value>
-                              <Style />
+                              <Style>
+                                <Color>White</Color>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -168,7 +176,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Facility Granted Date</Value>
-                              <Style />
+                              <Style>
+                                <Color>White</Color>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -199,7 +209,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Waived Document</Value>
-                              <Style />
+                              <Style>
+                                <Color>White</Color>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -230,7 +242,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>CIF </Value>
-                              <Style />
+                              <Style>
+                                <Color>White</Color>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -261,7 +275,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Business Unit</Value>
-                              <Style />
+                              <Style>
+                                <Color>White</Color>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -584,12 +600,32 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>                                                 Waivers Report</Value>
+                  <Value xml:space="preserve">                                              </Value>
                   <Style>
                     <FontStyle>Italic</FontStyle>
                     <FontFamily>verdana</FontFamily>
                     <FontSize>12pt</FontSize>
                     <FontWeight>Bold</FontWeight>
+                  </Style>
+                </TextRun>
+                <TextRun>
+                  <Value xml:space="preserve">                                    </Value>
+                  <Style>
+                    <FontStyle>Italic</FontStyle>
+                    <FontFamily>verdana</FontFamily>
+                    <FontSize>12pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                    <Color>DarkBlue</Color>
+                  </Style>
+                </TextRun>
+                <TextRun>
+                  <Value>Waiver Report</Value>
+                  <Style>
+                    <FontStyle>Italic</FontStyle>
+                    <FontFamily>verdana</FontFamily>
+                    <FontSize>14pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                    <Color>DarkBlue</Color>
                   </Style>
                 </TextRun>
               </TextRuns>

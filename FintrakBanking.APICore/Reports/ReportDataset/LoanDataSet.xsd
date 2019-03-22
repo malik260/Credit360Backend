@@ -108,6 +108,9 @@
               <xs:element name="logoPath" msprop:Generator_ColumnVarNameInTable="columnlogoPath" msprop:Generator_ColumnPropNameInRow="logoPath" msprop:Generator_ColumnPropNameInTable="logoPathColumn" msprop:Generator_UserColumnName="logoPath" type="xs:string" minOccurs="0" />
               <xs:element name="applicationRefrenceNumber" msprop:Generator_ColumnVarNameInTable="columnapplicationRefrenceNumber" msprop:Generator_ColumnPropNameInRow="applicationRefrenceNumber" msprop:Generator_ColumnPropNameInTable="applicationRefrenceNumberColumn" msprop:Generator_UserColumnName="applicationRefrenceNumber" type="xs:string" minOccurs="0" />
               <xs:element name="loanFigure" msprop:Generator_ColumnVarNameInTable="columnloanFigure" msprop:Generator_ColumnPropNameInRow="loanFigure" msprop:Generator_ColumnPropNameInTable="loanFigureColumn" msprop:Generator_UserColumnName="loanFigure" type="xs:string" minOccurs="0" />
+              <xs:element name="tenorToDate" msprop:Generator_ColumnVarNameInTable="columntenorToDate" msprop:Generator_ColumnPropNameInRow="tenorToDate" msprop:Generator_ColumnPropNameInTable="tenorToDateColumn" msprop:Generator_UserColumnName="tenorToDate" type="xs:string" minOccurs="0" />
+              <xs:element name="tenorToMaturity" msprop:Generator_ColumnVarNameInTable="columntenorToMaturity" msprop:Generator_ColumnPropNameInRow="tenorToMaturity" msprop:Generator_ColumnPropNameInTable="tenorToMaturityColumn" msprop:Generator_UserColumnName="tenorToMaturity" type="xs:string" minOccurs="0" />
+              <xs:element name="loanGlBalance" msprop:Generator_ColumnVarNameInTable="columnloanGlBalance" msprop:Generator_ColumnPropNameInRow="loanGlBalance" msprop:Generator_ColumnPropNameInTable="loanGlBalanceColumn" msprop:Generator_UserColumnName="loanGlBalance" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

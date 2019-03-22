@@ -73,7 +73,7 @@ namespace FintrakBanking.ReportObjects
                         join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
                         where a.COMPANYID == companyId && a.TERMLOANID == tearmLoanId
-                        orderby a.BOOKINGDATE descending//&& c.CUSTOMERSENSITIVITYLEVELID <= staffSensitivityLevelId
+                        orderby b.PAYMENTDATE // a.BOOKINGDATE descending//&& c.CUSTOMERSENSITIVITYLEVELID <= staffSensitivityLevelId
                         select new LoanInformation()
                         {
                             accountNumber = context.TBL_CASA.Where(c => c.CASAACCOUNTID == a.CASAACCOUNTID).Select(c => c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
@@ -479,51 +479,124 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
+        //public IList<LoanAnniverseryViewModel> LoanAnniversery(DateTime startDate, DateTime endDate, int companyId)
+        //{
+        //    using (FinTrakBankingContext context = new FinTrakBankingContext())
+        //    {
+        //        var data = from a in context.TBL_LOAN
+        //                   join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
+        //                   join c in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals c.CUSTOMERID
+        //                   where a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+        //                   && DbFunctions.TruncateTime(b.PAYMENTDATE) >= DbFunctions.TruncateTime(startDate)
+        //                    && DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
+        //                   orderby b.PAYMENTDATE descending
+        //                   //&& DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(b.PAYMENTDATE)
+        //                   //&& DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
+        //                   select new LoanAnniverseryViewModel()
+        //                   {
+        //                       customerId = a.CUSTOMERID,
+        //                       maturityDate = a.MATURITYDATE,
+        //                       grantedAmount = a.PRINCIPALAMOUNT,
+        //                       outstandingIntrestAmt = a.OUTSTANDINGINTEREST,
+        //                       outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+        //                       loanRefrenceNumber = a.LOANREFERENCENUMBER,
+        //                       applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+        //                       accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+        //                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+        //                       productId = a.PRODUCTID,
+        //                       companyName = a.TBL_COMPANY.NAME,
+        //                       logoPath = a.TBL_COMPANY.LOGOPATH,
+        //                       firstName = a.TBL_CUSTOMER.FIRSTNAME,
+        //                       lastName = a.TBL_CUSTOMER.LASTNAME,
+
+        //                       middleName = a.TBL_CUSTOMER.MIDDLENAME,
+        //                       totalperiodicPaymentAmt = b.PERIODPAYMENTAMOUNT,
+        //                       periodicInterestAmt = b.PERIODINTERESTAMOUNT,
+        //                       periodicPrincipalAmt = b.PERIODPRINCIPALAMOUNT,
+        //                       paymentdate = b.PAYMENTDATE,
+        //                       intrestrate = b.INTERESTRATE,
+        //                       emailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+        //                       phoneNumber = c.PHONENUMBER,
+        //                       totalOutstanding = a.PASTDUEPRINCIPAL + a.PASTDUEINTEREST + a.INTERESTONPASTDUEINTEREST + a.INTERESTONPASTDUEPRINCIPAL + a.OUTSTANDINGINTEREST + a.OUTSTANDINGPRINCIPAL,
+
+
+        //                   };
+
+        //        return data.ToList();
+        //    }
+
+        //}
+
         public IList<LoanAnniverseryViewModel> LoanAnniversery(DateTime startDate, DateTime endDate, int companyId)
         {
-            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            List<FINTRAK_TRAN_PROC_DETAILS> procedureDetails = new List<FINTRAK_TRAN_PROC_DETAILS>();
+            using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
-                var data = from a in context.TBL_LOAN
-                           join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
-                           join c in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals c.CUSTOMERID
-                           where a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                           && DbFunctions.TruncateTime(b.PAYMENTDATE) >= DbFunctions.TruncateTime(startDate)
-                            && DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
-                           orderby b.PAYMENTDATE descending
-                           //&& DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(b.PAYMENTDATE)
-                           //&& DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
-                           select new LoanAnniverseryViewModel()
-                           {
-                               customerId = a.CUSTOMERID,
-                               maturityDate = a.MATURITYDATE,
-                               grantedAmount = a.PRINCIPALAMOUNT,
-                               outstandingIntrestAmt = a.OUTSTANDINGINTEREST,
-                               outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
-                               loanRefrenceNumber = a.LOANREFERENCENUMBER,
-                               applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                               accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                               productName = a.TBL_PRODUCT.PRODUCTNAME,
-                               productId = a.PRODUCTID,
-                               companyName = a.TBL_COMPANY.NAME,
-                               logoPath = a.TBL_COMPANY.LOGOPATH,
-                               firstName = a.TBL_CUSTOMER.FIRSTNAME,
-                               lastName = a.TBL_CUSTOMER.LASTNAME,
+                 procedureDetails = stagecontext.FINTRAK_TRAN_PROC_DETAILS.ToList();
 
-                               middleName = a.TBL_CUSTOMER.MIDDLENAME,
-                               totalperiodicPaymentAmt = b.PERIODPAYMENTAMOUNT,
-                               periodicInterestAmt = b.PERIODINTERESTAMOUNT,
-                               periodicPrincipalAmt = b.PERIODPRINCIPALAMOUNT,
-                               paymentdate = b.PAYMENTDATE,
-                               intrestrate = b.INTERESTRATE,
-                               emailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
-                               phoneNumber = c.PHONENUMBER
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+                    var data = (from a in context.TBL_LOAN
+                               join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
+                               join c in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals c.CUSTOMERID
+                               where a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                               && DbFunctions.TruncateTime(b.PAYMENTDATE) >= DbFunctions.TruncateTime(startDate)
+                                && DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
+                               orderby b.PAYMENTDATE descending
+                               //&& DbFunctions.TruncateTime(startDate) >= DbFunctions.TruncateTime(b.PAYMENTDATE)
+                               //&& DbFunctions.TruncateTime(b.PAYMENTDATE) <= DbFunctions.TruncateTime(endDate)
+                               select new LoanAnniverseryViewModel()
+                               {
+                                   customerId = a.CUSTOMERID,
+                                   maturityDate = a.MATURITYDATE,
+                                   grantedAmount = a.PRINCIPALAMOUNT,
+                                   outstandingIntrestAmt = a.OUTSTANDINGINTEREST,
+                                   outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                                   loanRefrenceNumber = a.LOANREFERENCENUMBER,
+                                   
+                                   applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                   accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                   productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                   productId = a.PRODUCTID,
+                                   companyName = a.TBL_COMPANY.NAME,
+                                   logoPath = a.TBL_COMPANY.LOGOPATH,
+                                   firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                                   lastName = a.TBL_CUSTOMER.LASTNAME,
 
-                           };
+                                   middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                                   totalperiodicPaymentAmt = b.PERIODPAYMENTAMOUNT,
+                                   periodicInterestAmt = b.PERIODINTERESTAMOUNT,
+                                   periodicPrincipalAmt = b.PERIODPRINCIPALAMOUNT,
+                                   paymentdate = b.PAYMENTDATE,
+                                   intrestrate = b.INTERESTRATE,
+                                   emailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+                                   phoneNumber = c.PHONENUMBER,
+                                   totalOutstanding = a.PASTDUEPRINCIPAL + a.PASTDUEINTEREST + a.INTERESTONPASTDUEINTEREST + a.INTERESTONPASTDUEPRINCIPAL + a.OUTSTANDINGINTEREST + a.OUTSTANDINGPRINCIPAL,
 
-                return data.ToList();
+
+                               }).ToList().Select(x=>
+                               {
+                                   var recoveredValue = procedureDetails.Where(f => f.LOAN_ACCT == x.loanRefrenceNumber && f.RCRE_DATE == x.paymentdate && ((f.NARRATION.Equals("Principal Repayment" ) || f.NARRATION.Equals("Interest Repayment")))).Select(f => f.AMT_COLLECTED).Sum();
+                                   Decimal finalrecoveredAmount = 0.0M;
+
+                                   finalrecoveredAmount = recoveredValue;
+                               
+
+                                       x.recoveredAmount = finalrecoveredAmount;
+                                   
+
+                                 
+                                     
+
+                                   return x;
+                               });
+
+                    return data.ToList();
+                }
             }
 
         }
+
 
         public IList<LoanDocumentWaivedViewModel> LoanDocumentDeferred(DateTime startDate, DateTime endDate, int companyId, short? branchId)
         {
@@ -831,8 +904,10 @@ namespace FintrakBanking.ReportObjects
 
         public IList<FCYScheuledLoanViewModel> FCYScheuledLoan(int companyId, int loanId)
         {
+
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
+                var currentDate = context.TBL_FINANCECURRENTDATE.Where(x => x.COMPANYID == companyId).Select(d => d.CURRENTDATE).FirstOrDefault();
                 var currdata = from a in context.TBL_LOAN
                                where a.COMPANYID == companyId
                                && a.TERMLOANID == loanId
@@ -847,6 +922,7 @@ namespace FintrakBanking.ReportObjects
                                    lastName = a.TBL_CUSTOMER.LASTNAME,
                                    middleName = a.TBL_CUSTOMER.MIDDLENAME,
                                    loanCurrency = a.TBL_CURRENCY.CURRENCYCODE,
+                                   loanGlBalance = a.PRINCIPALAMOUNT,
                                    //scheduleTypeId = a.SCHEDULETYPEID,
                                    //scheduleTypeName = a.TBL_LOAN_SCHEDULE_type.SCHEDULETYPENAME,
                                    interestRate = a.INTERESTRATE,
@@ -857,11 +933,13 @@ namespace FintrakBanking.ReportObjects
                                    exchangeRate = a.EXCHANGERATE,
                                    //tenorDays = a.MATURITYDATE.Subtract(a.EFFECTIVEDATE)
                                    tenorDays = (a.MATURITYDATE.Day - a.EFFECTIVEDATE.Day),
-                                   //tenorToDate =(DateTime.Now - a.EFFECTIVEDATE.Day),
+                                   tenorToDate =  (int)DbFunctions.DiffDays(a.EFFECTIVEDATE, currentDate),
+                                   tenorToMaturity = (int)DbFunctions.DiffDays(currentDate, a.MATURITYDATE),
                                    logoPath = a.TBL_COMPANY.LOGOPATH,
                                    companyName = a.TBL_COMPANY.NAME,
                                    applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                    loanFigure = a.PRINCIPALAMOUNT,
+                                   
 
                                    //tenorToDate = DbFunctions.DiffDays(DateTime.Now,(a.EFFECTIVEDATE.Day))
 

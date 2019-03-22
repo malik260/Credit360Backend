@@ -1344,6 +1344,7 @@
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\Form3800BFacilityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ImpairedWatchListReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
@@ -1362,7 +1363,6 @@
     </Content>
     <EmbeddedResource Include="Reports\Report\CollateralEstimated.rdlc" />
     <EmbeddedResource Include="Reports\Report\FacilityApprovedNotUtilised.rdlc" />
-    <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentDeferralForMCC.rdlc" />
