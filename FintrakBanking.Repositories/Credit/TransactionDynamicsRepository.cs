@@ -303,7 +303,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => x.PRODUCTID)
                 .Distinct();
 
-            var dynamics = this.context.TBL_TRANSACTION_DYNAMICS.Where(x => ids.Contains((short)x.PRODUCTID))
+            var dynamics = this.context.TBL_TRANSACTION_DYNAMICS.Where(c => ids.Contains((short)c.PRODUCTID))
             .Select(c => new TransactionDynamicsViewModel
             {
                 dynamicsId = c.DYNAMICSID,
@@ -312,10 +312,11 @@ namespace FintrakBanking.Repositories.Credit
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
                 isExternal = c.ISEXTERNAL,
-                operationId = c.OPERATIONID
-            });
+                operationId = c.OPERATIONID,
+                isCheckListSpecific = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == c.OPERATIONID).Select(o => o.ISCHECKLISTSPECIFIC).FirstOrDefault()
+            }).ToList();
 
-            return dynamics.ToList();
+            return dynamics;
         }
 
         public List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByApplicationIdAndOperationLms(int detailId, int? operationId)
@@ -324,7 +325,12 @@ namespace FintrakBanking.Repositories.Credit
             if (operationId != null)
             {
                 var operation = context.TBL_OPERATIONS.Find(operationId);
-                if (operation.ISCHECKLISTSPECIFIC) return GetTransactionDynamicsDefaultByDetailIdLms(applicationDetail.PRODUCTID).Where(x => x.operationId == operationId).ToList();
+                if (operation.ISCHECKLISTSPECIFIC)
+                {
+                    var output = GetTransactionDynamicsDefaultByDetailIdLms(applicationDetail.LOANREVIEWAPPLICATIONID);
+                    return output.Where(x => x.operationId == operationId).ToList();
+
+                }
             }
             return GetTransactionDynamicsDefaultByDetailIdLms(applicationDetail.PRODUCTID);
         }

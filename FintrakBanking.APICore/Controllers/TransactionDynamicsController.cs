@@ -131,7 +131,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lms-condition-precedent-template/application-detail/{detailId}/operation/{operationId}")]
+        [Route("lms-transaction-dynamics-template/application-detail/{detailId}/operation/{operationId}")]
         public HttpResponseMessage GetTransactionDynamicsDefaultByApplicationIdAndOperationLms(int detailId, int? operationId)
         {
             try

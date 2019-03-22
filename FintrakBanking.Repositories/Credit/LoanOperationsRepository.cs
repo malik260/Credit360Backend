@@ -12769,6 +12769,7 @@ namespace FintrakBanking.Repositories.Credit
             return runningLoan;
         }
 
+
         public List<LoanPaymentSchedulePeriodicViewModel> GeneratePrepaymentSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
             var loanInfo = context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();

@@ -19,6 +19,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int MONITORING_TRIGGERID { get; set; }
 
+        public int? OPERATIONID { get; set; }
+
         [Required]
         [StringLength(800)]
         public string MONITORING_TRIGGER_NAME { get; set; }

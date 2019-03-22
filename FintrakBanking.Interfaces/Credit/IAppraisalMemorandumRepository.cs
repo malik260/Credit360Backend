@@ -77,5 +77,7 @@ namespace FintrakBanking.Interfaces.Credit
         WorkflowResponse GetWorkflowNextStatus(ForwardViewModel model);
 
         WorkflowResponse GetWorkflowNextStatusLms(ForwardReviewViewModel model);
+
+        IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersByOperationId(int operationId, int applicationDetailId);
     }
 }

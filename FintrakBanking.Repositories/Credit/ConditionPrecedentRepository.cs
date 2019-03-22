@@ -53,8 +53,9 @@ namespace FintrakBanking.Repositories.Credit
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
                 operationId = c.OPERATIONID,
+                isCheckListSpecific = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==c.OPERATIONID).Select(o=>o.ISCHECKLISTSPECIFIC).FirstOrDefault()
             })
-            .OrderBy(x => x.isSubsequent).ThenBy(x => x.isExternal);
+            .OrderBy(x => x.isSubsequent).ThenByDescending(x => x.isExternal);
 
             return conditions.ToList();
         }
@@ -210,7 +211,11 @@ namespace FintrakBanking.Repositories.Credit
             if (operationId != null)
             {
                 var operation = context.TBL_OPERATIONS.Find(operationId);
-                if (operation.ISCHECKLISTSPECIFIC) return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID).Where(x => x.operationId == operationId).ToList();
+                if (operation.ISCHECKLISTSPECIFIC)
+                {
+                    var output = GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID).Where(x => x.operationId == operationId).ToList();
+                    return output;
+                }
             }
             return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID);
         }
