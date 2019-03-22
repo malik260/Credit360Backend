@@ -582,6 +582,61 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Audit Trail
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("audit/deleted-staff-log")]
+        public HttpResponseMessage GetAuditDeletedStaffLog([FromUri] int page, [FromUri] int itemsPerPage)
+        {
+            try
+            {
+                var rec = audit.GetAuditTrail((short)token.GetBranchId).ToList();
+                var test = audit.GetAuditTrail((short)token.GetBranchId).Where(x => x.auditTypeId == 130).ToList();
+
+                var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId).Where(x=>x.auditTypeId == 130);
+                int totalItems = allAuditLog.Count();
+
+                allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage);
+
+                var data = allAuditLog.ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = totalItems });
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("audit/deleted-staff-log/search")]
+        public HttpResponseMessage FilterDeletedStaffLog([FromUri] int page, string searchQuery)
+        {
+            try
+            {
+                var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId).Where(x => x.auditTypeId == 130);
+
+                allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page)
+                    .Where(x => x.auditType.ToLower().Contains(searchQuery.ToLower())
+                    || x.firstName.ToLower().Contains(searchQuery) || x.lastName.ToLower().Contains(searchQuery)
+                    );
+
+                var data = allAuditLog.ToList();
+
+                int totalItems = allAuditLog.Count();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = allAuditLog.ToList(), count = allAuditLog.Count() });
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("audit/log")]

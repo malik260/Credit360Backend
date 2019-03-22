@@ -45,7 +45,8 @@ namespace FintrakBanking.Repositories.Admin
                        systemDate = _audit.SYSTEMDATETIME,
                        username = u.USERNAME,
                        url = _audit.URL,
-                       branchName = b.BRANCHNAME
+                       branchName = b.BRANCHNAME,
+                       auditTypeId = _audit.AUDITTYPEID,
                    };
         }
 
