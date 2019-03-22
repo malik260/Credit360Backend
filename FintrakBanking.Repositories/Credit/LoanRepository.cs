@@ -3470,7 +3470,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    var reviewDate = revolvingLoanRecord.MATURITYDATE.AddDays(-1); //.BOOKINGDATE.AddMonths(1);
+                    var reviewDate = revolvingLoanRecord.EFFECTIVEDATE.AddDays(31); //.BOOKINGDATE.AddMonths(1);
                     var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
                     var acctType = "DR";
                     if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
@@ -9265,6 +9265,10 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = cur.CURRENCYNAME,
                                    currencyCode = cur.CURRENCYCODE,
+                                   interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                                   interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                                   pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                                   pastDueInterest = a.PASTDUEINTEREST,
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.TERMLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
                                        loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -11646,6 +11650,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter
+                                  //&& a.LOANREFERENCENUMBER == "406-0056-0000036"
                                    //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                    //orderby b.DATECREATED descending
                                    select new LoanViewModel

@@ -273,7 +273,14 @@ public int? newInterestFrequencyTypeId { get; set; }
         public DateTime? newMaturityDate { get; set; }
         public int? loanSystemTypeId { get; set; }
         public int? maturityInstructionTypeId { get; set; }
-
+        public decimal pastDueInterest { get; set; }
+        public decimal pastDuePrincipal { get; set; }
+        public decimal interestOnPastDueInterest { get; set; }
+        public decimal interestOnPastDuePrincipal { get; set; }
+        public decimal accruedInterest { get; set; }
+        public decimal writeOffAmount { get {
+                return pastDueInterest + pastDuePrincipal
++ interestOnPastDueInterest + interestOnPastDuePrincipal + outstandingPrincipal + accruedInterest; } }
         public List<feeDetails> fees { get; set; }
     }
 

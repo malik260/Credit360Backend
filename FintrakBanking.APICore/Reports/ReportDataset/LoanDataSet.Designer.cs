@@ -3191,6 +3191,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnloanFigure;
             
+            private global::System.Data.DataColumn columntenorToDate;
+            
+            private global::System.Data.DataColumn columntenorToMaturity;
+            
+            private global::System.Data.DataColumn columnloanGlBalance;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public FCYScheuledLoanDataTable() {
@@ -3378,6 +3384,30 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn tenorToDateColumn {
+                get {
+                    return this.columntenorToDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn tenorToMaturityColumn {
+                get {
+                    return this.columntenorToMaturity;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn loanGlBalanceColumn {
+                get {
+                    return this.columnloanGlBalance;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -3432,7 +3462,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string companyName, 
                         string logoPath, 
                         string applicationRefrenceNumber, 
-                        string loanFigure) {
+                        string loanFigure, 
+                        string tenorToDate, 
+                        string tenorToMaturity, 
+                        string loanGlBalance) {
                 FCYScheuledLoanRow rowFCYScheuledLoanRow = ((FCYScheuledLoanRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         loanRefrenceNumber,
@@ -3453,7 +3486,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         companyName,
                         logoPath,
                         applicationRefrenceNumber,
-                        loanFigure};
+                        loanFigure,
+                        tenorToDate,
+                        tenorToMaturity,
+                        loanGlBalance};
                 rowFCYScheuledLoanRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowFCYScheuledLoanRow);
                 return rowFCYScheuledLoanRow;
@@ -3495,6 +3531,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnlogoPath = base.Columns["logoPath"];
                 this.columnapplicationRefrenceNumber = base.Columns["applicationRefrenceNumber"];
                 this.columnloanFigure = base.Columns["loanFigure"];
+                this.columntenorToDate = base.Columns["tenorToDate"];
+                this.columntenorToMaturity = base.Columns["tenorToMaturity"];
+                this.columnloanGlBalance = base.Columns["loanGlBalance"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3538,6 +3577,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnapplicationRefrenceNumber);
                 this.columnloanFigure = new global::System.Data.DataColumn("loanFigure", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnloanFigure);
+                this.columntenorToDate = new global::System.Data.DataColumn("tenorToDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntenorToDate);
+                this.columntenorToMaturity = new global::System.Data.DataColumn("tenorToMaturity", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntenorToMaturity);
+                this.columnloanGlBalance = new global::System.Data.DataColumn("loanGlBalance", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnloanGlBalance);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -23428,6 +23473,54 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string tenorToDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFCYScheuledLoan.tenorToDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'tenorToDate\' in table \'FCYScheuledLoan\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFCYScheuledLoan.tenorToDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string tenorToMaturity {
+                get {
+                    try {
+                        return ((string)(this[this.tableFCYScheuledLoan.tenorToMaturityColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'tenorToMaturity\' in table \'FCYScheuledLoan\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFCYScheuledLoan.tenorToMaturityColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string loanGlBalance {
+                get {
+                    try {
+                        return ((string)(this[this.tableFCYScheuledLoan.loanGlBalanceColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'loanGlBalance\' in table \'FCYScheuledLoan\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFCYScheuledLoan.loanGlBalanceColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsloanRefrenceNumberNull() {
                 return this.IsNull(this.tableFCYScheuledLoan.loanRefrenceNumberColumn);
             }
@@ -23652,6 +23745,42 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetloanFigureNull() {
                 this[this.tableFCYScheuledLoan.loanFigureColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IstenorToDateNull() {
+                return this.IsNull(this.tableFCYScheuledLoan.tenorToDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SettenorToDateNull() {
+                this[this.tableFCYScheuledLoan.tenorToDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IstenorToMaturityNull() {
+                return this.IsNull(this.tableFCYScheuledLoan.tenorToMaturityColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SettenorToMaturityNull() {
+                this[this.tableFCYScheuledLoan.tenorToMaturityColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsloanGlBalanceNull() {
+                return this.IsNull(this.tableFCYScheuledLoan.loanGlBalanceColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetloanGlBalanceNull() {
+                this[this.tableFCYScheuledLoan.loanGlBalanceColumn] = global::System.Convert.DBNull;
             }
         }
         
