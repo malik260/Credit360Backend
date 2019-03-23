@@ -1,8 +1,8 @@
 ﻿using System;
 
 namespace FintrakBanking.Common.Enum
-{ 
-    public enum AuditTypeEnum 
+{
+    public enum AuditTypeEnum
     {
         AccountApproved = 1,
         AccountCategoryAdded = 2,
@@ -177,18 +177,18 @@ namespace FintrakBanking.Common.Enum
         MonitoringSetupUpdated = 168,
         MonitoringSetupDeleted = 169,
         ForwardAppraisalMemorandum = 170,
-        LoanPrincipalInserted =171,
-        LoanPrincipalUpdated =172,
-        LoanPrincipalDeleted =173,
+        LoanPrincipalInserted = 171,
+        LoanPrincipalUpdated = 172,
+        LoanPrincipalDeleted = 173,
         LoanPrincipalEdited = 174,
-        ApprovedMarketInserted =175,
-        ApprovedMarketUpdated =176,
+        ApprovedMarketInserted = 175,
+        ApprovedMarketUpdated = 176,
         ApprovedMarketDeleted = 177,
-        ApprovedMarketEdited =178,
+        ApprovedMarketEdited = 178,
         CustomerproductFeeAdded = 179,
         CustomerproductFeeUpdated = 180,
         CustomerproductFeeDeleted = 181,
-        CustomerproductFeeApproved = 182,           
+        CustomerproductFeeApproved = 182,
         LoanApplicationUpdate = 183,
         LoanApplicationDelete = 184,
 
@@ -219,7 +219,7 @@ namespace FintrakBanking.Common.Enum
         StaffReliefUpdated = 198,
         EndPendingSession = 197,
 
-        ContingentLoanUsageAdd=199,
+        ContingentLoanUsageAdd = 199,
         LoanBookingDisapproved = 200,
         CollateralSearchJobUpdate = 201,
         LoanPerformanceChange = 202,
@@ -239,32 +239,32 @@ namespace FintrakBanking.Common.Enum
         ConditionPrecedentDeleted = 215,
         BulkIntegrationPosting = 216,
 
-        OverrideRequest= 214,
+        OverrideRequest = 214,
         ApprovedOverrideRequest = 217,
         AttemptedApproveOverrideRequest = 218,
         ForeignAccountCreation = 219,
         ForeignExchangeLoanAdded = 220,
         //new by adeyemi to be added to databases
         ProfileSettingsUpdated = 221,
-       DocumentTemplateAdded = 222,
+        DocumentTemplateAdded = 222,
         DocumentTemplateUpdated = 223,
         DocumentTemplateSectionAdded = 224,
         DocumentTemplateSectionUpdated = 225,
-        DocumentTemplateSectionDeleted =226,
+        DocumentTemplateSectionDeleted = 226,
         DocumentTemplateSectionRoleAdded = 227,
         DocumentTemplateSectionRoleUpdated = 228,
         DocumentTemplateSectionRoleDeleted = 229,
         LoanRolledOver = 230,
         GroupLoanSubAllocated = 231,
         LoanPrePaid = 232,
-        LoanApplicationCancellation=242,
+        LoanApplicationCancellation = 242,
 
         CrmsRegulatorySetupAdded = 233,
         CrmsRegulatorySetupUpdated = 234,
         CrmsRegulatorySetupDeleted = 235,
         ApprovalReliefApproved = 243,
         CamsolApproval = 244,
-       RegionDeleted = 245,
+        RegionDeleted = 245,
         ContingentLiabilityRenewal = 253,
         ContingentLiabilityTermination = 246,
         facilityBookingReferedBack = 247,
@@ -282,15 +282,16 @@ namespace FintrakBanking.Common.Enum
         LoanChargeFee = 260,
         ProductPriceIndexGlobalAdded = 261,
         ProductPriceIndexGlobalUpdated = 262,
-        	EditOfferLetterContent= 266,
+        EditOfferLetterContent = 266,
         ContingentLiabilityRebook = 263,
         CollateralDocumentType = 264,
         CancelContingentLiability = 265,
         ContingentLiabilityAmountAddition = 267,
         LoanConsultantAdded = 268,
         LoanConsultantUpdated = 269,
+        LoanDailyWriteoffInterestAccrual = 270,
     };
-   public enum RegulatoryTypeEnum
+    public enum RegulatoryTypeEnum
     {
         LoanType = 1,
         FeeType = 2,

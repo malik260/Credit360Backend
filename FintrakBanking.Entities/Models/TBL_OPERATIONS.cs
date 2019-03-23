@@ -46,6 +46,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISDISABLED { get; set; }
 
+        public int? NEXTAPPROVALLEVELID { get; set; }
+
+        public bool ISCHECKLISTSPECIFIC { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
 

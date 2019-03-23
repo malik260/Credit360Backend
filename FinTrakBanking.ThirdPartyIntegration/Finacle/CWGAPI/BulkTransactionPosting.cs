@@ -272,6 +272,64 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         }
 
 
+        public bool WriteBulkDailyWriteOffInterestAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
+                                             IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            int count = 0;
+            foreach (var item in model)
+            {
+                item.date = applicationDate;
+
+                var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
+
+                //var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+
+                var accounts = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.InterestOffBalansheetCompleteWriteOffAccount).FirstOrDefault();
+                
+                count++;
+
+                addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
+                addStaging.FLOWTYPE = "FFF";
+                addStaging.FORCEDEBITACCOUNT = "N";
+                addStaging.VALUEDATENUMBER = 1;
+                addStaging.BATCHID = batchCode;
+                addStaging.BATCHREFID = count;
+                addStaging.SID = count;
+                addStaging.COMPANYID = item.companyId;
+                addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(accounts.GLACCOUNTID2.Value, item.currencyId, item.branchId);//context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE; // GetGLAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId)  product.INTERESTINCOMEEXPENSEGL.Value;
+                addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                addStaging.CURRENCYRATE = 1; // financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
+                addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(accounts.GLACCOUNTID, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                addStaging.DESCRIPTION = "Write-off Daily Interest Accrual Posting";
+                addStaging.DESTINATIONBRANCHID = item.branchId;
+                addStaging.ISPOSTED = false;
+                addStaging.OPERATIONID = (int)OperationsEnum.DailyWriteoffInterestAccural;
+                addStaging.POSTEDBY = "SYSTEM";
+                addStaging.POSTEDDATE = DateTime.Now.Date;
+                addStaging.SOURCEBRANCHID = item.branchId;
+                addStaging.SOURCEREFERENCENUMBER = item.referenceNumber; // groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString();//product.PRODUCTCODE;
+                addStaging.VALUEDATE = item.date;
+                addStaging.TRANSACTIONTYPE = "BP";
+                addStaging.BANKID = "01";
+                addStaging.PRODUCTID = item.productId;
+                addStaging.CURRENCYID = item.currencyId;
+                addStaging.CREDITGLACCOUNTID = accounts.GLACCOUNTID2.Value;
+                addStaging.DEBITGLACCOUNTID = accounts.GLACCOUNTID;
+                addStaging.CREDITCASAACCOUNTID = null;
+                addStaging.DEBITCASAACCOUNTID = null;
+                addStaging.LOANID = null;
+                addStaging.SYSTEMDATETIME = DateTime.Now;
+
+
+                context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+                context.SaveChanges();
+
+            }
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+
+        }
+
 
         public bool WriteBulkDailyFeeAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                             IFinanceTransactionRepository financeTransaction, DateTime applicationDate)

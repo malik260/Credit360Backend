@@ -4,7 +4,8 @@
     {
         WriteOffLoanFacilities = 1,
         ChargeOnBank = 2,
-        OffBalansheetCompleteWriteOffAccount = 3,
+        PrincipalOffBalansheetCompleteWriteOffAccount = 3,
+        InterestOffBalansheetCompleteWriteOffAccount = 4,
     };
 
 }

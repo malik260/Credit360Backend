@@ -150,6 +150,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
             }
 
+            if(request !=null)
+                CustomJump(request.TOAPPROVALLEVELID, request.FROMAPPROVALLEVELID);
+
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
 
             if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
@@ -517,6 +520,15 @@ namespace FintrakBanking.Repositories.WorkFlow
             return true;
         }
 
+        private void CustomJump(int? destinationLevelId, int? originLevelId)
+        {
+            if (originLevelId == null || destinationLevelId==null) return; // -- changed
+            var origin = context.TBL_APPROVAL_LEVEL.Find(originLevelId);
+            if (origin.GROUPID != 9) return;
+            var destination = context.TBL_APPROVAL_LEVEL.Find(destinationLevelId);
+            if (destination.GROUPID != 1) return;
+            this.nextLevelId = originLevelId;
+        }
         private bool IsSpecialReferedBackResponse()
         {
             return this.statusId == (int)ApprovalStatusEnum.RePresent || this.statusId == (int)ApprovalStatusEnum.StepDown;

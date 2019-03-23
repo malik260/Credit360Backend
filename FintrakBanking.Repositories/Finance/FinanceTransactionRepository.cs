@@ -588,6 +588,94 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
+
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool PostDailyWriteoffLoansInterestAccrual(DailyInterestAccrualViewModel model)
+
+        {
+
+            //var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
+
+            var accounts = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.InterestOffBalansheetCompleteWriteOffAccount).FirstOrDefault();
+
+
+            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+            debit.operationId = (int)OperationsEnum.DailyWriteoffInterestAccural;
+            debit.description = "Loan Daily Write-off Interest Accrual Posting";
+            debit.valueDate = model.date; //generalSetup.GetApplicationDate();
+            debit.transactionDate = debit.valueDate;
+            debit.currencyId = model.currencyId;
+            debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+            debit.isApproved = true;
+            debit.postedBy = (int)SystemStaff.System;
+            debit.approvedBy = (int)SystemStaff.System;
+            debit.approvedDate = debit.transactionDate;
+            debit.approvedDateTime = DateTime.Now;
+            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            debit.companyId = model.companyId;
+            debit.glAccountId = accounts.GLACCOUNTID;
+            debit.sourceReferenceNumber = model.referenceNumber; //product.PRODUCTCODE;
+            debit.casaAccountId = null;
+            debit.debitAmount = (decimal)model.dailyAccuralAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = model.branchId;
+            debit.destinationBranchId = model.branchId;
+
+            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+            credit.operationId = (int)OperationsEnum.DailyWriteoffInterestAccural;
+            credit.description = "Loan Daily Write-off Interest Accrual Posting";
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
+            credit.transactionDate = credit.valueDate;
+            credit.currencyId = model.currencyId;
+            credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+            credit.isApproved = true;
+            credit.postedBy = (int)SystemStaff.System;
+            credit.approvedBy = (int)SystemStaff.System;
+            credit.approvedDate = credit.transactionDate;
+            credit.approvedDateTime = DateTime.Now;
+            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            credit.companyId = model.companyId;
+            credit.glAccountId = accounts.GLACCOUNTID2.Value;
+
+            credit.sourceReferenceNumber = model.referenceNumber;  //product.PRODUCTCODE;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = (decimal)model.dailyAccuralAmount;
+            credit.sourceBranchId = model.branchId;
+            credit.destinationBranchId = model.branchId;
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(debit);
+            inputTransactions.Add(credit);
+
+            var batchPost = PostTransaction(inputTransactions);
+
+            // Audit Section ---------------------------            
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDailyInterestAccrual,
+                STAFFID = (int)SystemStaff.System,//model.createdBy,
+                BRANCHID = model.branchId,
+                DETAIL = $"Loan Daily Write-off Interest Accrual Posting: {model.referenceNumber}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            if (batchPost != null)
+            {
+                var result = context.SaveChanges() > 0;
+                return result;
+            }
+            return false;
+
+        }
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool PostDailyLoansInterestAccrual(DailyInterestAccrualViewModel model)
 
@@ -2809,6 +2897,78 @@ namespace FintrakBanking.Repositories.Finance
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             debit.companyId = model.companyId;
             
+            debit.glAccountId = debitGL;
+            debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
+            debit.casaAccountId = null;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
+            //debit.sourceBranchId = casa.BRANCHID;
+            debit.sourceBranchId = loanData.BRANCHID;
+            debit.destinationBranchId = loanData.BRANCHID;
+
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(debit);
+            inputTransactions.Add(credit);
+
+            PostTransaction(inputTransactions, false, twoFactorAuth);
+
+            return null;
+
+        }
+
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public FinanceTransactionViewModel PostTerminateAndRebookDoubleEntries(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int debitGL, int creditGL, string description, TwoFactorAutheticationViewModel twoFactorAuth)
+        {
+            var loanData = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
+
+            model.date = generalSetup.GetApplicationDate();
+
+            //FinanceTransactionViewModel terminateAndRebookTransaction = new FinanceTransactionViewModel();
+            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+
+            //var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanData.CASAACCOUNTID && x.COMPANYID == model.companyId);
+
+            credit.operationId = (int)OperationsEnum.LoanTermination;
+            credit.description = description;
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
+            credit.transactionDate = credit.valueDate;
+            credit.currencyId = loanData.CURRENCYID;
+            credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+            credit.isApproved = true;
+            credit.postedBy = model.createdBy;
+            credit.approvedBy = model.createdBy;
+            credit.approvedDate = credit.transactionDate;
+            credit.approvedDateTime = DateTime.Now;
+            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            credit.companyId = model.companyId;
+
+
+            credit.glAccountId = creditGL; // context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanData.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
+            credit.sourceBranchId = loanData.BRANCHID;
+            credit.destinationBranchId = loanData.BRANCHID;
+
+
+            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+
+            debit.operationId = (int)OperationsEnum.LoanTermination;
+            debit.description = description;
+            debit.valueDate = model.date;//generalSetup.GetApplicationDate();
+            debit.transactionDate = credit.valueDate;
+            debit.currencyId = loanData.CURRENCYID;
+            debit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+            debit.isApproved = true;
+            debit.postedBy = model.createdBy;
+            debit.approvedBy = model.createdBy;
+            debit.approvedDate = credit.transactionDate;
+            debit.approvedDateTime = DateTime.Now;
+            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            debit.companyId = model.companyId;
+
             debit.glAccountId = debitGL;
             debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             debit.casaAccountId = null;

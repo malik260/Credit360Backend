@@ -1988,74 +1988,74 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         }
         public bool SendAlertOnAccountWithExeption_Unauthorized(string title, string messageBody)
         {
-            //var alertSetups = getAlertMessageSetting();
+            var alertSetups = getAlertMessageSetting();
 
-            //TBL_MONITORING_ALERT_SETUP AccountWithExeption = (from x in alertSetups
-            //                                                  where x.MONITORING_ITEMID == (int)AlertMessageEnum.AuathorizedAccount
-            //                                                  select x).FirstOrDefault();
-            //DateTime currentDate = DateTime.Now;
+            TBL_MONITORING_ALERT_SETUP AccountWithExeption = (from x in alertSetups
+                                                              where x.MONITORING_ITEMID == (int)AlertMessageEnum.AuathorizedAccount
+                                                              select x).FirstOrDefault();
+            DateTime currentDate = DateTime.Now;
 
-            //List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_REVOLVING
-            //                                   join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
-            //                                   join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
-            //                                   join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-            //                                   where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0
-            //                                   select new LoanViewModel
-            //                                   {
-            //                                      // applicationReferenceNumber = a.LOANREFERENCENUMBER,
-            //                                      // loanReferenceNumber = a.LOANREFERENCENUMBER,
-            //                                      // bookingDate = a.BOOKINGDATE,
-            //                                      // disburseDate = a.DISBURSEDATE,
-            //                                      // maturityDate = a.MATURITYDATE,
-            //                                      // principalAmountz = s.OVERDRAFTAMOUNT,
-            //                                      // exchangeRate = a.EXCHANGERATE,
-            //                                      // loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-            //                                      // relationshipManagerId = a.RELATIONSHIPMANAGERID,
-            //                                      // //relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-            //                                      // relationshipManagerEmail = a.TBL_STAFF.EMAIL,
-            //                                      // relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-            //                                      //// relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-            //                                      // relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
-            //                                      // branchId = a.BRANCHID,
-            //                                      // branchName = br.BRANCHNAME,
-            //                                      // customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
-            //                                      // notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
-            //                                   }).ToList();
-            //if (loanDetails.Count != 0)
-            //{
-            //    SendAlertsOnAccountWithExeptionRM(loanDetails.ToList(), AccountWithExeption.MESSAGE_TITLE);
-            //    if (AccountWithExeption.RECIPIENTEMAILS1.Trim() != string.Empty)
-            //    {
-            //        List<LoanViewModel> escalationLevelOne = (from x in loanDetails
-            //                                                  where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD1
-            //                                                  select x).ToList();
-            //        if (escalationLevelOne != null)
-            //        {
-            //            SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelOne, AccountWithExeption);
-            //        }
-            //    }
-            //    if (AccountWithExeption.RECIPIENTEMAILS2.Trim() != string.Empty)
-            //    {
-            //        List<LoanViewModel> escalationLevelTwo = (from x in loanDetails
-            //                                                  where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD2
-            //                                                  select x).ToList();
-            //        if (escalationLevelTwo != null)
-            //        {
-            //            SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelTwo, AccountWithExeption);
-            //        }
-            //    }
-            //    if (AccountWithExeption.RECIPIENTEMAILS3.Trim() != string.Empty)
-            //    {
-            //        List<LoanViewModel> escalationLevelThree = (from x in loanDetails
-            //                                                    where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD3
-            //                                                    select x).ToList();
-            //        if (escalationLevelThree != null)
-            //        {
-            //            SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelThree, AccountWithExeption);
-            //        }
-            //    }
-            //    return true;
-            //}
+            List<LoanViewModel> loanDetails = (from a in context.TBL_LOAN_REVOLVING
+                                               join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                                               join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                               join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                                               where DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate) <= (int?)AccountWithExeption.NOTIFICATION_PERIOD1 && s.AVAILABLEBALANCE < 0
+                                               select new LoanViewModel
+                                               {
+                                                   // applicationReferenceNumber = a.LOANREFERENCENUMBER,
+                                                   // loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                                   // bookingDate = a.BOOKINGDATE,
+                                                   // disburseDate = a.DISBURSEDATE,
+                                                   // maturityDate = a.MATURITYDATE,
+                                                   // principalAmountz = s.OVERDRAFTAMOUNT,
+                                                   // exchangeRate = a.EXCHANGERATE,
+                                                   // loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                                   // relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                                   // //relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                   // relationshipManagerEmail = a.TBL_STAFF.EMAIL,
+                                                   // relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                                   //// relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                                   // relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+                                                   // branchId = a.BRANCHID,
+                                                   // branchName = br.BRANCHNAME,
+                                                   // customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+                                                   // notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)currentDate)
+                                               }).ToList();
+            if (loanDetails.Count != 0)
+            {
+                SendAlertsOnAccountWithExeptionRM(loanDetails.ToList(), AccountWithExeption.MESSAGE_TITLE);
+                if (AccountWithExeption.RECIPIENTEMAILS1.Trim() != string.Empty)
+                {
+                    List<LoanViewModel> escalationLevelOne = (from x in loanDetails
+                                                              where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD1
+                                                              select x).ToList();
+                    if (escalationLevelOne != null)
+                    {
+                        SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelOne, AccountWithExeption);
+                    }
+                }
+                if (AccountWithExeption.RECIPIENTEMAILS2.Trim() != string.Empty)
+                {
+                    List<LoanViewModel> escalationLevelTwo = (from x in loanDetails
+                                                              where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD2
+                                                              select x).ToList();
+                    if (escalationLevelTwo != null)
+                    {
+                        SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelTwo, AccountWithExeption);
+                    }
+                }
+                if (AccountWithExeption.RECIPIENTEMAILS3.Trim() != string.Empty)
+                {
+                    List<LoanViewModel> escalationLevelThree = (from x in loanDetails
+                                                                where x.notificationDuration <= AccountWithExeption.NOTIFICATION_PERIOD3
+                                                                select x).ToList();
+                    if (escalationLevelThree != null)
+                    {
+                        SendAlertsOnAccountWithExeptionMonitoringTeam(escalationLevelThree, AccountWithExeption);
+                    }
+                }
+                return true;
+            }
             return false;
         }
         public void SendAlertsOnAccountWithExeptionRM(List<LoanViewModel> loanDetails, string title)
