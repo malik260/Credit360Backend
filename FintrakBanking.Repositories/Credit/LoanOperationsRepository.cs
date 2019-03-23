@@ -259,7 +259,7 @@ namespace FintrakBanking.Repositories.Credit
                              join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
                              join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE,c.BRANCHCODE,d.CURRENCYCODE, a.CATEGORYID } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
@@ -270,7 +270,7 @@ namespace FintrakBanking.Repositories.Credit
                                  productCode = groupedQ.Key.PRODUCTCODE,
                                  currencyCode = groupedQ.Key.CURRENCYCODE,
                                  branchCode = groupedQ.Key.BRANCHCODE,
-                                 
+
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => (double)i.DAILYACCURALAMOUNT * i.EXCHANGERATE),
 
                              }).ToList().Select(x =>
@@ -1250,7 +1250,7 @@ namespace FintrakBanking.Repositories.Credit
                              {
                                  x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
                                  return x;
-                             }).ToList(); 
+                             }).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
@@ -5280,7 +5280,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool ProcessChargeReversal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, int operationId, int staffId,  int loanReviewOperationsId)
+        public bool ProcessChargeReversal(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, int operationId, int staffId, int loanReviewOperationsId)
         {
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
             try
@@ -5314,7 +5314,7 @@ namespace FintrakBanking.Repositories.Credit
                 select new LoanPaymentRestructureScheduleInputViewModel()
                 {
                     loanId = a.LOANID,
-    
+
                     staffId = staffId,
                     createdBy = staffId,
                     // customerId = b.CUSTOMERID,
@@ -5423,7 +5423,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
-                if((decimal)model.feeAmount < (decimal)model.payAmount)
+                if ((decimal)model.feeAmount < (decimal)model.payAmount)
                 {
                     throw new ConditionNotMetException("Transaction Failed. The screen is for fee reduction only. Use Manual Fee page for addition. ");
                 }
@@ -5474,7 +5474,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool ArchiveLoanFee(List<TBL_LOAN_FEE> existingLoanFee, LoanPaymentRestructureScheduleInputViewModel model)
         {
-           foreach(var existingItem in existingLoanFee)
+            foreach (var existingItem in existingLoanFee)
             {
                 TBL_LOAN_FEE newFeeRecord = new TBL_LOAN_FEE();
                 newFeeRecord = existingItem;
@@ -10537,7 +10537,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
             }
-            
+
             ////var pastDueList = (from a in context.TBL_LOAN_PAST_DUE
             ////                   join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.LOANID equals b.LOANID
             ////                   where a.DATE >= DbFunctions.TruncateTime(effectiveDate) && a.DATE <= DbFunctions.TruncateTime(currentDate)
@@ -10607,11 +10607,11 @@ namespace FintrakBanking.Repositories.Credit
 
 
             decimal accruedDailyInterestDiff = previousAccruedDailyInterest - currentAccruedDailyInterest;
-          
+
             //decimal pastDueInterestDiff = loan.INTERESTONPASTDUEINTEREST - currentPastDueInterest;
             //decimal pastDuePrincipalDiff = loan.INTERESTONPASTDUEPRINCIPAL - currentPastDuePrincipal;
 
-            
+
             //All the posting here are not correct please, we need to build each if we are to debit or credit the customer
             //if (countRepayments < 1 && effectiveDate == currentDate)
             //{
@@ -10633,7 +10633,7 @@ namespace FintrakBanking.Repositories.Credit
                 inputTransactions.Add(financeTransaction.PostLoanPositiveReversalEntries(loanInput, accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId));
             }
 
-           
+
 
             //if (pastDueInterestDiff != 0)
             //{
@@ -11247,10 +11247,13 @@ namespace FintrakBanking.Repositories.Credit
         public bool CompleteWriteOff(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId)
         {
             bool output = false;
+
             try
             {
 
                 var systemDate = generalSetup.GetApplicationDate();
+
+                loanInput.date = systemDate;
 
                 var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanInput.productId);
                 var loan = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
@@ -11277,16 +11280,19 @@ namespace FintrakBanking.Repositories.Credit
                 principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
                 decimal pastDueInterest = decimal.Round((loan.PASTDUEINTEREST), 2, MidpointRounding.AwayFromZero);
                 decimal totalamountPrincipalAmount = (principalOutStandingBalance);
-                decimal interestOnPastDue = loan.INTERESTONPASTDUEINTEREST + loan.INTERESTONPASTDUEPRINCIPAL + pastDueInterest + accruedInterest;
+                decimal interestOnPastDue = loan.INTERESTONPASTDUEINTEREST + loan.INTERESTONPASTDUEPRINCIPAL;
 
 
-                decimal totalamountInterestAmount = (interestOnPastDue + interestOnPastDue);
+                decimal totalamountInterestAmount = (interestOnPastDue + accruedInterest + pastDueInterest);
 
                 decimal totalamount = (totalamountPrincipalAmount + totalamountInterestAmount);
 
                 //var _otherOperation = context.TBL_OTHER_OPERATION.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.WriteOffLoanFacilities).FirstOrDefault();
 
                 var _otherOperationAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.WriteOffLoanFacilities).FirstOrDefault();
+
+                var otherOperationAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.PrincipalOffBalansheetCompleteWriteOffAccount).FirstOrDefault();
+
 
                 //if (_otherOperationEnum == null)
 
@@ -11301,34 +11307,61 @@ namespace FintrakBanking.Repositories.Credit
                 if (principalOutStandingBalance != 0)
                 {
                     financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off", twoFactorAuth);
+
+                    financeTransaction.PostTerminateAndRebookDoubleEntries(loanId, loanInput, principalOutStandingBalance, otherOperationAccount.GLACCOUNTID, (int)otherOperationAccount.GLACCOUNTID2, "principal Write off", twoFactorAuth);
+
                 }
 
                 if (pastDueInterest != 0)
                 {
                     twoFactorAuth.skipAuthentication = true;
 
-                    //financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, pastDueInterest, sllp, "past due interest write off", twoFactorAuth);
-
-                    var debitGL = product.INTERESTINCOMEEXPENSEGL.Value;
                     var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
 
-                    financeTransaction.PostLoanGLEntries(loanInput, pastDueInterest, debitGL, creditGL, "past due interest write off", loanInput.operationId);
+                    financeTransaction.PostTerminateAndRebookDoubleEntries(loanId, loanInput, pastDueInterest, sllp, creditGL, "past due interest write off", twoFactorAuth);
+
+                    financeTransaction.PostTerminateAndRebookDoubleEntries(loanId, loanInput, pastDueInterest, otherOperationAccount.GLACCOUNTID, (int)otherOperationAccount.GLACCOUNTID2, "past due interest write off", twoFactorAuth);
+
+                    //var debitGL = product.INTERESTINCOMEEXPENSEGL.Value;
+                    //var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+
+                    //financeTransaction.PostLoanGLEntries(loanInput, pastDueInterest, debitGL, creditGL, "past due interest write off", loanInput.operationId);
+
                 }
 
                 if (accruedInterest != 0)
                 {
-                    var debitGL = product.INTERESTINCOMEEXPENSEGL.Value;
+                    //var debitGL = product.INTERESTINCOMEEXPENSEGL.Value;
                     var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
 
-                    financeTransaction.PostLoanGLEntries(loanInput, accruedInterest, debitGL, creditGL, "Accrued Interest Reversal", loanInput.operationId);
+                    //financeTransaction.PostLoanGLEntries(loanInput, accruedInterest, debitGL, creditGL, "Accrued Interest Reversal", loanInput.operationId);
+
+
+                    //financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, accruedInterest, sllp, "Accrued Interest Reversal", twoFactorAuth);
+
+
+                    financeTransaction.PostTerminateAndRebookDoubleEntries(loanId, loanInput, accruedInterest, sllp, creditGL, "Accrued Interest On Write-off", twoFactorAuth);
+
+                    financeTransaction.PostTerminateAndRebookDoubleEntries(loanId, loanInput, accruedInterest, otherOperationAccount.GLACCOUNTID, (int)otherOperationAccount.GLACCOUNTID2, "Accrued Interest On Write-off", twoFactorAuth);
+
+
                 }
 
                 if (interestOnPastDue > 0)
                 {
-                    var debitGL = product.PENALCHARGEGL.Value;
-                    var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                    //var debitGL = product.PENALCHARGEGL.Value;
+                    var creditGL = product.PENALCHARGEGL.Value;
 
-                    financeTransaction.PostLoanGLEntries(loanInput, interestOnPastDue, debitGL, creditGL, "interest on past due write off", loanInput.operationId);
+                    //financeTransaction.PostLoanGLEntries(loanInput, interestOnPastDue, debitGL, creditGL, "interest on past due write off", loanInput.operationId);
+
+
+                    //financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, accruedInterest, sllp, "interest on past due write off", twoFactorAuth);
+
+                    financeTransaction.PostTerminateAndRebookDoubleEntries(loanId, loanInput, interestOnPastDue, sllp, creditGL, "interest on past due write off", twoFactorAuth);
+
+                    financeTransaction.PostTerminateAndRebookDoubleEntries(loanId, loanInput, interestOnPastDue, otherOperationAccount.GLACCOUNTID, (int)otherOperationAccount.GLACCOUNTID2, "interest on past due write off", twoFactorAuth);
+
+
                 }
 
 
@@ -12914,7 +12947,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel GetRunningLoans(int companyId, string refNo)
         {
             var applicationDate = generalSetup.GetApplicationDate();
-            
+
             var data = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId);
             DateTime maturityDate = data.MATURITYDATE;
             DateTime effectiveDate = data.EFFECTIVEDATE;
@@ -13007,7 +13040,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var validate = GetRepaymentDate(runningLoan.loanId);
 
-            if(validate == true)
+            if (validate == true)
             {
                 runningLoan.previousEffectiveDate = runningLoan.previousEffectiveDate.AddDays(1);
             }
@@ -13752,7 +13785,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId)
         {
-          var applicationDate =  generalSetup.GetApplicationDate();
+            var applicationDate = generalSetup.GetApplicationDate();
             var activities = admin.GetUserActivitiesByUser(staffId);
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
@@ -13894,6 +13927,12 @@ namespace FintrakBanking.Repositories.Credit
                                 approvedAmount = ld.APPROVEDAMOUNT,
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
                                 lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                pastDueInterest = ln.PASTDUEINTEREST,
+                                pastDuePrincipal = ln.PASTDUEPRINCIPAL,
+                                interestOnPastDueInterest = ln.INTERESTONPASTDUEINTEREST,
+                                interestOnPastDuePrincipal = ln.INTERESTONPASTDUEPRINCIPAL,
+                                outstandingInterest = ln.OUTSTANDINGINTEREST,
+                                accruedInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY where a.TBL_LOAN.TERMLOANID == ln.TERMLOANID && a.DATE == applicationDate select a.ACCRUEDINTEREST).FirstOrDefault(),
 
                                 //lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.TERMLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                 // lmsLoanReferenceNumber = mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -16734,7 +16773,7 @@ namespace FintrakBanking.Repositories.Credit
                 };
 
 
-                chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPosting(model, oldContingent.LOANREFERENCENUMBER, (decimal)model.principalAmount, "Contingent Liability posting", (int)OperationsEnum.ContingentLiabilityAmountReduction));
+                chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPostingReduction(model, oldContingent.LOANREFERENCENUMBER, (decimal)model.principalAmount, "Contingent Liability posting", (int)OperationsEnum.ContingentLiabilityAmountReduction));
 
                 financeTransaction.PostTransaction(chargeDetails, false, twoFactorAuth);
 
@@ -21865,9 +21904,58 @@ namespace FintrakBanking.Repositories.Credit
                 context.SaveChanges();
 
 
-                result = true;
+                var model = (from a in context.TBL_DAILY_ACCRUAL
+                             join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                             join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
+                             join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
+                             where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.WrittenOffTermLoanInterestAccural
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID } into groupedQ
+                             select new DailyInterestAccrualViewModel()
+                             {
+                                 productId = groupedQ.Key.PRODUCTID,
+                                 branchId = groupedQ.Key.BRANCHID,
+                                 companyId = groupedQ.Key.COMPANYID,
+                                 currencyId = groupedQ.Key.CURRENCYID,
+                                 categoryId = groupedQ.Key.CATEGORYID,
+                                 productCode = groupedQ.Key.PRODUCTCODE,
+                                 currencyCode = groupedQ.Key.CURRENCYCODE,
+                                 branchCode = groupedQ.Key.BRANCHCODE,
 
-                return result;
+                                 dailyAccuralAmount = (double)groupedQ.Sum(i => (double)i.DAILYACCURALAMOUNT * i.EXCHANGERATE),
+
+                             }).ToList().Select(x =>
+                             {
+                                 x.referenceNumber = x.productCode + '/' + x.currencyCode + '/' + x.branchCode + '/' + x.companyId.ToString() + '/' + x.categoryId.ToString();
+                                 return x;
+                             }).ToList();
+
+                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
+
+                    result = bulkPosting.WriteBulkDailyWriteOffInterestAccuralToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+
+                }
+                else
+                {
+                    foreach (var item in model)
+                    {
+                        item.date = applicationDate;
+
+                        result = financeTransaction.PostDailyWriteoffLoansInterestAccrual(item);
+                    }
+                }
+
+                if (result)
+                {
+                    return result;
+                }
+                return false;
+
+                //result = true;
+
+                //return result;
             }
             catch (Exception ex)
             {
