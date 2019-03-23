@@ -747,6 +747,13 @@
     <Compile Include="Reports\ReportViews\Repayment.aspx.designer.cs">
       <DependentUpon>Repayment.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\RunningLoanReport.aspx.cs">
+      <DependentUpon>RunningLoanReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RunningLoanReport.aspx.designer.cs">
+      <DependentUpon>RunningLoanReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\RunningFacilitiesReport.aspx.cs">
       <DependentUpon>RunningFacilitiesReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1001,6 +1008,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\first-bank-logo.png" />
     <Content Include="Content\first-bank-new-logo.jpg" />
+    <Content Include="Content\first-bank-new1.jpg" />
     <Content Include="Content\firstbank.png" />
     <Content Include="Content\Icons\Draft.png" />
     <Content Include="Content\Icons\firstbank-logo.jpg" />
@@ -1082,6 +1090,7 @@
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
+    <Content Include="Reports\ReportViews\RunningLoanReport.aspx" />
     <Content Include="Reports\ReportViews\RunningFacilitiesReport.aspx" />
     <Content Include="Reports\ReportViews\SanctionLimitReport.aspx" />
     <Content Include="Reports\ReportViews\SeftLiquidatingLoans.aspx" />
@@ -1335,6 +1344,7 @@
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\Form3800BFacilityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ImpairedWatchListReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
@@ -1353,7 +1363,6 @@
     </Content>
     <EmbeddedResource Include="Reports\Report\CollateralEstimated.rdlc" />
     <EmbeddedResource Include="Reports\Report\FacilityApprovedNotUtilised.rdlc" />
-    <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentDeferralForMCC.rdlc" />
@@ -1368,6 +1377,7 @@
     <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
+    <EmbeddedResource Include="Reports\Report\RunningLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RunningFacilities.rdlc" />
     <EmbeddedResource Include="Reports\Report\SanctionLimitReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />

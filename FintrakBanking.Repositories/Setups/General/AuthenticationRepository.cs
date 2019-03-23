@@ -740,7 +740,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 // var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
                 if (profile != null)
                 {
+                    context.TBL_PROFILE_SETTING.AsNoTracking();
+
                     int count = profile.FAILEDLOGONATTEMPT ?? 0;
+
                     TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
                     prosett = context.TBL_PROFILE_SETTING.FirstOrDefault();
                     profile.LOGINCODE = null;

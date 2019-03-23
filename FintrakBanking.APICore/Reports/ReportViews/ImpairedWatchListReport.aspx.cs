@@ -19,8 +19,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 try
                 {
-                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                    //DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    //DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
                     int companyId = Int32.Parse(Request.QueryString["companyId"]);
                     //short branchId = short.Parse(Request.QueryString["branchId"]);
                     string inputDateInfo = Request.QueryString["key1"];
@@ -50,7 +50,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
                     LoanReportObjects impairedWatchListReport = new LoanReportObjects();
-                    var data = impairedWatchListReport.ImpairedWatchListReport(startDate, endDate, companyId);
+                    var data = impairedWatchListReport.ImpairedWatchListReport(companyId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();

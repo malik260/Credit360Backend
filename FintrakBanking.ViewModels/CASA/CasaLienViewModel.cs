@@ -17,6 +17,7 @@ namespace FintrakBanking.ViewModels.CASA
         public string branchName { get; set; }
         public string lienTypeName { get; set; }
         public string customerName { get; set; }
+        public DateTime dateLienRemoved { get; set; }
 
         public string currencyCode { get; set; }
 

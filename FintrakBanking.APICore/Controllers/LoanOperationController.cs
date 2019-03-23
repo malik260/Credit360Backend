@@ -63,6 +63,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("getWiteOffloan/{refNo}")]
+        public HttpResponseMessage getWiteOffloan(string refNo)
+        {
+            try
+            {
+                var data = repo.GetWriteOffLoans(token.GetCompanyId, refNo);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -855,6 +871,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("get-repayment-date")]
+        public HttpResponseMessage GetRepaymentDate(int loanId)
+        {
+            try
+            {
+                var data = repo.GetRepaymentDate(loanId);
+                
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
 
     }
 }

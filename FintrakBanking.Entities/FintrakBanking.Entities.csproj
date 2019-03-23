@@ -78,6 +78,7 @@
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
     <Compile Include="DocumentModels\TBL_JOB_REQUEST_MSG_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_MEDIA_LOAN_DOCUMENTS.cs" />
+    <Compile Include="Models\TBL_APPROVAL_LEVEL_SETTING.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_RELEASE_DOC.cs" />
     <Compile Include="Models\TBL_COLLATERAL_RELEASE_TYPE.cs" />

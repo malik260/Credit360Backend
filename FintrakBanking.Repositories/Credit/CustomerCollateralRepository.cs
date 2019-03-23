@@ -260,6 +260,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.FinalCollateralRelease).ToList();
             //var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TemporalCollateralRelease).ToList();
+            var levelsettings = context.TBL_APPROVAL_LEVEL_SETTING.Where(x => ids.Contains(x.APPROVALLEVELID));
 
 
 
@@ -315,7 +316,7 @@ namespace FintrakBanking.Repositories.Credit
                 var tempRelease = context.TBL_COLLATERAL_RELEASE_DOC.Where(a => a.COLLATERALRELEASEID == entity.targetId).ToList();
                 TBL_MEDIA_COLLATERAL_DOCUMENTS collateralRecord = new TBL_MEDIA_COLLATERAL_DOCUMENTS();
 
-                if (ids.Contains(31))//Bussiness Manager
+                if (levelsettings.Where(x => x.SETTINGCODE == "COLLATERALBUSSINESSMANAGERAPPROVER").FirstOrDefault() != null)//Bussiness Manager
                 {
                     foreach (var rec in tempRelease)
                     {
@@ -358,6 +359,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             //var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.FinalCollateralRelease).ToList();
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TemporalCollateralRelease).ToList();
+            var levelsettings = context.TBL_APPROVAL_LEVEL_SETTING.Where(x => ids.Contains(x.APPROVALLEVELID));
 
 
 
@@ -367,7 +369,7 @@ namespace FintrakBanking.Repositories.Credit
 
             TBL_MEDIA_COLLATERAL_DOCUMENTS collateralRecord = new TBL_MEDIA_COLLATERAL_DOCUMENTS();
 
-            if (ids.Contains(63))//Credit Control Officer
+            if (levelsettings.Where(x => x.SETTINGCODE == "COLLATERALCREDITCONTROLOFFICERAPPROVER").FirstOrDefault() != null)//Credit Control Officer
             {
                 foreach (var rec in tempRelease)
                 {
@@ -378,13 +380,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
             }
-            if (ids.Contains(31))//Legal
-            {
-                //customerCollateral.COLLATERALRELEASESTATUSID = (int)CollateralReleaseStatus.ReleasedToCustomer;
-                //context.Entry(customerCollateral).State = EntityState.Modified;
-
-            }
-
+           
             release.APPROVALSTATUSID = (short)entity.approvalStatusId;
             context.Entry(release).State = EntityState.Modified;
 
@@ -410,8 +406,12 @@ namespace FintrakBanking.Repositories.Credit
         public bool ReleaseCollateralGoForApproval(ApprovalViewModel model)
         {
             var release = context.TBL_COLLATERAL_RELEASE.Where(a => a.COLLATERALRELEASEID == model.targetId).FirstOrDefault();
-            var ids = genSetup.GetStaffApprovalLevelIds(model.createdBy, (int)OperationsEnum.FinalCollateralRelease).ToList();
+            var ids = genSetup.GetStaffApprovalLevelIds(model.createdBy, (int)release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.FinalRelease ? (int)OperationsEnum.FinalCollateralRelease : (int)OperationsEnum.TemporalCollateralRelease).ToList();
+
+
             var customerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(a => a.COLLATERALCUSTOMERID == release.COLLATERALCUSTOMERID).FirstOrDefault();
+            var levelsettings = context.TBL_APPROVAL_LEVEL_SETTING.Where(x => ids.Contains(x.APPROVALLEVELID));
+
 
             bool output = false;
 
@@ -420,30 +420,63 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = (short)model.approvalStatusId;
                 workflow.TargetId = model.targetId;
                 workflow.Comment = model.comment;
-                workflow.OperationId = (int)release.COLLATERALRELEASETYPEID == 1 ? (int)OperationsEnum.FinalCollateralRelease : (int)OperationsEnum.TemporalCollateralRelease;
+                workflow.OperationId = (int)release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.FinalRelease ? (int)OperationsEnum.FinalCollateralRelease : (int)OperationsEnum.TemporalCollateralRelease;
                 workflow.DeferredExecution = true;
                 workflow.LogActivity();
 
             if (workflow.NewState != (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
             {
-                if (release.COLLATERALRELEASETYPEID == 1) //OperationsEnum.FinalCollateralRelease
+                if (release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.FinalRelease) //OperationsEnum.FinalCollateralRelease
                 {
-                    if (ids.Contains(63))//Credit Control Officer
+
+                    if (levelsettings.Where(x=> x.SETTINGCODE == "COLLATERALLEGAL1APPROVER").FirstOrDefault() != null)//Credit Control Officer
                     {
                         customerCollateral.COLLATERALRELEASESTATUSID = (int)CollateralReleaseStatus.ReleasedToBM;
                         context.Entry(customerCollateral).State = EntityState.Modified;
-
-
                     }
                     output = true;
 
                 }
-                else if (release.COLLATERALRELEASETYPEID == 2) //OperationsEnum.TemporalCollateralRelease
+                else if (release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.TemporaryRelease) //OperationsEnum.TemporalCollateralRelease
                 {
-                    if (ids.Contains(31))//Legal
+                    var tempRelease = context.TBL_COLLATERAL_RELEASE_DOC.Where(a => a.COLLATERALRELEASEID == release.COLLATERALRELEASEID).ToList();
+
+                    TBL_MEDIA_COLLATERAL_DOCUMENTS collateralRecord = new TBL_MEDIA_COLLATERAL_DOCUMENTS();
+
+                  
+                    if (levelsettings.Where(x => x.SETTINGCODE == "COLLATERALLEGAL1APPROVER").FirstOrDefault() != null)//Legal
                     {
+                        foreach (var rec in tempRelease)
+                        {
+                            collateralRecord = documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Find(rec.DOCUMENTID);
+                            collateralRecord.COLLATERALRELEASESTATUSID = (int)CollateralReleaseStatus.InVault;
+                            documentContext.Entry(collateralRecord).State = EntityState.Modified;
+                            documentContext.SaveChanges();
+                        }
                         //customerCollateral.COLLATERALRELEASESTATUSID = (int)CollateralReleaseStatus.ReleasedToCustomer;
                         //context.Entry(customerCollateral).State = EntityState.Modified;
+
+                    }
+                    if (levelsettings.Where(x => x.SETTINGCODE == "COLLATERALMANAGEMENTTEAMAPPROVER").FirstOrDefault() != null)//cOLLATERALManagementTeam
+                    {
+                        foreach (var rec in tempRelease)
+                        {
+                            collateralRecord = documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Find(rec.DOCUMENTID);
+                            collateralRecord.COLLATERALRELEASESTATUSID = (int)CollateralReleaseStatus.ReleasedToLegal;
+                            documentContext.Entry(collateralRecord).State = EntityState.Modified;
+                            documentContext.SaveChanges();
+                        }
+
+                    }
+                    if (levelsettings.Where(x => x.SETTINGCODE == "COLLATERALLEGAL2APPROVER").FirstOrDefault() != null)//Legal
+                    {
+                        foreach (var rec in tempRelease)
+                        {
+                            collateralRecord = documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Find(rec.DOCUMENTID);
+                            collateralRecord.COLLATERALRELEASESTATUSID = (int)CollateralReleaseStatus.ReleasedToLegal;
+                            documentContext.Entry(collateralRecord).State = EntityState.Modified;
+                            documentContext.SaveChanges();
+                        }
 
                     }
                     output = true;
@@ -452,14 +485,14 @@ namespace FintrakBanking.Repositories.Credit
             }
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
             {
-                if (release.COLLATERALRELEASETYPEID == 1) //OperationsEnum.FinalCollateralRelease
+                if (release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.FinalRelease) //OperationsEnum.FinalCollateralRelease
                 {
                     output = FinalReleaseCollateralApproval(model, model.createdBy);
 
                }
-                else if (release.COLLATERALRELEASETYPEID == 2) //OperationsEnum.TemporalCollateralRelease
+                else if (release.COLLATERALRELEASETYPEID == (int)CollateralReleaseType.TemporaryRelease) //OperationsEnum.TemporalCollateralRelease
                 {
-                    //output = TemporaryReleaseCollateralApproval(model, model.createdBy);
+                    output = TemporaryReleaseCollateralApproval(model, model.createdBy);
 
                 }
             }
@@ -1263,6 +1296,8 @@ namespace FintrakBanking.Repositories.Credit
                         requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                         exchangeRate = c.c.EXCHANGERATE,
                         availableValue = 0,
+                        collateralReleaseStatusId = c.c.COLLATERALRELEASESTATUSID,
+                        collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q=>q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
                         accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
         })
                     .ToList()

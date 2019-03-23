@@ -27,4 +27,16 @@ namespace FintrakBanking.Common.Enum
         Tax = 3,
         Others = 4
     }
+
+    public enum ChargeFeeTargetEnum
+    {
+        Turnover = 1,
+        TransactionDebitAndCredit = 2,
+        Balance = 3,
+        Credit = 6,
+        Debit  = 5,
+        OutstandingPrincipal = 7,
+        Principal = 4,
+        ApprovedLoanAmount = 8
+    }
 }

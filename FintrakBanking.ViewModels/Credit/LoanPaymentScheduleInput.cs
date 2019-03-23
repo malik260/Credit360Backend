@@ -59,8 +59,8 @@ namespace FintrakBanking.ViewModels.Credit
 
 
     public class LoanPaymentRestructureScheduleInputViewModel : LoanPaymentScheduleInputViewModel
-
     {
+        public short dealTypeId { get; set; }
         public string sourceReferenceNumber { get; set; }
         public int casaAccountId { get; set; }
 
