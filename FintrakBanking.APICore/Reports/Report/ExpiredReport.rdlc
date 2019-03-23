@@ -1031,7 +1031,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!classificationDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1091,7 +1093,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!expiryDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1109,6 +1113,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>

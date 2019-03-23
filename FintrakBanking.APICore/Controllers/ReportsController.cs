@@ -1833,15 +1833,19 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("impaired-watch-list-report")]
-        public HttpResponseMessage GetImpairedWatchListReport()
+        public HttpResponseMessage GetImpairedWatchListReport([FromBody]DateRange param)
         {
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetImpairedWatchListReport(token.GetCompanyId);
+
+
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetRuniningLoanReport(param);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1907,15 +1911,19 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("excess-report")]
-        public HttpResponseMessage GetExcessReport()
+        public HttpResponseMessage GetExcessReport([FromBody]DateRange param)
         {
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetExcessReport(token.GetCompanyId);
+
+
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetExcessReport(param);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1954,16 +1962,19 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("runining-loan-report")]
-        public HttpResponseMessage GetRuniningLoanReport()
+        public HttpResponseMessage GetRuniningLoanReport([FromBody]DateRange param)
         {
-
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetRuniningLoanReport(token.GetCompanyId);
+
+
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetRuniningLoanReport(param);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1976,8 +1987,9 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
+
+      
 
         [HttpPost]
         [ClaimsAuthorization]

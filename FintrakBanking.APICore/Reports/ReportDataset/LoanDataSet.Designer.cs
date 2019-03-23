@@ -20065,7 +20065,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnendDate;
             
-            private global::System.Data.DataColumn columnotherInc;
+            private global::System.Data.DataColumn columnotherIncome;
             
             private global::System.Data.DataColumn columninterestInSupense;
             
@@ -20312,9 +20312,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn otherIncColumn {
+            public global::System.Data.DataColumn otherIncomeColumn {
                 get {
-                    return this.columnotherInc;
+                    return this.columnotherIncome;
                 }
             }
             
@@ -20607,7 +20607,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string sanctionLimit, 
                         string currencyType, 
                         string endDate, 
-                        string otherInc, 
+                        string otherIncome, 
                         string interestInSupense, 
                         string userClassification, 
                         string expiryDate, 
@@ -20658,7 +20658,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         sanctionLimit,
                         currencyType,
                         endDate,
-                        otherInc,
+                        otherIncome,
                         interestInSupense,
                         userClassification,
                         expiryDate,
@@ -20729,7 +20729,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnsanctionLimit = base.Columns["sanctionLimit"];
                 this.columncurrencyType = base.Columns["currencyType"];
                 this.columnendDate = base.Columns["endDate"];
-                this.columnotherInc = base.Columns["otherInc"];
+                this.columnotherIncome = base.Columns["otherIncome"];
                 this.columninterestInSupense = base.Columns["interestInSupense"];
                 this.columnuserClassification = base.Columns["userClassification"];
                 this.columnexpiryDate = base.Columns["expiryDate"];
@@ -20802,8 +20802,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columncurrencyType);
                 this.columnendDate = new global::System.Data.DataColumn("endDate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnendDate);
-                this.columnotherInc = new global::System.Data.DataColumn("otherInc", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnotherInc);
+                this.columnotherIncome = new global::System.Data.DataColumn("otherIncome", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnotherIncome);
                 this.columninterestInSupense = new global::System.Data.DataColumn("interestInSupense", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columninterestInSupense);
                 this.columnuserClassification = new global::System.Data.DataColumn("userClassification", typeof(string), null, global::System.Data.MappingType.Element);
@@ -41072,17 +41072,17 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string otherInc {
+            public string otherIncome {
                 get {
                     try {
-                        return ((string)(this[this.tableRunningLoanReport.otherIncColumn]));
+                        return ((string)(this[this.tableRunningLoanReport.otherIncomeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'otherInc\' in table \'RunningLoanReport\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'otherIncome\' in table \'RunningLoanReport\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableRunningLoanReport.otherIncColumn] = value;
+                    this[this.tableRunningLoanReport.otherIncomeColumn] = value;
                 }
             }
             
@@ -41785,14 +41785,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsotherIncNull() {
-                return this.IsNull(this.tableRunningLoanReport.otherIncColumn);
+            public bool IsotherIncomeNull() {
+                return this.IsNull(this.tableRunningLoanReport.otherIncomeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetotherIncNull() {
-                this[this.tableRunningLoanReport.otherIncColumn] = global::System.Convert.DBNull;
+            public void SetotherIncomeNull() {
+                this[this.tableRunningLoanReport.otherIncomeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
