@@ -106,14 +106,16 @@ namespace FintrakBanking.Repositories.CRMS
                        where (x.CRMSVALIDATED == false || x.CRMSVALIDATED == null)
                        select new CRMSTemplateViewModel
                        {
-                           ACCOUNT = x.CASAACCOUNTID != null ? context.TBL_CASA.Where(a => a.CASAACCOUNTID == x.CASAACCOUNTID).Select(g => g.PRODUCTACCOUNTNUMBER).FirstOrDefault() : "n/a", //c.PRODUCTACCOUNTNUMBER,
+                           ACCOUNT = x.CASAACCOUNTID == null ?  "n/a" : context.TBL_CASA.Where(a => a.CASAACCOUNTID == x.CASAACCOUNTID).Select(g => g.PRODUCTACCOUNTNUMBER).FirstOrDefault() , //c.PRODUCTACCOUNTNUMBER,
                            FEE_TYPE = cf.CRMSREGULATORYID,
-                           FEE_AMOUNT = f.RECOMMENDED_FEERATEVALUE * x.APPROVEDAMOUNT,
+                           FEE_AMOUNT = (f.RECOMMENDED_FEERATEVALUE/100) * x.APPROVEDAMOUNT,
                            CRMSLEGALSTATUSID = context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == x.CUSTOMERID).Select(q => q.CRMSLEGALSTATUSID).FirstOrDefault() != null ? context.TBL_CUSTOMER.Where(a => a.CUSTOMERID == x.CUSTOMERID).Select(q => q.CRMSLEGALSTATUSID).FirstOrDefault() : 0,// b.CRMSLEGALSTATUSID,
                            DATETIMECREATED = x.DATETIMECREATED,
                            LOANAPPLICATIONDETAILID = x.LOANAPPLICATIONDETAILID,
 
                        };
+
+            var te = term.ToList();
             //var OD = from x in context.TBL_LOAN_REVOLVING
             //         join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
             //         join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
@@ -533,7 +535,7 @@ namespace FintrakBanking.Repositories.CRMS
                         {
                             var feeRecord = output[i - 2];
 
-                            ws2.Cells[i, 1].Value = feeRecord.ACCOUNT;
+                            ws2.Cells[i, 1].Value = feeRecord.ACCOUNT==null? "n/a": feeRecord.ACCOUNT;
                             ws2.Cells[i, 2].Value = feeRecord.FEE_TYPE;
                             ws2.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
                         }
@@ -566,7 +568,7 @@ namespace FintrakBanking.Repositories.CRMS
                         {
                             var record = directors[i - 2];
 
-                            ws3.Cells[i, 1].Value = record.ACCOUNT;
+                            ws3.Cells[i, 1].Value = record.ACCOUNT== null ? "n/a" : record.ACCOUNT;
                             ws3.Cells[i, 2].Value = record.ID_TTPE;
                             ws3.Cells[i, 3].Value = record.ID_DETAIL;
                             ws3.Cells[i, 4].Value = record.EMAIL;
@@ -2250,7 +2252,7 @@ namespace FintrakBanking.Repositories.CRMS
                      select new CRMSTemplateViewModel
                      {
                          CRMSVALIDATED = a.CRMSVALIDATED,
-                         CRMSDATE = a.CRMSDATE != null ? a.CRMSDATE : Convert.ToDateTime("1-JAN-85"),
+                         CRMSDATE = a.CRMSDATE != null ? a.CRMSDATE : null ,//Convert.ToDateTime("1-JAN-85"),
                          DATETIMECREATED = a.DATETIMECREATED,
                          LOANAPPLICATIONDETAILID = a.LOANAPPLICATIONDETAILID,
                          BENEFICIARY_ACCOUNT_NUMBER = a.CASAACCOUNTID != null ? context.TBL_CASA.Where(o => o.CASAACCOUNTID == a.CASAACCOUNTID).Select(q => q.PRODUCTACCOUNTNUMBER).FirstOrDefault() : "n/a",

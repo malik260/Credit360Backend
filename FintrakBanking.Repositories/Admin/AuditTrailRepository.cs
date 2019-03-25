@@ -49,7 +49,28 @@ namespace FintrakBanking.Repositories.Admin
                        auditTypeId = _audit.AUDITTYPEID,
                    };
         }
+        public IQueryable<DeletedStaffLog> GetDeletedStaffLog(short branchId)
+        {
+            return from _audit in context.TBL_STAFF
+                   where _audit.DELETED == true
+                   //join atype in context.TBL_AUDIT_TYPE on _audit.AUDITTYPEID equals atype.AUDITTYPEID
+                   //join st in context.TBL_STAFF on _audit.STAFFID equals st.STAFFID
+                   //join u in context.TBL_PROFILE_USER on st.STAFFID equals u.STAFFID
+                   //join b in context.TBL_BRANCH on _audit.BRANCHID equals b.BRANCHID
+                   //where _audit.BRANCHID == branchId
+                   select new DeletedStaffLog
+                   {
+                       deletedById = _audit.DELETEDBY,
+                       deletedByName = context.TBL_STAFF.Where(a=>a.STAFFID == _audit.DELETEDBY).Select(q=>q.FIRSTNAME + " " + q.MIDDLENAME + " " + q.LASTNAME).FirstOrDefault(),// _audit.APPLICATIONDATE,
+                       deletedStaffId = _audit.STAFFID,
+                       deletedStaffName = _audit.FIRSTNAME + " " + _audit.MIDDLENAME + " " + _audit.LASTNAME,
+                       deletedDate = _audit.DATETIMEDELETED,
+                       deletedStaffCode = _audit.STAFFCODE,
+                       deletedByStaffCode = context.TBL_STAFF.Where(a => a.STAFFID == _audit.DELETEDBY).Select(q => q.STAFFCODE).FirstOrDefault(),// _audit.APPLICATIONDATE,
 
-      
+                   };
+        }
+
+
     }
 }

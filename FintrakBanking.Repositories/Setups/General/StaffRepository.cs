@@ -308,8 +308,23 @@ namespace FintrakBanking.Repositories.Setups.General
                         existingTempUser.SECURITYQUESTION = staffModel.user.securityQuestion;
                         existingTempUser.SECURITYANSWER = staffModel.user.securityAnswer;
                     }
-
-                    existingTempUser.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);
+                    else
+                    {
+                        existingTempUser.SECURITYQUESTION = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempStaff.STAFFCODE.ToLower()).FirstOrDefault().SECURITYQUESTION;
+                        existingTempUser.SECURITYANSWER = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempStaff.STAFFCODE.ToLower()).FirstOrDefault().SECURITYANSWER;
+                    }
+                    if (staffModel.user.changePassword)
+                    {
+                        existingTempUser.PASSWORD  = StaticHelpers.EncryptSha512(staffModel.user.password , StaticHelpers.EncryptionKey);// staffModel.user.password;
+                        existingTempUser.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);
+                    }
+                    else
+                    {
+                        existingTempUser.PASSWORD = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempStaff.STAFFCODE.ToLower()).FirstOrDefault().PASSWORD;
+                        existingTempUser.NEXTPASSWORDCHANGEDATE = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempStaff.STAFFCODE.ToLower()).FirstOrDefault().NEXTPASSWORDCHANGEDATE;
+                    }
+                    //existingTempUser.PASSWORD = context.TBL_PROFILE_USER.Where(a=>a.USERNAME.ToLower() == existingTempStaff.STAFFCODE.ToLower()).FirstOrDefault().PASSWORD;
+                    //existingTempUser.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);
                     //existingTempUser.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays);
                     existingTempUser.LASTUPDATEDBY = staffModel.createdBy;
                     existingTempUser.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
@@ -940,6 +955,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     isUpdate = true;
                     targetUser.USERNAME = tempUser.USERNAME;
                     targetUser.PASSWORD = tempUser.PASSWORD;
+                    targetUser.NEXTPASSWORDCHANGEDATE = tempUser.NEXTPASSWORDCHANGEDATE;
                     targetUser.ISFIRSTLOGINATTEMPT = false;
                     targetUser.ISACTIVE = true;
                     targetUser.ISLOCKED = false;

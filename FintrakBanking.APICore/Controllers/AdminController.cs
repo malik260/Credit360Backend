@@ -586,19 +586,16 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("audit/deleted-staff-log")]
-        public HttpResponseMessage GetAuditDeletedStaffLog([FromUri] int page, [FromUri] int itemsPerPage)
+        public HttpResponseMessage GetAuditDeletedStaffLog()
         {
             try
             {
-                var rec = audit.GetAuditTrail((short)token.GetBranchId).ToList();
-                var test = audit.GetAuditTrail((short)token.GetBranchId).Where(x => x.auditTypeId == 130).ToList();
+                var allDeletedStaffLog = audit.GetDeletedStaffLog((short)token.GetBranchId);
+                int totalItems = allDeletedStaffLog.Count();
 
-                var allAuditLog = audit.GetAuditTrail((short)token.GetBranchId).Where(x=>x.auditTypeId == 130);
-                int totalItems = allAuditLog.Count();
+                allDeletedStaffLog = allDeletedStaffLog.OrderBy(x => x.deletedDate);
 
-                allAuditLog = allAuditLog.OrderBy(x => x.systemDate).Skip(page).Take(itemsPerPage);
-
-                var data = allAuditLog.ToList();
+                var data = allDeletedStaffLog.ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = totalItems });
 
