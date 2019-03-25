@@ -108,6 +108,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         private overdraftDataTable tableoverdraft;
         
+        private UnutilizedFacilityReportDataTable tableUnutilizedFacilityReport;
+        
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -261,6 +263,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["overdraft"] != null)) {
                     base.Tables.Add(new overdraftDataTable(ds.Tables["overdraft"]));
+                }
+                if ((ds.Tables["UnutilizedFacilityReport"] != null)) {
+                    base.Tables.Add(new UnutilizedFacilityReportDataTable(ds.Tables["UnutilizedFacilityReport"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -702,6 +707,16 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public UnutilizedFacilityReportDataTable UnutilizedFacilityReport {
+            get {
+                return this.tableUnutilizedFacilityReport;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.BrowsableAttribute(true)]
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Visible)]
         public override global::System.Data.SchemaSerializationMode SchemaSerializationMode {
@@ -892,6 +907,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["overdraft"] != null)) {
                     base.Tables.Add(new overdraftDataTable(ds.Tables["overdraft"]));
+                }
+                if ((ds.Tables["UnutilizedFacilityReport"] != null)) {
+                    base.Tables.Add(new UnutilizedFacilityReportDataTable(ds.Tables["UnutilizedFacilityReport"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -1178,6 +1196,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableoverdraft.InitVars();
                 }
             }
+            this.tableUnutilizedFacilityReport = ((UnutilizedFacilityReportDataTable)(base.Tables["UnutilizedFacilityReport"]));
+            if ((initTable == true)) {
+                if ((this.tableUnutilizedFacilityReport != null)) {
+                    this.tableUnutilizedFacilityReport.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1272,6 +1296,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableLoan);
             this.tableoverdraft = new overdraftDataTable();
             base.Tables.Add(this.tableoverdraft);
+            this.tableUnutilizedFacilityReport = new UnutilizedFacilityReportDataTable();
+            base.Tables.Add(this.tableUnutilizedFacilityReport);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1528,6 +1554,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeUnutilizedFacilityReport() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void SchemaChanged(object sender, global::System.ComponentModel.CollectionChangeEventArgs e) {
             if ((e.Action == global::System.ComponentModel.CollectionChangeAction.Remove)) {
                 this.InitVars();
@@ -1706,6 +1738,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void overdraftRowChangeEventHandler(object sender, overdraftRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public delegate void UnutilizedFacilityReportRowChangeEventHandler(object sender, UnutilizedFacilityReportRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -18266,6 +18301,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnaccount;
             
+            private global::System.Data.DataColumn columncustomerId;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public ExcessReportDataTable() {
@@ -18469,6 +18506,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerIdColumn {
+                get {
+                    return this.columncustomerId;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -18525,7 +18570,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string classificationDate, 
                         string expiryDate, 
                         string groupDescription, 
-                        string account) {
+                        string account, 
+                        string customerId) {
                 ExcessReportRow rowExcessReportRow = ((ExcessReportRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         branchName,
@@ -18548,7 +18594,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         classificationDate,
                         expiryDate,
                         groupDescription,
-                        account};
+                        account,
+                        customerId};
                 rowExcessReportRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowExcessReportRow);
                 return rowExcessReportRow;
@@ -18592,6 +18639,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnexpiryDate = base.Columns["expiryDate"];
                 this.columngroupDescription = base.Columns["groupDescription"];
                 this.columnaccount = base.Columns["account"];
+                this.columncustomerId = base.Columns["customerId"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -18639,6 +18687,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columngroupDescription);
                 this.columnaccount = new global::System.Data.DataColumn("account", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnaccount);
+                this.columncustomerId = new global::System.Data.DataColumn("customerId", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerId);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -20130,7 +20180,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnendDate;
             
-            private global::System.Data.DataColumn columnotherInc;
+            private global::System.Data.DataColumn columnotherIncome;
             
             private global::System.Data.DataColumn columninterestInSupense;
             
@@ -20377,9 +20427,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn otherIncColumn {
+            public global::System.Data.DataColumn otherIncomeColumn {
                 get {
-                    return this.columnotherInc;
+                    return this.columnotherIncome;
                 }
             }
             
@@ -20672,7 +20722,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string sanctionLimit, 
                         string currencyType, 
                         string endDate, 
-                        string otherInc, 
+                        string otherIncome, 
                         string interestInSupense, 
                         string userClassification, 
                         string expiryDate, 
@@ -20723,7 +20773,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         sanctionLimit,
                         currencyType,
                         endDate,
-                        otherInc,
+                        otherIncome,
                         interestInSupense,
                         userClassification,
                         expiryDate,
@@ -20794,7 +20844,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnsanctionLimit = base.Columns["sanctionLimit"];
                 this.columncurrencyType = base.Columns["currencyType"];
                 this.columnendDate = base.Columns["endDate"];
-                this.columnotherInc = base.Columns["otherInc"];
+                this.columnotherIncome = base.Columns["otherIncome"];
                 this.columninterestInSupense = base.Columns["interestInSupense"];
                 this.columnuserClassification = base.Columns["userClassification"];
                 this.columnexpiryDate = base.Columns["expiryDate"];
@@ -20867,8 +20917,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columncurrencyType);
                 this.columnendDate = new global::System.Data.DataColumn("endDate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnendDate);
-                this.columnotherInc = new global::System.Data.DataColumn("otherInc", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnotherInc);
+                this.columnotherIncome = new global::System.Data.DataColumn("otherIncome", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnotherIncome);
                 this.columninterestInSupense = new global::System.Data.DataColumn("interestInSupense", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columninterestInSupense);
                 this.columnuserClassification = new global::System.Data.DataColumn("userClassification", typeof(string), null, global::System.Data.MappingType.Element);
@@ -22307,6 +22357,393 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
                 attribute2.FixedValue = "overdraftDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class UnutilizedFacilityReportDataTable : global::System.Data.TypedTableBase<UnutilizedFacilityReportRow> {
+            
+            private global::System.Data.DataColumn columnbusinessUnits;
+            
+            private global::System.Data.DataColumn columngroup;
+            
+            private global::System.Data.DataColumn columnbranch;
+            
+            private global::System.Data.DataColumn columncustomerName;
+            
+            private global::System.Data.DataColumn columncap;
+            
+            private global::System.Data.DataColumn columnreviwedDate;
+            
+            private global::System.Data.DataColumn columnstatus;
+            
+            private global::System.Data.DataColumn columnpurpose;
+            
+            private global::System.Data.DataColumn columnutilizedAmount;
+            
+            private global::System.Data.DataColumn columnapprovedAmount;
+            
+            private global::System.Data.DataColumn columnundisbursedAmount;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public UnutilizedFacilityReportDataTable() {
+                this.TableName = "UnutilizedFacilityReport";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal UnutilizedFacilityReportDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected UnutilizedFacilityReportDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn businessUnitsColumn {
+                get {
+                    return this.columnbusinessUnits;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn groupColumn {
+                get {
+                    return this.columngroup;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn branchColumn {
+                get {
+                    return this.columnbranch;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn customerNameColumn {
+                get {
+                    return this.columncustomerName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn capColumn {
+                get {
+                    return this.columncap;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn reviwedDateColumn {
+                get {
+                    return this.columnreviwedDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn statusColumn {
+                get {
+                    return this.columnstatus;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn purposeColumn {
+                get {
+                    return this.columnpurpose;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn utilizedAmountColumn {
+                get {
+                    return this.columnutilizedAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn approvedAmountColumn {
+                get {
+                    return this.columnapprovedAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn undisbursedAmountColumn {
+                get {
+                    return this.columnundisbursedAmount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public UnutilizedFacilityReportRow this[int index] {
+                get {
+                    return ((UnutilizedFacilityReportRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event UnutilizedFacilityReportRowChangeEventHandler UnutilizedFacilityReportRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event UnutilizedFacilityReportRowChangeEventHandler UnutilizedFacilityReportRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event UnutilizedFacilityReportRowChangeEventHandler UnutilizedFacilityReportRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event UnutilizedFacilityReportRowChangeEventHandler UnutilizedFacilityReportRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddUnutilizedFacilityReportRow(UnutilizedFacilityReportRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public UnutilizedFacilityReportRow AddUnutilizedFacilityReportRow(string businessUnits, string group, string branch, string customerName, string cap, string reviwedDate, string status, string purpose, string utilizedAmount, string approvedAmount, string undisbursedAmount) {
+                UnutilizedFacilityReportRow rowUnutilizedFacilityReportRow = ((UnutilizedFacilityReportRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        businessUnits,
+                        group,
+                        branch,
+                        customerName,
+                        cap,
+                        reviwedDate,
+                        status,
+                        purpose,
+                        utilizedAmount,
+                        approvedAmount,
+                        undisbursedAmount};
+                rowUnutilizedFacilityReportRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowUnutilizedFacilityReportRow);
+                return rowUnutilizedFacilityReportRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                UnutilizedFacilityReportDataTable cln = ((UnutilizedFacilityReportDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new UnutilizedFacilityReportDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columnbusinessUnits = base.Columns["businessUnits"];
+                this.columngroup = base.Columns["group"];
+                this.columnbranch = base.Columns["branch"];
+                this.columncustomerName = base.Columns["customerName"];
+                this.columncap = base.Columns["cap"];
+                this.columnreviwedDate = base.Columns["reviwedDate"];
+                this.columnstatus = base.Columns["status"];
+                this.columnpurpose = base.Columns["purpose"];
+                this.columnutilizedAmount = base.Columns["utilizedAmount"];
+                this.columnapprovedAmount = base.Columns["approvedAmount"];
+                this.columnundisbursedAmount = base.Columns["undisbursedAmount"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columnbusinessUnits = new global::System.Data.DataColumn("businessUnits", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbusinessUnits);
+                this.columngroup = new global::System.Data.DataColumn("group", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columngroup);
+                this.columnbranch = new global::System.Data.DataColumn("branch", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbranch);
+                this.columncustomerName = new global::System.Data.DataColumn("customerName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerName);
+                this.columncap = new global::System.Data.DataColumn("cap", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncap);
+                this.columnreviwedDate = new global::System.Data.DataColumn("reviwedDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnreviwedDate);
+                this.columnstatus = new global::System.Data.DataColumn("status", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnstatus);
+                this.columnpurpose = new global::System.Data.DataColumn("purpose", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpurpose);
+                this.columnutilizedAmount = new global::System.Data.DataColumn("utilizedAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnutilizedAmount);
+                this.columnapprovedAmount = new global::System.Data.DataColumn("approvedAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapprovedAmount);
+                this.columnundisbursedAmount = new global::System.Data.DataColumn("undisbursedAmount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnundisbursedAmount);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public UnutilizedFacilityReportRow NewUnutilizedFacilityReportRow() {
+                return ((UnutilizedFacilityReportRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new UnutilizedFacilityReportRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(UnutilizedFacilityReportRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.UnutilizedFacilityReportRowChanged != null)) {
+                    this.UnutilizedFacilityReportRowChanged(this, new UnutilizedFacilityReportRowChangeEvent(((UnutilizedFacilityReportRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.UnutilizedFacilityReportRowChanging != null)) {
+                    this.UnutilizedFacilityReportRowChanging(this, new UnutilizedFacilityReportRowChangeEvent(((UnutilizedFacilityReportRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.UnutilizedFacilityReportRowDeleted != null)) {
+                    this.UnutilizedFacilityReportRowDeleted(this, new UnutilizedFacilityReportRowChangeEvent(((UnutilizedFacilityReportRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.UnutilizedFacilityReportRowDeleting != null)) {
+                    this.UnutilizedFacilityReportRowDeleting(this, new UnutilizedFacilityReportRowChangeEvent(((UnutilizedFacilityReportRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveUnutilizedFacilityReportRow(UnutilizedFacilityReportRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                LoanDataSet ds = new LoanDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "UnutilizedFacilityReportDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -39739,6 +40176,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerId {
+                get {
+                    try {
+                        return ((string)(this[this.tableExcessReport.customerIdColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerId\' in table \'ExcessReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExcessReport.customerIdColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsbranchNameNull() {
                 return this.IsNull(this.tableExcessReport.branchNameColumn);
             }
@@ -39987,6 +40440,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetaccountNull() {
                 this[this.tableExcessReport.accountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerIdNull() {
+                return this.IsNull(this.tableExcessReport.customerIdColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerIdNull() {
+                this[this.tableExcessReport.customerIdColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -41552,17 +42017,17 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string otherInc {
+            public string otherIncome {
                 get {
                     try {
-                        return ((string)(this[this.tableRunningLoanReport.otherIncColumn]));
+                        return ((string)(this[this.tableRunningLoanReport.otherIncomeColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'otherInc\' in table \'RunningLoanReport\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'otherIncome\' in table \'RunningLoanReport\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableRunningLoanReport.otherIncColumn] = value;
+                    this[this.tableRunningLoanReport.otherIncomeColumn] = value;
                 }
             }
             
@@ -42265,14 +42730,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsotherIncNull() {
-                return this.IsNull(this.tableRunningLoanReport.otherIncColumn);
+            public bool IsotherIncomeNull() {
+                return this.IsNull(this.tableRunningLoanReport.otherIncomeColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetotherIncNull() {
-                this[this.tableRunningLoanReport.otherIncColumn] = global::System.Convert.DBNull;
+            public void SetotherIncomeNull() {
+                this[this.tableRunningLoanReport.otherIncomeColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -43820,6 +44285,335 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class UnutilizedFacilityReportRow : global::System.Data.DataRow {
+            
+            private UnutilizedFacilityReportDataTable tableUnutilizedFacilityReport;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal UnutilizedFacilityReportRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableUnutilizedFacilityReport = ((UnutilizedFacilityReportDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string businessUnits {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.businessUnitsColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'businessUnits\' in table \'UnutilizedFacilityReport\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.businessUnitsColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string group {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.groupColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'group\' in table \'UnutilizedFacilityReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.groupColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string branch {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.branchColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'branch\' in table \'UnutilizedFacilityReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.branchColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string customerName {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.customerNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'UnutilizedFacilityReport\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.customerNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string cap {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.capColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'cap\' in table \'UnutilizedFacilityReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.capColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string reviwedDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.reviwedDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'reviwedDate\' in table \'UnutilizedFacilityReport\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.reviwedDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string status {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.statusColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'status\' in table \'UnutilizedFacilityReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.statusColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string purpose {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.purposeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'purpose\' in table \'UnutilizedFacilityReport\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.purposeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string utilizedAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.utilizedAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'utilizedAmount\' in table \'UnutilizedFacilityReport\' is DBNu" +
+                                "ll.", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.utilizedAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string approvedAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.approvedAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedAmount\' in table \'UnutilizedFacilityReport\' is DBNu" +
+                                "ll.", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.approvedAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string undisbursedAmount {
+                get {
+                    try {
+                        return ((string)(this[this.tableUnutilizedFacilityReport.undisbursedAmountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'undisbursedAmount\' in table \'UnutilizedFacilityReport\' is D" +
+                                "BNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableUnutilizedFacilityReport.undisbursedAmountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbusinessUnitsNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.businessUnitsColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbusinessUnitsNull() {
+                this[this.tableUnutilizedFacilityReport.businessUnitsColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsgroupNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.groupColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetgroupNull() {
+                this[this.tableUnutilizedFacilityReport.groupColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsbranchNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.branchColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetbranchNull() {
+                this[this.tableUnutilizedFacilityReport.branchColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscustomerNameNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.customerNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcustomerNameNull() {
+                this[this.tableUnutilizedFacilityReport.customerNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscapNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.capColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcapNull() {
+                this[this.tableUnutilizedFacilityReport.capColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsreviwedDateNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.reviwedDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetreviwedDateNull() {
+                this[this.tableUnutilizedFacilityReport.reviwedDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsstatusNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.statusColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetstatusNull() {
+                this[this.tableUnutilizedFacilityReport.statusColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IspurposeNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.purposeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetpurposeNull() {
+                this[this.tableUnutilizedFacilityReport.purposeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsutilizedAmountNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.utilizedAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetutilizedAmountNull() {
+                this[this.tableUnutilizedFacilityReport.utilizedAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsapprovedAmountNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.approvedAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetapprovedAmountNull() {
+                this[this.tableUnutilizedFacilityReport.approvedAmountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsundisbursedAmountNull() {
+                return this.IsNull(this.tableUnutilizedFacilityReport.undisbursedAmountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetundisbursedAmountNull() {
+                this[this.tableUnutilizedFacilityReport.undisbursedAmountColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -45233,6 +46027,40 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public overdraftRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class UnutilizedFacilityReportRowChangeEvent : global::System.EventArgs {
+            
+            private UnutilizedFacilityReportRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public UnutilizedFacilityReportRowChangeEvent(UnutilizedFacilityReportRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public UnutilizedFacilityReportRow Row {
                 get {
                     return this.eventRow;
                 }

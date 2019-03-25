@@ -839,12 +839,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetImpairedWatchListReport(int companyId)
+        public string GetImpairedWatchListReport(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/ImpairedWatchListReport.aspx?companyId=" + companyId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            path = reportPath + "ReportViews/ImpairedWatchListReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&branchId=" + dateRange.branchId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
 
@@ -868,12 +868,20 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetExcessReport(int companyId)
+        public string GetExcessReport(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/ExcessReport.aspx?companyId=" + companyId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            path = reportPath + "ReportViews/ExcessReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&branchId=" + dateRange.branchId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
+        public string GetUnutilizedFacilityReport(int companyId)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/UnutilizedFacilityReport.aspx?companyId=" + companyId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
 
@@ -885,12 +893,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetRuniningLoanReport(int companyId)
+        public string GetRuniningLoanReport(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/RunningLoanReport.aspx?companyId=" + companyId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            path = reportPath + "ReportViews/RunningLoanReport.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&branchId=" + dateRange.branchId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
 

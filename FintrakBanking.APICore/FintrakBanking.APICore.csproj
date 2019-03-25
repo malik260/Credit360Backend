@@ -968,6 +968,13 @@
     <Compile Include="Reports\ReportViews\UnearnedLoanInterest.aspx.designer.cs">
       <DependentUpon>UnearnedLoanInterest.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\UnutilizedFacilityReport.aspx.cs">
+      <DependentUpon>UnutilizedFacilityReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\UnutilizedFacilityReport.aspx.designer.cs">
+      <DependentUpon>UnutilizedFacilityReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\UserGroupChangeReport.aspx.cs">
       <DependentUpon>UserGroupChangeReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1101,6 +1108,7 @@
     <Content Include="Reports\ReportViews\StalledPerfection.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
     <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
+    <Content Include="Reports\ReportViews\UnutilizedFacilityReport.aspx" />
     <Content Include="Reports\ReportViews\UserGroupChangeReport.aspx" />
     <Content Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
@@ -1392,6 +1400,7 @@
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\TurnoverCovenant.rdlc" />
     <EmbeddedResource Include="Reports\Report\UnearnedLoanInterest.rdlc" />
+    <EmbeddedResource Include="Reports\Report\UnutilizedFacilityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\UserGroupChangeReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\WeeklyRecoveryReportFINCON.rdlc" />
     <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />

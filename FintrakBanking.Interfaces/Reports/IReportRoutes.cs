@@ -85,14 +85,15 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCreditScheduleReport(DateRange dateRange);
 
         string GetSanctionLimitReport(DateRange dateRange);
-        string GetImpairedWatchListReport(int companyId);
+        string GetImpairedWatchListReport(DateRange dateRange);
 
         string GetInsuranceReport(int companyId);
         string GetExpiredReport(DateRange dateRange);
-        string GetExcessReport(int companyId);
+        string GetExcessReport(DateRange dateRange);
+        string GetUnutilizedFacilityReport(int companyId);
 
         string GetLoanDocumentDeferred(int companyId, DateRange dateRange, int staffId);
-        string GetRuniningLoanReport(int companyId);
+        string GetRuniningLoanReport(DateRange dateRange);
 
         string GetDisbursalCreditTurnover(DateRange dateRange);
 

@@ -11,7 +11,7 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class InsuranceReport : System.Web.UI.Page
+    public partial class UnutilizedFacilityReport : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -19,10 +19,10 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 try
                 {
-                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                    //DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                   // DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
                     int companyId = Int32.Parse(Request.QueryString["companyId"]);
-                    short branchId = short.Parse(Request.QueryString["branchId"]);
+                    //short branchId = short.Parse(Request.QueryString["branchId"]);
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -49,19 +49,19 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         this.ReportViewer.LocalReport.Refresh();
                         return;
                     }
-                    LoanReportObjects insuranceReport = new LoanReportObjects();
-                    var data = insuranceReport.InsuranceReport(startDate, endDate,companyId, branchId);
+                    LoanReportObjects unutilizedFacilityReport = new LoanReportObjects();
+                    var data = unutilizedFacilityReport.UnutilizedFacilityReport(companyId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "InsuranceReport";
+                    reportDataSource.Name = "UnutilizedFacilityReport";
 
                     //ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
                     //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/InsuranceReport.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/UnutilizedFacilityReport.rdlc");
                     //ReportViewer1.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }

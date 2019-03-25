@@ -332,7 +332,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
             }
-            return GetTransactionDynamicsDefaultByDetailIdLms(applicationDetail.PRODUCTID);
+            return GetTransactionDynamicsDefaultByDetailIdLms(applicationDetail.LOANREVIEWAPPLICATIONID);
         }
 
         #endregion CP Template
