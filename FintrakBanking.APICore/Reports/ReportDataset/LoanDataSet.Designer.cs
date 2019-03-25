@@ -1196,7 +1196,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableoverdraft.InitVars();
                 }
             }
-        }
             this.tableUnutilizedFacilityReport = ((UnutilizedFacilityReportDataTable)(base.Tables["UnutilizedFacilityReport"]));
             if ((initTable == true)) {
                 if ((this.tableUnutilizedFacilityReport != null)) {
@@ -44283,8 +44282,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public void SetsanctionLimitNull() {
                 this[this.tableoverdraft.sanctionLimitColumn] = global::System.Convert.DBNull;
             }
-        }
-        
         }
         
         /// <summary>
