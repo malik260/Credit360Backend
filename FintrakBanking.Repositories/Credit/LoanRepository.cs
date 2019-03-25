@@ -768,6 +768,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     //...................Update the Loan Request table.......................
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                    request.ISUSED = true;
 
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
 
@@ -899,6 +900,11 @@ namespace FintrakBanking.Repositories.Credit
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)contingentLoanInput.currencyId, entity.companyId).sellingRate;
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+            if (context.TBL_LOAN_CONTINGENT.Where(x => x.LOAN_BOOKING_REQUESTID == entity.loanBookingRequestId).Any())
+            {
+                throw new ConditionNotMetException("Contigent Liability already undergoing approval.");
+            }
+
             loanBookingValidation(entity);
 
             var bgData = context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId);
@@ -990,6 +996,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     //...................Update the Loan Request and loan application table.......................
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                    request.ISUSED = true;
 
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
                     //...................Adding Audit...............................
@@ -1024,10 +1031,10 @@ namespace FintrakBanking.Repositories.Credit
                         //if (entity.monitoringTriggers.Count > 0)
                         //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
 
-                        if (!entity.feeOverride && application.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
+                        if (entity.feeOverride && application.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
                         {
-                            //entity.isSuspenseCredit = true;
-                           // PostBandGFacilityFees(entity);
+                            entity.isSuspenseCredit = true;
+                            PostBandGFacilityFees(entity);
                         }
 
                         context.SaveChanges();
@@ -1382,6 +1389,7 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.TBL_LOAN.Add(data);
 
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                    request.ISUSED = true;
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
 
                     var dataCount = context.SaveChanges();
@@ -1687,6 +1695,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     //...................Adding Commercial Loan Record.........................
                     var loan = context.TBL_LOAN.Add(data);
+                    request.APPROVALSTATUSID = (short) ApprovalStatusEnum.Approved;
+                    request.ISUSED = true;
 
                     //request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
@@ -2021,6 +2031,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     //...Update the Loan Request and loan application table...
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                    request.ISUSED = true;
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
 
                     //...Adding Audit...
@@ -4437,20 +4448,20 @@ namespace FintrakBanking.Repositories.Credit
                             debit.rateCode = "TTB"; //loanDetails.nostroRateCode;
                             debit.rateUnit = string.Empty;
                             debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
-                            //if(loanDetails.productClassId == (short)ProductClassEnum.BondAndGuarantees)
-                            //{
-                            //    if (!loanDetails.isSuspenseCredit)
-                            //    {
-                            //        var glStore = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
-                            //        var prodCasa = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
-                            //        if (glStore != null)
-                            //        {
-                            //            debit.glAccountId = glStore.PRINCIPALBALANCEGL2.Value;
-                            //            debit.casaAccountId = prodCasa.CASAACCOUNTID;
-                            //        }
-                            //        else throw new ConditionNotMetException("Suspense Account to be creditted not defined");
-                            //    }
-                            //}
+                            if (loanDetails.productClassId == (short)ProductClassEnum.BondAndGuarantees)
+                            {
+                                if (!loanDetails.isSuspenseCredit)
+                                {
+                                    var glStore = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
+                                    var prodCasa = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
+                                    if (glStore != null)
+                                    {
+                                        debit.glAccountId = glStore.PRINCIPALBALANCEGL2.Value;
+                                        debit.casaAccountId = prodCasa.CASAACCOUNTID;
+                                    }
+                                    else throw new ConditionNotMetException("Suspense Account to be creditted not defined");
+                                }
+                            }
 
                             inputTransactions.Add(debit);
                         }
@@ -4489,20 +4500,20 @@ namespace FintrakBanking.Repositories.Credit
                             credit.rateCode = "TTB";
                             credit.rateUnit = string.Empty;
                             credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
-                            //if (loanDetails.productClassId == (short)ProductClassEnum.BondAndGuarantees)
-                            //{
-                            //    if (loanDetails.isSuspenseCredit)
-                            //    {
-                            //        var glStore = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
-                            //        var prodCasa = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
-                            //        if (glStore != null)
-                            //        {
-                            //            credit.glAccountId = glStore.PRINCIPALBALANCEGL2.Value;
-                            //            credit.casaAccountId = prodCasa.CASAACCOUNTID;
-                            //        }
-                            //        else throw new ConditionNotMetException("Suspense Account to be creditted not defined");
-                            //    }
-                            //}
+                            if (loanDetails.productClassId == (short)ProductClassEnum.BondAndGuarantees)
+                            {
+                                if (loanDetails.isSuspenseCredit)
+                                {
+                                    var glStore = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
+                                    var prodCasa = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTID == loanDetails.productId);
+                                    if (glStore != null)
+                                    {
+                                        credit.glAccountId = glStore.PRINCIPALBALANCEGL2.Value;
+                                        credit.casaAccountId = prodCasa.CASAACCOUNTID;
+                                    }
+                                    else throw new ConditionNotMetException("Suspense Account to be creditted not defined");
+                                }
+                            }
 
                             inputTransactions.Add(credit);
                         }

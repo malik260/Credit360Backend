@@ -116,6 +116,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("job-request/search/{searchString}")]
+        public HttpResponseMessage GetJobRequestBySearchString(string searchString)
+        {
+            var data = repo.GetJobRequestBySearchString(token.GetStaffId, searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("facility-job-request/{facilityReferenceNumber}")]
         public HttpResponseMessage GetAllGlobalJobRequestByFacilityRef(string facilityReferenceNumber)
         {
