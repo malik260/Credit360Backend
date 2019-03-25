@@ -34,5 +34,7 @@ namespace FintrakBanking.ViewModels.Report
         public decimal balance { get; set; }
         public string applicationRefrenceNumber { get; set; }
 
+        public string facilityType { get; set; }
+
     }
 }

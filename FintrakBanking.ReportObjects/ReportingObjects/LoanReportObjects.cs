@@ -121,6 +121,7 @@ namespace FintrakBanking.ReportObjects
                                           && b.TBL_CHART_OF_ACCOUNT.GLCLASSID == (int)ChartOfAccountClassEnum.LoanSchedule
                                           select new LoanStatementViewModel()
                                           {
+                                              facilityType = a.TBL_PRODUCT.PRODUCTNAME,
                                               //balance = a.OUTSTANDINGPRINCIPAL,
                                               companyName = a.TBL_COMPANY.NAME,
                                               logoPath = a.TBL_COMPANY.LOGOPATH,
@@ -149,6 +150,7 @@ namespace FintrakBanking.ReportObjects
                                         select new LoanStatementViewModel()
                                         {
                                             //balance = a.OUTSTANDINGPRINCIPAL,
+                                            facilityType = a.TBL_PRODUCT.PRODUCTNAME,
                                             companyName = a.TBL_COMPANY.NAME,
                                             logoPath = a.TBL_COMPANY.LOGOPATH,
                                             firstName = a.TBL_CUSTOMER.FIRSTNAME,
@@ -183,6 +185,7 @@ namespace FintrakBanking.ReportObjects
                                             && b.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
                                            select new LoanStatementViewModel()
                                            {
+                                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
                                                //balance = a.OUTSTANDINGPRINCIPAL,
                                                companyName = a.TBL_COMPANY.NAME,
                                                logoPath = a.TBL_COMPANY.LOGOPATH,
@@ -207,6 +210,7 @@ namespace FintrakBanking.ReportObjects
                 var interestAccurals = (from a in interestAccuralsSub
                                         group a by new
                                         {
+                                            a.facilityType,
                                             a.companyName,
                                             a.logoPath,
                                             a.firstName,
@@ -226,6 +230,7 @@ namespace FintrakBanking.ReportObjects
                                         } into groupedQ
                                         select new LoanStatementViewModel()
                                         {
+                                            facilityType = groupedQ.Key.facilityType,
                                             companyName = groupedQ.Key.companyName,
                                             logoPath = groupedQ.Key.logoPath,
                                             firstName = groupedQ.Key.firstName,

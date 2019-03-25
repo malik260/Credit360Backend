@@ -10976,6 +10976,7 @@ namespace FintrakBanking.Repositories.Credit
                         orderby l.BOOKINGDATE descending
                         select new LoanViewModel
                         {
+                            facilityType = l.TBL_PRODUCT.PRODUCTNAME,
                             loanId = l.TERMLOANID,
                             customerId = l.CUSTOMERID,
                             customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.LASTNAME,
