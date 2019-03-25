@@ -600,7 +600,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value xml:space="preserve">                                              </Value>
+                  <Value xml:space="preserve">                           </Value>
                   <Style>
                     <FontStyle>Italic</FontStyle>
                     <FontFamily>verdana</FontFamily>
@@ -609,7 +609,7 @@
                   </Style>
                 </TextRun>
                 <TextRun>
-                  <Value xml:space="preserve">                                    </Value>
+                  <Value xml:space="preserve">     </Value>
                   <Style>
                     <FontStyle>Italic</FontStyle>
                     <FontFamily>verdana</FontFamily>
@@ -619,7 +619,7 @@
                   </Style>
                 </TextRun>
                 <TextRun>
-                  <Value>Waiver Report</Value>
+                  <Value>Checklist Waiver Report</Value>
                   <Style>
                     <FontStyle>Italic</FontStyle>
                     <FontFamily>verdana</FontFamily>

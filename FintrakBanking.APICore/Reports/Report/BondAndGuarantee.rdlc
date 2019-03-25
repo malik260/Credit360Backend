@@ -342,7 +342,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Outstanding Principal</Value>
+                              <Value>Contigent Amount</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
@@ -547,6 +547,7 @@
                               <Value>=Fields!bookingDate.Value</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
+                                <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -565,6 +566,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -579,6 +581,7 @@
                               <Value>=Fields!disburseDate.Value</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
+                                <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -611,6 +614,7 @@
                               <Value>=Fields!maturityDate.Value</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
+                                <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -643,6 +647,7 @@
                               <Value>=Fields!outstandingPrincipal.Value</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -718,11 +723,21 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>EXPIRED BOND AND GUARANTEE</Value>
+                  <Value xml:space="preserve"> </Value>
                   <Style>
                     <FontFamily>Calibri</FontFamily>
                     <FontSize>12pt</FontSize>
                     <FontWeight>Bold</FontWeight>
+                    <Color>DarkBlue</Color>
+                  </Style>
+                </TextRun>
+                <TextRun>
+                  <Value>BONDS AND GUARANTEE</Value>
+                  <Style>
+                    <FontFamily>Calibri</FontFamily>
+                    <FontSize>14pt</FontSize>
+                    <FontWeight>Bold</FontWeight>
+                    <Color>DarkBlue</Color>
                   </Style>
                 </TextRun>
               </TextRuns>
