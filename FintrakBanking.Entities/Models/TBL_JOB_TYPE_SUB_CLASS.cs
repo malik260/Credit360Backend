@@ -25,6 +25,8 @@
         [Required]
         public short JOB_SUB_TYPEID { get; set; }
 
+        //public decimal DEFAULTCHARGEAMOUNT { get; set; }
+
         //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         //public virtual ICollection<TBL_JOB_TYPE_SUB> TBL_JOB_TYPE_SUB { get; set; }
 

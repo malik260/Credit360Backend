@@ -68,6 +68,9 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
         public int? LOANREVIEWOPERATIONID { get; set; }
 
+        //public int? SOURCELOANID { get; set; }
+        //public short? SOURCELOANSYSTEMTYPEID { get; set; }
+
         public DateTime? DATETIMEDELETED { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }

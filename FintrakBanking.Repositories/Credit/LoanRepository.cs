@@ -3421,6 +3421,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                 loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
                 loanRecord.ISDISBURSED = true;
+                loanRecord.DISBURSEDATE = DateTime.Now;
                 loanRecord.DISBURSEDBY = user.createdBy;
                 loanRecord.APPROVEDBY = user.createdBy;
                 loanRecord.APPROVERCOMMENT = user.comment;
@@ -3575,6 +3576,7 @@ namespace FintrakBanking.Repositories.Credit
                     financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails);
 
                 revolvingLoanRecord.DATEAPPROVED = DateTime.Now;
+                revolvingLoanRecord.DISBURSEDATE = DateTime.Now;
                 revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 revolvingLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                 revolvingLoanRecord.ISDISBURSED = true;
@@ -3661,6 +3663,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                 contingentLoanRecord.ISDISBURSED = true;
+                contingentLoanRecord.DISBURSEDATE = DateTime.Now; ;
                 contingentLoanRecord.APPROVEDBY = user.createdBy;
                 contingentLoanRecord.APPROVERCOMMENT = user.comment;
             }

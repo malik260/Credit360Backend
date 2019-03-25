@@ -10529,11 +10529,16 @@ namespace FintrakBanking.Repositories.Credit
                 if (periodicInterestDiff != 0)
                 {
                     inputTransactions.Add(financeTransaction.PostLoanPositiveReversalEntries(loanInput, periodicInterestDiff, product.PRINCIPALBALANCEGL.Value, "Interest Reversal", loanInput.operationId));
+
+                    output = true;
+
                 }
 
                 if (periodicPrincipalDiff != 0)
                 {
                     inputTransactions.Add(financeTransaction.PostLoanPositiveReversalEntries(loanInput, periodicPrincipalDiff, product.PRINCIPALBALANCEGL.Value, "Principal Reversal", loanInput.operationId));
+
+                    output = true;
                 }
 
             }
@@ -10631,6 +10636,9 @@ namespace FintrakBanking.Repositories.Credit
             if (accruedDailyInterestDiff != 0)
             {
                 inputTransactions.Add(financeTransaction.PostLoanPositiveReversalEntries(loanInput, accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId));
+
+                output = true;
+
             }
 
 
@@ -11262,7 +11270,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 decimal accruedInterest = 0;
                 var accrued = (from a in context.TBL_LOAN_SCHEDULE_DAILY
-                               where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
+                               where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == loanInput.date
                                select a).FirstOrDefault();
 
                 if (accrued != null)
@@ -17143,10 +17151,10 @@ namespace FintrakBanking.Repositories.Credit
                             model.interestFirstpaymentDate = nextPaymentDate;
                         }
 
-                        if (model.interestFirstpaymentDate <= model.effectiveDate)
-                        {
-                            throw new ConditionNotMetException("First Payment Date must be greater than Effective Date");
-                        }
+                        //if (model.interestFirstpaymentDate <= model.effectiveDate)
+                        //{
+                        //    throw new ConditionNotMetException("First Payment Date must be greater than Effective Date");
+                        //}
 
                         var loanData = context.TBL_LOAN.Where(c => c.TERMLOANID == loanId).FirstOrDefault();
 
