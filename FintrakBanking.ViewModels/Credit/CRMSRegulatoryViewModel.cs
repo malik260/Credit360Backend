@@ -67,6 +67,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? MATURITYDATE { get; set; }
         public string REFERENCENUMBER { get; set; }
         public DateTime DATETIMECREATED { get; set; }
+        public DateTime? CRMSDATE { get; set; }
+        public bool? CRMSVALIDATED { get; set; }
 
         public string REPAYMENT_AGREEMENT_MODE { get; set; }
         public double? INTEREST_RATE { get; set; }

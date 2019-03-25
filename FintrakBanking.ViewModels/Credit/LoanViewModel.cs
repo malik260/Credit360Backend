@@ -48,7 +48,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-
+        public Decimal sanctionLimit { get; set; }
         public bool isSuspenseCredit { get; set; }
         public decimal bookedAmount { get; set; }
 

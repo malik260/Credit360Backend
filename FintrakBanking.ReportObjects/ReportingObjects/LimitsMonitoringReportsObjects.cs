@@ -103,7 +103,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                  //frequencyTypeId = a.FREQUENCYTYPEID,
                                                                  frequencyTypeName = f.MODE,
                                                                  //loanId = a.LOANID,
-                                                                 loanRefNumber = e.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                                                // loanRefNumber = e.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                                                 loanRefNumber = b.LOANREFERENCENUMBER,
                                                                  //relationshipManager = d.FIRSTNAME + " " + d.LASTNAME,
                                                                  //relationshipManagerId = d.STAFFID,
                                                                  //managerEmail = d.EMAIL,
@@ -327,6 +328,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                      //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
                                                      where e.PRUDENTIALGUIDELINETYPEID == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
                                                      && DbFunctions.TruncateTime(b.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
+                                                     && b.OUTSTANDINGINTEREST >= 0
                                                      orderby b.EFFECTIVEDATE descending
 
                                                      select new LoanViewModel
@@ -340,8 +342,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                          externalPrudentialGuidelineStatus = e.STATUSNAME,
                                                          productName = d.TBL_PRODUCT.PRODUCTNAME,
                                                          customerName = cu.FIRSTNAME + " " + cu.LASTNAME,
-                                                         outstandingInterest = b.OUTSTANDINGINTEREST,
-                                                         outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+                                                         outstandingInterest = Math.Round(b.OUTSTANDINGINTEREST,2),
+                                                         outstandingPrincipal = Math.Round(b.OUTSTANDINGPRINCIPAL,2),
                                                          //  businessUnit = staffmis.Where(x => x.STAFFCODE == a.TBL_STAFF.STAFFCODE)
 
 
@@ -444,8 +446,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                                //join l in context.TBL_LOAN on a.LOANAPPLICATIONDETAILID equals l.LOANAPPLICATIONDETAILID
-                                               where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.RevolvingLoan 
-                                               && a.MATURITYDATE < applDate// && a.MATURITYDATE<= endDate
+                                               where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.RevolvingLoan
+                                               && DbFunctions.TruncateTime(a.MATURITYDATE) >= DbFunctions.TruncateTime(startDate) 
+                                               && DbFunctions.TruncateTime(a.MATURITYDATE) <= DbFunctions.TruncateTime(endDate)
+                                               //&& a.MATURITYDATE < applDate// && a.MATURITYDATE<= endDate
                                              orderby a.MATURITYDATE descending
 
                                              select new LoanViewModel
@@ -464,7 +468,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                    relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-                                                   relationshipOfficerEmail = a.TBL_STAFF.EMAIL
+                                                   relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+                                                   sanctionLimit = a.OVERDRAFTLIMIT
+                                                   
                                                   // outstandingInterest = l.OUTSTANDINGINTEREST,
                                                   // outstandingPrincipal = l.OUTSTANDINGPRINCIPAL
                                                }).ToList();

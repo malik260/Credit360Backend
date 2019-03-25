@@ -572,11 +572,13 @@ namespace FintrakBanking.Repositories.Credit
                 nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
             }
 
+
             if (apsOperationIds.Contains(operationId))
             {
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 operationId = (int)appl.OPERATIONID;
                 nextProcessId = (int)OperationsEnum.LoanReviewApprovalAvailment; // redefine
+                workflow.Amount = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).Sum(x => x.CUSTOMERPROPOSEDAMOUNT) ?? 0;
             }
 
             if (camOperationIds.Contains(operationId) || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))
@@ -869,8 +871,16 @@ namespace FintrakBanking.Repositories.Credit
             List<int> levels1 = general.GetRouteLevels(46, 1);
             List<int> levels2 = general.GetRouteLevels(71, 1);
             List<int> levels3 = general.GetRouteLevels(79, 1);
+            var camLevels = levels1.Union(levels2).Union(levels3).Distinct();
 
-            var levels = levels1.Union(levels2).Union(levels3).Distinct();
+             levels1 = general.GetRouteLevels(107, 1);
+             levels2 = general.GetRouteLevels(108, 1);
+             levels3 = general.GetRouteLevels(109, 1);
+            var apsLevels = levels1.Union(levels2).Union(levels3).Distinct();
+
+          var  levels = camLevels.Union(apsLevels).Distinct();
+
+            var operations = camOperationIds.Union(apsOperationIds);
 
             //var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
             //                    .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
@@ -897,7 +907,7 @@ namespace FintrakBanking.Repositories.Credit
                 )
                 .OrderByDescending(x => x.LOANAPPLICATIONID)
                 .Join(
-                    context.TBL_APPROVAL_TRAIL.Where(x => camOperationIds.Contains(x.OPERATIONID)
+                    context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID)
                         && levels.Contains((int)x.TOAPPROVALLEVELID)
                         && (x.RESPONSESTAFFID == null || (x.RESPONSESTAFFID == staffId && x.TOSTAFFID != null))
                         ),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
@@ -970,6 +980,8 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
 
+
+           
             return applications;
 
         }

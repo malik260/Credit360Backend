@@ -438,6 +438,7 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_PRODUCT_BEHAVIOUR on a.PRODUCTID equals b.PRODUCTID
                         join c in context.TBL_LOAN_CONTINGENT_USAGE on a.CONTINGENTLOANID equals c.CONTINGENTLOANID
                         where b.ALLOWFUNDUSAGE == true && c.CONTINGENTLOANID == loanId
+                        && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                         select new ContingentLoansViewModel()
                         {
                             principalName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,

@@ -35,6 +35,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 
+        public int? OPERATIONID { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN_TRANSACTION_DYNAMICS> TBL_LOAN_TRANSACTION_DYNAMICS { get; set; }
     }

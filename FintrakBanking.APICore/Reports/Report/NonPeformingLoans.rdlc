@@ -115,14 +115,14 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Textbox Name="Textbox3">
+          <Textbox Name="CDate">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Parameters!currentDate.Value</Value>
+                    <Value>=CDate(Today()).ToString("MMM dd,yyyy")</Value>
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                     </Style>
@@ -131,7 +131,6 @@
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <rd:DefaultName>Textbox2</rd:DefaultName>
             <Top>0.625in</Top>
             <Left>1.34028in</Left>
             <Height>0.25in</Height>
@@ -243,7 +242,7 @@
                   <Width>2.76042in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.5625in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -262,7 +261,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Loan Ref #</Value>
+                                  <Value>Loan Reference Number</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -769,7 +768,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!outstandingPrincipal.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>n2</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -799,7 +800,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!outstandingInterest.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>#,0.00;(#,0.00)</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -829,7 +832,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!bookingDate.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>d MMM yyyy</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -859,7 +864,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!disburseDate.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <Format>d MMM yyyy</Format>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -969,7 +976,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -1343,7 +1349,7 @@
             <Top>1.40848in</Top>
             <Left>0.51958in</Left>
             <Height>0.75in</Height>
-            <Width>17.92709in</Width>
+            <Width>18.48959in</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -1355,7 +1361,7 @@
         <Height>2.375in</Height>
         <Style />
       </Body>
-      <Width>18.44667in</Width>
+      <Width>19.00917in</Width>
       <Page>
         <PageHeader>
           <Height>1.02777in</Height>

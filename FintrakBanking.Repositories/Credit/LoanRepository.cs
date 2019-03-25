@@ -3470,7 +3470,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    var reviewDate = revolvingLoanRecord.MATURITYDATE.AddDays(-1); //.BOOKINGDATE.AddMonths(1);
+                    var reviewDate = revolvingLoanRecord.EFFECTIVEDATE.AddDays(31); //.BOOKINGDATE.AddMonths(1);
                     var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
                     var acctType = "DR";
                     if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
@@ -7213,7 +7213,7 @@ namespace FintrakBanking.Repositories.Credit
                     var loans = (from a in context.TBL_LOAN
                                  join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                  join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                 // where a.ISDISBURSED == true && a.FULLANDFINALSTATUSID == (int)FullAndFinalStatusEnum.OnGoing && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                  where a.FULLANDFINALSTATUSID == (int)FullAndFinalStatusEnum.OnGoing && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                                  select new LoanViewModel
                                  {
                                      loanId = a.TERMLOANID,
@@ -7301,7 +7301,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool CancelFullAndFinal(int loanId)
         {
-            var applicationDate = generalSetup.GetApplicationDate();
             try
             {
                 var loan = context.TBL_LOAN.Where(o => o.TERMLOANID == loanId).Select(o => o).FirstOrDefault();
@@ -11650,6 +11649,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
                                   && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter
+                                  //&& a.LOANREFERENCENUMBER == "406-0056-0000036"
                                    //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                    //orderby b.DATECREATED descending
                                    select new LoanViewModel
