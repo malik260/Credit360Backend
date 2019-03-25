@@ -45,11 +45,12 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool ReassignJobRequest(JobRequestViewModel model, int jobRequestId);
 
         // Legal jobs
-        bool EffectLegaCollateralJobs(JobRequestCollateralSearchViewModel model);
+        bool saveCollateralJobsChargesSpecifiedByLegal(JobRequestCollateralSearchViewModel model);
 
         // job type
         IEnumerable<JobTypeViewModel> GetAllJobType();
         IEnumerable<JobTypeViewModel> GetJobSubType(short jobId);
+        IEnumerable<JobSubTypeClassViewModel> GetJobSubTypeClass(short jobSubTypeId);
 
         bool AddJobType(JobTypeViewModel model);
 
@@ -69,7 +70,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         bool AcknowledgeJob(JobRequestViewModel entity, int jobRequestId);
 
-        bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model);
+        bool ChargeCustomerForOnSearchJobs(JobRequestCollateralSearchViewModel model);
         bool ReverseChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model);
         List<JobRequestDetailViewModel> GetLegalJobRequestDetails();
 

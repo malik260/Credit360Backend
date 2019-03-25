@@ -42,7 +42,7 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
                                  }).ToList();
 
 
-                if (indexRate != null)
+                if (indexRate == null)
                     return false;
 
 

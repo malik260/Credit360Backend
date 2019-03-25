@@ -12,7 +12,7 @@ namespace FintrakBanking.ReportObjects.ReportHelper
 {
     public class RunningLoan
     {
-        public List<RuniningLoanViewModel> GetRunningLoan(int companyid)
+        public List<RuniningLoanViewModel> GetRunningLoan(DateTime startDate, DateTime endDate, int companyId, short? branchId)
         {
             List<SubHead> subList = new List<SubHead>();
 
@@ -52,8 +52,11 @@ namespace FintrakBanking.ReportObjects.ReportHelper
 
 
                                             where l.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                                && l.COMPANYID == companyid
-                                            orderby l.DATETIMECREATED descending
+                                            && DbFunctions.TruncateTime(l.MATURITYDATE) >= DbFunctions.TruncateTime(startDate)
+                                               && DbFunctions.TruncateTime(l.MATURITYDATE) <= DbFunctions.TruncateTime(endDate)
+                                               && (b.BRANCHID == branchId || branchId == null || branchId == 0)
+                                                && l.COMPANYID == companyId
+                                            orderby l.MATURITYDATE descending
 
                                             select new RuniningLoanViewModel
                                             {
@@ -87,11 +90,13 @@ namespace FintrakBanking.ReportObjects.ReportHelper
                                                 schemeCode = p.PRODUCTCODE,
                                                
                                                 subUserClassification = pg.STATUSNAME,
+                                                userClassification = pgt.PRUDENTIALGUIDELINETYPENAME,
+
                                                 glSubHeadCode = glInfo,
                                                 classificationDate = DateTime.Now,
                                                
                                                 limitExpiryDate = l.MATURITYDATE,
-                                                pastDueDate = (l.PASTDUEDATE.Value == null ? default(DateTime) : l.PASTDUEDATE.Value),
+                                                pastDueDate = l.PASTDUEDATE,
                                                
                                                 staffCode = st.STAFFCODE,
                                                

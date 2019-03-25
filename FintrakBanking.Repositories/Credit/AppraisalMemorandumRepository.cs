@@ -1476,6 +1476,20 @@ namespace FintrakBanking.Repositories.Credit
                 .ToList();
         }
 
+
+        public IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersByOperationId(int operationId,int applicationDetailId)
+        {
+            return context.TBL_LOAN_MONITORING_TRIG_SETUP
+                .Where(x => x.OPERATIONID==operationId)
+                .Select(x => new MonitoringTriggersViewModel
+                {
+                    applicationDetailId = applicationDetailId,
+                    monitoringTriggerId = x.MONITORING_TRIGGERID,
+                    monitoringTrigger = x.MONITORING_TRIGGER_NAME,
+                })
+                .ToList();
+        }
+
         public IEnumerable<MonitoringTriggersViewModel> SaveApplicationMonitoringTriggers(int applicationId, List<MonitoringTriggersViewModel> items, int staffId)
         {
             context.TBL_LOAN_APPLICATN_DETL_MTRIG

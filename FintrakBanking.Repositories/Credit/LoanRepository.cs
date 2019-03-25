@@ -4660,7 +4660,9 @@ namespace FintrakBanking.Repositories.Credit
                         FEERATEVALUE = ent.feeRateValue,
                         ISINTEGRALFEE = ent.isIntegralFee,
                         LOANID = chargeByApprovedAmount ? facilityDetail.LOANAPPLICATIONDETAILID : loanId,
+                        SOURCELOANID = loanId,
                         LOANSYSTEMTYPEID = chargeByApprovedAmount ? (short)LoanSystemTypeEnum.LineFacility : loanSystemTypeId,
+                        SOURCELOANSYSTEMTYPEID = loanSystemTypeId,
                         ISRECURRING = ent.recurring,
                         RECURRINGPAYMENTDAY = 28,
                         CREATEDBY = loanModel.createdBy,
@@ -7213,7 +7215,7 @@ namespace FintrakBanking.Repositories.Credit
                     var loans = (from a in context.TBL_LOAN
                                  join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                  join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                 // where a.ISDISBURSED == true && a.FULLANDFINALSTATUSID == (int)FullAndFinalStatusEnum.OnGoing && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                  where a.FULLANDFINALSTATUSID == (int)FullAndFinalStatusEnum.OnGoing && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                                  select new LoanViewModel
                                  {
                                      loanId = a.TERMLOANID,
@@ -7301,7 +7303,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool CancelFullAndFinal(int loanId)
         {
-            var applicationDate = generalSetup.GetApplicationDate();
             try
             {
                 var loan = context.TBL_LOAN.Where(o => o.TERMLOANID == loanId).Select(o => o).FirstOrDefault();
@@ -10977,6 +10978,7 @@ namespace FintrakBanking.Repositories.Credit
                         orderby l.BOOKINGDATE descending
                         select new LoanViewModel
                         {
+                            facilityType = l.TBL_PRODUCT.PRODUCTNAME,
                             loanId = l.TERMLOANID,
                             customerId = l.CUSTOMERID,
                             customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.LASTNAME,

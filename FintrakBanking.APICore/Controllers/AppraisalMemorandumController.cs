@@ -454,6 +454,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("application-monitoring-triggers-aps/{operationId}/applicationDetailId/{applicationDetailId}")]
+        public HttpResponseMessage GetASP_MonitoringTriggers(int operationId,int applicationDetailId)
+        {
+            try
+            {
+                var response = repo.GetApplicationMonitoringTriggersByOperationId(operationId, applicationDetailId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("application-monitoring-triggers/{applicationId}")]
