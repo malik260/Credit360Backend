@@ -52,8 +52,10 @@ namespace FintrakBanking.Repositories.Credit
                 timelineId = c.TIMELINEID,
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
+                operationId = c.OPERATIONID,
+                isCheckListSpecific = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==c.OPERATIONID).Select(o=>o.ISCHECKLISTSPECIFIC).FirstOrDefault()
             })
-            .OrderBy(x => x.isSubsequent).ThenBy(x => x.isExternal);
+            .OrderBy(x => x.isSubsequent).ThenByDescending(x => x.isExternal);
 
             return conditions.ToList();
         }
@@ -202,7 +204,21 @@ namespace FintrakBanking.Repositories.Credit
         {
             return this.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == detailId);
         }
-     
+
+        public List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByApplicationIdAndOperationLms(int detailId, int? operationId)
+        {
+            var applicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Find(detailId);
+            if (operationId != null)
+            {
+                var operation = context.TBL_OPERATIONS.Find(operationId);
+                if (operation.ISCHECKLISTSPECIFIC)
+                {
+                    var output = GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID).Where(x => x.operationId == operationId).ToList();
+                    return output;
+                }
+            }
+            return GetConditionPrecedentDefaultByProductId(applicationDetail.PRODUCTID);
+        }
 
         #region CP Template
 

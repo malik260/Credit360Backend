@@ -183,7 +183,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Discription</Value>
+                              <Value>Description</Value>
                               <Style>
                                 <FontFamily>verdana</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -592,7 +592,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>

@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Extensions;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.ReportObjects.Credit;
 using FintrakBanking.Repositories.Setups.General;
 using Microsoft.Reporting.WebForms;
 using System;
@@ -20,6 +21,10 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
             {
                 try
                 {
+                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+
+                    int companyId = Int32.Parse(Request.QueryString["companyId"]);
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -46,6 +51,10 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
                         this.ReportViewer.LocalReport.Refresh();
                         return;
                     }
+                    //LimitsMonitoringReportsObjects sla = new LimitsMonitoringReportsObjects();
+                    //var data = sla.CovenantsApproachingDueDate(startDate, endDate, companyId);
+                    //LoanMonitoring la = new LoanMonitoring();
+                    //var data = la.
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));

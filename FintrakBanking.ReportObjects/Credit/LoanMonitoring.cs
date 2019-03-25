@@ -183,13 +183,15 @@ namespace FintrakBanking.ReportObjects.Credit
                         join c in context.TBL_PRODUCT_TYPE on b.PRODUCTTYPEID equals c.PRODUCTTYPEID
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.RevolvingLoan && a.COMPANYID == companyId
+                        //&& DbFunctions.TruncateTime(a.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) 
+                        //&& DbFunctions.TruncateTime(a.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
                         && DbFunctions.DiffDays(a.MATURITYDATE, applDate) <= 90
                         select new LoanViewModel
                         {
                             applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                             loanReferenceNumber = a.LOANREFERENCENUMBER,
                             bookingDate = a.BOOKINGDATE,
-                            disburseDate = (a.DISBURSEDATE == null ? default(DateTime) : a.DISBURSEDATE),
+                            disburseDate = a.DISBURSEDATE,//(a.DISBURSEDATE == null ? default(DateTime) : a.DISBURSEDATE),
                             maturityDate = a.MATURITYDATE,
                             productName = b.PRODUCTNAME,
                             loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,

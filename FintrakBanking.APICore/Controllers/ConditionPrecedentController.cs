@@ -152,6 +152,37 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-condition-precedent-template/application-detail/{detailId}/operation/{operationId}")]
+        public HttpResponseMessage GetConditionPrecedentDefaultByApplicationIdAndOperationLms(int detailId, int? operationId)
+        {
+            try
+            {
+                List<ConditionPrecedentViewModel> data = repo.GetConditionPrecedentDefaultByApplicationIdAndOperationLms(detailId, operationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("condition-precedent-template/application-detail/{detailId}/operation/{operationId}")]
+        public HttpResponseMessage GetConditionPrecedentDefaultByApplicationIdAndOperation(int detailId, int? operationId)
+        {
+            try
+            {
+
+                List<ConditionPrecedentViewModel> data = repo.GetConditionPrecedentDefaultByDetailId(detailId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         #endregion DEFAULT conditions
 
         #region LOS conditions

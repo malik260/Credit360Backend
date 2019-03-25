@@ -33,5 +33,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddTransactionDynamicsLms(TransactionDynamicsViewModel entity);
         IEnumerable<TransactionDynamicsViewModel> GetTransactionDynamicsByDetailIdLms(int detailId);
         List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByDetailIdLms(int detailId);
+        List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByApplicationIdAndOperationLms(int detailId, int? operationId);
     }
 }

@@ -46,6 +46,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool DELETED { get; set; }
 
+        public int? OPERATIONID { get; set; }
+
         public virtual TBL_CHECKLIST_RESPONSE_TYPE TBL_CHECKLIST_RESPONSE_TYPE { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
