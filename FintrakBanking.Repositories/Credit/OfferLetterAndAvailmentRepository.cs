@@ -2642,6 +2642,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     var omission = checklistItems.Where(c => c.CHECKLISTSTATUSID3 == false || c.CHECKLISTSTATUSID3 == null); //c.CHECKLISTSTATUSID2 == false ||
 
+                    if (item.CHECKLIST_TYPEID == (short)(int)CheckTypeEnum.CAPChecklist) return;
+
                     if (omission.Any()) throw new SecureException($"One or more {item.CHECKLIST_TYPE_NAME} item(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
 
                 }
