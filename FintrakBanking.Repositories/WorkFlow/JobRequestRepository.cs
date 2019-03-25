@@ -479,8 +479,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                             join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                             join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
                             where  adminJobTypeIds.Contains(x.JOBTYPEID)
-                            orderby x.ARRIVALDATE descending
-                            select (
+                            orderby x.JOBREQUESTID descending
+                             select (
                             new JobRequestViewModel
                             {
                                 jobRequestId = x.JOBREQUESTID,
@@ -490,6 +490,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 jobTypeId = t.JOBTYPEID,
                                 jobSubTypeId = s.JOB_SUB_TYPEID,
                                 jobTypeName = t.JOBTYPENAME,
+                                requireCharge = s.REQUIRECHARGE ?? false,
+                                chargeFeeId = s.CHARGEFEEID ?? 0,
                                 jobSubTypeName = s.JOB_SUB_TYPE_NAME,
                                 jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
                                 jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
@@ -531,7 +533,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                                 assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                            })).ToList().OrderByDescending(x => x.arrivalDate).Take(30).ToList();
+                            })).ToList().Take(30).ToList();
             }
 
             List<int> jobRequestIds = new List<int>();
@@ -550,7 +552,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                                 join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
                                 where unitIds.Contains((int)x.JOBTYPEUNITID ) && !jobRequestIds.Contains(x.JOBREQUESTID)
-                                orderby x.REQUESTSTATUSID ascending
+                                orderby x.JOBREQUESTID descending
                                 select (
                                 new JobRequestViewModel
                                 {
@@ -562,6 +564,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                     jobSubTypeId = s.JOB_SUB_TYPEID,
                                     jobTypeName = t.JOBTYPENAME,
                                     jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+                                    requireCharge = s.REQUIRECHARGE ?? false,
+                                    chargeFeeId = s.CHARGEFEEID ?? 0,
                                     jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
                                     jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
                                     senderStaffId = x.SENDERSTAFFID,
@@ -602,7 +606,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                     to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                                     assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                                })).OrderByDescending(x => x.arrivalDate).Take(30).ToList();
+                                })).Take(30).ToList();
 
             }
             
@@ -618,7 +622,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                           join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
                           where ((x.SENDERSTAFFID == staffId) || (x.RECEIVERSTAFFID == staffId) || (x.REASSIGNEDTO == staffId) || (unitIds.Contains((int)x.JOBTYPEUNITID)))
                           && !jobRequestIds.Contains(x.JOBREQUESTID)
-                          orderby x.ARRIVALDATE descending
+                          orderby x.JOBREQUESTID descending
                           select (
                           new JobRequestViewModel
                           {
@@ -630,6 +634,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                               jobSubTypeId = s.JOB_SUB_TYPEID,
                               jobTypeName = t.JOBTYPENAME,
                               jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+                              requireCharge = s.REQUIRECHARGE ?? false,
+                              chargeFeeId = s.CHARGEFEEID ?? 0,
                               jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
                               jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
                               senderStaffId = x.SENDERSTAFFID,
@@ -670,7 +676,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                               to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                               assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                          })).OrderByDescending(x => x.arrivalDate).Take(30).ToList();
+                          })).Take(30).ToList();
 
                 staffData.AddRange(xy);
             }
@@ -682,7 +688,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                              join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                              join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
                              where ((x.SENDERSTAFFID == staffId) || (x.RECEIVERSTAFFID == staffId) || (x.REASSIGNEDTO == staffId)) && !jobRequestIds.Contains(x.JOBREQUESTID)
-                             orderby x.ARRIVALDATE descending
+                             orderby x.JOBREQUESTID descending
                              select (
                              new JobRequestViewModel
                              {
@@ -694,6 +700,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                  jobSubTypeId = s.JOB_SUB_TYPEID,
                                  jobTypeName = t.JOBTYPENAME,
                                  jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+                                 requireCharge = s.REQUIRECHARGE ?? false,
+                                 chargeFeeId = s.CHARGEFEEID ?? 0,
                                  jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
                                  jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
                                  senderStaffId = x.SENDERSTAFFID,
@@ -734,7 +742,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                  to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                                  assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                             })).OrderByDescending(x => x.arrivalDate).Take(30).ToList();
+                             })).Take(30).ToList();
             }
 
             allData = adminData.Union(hubStaffData).Union(staffData).Distinct().ToList();
@@ -832,6 +840,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                             targetId = x.TARGETID,
                             jobTypeId = t.JOBTYPEID,
                             jobSubTypeId = s.JOB_SUB_TYPEID,
+                            //requireCharge = s.REQUIRECHARGE ?? false,
+                            //chargeFeeId = s.CHARGEFEEID ?? 0,
                             jobTypeName = t.JOBTYPENAME,
                             jobSubTypeName = s.JOB_SUB_TYPE_NAME,
                             jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
@@ -1627,17 +1637,19 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
+        public bool ChargeCustomerForOnSearchJobs(JobRequestCollateralSearchViewModel model)
         {
             var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated).ToList();
+            var subJobRecord = context.TBL_JOB_TYPE_SUB.Find(model.jobSubTypeId);
             var consultantId = jobRequestDetail.FirstOrDefault().ACCREDITEDCONSULTANTID;
             var consultantRecord = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == consultantId);
+
             var twoFADetails = new TwoFactorAutheticationViewModel
             {
                 username = model.username,
                 passcode = model.passCode
             };
-            if (model.isInitiation)
+            if (model.isInitiation )
             {
                 return initiateChargeOnCustomerForCollatteralSearch(model, jobRequestDetail, twoFADetails, consultantRecord);
             }
@@ -1832,7 +1844,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         //}
 
-        public bool EffectLegaCollateralJobs(JobRequestCollateralSearchViewModel model)
+        public bool saveCollateralJobsChargesSpecifiedByLegal(JobRequestCollateralSearchViewModel model)
         {
             var jobRequest = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
             var baseApplication = context.TBL_LOAN_APPLICATION_DETAIL.Find(jobRequest.TARGETID);
@@ -1844,101 +1856,111 @@ namespace FintrakBanking.Repositories.WorkFlow
             //    throw new SecureException("Customer account number is not supplied");
 
             // Decimal chargeAmount = 0;
-
-            var collateralStateDetails = context.TBL_STATE.Find(model.collateralStateId);
-            if (model.requireCharting)
+            foreach(var searchModel in model.searchDetails)
             {
-                //chargeAmount = chargeAmount + (collateralStateDetails.CHARTINGAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeclassId = (short)JobSubTypeClassEnum.CollateralCharting,
-                    jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
-                    jobTypeId = (short)JobTypeEnum.legal,
-                    amount = model.chartChargeAmount, 
+                    jobSubTypeclassId = (short)searchModel.jobSubTypeclassId,
+                    jobSubTypeId = (short)jobRequest.JOB_SUB_TYPEID,
+                    jobTypeId = (short)jobRequest.JOBTYPEID,
+                    amount = searchModel.amount,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
-                    accreditedConsultantId = model.solicitorId,
+                    accreditedConsultantId = searchModel.accreditedConsultantId,
                     accountNumber = model.accountNumber,
                     currencyId = company.CURRENCYID,
-                    description2 = model.description2
-                };
-                saveJobRequestDetail(detail);
-            }
-
-            if (model.requireSearch)
-            {
-                //chargeAmount = chargeAmount + (collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT);
-                var detail = new JobRequestDetailViewModel
-                {
-                    jobSubTypeclassId = (short)JobSubTypeClassEnum.CollateralSearch,
-                    jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
-                    jobTypeId = (short)JobTypeEnum.legal,
-                    amount = model.searchChargeAmount, 
-                    jobRequestId = model.jobRequestId,
-                    createdBy = model.createdBy,
-                    accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber,
-                    currencyId = company.CURRENCYID,
-                    description2 = model.description2
-                };
-                saveJobRequestDetail(detail);
-            }
-
-            if (model.requireVerification)
-            {
-                //chargeAmount = chargeAmount + (collateralStateDetails.VERIFICATIONAMOUNT ?? 0);
-                var detail = new JobRequestDetailViewModel
-                {
-                    jobSubTypeclassId = (short)JobSubTypeClassEnum.CollateralVerification,
-                    jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
-                    jobTypeId = (short)JobTypeEnum.legal,
-                    amount = model.verificationChargeAmount,
-                    jobRequestId = model.jobRequestId,
-                    createdBy = model.createdBy,
-                    accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber,
-                    currencyId = company.CURRENCYID,
-                    description2 = model.description2
-                };
-                saveJobRequestDetail(detail);
-            }
-
-            if (model.additionalCharge > 0)
-            {
-                //chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
-                var detail = new JobRequestDetailViewModel
-                {
-                    jobSubTypeclassId = (short)JobSubTypeClassEnum.AdditionalCharges,
-                    jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
-                    jobTypeId = (short)JobTypeEnum.legal,
-                    amount = model.additionalCharge,
+                    description2 = model.description2,
                     description = model.additionalChargeJustification,
-                    jobRequestId = model.jobRequestId,
-                    createdBy = model.createdBy,
-                    accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber,
-                    currencyId = company.CURRENCYID,
-                    description2 = model.description2
                 };
                 saveJobRequestDetail(detail);
             }
+
+            //var collateralStateDetails = context.TBL_STATE.Find(model.collateralStateId);
+            //if (model.requireCharting)
+            //{
+            //    //chargeAmount = chargeAmount + (collateralStateDetails.CHARTINGAMOUNT ?? 0);
+            //    var detail = new JobRequestDetailViewModel
+            //    {
+            //        jobSubTypeclassId = (short)JobSubTypeClassEnum.CollateralCharting,
+            //        jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
+            //        jobTypeId = (short)JobTypeEnum.legal,
+            //        amount = model.chartChargeAmount, 
+            //        jobRequestId = model.jobRequestId,
+            //        createdBy = model.createdBy,
+            //        accreditedConsultantId = model.solicitorId,
+            //        accountNumber = model.accountNumber,
+            //        currencyId = company.CURRENCYID,
+            //        description2 = model.description2
+            //    };
+            //    saveJobRequestDetail(detail);
+            //}
+
+            //if (model.requireSearch)
+            //{
+            //    //chargeAmount = chargeAmount + (collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT);
+            //    var detail = new JobRequestDetailViewModel
+            //    {
+            //        jobSubTypeclassId = (short)JobSubTypeClassEnum.CollateralSearch,
+            //        jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
+            //        jobTypeId = (short)JobTypeEnum.legal,
+            //        amount = model.searchChargeAmount, 
+            //        jobRequestId = model.jobRequestId,
+            //        createdBy = model.createdBy,
+            //        accreditedConsultantId = model.solicitorId,
+            //        accountNumber = model.accountNumber,
+            //        currencyId = company.CURRENCYID,
+            //        description2 = model.description2
+            //    };
+            //    saveJobRequestDetail(detail);
+            //}
+
+            //if (model.requireVerification)
+            //{
+            //    //chargeAmount = chargeAmount + (collateralStateDetails.VERIFICATIONAMOUNT ?? 0);
+            //    var detail = new JobRequestDetailViewModel
+            //    {
+            //        jobSubTypeclassId = (short)JobSubTypeClassEnum.CollateralVerification,
+            //        jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
+            //        jobTypeId = (short)JobTypeEnum.legal,
+            //        amount = model.verificationChargeAmount,
+            //        jobRequestId = model.jobRequestId,
+            //        createdBy = model.createdBy,
+            //        accreditedConsultantId = model.solicitorId,
+            //        accountNumber = model.accountNumber,
+            //        currencyId = company.CURRENCYID,
+            //        description2 = model.description2
+            //    };
+            //    saveJobRequestDetail(detail);
+            //}
+
+            //if (model.additionalCharge > 0)
+            //{
+            //    //chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
+            //    var detail = new JobRequestDetailViewModel
+            //    {
+            //        jobSubTypeclassId = (short)JobSubTypeClassEnum.AdditionalCharges,
+            //        jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
+            //        jobTypeId = (short)JobTypeEnum.legal,
+            //        amount = model.additionalCharge,
+            //        description = model.additionalChargeJustification,
+            //        jobRequestId = model.jobRequestId,
+            //        createdBy = model.createdBy,
+            //        accreditedConsultantId = model.solicitorId,
+            //        accountNumber = model.accountNumber,
+            //        currencyId = company.CURRENCYID,
+            //        description2 = model.description2
+            //    };
+            //    saveJobRequestDetail(detail);
+            //}
 
             jobRequest.REQUESTSTATUSID = (short)JobRequestStatusEnum.processing;
 
             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
             var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
-            string messageBoby = $"Dear RM, <br /><br />This is to bring to your attention that legal has specified charges for collaral on job request with code '{jobRequest.JOBREQUESTCODE}'. <br /><br /> You attention is required to effect the charges. <br /><br />";
+            string messageBoby = $"Dear RM, <br /><br />This is to bring to your attention that legal has specified charges for collateral on job request with code '{jobRequest.JOBREQUESTCODE}'. <br /><br /> You attention is required to effect the charges. <br /><br />";
             string alertSubject = $"Collateral Search Request";
             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetStaffEmailRecipients(jobRequest.SENDERSTAFFID), jobRequest.JOBREQUESTCODE, jobRequest.JOBREQUESTID);
-            //if (baseApplication != null)
-            //{
-            //    BasicTrasactionSourceInputModel input = new BasicTrasactionSourceInputModel();
-            //    input.createdBy = model.createdBy;
-            //    input.description = "Collateral Search";
-            //    input.sourceApplicationId = (short)baseApplication.LOANAPPLICATIONDETAILID;
-            //    input.companyId = model.companyId;
-            //    input.userBranchId = model.userBranchId;
-            //}
+
 
             return context.SaveChanges() > 0;
         }
@@ -2314,9 +2336,23 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 jobTypeId = x.JOBTYPEID,
                 jobSubTypeName = x.JOB_SUB_TYPE_NAME,
-                jobSubTypeId = x.JOB_SUB_TYPEID
+                jobSubTypeId = x.JOB_SUB_TYPEID,
+                requireCharge = x.REQUIRECHARGE,
+                chargeFeeId = x.CHARGEFEEID
             }).Where(x => x.jobTypeId == jobId );
         }
+
+        public IEnumerable<JobSubTypeClassViewModel> GetJobSubTypeClass(short jobSubTypeId)
+        {
+            return context.TBL_JOB_TYPE_SUB_CLASS.Select(x => new JobSubTypeClassViewModel
+            {
+                jobSubTypeclassId = x.JOB_SUB_TYPE_CLASSID,
+                jobSubTypeclassName = x.JOB_SUB_TYPE_CLASS_NAME,
+                jobSubTypeId = x.JOB_SUB_TYPEID,
+                defaultChargeAmount = x.DEFAULTCHARGEAMOUNT,
+            }).Where(x => x.jobSubTypeId == jobSubTypeId);
+        }
+
 
         #endregion job-type
 
@@ -2741,6 +2777,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                         credit.approvedDateTime = DateTime.Now;
                         credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                         credit.companyId = model.companyId;
+                        if(credits.GLACCOUNTID1 == null || credits.GLACCOUNTID1 == 0)
+                        {
+                            throw new ConditionNotMetException("There is no GL defined for "+ credits.DESCRIPTION + " record("+ credits.CHARGEFEEDETAILID+").");
+                        }
                         credit.glAccountId = (int)credits.GLACCOUNTID1;
                         credit.sourceReferenceNumber = model.requestCode;
                         credit.batchCode = batchCode;

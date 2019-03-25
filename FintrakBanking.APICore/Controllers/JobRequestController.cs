@@ -240,7 +240,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.EffectLegaCollateralJobs(entity);
+                var data = repo.saveCollateralJobsChargesSpecifiedByLegal(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Collateral Search charge instruction sent Successfully" });
@@ -274,7 +274,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.PlaceChargeOnCustomerForCollateralSearch(entity);
+                var data = repo.ChargeCustomerForOnSearchJobs(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Performed Successfully" });
@@ -875,7 +875,16 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-         [HttpPost] [ClaimsAuthorization][Route("job-type")]
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-sub-type-class/{jobSubTypeId}")]
+        public HttpResponseMessage GetJobSubTypeClass(short jobSubTypeId)
+        {
+            var data = repo.GetJobSubTypeClass(jobSubTypeId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpPost] [ClaimsAuthorization][Route("job-type")]
         public HttpResponseMessage AddJobType([FromBody] JobTypeViewModel entity)
         {
             try
