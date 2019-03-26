@@ -4660,7 +4660,9 @@ namespace FintrakBanking.Repositories.Credit
                         FEERATEVALUE = ent.feeRateValue,
                         ISINTEGRALFEE = ent.isIntegralFee,
                         LOANID = chargeByApprovedAmount ? facilityDetail.LOANAPPLICATIONDETAILID : loanId,
+                        SOURCELOANID = loanId,
                         LOANSYSTEMTYPEID = chargeByApprovedAmount ? (short)LoanSystemTypeEnum.LineFacility : loanSystemTypeId,
+                        SOURCELOANSYSTEMTYPEID = loanSystemTypeId,
                         ISRECURRING = ent.recurring,
                         RECURRINGPAYMENTDAY = 28,
                         CREATEDBY = loanModel.createdBy,
@@ -10976,6 +10978,7 @@ namespace FintrakBanking.Repositories.Credit
                         orderby l.BOOKINGDATE descending
                         select new LoanViewModel
                         {
+                            facilityType = l.TBL_PRODUCT.PRODUCTNAME,
                             loanId = l.TERMLOANID,
                             customerId = l.CUSTOMERID,
                             customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.LASTNAME,

@@ -24,7 +24,7 @@
               <Width>1in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1in</Width>
+              <Width>1.64583in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1in</Width>
@@ -280,7 +280,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Account</Value>
+                              <Value>Loan Reference Number</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -1662,7 +1662,7 @@
         <Top>0.92583in</Top>
         <Left>0.60292in</Left>
         <Height>0.5in</Height>
-        <Width>29.15688in</Width>
+        <Width>29.80271in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1673,7 +1673,7 @@
     <Height>1.97917in</Height>
     <Style />
   </Body>
-  <Width>29.7598in</Width>
+  <Width>30.40563in</Width>
   <Page>
     <PageHeader>
       <Height>1in</Height>

@@ -755,7 +755,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Other Inc</Value>
+                              <Value>Other Income</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -1674,7 +1674,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -2232,7 +2231,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!endDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2254,21 +2255,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="otherInc1">
+                    <Textbox Name="otherIncome">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!otherInc.Value</Value>
+                              <Value>=Fields!otherIncome.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>otherInc1</rd:DefaultName>
+                      <rd:DefaultName>otherIncome</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -2352,7 +2353,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!expiryDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2382,7 +2385,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!maturityDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2862,7 +2867,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!classificationDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2892,7 +2899,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!applicationDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2952,7 +2961,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!lastCreditDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2982,7 +2993,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!sanctionLimitDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -3012,7 +3025,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!limitExpiryDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>d MMM yyyy</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -3030,6 +3045,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -3223,7 +3239,7 @@
         <Top>1.25917in</Top>
         <Left>2.63417in</Left>
         <Height>0.5in</Height>
-        <Width>57.85464in</Width>
+        <Width>57.85465in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3393,8 +3409,8 @@
           <DataField>endDate</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="otherInc">
-          <DataField>otherInc</DataField>
+        <Field Name="otherIncome">
+          <DataField>otherIncome</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="interestInSupense">

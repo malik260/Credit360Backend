@@ -30,6 +30,9 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public short? jobTypeHubId { get; set; }
         public short? jobSubTypeId { get; set; }
         public string jobSubTypeName { get; set; }
+        public bool? requireCharge { get; set; }
+        public decimal? defaultChargeAmount { get; set; }
+        public int? chargeFeeId { get; set; }
 
         public bool isApplicationLevel { get; set; }
         public bool requireApplicationDetail { get; set; }
@@ -155,6 +158,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class JobSubTypeClassViewModel
     {
+        public decimal? defaultChargeAmount { get; set; }
+
         public int jobSubTypeclassId { get; set; }
         public string jobSubTypeclassName { get; set; }
         public short jobSubTypeId { get; set; }
@@ -182,6 +187,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
         public int? casaAccountId { get; set; }
         public int? jobSubTypeclassId { get; set; }
+        public int? jobSubTypeId { get; set; }
         public bool requireCharting { get; set; }
         public bool requireVerification { get; set; }
         public bool requireSearch { get; set; }
@@ -200,6 +206,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int operationId { get; set; }
         public short? currencyId { get; set; }
         public bool isInitiation { get; set; }
+        public List<JobRequestDetailViewModel> searchDetails { get; set; }
 
     }
 
@@ -285,6 +292,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
     {
         public short jobSubTypeId { get; set; }
         public string jobSubTypeName { get; set; }
+        public bool? requireCharge { get; set; }
+        public int? chargeFeeId { get; set; }
     }
 
     public class OperationStaffViewModel : GeneralEntity

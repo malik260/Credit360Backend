@@ -48,7 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-
+        public string facilityType { get; set; }
+        public Decimal sanctionLimit { get; set; }
         public bool isSuspenseCredit { get; set; }
         public decimal bookedAmount { get; set; }
 
@@ -1328,8 +1329,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime dateGranted { get; set; }
         public DateTime lastCreditDate { get; set; }
         public DateTime expiryDate { get; set; }
-        public string sanctionLimit { get; set; }
-        public string previousLimit { get; set; }
+        public decimal sanctionLimit { get; set; }
+        public decimal previousLimit { get; set; }
         public string repaymentFrequencyForInterest { get; set; }
         public string repaymentFrequencyForPrincipal { get; set; }
         public decimal cumRepaymentAmountDue { get; set; }
@@ -1344,10 +1345,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string detailsOfSecuritiesOthers { get; set; }
         public decimal collateralValue { get; set; }
         public int collateralStatus { get; set; }
-
-
-
-
+        public string staffCode { get; set; }
     }
 
 
@@ -1439,7 +1437,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string deskDescription { get; set; }
         public string buDescription { get; set; }
         public decimal sanctionLimit { get; set; }
-        public DateTime pastDueDate { get; set; }
+        public DateTime? pastDueDate { get; set; }
         public decimal pastDueDat { get; set; }
         public string groupDescription { get; set; }
         public string accountName { get; set; }
@@ -1570,6 +1568,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class UnutilizedFacilityViewModel
     {
+        public decimal utilizedAmount { get; set; }
+        public decimal amountDisbursed { get; set; }
+        public decimal approvedAmount { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public short productTypeId { get; set; }
+        public decimal undisbursedAmount { get; set; }
+
         public DateTime dateTimeCreated { get; set; }
         public string businessUnits { get; set; }
         public string group { get; set; }
@@ -1582,6 +1587,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string newApprovalInNaira{ get; set; }
         public string newApprovalInDollar { get; set; }
         public string staffCode { get; set; }
+        public string cap { get; set; }
     }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{

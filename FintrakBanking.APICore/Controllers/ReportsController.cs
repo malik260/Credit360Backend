@@ -1833,15 +1833,19 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("impaired-watch-list-report")]
-        public HttpResponseMessage GetImpairedWatchListReport()
+        public HttpResponseMessage GetImpairedWatchListReport([FromBody]DateRange param)
         {
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetImpairedWatchListReport(token.GetCompanyId);
+
+
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetRuniningLoanReport(param);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1907,15 +1911,19 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("excess-report")]
-        public HttpResponseMessage GetExcessReport()
+        public HttpResponseMessage GetExcessReport([FromBody]DateRange param)
         {
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetExcessReport(token.GetCompanyId);
+
+
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetExcessReport(param);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1929,18 +1937,16 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("runining-loan-report")]
-        public HttpResponseMessage GetRuniningLoanReport()
+        [Route("unutilized-facility-report")]
+        public HttpResponseMessage GetUnutilizedFacilityReport()
         {
-
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetRuniningLoanReport(token.GetCompanyId);
+                var data = repo.GetUnutilizedFacilityReport(token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1953,8 +1959,37 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
         }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("runining-loan-report")]
+        public HttpResponseMessage GetRuniningLoanReport([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+
+
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetRuniningLoanReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+      
 
         [HttpPost]
         [ClaimsAuthorization]

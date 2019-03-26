@@ -25,6 +25,9 @@ namespace FintrakBanking.Entities.Models
 
         public short JOBTYPEID { get; set; }
 
+        public bool? REQUIRECHARGE { get; set; }
+        public int? CHARGEFEEID { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_JOB_REQUEST_DETAIL> TBL_JOB_REQUEST_DETAIL { get; set; }
 
