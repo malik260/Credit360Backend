@@ -41,4 +41,19 @@ namespace FintrakBanking.ViewModels.Admin
         public string branchName { get; set; }
         public string branchCode { get; set; }
     }
+
+
+    public class DeletedStaffLog
+    {
+        public string deletedByName { get; set; }
+        public string deletedByStaffCode { get; set; }
+
+        public int? deletedById { get; set; }
+        public string deletedStaffCode { get; set; }
+
+        public string deletedStaffName { get; set; }
+        public int? deletedStaffId { get; set; }
+        public DateTime? deletedDate { get; set; }
+
+    }
 }

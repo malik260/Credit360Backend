@@ -13,5 +13,7 @@ namespace FintrakBanking.Interfaces.Admin
         void AddAuditTrail(TBL_AUDIT auditInput);
 
         IQueryable<AuditViewModel> GetAuditTrail(short branchId);
+        IQueryable<DeletedStaffLog> GetDeletedStaffLog(short branchId);
+
     }
 }
