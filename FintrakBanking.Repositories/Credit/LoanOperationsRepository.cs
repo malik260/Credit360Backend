@@ -8360,6 +8360,9 @@ namespace FintrakBanking.Repositories.Credit
                             context.SaveChanges();
                         }
 
+                        this.context.TBL_LOAN_SCHEDULE_PERIODIC.AddRange(tblPeriodicSchedule); ////change to Temp table
+                        context.SaveChanges();
+
                         //////----------generate and save daily loan schedule -----------------------------------
                         ////List<LoanPaymentScheduleDailyViewModel> dailySchedule = loanSchedule.GenerateDailyLoanSchedule(loanInput);
 
