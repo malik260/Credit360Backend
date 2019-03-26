@@ -75,6 +75,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         List<JobRequestDetailViewModel> GetLegalJobRequestDetails();
 
         IEnumerable<JobRequestViewModel> GetAllGlobalJobRequestByFacilityRef(string facilityRef);
+        IEnumerable<JobRequestViewModel> GetJobRequestBySearchString(int staffId, string searchString);
 
         bool AssignJobTypeToStaff(jobReasignment model);
         bool DeleteJobTypeForAStaff(jobReasignment model);

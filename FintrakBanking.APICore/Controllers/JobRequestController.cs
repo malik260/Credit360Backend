@@ -116,6 +116,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("job-request/search/{searchString}")]
+        public HttpResponseMessage GetJobRequestBySearchString(string searchString)
+        {
+            var data = repo.GetJobRequestBySearchString(token.GetStaffId, searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("facility-job-request/{facilityReferenceNumber}")]
         public HttpResponseMessage GetAllGlobalJobRequestByFacilityRef(string facilityReferenceNumber)
         {
@@ -233,33 +242,18 @@ namespace FintrakBanking.APICore.Controllers
         [Route("job-request/legal-collateral-job")]
         public HttpResponseMessage EffectLegaCollateralJobs([FromBody] JobRequestCollateralSearchViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.saveCollateralJobsChargesSpecifiedByLegal(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Collateral Search charge instruction sent Successfully" });
-                }
+            var data = repo.saveCollateralJobsChargesSpecifiedByLegal(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Collateral Search charge instruction sent Successfully" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Collateral Search charge Instructions failed to save " });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Collateral Search charge Instructions failed to save " });
         }
 
         [HttpPost]
@@ -267,37 +261,18 @@ namespace FintrakBanking.APICore.Controllers
         [Route("job-request/place-legal-job-charges")]
         public HttpResponseMessage PlaceChargeOnCustomerForCollateralSearch([FromBody] JobRequestCollateralSearchViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.ChargeCustomerForOnSearchJobs(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Performed Successfully" });
-                }
+            var data = repo.ChargeCustomerForOnSearchJobs(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Performed Successfully" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to Perform Operation " });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (TwoFactorAuthenticationException fa)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to Perform Operation " });
         }
 
         [HttpPost]
@@ -305,33 +280,18 @@ namespace FintrakBanking.APICore.Controllers
         [Route("job-request/reverse-legal-job-charges")]
         public HttpResponseMessage ReverseChargeOnCustomerForCollateralSearch([FromBody] JobRequestCollateralSearchViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.ReverseChargeOnCustomerForCollateralSearch(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Performed Successfully" });
-                }
+            var data = repo.ReverseChargeOnCustomerForCollateralSearch(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Performed Successfully" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to Perform Operation " });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (TwoFactorAuthenticationException fa)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to Perform Operation " });
         }
 
         //[HttpPost] [ClaimsAuthorization]
@@ -372,68 +332,38 @@ namespace FintrakBanking.APICore.Controllers
         [Route("global-job-request")]
         public HttpResponseMessage AddGlobalJobRequest([FromBody] JobRequestViewModel entity)
          {
-            try
-            {
-                entity.companyId = (int)token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.branchId = (short)token.GetBranchId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.branchId = (short)token.GetBranchId;
+            entity.companyId = (int)token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.branchId = (short)token.GetBranchId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.branchId = (short)token.GetBranchId;
 
-                var code = repo.AddGlobalJobRequest(entity);
-                if (code != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = code, message = "Request logged successfully. The Request Code is "+ code });
-                }
+            var code = repo.AddGlobalJobRequest(entity);
+            if (code != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = code, message = "Request logged successfully. The Request Code is " + code });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error logging this request" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error logging this request" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error logging this request" });
         }
 
         [HttpPost] [ClaimsAuthorization]
         [Route("job-request/comment")]
         public HttpResponseMessage AddJobComment([FromBody] JobRequestMessageViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddJobComment(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Comment added successfully." });
-                }
+            var data = repo.AddJobComment(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Comment added successfully." });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error commenting on this job" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error commenting on this request" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error commenting on this job" });
         }
 
 
@@ -441,99 +371,54 @@ namespace FintrakBanking.APICore.Controllers
         [Route("job-request/reply/{jobRequestId}")]
         public HttpResponseMessage ReplyJobRequest([FromBody] JobRequestViewModel entity, int jobRequestId)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.lastUpdatedBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.lastUpdatedBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
 
-                var data = repo.ReplyJobRequest(entity, jobRequestId);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Job response was successfully saved" });
-                }
+            var data = repo.ReplyJobRequest(entity, jobRequestId);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Job response was successfully saved" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record." });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
 
         [HttpPut, Route("job-request/reassign/{jobRequestId}")]
         public HttpResponseMessage ReassignJobRequest([FromBody] JobRequestViewModel entity, int jobRequestId)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.lastUpdatedBy = token.GetStaffId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.staffId = token.GetStaffId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.lastUpdatedBy = token.GetStaffId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.staffId = token.GetStaffId;
 
-                var data = repo.ReassignJobRequest(entity, jobRequestId);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job been assigned successfully" });
-                }
+            var data = repo.ReassignJobRequest(entity, jobRequestId);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job been assigned successfully" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (ConditionNotMetException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (BadLogicException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
 
         public HttpResponseMessage AcknowledgeJob([FromBody] JobRequestViewModel entity, int jobRequestId)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.lastUpdatedBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.lastUpdatedBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AcknowledgeJob(entity, jobRequestId);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Job Acknowledged." });
-                }
+            var data = repo.AcknowledgeJob(entity, jobRequestId);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Job Acknowledged." });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (ConditionNotMetException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (BadLogicException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
         #region Middle Office Request
         [HttpPut, Route("job-request/invoice-status")]
@@ -887,116 +772,64 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost] [ClaimsAuthorization][Route("job-type")]
         public HttpResponseMessage AddJobType([FromBody] JobTypeViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddJobType(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
+            var data = repo.AddJobType(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record." });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
        [HttpPut] [ClaimsAuthorization][Route("job-type/{jobTypeId}")]
         public HttpResponseMessage UpdateJobType([FromBody] JobTypeViewModel entity, short jobTypeId)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.lastUpdatedBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.lastUpdatedBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.UpdateJobType(entity, jobTypeId);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
-                }
+            var data = repo.UpdateJobType(entity, jobTypeId);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record." });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
 
         [HttpPost, Route("map-job-type-hub-staff")]
         public HttpResponseMessage mapJobTypeHubStaff([FromBody] JobTypeHubViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
 
 
-                var data = repo.mapJobTypeHubStaff(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The staff - hub mapping was successful" });
-                }
+            var data = repo.mapJobTypeHubStaff(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The staff - hub mapping was successful" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (ConditionNotMetException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (BadLogicException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
 
         [HttpPut, Route("update-map-job-type-hub-staff")]
         public HttpResponseMessage UpdatemappedJobTypeHubStaff([FromBody] JobTypeHubViewModel entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
 
-                if (repo.UpdatemappedJobTypeHubStaff(entity)) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Update was successful" }); }
+            if (repo.UpdatemappedJobTypeHubStaff(entity)) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Update was successful" }); }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
 
 
@@ -1019,65 +852,35 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost, Route("assign-job-type")]
         public HttpResponseMessage AssignJobTypeToStaff([FromBody] jobReasignment entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
 
-                var data = repo.AssignJobTypeToStaff(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job type been assigned successfully" });
-                }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (ConditionNotMetException ex)
+            var data = repo.AssignJobTypeToStaff(entity);
+            if (data)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job type been assigned successfully" });
             }
-            catch (BadLogicException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
-            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
 
         [HttpPut, Route("update-assigned-job-type")]
         public HttpResponseMessage UpdateAssignJobTypeToStaff([FromBody] jobReasignment entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
 
 
-                var data = repo.UpdateAsignedJobTypeToStaff(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job type been assigned successfully" });
-                }
+            var data = repo.UpdateAsignedJobTypeToStaff(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job type been assigned successfully" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (ConditionNotMetException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (BadLogicException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
 
         [HttpDelete, Route("delete-job-request-document/{documentId}")]
@@ -1103,34 +906,19 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost, Route("delete-assigned-job-type")]
         public HttpResponseMessage DeleteAssignedJobTypeToStaff([FromBody] jobReasignment entity)
         {
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                //entity.dateTimeCreated = 
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            //entity.dateTimeCreated = 
 
 
-                var data = repo.DeleteJobTypeForAStaff(entity);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job type been assigned successfully" });
-                }
+            var data = repo.DeleteJobTypeForAStaff(entity);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job type been assigned successfully" });
+            }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-            }
-            catch (ConditionNotMetException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (BadLogicException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
         }
 
         [HttpGet]

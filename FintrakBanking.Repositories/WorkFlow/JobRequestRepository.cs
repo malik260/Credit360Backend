@@ -781,7 +781,347 @@ namespace FintrakBanking.Repositories.WorkFlow
             return allData;
         }
 
-   
+
+        public IEnumerable<JobRequestViewModel> GetJobRequestBySearchString(int staffId, string searchString)
+        {
+            var thisStaff = this.context.TBL_STAFF.Find(staffId);
+            var staffAdmin = this.context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.STAFFID == staffId);
+            var staffHub = this.context.TBL_JOB_TYPE_HUB_STAFF.Where(x => x.STAFFID == staffId);
+            var middleOfficeUnit = from x in context.TBL_JOB_TYPE_UNIT
+                                   join t in context.TBL_JOB_TYPE_HUB_STAFF on x.JOBTYPEUNITID equals t.JOBTYPEUNITID
+                                   where x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && t.STAFFID == staffId
+                                   select x;
+
+            bool isTeamLead = (from s in context.TBL_JOB_TYPE_HUB_STAFF where s.STAFFID == staffId select s.ISTEAMLEAD).FirstOrDefault();
+            List<JobRequestViewModel> allData = new List<JobRequestViewModel>();
+            List<JobRequestViewModel> adminData = new List<JobRequestViewModel>();
+            List<JobRequestViewModel> hubStaffData = new List<JobRequestViewModel>();
+            List<JobRequestViewModel> staffData = new List<JobRequestViewModel>();
+            List<int> adminJobTypeIds = new List<int>();
+            if (staffAdmin.Any())
+            {
+                foreach (var i in staffAdmin)
+                {
+                    adminJobTypeIds.Add(i.JOBTYPEID);
+                }
+                adminData = (from x in context.TBL_JOB_REQUEST
+                             join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
+                             join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
+                             where adminJobTypeIds.Contains(x.JOBTYPEID) 
+                             && (
+                             (x.JOBREQUESTCODE.ToLower() == searchString.ToLower()) 
+                             )
+                             orderby x.JOBREQUESTID descending
+                             select (
+                            new JobRequestViewModel
+                            {
+                                jobRequestId = x.JOBREQUESTID,
+                                requestTitle = x.JOB_TITLE,
+                                jobRequestCode = x.JOBREQUESTCODE,
+                                targetId = x.TARGETID,
+                                jobTypeId = t.JOBTYPEID,
+                                jobSubTypeId = s.JOB_SUB_TYPEID,
+                                jobTypeName = t.JOBTYPENAME,
+                                requireCharge = s.REQUIRECHARGE ?? false,
+                                chargeFeeId = s.CHARGEFEEID ?? 0,
+                                jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+                                jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
+                                jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
+                                senderStaffId = x.SENDERSTAFFID,
+                                senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                                senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
+                                departmentUnitId = x.DEPARTMENTUNITID,
+
+                                receiverStaffId = (int)x.RECEIVERSTAFFID,
+                                reassignedTo = x.REASSIGNEDTO,
+                                isReassigned = x.ISREASSIGNED,
+                                isAcknowledged = x.ISACKNOWLEDGED,
+                                operationsId = x.OPERATIONSID,
+                                operationName = x.TBL_OPERATIONS.OPERATIONNAME,
+                                requestStatusId = x.REQUESTSTATUSID,
+                                requestStatusname = x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved ? "Completed" : x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+
+                                senderComment = x.SENDERCOMMENT,
+                                responseComment = x.RESPONSECOMMENT,
+                                arrivalDate = x.ARRIVALDATE,
+                                systemArrivalDate = x.SYSTEMARRIVALDATE,
+                                reassignedDate = x.REASSIGNEDDATE,
+                                systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
+                                responseDate = x.RESPONSEDATE,
+                                systemResponseDate = x.SYSTEMRESPONSEDATE,
+                                acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
+                                systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+                                loggedInStaffId = staffId,
+                                jobTypeUnitId = x.JOBTYPEUNITID,
+                                jobTypeHubId = x.JOBTYPEHUBID,
+                                branchId = x.BRANCHID,
+                                isTeamLead = (from s in context.TBL_JOB_TYPE_HUB_STAFF where s.STAFFID == staffId select s.ISTEAMLEAD).FirstOrDefault(),
+
+                                refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
+                                                         ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+
+                                fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                                fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
+                                to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
+                                assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+
+                            })).ToList().Take(30).ToList();
+            }
+
+            List<int> jobRequestIds = new List<int>();
+
+            foreach (var i in adminData) { jobRequestIds.Add(i.jobRequestId); }
+
+            if (staffHub.Any() && middleOfficeUnit.Any() && isTeamLead)
+            {
+                List<int> unitIds = new List<int>();
+                foreach (var i in staffHub)
+                {
+                    unitIds.Add(i.JOBTYPEUNITID);
+                };
+
+                hubStaffData = (from x in context.TBL_JOB_REQUEST
+                                join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
+                                join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
+                                where unitIds.Contains((int)x.JOBTYPEUNITID) && !jobRequestIds.Contains(x.JOBREQUESTID)
+                                && (
+                                (x.JOBREQUESTCODE.ToLower().Contains(searchString.ToLower()))
+                                )
+                                orderby x.JOBREQUESTID descending
+                                select (
+                                new JobRequestViewModel
+                                {
+                                    jobRequestId = x.JOBREQUESTID,
+                                    requestTitle = x.JOB_TITLE,
+                                    jobRequestCode = x.JOBREQUESTCODE,
+                                    targetId = x.TARGETID,
+                                    jobTypeId = t.JOBTYPEID,
+                                    jobSubTypeId = s.JOB_SUB_TYPEID,
+                                    jobTypeName = t.JOBTYPENAME,
+                                    jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+                                    requireCharge = s.REQUIRECHARGE ?? false,
+                                    chargeFeeId = s.CHARGEFEEID ?? 0,
+                                    jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
+                                    jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
+                                    senderStaffId = x.SENDERSTAFFID,
+                                    senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                                    senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
+                                    departmentUnitId = x.DEPARTMENTUNITID,
+
+                                    receiverStaffId = (int)x.RECEIVERSTAFFID,
+                                    reassignedTo = x.REASSIGNEDTO,
+                                    isReassigned = x.ISREASSIGNED,
+                                    isAcknowledged = x.ISACKNOWLEDGED,
+                                    operationsId = x.OPERATIONSID,
+                                    operationName = x.TBL_OPERATIONS.OPERATIONNAME,
+                                    requestStatusId = x.REQUESTSTATUSID,
+                                    requestStatusname = x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved ? "Completed" : x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+
+                                    senderComment = x.SENDERCOMMENT,
+                                    responseComment = x.RESPONSECOMMENT,
+                                    arrivalDate = x.ARRIVALDATE,
+                                    systemArrivalDate = x.SYSTEMARRIVALDATE,
+                                    reassignedDate = x.REASSIGNEDDATE,
+                                    systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
+                                    responseDate = x.RESPONSEDATE,
+                                    systemResponseDate = x.SYSTEMRESPONSEDATE,
+                                    acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
+                                    systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+                                    loggedInStaffId = staffId,
+                                    jobTypeUnitId = x.JOBTYPEUNITID,
+                                    jobTypeHubId = x.JOBTYPEHUBID,
+                                    branchId = x.BRANCHID,
+                                    isTeamLead = (from s in context.TBL_JOB_TYPE_HUB_STAFF where s.STAFFID == staffId select s.ISTEAMLEAD).FirstOrDefault(),
+
+                                    refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
+                                                             ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+
+                                    fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                                    fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
+                                    to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
+                                    assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+
+                                })).Take(30).ToList();
+
+            }
+
+            if (staffHub.Any() && !middleOfficeUnit.Any())
+            {
+                List<int> unitIds = new List<int>();
+                foreach (var i in staffHub)
+                {
+                    unitIds.Add(i.JOBTYPEUNITID);
+                }
+                var xy = (from x in context.TBL_JOB_REQUEST
+                          join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
+                          join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
+                          where ((x.SENDERSTAFFID == staffId) || (x.RECEIVERSTAFFID == staffId) || (x.REASSIGNEDTO == staffId) || (unitIds.Contains((int)x.JOBTYPEUNITID)))
+                          && !jobRequestIds.Contains(x.JOBREQUESTID)
+                          && (
+                             (x.JOBREQUESTCODE.ToLower().Contains(searchString.ToLower()))
+                             )
+                          orderby x.JOBREQUESTID descending
+                          select (
+                          new JobRequestViewModel
+                          {
+                              jobRequestId = x.JOBREQUESTID,
+                              requestTitle = x.JOB_TITLE,
+                              jobRequestCode = x.JOBREQUESTCODE,
+                              targetId = x.TARGETID,
+                              jobTypeId = t.JOBTYPEID,
+                              jobSubTypeId = s.JOB_SUB_TYPEID,
+                              jobTypeName = t.JOBTYPENAME,
+                              jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+                              requireCharge = s.REQUIRECHARGE ?? false,
+                              chargeFeeId = s.CHARGEFEEID ?? 0,
+                              jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
+                              jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
+                              senderStaffId = x.SENDERSTAFFID,
+                              senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                              senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
+                              departmentUnitId = x.DEPARTMENTUNITID,
+
+                              receiverStaffId = (int)x.RECEIVERSTAFFID,
+                              reassignedTo = x.REASSIGNEDTO,
+                              isReassigned = x.ISREASSIGNED,
+                              isAcknowledged = x.ISACKNOWLEDGED,
+                              operationsId = x.OPERATIONSID,
+                              operationName = x.TBL_OPERATIONS.OPERATIONNAME,
+                              requestStatusId = x.REQUESTSTATUSID,
+                              requestStatusname = x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved ? "Completed" : x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+
+                              senderComment = x.SENDERCOMMENT,
+                              responseComment = x.RESPONSECOMMENT,
+                              arrivalDate = x.ARRIVALDATE,
+                              systemArrivalDate = x.SYSTEMARRIVALDATE,
+                              reassignedDate = x.REASSIGNEDDATE,
+                              systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
+                              responseDate = x.RESPONSEDATE,
+                              systemResponseDate = x.SYSTEMRESPONSEDATE,
+                              acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
+                              systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+                              loggedInStaffId = staffId,
+                              jobTypeUnitId = x.JOBTYPEUNITID,
+                              jobTypeHubId = x.JOBTYPEHUBID,
+                              branchId = x.BRANCHID,
+                              isTeamLead = (from s in context.TBL_JOB_TYPE_HUB_STAFF where s.STAFFID == staffId select s.ISTEAMLEAD).FirstOrDefault(),
+
+                              refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
+                                                       ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+
+                              fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                              fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
+                              to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
+                              assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+
+                          })).Take(30).ToList();
+
+                staffData.AddRange(xy);
+            }
+
+
+            if ((middleOfficeUnit.Any() && !isTeamLead) || (!staffHub.Any() && !middleOfficeUnit.Any() && !isTeamLead))
+            {
+                staffData = (from x in context.TBL_JOB_REQUEST
+                             join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
+                             join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
+                             where ((x.SENDERSTAFFID == staffId) || (x.RECEIVERSTAFFID == staffId) || (x.REASSIGNEDTO == staffId)) && !jobRequestIds.Contains(x.JOBREQUESTID)
+                             && (
+                             (x.JOBREQUESTCODE.ToLower().Contains(searchString.ToLower()))
+                             )
+                             orderby x.JOBREQUESTID descending
+                             select (
+                             new JobRequestViewModel
+                             {
+                                 jobRequestId = x.JOBREQUESTID,
+                                 requestTitle = x.JOB_TITLE,
+                                 jobRequestCode = x.JOBREQUESTCODE,
+                                 targetId = x.TARGETID,
+                                 jobTypeId = t.JOBTYPEID,
+                                 jobSubTypeId = s.JOB_SUB_TYPEID,
+                                 jobTypeName = t.JOBTYPENAME,
+                                 jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+                                 requireCharge = s.REQUIRECHARGE ?? false,
+                                 chargeFeeId = s.CHARGEFEEID ?? 0,
+                                 jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
+                                 jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
+                                 senderStaffId = x.SENDERSTAFFID,
+                                 senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                                 senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
+                                 departmentUnitId = x.DEPARTMENTUNITID,
+
+                                 receiverStaffId = (int)x.RECEIVERSTAFFID,
+                                 reassignedTo = x.REASSIGNEDTO,
+                                 isReassigned = x.ISREASSIGNED,
+                                 isAcknowledged = x.ISACKNOWLEDGED,
+                                 operationsId = x.OPERATIONSID,
+                                 operationName = x.TBL_OPERATIONS.OPERATIONNAME,
+                                 requestStatusId = x.REQUESTSTATUSID,
+                                 requestStatusname = x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved ? "Completed" : x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+
+                                 senderComment = x.SENDERCOMMENT,
+                                 responseComment = x.RESPONSECOMMENT,
+                                 arrivalDate = x.ARRIVALDATE,
+                                 systemArrivalDate = x.SYSTEMARRIVALDATE,
+                                 reassignedDate = x.REASSIGNEDDATE,
+                                 systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
+                                 responseDate = x.RESPONSEDATE,
+                                 systemResponseDate = x.SYSTEMRESPONSEDATE,
+                                 acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
+                                 systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+                                 loggedInStaffId = staffId,
+                                 jobTypeUnitId = x.JOBTYPEUNITID,
+                                 jobTypeHubId = x.JOBTYPEHUBID,
+                                 branchId = x.BRANCHID,
+                                 isTeamLead = (from s in context.TBL_JOB_TYPE_HUB_STAFF where s.STAFFID == staffId select s.ISTEAMLEAD).FirstOrDefault(),
+
+                                 refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
+                                                          ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+
+                                 fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                                 fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
+                                 to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
+                                 assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+
+                             })).Take(30).ToList();
+            }
+
+            allData = adminData.Union(hubStaffData).Union(staffData).Distinct().ToList();
+
+
+
+            foreach (var item in allData)
+            {
+                var applicationDet = context.TBL_LOAN_APPLICATION_DETAIL.Find(item.targetId);
+                if (applicationDet != null)
+                {
+                    var customer = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == applicationDet.CUSTOMERID);
+                    if (customer != null) item.customerName = customer.FIRSTNAME;
+                }
+
+                var detail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == item.jobRequestId);
+                if (detail.Any())
+                {
+                    item.hasLegalRecommendedSearch = true;
+                    if (detail.FirstOrDefault().CUSTOMERORBUSINESSCHARGED == true)
+                        item.customerCharged = true;
+
+                    if (detail.FirstOrDefault().ACCREDITEDCONSULTANTPAID)
+                        item.consultantPaid = true;
+                };
+
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfTreasuryBills) item.jobSubTypeName = "Treasury Bill confirm..";
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfFBNQUEST) item.jobSubTypeName = "FBN Quest confirm..";
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfDealSlip) item.jobSubTypeName = "Deal Slip confirm..";
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfStock) item.jobSubTypeName = "Stock confirmation";
+                if (item.jobSubTypeId == null || item.jobSubTypeId < 1) item.jobSubTypeName = "n/a";
+            }
+
+
+            return allData;
+        }
+
         public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId, int branchId)
         {
             return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId);
