@@ -628,10 +628,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public ApprovalStatusEnum ApproveTakeFee(ApprovalViewModel userModel)
         {
-            if(userModel.approvalStatusId<0 || string.IsNullOrEmpty(userModel.comment))
-            {
-                throw new ConditionNotMetException("Kindly Enter Comment And Select an Approval Status Before Proceeding...");
-            }
+            //if(userModel.approvalStatusId<0 || string.IsNullOrEmpty(userModel.comment))
+            //{
+            //    throw new ConditionNotMetException("Kindly Enter Comment And Select an Approval Status Before Proceeding...");
+            //}
 
             var twoFADetails = new TwoFactorAutheticationViewModel
             {

@@ -860,6 +860,24 @@ namespace FintrakBanking.Repositories.Credit
                               year = a.YEAR,
                           }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList(); ;
 
+            first.Add(new CustomerTransactionsViewModels
+            {
+                cust_Id = "TOTAL",
+                max_Credit_Balance = first.Sum(t => t.max_Credit_Balance),
+                max_Debit_Balance = first.Sum(t => t.max_Debit_Balance),
+                min_Credit_Balance = first.Sum(t => t.min_Credit_Balance),
+                min_Debit_Balance = first.Sum(t => t.min_Debit_Balance),
+                credit_Turnover = first.Sum(t => t.credit_Turnover),
+                debit_Turnover = first.Sum(t => t.debit_Turnover),
+            });
+            second.Add(new CustomerTransactionsViewModels
+            {
+                cust_Id = "TOTAL",
+                interest = second.Sum(t => t.interest),
+                float_Charge = second.Sum(t => t.float_Charge),
+            });
+
+
             fields.firstTransaction = first;
             fields.secondTransaction = second;
 
