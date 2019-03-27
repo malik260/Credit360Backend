@@ -41,7 +41,17 @@ namespace FintrakBanking.ViewModels.Admin
         public string branchName { get; set; }
         public string branchCode { get; set; }
     }
+    public class DormantStaffLog
+    {
+        public int userId { get; set; }
+        public string staffName { get; set; }
+        public string staffCode { get; set; }
 
+        public int userName { get; set; }
+
+        public DateTime? lastLoginDate { get; set; }
+
+    }
 
     public class DeletedStaffLog
     {

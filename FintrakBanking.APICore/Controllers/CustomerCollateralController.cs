@@ -246,11 +246,22 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
 
                 var response = repo.ReleaseCollateralGoForApproval(entity);
-                if (response)
+                if (response.status==(int)ApprovalStatusEnum.Approved)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Approval successfull" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Approved successfully" });
                 }
-
+                if (response.status == (int)ApprovalStatusEnum.Processing)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Has Been Sent To The Next Approver (" + response.approvalLevel + ")"});
+                }
+                if (response.status == (int)ApprovalStatusEnum.Disapproved)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Disapproved successfull" });
+                }
+                if (response.status == (int)ApprovalStatusEnum.Referred)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Has Been Reffered Back successfull (" + response.approvalLevel + ")"});
+                }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
             }
             catch (ConditionNotMetException ex)

@@ -33,4 +33,10 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string collateralCode { get; set; }
 
     }
+    public class ApprovalResponse
+    {
+        public int status { get; set; }
+        public string approvalLevel { get; set; }
+
+    }
 }

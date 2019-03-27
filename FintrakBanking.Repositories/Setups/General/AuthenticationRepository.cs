@@ -680,7 +680,13 @@ namespace FintrakBanking.Repositories.Setups.General
             TBL_PROFILE_USER profile = new TBL_PROFILE_USER();
             profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToUpper() == username.ToUpper());// && c.PASSWORD == password);
 
-            if (profile != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
+            var record = (from a in context.TBL_PROFILE_USER
+                          join b in context.TBL_STAFF on a.STAFFID equals b.STAFFID
+                          where a.USERNAME.ToUpper() == username.ToUpper() && !b.DELETED
+                          select a).FirstOrDefault();
+
+
+            if (record != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {
                 var staff1 = context.TBL_STAFF.Find(profile.STAFFID);
                 var userInfo = new UserViewModel();
@@ -707,7 +713,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 return userInfo;
             }
-            else if (profile != null && profile.PASSWORD == password)
+            else if (record != null && record.PASSWORD == password)
             {
                 var staff = context.TBL_STAFF.Find(profile.STAFFID);
                 var userInfo = new UserViewModel();
@@ -738,7 +744,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 //FinTrakBankingContext db = new FinTrakBankingContext();
                 // var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
-                if (profile != null)
+                if (record != null)
                 {
                     context.TBL_PROFILE_SETTING.AsNoTracking();
 
@@ -767,7 +773,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
                 else
                 {
-                    throw new SecureException("1001 Not Fund.");
+                    throw new SecureException("1001 Not Found., Kindly Contact Administrator");
                 }
             }
         }
@@ -862,7 +868,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return (from u in context.TBL_PROFILE_USER
                     join st in context.TBL_STAFF
                     on u.STAFFID equals st.STAFFID
-                    where u.USERNAME.ToLower() == userName.ToLower() && u.ISACTIVE && !u.ISLOCKED
+                    where u.USERNAME.ToLower() == userName.ToLower() && u.ISACTIVE && !u.ISLOCKED && !st.DELETED
                     select new UserViewModel()
                     {
                         user_id = u.USERID,
@@ -883,7 +889,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return (from u in context.TBL_PROFILE_USER
                     join st in context.TBL_STAFF
                     on u.STAFFID equals st.STAFFID
-                    where u.USERNAME.ToLower() == userName.ToLower()
+                    where u.USERNAME.ToLower() == userName.ToLower() 
                     select new UserViewModel()
                     {
                         user_id = u.USERID,
