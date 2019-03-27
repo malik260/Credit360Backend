@@ -17,6 +17,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -65,8 +66,15 @@ namespace FintrakBanking.APICore.Providers
             //var origin = context.OwinContext.Request.Headers["Origin"];
             try
             {
+                var test = context.Password.EncryptSha512(StaticHelpers.EncryptionKey);
                 string ipAddress = GetIpAddress();
                 UserViewModel user = null;
+
+                byte[] pass = Convert.FromBase64String(context.Password);
+                string password = Encoding.UTF8.GetString(pass);
+                var test2 = password.EncryptSha512(StaticHelpers.EncryptionKey);
+
+
                 //var profile2 = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == context.UserName.ToLower());// && c.PASSWORD == password);
 
                 var exipredHr = int.Parse(ConfigurationManager.AppSettings["tokenExpiryHour"]);
@@ -75,7 +83,8 @@ namespace FintrakBanking.APICore.Providers
 
                 var userVm = new UserViewModel
                 {
-                    password = context.Password.EncryptSha512(StaticHelpers.EncryptionKey),
+                    //StaticHelpers.EncryptSha512(password, StaticHelpers.EncryptionKey);
+                    password = password.EncryptSha512(StaticHelpers.EncryptionKey),
                     username = context.UserName
                 };
                 ClaimsIdentity identity;
