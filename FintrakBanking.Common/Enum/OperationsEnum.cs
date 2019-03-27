@@ -120,7 +120,7 @@ namespace FintrakBanking.Common.Enum
         APS_ReleaseCAP =108,
         APS_ReleasePrincipaRequest =109,
         DailyWriteoffInterestAccural = 112,
-
+        LoanRecoveryPayment = 113,
 
     }
 }
