@@ -2560,14 +2560,15 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             StaffMISDetailsModel model = new StaffMISDetailsModel();
             var misRecord = staffMIS.StaffInformationSystem(staffId);
-            model.username = misRecord.field1;
-            model.teamUnit = misRecord.field2;
-            model.costCent = misRecord.field3;
-            model.dept = misRecord.field4;
-            model.region = misRecord.field5;
-            model.group = misRecord.field6;
-            model.directorate = misRecord.field7;
-
+            if (misRecord != null) {
+                model.username = misRecord.field1;
+                model.teamUnit = misRecord.field2;
+                model.costCent = misRecord.field3;
+                model.dept = misRecord.field4;
+                model.region = misRecord.field5;
+                model.group = misRecord.field6;
+                model.directorate = misRecord.field7;
+            }
             return model;
         }
 
