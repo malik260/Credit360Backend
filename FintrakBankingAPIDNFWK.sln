@@ -18,9 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.Interfaces", "FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj", "{6A7C3564-00B2-45D4-A40C-4B52A06C296A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{D07C7CF8-D25B-4D24-980D-57D67F88DFC3}"
-	ProjectSection(SolutionItems) = preProject
-		FintrakBanking.Repositories\FintrakBanking.Repositories.csproj = FintrakBanking.Repositories\FintrakBanking.Repositories.csproj
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ViewModels", "ViewModels", "{03397FE3-2F2B-4A23-9D58-449BF254C9A6}"
 EndProject
