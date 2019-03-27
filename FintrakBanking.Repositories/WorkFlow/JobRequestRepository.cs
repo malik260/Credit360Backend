@@ -2672,12 +2672,12 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public IEnumerable<JobTypeViewModel> GetJobSubType(short jobId)
         {
-            return this.context.TBL_JOB_TYPE_SUB.Select(x => new JobSubTypeViewModel
+            return context.TBL_JOB_TYPE_SUB.Select(x => new JobSubTypeViewModel
             {
                 jobTypeId = x.JOBTYPEID,
                 jobSubTypeName = x.JOB_SUB_TYPE_NAME,
                 jobSubTypeId = x.JOB_SUB_TYPEID,
-                requireCharge = x.REQUIRECHARGE,
+                requireCharge = x.REQUIRECHARGE ?? false,
                 chargeFeeId = x.CHARGEFEEID
             }).Where(x => x.jobTypeId == jobId );
         }

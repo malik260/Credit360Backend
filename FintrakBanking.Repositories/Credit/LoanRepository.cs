@@ -396,8 +396,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var requestsToLegal = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId
                 && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
-                && x.JOBTYPEID == (short)JobTypeEnum.legal
+                && x.JOBTYPEID == (short)JobTypeEnum.legal && x.REQUESTSTATUSID != (short)JobRequestStatusEnum.cancel
             );
+            //if(requestsToLegal.Count() <= 0) { throw new ConditionNotMetException("No request has been sent to Legal for preparation of B&G Instrument."); }
 
             if (requestsToLegal.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
                 throw new ConditionNotMetException("There are pending B&G Legal Job request which must be approved");
@@ -406,14 +407,14 @@ namespace FintrakBanking.Repositories.Credit
 
             if (attendedRequests.Any())
             {
-                if (attendedRequests.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved).Any())
-                    return true;
+                if (attendedRequests.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.processing).Any())
+                    throw new ConditionNotMetException("Bond and gaurantee job sent to legal is still being processed. Loan cannot be book until process is completed.");
 
                 if (attendedRequests.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
                     throw new ConditionNotMetException("Bond and gaurantee job sent to legal was disapproved. You cannot continue with the application.");
             }
 
-            return false;
+            return true;
         }
 
         private void loanBookingValidation(LoanViewModel entity)
@@ -921,14 +922,14 @@ namespace FintrakBanking.Repositories.Credit
             if (application.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
             {
                 entity.productClassId = (short)ProductClassEnum.BondAndGuarantees;
-                bool bAndGRequestSent = false;
+                //bool bAndGRequestSent = false;
                 var applicationfacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == entity.loanApplicationId);
                 foreach(var item in applicationfacilities)
                 {
-                    if (PendingBondsAndGuaranteeJobRequest(item.LOANAPPLICATIONDETAILID))bAndGRequestSent = true;
+                    PendingBondsAndGuaranteeJobRequest(item.LOANAPPLICATIONDETAILID);
                 }
                
-                if(!bAndGRequestSent) throw new ConditionNotMetException("There are pending bonds and gaurantees that must be attended to");
+                //if(!bAndGRequestSent) throw new ConditionNotMetException("You have not sent any request to legal to validate this B&G.");
             }
 
             var loanReferenceNumber = GenerateLoanReferenceNumber(application.BRANCHID, entity.productId, (short)LoanSystemTypeEnum.ContingentLiability);
@@ -985,8 +986,6 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-                try
-                {
                     // ............. Checking customer balance, and fee override ......
                     confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
                     entity.feeOverride = true;
@@ -1015,65 +1014,63 @@ namespace FintrakBanking.Repositories.Credit
                         operationId = (int)OperationsEnum.ContigentLoanBooking
                     };
 
-                    if (LogApproval(approvalModel, (int)OperationsEnum.ContigentLoanBooking, false, (int)ApprovalStatusEnum.Processing))
+                if (LogApproval(approvalModel, (int)OperationsEnum.ContigentLoanBooking, false, (int)ApprovalStatusEnum.Processing))
+                {
+                    //............save Loan Covenant..........
+                    AddLoanCovenant(entity, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
+                    //............save Loan Fees..........
+                    AddLoanFees(entity.loanChargeFee, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity, applicationDetail);
+                    entity.loanReferenceNumber = loanReferenceNumber;
+
+                    //...................Saving Loan Collaterals Mapping.......................
+                    AddLoanCollateralMapping(entity.loanApplicationId, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
+
+                    //...................Mapping Loan Monitoring Trigger.......................
+                    AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
+                    //if (entity.monitoringTriggers.Count > 0)
+                    //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
+
+                    context.SaveChanges();
+                    if (entity.feeOverride && application.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
                     {
-                        //............save Loan Covenant..........
-                        AddLoanCovenant(entity, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
-                        //............save Loan Fees..........
-                        AddLoanFees(entity.loanChargeFee,  loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity, applicationDetail);
-                        entity.loanReferenceNumber = loanReferenceNumber;
+                        entity.isSuspenseCredit = true;
+                        var feeRecord = context.TBL_LOAN_FEE.Where(x => x.SOURCELOANID == loan.CONTINGENTLOANID
+                        && x.SOURCELOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
+                        && x.ISPOSTED == false).ToList();
 
-                        //...................Saving Loan Collaterals Mapping.......................
-                        AddLoanCollateralMapping(entity.loanApplicationId, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
-
-                        //...................Mapping Loan Monitoring Trigger.......................
-                        AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
-                        //if (entity.monitoringTriggers.Count > 0)
-                        //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
-
-                        if (entity.feeOverride && application.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
+                        List<LoanChargeFeeViewModel> loanChargeFeeList = new List<LoanChargeFeeViewModel>();
+                        foreach (var fee in feeRecord)
                         {
-                            entity.isSuspenseCredit = true;
-                            PostBandGFacilityFees(entity);
-                        }
+                            var loanfee = new LoanChargeFeeViewModel
+                            {
+                                loanChargeFeeId = fee.LOANCHARGEFEEID,
+                                chargeFeeId = fee.CHARGEFEEID,
+                                loanId = fee.LOANID,
+                                loanSystemTypeId = fee.LOANSYSTEMTYPEID,
+                                feeRateValue = fee.FEERATEVALUE,
+                                feeDependentAmount = fee.FEERATEVALUE,
+                                feeAmount = fee.FEEAMOUNT,
+                                isIntegralFee = fee.ISINTEGRALFEE,
+                                recurring = fee.ISRECURRING,
+                            };
+                            loanChargeFeeList.Add(loanfee);
+                        };
 
-                        context.SaveChanges();
-
-                        //.....Commit transaction ............
-                        trans.Commit();
+                        entity.loanChargeFee = loanChargeFeeList;
+                        PostBandGFacilityFees(entity);
                     }
-                    //.......................END OF APPROVAL LOG......................................................
 
-                    if (dataCount > 0)
-                        return loanReferenceNumber;
-                    else
-                        return "";
+                    context.SaveChanges();
+
+                    //.....Commit transaction ............
+                    trans.Commit();
                 }
-                catch (BadLogicException be)
-                {
-                    trans.Rollback();
-                    throw new BadLogicException(be.Message);
-                }
-                catch (ConditionNotMetException ce)
-                {
-                    trans.Rollback();
-                    throw new ConditionNotMetException(ce.Message);
-                }
-                catch (APIErrorException ae)
-                {
-                    trans.Rollback();
-                    throw new APIErrorException(ae.Message);
-                }
-                catch (SecureException ae)
-                {
-                    trans.Rollback();
-                    throw new SecureException(ae.Message);
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
-                }
+                //.......................END OF APPROVAL LOG......................................................
+
+                if (dataCount > 0) { return loanReferenceNumber;  }
+
+                else { return ""; }
+                       
             }
         }
 
@@ -4400,7 +4397,6 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (item.isPosted == false && item.feeAmount != 0)
                 {
-                    
                     var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanDetails.casaAccountId);
 
                     if (company.CURRENCYID != loanDetails.currencyId && loanDetails.casaAccountId2 != null)
@@ -4460,7 +4456,7 @@ namespace FintrakBanking.Repositories.Credit
                                     if (glStore != null)
                                     {
                                         debit.glAccountId = glStore.PRINCIPALBALANCEGL2.Value;
-                                        debit.casaAccountId = prodCasa.CASAACCOUNTID;
+                                        debit.casaAccountId = null;
                                     }
                                     else throw new ConditionNotMetException("Suspense Account to be creditted not defined");
                                 }
@@ -4477,7 +4473,6 @@ namespace FintrakBanking.Repositories.Credit
                                 creditAmount = (decimal)item.feeAmount * (decimal)(credits.VALUE / 100.0);
                             else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
                                 creditAmount = (decimal)credits.VALUE;
-
 
                             credit.operationId = (int)loanDetails.operationId;
                             credit.description = feeDescription; 
