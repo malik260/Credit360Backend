@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class LoanPaymentScheduleInputViewModel: GeneralEntity
+    public class LoanPaymentScheduleInputViewModel : GeneralEntity
 
     {
         public short scheduleMethodId { get; set; }
@@ -13,7 +13,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime effectiveDate { get; set; }
         public double interestRate { get; set; }
         public int? loanId { get; set; }
-        public short? principalFrequency { get; set; } 
+        public short? principalFrequency { get; set; }
         public short? interestFrequency { get; set; }
         public int? principalFrequencyTypeId { get; set; }
         public int? interestFrequencyTypeId { get; set; }
@@ -32,7 +32,7 @@ namespace FintrakBanking.ViewModels.Credit
         //public int tenor { get { return  }  }
         private int _tenor;
 
-        public int tenor 
+        public int tenor
         {
             get { return (maturityDate - effectiveDate).Days; }
             set { _tenor = value; }
@@ -60,6 +60,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanPaymentRestructureScheduleInputViewModel : LoanPaymentScheduleInputViewModel
     {
+
+        public int? loanRecoveryPaymentId { get; set; }
         public short dealTypeId { get; set; }
         public string sourceReferenceNumber { get; set; }
         public int casaAccountId { get; set; }
@@ -86,7 +88,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationId { get; set; }
         public bool isManagementInterestRate { get; set; }
         public DateTime? newMaturityDate { get; set; }
-        public int newTenorPrepayment{ get { return ((DateTime)newMaturityDate - newEffectiveDate).Days; } }
+        public int newTenorPrepayment { get { return ((DateTime)newMaturityDate - newEffectiveDate).Days; } }
         public int customerId { get; set; }
         public DateTime date { get; set; }
         public decimal feeRate { get; set; }
@@ -101,18 +103,18 @@ namespace FintrakBanking.ViewModels.Credit
     }
 
 
-    public class LoanPaymentScheduleExtendedInputViewModel: LoanPaymentScheduleInputViewModel
+    public class LoanPaymentScheduleExtendedInputViewModel : LoanPaymentScheduleInputViewModel
     {
         public int numberOfPayments { get; set; }
         public int numberOfPaymentsInAYear { get; set; }
-        public int daysInAYear { get; set; }        
+        public int daysInAYear { get; set; }
     }
 
     public class IrregularLoanScheduleInputViewModel
     {
         public DateTime paymentDate { get; set; }
         public Double paymentAmount { get; set; }
-        public short paymentTypeId  { get; set; }
+        public short paymentTypeId { get; set; }
     }
 
     public class LoanPaymentScheduleInput
@@ -154,8 +156,8 @@ namespace FintrakBanking.ViewModels.Credit
         public double deferredInterestAmount { get; set; }
         public double endPrincipalAmount { get; set; }
     }
-    
-    public class LoanRepaymentViewModel: GeneralEntity 
+
+    public class LoanRepaymentViewModel : GeneralEntity
     {
         public int loanId { get; set; }
         public string loanRefNo { get; set; }

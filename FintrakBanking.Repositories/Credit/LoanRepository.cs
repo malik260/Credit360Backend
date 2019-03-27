@@ -4512,7 +4512,7 @@ namespace FintrakBanking.Repositories.Credit
                                     if (glStore != null)
                                     {
                                         credit.glAccountId = glStore.PRINCIPALBALANCEGL2.Value;
-                                        credit.casaAccountId = prodCasa.CASAACCOUNTID;
+                                        //credit.casaAccountId = prodCasa.CASAACCOUNTID;
                                     }
                                     else throw new ConditionNotMetException("Suspense Account to be creditted not defined");
                                 }
@@ -5938,7 +5938,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal? disbursableAmount = 0;
             if (operationId == (short)OperationsEnum.TermLoanBooking 
                 || operationId == (short)OperationsEnum.ForeignExchangeLoanBooking 
-                || operationId == (short)OperationsEnum.ContigentLoanBooking)
+                || operationId == (short)OperationsEnum.CommercialLoanBooking)
             {
                 var summedPrincipal =  (from l in context.TBL_LOAN
                                      where l.LOANAPPLICATIONDETAILID == loanApplicationDetailId

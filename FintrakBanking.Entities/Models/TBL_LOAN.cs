@@ -46,11 +46,13 @@ namespace FintrakBanking.Entities.Models
         public short CURRENCYID { get; set; }
 
         public double EXCHANGERATE { get; set; }
-        
+
         public int? FULLANDFINALSTATUSID { get; set; }
 
+        public int? RECOVERYSTATUSID { get; set; }
+
         //public double? FULLANDFINALAMOUNT { get; set; }
-        
+
         [Required]
         [StringLength(50)]
         public string LOANREFERENCENUMBER { get; set; }
@@ -230,9 +232,9 @@ namespace FintrakBanking.Entities.Models
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
-        
+
         public DateTime? NEXT_INTEREST_REPRICINGDATE { get; set; }
-        
+
         public int? REPRICINGMODEID { get; set; }
 
         public int? REPRICINGDURATION { get; set; }
@@ -288,6 +290,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
 
         public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
-        
+
     }
 }
