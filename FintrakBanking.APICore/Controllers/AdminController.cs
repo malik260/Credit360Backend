@@ -582,7 +582,29 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Audit Trail
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("audit/dormant-staff-log")]
+        public HttpResponseMessage GetAuditDormantStaffLog()
+        {
+            try
+            {
+                var allDeletedStaffLog = audit.GetDormantStaffLog((short)token.GetBranchId);
+                int totalItems = allDeletedStaffLog.Count();
 
+                //allDeletedStaffLog = allDeletedStaffLog.OrderBy(x => x.lastLoginDate);
+
+                var data = allDeletedStaffLog.ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = totalItems });
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("audit/deleted-staff-log")]

@@ -14,6 +14,7 @@ namespace FintrakBanking.Interfaces.Admin
 
         IQueryable<AuditViewModel> GetAuditTrail(short branchId);
         IQueryable<DeletedStaffLog> GetDeletedStaffLog(short branchId);
+        IQueryable<DormantStaffLog> GetDormantStaffLog(short branchId);
 
     }
 }

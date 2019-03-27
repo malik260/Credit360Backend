@@ -213,6 +213,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LMSR_APPLICATION> TBL_LMSR_APPLICATION { get; set; }
         public virtual DbSet<TBL_LMSR_APPLICATION_DETAIL> TBL_LMSR_APPLICATION_DETAIL { get; set; }
         public virtual DbSet<TBL_LOAN> TBL_LOAN { get; set; }
+        public virtual DbSet<TBL_LOAN_RECOVERY_PAYMENT> TBL_LOAN_RECOVERY_PAYMENT { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION> TBL_LOAN_APPLICATION { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_ARCHIVE> TBL_LOAN_APPLICATION_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COLLATERL> TBL_LOAN_APPLICATION_COLLATERL { get; set; }

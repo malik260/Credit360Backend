@@ -16,6 +16,11 @@
         None = 1, OnGoing = 2, Cancelled = 3, Completed = 4
     };
 
+    public enum RecoveryStatusEnum
+    {
+        None = 1, OnGoing = 2, Cancelled = 3, Completed = 4
+    };
+
 }
 
 //ScheduleTypeId ScheduleTypeName    ScheduleCategoryId

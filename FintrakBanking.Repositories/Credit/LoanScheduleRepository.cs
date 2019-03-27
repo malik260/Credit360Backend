@@ -1710,6 +1710,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault(); //context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
 
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //     firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+            //}
+
+
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
@@ -1978,6 +1984,12 @@ namespace FintrakBanking.Repositories.Credit
             //var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //     firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+            //}
+
 
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
@@ -2299,9 +2311,14 @@ namespace FintrakBanking.Repositories.Credit
 
 
             //var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PERIODPRINCIPALAMOUNT != 0).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
-
-
+            
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PERIODPRINCIPALAMOUNT != 0 && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //    firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PERIODPRINCIPALAMOUNT != 0).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+            //}
+
 
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
@@ -2639,6 +2656,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PERIODPRINCIPALAMOUNT != 0 && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+            
 
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
@@ -3036,6 +3054,11 @@ namespace FintrakBanking.Repositories.Credit
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //     firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+            //}
+
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
@@ -3276,6 +3299,11 @@ namespace FintrakBanking.Repositories.Credit
             //var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //    firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+            //}
 
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
@@ -3585,6 +3613,11 @@ namespace FintrakBanking.Repositories.Credit
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PERIODPRINCIPALAMOUNT != 0 && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
 
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //    firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PERIODPRINCIPALAMOUNT != 0).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+            //}
+
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
@@ -3890,6 +3923,11 @@ namespace FintrakBanking.Repositories.Credit
             //var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+            
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //    firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+            //}
 
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
@@ -4174,6 +4212,11 @@ namespace FintrakBanking.Repositories.Credit
             //var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //    firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+            //}
 
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
@@ -4488,6 +4531,12 @@ namespace FintrakBanking.Repositories.Credit
             //var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+
+
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //    firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+            //}
 
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
@@ -4847,6 +4896,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
+
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //    firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+            //}
+
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
@@ -5173,6 +5228,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
 
+
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //    firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+            //}
+
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
@@ -5478,7 +5539,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PERIODPRINCIPALAMOUNT != 0 && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
-
+            
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
             var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
@@ -6251,6 +6312,12 @@ namespace FintrakBanking.Repositories.Credit
             //var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
 
             var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTDATE).Take(1).FirstOrDefault();
+
+
+            //if (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT.Equals(0))
+            //{
+            //    firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+            //}
 
             var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 

@@ -85,6 +85,7 @@
     <Compile Include="Models\TBL_COLLATERAL_RELEASE_STATUS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_RELEASE.cs" />
     <Compile Include="Models\TBL_JOB_SOURCE.cs" />
+    <Compile Include="Models\TBL_LOAN_RECOVERY_PAYMENT.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_PROMISSORY.cs" />
     <Compile Include="Models\TBL_COLLATERAL_PROMISSORY.cs" />
     <Compile Include="Models\TBL_EOD_OPERATION.cs" />

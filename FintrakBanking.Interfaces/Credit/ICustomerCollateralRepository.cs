@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool ReleaseCollateral(CollateralViewModel entity);
         bool ReleaseCollateralJobRequest(CollateralViewModel entity);
-        bool ReleaseCollateralGoForApproval(ApprovalViewModel entity);
+        ApprovalResponse ReleaseCollateralGoForApproval(ApprovalViewModel entity);
 
         IQueryable<CollateralViewModel> GetCollateralReleaseAwaitingApproval(int companyId, int staffId);
 
