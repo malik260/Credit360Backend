@@ -100,10 +100,13 @@ namespace FintrakBanking.Entities.Models
 
         public int? LEVELTYPEID { get; set; }
 
+        public int? LEVELBUSINESSRULEID { get; set; }
+
         public virtual TBL_APPROVAL_GROUP TBL_APPROVAL_GROUP { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
+        public virtual TBL_LEVEL_BUSINESS_RULE TBL_LEVEL_BUSINESS_RULE { get; set; }
 
         public virtual TBL_STAFF_ROLE TBL_STAFF_ROLE { get; set; }
 

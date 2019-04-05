@@ -329,7 +329,6 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion preset route
 
-
         #region route operation
 
         [HttpPost]
@@ -362,7 +361,6 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion route operation
-
 
         #region trail
         [HttpGet] [ClaimsAuthorization]  
@@ -436,9 +434,5 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #endregion
-
-
-        // 
-
     }
 }

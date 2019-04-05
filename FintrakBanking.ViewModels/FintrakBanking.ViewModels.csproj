@@ -254,6 +254,8 @@
     <Compile Include="UserInfo.cs" />
     <Compile Include="WorkFlow\ApprovalLevelInfo.cs" />
     <Compile Include="WorkFlow\ApprovalTrailViewModel.cs" />
+    <Compile Include="WorkFlow\BusinessRuleViewModel.cs" />
+    <Compile Include="WorkFlow\LevelBusinessRule.cs" />
     <Compile Include="WorkFlow\WorkflowResponseViewModel.cs" />
     <Compile Include="WorkFlow\ApprovalViewModel.cs" />
     <Compile Include="WorkFlow\JobRequestViewModel.cs" />

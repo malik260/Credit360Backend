@@ -290,6 +290,9 @@ namespace FintrakBanking.Common.Enum
         LoanConsultantAdded = 268,
         LoanConsultantUpdated = 269,
         LoanDailyWriteoffInterestAccrual = 270,
+        BusinessRuleAdded = 271,
+        BusinessRuleUpdated = 272,
+        BusinessRuleDeleted = 273,
     };
     public enum RegulatoryTypeEnum
     {

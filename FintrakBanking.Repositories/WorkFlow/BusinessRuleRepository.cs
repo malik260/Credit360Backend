@@ -1,0 +1,207 @@
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.WorkFlow;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace FintrakBanking.Repositories.WorkFlow
+{
+    public class BusinessRuleRepository : IBusinessRuleRepository
+    {
+        private FinTrakBankingContext context;
+        private IGeneralSetupRepository genSetup;
+        private IAuditTrailRepository auditTrail;
+        private IWorkflow workflow;
+        private IAdminRepository admin;
+
+        public BusinessRuleRepository(
+                FinTrakBankingContext _context,
+                IGeneralSetupRepository _genSetup,
+                IAuditTrailRepository _auditTrail,
+                IWorkflow _workflow,
+                IAdminRepository _admin
+            )
+        {
+            this.context = _context;
+            this.genSetup = _genSetup;
+            this.auditTrail = _auditTrail;
+            this.workflow = _workflow;
+            this.admin = _admin;
+        }
+
+        public bool AddBusinessRule(BusinessRuleViewModel model)
+        {
+            if (admin.IsSuperAdmin(model.createdBy) == true)
+            {
+                var data = new TBL_LEVEL_BUSINESS_RULE
+                {
+                    DESCRIPTION = model.description,
+                    MINIMUMAMOUNT = model.minimumAmount,
+                    MAXIMUMAMOUNT = model.maximumAmount,
+                    PEPAMOUNT = model.pepAmount,
+                    PEP = model.pep,
+                    INSIDERRELATED = model.insiderRelated,
+                    ONLENDING = model.onLending,
+                    INTERVENTIONFUNDS = model.interventionFunds,
+                    ORRBASEDAPPROVAL = model.orrBasedApproval,
+                    TENOR = model.tenor,
+
+                    COMPANYID = model.companyId,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                };
+
+                context.TBL_LEVEL_BUSINESS_RULE.Add(data);
+
+                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.BusinessRuleAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"New business rule '{ model.description }' created by this super-admin {audit_staff}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.auditTrail.AddAuditTrail(audit);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteBusinessRule(int id, UserInfo user)
+        {
+            var model = this.context.TBL_LEVEL_BUSINESS_RULE.Find(id);
+            if (admin.IsSuperAdmin(user.createdBy) == true)
+            {
+                model.DELETED = true;
+                model.DELETEDBY = user.createdBy;
+                model.DATETIMEDELETED = genSetup.GetApplicationDate();
+
+                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.BusinessRuleDeleted,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Workflow business rule '{model.DESCRIPTION}' was deleted by this super-admin {audit_staff}",
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = model.LEVELBUSINESSRULEID
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            if (context.TBL_APPROVAL_LEVEL.Where(x => x.LEVELBUSINESSRULEID == id).Any()) throw new SecureException("Can not delete this business rule because it is being used. You can de activate it.");
+
+            return context.SaveChanges() != 0;
+        }
+
+        public IEnumerable<BusinessRuleViewModel> GetBusinessRule(int companyId)
+        {
+            return context.TBL_LEVEL_BUSINESS_RULE
+                .Where(x => x.COMPANYID == companyId && x.DELETED == false)
+                .Select(x => new BusinessRuleViewModel
+                {
+                    levelBusinessRuleId = x.LEVELBUSINESSRULEID,
+                    description = x.DESCRIPTION,
+                    minimumAmount = x.MINIMUMAMOUNT,
+                    maximumAmount = x.MAXIMUMAMOUNT,
+                    pepAmount = x.PEPAMOUNT,
+                    pep = x.PEP,
+                    insiderRelated = x.INSIDERRELATED,
+                    onLending = x.ONLENDING,
+                    interventionFunds = x.INTERVENTIONFUNDS,
+                    orrBasedApproval = x.ORRBASEDAPPROVAL,
+                    tenor = x.TENOR,
+                })
+                .ToList();
+        }
+
+        public BusinessRuleViewModel GetBusinessRuleById(int businessRuleId)
+        {
+            var rule = context.TBL_LEVEL_BUSINESS_RULE.FirstOrDefault(x => x.LEVELBUSINESSRULEID == businessRuleId && x.DELETED == false);
+
+            return new BusinessRuleViewModel
+            {
+                levelBusinessRuleId = rule.LEVELBUSINESSRULEID,
+                description = rule.DESCRIPTION,
+                minimumAmount = rule.MINIMUMAMOUNT,
+                maximumAmount = rule.MAXIMUMAMOUNT,
+                pepAmount = rule.PEPAMOUNT,
+                pep = rule.PEP,
+                insiderRelated = rule.INSIDERRELATED,
+                onLending = rule.ONLENDING,
+                interventionFunds = rule.INTERVENTIONFUNDS,
+                orrBasedApproval = rule.ORRBASEDAPPROVAL,
+                tenor = rule.TENOR,
+            };
+        }
+
+        public bool UpdateBusinessRule(BusinessRuleViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_LEVEL_BUSINESS_RULE.Find(id);
+            if (admin.IsSuperAdmin(user.createdBy) == true)
+            {
+                entity.DESCRIPTION = model.description;
+                entity.MINIMUMAMOUNT = model.minimumAmount;
+                entity.MAXIMUMAMOUNT = model.maximumAmount;
+                entity.PEPAMOUNT = model.pepAmount;
+                entity.PEP = model.pep;
+                entity.INSIDERRELATED = model.insiderRelated;
+                entity.ONLENDING = model.onLending;
+                entity.INTERVENTIONFUNDS = model.interventionFunds;
+                entity.ORRBASEDAPPROVAL = model.orrBasedApproval;
+                entity.TENOR = model.tenor;
+
+                entity.LASTUPDATEDBY = user.createdBy;
+                entity.DATETIMEUPDATED = DateTime.Now;
+
+                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.BusinessRuleUpdated,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Workflow business rule '{entity.DESCRIPTION}' was updated by this super-admin {audit_staff}",
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = entity.LEVELBUSINESSRULEID
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            return context.SaveChanges() != 0;
+        }
+    }
+}
