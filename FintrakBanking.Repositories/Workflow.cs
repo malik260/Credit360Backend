@@ -914,8 +914,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                DefaultRoleId = x.Level.STAFFROLEID,
                                SlaInterval = x.Level.SLAINTERVAL,
                                LevelTypeId = x.Level.LEVELTYPEID,
-                               LevelBusinessRuleId = x.Level.LEVELBUSINESSRULEID,
-                               LevelBusinessRule = x.Level.TBL_LEVEL_BUSINESS_RULE
+                               LevelBusinessRuleId = x.Level.APPROVALBUSINESSRULEID,
+                               LevelBusinessRule = x.Level.TBL_APPROVAL_BUSINESS_RULE
                            })
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition)
@@ -937,7 +937,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             return levels;
         }
 
-        private bool LevelBusinessRuleIsValid(TBL_LEVEL_BUSINESS_RULE rule)
+        private bool LevelBusinessRuleIsValid(TBL_APPROVAL_BUSINESS_RULE rule)
         {
             if (this.levelBusinessRule == null) return true;
             if ((rule.MINIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT <= this.levelBusinessRule.Amount)) return false;
@@ -1162,7 +1162,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
         public int? LevelTypeId { get; set; }
         public int? LevelBusinessRuleId { get; set; }
-        public TBL_LEVEL_BUSINESS_RULE LevelBusinessRule { get; set; }
+        public TBL_APPROVAL_BUSINESS_RULE LevelBusinessRule { get; set; }
     }
 }
 

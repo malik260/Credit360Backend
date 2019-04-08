@@ -6,16 +6,16 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_LEVEL_BUSINESS_RULE")]
-    public partial class TBL_LEVEL_BUSINESS_RULE
+    [Table("TBL_APPROVAL_BUSINESS_RULE")]
+    public partial class TBL_APPROVAL_BUSINESS_RULE
     {
-        public TBL_LEVEL_BUSINESS_RULE()
+        public TBL_APPROVAL_BUSINESS_RULE()
         {
             TBL_APPROVAL_LEVEL = new HashSet<TBL_APPROVAL_LEVEL>();
         }
 
         [Key]
-        public int LEVELBUSINESSRULEID { get; set; }
+        public int APPROVALBUSINESSRULEID { get; set; }
 
         public string DESCRIPTION { get; set; }
 

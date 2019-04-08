@@ -89,7 +89,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             groupId = (int)x.GROUPID,
                             roleId = x.STAFFROLEID,
                             levelTypeId = x.LEVELTYPEID,
-                            levelBusinessRuleId = x.LEVELBUSINESSRULEID,
+                            levelBusinessRuleId = x.APPROVALBUSINESSRULEID,
                         }).OrderBy(x => x.position).ToList();
 
             return data;
@@ -258,7 +258,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
                     LEVELTYPEID = model.levelTypeId,
-                    LEVELBUSINESSRULEID = model.levelBusinessRuleId
+                    APPROVALBUSINESSRULEID = model.levelBusinessRuleId
                 };
 
                 context.TBL_APPROVAL_LEVEL.Add(data);
@@ -312,7 +312,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     GROUPID = model.groupId,
                     STAFFROLEID = model.roleId,
                     LEVELTYPEID = model.levelTypeId,
-                    LEVELBUSINESSRULEID = model.levelBusinessRuleId,
+                    APPROVALBUSINESSRULEID = model.levelBusinessRuleId,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
@@ -414,7 +414,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 data.GROUPID = model.groupId;
                 data.STAFFROLEID = model.roleId;
                 data.LEVELTYPEID = model.levelTypeId;
-                data.LEVELBUSINESSRULEID = model.levelBusinessRuleId;
+                data.APPROVALBUSINESSRULEID = model.levelBusinessRuleId;
                 data.LASTUPDATEDBY = model.lastUpdatedBy;
 
                 // Audit Section ---------------------------
@@ -465,7 +465,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     GROUPID = model.groupId,
                     STAFFROLEID = model.roleId,
                     LEVELTYPEID = model.levelTypeId,
-                    LEVELBUSINESSRULEID = model.levelBusinessRuleId,
+                    APPROVALBUSINESSRULEID = model.levelBusinessRuleId,
                     SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                     CREATEDBY = model.createdBy,
@@ -575,7 +575,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         GROUPID = model.GROUPID,
                         STAFFROLEID = model.STAFFROLEID,
                         LEVELTYPEID = model.LEVELTYPEID,
-                        LEVELBUSINESSRULEID = model.LEVELBUSINESSRULEID,
+                        APPROVALBUSINESSRULEID = model.APPROVALBUSINESSRULEID,
                         SLANOTIFICATIONINTERVAL = model.SLANOTIFICATIONINTERVAL,
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                         CREATEDBY = model.CREATEDBY,
@@ -846,7 +846,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 GROUPID = data.GROUPID,
                 STAFFROLEID = data.STAFFROLEID,
                 LEVELTYPEID = data.LEVELTYPEID,
-                LEVELBUSINESSRULEID = data.LEVELBUSINESSRULEID,
+                APPROVALBUSINESSRULEID = data.APPROVALBUSINESSRULEID,
                 SLANOTIFICATIONINTERVAL = data.SLANOTIFICATIONINTERVAL,
                 DELETED = data.DELETED
             };
@@ -888,7 +888,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 updateData.GROUPID = data.GROUPID;
                 updateData.STAFFROLEID = data.STAFFROLEID;
                 updateData.LEVELTYPEID = data.LEVELTYPEID;
-                updateData.LEVELBUSINESSRULEID = data.LEVELBUSINESSRULEID;
+                updateData.APPROVALBUSINESSRULEID = data.APPROVALBUSINESSRULEID;
                 updateData.SLANOTIFICATIONINTERVAL = data.SLANOTIFICATIONINTERVAL;
                 updateData.DELETED = data.DELETED;
                 updateData.LASTUPDATEDBY = data.CREATEDBY;
@@ -964,7 +964,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                  groupId = (int)x.GROUPID,
                                  roleId = x.STAFFROLEID,
                                  levelTypeId = x.LEVELTYPEID,
-                                 levelBusinessRuleId = x.LEVELBUSINESSRULEID,
+                                 levelBusinessRuleId = x.APPROVALBUSINESSRULEID,
                                  groupName = a.GROUPNAME,
                                  operation = x.OPERATION
                              }).ToList();

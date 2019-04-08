@@ -39,7 +39,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (admin.IsSuperAdmin(model.createdBy) == true)
             {
-                var data = new TBL_LEVEL_BUSINESS_RULE
+                var data = new TBL_APPROVAL_BUSINESS_RULE
                 {
                     DESCRIPTION = model.description,
                     MINIMUMAMOUNT = model.minimumAmount,
@@ -57,7 +57,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                 };
 
-                context.TBL_LEVEL_BUSINESS_RULE.Add(data);
+                context.TBL_APPROVAL_BUSINESS_RULE.Add(data);
 
                 var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
 
@@ -85,7 +85,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool DeleteBusinessRule(int id, UserInfo user)
         {
-            var model = this.context.TBL_LEVEL_BUSINESS_RULE.Find(id);
+            var model = this.context.TBL_APPROVAL_BUSINESS_RULE.Find(id);
             if (admin.IsSuperAdmin(user.createdBy) == true)
             {
                 model.DELETED = true;
@@ -104,7 +104,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = model.LEVELBUSINESSRULEID
+                    TARGETID = model.APPROVALBUSINESSRULEID
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -114,18 +114,18 @@ namespace FintrakBanking.Repositories.WorkFlow
                 throw new NotImplementedException();
             }
 
-            if (context.TBL_APPROVAL_LEVEL.Where(x => x.LEVELBUSINESSRULEID == id).Any()) throw new SecureException("Can not delete this business rule because it is being used. You can de activate it.");
+            if (context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALBUSINESSRULEID == id).Any()) throw new SecureException("Can not delete this business rule because it is being used. You can de activate it.");
 
             return context.SaveChanges() != 0;
         }
 
         public IEnumerable<BusinessRuleViewModel> GetBusinessRule(int companyId)
         {
-            return context.TBL_LEVEL_BUSINESS_RULE
+            return context.TBL_APPROVAL_BUSINESS_RULE
                 .Where(x => x.COMPANYID == companyId && x.DELETED == false)
                 .Select(x => new BusinessRuleViewModel
                 {
-                    levelBusinessRuleId = x.LEVELBUSINESSRULEID,
+                    levelBusinessRuleId = x.APPROVALBUSINESSRULEID,
                     description = x.DESCRIPTION,
                     minimumAmount = x.MINIMUMAMOUNT,
                     maximumAmount = x.MAXIMUMAMOUNT,
@@ -142,11 +142,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public BusinessRuleViewModel GetBusinessRuleById(int businessRuleId)
         {
-            var rule = context.TBL_LEVEL_BUSINESS_RULE.FirstOrDefault(x => x.LEVELBUSINESSRULEID == businessRuleId && x.DELETED == false);
+            var rule = context.TBL_APPROVAL_BUSINESS_RULE.FirstOrDefault(x => x.APPROVALBUSINESSRULEID == businessRuleId && x.DELETED == false);
 
             return new BusinessRuleViewModel
             {
-                levelBusinessRuleId = rule.LEVELBUSINESSRULEID,
+                levelBusinessRuleId = rule.APPROVALBUSINESSRULEID,
                 description = rule.DESCRIPTION,
                 minimumAmount = rule.MINIMUMAMOUNT,
                 maximumAmount = rule.MAXIMUMAMOUNT,
@@ -162,7 +162,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool UpdateBusinessRule(BusinessRuleViewModel model, int id, UserInfo user)
         {
-            var entity = this.context.TBL_LEVEL_BUSINESS_RULE.Find(id);
+            var entity = this.context.TBL_APPROVAL_BUSINESS_RULE.Find(id);
             if (admin.IsSuperAdmin(user.createdBy) == true)
             {
                 entity.DESCRIPTION = model.description;
@@ -191,7 +191,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = entity.LEVELBUSINESSRULEID
+                    TARGETID = entity.APPROVALBUSINESSRULEID
                 };
 
                 this.auditTrail.AddAuditTrail(audit);

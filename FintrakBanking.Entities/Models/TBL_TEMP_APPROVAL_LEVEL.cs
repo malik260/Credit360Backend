@@ -110,7 +110,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? LEVELTYPEID { get; set; }
 
-        public int? LEVELBUSINESSRULEID { get; set; }
+        public int? APPROVALBUSINESSRULEID { get; set; }
 
         //  public virtual TBL_APPROVAL_GROUP TBL_APPROVAL_GROUP { get; set; }
 
