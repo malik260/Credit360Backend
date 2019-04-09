@@ -93,6 +93,12 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_VALUEBASE_TYPE> TBL_COLLATERAL_VALUEBASE_TYPE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_VALUER> TBL_COLLATERAL_VALUER { get; set; }
         public virtual DbSet<TBL_COLLATERAL_VALUER_TYPE> TBL_COLLATERAL_VALUER_TYPE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_INDEMNITY> TBL_COLLATERAL_INDEMNITY { get; set; }
+        public virtual DbSet<TBL_TEMP_COLLATERAL_INDEMNITY> TBL_TEMP_COLLATERAL_INDEMNITY { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_DOMICILIATION> TBL_COLLATERAL_DOMICILIATION { get; set; }
+        public virtual DbSet<TBL_TEMP_COLLATERAL_DOMICILIATION> TBL_TEMP_COLLATERAL_DOMICILIATION { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_ISPO> TBL_COLLATERAL_ISPO { get; set; }
+        public virtual DbSet<TBL_TEMP_COLLATERAL_ISPO> TBL_TEMP_COLLATERAL_ISPO { get; set; }
         public virtual DbSet<TBL_COLLATERAL_VEHICLE> TBL_COLLATERAL_VEHICLE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_VISITATION> TBL_COLLATERAL_VISITATION { get; set; }
         public virtual DbSet<TBL_COMPANY> TBL_COMPANY { get; set; }

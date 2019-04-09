@@ -18,6 +18,10 @@ namespace FintrakBanking.Common.Enum
         Miscellaneous = 17,
         Stock = 14,
         Promissory = 18,
+        ISPO = 19,
+        DomiciliationContract =20,
+        DomiciliationSalary =21,
+        Indemity=22
 
     }
 }

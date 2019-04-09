@@ -37,7 +37,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string machineType { get; set; }
         public double exchangeRate { get; set; }
         public string capturedBy { get; set; }
-
+        public string address { get; set; }
         // presentation
         public int approvalStatus { get; set; }
 
@@ -327,6 +327,22 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string accountName { get; set; }
+        public string accountNameToDeposit { get; set; }
+        public string accountNumberToDeposit { get; set; }
+        public decimal regularPaymentAmount { get; set; }
+        public string payer { get; set; }
+        public string contractDetail { get; set; }
+        public string contractEmployer { get; set; }
+        public decimal contractValue { get; set; }
+        public decimal outstandingInvoiceAmount { get; set; }
+        public string accountNumberToDebit { get; set; }
+        public string invoiceNumber { get; set; }
+        public DateTime invoiceDate { get; set; }
+        public decimal monthlySalary { get; set; }
+        public decimal annualAllowances { get; set; }
+        public decimal annualEmolument { get; set; }
+        public decimal annualSalary { get; set; }
+        public int collateralISPOId { get; set; }
     }
 
     public class crossGarantee
