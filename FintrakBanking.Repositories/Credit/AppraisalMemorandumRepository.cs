@@ -333,14 +333,15 @@ namespace FintrakBanking.Repositories.Credit
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
             // workflow.Disputed = appl.DISPUTED; // buggy
+            workflow.LevelBusinessRule = new LevelBusinessRule { Amount = appl.TOTALEXPOSUREAMOUNT, Pep = model.politicallyExposed }; // TODO
 
             if (model.forwardAction == 8 || model.forwardAction == 9)
             {
                 //workflow.StatusId = (int)ApprovalStatusEnum.Referred;
                 var dictionary = GetRepresentStepdownItems(model.applicationId, model.forwardAction,operationId);
                 workflow.NextLevelId = dictionary["levelId"];
-                workflow.ToStaffId = dictionary["staffId"];
-                if (model.forwardAction == 8) workflow.ToStaffId = null;
+                //workflow.ToStaffId = dictionary["staffId"];
+                //if (model.forwardAction == 8) workflow.ToStaffId = null;
             }
 
             string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);

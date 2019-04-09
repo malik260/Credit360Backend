@@ -31,6 +31,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL> TBL_TEMP_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
+        public virtual DbSet<TBL_APPROVAL_BUSINESS_RULE> TBL_APPROVAL_BUSINESS_RULE { get; set; }
+
+
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL_STAFF> TBL_TEMP_APPROVAL_LEVEL_STAFF { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATE> TBL_APPROVAL_STATE { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATUS> TBL_APPROVAL_STATUS { get; set; }
@@ -619,6 +622,16 @@ namespace FintrakBanking.Entities.Models
             //modelBuilder.Entity<TBL_APPROVAL_LEVEL>()
             //    .Property(e => e.INTERESTRATE)
             //    .HasPrecision(38, 0);
+
+            //modelBuilder.Entity<TBL_APPROVAL_LEVEL>()
+            //    .HasOptional(e => e.TBL_LEVEL_BUSINESS_RULE)
+            //    .WithRequired(e => e.TBL_APPROVAL_LEVEL)
+            //    .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_APPROVAL_BUSINESS_RULE>()
+                .HasMany(e => e.TBL_APPROVAL_LEVEL)
+                .WithRequired(e => e.TBL_APPROVAL_BUSINESS_RULE)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_APPROVAL_LEVEL>()
                 .HasMany(e => e.TBL_APPROVAL_LEVEL_STAFF)

@@ -37,7 +37,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         AlertPlaceholders Placeholders { set; }
         WorkflowResponse Response { get; set; }
-
+        LevelBusinessRule LevelBusinessRule { set; }
         bool LogActivity();
         void NextProcess(
                 int companyId, 

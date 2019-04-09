@@ -79,6 +79,8 @@ namespace FintrakBanking.ViewModels.Setups.Approval
                     return levelName + "(" + roleName + ")";
             }
         }
+
+        public int? levelBusinessRuleId { get; set; }
     }
 
     public class PresetRouteViewModel : GeneralEntity
