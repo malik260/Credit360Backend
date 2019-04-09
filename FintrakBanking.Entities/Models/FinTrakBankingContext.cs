@@ -99,7 +99,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_INDEMNITY> TBL_COLLATERAL_INDEMNITY { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_INDEMNITY> TBL_TEMP_COLLATERAL_INDEMNITY { get; set; }
         public virtual DbSet<TBL_COLLATERAL_DOMICILIATION> TBL_COLLATERAL_DOMICILIATION { get; set; }
-        public virtual DbSet<TBL_TEMP_COLLATERAL_DOMICILIATION> TBL_TEMP_COLLATERAL_DOMICILIATION { get; set; }
+        public virtual DbSet<TBL_TEMP_COLLATERAL_DOMCLTN> TBL_TEMP_COLLATERAL_DOMCLTN { get; set; }
         public virtual DbSet<TBL_COLLATERAL_ISPO> TBL_COLLATERAL_ISPO { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_ISPO> TBL_TEMP_COLLATERAL_ISPO { get; set; }
         public virtual DbSet<TBL_COLLATERAL_VEHICLE> TBL_COLLATERAL_VEHICLE { get; set; }
@@ -8822,7 +8822,20 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.RISKRATINGID);
 
 
-            //modelBuilder.Entity<TBL_CUSTOMER>().Ignore(x => x.FULLNAME);
+            modelBuilder.Entity<TBL_COLLATERAL_CUSTOMER>()
+                .HasMany(e => e.TBL_COLLATERAL_DOMICILIATION)
+                .WithRequired(e => e.TBL_COLLATERAL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_COLLATERAL_CUSTOMER>()
+                .HasMany(e => e.TBL_COLLATERAL_INDEMNITY)
+                .WithRequired(e => e.TBL_COLLATERAL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_COLLATERAL_CUSTOMER>()
+                .HasMany(e => e.TBL_COLLATERAL_ISPO)
+                .WithRequired(e => e.TBL_COLLATERAL_CUSTOMER)
+                .WillCascadeOnDelete(false);
 
         }
     }

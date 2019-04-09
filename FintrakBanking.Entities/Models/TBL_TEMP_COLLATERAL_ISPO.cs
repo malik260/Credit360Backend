@@ -30,23 +30,7 @@ namespace FintrakBanking.Entities.Models
 
         public string REMARK { get; set; }
 
-        public int COMPANYID { get; set; }
-
-        public int CREATEDBY { get; set; }
-
-        public int? LASTUPDATEDBY { get; set; }
-
-        public DateTime DATETIMECREATED { get; set; }
-
-        public DateTime? DATETIMEUPDATED { get; set; }
-
-        public bool DELETED { get; set; }
-
-        public int? DELETEDBY { get; set; }
-
-        public DateTime? DATETIMEDELETED { get; set; }
-
-        public short APPROVALSTATUSID { get; set; }
+        //public short APPROVALSTATUSID { get; set; }
 
 
         public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }

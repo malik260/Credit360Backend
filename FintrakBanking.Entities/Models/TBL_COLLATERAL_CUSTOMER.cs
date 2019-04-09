@@ -27,6 +27,9 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_APPLICATION_COLLATERL = new HashSet<TBL_LOAN_APPLICATION_COLLATERL>();
             TBL_LOAN_COLLATERAL_MAPPING = new HashSet<TBL_LOAN_COLLATERAL_MAPPING>();
             TBL_LOANAPPLICATION_COLTRL_MAP = new HashSet<TBL_LOANAPPLICATION_COLTRL_MAP>();
+            TBL_COLLATERAL_DOMICILIATION = new HashSet<TBL_COLLATERAL_DOMICILIATION>();
+            TBL_COLLATERAL_INDEMNITY = new HashSet<TBL_COLLATERAL_INDEMNITY>();
+            TBL_COLLATERAL_ISPO = new HashSet<TBL_COLLATERAL_ISPO>();
         }
 
         [Key]
@@ -135,5 +138,12 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOANAPPLICATION_COLTRL_MAP> TBL_LOANAPPLICATION_COLTRL_MAP { get; set; }
+
+        public virtual ICollection<TBL_COLLATERAL_DOMICILIATION> TBL_COLLATERAL_DOMICILIATION { get; set; }
+
+        public virtual ICollection<TBL_COLLATERAL_INDEMNITY> TBL_COLLATERAL_INDEMNITY { get; set; }
+
+        public virtual ICollection<TBL_COLLATERAL_ISPO> TBL_COLLATERAL_ISPO { get; set; }
+
     }
 }
