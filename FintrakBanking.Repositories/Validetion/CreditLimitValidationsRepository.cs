@@ -610,12 +610,12 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var outstandingLoan = (from d in context.TBL_LOAN
                                where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
                                (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
-                               select d.OUTSTANDINGPRINCIPAL).Sum();
+                               select (decimal?)d.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
             var outstandingRevolving = (from d in context.TBL_LOAN_REVOLVING
                                     where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
                                     (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
-                                    select d.OVERDRAFTLIMIT).Sum();
+                                    select (decimal?)d.OVERDRAFTLIMIT).Sum() ?? 0;
 
             var accountOfficerNPLExposure = outstandingLoan + outstandingRevolving;
 
