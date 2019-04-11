@@ -20,19 +20,17 @@ namespace FintrakBanking.Entities.Models
 
         public string EMPLOYER { get; set; }
 
-        public decimal CONTRACTVALUE { get; set; }
+        public decimal? CONTRACTVALUE { get; set; }
 
-        public decimal OUTSTANDINGINVOICEAMOUNT { get; set; }
+        public decimal? OUTSTANDINGINVOICEAMOUNT { get; set; }
 
-        public string ACCOUNTNAMETODEPOSIT { get; set; }
-
-        public string ACCOUNTNUMBERTODEPOSIT { get; set; }
+        public string ACCOUNTNAMETODEBIT { get; set; }
 
         public string PAYER { get; set; }
 
         public string ACCOUNTNUMBERTODEBIT { get; set; }
 
-        public decimal REGULARPAYMENTAMOUNT { get; set; }
+        public decimal? REGULARPAYMENTAMOUNT { get; set; }
 
         public decimal? SECURITYVALUE { get; set; }
 
@@ -40,19 +38,21 @@ namespace FintrakBanking.Entities.Models
 
         public string INVOICENUMBER { get; set; }
 
-        public DateTime INVOICEDATE { get; set; }
+        public DateTime? INVOICEDATE { get; set; }
 
-        public decimal MONTHLYSALARY { get; set; }
+        public decimal? MONTHLYSALARY { get; set; }
 
-        public decimal ANNUALSALARY { get; set; }
+        public decimal? ANNUALSALARY { get; set; }
 
-        public decimal ANNUALALLOWANCES { get; set; }
+        public decimal? ANNUALALLOWANCES { get; set; }
 
-        public decimal ANNUALEMOLUMENT { get; set; }
+        public decimal? ANNUALEMOLUMENT { get; set; }
 
         public string ACCOUNTNUMBER { get; set; }
 
         public string REMARK { get; set; }
+
+        public string DESCRIPTION { get; set; }
 
         //public short APPROVALSTATUSID { get; set; }
 

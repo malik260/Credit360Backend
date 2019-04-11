@@ -16,9 +16,9 @@ namespace FintrakBanking.Entities.Models
 
         public int TEMPCOLLATERALCUSTOMERID { get; set; }
 
-        public string ACCOUNTNAMETODEPOSIT { get; set; }
+        public string ACCOUNTNAMETODEBIT { get; set; }
 
-        public string ACCOUNTNUMBERTODEPOSIT { get; set; }
+        public string ACCOUNTNUMBERTODEBIT { get; set; }
 
         public string PAYER { get; set; }
 
@@ -29,6 +29,8 @@ namespace FintrakBanking.Entities.Models
         public short? FREQUENCYTYPEID { get; set; }
 
         public string REMARK { get; set; }
+
+        public string DESCRIPTION { get; set; }
 
         //public short APPROVALSTATUSID { get; set; }
 

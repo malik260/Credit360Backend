@@ -16,9 +16,9 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
-        public string ACCOUNTNAMETODEPOSIT { get; set; }
+        public string ACCOUNTNAMETODEBIT { get; set; }
 
-        public string ACCOUNTNUMBERTODEPOSIT { get; set; }
+        public string ACCOUNTNUMBERTODEBIT { get; set; }
 
         public string PAYER { get; set; }
 
@@ -30,6 +30,7 @@ namespace FintrakBanking.Entities.Models
 
         public string REMARK { get; set; }
 
+        public string DESCRIPTION { get; set; }
 
         public virtual TBL_FREQUENCY_TYPE TBL_FREQUENCY_TYPE { get; set; }
 
