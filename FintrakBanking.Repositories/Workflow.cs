@@ -65,6 +65,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? toStaffId = null;
         private bool endProcess = false;
         private AlertPlaceholders placeholders = null;
+        private LevelBusinessRule levelBusinessRule = null;
         //private WorkflowResponse response = null;
 
         private float? interestRateConcession = null;
@@ -103,6 +104,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool DeferredExecution { set { deferredExecution = value; } }
         public bool StatusOnly { set { statusOnly = value; } }
         public bool ForcefullyEndProcess { set { endProcess = value; keepPending = false; } } // <----------- this property is deprecated!!!
+        public LevelBusinessRule LevelBusinessRule { set { levelBusinessRule = value; } }
         public AlertPlaceholders Placeholders { set { placeholders = value; } }
         public WorkflowResponse Response { get { return response; } set { response = value; } }
 
@@ -862,17 +864,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                                && x.OPERATIONID == this.operationId
                                && x.PRODUCTCLASSID == this.productClassId
                                && x.PRODUCTID == this.productId
-                           );
-
-            var test1 = mappings.ToList();
-            var test = mappings.Count();
+                           )
+                           .ToList();
 
             if (mappings.Any() == false)
             {
                 mappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
                                && x.OPERATIONID == this.operationId
                                && x.PRODUCTCLASSID == this.productClassId
-                           );
+                           ).ToList();
             }
 
             if (mappings.Any() == false)
@@ -887,7 +887,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 throw new SecureException("There is no approval workflow setup for the OPERATION: " + operarion.OPERATIONNAME + ", PRODUCT CLASS: " + productclass);
             }
 
-            var approvalLevels = mappings
+            var levels = mappings
                            .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                            .Join(context.TBL_APPROVAL_LEVEL, mg => mg.m.GROUPID, l => l.GROUPID, (mg, l) =>
                            new { Mapping = mg.m, Level = l })
@@ -914,17 +914,39 @@ namespace FintrakBanking.Repositories.WorkFlow
                                RouteViaStaffOrganogram = x.Level.ROUTEVIASTAFFORGANOGRAM,
                                DefaultRoleId = x.Level.STAFFROLEID,
                                SlaInterval = x.Level.SLAINTERVAL,
-                               LevelTypeId = x.Level.LEVELTYPEID
+                               LevelTypeId = x.Level.LEVELTYPEID,
+                               LevelBusinessRuleId = x.Level.APPROVALBUSINESSRULEID,
+                               LevelBusinessRule = x.Level.TBL_APPROVAL_BUSINESS_RULE
                            })
                            .OrderBy(x => x.GroupPosition)
-                           .ThenBy(x => x.LevelPosition);
-
-            this.workflowSetup = approvalLevels.ToList();
+                           .ThenBy(x => x.LevelPosition)
+                           .ToList();
 
             int n = 1;
-            foreach (var wf in workflowSetup) { wf.Sn = n++; }
+            foreach (var level in levels)
+            {
+                if (level.LevelBusinessRuleId != null && LevelBusinessRuleIsValid(level.LevelBusinessRule) == false)
+                {
+                    levels.Remove(level);
+                    continue;
+                }
+                level.Sn = n++;
+            }
 
-            return this.workflowSetup;
+            this.workflowSetup = levels;
+
+            return levels;
+        }
+
+        private bool LevelBusinessRuleIsValid(TBL_APPROVAL_BUSINESS_RULE rule)
+        {
+            if (this.levelBusinessRule == null) return true;
+            if ((rule.MINIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT <= this.levelBusinessRule.Amount)) return false;
+            if ((rule.MAXIMUMAMOUNT != null) && !(this.levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) return false;
+            if ((rule.MINIMUMAMOUNT != null && rule.MAXIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT <= this.levelBusinessRule.Amount && this.levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) return false;
+            if ((rule.PEP) && !(rule.PEP == this.levelBusinessRule.Pep)) return false;
+            if ((rule.PEPAMOUNT != null) && !(rule.PEPAMOUNT <= this.levelBusinessRule.PepAmount)) return false;
+            return true;
         }
 
         private void SendNotifications()
@@ -1139,7 +1161,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         public TBL_APPROVAL_GROUP_MAPPING Mapping { get; set; }
 
         public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
-        public int? LevelTypeId { get; internal set; }
+        public int? LevelTypeId { get; set; }
+        public int? LevelBusinessRuleId { get; set; }
+        public TBL_APPROVAL_BUSINESS_RULE LevelBusinessRule { get; set; }
     }
 }
 

@@ -33,6 +33,8 @@ namespace FintrakBanking.Entities.DocumentModels
         public virtual DbSet<TBL_TEMP_MEDIA_COLLATERAL_DOCS> TBL_TEMP_MEDIA_COLLATERAL_DOCS { get; set; }
         public virtual DbSet<TBL_MEDIA_LOAN_MATURITY_INSTR> TBL_MEDIA_LOAN_MATURITY_INSTR { get; set; }
         public virtual DbSet<TBL_LOAN_CONTINGENT_USAGE_DOCS> TBL_LOAN_CONTINGENT_USAGE_DOCS { get; set; }
+        public virtual DbSet<TBL_DOC_INVOICE> TBL_DOC_INVOICE { get; set; }
+        public virtual DbSet<TBL_TEMP_DOC_INVOICE> TBL_TEMP_DOC_INVOICE { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

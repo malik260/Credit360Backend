@@ -176,6 +176,7 @@
     <Compile Include="Setups\Risk\IRiskSetupRepository.cs" />
     <Compile Include="ThridPartyIntegration\IXDSServiceRepository.cs" />
     <Compile Include="Validation\IOverDraftValidation.cs" />
+    <Compile Include="WorkFlow\IBusinessRuleRepository.cs" />
     <Compile Include="WorkFlow\IJobRequestRepository.cs" />
     <Compile Include="WorkFlow\IWorkflow.cs" />
     <Compile Include="WorkFlow\IWorkFlowRepository.cs" />
