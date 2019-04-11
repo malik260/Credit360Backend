@@ -34,5 +34,13 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<TransactionDynamicsViewModel> GetTransactionDynamicsByDetailIdLms(int detailId);
         List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByDetailIdLms(int detailId);
         List<TransactionDynamicsViewModel> GetTransactionDynamicsDefaultByApplicationIdAndOperationLms(int detailId, int? operationId);
+
+        // SUGGESTED conditions
+        bool AddSuggestedConditions(SuggestedConditionsViewModel entity);
+        List<SuggestedConditionsViewModel> GetSuggestedConditions(int applicationId);
+        List<SuggestedConditionsViewModel> GetSuggestedConditionsByApplicationId(int applicationId);
+        bool UpdateSuggestedConditions(int id, SuggestedConditionsViewModel entity);
+        bool RemoveSuggestedConditions(int id, UserInfo user);
+
     }
 }

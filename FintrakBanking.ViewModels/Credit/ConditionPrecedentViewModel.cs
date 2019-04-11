@@ -86,7 +86,14 @@ namespace FintrakBanking.ViewModels.Credit
         public bool owner { get; set; }
     }
 
-
+    public class SuggestedConditionsViewModel : GeneralEntity
+    {
+        public int suggestionid { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public int suggestionTypeId { get; set; }
+        public string description { get; set; }
+        //public int applicationId { get; set; }
+    }
     
 }
 

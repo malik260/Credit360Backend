@@ -624,12 +624,12 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllProduct().ToList();
+                var data = repo.GetAllProduct().ToList().OrderBy(p => p.productName);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = "No record found" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });  //Ok(accounts);
+                return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data });  //Ok(accounts);
             }
             catch (SecureException ex)
             {
@@ -637,7 +637,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product/")]
+        public HttpResponseMessage SearchRandomProductBySearchQuery(string searchQuery)
+        {
+            if (searchQuery == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Search string is null" });
+            }
+            try
+            {
+                var data = repo.GetAllProduct().ToList().Where(p => p.productName.ToLower().Contains(searchQuery)).OrderBy(p => p.productName);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("product-lite")]
         public HttpResponseMessage GetAllProductLite()
         {

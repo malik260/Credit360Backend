@@ -94,6 +94,7 @@
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_INDEMNITY.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_ISPO.cs" />
+    <Compile Include="Models\TBL_SUGGESTED_CONDITIONS.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_PROMISSORY.cs" />
     <Compile Include="Models\TBL_COLLATERAL_PROMISSORY.cs" />
     <Compile Include="Models\TBL_EOD_OPERATION.cs" />

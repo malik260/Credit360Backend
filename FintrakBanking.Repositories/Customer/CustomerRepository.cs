@@ -2810,6 +2810,7 @@ namespace FintrakBanking.Repositories.Customer
                     || x.lastName.ToLower().Contains(search.ToLower())
                     || x.middleName.ToLower().Contains(search.ToLower())
                     || x.customerCode.Contains(search.ToLower())
+                    || x.customerId.ToString().Contains(search)
                 );
             }
 
@@ -2924,6 +2925,7 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.customerCode.StartsWith(searchQuery)
                                    || x.branchName.StartsWith(searchQuery)
+                                   || x.customerId.ToString().StartsWith(searchQuery)
                              select x);
 
             var customerInfo = customers.ToList();

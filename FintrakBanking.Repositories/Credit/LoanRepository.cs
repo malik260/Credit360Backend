@@ -10430,6 +10430,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERID.ToString().Contains(searchQuery.Trim()) ||
                                    c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim())) 
                                    && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled 
                                        || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated 
@@ -10481,6 +10482,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERID.ToString().Contains(searchQuery.Trim()) ||
                                    c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) 
                                    && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)  //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
                                   // && a.MATURITYDATE > applicationDate
@@ -10580,6 +10582,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERID.ToString().Contains(searchQuery.Trim()) ||
                                    c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
                                    && !loanStatus.Contains(a.LOANSTATUSID)
                                    //&& (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled)
@@ -10627,7 +10630,8 @@ namespace FintrakBanking.Repositories.Credit
                                        a.APPLICATIONREFERENCENUMBER.Contains(searchQuery.Trim()) ||
                                        b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
                                        b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
-                                       b.LASTNAME.ToUpper().Contains(searchQuery.Trim())
+                                       b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.CUSTOMERID.ToString().Contains(searchQuery.Trim())
                                    )
                                    select new LoanViewModel
                                    {
@@ -10965,6 +10969,10 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
+            if (allFilteredLoan.Count() == 0)
+            {
+                throw new SecureException("Loan account is not found!");
+            }
 
             return allFilteredLoan;
         }
