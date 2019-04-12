@@ -147,6 +147,19 @@ namespace FintrakBanking.ViewModels.Credit
         public double? latitude { get; set; }
         public byte? perfectionStatusId { get; set; }
 
+        public bool? isAssetPledgedByThirdParty { get; set; }
+
+        public string thirdPartyName { get; set; }
+
+
+        public int? localGovernmentId { get; set; }
+
+        public bool? isAssetManagedByTrustee { get; set; }
+
+        public string trusteeName { get; set; }
+
+        public decimal? bankShareOfCollateral { get; set; }
+
         public string perfectionStatusReason { get; set; }
         public bool? isOwnerOccupied { get; set; }
         public bool? isResidential { get; set; }
@@ -346,6 +359,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralDomiciliationId { get; set; }
         public int collateralIndemnityId { get; set; }
         public string accountNameToDebit { get; set; }
+        public string stateName { get; set; }
+        public string localGovtName { get; set; }
+        public string interval { get; set; }
     }
 
     public class crossGarantee
@@ -545,6 +561,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralSubTypeName;
         public string cityName;
         public string valuerName;
+        public string TrusteeName;
 
         public int collateralPropertyId { get; set; }
         public int collateralCustomerId { get; set; }
@@ -570,6 +587,13 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? collateralUsableAmount { get; set; }
         public string remark { get; set; }
         public decimal valuationAmount { get; set; }
+        public bool? isAssetPledgedByThirdParty { get; set; }
+        public bool? isAssetManagedByTrustee { get; set; }
+        public string thirdPartyName { get; set; }
+        public string stateName { get; set; }
+        public string localGovtName { get; set; }
+        public decimal? bankShareOfCollateral { get; set; }
+        public string trusteeName { get; set; }
     }
 
     public class CollateralSecurityViewModel

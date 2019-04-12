@@ -1038,13 +1038,11 @@ namespace FintrakBanking.Repositories.Credit
 
             //ValidateCollateralSearchJobRequests(applicationId, application.REQUIRECOLLATERALTYPEID, true);
 
-            if (!isCamsolJobRequestSent)
-                throw new ConditionNotMetException("Job Request must be sent to CAMSOL before you can proceed.");
+            // if (!isCamsolJobRequestSent) throw new ConditionNotMetException("Job Request must be sent to CAMSOL before you can proceed.");
 
             if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
             {
-                if (isCollateralSearchJobRequestSent == false)
-                    throw new ConditionNotMetException("Job Request to Legal of type Collateral Related is required!");
+                // if (isCollateralSearchJobRequestSent == false) throw new ConditionNotMetException("Job Request to Legal of type Collateral Related is required!");
 
                 //if (requests.Count() > 0) isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
             }

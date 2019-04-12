@@ -1383,7 +1383,7 @@ namespace FintrakBanking.Repositories.Credit
             //var count = collaterals.Count();
             //var test = collaterals;
 
-            return collaterals;
+            return collaterals.OrderByDescending(x => x.collateralId);
         }
 
         public IEnumerable<CollateralViewModel> GetCustomerCollateralReport(string searchParam, int companyId)
@@ -2178,7 +2178,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralISPOId = collateral.COLLATERALISPOID,
                 accountNameToDebit = collateral.ACCOUNTNAMETODEBIT,
                 accountNumberToDebit = collateral.ACCOUNTNUMBERTODEBIT,
-                renewalFrequencyTypeId = collateral.FREQUENCYTYPEID,
+                interval = collateral.TBL_FREQUENCY_TYPE.MODE,
                 securityValue = collateral.SECURITYVALUE,
                 regularPaymentAmount = collateral.REGULARPAYMENTAMOUNT,
                 payer = collateral.PAYER,
@@ -2205,7 +2205,7 @@ namespace FintrakBanking.Repositories.Credit
                 payer = collateral.PAYER,
                 accountNumberToDebit = collateral.ACCOUNTNUMBERTODEBIT,
                 regularPaymentAmount = collateral.REGULARPAYMENTAMOUNT,
-                renewalFrequencyTypeId = collateral.FREQUENCYTYPEID,
+                interval = collateral.TBL_FREQUENCY_TYPE.MODE,
                 invoiceNumber = collateral.INVOICENUMBER,
                 securityValue = collateral.SECURITYVALUE,
                 invoiceDate = collateral.INVOICEDATE,
@@ -2634,7 +2634,13 @@ namespace FintrakBanking.Repositories.Credit
             collateral.VALUATIONAMOUNT = entity.valuationAmount;
             collateral.ISRESIDENTIAL = entity.isResidential;
             collateral.ISOWNEROCCUPIED = entity.isOwnerOccupied;
-
+            collateral.ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty;
+            collateral.THRIDPARTYNAME = entity.thirdPartyName;
+            collateral.ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee;
+            collateral.TRUSTEENAME = entity.trusteeName;
+            collateral.STATEID = entity.stateId;
+            collateral.LOCALGOVERNMENTID = entity.localGovernmentId;
+            collateral.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
         }
 
         private CollateralViewModel GetCollateralImmovableProperty(int collateralId)
@@ -2682,6 +2688,13 @@ namespace FintrakBanking.Repositories.Credit
                 valuationAmount = specifics.VALUATIONAMOUNT,
                 isResidential = specifics.ISRESIDENTIAL,
                 isOwnerOccupied = specifics.ISOWNEROCCUPIED,
+                isAssetPledgedByThirdParty = specifics.ISASSETPLEDGEDBYTHRIDPARTY,
+                thirdPartyName = specifics.THRIDPARTYNAME,
+                isAssetManagedByTrustee = specifics.ISASSETMANAGEDBYTRUSTEE,
+                trusteeName = specifics.TRUSTEENAME,
+                stateName = specifics.TBL_STATE.STATENAME,
+                localGovtName = specifics.TBL_LOCALGOVERNMENT.NAME,
+                bankShareOfCollateral = specifics.BANKSHAREOFCOLLATERAL,
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -4725,7 +4738,14 @@ namespace FintrakBanking.Repositories.Credit
 
                                                      securityValue = (decimal)x.SECURITYVALUE,
                                                      collateralUsableAmount = x.COLLATERALUSABLEAMOUNT,
-                                                     remark = x.REMARK
+                                                     remark = x.REMARK,
+                                                     isAssetPledgedByThirdParty = x.ISASSETPLEDGEDBYTHRIDPARTY,
+                                                     thirdPartyName = x.THRIDPARTYNAME,
+                                                     isAssetManagedByTrustee = x.ISASSETMANAGEDBYTRUSTEE,
+                                                     trusteeName = x.TRUSTEENAME,
+                                                     stateName = x.TBL_STATE.STATENAME,
+                                                     localGovtName = x.TBL_LOCALGOVERNMENT.NAME,
+                                                     bankShareOfCollateral = x.BANKSHAREOFCOLLATERAL,
                                                  }).FirstOrDefault();
 
                 }
@@ -5051,7 +5071,14 @@ namespace FintrakBanking.Repositories.Credit
                 PERFECTIONSTATUSREASON = entity.perfectionStatusReason,
                 VALUATIONAMOUNT = entity.valuationAmount,
                 ISOWNEROCCUPIED = entity.isOwnerOccupied,
-                ISRESIDENTIAL = entity.isResidential
+                ISRESIDENTIAL = entity.isResidential,
+                ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty,
+                THRIDPARTYNAME = entity.thirdPartyName,
+                ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee,
+                TRUSTEENAME = entity.trusteeName,
+                STATEID = entity.stateId,
+                LOCALGOVERNMENTID = entity.localGovernmentId,
+                BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral
 
             });
 
@@ -5693,6 +5720,13 @@ namespace FintrakBanking.Repositories.Credit
                     mainProp.VALUERREFERENCENUMBER = tempProp.VALUERREFERENCENUMBER;
                     mainProp.ISOWNEROCCUPIED = tempProp.ISOWNEROCCUPIED;
                     mainProp.ISRESIDENTIAL = tempProp.ISRESIDENTIAL;
+                    mainProp.ISASSETPLEDGEDBYTHRIDPARTY = tempProp.ISASSETPLEDGEDBYTHRIDPARTY;
+                    mainProp.THRIDPARTYNAME = tempProp.THRIDPARTYNAME;
+                    mainProp.ISASSETMANAGEDBYTRUSTEE = tempProp.ISASSETMANAGEDBYTRUSTEE;
+                    mainProp.TRUSTEENAME = tempProp.TRUSTEENAME;
+                    mainProp.STATEID = tempProp.STATEID;
+                    mainProp.LOCALGOVERNMENTID = tempProp.LOCALGOVERNMENTID;
+                    mainProp.BANKSHAREOFCOLLATERAL = tempProp.BANKSHAREOFCOLLATERAL;
 
                 }
                 else
@@ -5724,7 +5758,14 @@ namespace FintrakBanking.Repositories.Credit
                         VALUERID = tempProp.VALUERID,
                         VALUERREFERENCENUMBER = tempProp.VALUERREFERENCENUMBER,
                         ISOWNEROCCUPIED = tempProp.ISOWNEROCCUPIED,
-                        ISRESIDENTIAL = tempProp.ISRESIDENTIAL
+                        ISRESIDENTIAL = tempProp.ISRESIDENTIAL,
+                        ISASSETPLEDGEDBYTHRIDPARTY = tempProp.ISASSETPLEDGEDBYTHRIDPARTY,
+                        THRIDPARTYNAME = tempProp.THRIDPARTYNAME,
+                        ISASSETMANAGEDBYTRUSTEE = tempProp.ISASSETMANAGEDBYTRUSTEE,
+                        TRUSTEENAME = tempProp.TRUSTEENAME,
+                        STATEID = tempProp.STATEID,
+                        LOCALGOVERNMENTID = tempProp.LOCALGOVERNMENTID,
+                        BANKSHAREOFCOLLATERAL = tempProp.BANKSHAREOFCOLLATERAL,
                     });
                 }
             }
@@ -6543,6 +6584,13 @@ namespace FintrakBanking.Repositories.Credit
                                cityName = x.TBL_CITY.CITYNAME,
                                isOwnerOccupied = x.ISOWNEROCCUPIED,
                                isResidential = x.ISRESIDENTIAL,
+                               isAssetPledgedByThirdParty = x.ISASSETPLEDGEDBYTHRIDPARTY,
+                               thirdPartyName = x.THRIDPARTYNAME,
+                               isAssetManagedByTrustee = x.ISASSETMANAGEDBYTRUSTEE,
+                               trusteeName = x.TRUSTEENAME,
+                               stateName = x.TBL_STATE.STATENAME,
+                               localGovtName = x.TBL_LOCALGOVERNMENT.NAME,
+                               bankShareOfCollateral = x.BANKSHAREOFCOLLATERAL,
                                countryName = context.TBL_COUNTRY.Where(a => a.COUNTRYID == x.COUNTRYID).Select(a => a.NAME).FirstOrDefault(),
                                collateralValuer = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == x.VALUERID).Select(a => a.NAME + ", " + a.FIRMNAME).FirstOrDefault(),
                                propertyBaseType = context.TBL_COLLATERAL_VALUEBASE_TYPE.Where(a => a.COLLATERALVALUEBASETYPEID == x.PROPERTYVALUEBASETYPEID).Select(a => a.VALUEBASETYPENAME).FirstOrDefault(),
