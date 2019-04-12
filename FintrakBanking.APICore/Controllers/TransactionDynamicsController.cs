@@ -27,6 +27,79 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
+
+        #region SUGGESTED conditions
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("suggested-conditions/{applicationDetailsId}")]
+        public HttpResponseMessage GetSuggestedConditions(int applicationDetailsId)
+        {
+                var data = repo.GetSuggestedConditions(applicationDetailsId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("suggested-conditions-byAppId/{applicationId}")]
+        public HttpResponseMessage GetSuggestedConditionsByApplicationId(int applicationId)
+        {
+            var data = repo.GetSuggestedConditionsByApplicationId(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("suggested-conditions")]
+        public HttpResponseMessage AddSuggestedConditions([FromBody] SuggestedConditionsViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            var data = repo.AddSuggestedConditions(entity);
+                
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+             
+
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("suggested-conditions-update/{id}")]
+        public HttpResponseMessage UpdateSuggestedConditions([FromBody] SuggestedConditionsViewModel entity, int id)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.lastUpdatedBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            var data = repo.UpdateSuggestedConditions(id, entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been modified successfully" });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("suggested-conditions-delete/{conditionId}")]
+        public HttpResponseMessage RemoveSuggestedConditions(int conditionId)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+            };
+            var data = repo.RemoveSuggestedConditions(conditionId, user);
+            
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been removed successfully" });
+        }
+
+        #endregion SUGGESTED conditions
+
+
         #region DEFAULT dynamics
 
         [HttpGet]

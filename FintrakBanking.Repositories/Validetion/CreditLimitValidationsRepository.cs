@@ -610,12 +610,12 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var outstandingLoan = (from d in context.TBL_LOAN
                                where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
                                (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
-                               select d.OUTSTANDINGPRINCIPAL).Sum();
+                               select (decimal?)d.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
 
             var outstandingRevolving = (from d in context.TBL_LOAN_REVOLVING
                                     where d.LOANSTATUSID == (short)LoanStatusEnum.Active &&
                                     (d.RELATIONSHIPOFFICERID == staffId || d.RELATIONSHIPMANAGERID == staffId)
-                                    select d.OVERDRAFTLIMIT).Sum();
+                                    select (decimal?)d.OVERDRAFTLIMIT).Sum() ?? 0;
 
             var accountOfficerNPLExposure = outstandingLoan + outstandingRevolving;
 
@@ -628,14 +628,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var initiated = (from a in context.TBL_LOAN_APPLICATION
                              join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                              where d.STATUSID == (short)ApprovalStatusEnum.Approved && a.APPROVEDDATE == null
-                             select d.APPROVEDAMOUNT).Sum();
+                             select (decimal?)d.APPROVEDAMOUNT).Sum() ?? 0;
 
             var approved = (from a in context.TBL_LOAN_APPLICATION
                             join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                             where d.STATUSID == (short)ApprovalStatusEnum.Approved && a.APPROVEDDATE != null &&
                             (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestCompleted &&
                             a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestInitiated)
-                            select d.APPROVEDAMOUNT).Sum();
+                            select (decimal?)d.APPROVEDAMOUNT).Sum() ?? 0;
 
             return new CreditLimitValidationsModel
             {

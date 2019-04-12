@@ -8,6 +8,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using System.Linq;
+using System.Net.Http;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -507,6 +508,96 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion LMS approval process
+
+
+        #region SUGGESTED conditions
+
+        public bool AddSuggestedConditions(SuggestedConditionsViewModel entity)
+        {
+            if (entity == null)
+            {
+                return false;
+            }
+
+            var suggestedCondition = new TBL_SUGGESTED_CONDITIONS
+            {
+                LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
+                SUGGESTIONTYPEID = entity.suggestionTypeId,
+                //APPLICATIONID = entity.applicationId,
+                DESCRIPTION = entity.description,
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = entity.dateTimeCreated
+            };
+            context.TBL_SUGGESTED_CONDITIONS.Add(suggestedCondition);
+            return context.SaveChanges() != 0;
+        }
+
+        public List<SuggestedConditionsViewModel> GetSuggestedConditions(int applicationDetailId)
+        {
+            return context.TBL_SUGGESTED_CONDITIONS.Where(c => c.LOANAPPLICATIONDETAILID == applicationDetailId).Select(c => new SuggestedConditionsViewModel
+            {
+                suggestionid = c.SUGGESTEDCONDITIONID,
+                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                suggestionTypeId = c.SUGGESTIONTYPEID,
+                description = c.DESCRIPTION,
+                //applicationId = c.APPLICATIONID,
+            }).ToList();
+        }
+
+        public List<SuggestedConditionsViewModel> GetSuggestedConditionsByApplicationId(int applicationId)
+        {
+            // get all detalids in the appplication
+            var allDetailIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONID == applicationId)
+                .Select(l => l.LOANAPPLICATIONDETAILID).ToList();
+            var conditions2 = (from id in allDetailIds
+                               join c in context.TBL_SUGGESTED_CONDITIONS on id equals c.LOANAPPLICATIONDETAILID
+                               select new SuggestedConditionsViewModel
+                               {
+                                   suggestionid = c.SUGGESTEDCONDITIONID,
+                                   loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                                   suggestionTypeId = c.SUGGESTIONTYPEID,
+                                   description = c.DESCRIPTION,
+                                   //applicationId = c.APPLICATIONID,
+                               }).ToList();
+            return conditions2;
+        }
+
+        public bool UpdateSuggestedConditions(int id, SuggestedConditionsViewModel entity)
+        {
+            if (entity == null)
+            {
+                return false;
+            }
+
+            var suggestedCondition = context.TBL_SUGGESTED_CONDITIONS.Find(entity.suggestionid);
+            if (suggestedCondition != null)
+            {
+                suggestedCondition.SUGGESTEDCONDITIONID = entity.suggestionid;
+                suggestedCondition.LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId;
+                suggestedCondition.SUGGESTIONTYPEID = entity.suggestionTypeId;
+                //suggestedCondition.APPLICATIONID = entity.applicationId;
+                suggestedCondition.DESCRIPTION = entity.description;
+                suggestedCondition.CREATEDBY = entity.createdBy;
+                suggestedCondition.DATETIMECREATED = entity.dateTimeCreated;
+                suggestedCondition.LASTUPDATEDBY = entity.lastUpdatedBy;
+                suggestedCondition.DATETIMEUPDATED = entity.dateTimeUpdated;
+            }
+            return context.SaveChanges() != 0;
+        }
+
+        public bool RemoveSuggestedConditions(int id, UserInfo user)
+        {
+            var suggestedCondition = context.TBL_SUGGESTED_CONDITIONS.Find(id);
+            if (suggestedCondition == null)
+            {
+                return false;
+            }
+
+            context.TBL_SUGGESTED_CONDITIONS.Remove(suggestedCondition);
+            return context.SaveChanges() != 0;
+        }
+
+        #endregion SUGGESTED conditions
 
     }
 }
