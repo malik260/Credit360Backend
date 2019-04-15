@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using FintrakBanking.Interfaces.Setups.Approval;
-using FintrakBanking.ViewModels.Setups.Approval;
-using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.ViewModels;
-using System.Web.Http;
-using System.Net.Http;
 using System.Net;
-using FintrakBanking.APICore.core;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
+
+using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.APICore.core;
 using FintrakBanking.Common.CustomException;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.Approval;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
