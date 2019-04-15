@@ -152,11 +152,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string thirdPartyName { get; set; }
 
 
-        public int? localGovtId { get; set; }
+        public int? localGovernmentId { get; set; }
 
         public bool? isAssetManagedByTrustee { get; set; }
 
-        public string TrusteeName { get; set; }
+        public string trusteeName { get; set; }
 
         public decimal? bankShareOfCollateral { get; set; }
 
@@ -361,6 +361,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountNameToDebit { get; set; }
         public string stateName { get; set; }
         public string localGovtName { get; set; }
+        public string interval { get; set; }
     }
 
     public class crossGarantee
@@ -592,6 +593,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string stateName { get; set; }
         public string localGovtName { get; set; }
         public decimal? bankShareOfCollateral { get; set; }
+        public string trusteeName { get; set; }
     }
 
     public class CollateralSecurityViewModel

@@ -2178,7 +2178,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralISPOId = collateral.COLLATERALISPOID,
                 accountNameToDebit = collateral.ACCOUNTNAMETODEBIT,
                 accountNumberToDebit = collateral.ACCOUNTNUMBERTODEBIT,
-                renewalFrequencyTypeId = collateral.FREQUENCYTYPEID,
+                interval = collateral.TBL_FREQUENCY_TYPE.MODE,
                 securityValue = collateral.SECURITYVALUE,
                 regularPaymentAmount = collateral.REGULARPAYMENTAMOUNT,
                 payer = collateral.PAYER,
@@ -2205,7 +2205,7 @@ namespace FintrakBanking.Repositories.Credit
                 payer = collateral.PAYER,
                 accountNumberToDebit = collateral.ACCOUNTNUMBERTODEBIT,
                 regularPaymentAmount = collateral.REGULARPAYMENTAMOUNT,
-                renewalFrequencyTypeId = collateral.FREQUENCYTYPEID,
+                interval = collateral.TBL_FREQUENCY_TYPE.MODE,
                 invoiceNumber = collateral.INVOICENUMBER,
                 securityValue = collateral.SECURITYVALUE,
                 invoiceDate = collateral.INVOICEDATE,
@@ -2637,9 +2637,9 @@ namespace FintrakBanking.Repositories.Credit
             collateral.ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty;
             collateral.THRIDPARTYNAME = entity.thirdPartyName;
             collateral.ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee;
-            collateral.TRUSTEENAME = entity.TrusteeName;
+            collateral.TRUSTEENAME = entity.trusteeName;
             collateral.STATEID = entity.stateId;
-            collateral.LOCALGOVERNMENTID = entity.localGovtId;
+            collateral.LOCALGOVERNMENTID = entity.localGovernmentId;
             collateral.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
         }
 
@@ -2691,7 +2691,7 @@ namespace FintrakBanking.Repositories.Credit
                 isAssetPledgedByThirdParty = specifics.ISASSETPLEDGEDBYTHRIDPARTY,
                 thirdPartyName = specifics.THRIDPARTYNAME,
                 isAssetManagedByTrustee = specifics.ISASSETMANAGEDBYTRUSTEE,
-                TrusteeName = specifics.TRUSTEENAME,
+                trusteeName = specifics.TRUSTEENAME,
                 stateName = specifics.TBL_STATE.STATENAME,
                 localGovtName = specifics.TBL_LOCALGOVERNMENT.NAME,
                 bankShareOfCollateral = specifics.BANKSHAREOFCOLLATERAL,
@@ -4742,7 +4742,7 @@ namespace FintrakBanking.Repositories.Credit
                                                      isAssetPledgedByThirdParty = x.ISASSETPLEDGEDBYTHRIDPARTY,
                                                      thirdPartyName = x.THRIDPARTYNAME,
                                                      isAssetManagedByTrustee = x.ISASSETMANAGEDBYTRUSTEE,
-                                                     TrusteeName = x.TRUSTEENAME,
+                                                     trusteeName = x.TRUSTEENAME,
                                                      stateName = x.TBL_STATE.STATENAME,
                                                      localGovtName = x.TBL_LOCALGOVERNMENT.NAME,
                                                      bankShareOfCollateral = x.BANKSHAREOFCOLLATERAL,
@@ -5075,9 +5075,9 @@ namespace FintrakBanking.Repositories.Credit
                 ISASSETPLEDGEDBYTHRIDPARTY = entity.isAssetPledgedByThirdParty,
                 THRIDPARTYNAME = entity.thirdPartyName,
                 ISASSETMANAGEDBYTRUSTEE = entity.isAssetManagedByTrustee,
-                TRUSTEENAME = entity.TrusteeName,
+                TRUSTEENAME = entity.trusteeName,
                 STATEID = entity.stateId,
-                LOCALGOVERNMENTID = entity.localGovtId,
+                LOCALGOVERNMENTID = entity.localGovernmentId,
                 BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral
 
             });
@@ -6587,7 +6587,7 @@ namespace FintrakBanking.Repositories.Credit
                                isAssetPledgedByThirdParty = x.ISASSETPLEDGEDBYTHRIDPARTY,
                                thirdPartyName = x.THRIDPARTYNAME,
                                isAssetManagedByTrustee = x.ISASSETMANAGEDBYTRUSTEE,
-                               TrusteeName = x.TRUSTEENAME,
+                               trusteeName = x.TRUSTEENAME,
                                stateName = x.TBL_STATE.STATENAME,
                                localGovtName = x.TBL_LOCALGOVERNMENT.NAME,
                                bankShareOfCollateral = x.BANKSHAREOFCOLLATERAL,
