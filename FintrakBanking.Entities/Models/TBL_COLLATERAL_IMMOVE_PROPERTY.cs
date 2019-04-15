@@ -79,7 +79,25 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISRESIDENTIAL { get; set; }
 
+        public bool? ISASSETPLEDGEDBYTHRIDPARTY { get; set; }
+
+        public string THRIDPARTYNAME { get; set; }
+
+        public bool? ISASSETMANAGEDBYTRUSTEE { get; set; }
+
+        public string TRUSTEENAME { get; set; }
+
+        public int? LOCALGOVERNMENTID { get; set; }
+
+        public int? STATEID { get; set; }
+
+        public decimal? BANKSHAREOFCOLLATERAL { get; set; }
+
         public virtual TBL_CITY TBL_CITY { get; set; }
+
+        public virtual TBL_LOCALGOVERNMENT TBL_LOCALGOVERNMENT { get; set; }
+
+        public virtual TBL_STATE TBL_STATE { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
 

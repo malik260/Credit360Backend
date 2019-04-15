@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
         //public virtual DbSet<TBL_ENDOFDAY_MONITORING> TBL_ENDOFDAY_MONITORING { get; set; }
         public virtual DbSet<TBL_ACCOUNT_CATEGORY> TBL_ACCOUNT_CATEGORY { get; set; }
         public virtual DbSet<TBL_ACCOUNT_TYPE> TBL_ACCOUNT_TYPE { get; set; }
-        public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; } 
+        public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
         public virtual DbSet<TBL_TEMP_ACCREDITEDCONSULTANT> TBL_TEMP_ACCREDITEDCONSULTANT { get; set; }
@@ -189,11 +189,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_FEE_AMORTISATION_TYPE> TBL_FEE_AMORTISATION_TYPE { get; set; }
         public virtual DbSet<TBL_FEE_INTERVAL> TBL_FEE_INTERVAL { get; set; }
         public virtual DbSet<TBL_FEE_TARGET> TBL_FEE_TARGET { get; set; }
-        
+
         public virtual DbSet<TBL_EOD_OPERATION> TBL_EOD_OPERATION { get; set; }
         public virtual DbSet<TBL_EOD_OPERATION_LOG> TBL_EOD_OPERATION_LOG { get; set; }
         public virtual DbSet<TBL_EOD_STATUS> TBL_EOD_STATUS { get; set; }
-        
+
         public virtual DbSet<TBL_FEE_TYPE> TBL_FEE_TYPE { get; set; }
         public virtual DbSet<TBL_FINANCE_ENDOFDAY> TBL_FINANCE_ENDOFDAY { get; set; }
         public virtual DbSet<TBL_FINANCE_TRANSACTION> TBL_FINANCE_TRANSACTION { get; set; }
@@ -201,7 +201,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_FINANCIAL_STATEMENT_CAPTN> TBL_FINANCIAL_STATEMENT_CAPTN { get; set; }
         public virtual DbSet<TBL_FINANCIAL_STATEMENT_TYPE> TBL_FINANCIAL_STATEMENT_TYPE { get; set; }
         public virtual DbSet<TBL_FREQUENCY_TYPE> TBL_FREQUENCY_TYPE { get; set; }
-        public virtual DbSet<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; } 
+        public virtual DbSet<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_SUB_CLASS> TBL_JOB_TYPE_SUB_CLASS { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_HUB_STAFF> TBL_JOB_TYPE_HUB_STAFF { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_DETAIL> TBL_JOB_REQUEST_DETAIL { get; set; }
@@ -376,6 +376,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
         public virtual DbSet<TBL_STOCK_PRICE> TBL_STOCK_PRICE { get; set; }
         public virtual DbSet<TBL_SUB_SECTOR> TBL_SUB_SECTOR { get; set; }
+        public virtual DbSet<TBL_SUGGESTED_CONDITIONS> TBL_SUGGESTED_CONDITIONS  { get; set; }
         public virtual DbSet<TBL_TAX> TBL_TAX { get; set; }
         public virtual DbSet<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
         public virtual DbSet<TBL_TEMP_CHARGE_FEE_DETAIL> TBL_TEMP_CHARGE_FEE_DETAIL { get; set; }

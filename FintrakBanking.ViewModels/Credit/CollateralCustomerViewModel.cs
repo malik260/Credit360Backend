@@ -147,6 +147,19 @@ namespace FintrakBanking.ViewModels.Credit
         public double? latitude { get; set; }
         public byte? perfectionStatusId { get; set; }
 
+        public bool? isAssetPledgedByThirdParty { get; set; }
+
+        public string thirdPartyName { get; set; }
+
+
+        public int? localGovernmentId { get; set; }
+
+        public bool? isAssetManagedByTrustee { get; set; }
+
+        public string trusteeName { get; set; }
+
+        public decimal? bankShareOfCollateral { get; set; }
+
         public string perfectionStatusReason { get; set; }
         public bool? isOwnerOccupied { get; set; }
         public bool? isResidential { get; set; }
@@ -329,20 +342,26 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountName { get; set; }
         public string accountNameToDeposit { get; set; }
         public string accountNumberToDeposit { get; set; }
-        public decimal regularPaymentAmount { get; set; }
+        public decimal? regularPaymentAmount { get; set; }
         public string payer { get; set; }
         public string contractDetail { get; set; }
         public string contractEmployer { get; set; }
-        public decimal contractValue { get; set; }
-        public decimal outstandingInvoiceAmount { get; set; }
+        public decimal? contractValue { get; set; }
+        public decimal? outstandingInvoiceAmount { get; set; }
         public string accountNumberToDebit { get; set; }
         public string invoiceNumber { get; set; }
-        public DateTime invoiceDate { get; set; }
-        public decimal monthlySalary { get; set; }
-        public decimal annualAllowances { get; set; }
-        public decimal annualEmolument { get; set; }
-        public decimal annualSalary { get; set; }
+        public DateTime? invoiceDate { get; set; }
+        public decimal? monthlySalary { get; set; }
+        public decimal? annualAllowances { get; set; }
+        public decimal? annualEmolument { get; set; }
+        public decimal? annualSalary { get; set; }
         public int collateralISPOId { get; set; }
+        public int collateralDomiciliationId { get; set; }
+        public int collateralIndemnityId { get; set; }
+        public string accountNameToDebit { get; set; }
+        public string stateName { get; set; }
+        public string localGovtName { get; set; }
+        public string interval { get; set; }
     }
 
     public class crossGarantee
@@ -542,6 +561,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralSubTypeName;
         public string cityName;
         public string valuerName;
+        public string TrusteeName;
 
         public int collateralPropertyId { get; set; }
         public int collateralCustomerId { get; set; }
@@ -567,6 +587,13 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? collateralUsableAmount { get; set; }
         public string remark { get; set; }
         public decimal valuationAmount { get; set; }
+        public bool? isAssetPledgedByThirdParty { get; set; }
+        public bool? isAssetManagedByTrustee { get; set; }
+        public string thirdPartyName { get; set; }
+        public string stateName { get; set; }
+        public string localGovtName { get; set; }
+        public decimal? bankShareOfCollateral { get; set; }
+        public string trusteeName { get; set; }
     }
 
     public class CollateralSecurityViewModel

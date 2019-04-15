@@ -864,14 +864,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                                && x.OPERATIONID == this.operationId
                                && x.PRODUCTCLASSID == this.productClassId
                                && x.PRODUCTID == this.productId
-                           );
+                           )
+                           .ToList();
 
             if (mappings.Any() == false)
             {
                 mappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
                                && x.OPERATIONID == this.operationId
                                && x.PRODUCTCLASSID == this.productClassId
-                           );
+                           ).ToList();
             }
 
             if (mappings.Any() == false)

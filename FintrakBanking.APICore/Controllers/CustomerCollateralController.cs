@@ -322,8 +322,6 @@ namespace FintrakBanking.APICore.Controllers
         public async Task<HttpResponseMessage> AddCollateral()
         {
 
-            try
-            {
                 if (!Request.Content.IsMimeMultipartContent())
                 {
                     return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
@@ -361,26 +359,8 @@ namespace FintrakBanking.APICore.Controllers
                 var buffer = await file.ReadAsByteArrayAsync();
                 var data = repo.AddCollateral(incomingData, buffer);
 
-                if (data != 0)
-                {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (APIErrorException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (ConditionNotMetException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-
+           
            
         }
 

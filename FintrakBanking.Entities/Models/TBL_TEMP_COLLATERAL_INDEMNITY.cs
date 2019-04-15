@@ -44,6 +44,8 @@ namespace FintrakBanking.Entities.Models
 
         public string REMARK { get; set; }
 
+        public string DESCRIPTION { get; set; }
+
         //public short APPROVALSTATUSID { get; set; }
 
 
