@@ -7688,8 +7688,8 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var item in customer)
             {
                 var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
-
                 exposure = from a in context.TBL_LOAN
+                           join b in context.TBL_LOAN_APPLICATION on a.LOANREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                            select new CurrentCustomerExposure
                            {
@@ -7705,12 +7705,14 @@ namespace FintrakBanking.Repositories.Credit
                                reviewDate = DateTime.Now,
                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                loanStatus = "Running",
-                               referenceNumber = a.LOANREFERENCENUMBER
+                               referenceNumber = a.LOANREFERENCENUMBER,
+                               applicationStatusId = b.APPLICATIONSTATUSID
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
 
                 exposure = (from a in context.TBL_LOAN_REVOLVING
+                            join b in context.TBL_LOAN_APPLICATION on a.LOANREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                             where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                             select new CurrentCustomerExposure
                             {
@@ -7727,7 +7729,8 @@ namespace FintrakBanking.Repositories.Credit
                                 reviewDate = DateTime.Now,
                                 prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                 loanStatus = "Running",
-                                referenceNumber = a.LOANREFERENCENUMBER
+                                referenceNumber = a.LOANREFERENCENUMBER,
+                                applicationStatusId = b.APPLICATIONSTATUSID
                             }).ToList();
                 //.Select(x =>
                 //{
@@ -7748,6 +7751,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
 
                 exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
+                           join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
                            where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                            select new CurrentCustomerExposure
                            {
@@ -7762,7 +7766,7 @@ namespace FintrakBanking.Repositories.Credit
                                prudentialGuideline = "Processing",
                                loanStatus = "Processing",
                                referenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                               // referenceNumber = a.
+                               applicationStatusId = b.APPLICATIONSTATUSID
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
@@ -7795,7 +7799,7 @@ namespace FintrakBanking.Repositories.Credit
                 existingLimit = exposures.Sum(t => t.existingLimit),
                 proposedLimit = exposures.Sum(t => t.proposedLimit),
                 recommendedLimit = exposures.Sum(t => t.recommendedLimit),
-                outstandings = exposures.Sum(t=>t.outstandings),
+                outstandings = exposures.Sum(t => t.outstandings),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
                 PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
                 reviewDate = DateTime.Now,
