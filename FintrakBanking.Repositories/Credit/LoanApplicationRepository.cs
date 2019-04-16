@@ -3983,6 +3983,30 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_LOAN_APPLICATION.Find(id);
+            entity.ISPROJECTRELATED = model.isProjectRelated;
+            entity.ISONLENDING = model.isOnLending;
+            entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            return context.SaveChanges() != 0;
+        }
+
+        public LoanApplicationTagsViewModel GetLoanApplicationTags(int id)
+        {
+            var entity = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == id && x.DELETED == false);
+
+            return new LoanApplicationTagsViewModel
+            {
+                isProjectRelated = entity.ISPROJECTRELATED,
+                isOnLending = entity.ISONLENDING,
+                isInterventionFunds = entity.ISINTERVENTIONFUNDS,
+            };
+        }
 
     }
 }

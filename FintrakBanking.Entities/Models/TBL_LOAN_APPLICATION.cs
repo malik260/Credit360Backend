@@ -89,6 +89,11 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISPOLITICALLYEXPOSED { get; set; }
 
+        public bool ISPROJECTRELATED { get; set; }
+        public bool ISONLENDING { get; set; }
+        public bool ISINTERVENTIONFUNDS { get; set; }
+        public bool ISORRBASEDAPPROVAL { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

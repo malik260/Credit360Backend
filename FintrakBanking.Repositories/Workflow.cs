@@ -524,17 +524,18 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void CustomJump(int? destinationLevelId, int? originLevelId)
         {
-            if (originLevelId == null || destinationLevelId==null) return; // -- changed
+            if (originLevelId == null || destinationLevelId == null) return; // -- changed
             var origin = context.TBL_APPROVAL_LEVEL.Find(originLevelId);
             if (origin.GROUPID != 9) return;
             var destination = context.TBL_APPROVAL_LEVEL.Find(destinationLevelId);
             if (destination.GROUPID != 1) return;
             this.nextLevelId = originLevelId;
         }
-        private bool IsSpecialReferedBackResponse()
-        {
-            return this.statusId == (int)ApprovalStatusEnum.RePresent || this.statusId == (int)ApprovalStatusEnum.StepDown;
-        }
+
+        //private bool IsSpecialReferedBackResponse()
+        //{
+        //    return this.statusId == (int)ApprovalStatusEnum.RePresent || this.statusId == (int)ApprovalStatusEnum.StepDown;
+        //}
 
         private bool ResolveLevelMultipleApproval()
         {
@@ -673,7 +674,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool OrganogramRouting() // if workflow is forced to use organogram
         {
-            /*if (next == null) { return true; }
+            if (next == null) { return true; }
             if (this.toStaffId != null) { return true; }
             if (this.externalInitialization == true) { return true; }
 
@@ -687,6 +688,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             // second level deep
             var currentLevel = approvalGrid.Where(x => x.DefaultRoleId == next.DefaultRoleId).First();
+            if (currentLevel == null) { return false; }
             next = approvalGrid.FirstOrDefault(x =>
                 (x.GroupPosition > currentLevel.GroupPosition) // next group
                 || (x.LevelPosition > currentLevel.LevelPosition && x.GroupPosition == currentLevel.GroupPosition) // same group
@@ -699,10 +701,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.slaInterval = next.SlaInterval;
                 this.useOrganogram = next.RouteViaStaffOrganogram;
                 return true;
-            }*/
+            }
 
-            // return false;
-            return true;
+            return false;
         }
 
         private void CheckApprovalLimits()
@@ -926,7 +927,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             int n = 1;
             foreach (var level in levels)
             {
-                if (level.LevelBusinessRuleId != null && LevelBusinessRuleIsValid(level.LevelBusinessRule) == false)
+                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule))
                 {
                     levels.Remove(level);
                     continue;
@@ -941,12 +942,20 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool LevelBusinessRuleIsValid(TBL_APPROVAL_BUSINESS_RULE rule)
         {
-            if (this.levelBusinessRule == null) return true;
-            if ((rule.MINIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT <= this.levelBusinessRule.Amount)) return false;
-            if ((rule.MAXIMUMAMOUNT != null) && !(this.levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) return false;
-            if ((rule.MINIMUMAMOUNT != null && rule.MAXIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT <= this.levelBusinessRule.Amount && this.levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) return false;
-            if ((rule.PEP) && !(rule.PEP == this.levelBusinessRule.Pep)) return false;
-            if ((rule.PEPAMOUNT != null) && !(rule.PEPAMOUNT <= this.levelBusinessRule.PepAmount)) return false;
+            if (levelBusinessRule == null) return true;
+
+            if ((rule.MINIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT <= levelBusinessRule.Amount)) return false;
+            if ((rule.MAXIMUMAMOUNT != null) && !(levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) return false;
+            if ((rule.MINIMUMAMOUNT != null && rule.MAXIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT <= levelBusinessRule.Amount && levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) return false;
+            if ((rule.PEPAMOUNT != null) && !(rule.PEPAMOUNT <= levelBusinessRule.PepAmount)) return false;
+
+            if (rule.PEP && levelBusinessRule.Pep == false) return false;
+            if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == false) return false;
+            if (rule.PROJECTRELATED && levelBusinessRule.ProjectRelated == false) return false;
+            if (rule.ONLENDING && levelBusinessRule.OnLending == false) return false;
+            if (rule.INTERVENTIONFUNDS && levelBusinessRule.InterventionFunds == false) return false;
+            if (rule.ORRBASEDAPPROVAL && levelBusinessRule.OrrBasedApproval == false) return false;
+
             return true;
         }
 
