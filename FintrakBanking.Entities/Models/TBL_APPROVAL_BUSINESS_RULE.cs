@@ -25,6 +25,7 @@
 
         public bool PEP { get; set; }
         public bool INSIDERRELATED { get; set; }
+        public bool PROJECTRELATED { get; set; }
         public bool ONLENDING { get; set; }
         public bool INTERVENTIONFUNDS { get; set; }
         public bool ORRBASEDAPPROVAL { get; set; }

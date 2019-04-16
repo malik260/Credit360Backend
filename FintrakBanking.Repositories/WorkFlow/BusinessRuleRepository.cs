@@ -46,6 +46,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     MAXIMUMAMOUNT = model.maximumAmount,
                     PEPAMOUNT = model.pepAmount,
                     PEP = model.pep,
+                    PROJECTRELATED = model.projectRelated,
                     INSIDERRELATED = model.insiderRelated,
                     ONLENDING = model.onLending,
                     INTERVENTIONFUNDS = model.interventionFunds,
@@ -131,6 +132,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     maximumAmount = x.MAXIMUMAMOUNT,
                     pepAmount = x.PEPAMOUNT,
                     pep = x.PEP,
+                    projectRelated = x.PROJECTRELATED,
                     insiderRelated = x.INSIDERRELATED,
                     onLending = x.ONLENDING,
                     interventionFunds = x.INTERVENTIONFUNDS,
@@ -152,6 +154,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 maximumAmount = rule.MAXIMUMAMOUNT,
                 pepAmount = rule.PEPAMOUNT,
                 pep = rule.PEP,
+                projectRelated = rule.PROJECTRELATED,
                 insiderRelated = rule.INSIDERRELATED,
                 onLending = rule.ONLENDING,
                 interventionFunds = rule.INTERVENTIONFUNDS,
@@ -170,6 +173,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 entity.MAXIMUMAMOUNT = model.maximumAmount;
                 entity.PEPAMOUNT = model.pepAmount;
                 entity.PEP = model.pep;
+                entity.PROJECTRELATED = model.projectRelated;
                 entity.INSIDERRELATED = model.insiderRelated;
                 entity.ONLENDING = model.onLending;
                 entity.INTERVENTIONFUNDS = model.interventionFunds;
