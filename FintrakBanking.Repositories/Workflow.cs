@@ -673,7 +673,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool OrganogramRouting() // if workflow is forced to use organogram
         {
-            if (next == null) { return true; }
+            /*if (next == null) { return true; }
             if (this.toStaffId != null) { return true; }
             if (this.externalInitialization == true) { return true; }
 
@@ -699,9 +699,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.slaInterval = next.SlaInterval;
                 this.useOrganogram = next.RouteViaStaffOrganogram;
                 return true;
-            }
+            }*/
 
-            return false;
+            // return false;
+            return true;
         }
 
         private void CheckApprovalLimits()
