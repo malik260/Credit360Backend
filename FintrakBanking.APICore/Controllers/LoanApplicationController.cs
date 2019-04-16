@@ -1620,5 +1620,33 @@ namespace FintrakBanking.APICore.Controllers
         //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
         //}
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application-tags/{id}")]
+        public HttpResponseMessage GetLoanApplicationTags(int id)
+        {
+            LoanApplicationTagsViewModel response = repo.GetLoanApplicationTags(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("loan-application-tags/{id}")]
+        public HttpResponseMessage UpdateLoanApplicationTags([FromBody] LoanApplicationTagsViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdateLoanApplicationTags(model, id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
     }
 }

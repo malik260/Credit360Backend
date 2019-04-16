@@ -811,4 +811,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class LoanApplicationTagsViewModel : GeneralEntity
+    {
+        public bool isProjectRelated { get; set; }
+        public bool isOnLending { get; set; }
+        public bool isInterventionFunds { get; set; }
+    }
 }

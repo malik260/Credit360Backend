@@ -138,5 +138,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId);
 
+        LoanApplicationTagsViewModel GetLoanApplicationTags(int id);
+        bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user);
     }
 }

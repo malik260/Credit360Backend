@@ -9,6 +9,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public decimal? Amount { get; set; }
         public decimal? PepAmount { get; set; }
         public bool Pep { get; set; }
+        public bool ProjectRelated { get; set; }
         public bool InsiderRelated { get; set; }
         public bool OnLending { get; set; }
         public bool InterventionFunds { get; set; }
