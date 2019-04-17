@@ -27,6 +27,10 @@ namespace FintrakBanking.Repositories.Setups.General
         private SessionStatusInfo _sessionInfo;
 
         TBL_PROFILE_SETTING profileSetting = null;
+        TBL_FINANCECURRENTDATE applicationDate = null;
+
+        bool endOfDayStatus = false;
+        bool endOfDayStatusChecked = false;
 
         public string LogCode { get; set; }
 
@@ -1042,12 +1046,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool GetRunningEndOfDayProcess(int companyId)
         {
-            var applicationDate = context.TBL_FINANCECURRENTDATE.Find(1);
-            if (applicationDate == null) throw new SecureException("Cannot resolve current application date!");
-            var exist = context.TBL_FINANCE_ENDOFDAY
-                .Where(x => x.DATE == applicationDate.CURRENTDATE && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).Select(x => x);
-
-            return exist.ToList().Count() > 0;
+            return false;
+            //if (endOfDayStatusChecked) return endOfDayStatus;
+            //if (applicationDate == null) applicationDate = context.TBL_FINANCECURRENTDATE.Find(1);
+            //if (applicationDate == null) throw new SecureException("Cannot resolve current application date!");
+            //endOfDayStatus = context.TBL_FINANCE_ENDOFDAY
+            //    .Where(x => x.DATE == applicationDate.CURRENTDATE && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing)
+            //    .Any();
+            //endOfDayStatusChecked = true;
+            //return endOfDayStatus;
 
         }
     }
