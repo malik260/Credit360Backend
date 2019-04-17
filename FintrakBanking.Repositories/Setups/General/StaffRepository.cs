@@ -1828,7 +1828,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                        };
 
-            return data;
+            return data.ToList();
         }
 
   
