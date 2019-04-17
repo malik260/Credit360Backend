@@ -1042,9 +1042,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool GetRunningEndOfDayProcess(int companyId)
         {
-            var applicationDate = context.TBL_FINANCECURRENTDATE.Select(x => x.CURRENTDATE).FirstOrDefault();
+            var applicationDate = context.TBL_FINANCECURRENTDATE.Find(1);
+            if (applicationDate == null) throw new SecureException("Cannot resolve current application date!");
             var exist = context.TBL_FINANCE_ENDOFDAY
-                .Where(x => x.DATE == applicationDate && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).Select(x => x);
+                .Where(x => x.DATE == applicationDate.CURRENTDATE && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).Select(x => x);
 
             return exist.ToList().Count() > 0;
 
