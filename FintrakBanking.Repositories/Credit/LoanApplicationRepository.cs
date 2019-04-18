@@ -1018,17 +1018,17 @@ namespace FintrakBanking.Repositories.Credit
 
                     } // foreach checklistTypes
 
-                    var rmSuggestion = (from a in context.TBL_LOAN_APPLICATION_DETAIL
-                                        where a.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID && (detail.CONDITIONPRECIDENT == null
-                                        || detail.CONDITIONSUBSEQUENT == null || a.TRANSACTIONDYNAMICS == null)
-                                        select a);
+                    // var rmSuggestion = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                    //                     where a.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID && (detail.CONDITIONPRECIDENT == null
+                    //                     || detail.CONDITIONSUBSEQUENT == null || a.TRANSACTIONDYNAMICS == null)
+                    //                     select a);
 
-                    if (rmSuggestion.Any())
-                    {
-                        isCheckListDone = false;
-                        str = str + " Kindly Complete The RM Suggestions Record" + Environment.NewLine;
-                        checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
-                    }
+                    // if (rmSuggestion.Any())
+                    // {
+                    //     isCheckListDone = false;
+                    //     str = str + " Kindly Complete The RM Suggestions Record" + Environment.NewLine;
+                    //     checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                    // }
 
                     if (isCheckListDone == false) break;
 

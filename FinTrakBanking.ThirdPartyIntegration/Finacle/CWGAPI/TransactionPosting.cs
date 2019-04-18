@@ -32,7 +32,6 @@
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
-               // finacle = _finacle;
             }
 
             public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
