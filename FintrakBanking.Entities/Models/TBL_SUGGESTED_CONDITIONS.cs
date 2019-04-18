@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.Models
     public partial class TBL_SUGGESTED_CONDITIONS
     {
         [Key]
-        public int SUGGESTEDCONDITIONID { get; set; }
+        public int SUGGESTEDCONDITIONSID { get; set; }
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
