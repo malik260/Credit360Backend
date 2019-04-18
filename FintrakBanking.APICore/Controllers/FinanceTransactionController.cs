@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("getexchangerate/{currencyId}/{date}")]
-        public HttpResponseMessage GetExchangeRate(DateTime ? date, short currencyId)
+        public HttpResponseMessage GetExchangeRate(DateTime? date, short currencyId)
         { 
                 try
                 {

@@ -924,20 +924,23 @@ namespace FintrakBanking.Repositories.WorkFlow
                            .ThenBy(x => x.LevelPosition)
                            .ToList();
 
+            List<WorkflowSetup> grid = new List<WorkflowSetup>();
+
             int n = 1;
             foreach (var level in levels)
             {
                 if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule))
                 {
-                    levels.Remove(level);
+                    // levels.Remove(level);
                     continue;
                 }
                 level.Sn = n++;
+                grid.Add(level);
             }
 
-            this.workflowSetup = levels;
+            this.workflowSetup = grid;
 
-            return levels;
+            return grid;
         }
 
         private bool LevelBusinessRuleIsValid(TBL_APPROVAL_BUSINESS_RULE rule)

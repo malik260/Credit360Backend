@@ -3442,7 +3442,7 @@ namespace FintrakBanking.Repositories.Credit
                
 
                 /*UPDATING STAFF MIS */
-                this.updateloanStaffMIS(loanRecord);
+                // this.updateloanStaffMIS(loanRecord);
 
                 context.SaveChanges();
                 /* BUILD SCHEDULE MODEL & CALL GENERATE SCHEDULE METHOD */
