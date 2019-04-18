@@ -175,6 +175,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         securityAnswer = u.SECURITYANSWER,
                         branchId = st.BRANCHID,
                         roleId = st.STAFFROLEID,
+                        companyId = st.COMPANYID,
                         groupId = u.TBL_PROFILE_USERGROUP.Where(x => x.USERID == u.USERID)
                                     .Select(x => new UserGroupId
                                     {

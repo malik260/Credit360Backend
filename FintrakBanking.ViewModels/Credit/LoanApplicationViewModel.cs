@@ -125,7 +125,7 @@ namespace FintrakBanking.ViewModels.Credit
             get
             {
                 var units = applicationTenor == 1 ? " day" : " days";
-                if (applicationTenor < 15) return applicationTenor.ToString() + units;
+                if (applicationTenor < 30) return applicationTenor.ToString() + units;
                 var months = Math.Ceiling((Math.Floor(applicationTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
                 return months.ToString() + units;

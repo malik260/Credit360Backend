@@ -390,7 +390,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
                                  where a.SUBSECTORID == c.SUBSECTORID && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                                  let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).Sum(x => x.OUTSTANDINGPRINCIPAL)
-                                 select sumPrincipalAmount;
+                                 select (decimal?)sumPrincipalAmount ?? 0;
 
             var limitAmount = 0;
             var sector = context.TBL_SECTOR.FirstOrDefault(a => a.SECTORID == subSector.SECTORID);
@@ -408,7 +408,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             model.limit = (double)limitAmount;
             model.difference = (double)data.FirstOrDefault() - (double)limitAmount;
-            model.maximumAllowedLimit = (decimal)sector.LOAN_LIMIT;
+            model.maximumAllowedLimit = (decimal?)sector.LOAN_LIMIT ?? 0;
 
             return model;
         }
