@@ -376,7 +376,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
         public virtual DbSet<TBL_STOCK_PRICE> TBL_STOCK_PRICE { get; set; }
         public virtual DbSet<TBL_SUB_SECTOR> TBL_SUB_SECTOR { get; set; }
-        public virtual DbSet<TBL_SUGGESTED_CONDITIONS> TBL_SUGGESTED_CONDITIONS  { get; set; }
+        public virtual DbSet<TBL_SUGGESTED_CONDITION> TBL_SUGGESTED_CONDITIONS  { get; set; }
         public virtual DbSet<TBL_TAX> TBL_TAX { get; set; }
         public virtual DbSet<TBL_TEMP_CHARGE_FEE> TBL_TEMP_CHARGE_FEE { get; set; }
         public virtual DbSet<TBL_TEMP_CHARGE_FEE_DETAIL> TBL_TEMP_CHARGE_FEE_DETAIL { get; set; }

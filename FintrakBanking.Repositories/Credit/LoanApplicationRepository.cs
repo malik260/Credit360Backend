@@ -3989,6 +3989,8 @@ namespace FintrakBanking.Repositories.Credit
             entity.ISPROJECTRELATED = model.isProjectRelated;
             entity.ISONLENDING = model.isOnLending;
             entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
+            entity.WITHOUTINSTRUCTION = model.withoutInstruction;
+            entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
@@ -4005,6 +4007,8 @@ namespace FintrakBanking.Repositories.Credit
                 isProjectRelated = entity.ISPROJECTRELATED,
                 isOnLending = entity.ISONLENDING,
                 isInterventionFunds = entity.ISINTERVENTIONFUNDS,
+                withoutInstruction = entity.WITHOUTINSTRUCTION,
+                domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
             };
         }
 

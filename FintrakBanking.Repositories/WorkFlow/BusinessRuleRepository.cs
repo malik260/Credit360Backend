@@ -51,6 +51,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     ONLENDING = model.onLending,
                     INTERVENTIONFUNDS = model.interventionFunds,
                     ORRBASEDAPPROVAL = model.orrBasedApproval,
+                    WITHOUTINSTRUCTION = model.withoutInstruction,
+                    DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace,
                     TENOR = model.tenor,
 
                     COMPANYID = model.companyId,
@@ -138,6 +140,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     interventionFunds = x.INTERVENTIONFUNDS,
                     orrBasedApproval = x.ORRBASEDAPPROVAL,
                     tenor = x.TENOR,
+                    withoutInstruction = x.WITHOUTINSTRUCTION,
+                    domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
                 })
                 .ToList();
         }
@@ -159,6 +163,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 onLending = rule.ONLENDING,
                 interventionFunds = rule.INTERVENTIONFUNDS,
                 orrBasedApproval = rule.ORRBASEDAPPROVAL,
+                withoutInstruction = rule.WITHOUTINSTRUCTION,
+                domiciliationNotInPlace = rule.DOMICILIATIONNOTINPLACE,
                 tenor = rule.TENOR,
             };
         }
@@ -179,6 +185,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 entity.INTERVENTIONFUNDS = model.interventionFunds;
                 entity.ORRBASEDAPPROVAL = model.orrBasedApproval;
                 entity.TENOR = model.tenor;
+                entity.WITHOUTINSTRUCTION = model.withoutInstruction;
+                entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
 
                 entity.LASTUPDATEDBY = user.createdBy;
                 entity.DATETIMEUPDATED = DateTime.Now;

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    [Table("TBL_SUGGESTED_CONDITIONS")]
-    public partial class TBL_SUGGESTED_CONDITIONS
+    [Table("TBL_SUGGESTED_CONDITION")]
+    public partial class TBL_SUGGESTED_CONDITION
     {
         [Key]
-        public int SUGGESTEDCONDITIONSID { get; set; }
+        public int SUGGESTEDCONDITIONID { get; set; }
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 

@@ -159,11 +159,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
 
-            if (this.useOrganogram == true)
-            {
-                bool route = OrganogramRouting();
-                if (route == false) { throw new SecureException("Could not resolve next organogram route!"); }
-            }
+            //if (this.useOrganogram == true)
+            //{
+            //    bool route = OrganogramRouting();
+            //    if (route == false) { throw new SecureException("Could not resolve next organogram route!"); }
+            //}
 
             if (this.neededNumberOfApproval > 1 && ActionIsApprovalDecision())
             {
@@ -929,11 +929,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             int n = 1;
             foreach (var level in levels)
             {
-                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule))
-                {
-                    // levels.Remove(level);
-                    continue;
-                }
+                if (level.LevelBusinessRuleId != null && !LevelBusinessRuleIsValid(level.LevelBusinessRule)) continue;
                 level.Sn = n++;
                 grid.Add(level);
             }
