@@ -29,6 +29,9 @@
         public bool ONLENDING { get; set; }
         public bool INTERVENTIONFUNDS { get; set; }
         public bool ORRBASEDAPPROVAL { get; set; }
+        public bool WITHOUTINSTRUCTION { get; set; }
+        public bool DOMICILIATIONNOTINPLACE { get; set; }
+
         public int COMPANYID { get; set; }
         public int? TENOR { get; set; }
 

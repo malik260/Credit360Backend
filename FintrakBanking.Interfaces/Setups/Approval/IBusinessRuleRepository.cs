@@ -4,7 +4,7 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 
-namespace FintrakBanking.Interfaces.WorkFlow
+namespace FintrakBanking.Interfaces.Setups.Approval
 {
     public interface IBusinessRuleRepository
     {

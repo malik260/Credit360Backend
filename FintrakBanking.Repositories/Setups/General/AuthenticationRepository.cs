@@ -189,6 +189,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (user == null) throw new SecureException("The user is not registered in the application. Contact the system administrator.");
 
             result.grantMessage = "valid";
+            result.companyId = user.companyId;
             if (!user.isActive) result.grantMessage = "This account is INACTIVE";
             if (user.isLocked) result.grantMessage = "This account is LOCKED";
             if (!ResumptionClosingTime(user)) result.grantMessage = "You cannot login at this time";
@@ -741,8 +742,13 @@ namespace FintrakBanking.Repositories.Setups.General
                 profile.FAILEDLOGONATTEMPT = 0;
 
                 context.Entry(profile).State = EntityState.Modified;
+                //try
+                //{
                 context.SaveChanges();
+                //}catch(Exception ex)
+                //{
 
+                //}
                 return userInfo;
             }
             else

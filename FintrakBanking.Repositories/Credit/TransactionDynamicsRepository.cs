@@ -519,7 +519,7 @@ namespace FintrakBanking.Repositories.Credit
                 return false;
             }
 
-            var suggestedCondition = new TBL_SUGGESTED_CONDITIONS
+            var suggestedCondition = new TBL_SUGGESTED_CONDITION
             {
                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
                 SUGGESTIONTYPEID = entity.suggestionTypeId,
@@ -536,7 +536,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             return context.TBL_SUGGESTED_CONDITIONS.Where(c => c.LOANAPPLICATIONDETAILID == applicationDetailId).Select(c => new SuggestedConditionsViewModel
             {
-                suggestionid = c.SUGGESTEDCONDITIONSID,
+                suggestionid = c.SUGGESTEDCONDITIONID,
                 loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                 suggestionTypeId = c.SUGGESTIONTYPEID,
                 description = c.DESCRIPTION,
@@ -554,7 +554,7 @@ namespace FintrakBanking.Repositories.Credit
                                orderby c.DATETIMECREATED
                                select new SuggestedConditionsViewModel
                                {
-                                   suggestionid = c.SUGGESTEDCONDITIONSID,
+                                   suggestionid = c.SUGGESTEDCONDITIONID,
                                    loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                                    suggestionTypeId = c.SUGGESTIONTYPEID,
                                    description = c.DESCRIPTION,
@@ -573,7 +573,7 @@ namespace FintrakBanking.Repositories.Credit
             var suggestedCondition = context.TBL_SUGGESTED_CONDITIONS.Find(entity.suggestionid);
             if (suggestedCondition != null)
             {
-                suggestedCondition.SUGGESTEDCONDITIONSID = entity.suggestionid;
+                suggestedCondition.SUGGESTEDCONDITIONID = entity.suggestionid;
                 suggestedCondition.LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId;
                 suggestedCondition.SUGGESTIONTYPEID = entity.suggestionTypeId;
                 //suggestedCondition.APPLICATIONID = entity.applicationId;

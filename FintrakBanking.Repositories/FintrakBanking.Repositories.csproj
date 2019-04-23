@@ -227,7 +227,7 @@
     <Compile Include="Setups\General\StaffRepository.cs" />
     <Compile Include="Setups\Risk\RiskRepository.cs" />
     <Compile Include="Validetion\OverDraftValidation.cs" />
-    <Compile Include="WorkFlow\BusinessRuleRepository.cs" />
+    <Compile Include="Setups\Approval\BusinessRuleRepository.cs" />
     <Compile Include="WorkFlow\JobRequestRepository.cs" />
     <Compile Include="Workflow.cs" />
   </ItemGroup>

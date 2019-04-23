@@ -93,7 +93,9 @@ namespace FintrakBanking.Entities.Models
         public bool ISONLENDING { get; set; }
         public bool ISINTERVENTIONFUNDS { get; set; }
         public bool ISORRBASEDAPPROVAL { get; set; }
-
+        public bool WITHOUTINSTRUCTION { get; set; }
+        public bool DOMICILIATIONNOTINPLACE { get; set; }
+        
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
