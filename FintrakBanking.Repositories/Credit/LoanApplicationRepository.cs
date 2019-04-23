@@ -3935,6 +3935,7 @@ namespace FintrakBanking.Repositories.Credit
             var details = application.LoanApplicationDetail;
             int branchId = (int)application.branchId;
             int customerId = (int)application.customerId;
+            int productId = application.productId;
 
             var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
                 .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
@@ -3947,6 +3948,13 @@ namespace FintrakBanking.Repositories.Credit
                     c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
                 .Select(x => new { id = x.o.OVERRIDE_DETAILID })
                 .FirstOrDefault();
+
+            // if productoverride is to be used
+            //var productOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+            //    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.productLimitOverride && x.ISUSED == false),
+            //        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+            //    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+            //    .FirstOrDefault();
 
             if (branchOverrideRequest != null)
             {
@@ -3980,6 +3988,11 @@ namespace FintrakBanking.Repositories.Credit
                     //var sector = context.TBL_SECTOR.Find(sectorId);
                     if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
                 }
+            }
+
+            if (limitValidation.ProductLimitExceeded(productId, application.proposedAmount))
+            {
+                throw new SecureException("Product Limit exceeded!");
             }
         }
 

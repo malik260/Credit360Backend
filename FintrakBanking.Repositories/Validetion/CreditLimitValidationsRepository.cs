@@ -1081,6 +1081,29 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return sectorMaximumExposure > 0 && sectorLimit < applicationAmount;
         }
 
+        public bool ProductLimitExceeded(int productId, decimal applicationAmount)
+        {
+            var outstandingLoan = (from a in context.TBL_LOAN
+                                   join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                                   where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTID == productId
+                                   select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
+
+            var outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
+                                        join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTID == productId
+                                        select (decimal?)a.OVERDRAFTLIMIT).Sum() ?? 0;
+
+            var productExposure = outstandingLoan + outstandingRevolving;
+
+            decimal? productMaximumExposure = 0;
+            var product =context.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault(a => a.PRODUCTID == productId);
+            if (product != null) productMaximumExposure = (decimal?)product.PRODUCT_LIMIT ?? 0;
+
+            var productLimit = productMaximumExposure - productExposure;
+
+            return productMaximumExposure > 0 && productLimit <= applicationAmount;
+        }
+
         public TotalExposureLimit GetTotalExposureLimitReference(string reference, int companyId)
         { 
             var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == reference);
