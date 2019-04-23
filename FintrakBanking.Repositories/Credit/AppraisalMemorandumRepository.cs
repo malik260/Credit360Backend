@@ -343,6 +343,7 @@ namespace FintrakBanking.Repositories.Credit
                 OnLending = appl.ISONLENDING,
                 InterventionFunds = appl.ISINTERVENTIONFUNDS,
                 OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
+                DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
             }; 
 
             if (model.forwardAction == 8 || model.forwardAction == 9)
