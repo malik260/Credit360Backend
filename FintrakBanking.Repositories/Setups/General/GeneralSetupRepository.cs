@@ -208,6 +208,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var data = (from a in context.TBL_OPERATIONS
                         orderby a.OPERATIONNAME ascending
+                        where a.ISDISABLED == false
                         select new LookupViewModel()
                         {
                             lookupId = (short)a.OPERATIONID,
