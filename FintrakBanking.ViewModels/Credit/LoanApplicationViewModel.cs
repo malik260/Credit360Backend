@@ -153,6 +153,37 @@ namespace FintrakBanking.ViewModels.Credit
         public int? regionId { get; set; }
         public bool editMode { get; set; }
         public short? requireCollateralTypeId { get; set; }
+
+
+        public string slaGlobalStatus
+        {
+            get
+            {
+                float sla = 3;
+                float elapse = 2;
+                if (elapse == 0) return "success";
+                float factor = (elapse / sla) * 100;
+                if (factor <= 30) return "success";
+                if (factor <= 70) return "warning";
+                if (factor <= 100) return "danger";
+                return "danger";
+            }
+        }
+
+        public string slaInduvidualStatus
+        {
+            get
+            {
+                float sla = 7;
+                float elapse = 2;
+                if (elapse == 0) return "success";
+                float factor = (elapse / sla) * 100;
+                if (factor <= 30) return "success";
+                if (factor <= 70) return "warning";
+                if (factor <= 100) return "danger";
+                return "danger";
+            }
+        }
     }
 
     public class LoanApplicationUpdateMessage
