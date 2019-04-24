@@ -2,6 +2,7 @@
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
@@ -10,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FintrakBanking.Repositories.WorkFlow
+namespace FintrakBanking.Repositories.Setups.Approval
 {
     public class BusinessRuleRepository : IBusinessRuleRepository
     {
@@ -46,10 +47,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                     MAXIMUMAMOUNT = model.maximumAmount,
                     PEPAMOUNT = model.pepAmount,
                     PEP = model.pep,
+                    PROJECTRELATED = model.projectRelated,
                     INSIDERRELATED = model.insiderRelated,
                     ONLENDING = model.onLending,
                     INTERVENTIONFUNDS = model.interventionFunds,
                     ORRBASEDAPPROVAL = model.orrBasedApproval,
+                    WITHOUTINSTRUCTION = model.withoutInstruction,
+                    DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace,
                     TENOR = model.tenor,
 
                     COMPANYID = model.companyId,
@@ -131,11 +135,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                     maximumAmount = x.MAXIMUMAMOUNT,
                     pepAmount = x.PEPAMOUNT,
                     pep = x.PEP,
+                    projectRelated = x.PROJECTRELATED,
                     insiderRelated = x.INSIDERRELATED,
                     onLending = x.ONLENDING,
                     interventionFunds = x.INTERVENTIONFUNDS,
                     orrBasedApproval = x.ORRBASEDAPPROVAL,
                     tenor = x.TENOR,
+                    withoutInstruction = x.WITHOUTINSTRUCTION,
+                    domiciliationNotInPlace = x.DOMICILIATIONNOTINPLACE,
                 })
                 .ToList();
         }
@@ -152,10 +159,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 maximumAmount = rule.MAXIMUMAMOUNT,
                 pepAmount = rule.PEPAMOUNT,
                 pep = rule.PEP,
+                projectRelated = rule.PROJECTRELATED,
                 insiderRelated = rule.INSIDERRELATED,
                 onLending = rule.ONLENDING,
                 interventionFunds = rule.INTERVENTIONFUNDS,
                 orrBasedApproval = rule.ORRBASEDAPPROVAL,
+                withoutInstruction = rule.WITHOUTINSTRUCTION,
+                domiciliationNotInPlace = rule.DOMICILIATIONNOTINPLACE,
                 tenor = rule.TENOR,
             };
         }
@@ -170,11 +180,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                 entity.MAXIMUMAMOUNT = model.maximumAmount;
                 entity.PEPAMOUNT = model.pepAmount;
                 entity.PEP = model.pep;
+                entity.PROJECTRELATED = model.projectRelated;
                 entity.INSIDERRELATED = model.insiderRelated;
                 entity.ONLENDING = model.onLending;
                 entity.INTERVENTIONFUNDS = model.interventionFunds;
                 entity.ORRBASEDAPPROVAL = model.orrBasedApproval;
                 entity.TENOR = model.tenor;
+                entity.WITHOUTINSTRUCTION = model.withoutInstruction;
+                entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
 
                 entity.LASTUPDATEDBY = user.createdBy;
                 entity.DATETIMEUPDATED = DateTime.Now;

@@ -2494,7 +2494,7 @@ namespace FintrakBanking.Repositories.Customer
                            name = a.NAME,
                            customerTypeId = a.CUSTOMERTYPEID
                        };
-            return type;
+            return type.ToList();
         }
 
         public IEnumerable<CustomerAddressTypeViewModels> GetCustomerAddressType()
@@ -2528,7 +2528,7 @@ namespace FintrakBanking.Repositories.Customer
                            documentTypeName = a.DOCUMENTTYPENAME,
                            documentTypeId = a.DOCUMENTTYPEID
                        };
-            return type;
+            return type.ToList();
         }
 
         public IEnumerable<CustomerSupplierTypeViewModels> GetClientSupplierType()

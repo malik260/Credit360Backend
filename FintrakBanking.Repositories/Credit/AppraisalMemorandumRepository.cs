@@ -333,7 +333,18 @@ namespace FintrakBanking.Repositories.Credit
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
             // workflow.Disputed = appl.DISPUTED; // buggy
-            workflow.LevelBusinessRule = new LevelBusinessRule { Amount = appl.TOTALEXPOSUREAMOUNT, Pep = model.politicallyExposed }; // TODO
+
+            workflow.LevelBusinessRule = new LevelBusinessRule {
+                Amount = appl.TOTALEXPOSUREAMOUNT,
+                PepAmount = appl.TOTALEXPOSUREAMOUNT,
+                Pep = model.politicallyExposed,
+                InsiderRelated = appl.ISRELATEDPARTY,
+                ProjectRelated = appl.ISPROJECTRELATED,
+                OnLending = appl.ISONLENDING,
+                InterventionFunds = appl.ISINTERVENTIONFUNDS,
+                OrrBasedApproval = appl.ISORRBASEDAPPROVAL,
+                DomiciliationNotInPlace = appl.DOMICILIATIONNOTINPLACE,
+            }; 
 
             if (model.forwardAction == 8 || model.forwardAction == 9)
             {

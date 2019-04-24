@@ -1477,6 +1477,27 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("product-price-index-by-productId/{productId}")]
+        //public HttpResponseMessage GetProductPriceIndexByProductId(int productId)
+        //{
+        //    try
+        //    {
+        //        var token = new TokenDecryptionHelper();
+        //        var data = repo.GetProductPriceIndexByCurrencyId(productId);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
         // GetProductPriceIndexByCurrencyId(int loanApplicationDetailId, int currencyId)
 
         //[HttpPost]

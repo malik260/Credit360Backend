@@ -27,6 +27,10 @@ namespace FintrakBanking.Repositories.Setups.General
         private SessionStatusInfo _sessionInfo;
 
         TBL_PROFILE_SETTING profileSetting = null;
+        TBL_FINANCECURRENTDATE applicationDate = null;
+
+        bool endOfDayStatus = false;
+        bool endOfDayStatusChecked = false;
 
         public string LogCode { get; set; }
 
@@ -171,6 +175,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         securityAnswer = u.SECURITYANSWER,
                         branchId = st.BRANCHID,
                         roleId = st.STAFFROLEID,
+                        companyId = st.COMPANYID,
                         groupId = u.TBL_PROFILE_USERGROUP.Where(x => x.USERID == u.USERID)
                                     .Select(x => new UserGroupId
                                     {
@@ -184,6 +189,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (user == null) throw new SecureException("The user is not registered in the application. Contact the system administrator.");
 
             result.grantMessage = "valid";
+            result.companyId = user.companyId;
             if (!user.isActive) result.grantMessage = "This account is INACTIVE";
             if (user.isLocked) result.grantMessage = "This account is LOCKED";
             if (!ResumptionClosingTime(user)) result.grantMessage = "You cannot login at this time";
@@ -736,8 +742,13 @@ namespace FintrakBanking.Repositories.Setups.General
                 profile.FAILEDLOGONATTEMPT = 0;
 
                 context.Entry(profile).State = EntityState.Modified;
+                //try
+                //{
                 context.SaveChanges();
+                //}catch(Exception ex)
+                //{
 
+                //}
                 return userInfo;
             }
             else
@@ -1042,11 +1053,15 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool GetRunningEndOfDayProcess(int companyId)
         {
-            var applicationDate = context.TBL_FINANCECURRENTDATE.Select(x => x.CURRENTDATE).FirstOrDefault();
-            var exist = context.TBL_FINANCE_ENDOFDAY
-                .Where(x => x.DATE == applicationDate && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).Select(x => x);
-
-            return exist.ToList().Count() > 0;
+            return false;
+            //if (endOfDayStatusChecked) return endOfDayStatus;
+            //if (applicationDate == null) applicationDate = context.TBL_FINANCECURRENTDATE.Find(1);
+            //if (applicationDate == null) throw new SecureException("Cannot resolve current application date!");
+            //endOfDayStatus = context.TBL_FINANCE_ENDOFDAY
+            //    .Where(x => x.DATE == applicationDate.CURRENTDATE && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing)
+            //    .Any();
+            //endOfDayStatusChecked = true;
+            //return endOfDayStatus;
 
         }
     }

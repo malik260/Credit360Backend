@@ -1018,17 +1018,17 @@ namespace FintrakBanking.Repositories.Credit
 
                     } // foreach checklistTypes
 
-                    var rmSuggestion = (from a in context.TBL_LOAN_APPLICATION_DETAIL
-                                        where a.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID && (detail.CONDITIONPRECIDENT == null
-                                        || detail.CONDITIONSUBSEQUENT == null || a.TRANSACTIONDYNAMICS == null)
-                                        select a);
+                    // var rmSuggestion = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                    //                     where a.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID && (detail.CONDITIONPRECIDENT == null
+                    //                     || detail.CONDITIONSUBSEQUENT == null || a.TRANSACTIONDYNAMICS == null)
+                    //                     select a);
 
-                    if (rmSuggestion.Any())
-                    {
-                        isCheckListDone = false;
-                        str = str + " Kindly Complete The RM Suggestions Record" + Environment.NewLine;
-                        checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
-                    }
+                    // if (rmSuggestion.Any())
+                    // {
+                    //     isCheckListDone = false;
+                    //     str = str + " Kindly Complete The RM Suggestions Record" + Environment.NewLine;
+                    //     checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                    // }
 
                     if (isCheckListDone == false) break;
 
@@ -3935,6 +3935,7 @@ namespace FintrakBanking.Repositories.Credit
             var details = application.LoanApplicationDetail;
             int branchId = (int)application.branchId;
             int customerId = (int)application.customerId;
+            int productId = application.productId;
 
             var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
                 .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
@@ -3947,6 +3948,13 @@ namespace FintrakBanking.Repositories.Credit
                     c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
                 .Select(x => new { id = x.o.OVERRIDE_DETAILID })
                 .FirstOrDefault();
+
+            // if productoverride is to be used
+            //var productOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+            //    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.productLimitOverride && x.ISUSED == false),
+            //        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+            //    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+            //    .FirstOrDefault();
 
             if (branchOverrideRequest != null)
             {
@@ -3981,8 +3989,41 @@ namespace FintrakBanking.Repositories.Credit
                     if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
                 }
             }
+
+            if (limitValidation.ProductLimitExceeded(productId, application.proposedAmount))
+            {
+                throw new SecureException("Product Limit exceeded!");
+            }
         }
 
+        public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_LOAN_APPLICATION.Find(id);
+            entity.ISPROJECTRELATED = model.isProjectRelated;
+            entity.ISONLENDING = model.isOnLending;
+            entity.ISINTERVENTIONFUNDS = model.isInterventionFunds;
+            entity.WITHOUTINSTRUCTION = model.withoutInstruction;
+            entity.DOMICILIATIONNOTINPLACE = model.domiciliationNotInPlace;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            return context.SaveChanges() != 0;
+        }
+
+        public LoanApplicationTagsViewModel GetLoanApplicationTags(int id)
+        {
+            var entity = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == id && x.DELETED == false);
+
+            return new LoanApplicationTagsViewModel
+            {
+                isProjectRelated = entity.ISPROJECTRELATED,
+                isOnLending = entity.ISONLENDING,
+                isInterventionFunds = entity.ISINTERVENTIONFUNDS,
+                withoutInstruction = entity.WITHOUTINSTRUCTION,
+                domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
+            };
+        }
 
     }
 }

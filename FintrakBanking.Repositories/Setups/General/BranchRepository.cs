@@ -283,7 +283,7 @@ namespace FintrakBanking.Repositories.Setups.General
                            {
                                branchId = x.BRANCHID,
                                stateId = x.STATEID,
-                               cityId = (int)x.CITYID,
+                               cityId = x.CITYID,
                                companyId = x.COMPANYID,
                                stateName = x.TBL_STATE.STATENAME,
                                cityName = context.TBL_CITY.FirstOrDefault(c => c.CITYID == x.CITYID).CITYNAME ?? "",

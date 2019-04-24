@@ -95,7 +95,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         lookupId = data.SECTORID ,
                         lookupName = data.NAME  
-                    });
+                    }).ToList();
         }
 
         //public IEnumerable<LookupViewModel> GetAllSectors ()

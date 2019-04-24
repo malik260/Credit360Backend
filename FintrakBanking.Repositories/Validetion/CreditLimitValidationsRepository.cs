@@ -390,7 +390,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                  join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
                                  where a.SUBSECTORID == c.SUBSECTORID && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                                  let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).Sum(x => x.OUTSTANDINGPRINCIPAL)
-                                 select sumPrincipalAmount;
+                                 select (decimal?)sumPrincipalAmount ?? 0;
 
             var limitAmount = 0;
             var sector = context.TBL_SECTOR.FirstOrDefault(a => a.SECTORID == subSector.SECTORID);
@@ -408,7 +408,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             model.limit = (double)limitAmount;
             model.difference = (double)data.FirstOrDefault() - (double)limitAmount;
-            model.maximumAllowedLimit = (decimal)sector.LOAN_LIMIT;
+            model.maximumAllowedLimit = (decimal?)sector.LOAN_LIMIT ?? 0;
 
             return model;
         }
@@ -1079,6 +1079,29 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var sectorLimit = sectorMaximumExposure - sectorExposure;
 
             return sectorMaximumExposure > 0 && sectorLimit < applicationAmount;
+        }
+
+        public bool ProductLimitExceeded(int productId, decimal applicationAmount)
+        {
+            var outstandingLoan = (from a in context.TBL_LOAN
+                                   join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                                   where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTID == productId
+                                   select (decimal?)a.OUTSTANDINGPRINCIPAL).Sum() ?? 0;
+
+            var outstandingRevolving = (from a in context.TBL_LOAN_REVOLVING
+                                        join b in context.TBL_PRODUCT on a.PRODUCTID equals b.PRODUCTID
+                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTID == productId
+                                        select (decimal?)a.OVERDRAFTLIMIT).Sum() ?? 0;
+
+            var productExposure = outstandingLoan + outstandingRevolving;
+
+            decimal? productMaximumExposure = 0;
+            var product =context.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault(a => a.PRODUCTID == productId);
+            if (product != null) productMaximumExposure = (decimal?)product.PRODUCT_LIMIT ?? 0;
+
+            var productLimit = productMaximumExposure - productExposure;
+
+            return productMaximumExposure > 0 && productLimit <= applicationAmount;
         }
 
         public TotalExposureLimit GetTotalExposureLimitReference(string reference, int companyId)

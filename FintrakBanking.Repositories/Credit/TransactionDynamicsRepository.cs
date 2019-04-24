@@ -519,7 +519,7 @@ namespace FintrakBanking.Repositories.Credit
                 return false;
             }
 
-            var suggestedCondition = new TBL_SUGGESTED_CONDITIONS
+            var suggestedCondition = new TBL_SUGGESTED_CONDITION
             {
                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
                 SUGGESTIONTYPEID = entity.suggestionTypeId,
@@ -551,6 +551,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(l => l.LOANAPPLICATIONDETAILID).ToList();
             var conditions2 = (from id in allDetailIds
                                join c in context.TBL_SUGGESTED_CONDITIONS on id equals c.LOANAPPLICATIONDETAILID
+                               orderby c.DATETIMECREATED
                                select new SuggestedConditionsViewModel
                                {
                                    suggestionid = c.SUGGESTEDCONDITIONID,

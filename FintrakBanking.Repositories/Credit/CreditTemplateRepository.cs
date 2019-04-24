@@ -200,7 +200,7 @@ namespace FintrakBanking.Repositories.Credit
                     editable = sectionIds.Contains(x.t.TEMPLATESECTIONID),
                     templateSectionId = x.t.TEMPLATESECTIONID,
                     staffRoleName = x.r.STAFFROLENAME
-                })
+                }).OrderBy(d => d.position)
                 .ToList();
 
             return sections;

@@ -94,7 +94,7 @@
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_INDEMNITY.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_ISPO.cs" />
-    <Compile Include="Models\TBL_SUGGESTED_CONDITIONS.cs" />
+    <Compile Include="Models\TBL_SUGGESTED_CONDITION.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_PROMISSORY.cs" />
     <Compile Include="Models\TBL_COLLATERAL_PROMISSORY.cs" />
     <Compile Include="Models\TBL_EOD_OPERATION.cs" />
@@ -154,8 +154,6 @@
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_PICTURE.cs" />
     <Compile Include="DocumentModels\TBL_MEDIA_STAFF_SIGNATURE.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_MEDIA_COLLATERAL_DOCS.cs" />
-    <Compile Include="Models\DEV_CHECKLIST.cs" />
-    <Compile Include="Models\ELMAH_Error.cs" />
     <Compile Include="Models\FinTrakBankingContext.cs" />
     <Compile Include="Models\OracleDatabaseConfiguration.cs" />
     <Compile Include="Models\TBL_ACCOUNTING_STANDARD.cs" />

@@ -6,7 +6,7 @@ namespace FintrakBanking.ViewModels.Setups.General
     {
         public short branchId { get; set; }
         public int? stateId { get; set; }
-        public int cityId { get; set; }
+        public int? cityId { get; set; }
         public int regionId { get; set; }
         public string regionName { get; set; }
         public string branchName { get; set; }

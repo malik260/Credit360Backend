@@ -13,10 +13,13 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public decimal? maximumAmount { get; set; }
         public decimal? pepAmount { get; set; }
         public bool pep { get; set; }
+        public bool projectRelated { get; set; }
         public bool insiderRelated { get; set; }
         public bool onLending { get; set; }
         public bool interventionFunds { get; set; }
         public bool orrBasedApproval { get; set; }
+        public bool withoutInstruction { get; set; }
+        public bool domiciliationNotInPlace { get; set; }
         public string description { get; set; }
         public int? tenor { get; set; }
     }
