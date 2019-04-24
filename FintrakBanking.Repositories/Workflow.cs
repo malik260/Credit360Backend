@@ -952,23 +952,25 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (levelBusinessRule == null) return true;
 
             bool validity = false;
-            bool limitChecked = true;
+            bool flagChecked = false;
 
-            if ((rule.MINIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT < levelBusinessRule.Amount)) limitChecked = false;
-            if ((rule.MAXIMUMAMOUNT != null) && !(levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) limitChecked = false;
-            if ((rule.MINIMUMAMOUNT != null && rule.MAXIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT < levelBusinessRule.Amount && levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) limitChecked = false;
-            if ((rule.PEPAMOUNT != null) && !(rule.PEPAMOUNT <= levelBusinessRule.PepAmount)) limitChecked = false;
+            bool limitChecked = false;
+            if ((rule.MINIMUMAMOUNT > 0) && (rule.MINIMUMAMOUNT < levelBusinessRule.Amount)) limitChecked = true;
+            if ((rule.MAXIMUMAMOUNT > 0) && (levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) limitChecked = true;
+            if ((rule.MINIMUMAMOUNT > 0 && rule.MAXIMUMAMOUNT > 0) && (rule.MINIMUMAMOUNT < levelBusinessRule.Amount && levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) limitChecked = true;
+            if ((rule.PEPAMOUNT > 0) && (rule.PEPAMOUNT <= levelBusinessRule.PepAmount)) limitChecked = true;
 
-            if (limitChecked) validity = true;
+            if (rule.PEP && levelBusinessRule.Pep == true) flagChecked = true;
+            if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == true) flagChecked = true;
+            if (rule.PROJECTRELATED && levelBusinessRule.ProjectRelated == true) flagChecked = true;
+            if (rule.ONLENDING && levelBusinessRule.OnLending == true) flagChecked = true;
+            if (rule.INTERVENTIONFUNDS && levelBusinessRule.InterventionFunds == true) flagChecked = true;
+            if (rule.ORRBASEDAPPROVAL && levelBusinessRule.OrrBasedApproval == true) flagChecked = true;
+            if (rule.WITHOUTINSTRUCTION && levelBusinessRule.WithoutInstruction == true) flagChecked = true;
+            if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
 
-            if (rule.PEP && levelBusinessRule.Pep == true) validity = true;
-            if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == true) validity = true;
-            if (rule.PROJECTRELATED && levelBusinessRule.ProjectRelated == true) validity = true;
-            if (rule.ONLENDING && levelBusinessRule.OnLending == true) validity = true;
-            if (rule.INTERVENTIONFUNDS && levelBusinessRule.InterventionFunds == true) validity = true;
-            if (rule.ORRBASEDAPPROVAL && levelBusinessRule.OrrBasedApproval == true) validity = true;
-            if (rule.WITHOUTINSTRUCTION && levelBusinessRule.WithoutInstruction == true) validity = true;
-            if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) validity = true;
+            if (limitChecked && flagChecked) return limitChecked && limitChecked;
+            if (limitChecked || flagChecked) return true;
 
             return validity;
         }
