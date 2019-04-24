@@ -1196,7 +1196,10 @@ namespace FintrakBanking.Repositories.Credit
                 customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                 operationId = x.a.OPERATIONID,
                 productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
-                tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID
+                tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
+                globalsla = x.a.TBL_PRODUCT_CLASS.GLOBALSLA,
+                currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
+                dateTimeCreated = x.a.DATETIMECREATED
             })
             .Where(x => x.currentApprovalLevelTypeId != 2) // hou
             .ToList()
