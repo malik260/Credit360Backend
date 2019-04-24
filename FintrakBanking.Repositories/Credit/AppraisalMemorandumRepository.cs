@@ -302,9 +302,10 @@ namespace FintrakBanking.Repositories.Credit
             // VALIDATION TODO if (model.recommendedChanges.Count() > 0)
             items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
 
-            var test = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
+            var approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
 
-            decimal totalApprovedAmount = test.Sum(x => x.APPROVEDAMOUNT);
+            decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
+            decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
 
             //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
             if (appl.RISKRATINGID != null && model.isBusiness == false)
@@ -324,7 +325,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ToStaffId = model.receiverStaffId;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
-            workflow.Amount = appl.TOTALEXPOSUREAMOUNT; //model.amount;
+            workflow.Amount = totalApplicationAmount; // appl.TOTALEXPOSUREAMOUNT; //model.amount;
             workflow.InvestmentGrade = model.investmentGrade;
             workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
@@ -335,8 +336,8 @@ namespace FintrakBanking.Repositories.Credit
             // workflow.Disputed = appl.DISPUTED; // buggy
 
             workflow.LevelBusinessRule = new LevelBusinessRule {
-                Amount = appl.TOTALEXPOSUREAMOUNT,
-                PepAmount = appl.TOTALEXPOSUREAMOUNT,
+                Amount = totalApplicationAmount, // appl.TOTALEXPOSUREAMOUNT,
+                PepAmount = totalApplicationAmount, // appl.TOTALEXPOSUREAMOUNT,
                 Pep = model.politicallyExposed,
                 InsiderRelated = appl.ISRELATEDPARTY,
                 ProjectRelated = appl.ISPROJECTRELATED,
@@ -1404,18 +1405,18 @@ namespace FintrakBanking.Repositories.Credit
             //                .Select(x => x.BRANCHID)
             //                .ToList();
 
-            var regions = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
-                            .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
-                            .Select(x => new
-                            {
-                                REGIONID = x.r.REGIONID
-                            })
-                            .Select(x => x.REGIONID)
-                            .ToList();
+            //var regions = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
+            //                .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
+            //                .Select(x => new
+            //                {
+            //                    REGIONID = x.r.REGIONID
+            //                })
+            //                .Select(x => x.REGIONID)
+            //                .ToList();
 
             var applications = context.TBL_LOAN_APPLICATION
                 .Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                    && regions.Contains((int)x.CAPREGIONID)
+                    //&& regions.Contains((int)x.CAPREGIONID)
                     // && branches.Contains(x.BRANCHID)
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved

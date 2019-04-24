@@ -153,6 +153,25 @@ namespace FintrakBanking.ViewModels.Credit
         public int? regionId { get; set; }
         public bool editMode { get; set; }
         public short? requireCollateralTypeId { get; set; }
+
+
+        public string slaGlobalStatus
+        {
+            get
+            {
+                string status = "success";
+                return status;
+            }
+        }
+
+        public string slaInduvidualStatus
+        {
+            get
+            {
+                string status = "danger";
+                return status;
+            }
+        }
     }
 
     public class LoanApplicationUpdateMessage
