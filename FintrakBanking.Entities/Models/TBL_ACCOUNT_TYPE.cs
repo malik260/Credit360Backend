@@ -27,6 +27,8 @@ namespace FintrakBanking.Entities.Models
 
         public short ACCOUNTCATEGORYID { get; set; }
 
+        public short? COLLATERALCLASSIFICATIONID { get; set; }
+
         public int? CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

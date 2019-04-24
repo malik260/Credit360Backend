@@ -70,6 +70,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISCURRENT { get; set; }
 
+        public string RELATEDCOLLATERALCODE { get; set; }
+
         public short APPROVALSTATUSID { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
