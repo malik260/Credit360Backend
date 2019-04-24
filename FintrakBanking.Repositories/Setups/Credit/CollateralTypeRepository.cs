@@ -43,7 +43,9 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         requireInsurancePolicy = m.REQUIREINSURANCEPOLICY,
                         requireVisitation = m.REQUIREVISITATION,
                         details = m.DETAILS,
-                         position = m.POSITION 
+                        position = m.POSITION,
+                        collateralClassificationId = m.COLLATERALCLASSIFICATIONID,
+
                     }).OrderBy(m=> m.position );
         }
 
@@ -71,7 +73,8 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                            collateralTypeId = m.COLLATERALTYPEID,
                            collateralTypeName = m.COLLATERALTYPENAME,
                            requireInsurancePolicy = m.REQUIREINSURANCEPOLICY,
-                           requireVisitation = m.REQUIREVISITATION
+                           requireVisitation = m.REQUIREVISITATION,
+                           collateralClassificationId = m.COLLATERALCLASSIFICATIONID
 
                        }).ToList();
                       // .Distinct();
@@ -185,7 +188,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             type.DATETIMEUPDATED = genSetup.GetApplicationDate();
             type.LASTUPDATEDBY = entity.lastUpdatedBy;
             type.REQUIREVISITATION = entity.requireVisitation;
-
+            type.COLLATERALCLASSIFICATIONID = entity.collateralClassificationId;
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -364,8 +367,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
             return respose;
         }
 
-       
-
+      
 
 
         #endregion End od Collateral SubType

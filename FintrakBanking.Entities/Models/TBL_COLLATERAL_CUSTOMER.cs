@@ -86,6 +86,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? ACTEDONBY { get; set; }
 
+        public string RELATEDCOLLATERALCODE { get; set; }
+
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
