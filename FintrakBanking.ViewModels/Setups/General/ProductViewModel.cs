@@ -243,5 +243,6 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string productClassProcess { get; set; }
         public short customerTypeId { get; set; }
         public string customerType { get; set; }
+        public int globalSla { get; set; }
     }
 }

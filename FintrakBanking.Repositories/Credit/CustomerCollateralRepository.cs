@@ -1155,7 +1155,8 @@ namespace FintrakBanking.Repositories.Credit
                 INSURANCETYPE = entity.insuranceType,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
-                DELETED = false
+                DELETED = false,
+                PREMIUMAMOUNT = entity.inSurPremiumAmount
 
             });
         }
@@ -1174,7 +1175,8 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 ISPOLICYAPPROVAL = true,
-                DELETED = false
+                DELETED = false,
+                PREMIUMAMOUNT = entity.inSurPremiumAmount,
 
             });
 
@@ -1235,6 +1237,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateral.STARTDATE = (DateTime)entity.startDate;
                 collateral.ENDDATE = (DateTime)entity.expiryDate;
                 collateral.INSURANCETYPE = entity.insuranceType;
+                collateral.PREMIUMAMOUNT = entity.inSurPremiumAmount;
             }
 
         }
@@ -1679,6 +1682,7 @@ namespace FintrakBanking.Repositories.Credit
                 details.expiryDate = insurance.ENDDATE;
                 details.insuranceType = insurance.INSURANCETYPE;
                 details.policyId = insurance.POLICYID;
+                details.inSurPremiumAmount = insurance.PREMIUMAMOUNT;
 
 
             }
@@ -2641,6 +2645,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.STATEID = entity.stateId;
             collateral.LOCALGOVERNMENTID = entity.localGovernmentId;
             collateral.BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral;
+            collateral.ESTIMATEDVALUE = entity.estimatedValue;
         }
 
         private CollateralViewModel GetCollateralImmovableProperty(int collateralId)
@@ -2669,6 +2674,7 @@ namespace FintrakBanking.Repositories.Credit
                 //collateralValue = specifics.COLLATERALVALUE,
                 forcedSaleValue = specifics.FORCEDSALEVALUE,
                 stampToCover = specifics.STAMPTOCOVER,
+                estimatedValue = specifics.ESTIMATEDVALUE,
 
                 //valuationSource = specifics.VALUATIONSOURCE,
                 //originalValue = specifics.ORIGINALVALUE,
@@ -2808,7 +2814,7 @@ namespace FintrakBanking.Repositories.Credit
                 TEMPCOLLATERALCUSTOMERID = collateralId,
                 ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                 INSURANCEPOLICYNUMBER = entity.insurancePolicyNumber,
-                PREMIUMAMOUNT = entity.premiumAmount,
+                PREMIUMAMOUNT = (decimal)entity.premiumAmount,
                 POLICYAMOUNT = entity.policyAmount,
                 INSURANCECOMPANYNAME = entity.insuranceCompanyName,
                 INSURERADDRESS = entity.insurerAddress,
@@ -2839,7 +2845,7 @@ namespace FintrakBanking.Repositories.Credit
 
             collateral.ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer;
             // collateral.INSURANCEPOLICYNUMBER = entity.insurancePolicyNumber;
-            collateral.PREMIUMAMOUNT = entity.premiumAmount;
+            collateral.PREMIUMAMOUNT = (decimal)entity.premiumAmount;
             collateral.POLICYAMOUNT = entity.policyAmount;
             collateral.INSURANCECOMPANYNAME = entity.insuranceCompanyName;
             collateral.INSURERADDRESS = entity.insurerAddress;
@@ -3758,7 +3764,7 @@ namespace FintrakBanking.Repositories.Credit
                         lastValuationDate = m.LASTVALUATIONDATE,
                         valuerId = m.VALUERID,
                         valuerReferenceNumber = m.VALUERREFERENCENUMBER,
-
+                        estimatedValue = m.ESTIMATEDVALUE,
                         //   collateralValue = m.COLLATERALVALUE,
                         forcedSaleValue = m.FORCEDSALEVALUE,
                         stampToCover = m.STAMPTOCOVER,
@@ -4329,7 +4335,8 @@ namespace FintrakBanking.Repositories.Credit
                 POLICYREFERENCENUMBER = entity.policyReferenceNumber,
                 INSURANCECOMPANYNAME = entity.insuranceCompanyName,
                 STARTDATE = entity.startDate,
-                ENDDATE = entity.endDate
+                ENDDATE = entity.endDate,
+                PREMIUMAMOUNT = entity.inSurPremiumAmount
 
             });
 
@@ -4347,7 +4354,8 @@ namespace FintrakBanking.Repositories.Credit
                         policyReferenceNumber = m.POLICYREFERENCENUMBER,
                         insuranceCompanyName = m.INSURANCECOMPANYNAME,
                         startDate = m.STARTDATE,
-                        endDate = m.ENDDATE
+                        endDate = m.ENDDATE,
+                        inSurPremiumAmount = m.PREMIUMAMOUNT
                     }).FirstOrDefault();
         }
         #endregion End of Collateral Customer Policy
@@ -4735,7 +4743,7 @@ namespace FintrakBanking.Repositories.Credit
                                                      valuerReferenceNumber = x.VALUERREFERENCENUMBER,
                                                      propertyValueBaseTypeId = x.PROPERTYVALUEBASETYPEID,
                                                      openMarketValue = x.OPENMARKETVALUE,
-
+                                                     estimatedValue = x.ESTIMATEDVALUE,
                                                      securityValue = (decimal)x.SECURITYVALUE,
                                                      collateralUsableAmount = x.COLLATERALUSABLEAMOUNT,
                                                      remark = x.REMARK,
@@ -5078,7 +5086,8 @@ namespace FintrakBanking.Repositories.Credit
                 TRUSTEENAME = entity.trusteeName,
                 STATEID = entity.stateId,
                 LOCALGOVERNMENTID = entity.localGovernmentId,
-                BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral
+                BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral,
+                ESTIMATEDVALUE = entity.estimatedValue
 
             });
 
@@ -5180,6 +5189,7 @@ namespace FintrakBanking.Repositories.Credit
                         EFFECTIVEDATE = entity.effectiveDate,
                         REMARK = entity.remark,
                         BANK = entity.bank,
+                        
 
                     });
 
@@ -5309,7 +5319,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 ACTEDONBY = model.staffId,
                 ISCURRENT = true,
-
+                RELATEDCOLLATERALCODE = model.relatedCollateralCode
 
             });
 
@@ -5660,6 +5670,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainPol.POLICYREFERENCENUMBER = tempPol.POLICYREFERENCENUMBER;
                     mainPol.STARTDATE = tempPol.STARTDATE;
                     mainPol.SUMINSURED = tempPol.SUMINSURED;
+                    mainPol.PREMIUMAMOUNT = tempPol.PREMIUMAMOUNT;
                 }
                 else
                 {
@@ -5675,6 +5686,7 @@ namespace FintrakBanking.Repositories.Credit
                         POLICYREFERENCENUMBER = tempPol.POLICYREFERENCENUMBER,
                         STARTDATE = tempPol.STARTDATE,
                         SUMINSURED = tempPol.SUMINSURED,
+                        PREMIUMAMOUNT = tempPol.PREMIUMAMOUNT
                     });
                 }
             }
@@ -5727,6 +5739,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainProp.STATEID = tempProp.STATEID;
                     mainProp.LOCALGOVERNMENTID = tempProp.LOCALGOVERNMENTID;
                     mainProp.BANKSHAREOFCOLLATERAL = tempProp.BANKSHAREOFCOLLATERAL;
+                    mainProp.ESTIMATEDVALUE = tempProp.ESTIMATEDVALUE;
 
                 }
                 else
@@ -5766,6 +5779,7 @@ namespace FintrakBanking.Repositories.Credit
                         STATEID = tempProp.STATEID,
                         LOCALGOVERNMENTID = tempProp.LOCALGOVERNMENTID,
                         BANKSHAREOFCOLLATERAL = tempProp.BANKSHAREOFCOLLATERAL,
+                        ESTIMATEDVALUE = tempProp.ESTIMATEDVALUE
                     });
                 }
             }
@@ -6392,6 +6406,7 @@ namespace FintrakBanking.Repositories.Credit
                     POLICYREFERENCENUMBER = data.POLICYREFERENCENUMBER,
                     STARTDATE = data.STARTDATE,
                     SUMINSURED = data.SUMINSURED,
+                    PREMIUMAMOUNT = data.PREMIUMAMOUNT
                 });
                 data.ISPOLICYAPPROVAL = false;
             }
@@ -6589,6 +6604,7 @@ namespace FintrakBanking.Repositories.Credit
                                isAssetManagedByTrustee = x.ISASSETMANAGEDBYTRUSTEE,
                                trusteeName = x.TRUSTEENAME,
                                stateName = x.TBL_STATE.STATENAME,
+                               estimatedValue = x.ESTIMATEDVALUE,
                                localGovtName = x.TBL_LOCALGOVERNMENT.NAME,
                                bankShareOfCollateral = x.BANKSHAREOFCOLLATERAL,
                                countryName = context.TBL_COUNTRY.Where(a => a.COUNTRYID == x.COUNTRYID).Select(a => a.NAME).FirstOrDefault(),
@@ -6868,6 +6884,8 @@ namespace FintrakBanking.Repositories.Credit
                     startDate = x.STARTDATE,
                     expiryDate = x.ENDDATE,
                     insuranceType = x.INSURANCETYPE,
+                    inSurPremiumAmount = x.PREMIUMAMOUNT
+                    
                 })).ToList();
 
             return insurance;

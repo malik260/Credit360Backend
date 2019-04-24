@@ -44,6 +44,7 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         CustomerEligibility GetCustomerEligibility(string customerCode);
         bool BranchLimitExceeded(int branchId, decimal applicationAmount);
         bool SectorLimitExceeded(int sectorId, decimal applicationAmount);
+        bool ProductLimitExceeded(int productId, decimal applicationAmount);
         TotalExposureLimit GetTotalExposureLimit(ExposureLimitRequestModel model);
         TotalExposureLimit GetTotalExposureLimitReference(string reference, int getCompanyId);
     }

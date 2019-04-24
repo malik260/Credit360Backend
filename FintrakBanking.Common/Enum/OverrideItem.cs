@@ -14,5 +14,6 @@ namespace FintrakBanking.Common.Enum
         BranchNplLimitOverride = 4,
         SectorNplLimitOverride = 5,
         CustomerExposureLimitOverride = 6,
+        //productLimitOverride = 7,
     }
 }

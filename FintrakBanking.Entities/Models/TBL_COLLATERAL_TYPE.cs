@@ -38,6 +38,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? CHARGEGLACCOUNTID { get; set; }
 
+        public int? COLLATERALCLASSIFICATIONID { get; set; }
+
         public int POSITION { get; set; }
 
         public int CREATEDBY { get; set; }

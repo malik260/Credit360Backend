@@ -51,6 +51,8 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "money")]
         public decimal? SECURITYVALUE { get; set; }
 
+        public decimal? ESTIMATEDVALUE { get; set; }
+
         //[Column(TypeName = "money")]
         public decimal? COLLATERALUSABLEAMOUNT { get; set; }
 

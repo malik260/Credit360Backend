@@ -3178,6 +3178,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             productClass.PRODUCTCLASSTYPEID = model.productClassTypeId;
                             productClass.PRODUCT_CLASS_PROCESSID = model.productClassProcessId;
                             productClass.CUSTOMERTYPEID = model.customerTypeId;
+                            productClass.GLOBALSLA = model.globalSla;
                         }
                     }
                     else
@@ -3187,7 +3188,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             PRODUCTCLASSNAME = model.productClassName,
                             PRODUCTCLASSTYPEID = model.productClassTypeId,
                             PRODUCT_CLASS_PROCESSID = model.productClassProcessId,
-                            CUSTOMERTYPEID = model.customerTypeId
+                            CUSTOMERTYPEID = model.customerTypeId,
+                            GLOBALSLA = model.globalSla
                         };
                         context.TBL_PRODUCT_CLASS.Add(productClass);
                     }
