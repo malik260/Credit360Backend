@@ -159,8 +159,14 @@ namespace FintrakBanking.ViewModels.Credit
         {
             get
             {
-                string status = "success";
-                return status;
+                float sla = 3;
+                float elapse = 2;
+                if (elapse == 0) return "success";
+                float factor = (elapse / sla) * 100;
+                if (factor <= 30) return "success";
+                if (factor <= 70) return "warning";
+                if (factor <= 100) return "danger";
+                return "danger";
             }
         }
 
@@ -168,8 +174,14 @@ namespace FintrakBanking.ViewModels.Credit
         {
             get
             {
-                string status = "danger";
-                return status;
+                float sla = 7;
+                float elapse = 2;
+                if (elapse == 0) return "success";
+                float factor = (elapse / sla) * 100;
+                if (factor <= 30) return "success";
+                if (factor <= 70) return "warning";
+                if (factor <= 100) return "danger";
+                return "danger";
             }
         }
     }
