@@ -161,7 +161,7 @@ namespace FintrakBanking.ViewModels.Credit
             get
             {
                 float sla = globalsla;
-                float elapse = (float)Math.Abs(dateTimeCreated.Subtract(timeIn.Value).TotalHours);
+                float elapse = (float)Math.Abs(dateTimeCreated.Subtract(timeIn.HasValue ? timeIn.Value : default(DateTime)).TotalHours);
                 if (elapse == 0) return "success";
                 float factor = (elapse / sla) * 100;
                 if (factor <= 30) return "success";
@@ -176,7 +176,7 @@ namespace FintrakBanking.ViewModels.Credit
             get
             {
                 float sla = currentApprovalLevelSlaInterval;
-                float elapse = (float)Math.Abs(dateTimeCreated.Subtract(timeIn.Value).TotalHours);
+                float elapse = (float)Math.Abs(dateTimeCreated.Subtract(timeIn.HasValue ? timeIn.Value : default(DateTime)).TotalHours);
                 if (elapse == 0) return "success";
                 float factor = (elapse / sla) * 100;
                 if (factor <= 30) return "success";
