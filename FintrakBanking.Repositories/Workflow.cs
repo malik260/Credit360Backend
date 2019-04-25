@@ -737,6 +737,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (tenor == 0 && level.TENOR == 0) { return true; } // setup
             if (tenor == 0 && level.TENOR == null) { return true; } // setup
             if (tenor > 0 && level.TENOR >= tenor) { return true; } // gen cam
+            if (level.TENOR == null && ActionIsApprovalDecision()) return true; // access bank no tenor setup
 
             return false;
         }
