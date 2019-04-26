@@ -464,6 +464,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual DbSet<TBL_LOAN_REPRICING_MODE> TBL_LOAN_REPRICING_MODE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_RELEASE_DOC> TBL_COLLATERAL_RELEASE_DOC { get; set; }
+        public virtual DbSet<TBL_TERM_SHEET> TBL_TERM_SHEET { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

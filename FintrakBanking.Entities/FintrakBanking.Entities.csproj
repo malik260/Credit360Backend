@@ -536,6 +536,7 @@
     <Compile Include="Models\TBL_TEMP_STAFF.cs" />
     <Compile Include="Models\TBL_TEMP_STAFF_RELIEF.cs" />
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
+    <Compile Include="Models\TBL_TERM_SHEET.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
     <Compile Include="OracleDatabaseConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
