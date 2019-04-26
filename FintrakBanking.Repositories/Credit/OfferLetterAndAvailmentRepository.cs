@@ -194,10 +194,20 @@ namespace FintrakBanking.Repositories.Credit
                     .Select(x => (int)x.TBL_LOAN_APPLICATION_DETAIL.PROPOSEDPRODUCTID).ToList();
 
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
+
+            var acceptIds = context.TBL_LOAN_APPLICATION.Where(x => x.APPROVALSTATUSID == 2 && x.AVAILMENTDATE == null)
+                .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == 6 && t.RESPONSESTAFFID == staffId),
+                    a => a.LOANAPPLICATIONID, b => b.TARGETID, (a, b) => new { a, b })
+                    .Select(x => new { TARGETID = x.b.TARGETID })
+                    .Select(t => t.TARGETID)
+                    .ToList()
+                    ;
+
             IQueryable<CamProcessedLoanViewModel> data = null;
 
             data = context.TBL_LOAN_APPLICATION
                 .Where(x => //x.BRANCHID == branchId && 
+                acceptIds.Contains(x.LOANAPPLICATIONID) &&
                 !exceptIds.Contains(x.LOANAPPLICATIONID) && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
@@ -2316,13 +2326,7 @@ namespace FintrakBanking.Repositories.Credit
                         .ToList()
                         ;
 
-            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
-            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
-            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
-
-            if (next == false) return staffRoleLevelId;
-            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
-            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
+            var nextLevelId = levels.Skip(1).Take(1).Select(x => x.levelId).FirstOrDefault();
 
             return nextLevelId;
         }
