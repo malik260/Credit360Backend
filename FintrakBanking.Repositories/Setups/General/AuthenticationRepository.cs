@@ -191,7 +191,7 @@ namespace FintrakBanking.Repositories.Setups.General
             result.grantMessage = "valid";
             result.companyId = user.companyId;
             if (!user.isActive) result.grantMessage = "This account is INACTIVE";
-            if (user.isLocked) result.grantMessage = "This account is LOCKED";
+            if (IsAccountLocked(user.username)) result.grantMessage = "This account is LOCKED";
             if (!ResumptionClosingTime(user)) result.grantMessage = "You cannot login at this time";
 
             if (result.grantMessage != "valid")
@@ -502,27 +502,48 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool IsAccountLocked(string userName) // ERROR POINT 1 - 
         {
-            var data = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == userName);
+            var data2 = GetAllUsers();
+                var data = data2.FirstOrDefault(c => c.username.ToLower() == userName.ToLower());
             if (data == null) throw new SecureException("1001 Login Failure.");
             if (data.isLocked)
             {
-                var  loginInfo = GetUserLoginInfoByUserName(userName);
-                _auditTrail.AddAuditTrail(new TBL_AUDIT
+                // check 10ms
+                if (Math.Abs(DateTime.Now.Subtract(data.lastLockOutDate.Value).TotalMinutes) > 10)
                 {
-                    AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
-                    STAFFID = loginInfo.staffId,
-                    BRANCHID = (short)data.branchId,//(short)context.TBL_STAFF.Where(x => x.STAFFID == loginInfo.staffId).Select(x => x.BRANCHID).FirstOrDefault(),
-                    DETAIL = $"{loginInfo.username} - This account is LOCKED",
-                    IPADDRESS = CommonHelpers.GetUserIP(),
-                    URL = String.Empty, // Request.RequestUri.AbsoluteUri,
-                    APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
-                    SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = -1
-                });
-                context.SaveChanges();
-                return true;
+                    unlockUser(userName);
+                    return false;
+                }
+                else
+                {
+                    var loginInfo = GetUserLoginInfoByUserName(userName);
+                    _auditTrail.AddAuditTrail(new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
+                        STAFFID = loginInfo.staffId,
+                        BRANCHID = (short)data.branchId,//(short)context.TBL_STAFF.Where(x => x.STAFFID == loginInfo.staffId).Select(x => x.BRANCHID).FirstOrDefault(),
+                        DETAIL = $"{userName} - This account is LOCKED",
+                        IPADDRESS = CommonHelpers.GetUserIP(),
+                        URL = String.Empty, // Request.RequestUri.AbsoluteUri,
+                        APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                        SYSTEMDATETIME = DateTime.Now,
+                        TARGETID = -1
+                    });
+                    context.SaveChanges();
+                    return true;
+                }
             }
             return false;
+        }
+
+        public void unlockUser(string userName)
+        {
+            var user = context.TBL_PROFILE_USER.Where(u => u.USERNAME.ToLower() == userName.ToLower()).FirstOrDefault();
+            if (user != null)
+            {
+                user.FAILEDLOGONATTEMPT = 0;
+                user.ISLOCKED = false;
+                context.SaveChanges();
+            }
         }
         
         public bool IsAccountActive(string userName)
@@ -813,7 +834,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IQueryable<UserViewModel> GetAllUsers()
         {
-            return (from u in context.TBL_PROFILE_USER
+            var users =  (from u in context.TBL_PROFILE_USER
                     join st in context.TBL_STAFF on u.STAFFID equals st.STAFFID
                     select new UserViewModel
                     {
@@ -835,7 +856,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                         groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
                                     }).ToList(),
                         isLocked = u.ISLOCKED,
+                        lastLockOutDate = u.LASTLOCKOUTDATE,
                     });
+            return users;
         }
 
         public UserViewModel GetSingleUser(int userId)
