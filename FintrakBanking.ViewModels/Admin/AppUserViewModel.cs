@@ -41,6 +41,7 @@ namespace FintrakBanking.ViewModels.Admin
         public string activityParentName { get; set; }
 
         public bool selected { get; set; }
+        public DateTime? expireOn { get; set; }
 
     }
     public class Users
