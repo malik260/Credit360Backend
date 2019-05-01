@@ -2256,6 +2256,19 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.NextLevelId = GetFirstAvailmentLevelId(entity.operationId);
                     }
 
+                    workflow.LevelBusinessRule = new LevelBusinessRule
+                    {
+                        Amount = request.AMOUNT_REQUESTED,
+                        PepAmount = request.AMOUNT_REQUESTED,
+                        Pep = application.ISPOLITICALLYEXPOSED,
+                        InsiderRelated = application.ISRELATEDPARTY,
+                        ProjectRelated = application.ISPROJECTRELATED,
+                        OnLending = application.ISONLENDING,
+                        InterventionFunds = application.ISINTERVENTIONFUNDS,
+                        OrrBasedApproval = application.ISORRBASEDAPPROVAL,
+                        DomiciliationNotInPlace = application.DOMICILIATIONNOTINPLACE,
+                    };
+
                     workflow.LogActivity();
 
                     context.SaveChanges();

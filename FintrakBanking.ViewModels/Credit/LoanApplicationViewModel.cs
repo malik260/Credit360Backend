@@ -119,7 +119,9 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? timeIn { get; set; }
         public DateTime? slaTime { get; set; }
         public string cancellationReason { get; set; }
-        
+        public int globalsla { get; set; }
+        public int currentApprovalLevelSlaInterval { get; set; }
+
         public string tenorString
         {
             get
@@ -143,7 +145,7 @@ namespace FintrakBanking.ViewModels.Credit
                 return count.ToString() + units;
             }
         }
-
+        
         public int tempApplicationCancellationId { get; set; }
         public IQueryable<string> staffName { get; set; }
         public string comment { get; set; }
@@ -153,6 +155,36 @@ namespace FintrakBanking.ViewModels.Credit
         public int? regionId { get; set; }
         public bool editMode { get; set; }
         public short? requireCollateralTypeId { get; set; }
+
+        public string slaGlobalStatus
+        {
+            get
+            {
+                float sla = globalsla;
+                float elapse = (float)Math.Abs(dateTimeCreated.Subtract(timeIn.HasValue ? timeIn.Value : default(DateTime)).TotalHours);
+                if (elapse == 0) return "success";
+                float factor = (elapse / sla) * 100;
+                if (factor <= 30) return "success";
+                if (factor <= 70) return "warning";
+                if (factor <= 100) return "danger";
+                return "danger";
+            }
+        }
+
+        public string slaInduvidualStatus
+        {
+            get
+            {
+                float sla = currentApprovalLevelSlaInterval;
+                float elapse = (float)Math.Abs(dateTimeCreated.Subtract(timeIn.HasValue ? timeIn.Value : default(DateTime)).TotalHours);
+                if (elapse == 0) return "success";
+                float factor = (elapse / sla) * 100;
+                if (factor <= 30) return "success";
+                if (factor <= 70) return "warning";
+                if (factor <= 100) return "danger";
+                return "danger";
+            }
+        }
     }
 
     public class LoanApplicationUpdateMessage

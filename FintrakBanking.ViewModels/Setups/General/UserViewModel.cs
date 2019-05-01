@@ -52,6 +52,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int operationId { get; set; }
         public int approvalStatusId { get; set; }
         public string comment { get; set; }
+        public DateTime? lastLockOutDate { get; set; }
 
         public SessionStatusInfo sessionStatusInfo { get; set; }
 

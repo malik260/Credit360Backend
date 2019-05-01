@@ -34,6 +34,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEUPDATED { get; set; }
 
+        public DateTime? EXPIREON { get; set; }
+
         public virtual TBL_PROFILE_ACTIVITY TBL_PROFILE_ACTIVITY { get; set; }
 
         public virtual TBL_TEMP_PROFILE_USER TBL_TEMP_PROFILE_USER { get; set; }

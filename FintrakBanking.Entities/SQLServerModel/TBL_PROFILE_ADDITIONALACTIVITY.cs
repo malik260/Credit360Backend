@@ -37,5 +37,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         public virtual TBL_PROFILE_ACTIVITY TBL_PROFILE_ACTIVITY { get; set; }
 
         public virtual TBL_PROFILE_USER TBL_PROFILE_USER { get; set; }
+
+        public DateTime? EXPIREON { get; set; }
     }
 }

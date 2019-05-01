@@ -79,6 +79,7 @@
     <Compile Include="CASA\ICasaRepository.cs" />
     <Compile Include="CASA\IOverRideRepository.cs" />
     <Compile Include="Credit\ILoanFeeChargeRepository.cs" />
+    <Compile Include="Credit\ITermSheetRepository.cs" />
     <Compile Include="CRMS\ICRMSCodeBookRepository.cs" />
     <Compile Include="CRMS\ICRMSRegulatories.cs" />
     <Compile Include="Credit\IDashboardRepository.cs" />

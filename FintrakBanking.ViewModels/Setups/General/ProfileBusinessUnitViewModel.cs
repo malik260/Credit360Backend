@@ -8,7 +8,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 {
     public class ProfileBusinessUnitViewModel : GeneralEntity
     {
-        public int profileBusinessUnitId { get; set; }
+        public int businessUnitId { get; set; }
 
         public string businessUnitName { get; set; }
 

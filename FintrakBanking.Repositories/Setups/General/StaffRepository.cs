@@ -246,15 +246,16 @@ namespace FintrakBanking.Repositories.Setups.General
         {
 
             bool isUpdate = false;
-            List<TBL_TEMP_PROFILE_USERGROUP> userGroups = new List<TBL_TEMP_PROFILE_USERGROUP>();
-            List<TBL_TEMP_PROFILE_ADTN_ACTIVITY> userActivities = new List<TBL_TEMP_PROFILE_ADTN_ACTIVITY>();
             TBL_TEMP_PROFILE_USER user = null;
 
-            if (staffModel.user.activities.Any())
-            {
-                foreach (var item in staffModel.user.activities)
+
+
+            List<TBL_TEMP_PROFILE_USERGROUP> userGroups = new List<TBL_TEMP_PROFILE_USERGROUP>();
+            List<TBL_TEMP_PROFILE_ADTN_ACTIVITY> userActivities = new List<TBL_TEMP_PROFILE_ADTN_ACTIVITY>();
+
+            foreach (var item in staffModel.user.activities)
                 {
-                    var userActivity = new TBL_TEMP_PROFILE_ADTN_ACTIVITY()
+                    userActivities.Add(new TBL_TEMP_PROFILE_ADTN_ACTIVITY()
                     {
                         ACTIVITYID = item.activityId,
                         CANADD = false,
@@ -264,17 +265,13 @@ namespace FintrakBanking.Repositories.Setups.General
                         CANVIEW = false,
                         CREATEDBY = staffModel.createdBy,
                         DATETIMECREATED = DateTime.Now,
-                    };
-
-                    userActivities.Add(userActivity);
+                        EXPIREON = item.expireOn
+                    });
                 }
-            }
 
-            if (staffModel.user.group.Count > 0)
-            {
                 foreach (var item in staffModel.user.group)
                 {
-                    var grpItem = new TBL_TEMP_PROFILE_USERGROUP()
+                    userGroups.Add(new TBL_TEMP_PROFILE_USERGROUP()
                     {
                         GROUPID = item.groupId,
                         DATETIMECREATED = DateTime.Now,
@@ -282,31 +279,29 @@ namespace FintrakBanking.Repositories.Setups.General
                         ISCURRENT = true,
                         APPROVALSTATUS = false,
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
-                    };
-                    userGroups.Add(grpItem);
+                    });
                 }
-            }
-            if (staffModel.user != null)
-            {
-
-
-
-            }
 
 
             var existingTempStaff = context.TBL_TEMP_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower() && x.ISCURRENT == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
+
             if (existingTempStaff != null)
             {
+                isUpdate = true;
+
+                var unApprovedStaffEdit = context.TBL_TEMP_STAFF.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower());
+                if (unApprovedStaffEdit.Any()) throw new SecureException("Staff is already undergoing approval");
+
                 var existingTempUser = context.TBL_TEMP_PROFILE_USER.FirstOrDefault(u => u.TEMPSTAFFID == existingTempStaff.TEMPSTAFFID);
                 if (existingTempUser != null)
                 {
-                    isUpdate = true;
 
                     existingTempUser.USERNAME = staffModel.user.username;
                     existingTempUser.ISFIRSTLOGINATTEMPT = false;
                     existingTempUser.ISACTIVE = false;
                     existingTempUser.ISLOCKED = true;
                     existingTempUser.FAILEDLOGONATTEMPT = 0;
+
                     if (staffModel.user.changeSecutirtyQuestion)
                     {
                         existingTempUser.SECURITYQUESTION = staffModel.user.securityQuestion;
@@ -340,7 +335,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             else
             {
-                    user = new TBL_TEMP_PROFILE_USER()
+                user = new TBL_TEMP_PROFILE_USER()
                     {
                         TEMPSTAFFID = staffModel.staffId,
                         USERNAME = staffModel.user.username,
@@ -362,18 +357,11 @@ namespace FintrakBanking.Repositories.Setups.General
                         TBL_TEMP_PROFILE_ADTN_ACTIVITY = userActivities,
                         TBL_TEMP_PROFILE_USERGROUP = userGroups
                     };
-
-                
             }
-            var unApprovedStaffEdit = context.TBL_TEMP_STAFF.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending &&
-                                                                        x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower());
+
+
             TBL_TEMP_STAFF tempStaff = new TBL_TEMP_STAFF();
-
-            if (unApprovedStaffEdit.Any())
-            {
-                throw new SecureException("Staff is already undergoing approval");
-            }
-
+          
             if (existingTempStaff != null)
             {
                 //foreach (var item in existStingTempStaff)
@@ -496,6 +484,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var output = context.SaveChanges() > 0;
 
                     var targetStaffId = existingTempStaff?.TEMPSTAFFID ?? tempStaff.TEMPSTAFFID;
+
                     if (isUpdate != true)
                     {
                         user.TEMPSTAFFID = targetStaffId;
@@ -922,6 +911,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             CANVIEW = false,
                             CREATEDBY = item.CREATEDBY,
                             DATETIMECREATED = DateTime.Now,
+                            EXPIREON = item.EXPIREON
                         };
                         userActivities.Add(userActivity);
                 }
@@ -1209,6 +1199,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             CANVIEW = false,
                             CREATEDBY = item.CREATEDBY,
                             DATETIMECREATED = DateTime.Now,
+                            EXPIREON = item.EXPIREON,
                         };
                         userActivities.Add(userActivity);
                     }
@@ -1471,6 +1462,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         CANVIEW = false,
                         CREATEDBY = staffModel.createdBy,
                         DATETIMECREATED = DateTime.Now,
+                        EXPIREON = item.expireOn
                     };
 
                     userActivities.Add(userActivity);

@@ -3170,7 +3170,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             customerTypeId = p.CUSTOMERTYPEID,
                             customerType = p.TBL_CUSTOMER_TYPE.NAME,
                             profileBusinessUnitName = p.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
-                            profileBusinessUnitId = p.BUSINESSUNITID,
+                            businessUnitId = p.BUSINESSUNITID,
 
                         }).ToList();
             return data;
@@ -3192,7 +3192,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             productClass.PRODUCTCLASSTYPEID = model.productClassTypeId;
                             productClass.PRODUCT_CLASS_PROCESSID = model.productClassProcessId;
                             productClass.CUSTOMERTYPEID = model.customerTypeId;
-                            productClass.BUSINESSUNITID = model.profileBusinessUnitId;
+                            productClass.GLOBALSLA = model.globalSla;
+                            productClass.BUSINESSUNITID = model.businessUnitId;
                         }
                     }
                     else
@@ -3202,7 +3203,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             PRODUCTCLASSNAME = model.productClassName,
                             PRODUCTCLASSTYPEID = model.productClassTypeId,
                             PRODUCT_CLASS_PROCESSID = model.productClassProcessId,
-                            CUSTOMERTYPEID = model.customerTypeId
+                            CUSTOMERTYPEID = model.customerTypeId,
+                            GLOBALSLA = model.globalSla
                         };
                         context.TBL_PRODUCT_CLASS.Add(productClass);
                     }

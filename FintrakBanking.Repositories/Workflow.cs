@@ -737,6 +737,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (tenor == 0 && level.TENOR == 0) { return true; } // setup
             if (tenor == 0 && level.TENOR == null) { return true; } // setup
             if (tenor > 0 && level.TENOR >= tenor) { return true; } // gen cam
+            if (level.TENOR == null && ActionIsApprovalDecision()) return true; // access bank no tenor setup
 
             return false;
         }
@@ -951,21 +952,28 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (levelBusinessRule == null) return true;
 
-            if ((rule.MINIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT < levelBusinessRule.Amount)) return false;
-            if ((rule.MAXIMUMAMOUNT != null) && !(levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) return false;
-            if ((rule.MINIMUMAMOUNT != null && rule.MAXIMUMAMOUNT != null) && !(rule.MINIMUMAMOUNT < levelBusinessRule.Amount && levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) return false;
-            if ((rule.PEPAMOUNT != null) && !(rule.PEPAMOUNT <= levelBusinessRule.PepAmount)) return false;
+            bool validity = false;
+            bool flagChecked = false;
 
-            if (rule.PEP && levelBusinessRule.Pep == false) return false;
-            if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == false) return false;
-            if (rule.PROJECTRELATED && levelBusinessRule.ProjectRelated == false) return false;
-            if (rule.ONLENDING && levelBusinessRule.OnLending == false) return false;
-            if (rule.INTERVENTIONFUNDS && levelBusinessRule.InterventionFunds == false) return false;
-            if (rule.ORRBASEDAPPROVAL && levelBusinessRule.OrrBasedApproval == false) return false;
-            if (rule.WITHOUTINSTRUCTION && levelBusinessRule.WithoutInstruction == false) return false;
-            if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == false) return false;
+            bool limitChecked = false;
+            if ((rule.MINIMUMAMOUNT > 0) && (rule.MINIMUMAMOUNT < levelBusinessRule.Amount)) limitChecked = true;
+            if ((rule.MAXIMUMAMOUNT > 0) && (levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) limitChecked = true;
+            if ((rule.MINIMUMAMOUNT > 0 && rule.MAXIMUMAMOUNT > 0) && (rule.MINIMUMAMOUNT < levelBusinessRule.Amount && levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) limitChecked = true;
+            if ((rule.PEPAMOUNT > 0) && (rule.PEPAMOUNT <= levelBusinessRule.PepAmount)) limitChecked = true;
 
-            return true;
+            if (rule.PEP && levelBusinessRule.Pep == true) flagChecked = true;
+            if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == true) flagChecked = true;
+            if (rule.PROJECTRELATED && levelBusinessRule.ProjectRelated == true) flagChecked = true;
+            if (rule.ONLENDING && levelBusinessRule.OnLending == true) flagChecked = true;
+            if (rule.INTERVENTIONFUNDS && levelBusinessRule.InterventionFunds == true) flagChecked = true;
+            if (rule.ORRBASEDAPPROVAL && levelBusinessRule.OrrBasedApproval == true) flagChecked = true;
+            if (rule.WITHOUTINSTRUCTION && levelBusinessRule.WithoutInstruction == true) flagChecked = true;
+            if (rule.DOMICILIATIONNOTINPLACE && levelBusinessRule.DomiciliationNotInPlace == true) flagChecked = true;
+
+            if (limitChecked && flagChecked) return limitChecked && limitChecked;
+            if (limitChecked || flagChecked) return true;
+
+            return validity;
         }
 
         private void SendNotifications()
@@ -973,6 +981,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (statusOnly) return;
             if (emailNotification || smsNotification)
             {
+                int tat = next != null ? next.SlaInterval : 0;
                 var setup = context.TBL_SETUP_GLOBAL.Find(1);
                 var operation = context.TBL_OPERATIONS.Find(this.operationId);
                 var applicationUrl = setup.APPLICATION_URL.Length == 0 ? "#" : setup.APPLICATION_URL;
@@ -1051,6 +1060,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                             $"{placeholders.locationName}" +
                             $"<p>Time: { time }</p>"
                             ;
+
+                if (tat > 0)
+                {
+                    messageBody = messageBody + $"<p>TAT: { tat } hour(s)</p>";
+                    ownerMessageBody = ownerMessageBody + $"<p>TAT: { tat } hour(s)</p>";
+                }
 
                 //var mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
 
