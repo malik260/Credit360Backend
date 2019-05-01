@@ -235,6 +235,8 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class ProductClassificationViewModel: GeneralEntity
     {
+        public string profileBusinessUnitName { get; set; }
+
         public short productClassId { get; set; }
         public string productClassName { get; set; }
         public short productClassTypeId { get; set; }
@@ -243,5 +245,6 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string productClassProcess { get; set; }
         public short customerTypeId { get; set; }
         public string customerType { get; set; }
+        public int? profileBusinessUnitId { get; set; }
     }
 }

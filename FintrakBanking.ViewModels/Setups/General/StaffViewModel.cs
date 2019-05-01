@@ -44,6 +44,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string BranchName { get; set; }
         public int? MisinfoId { get; set; }
         public string MisInfoCode { get; set; }
+        public int? businessUnitId { get; set; }
         public short? DepartmentId { get; set; }
         public short? departmentUnitId { get; set; }
         public string departmentName { get; set; }
@@ -70,7 +71,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public decimal? workStartDuration { get; set; }
         public decimal? workEndDuration { get; set; }
         public AppUserViewModel user { get; set; }
-     
+        public string businessUnitName { get; set; }
     }
 
     public class staffBulkFeedbackViewModel

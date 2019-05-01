@@ -223,6 +223,7 @@
     <Compile Include="Setups\General\MessageLogViewModel.cs" />
     <Compile Include="Setups\General\ProductChargeFeeViewModel.cs" />
     <Compile Include="Report\ProfileActivityReportViewModel.cs" />
+    <Compile Include="Setups\General\ProfileBusinessUnitViewModel.cs" />
     <Compile Include="Setups\General\PublicHolidayViewModel.cs" />
     <Compile Include="Setups\General\SectorViewModel.cs" />
     <Compile Include="Setups\General\CustomFieldsDataViewModel.cs" />

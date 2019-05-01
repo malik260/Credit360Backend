@@ -447,7 +447,7 @@ namespace FintrakBanking.Repositories.Setups.General
             get => _sessionInfo;
             set => _sessionInfo = value;
         }
-
+    
         public UserViewModel FindUserByUserNameAndPassword(string username, string password) // ERROR POINT 2 - 
         {
             UserViewModel data = null;
@@ -709,6 +709,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.logincode = profile.LOGINCODE;
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff1.STAFFROLEID;
+                userInfo.businessUnitId = staff1.BUSINESSUNITID;
+                userInfo.businessUnitName = staff1.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME;
 
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
@@ -736,7 +738,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.logincode = profile.LOGINCODE;
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff.STAFFROLEID;
-
+                userInfo.businessUnitId = staff.BUSINESSUNITID;
+                userInfo.businessUnitName = staff.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME;
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
                 profile.FAILEDLOGONATTEMPT = 0;

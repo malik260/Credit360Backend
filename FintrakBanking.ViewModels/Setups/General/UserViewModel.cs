@@ -84,6 +84,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         }
 
         public int sessionTimeout { get; set; }
+        public string businessUnitName { get; set; }
+        public int? businessUnitId { get; set; }
     }
 
     public class SessionStatusInfo

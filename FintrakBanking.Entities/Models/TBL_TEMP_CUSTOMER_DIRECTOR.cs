@@ -68,6 +68,12 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime DATECREATED { get; set; }
 
+        public string GENDER { get; set; }
+
+        public int? MARITALSTATUSID { get; set; }
+
+        public DateTime? DATEOFBIRTH { get; set; }
+
         public bool ISCURRENT { get; set; }
 
         public int APPROVALSTATUSID { get; set; }

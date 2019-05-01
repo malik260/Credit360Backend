@@ -193,6 +193,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_EOD_OPERATION> TBL_EOD_OPERATION { get; set; }
         public virtual DbSet<TBL_EOD_OPERATION_LOG> TBL_EOD_OPERATION_LOG { get; set; }
         public virtual DbSet<TBL_EOD_STATUS> TBL_EOD_STATUS { get; set; }
+        public virtual DbSet<TBL_PROFILE_BUSINESS_UNIT> TBL_PROFILE_BUSINESS_UNIT { get; set; }
 
         public virtual DbSet<TBL_FEE_TYPE> TBL_FEE_TYPE { get; set; }
         public virtual DbSet<TBL_FINANCE_ENDOFDAY> TBL_FINANCE_ENDOFDAY { get; set; }

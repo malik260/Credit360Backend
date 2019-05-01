@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.APICore.JWTAuth;
+using System.Collections.Generic;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -534,5 +535,16 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
         #endregion General Setups
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("profile-business-unit")]
+        public HttpResponseMessage GetProfileBusinessUnits()
+        {
+            IEnumerable<ProfileBusinessUnitViewModel> response = repo.GetProfileBusinessUnits();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
     }
+
 }

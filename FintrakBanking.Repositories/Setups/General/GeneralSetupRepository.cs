@@ -441,6 +441,16 @@ namespace FintrakBanking.Repositories.Setups.General
             return controlLevels.Select(x => x.levelId).Distinct().ToList();
         }
 
+        public IEnumerable<ProfileBusinessUnitViewModel> GetProfileBusinessUnits()
+        {
+            return context.TBL_PROFILE_BUSINESS_UNIT
+               .Select(x => new ProfileBusinessUnitViewModel
+               {
+                   profileBusinessUnitId = x.BUSINESSUNITID,
+                   businessUnitName = x.BUSINESSUNITNAME,
+               })
+               .ToList();
+        }
     }
 
 }

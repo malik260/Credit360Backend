@@ -104,7 +104,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupId = (short)data.PRODUCTCLASSID,
                         lookupName = data.PRODUCTCLASSNAME,
                         lookupTypeId = data.PRODUCTCLASSTYPEID,
-                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME
+                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
+                        businessUnitName = data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        businessUnitId = data.BUSINESSUNITID,
                     });
         }
 
@@ -122,7 +124,10 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupId = (short)data.PRODUCTCLASSID,
                         lookupName = data.PRODUCTCLASSNAME,
                         lookupTypeId = data.PRODUCTCLASSTYPEID,
-                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME
+                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
+                        businessUnitName = data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        businessUnitId = data.BUSINESSUNITID,
+
                     });
         }
 
@@ -135,7 +140,10 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupId = (short)data.PRODUCTCLASSID,
                         lookupName = data.PRODUCTCLASSNAME,
                         lookupTypeId = data.PRODUCTCLASSTYPEID,
-                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME
+                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
+                        businessUnitName = data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        businessUnitId = data.BUSINESSUNITID,
+
                     }).ToList();
         }
         public IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId)
@@ -148,7 +156,10 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupId = (short)data.PRODUCTCLASSID,
                         lookupName = data.PRODUCTCLASSNAME,
                         lookupTypeId = data.PRODUCTCLASSTYPEID,
-                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME
+                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
+                        businessUnitName = data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        businessUnitId = data.BUSINESSUNITID,
+
                     });
         }
         public ProductBehaviourViewModel GetProductBehaviour(int productId)
@@ -613,7 +624,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                    expiryPeriod = data.EXPIRYPERIOD,
                                    scheduleTypeId = data.SCHEDULETYPEID,
                                    usedByLos = data.USEDBYLOS,
-                                   penalChargeRate = data.PENALCHARGERATE
+                                   penalChargeRate = data.PENALCHARGERATE,
 
                                });
             var Productdata = productData.ToList();
@@ -3157,7 +3168,10 @@ namespace FintrakBanking.Repositories.Setups.General
                             productClassProcessId = p.PRODUCT_CLASS_PROCESSID,
                             productClassProcess = p.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESS_NAME,
                             customerTypeId = p.CUSTOMERTYPEID,
-                            customerType = p.TBL_CUSTOMER_TYPE.NAME
+                            customerType = p.TBL_CUSTOMER_TYPE.NAME,
+                            profileBusinessUnitName = p.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                            profileBusinessUnitId = p.BUSINESSUNITID,
+
                         }).ToList();
             return data;
         }
@@ -3178,6 +3192,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             productClass.PRODUCTCLASSTYPEID = model.productClassTypeId;
                             productClass.PRODUCT_CLASS_PROCESSID = model.productClassProcessId;
                             productClass.CUSTOMERTYPEID = model.customerTypeId;
+                            productClass.BUSINESSUNITID = model.profileBusinessUnitId;
                         }
                     }
                     else

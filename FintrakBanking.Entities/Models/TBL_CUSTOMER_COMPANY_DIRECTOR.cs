@@ -31,6 +31,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string MIDDLENAME { get; set; }
 
+        public string GENDER { get; set; }
+
+        public int? MARITALSTATUSID { get; set; }
+
         public short CUSTOMERTYPEID { get; set; }
 
         public short COMPANYDIRECTORTYPEID { get; set; }
@@ -62,6 +66,8 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(50)]
         public string TAX_NUMBER { get; set; }
+
+        public DateTime? DATEOFBIRTH { get; set; }
 
         public int CREATEDBY { get; set; }
 
