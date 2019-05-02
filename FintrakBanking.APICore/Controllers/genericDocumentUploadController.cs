@@ -9,7 +9,6 @@ using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using System.Threading.Tasks;
-using FintrakBanking.Interfaces.Media;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -18,7 +17,6 @@ namespace FintrakBanking.APICore.Controllers
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         private ILoanDocumentRepository repo;
-        private IDocumentArchiveRepository archive;
 
         public GenericDocumentUploadController(ILoanDocumentRepository repo)
         {
