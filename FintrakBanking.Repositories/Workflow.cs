@@ -954,12 +954,16 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             bool validity = false;
             bool flagChecked = false;
-
             bool limitChecked = false;
-            if ((rule.MINIMUMAMOUNT > 0) && (rule.MINIMUMAMOUNT < levelBusinessRule.Amount)) limitChecked = true;
-            if ((rule.MAXIMUMAMOUNT > 0) && (levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) limitChecked = true;
-            if ((rule.MINIMUMAMOUNT > 0 && rule.MAXIMUMAMOUNT > 0) && (rule.MINIMUMAMOUNT < levelBusinessRule.Amount && levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) limitChecked = true;
-            if ((rule.PEPAMOUNT > 0) && (rule.PEPAMOUNT <= levelBusinessRule.PepAmount)) limitChecked = true;
+            decimal pepAmount = rule.PEPAMOUNT ?? 0;
+            decimal minimumAmount = rule.MINIMUMAMOUNT ?? 0;
+            decimal maximumAmount = rule.MAXIMUMAMOUNT ?? 0;
+
+            if ((minimumAmount > 0 && maximumAmount == 0) && (minimumAmount < levelBusinessRule.Amount)) limitChecked = true;
+            if ((minimumAmount == 0 && maximumAmount > 0) && (levelBusinessRule.Amount <= maximumAmount)) limitChecked = true;
+            if ((minimumAmount > 0 && maximumAmount > 0) && (minimumAmount < levelBusinessRule.Amount && levelBusinessRule.Amount <= maximumAmount)) limitChecked = true;
+
+            if ((rule.PEP && pepAmount > 0) && (pepAmount <= levelBusinessRule.PepAmount)) limitChecked = true;
 
             if (rule.PEP && levelBusinessRule.Pep == true) flagChecked = true;
             if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == true) flagChecked = true;

@@ -21,7 +21,9 @@ namespace FintrakBanking.ViewModels.Setups.General
         public List<UserGroup> userGroup { get; set; }
         public List<UserActivities> activities { get; set; }
 
-       
+
+        public List<int> userGroupIds { get; set; }
+        public List<int> activitieIds { get; set; }
     }
     
 }

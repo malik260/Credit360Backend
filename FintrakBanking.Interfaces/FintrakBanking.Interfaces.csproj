@@ -85,6 +85,7 @@
     <Compile Include="Credit\IFacilityDetailSummary.cs" />
     <Compile Include="Credit\ILaonCamSolRepository.cs" />
     <Compile Include="Credit\IMemorandumRepository.cs" />
+    <Compile Include="Media\IDocumentArchiveRepository.cs" />
     <Compile Include="Setups\Credit\ICrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\IFXAccountCreationRepository.cs" />
     <Compile Include="Setups\Finance\ICustomChartOfAccountRepository.cs" />

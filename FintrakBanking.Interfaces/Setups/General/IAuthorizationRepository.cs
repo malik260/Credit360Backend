@@ -19,6 +19,9 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<Object> GetActivitiesByGroupId(int grpId);
 
+        IEnumerable<Object> GetActivitiesByRoleId(int roleId);
+        IEnumerable<Object> GetGroupsByRoleId(int roleId);
+
         Task<bool> AddActivitiesToGroup(GroupViewModel model);
 
         //bool AddActivitiesToGroup(GroupViewModel model);

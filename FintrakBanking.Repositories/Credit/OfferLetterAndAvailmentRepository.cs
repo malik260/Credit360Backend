@@ -2252,14 +2252,15 @@ namespace FintrakBanking.Repositories.Credit
                 //{
                     int staffId = model.createdBy;
                     int? receiverLevelId = null;
+                    int? productClassId = null; // appl.PRODUCTCLASSID <-------------- was this in fbn
 
-                    receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.LoanAvailment, appl.PRODUCTCLASSID, true);
+                    receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.LoanAvailment, productClassId, true); // appl.PRODUCTCLASSID
 
                     workflow.StaffId = staffId;
                     workflow.NextLevelId = receiverLevelId; // BREAKING!
 
                     workflow.OperationId = (int)OperationsEnum.LoanAvailment;
-                    workflow.ProductClassId = appl.PRODUCTCLASSID;
+                    workflow.ProductClassId = productClassId;
                     workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                     workflow.Comment = "Offer letter approved";
                     workflow.DeferredExecution = true;
@@ -2306,7 +2307,7 @@ namespace FintrakBanking.Repositories.Credit
             return count == 0;
         }
 
-        private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        private int? GetFirstReceiverLevel(int staffId, int operationId, int? productClassId, bool next = false)
         {
             var staff = context.TBL_STAFF.Find(staffId);
 
