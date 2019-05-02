@@ -29,6 +29,20 @@ namespace FintrakBanking.Entities.Models
 
         public int? EMPLOYERSTATEID { get; set; }
 
+        public int? YEAROFEMPLOYMENT { get; set; }
+
+        public int? TOTALWORKINGEXPERIENCE { get; set; }
+
+        public int? YEARSOFCURRENTEMPLOYMENT { get; set; }
+
+        public decimal? TERMINALBENEFITS { get; set; }
+
+        public decimal? ANNUALINCOME { get; set; }
+
+        public decimal? MONTHLYINCOME { get; set; }
+
+        public decimal? EXPENDITURE { get; set; }
+
         public int EMPLOYERCOUNTRYID { get; set; }
 
         [Required]

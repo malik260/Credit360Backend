@@ -130,7 +130,18 @@ namespace FintrakBanking.Repositories.Customer
                 ISPROSPECT = entity.isProspect,
                 CRMSCOMPANYSIZEID = entity.crmsCompanySizeId,
                 CRMSLEGALSTATUSID = entity.crmsLegalStatusId,
-                CRMSRELATIONSHIPTYPEID = entity.crmsRelationshipTypeId
+                CRMSRELATIONSHIPTYPEID = entity.crmsRelationshipTypeId,
+                COUNTRYOFRESIDENTID = entity.countryOfResidentId,
+                NUMBEROFDEPENDENTS = entity.numberOfDependents,
+                NUMBEROFLOANSTAKEN = entity.numberOfLoansTaken,
+                MONTHLYLOANREPAYMENT =entity.loanMonthlyRepaymentFromOtherBanks,
+                DATEOFRELATIONSHIPWITHBANK = entity.dateOfRelationshipWithBank,
+                RELATIONSHIPTYPEID =entity.relationshipTypeId,
+                TEAMLDR = entity.teamLDP,
+                TEAMNPL = entity.teamNPL,
+                CORR = entity.corr,
+                PASTDUEOBLIGATIONS =entity.pastDueObligations,
+                BUSINESSUNTID = entity.businessUnitId
             };
             context.TBL_CUSTOMER.Add(customer);
 
@@ -186,6 +197,7 @@ namespace FintrakBanking.Repositories.Customer
                 address.HOMETOWN = ent.homeTown;
                 address.POBOX = ent.pobox;
                 address.STATEID = ent.stateId;
+                address.LOCALGOVERNMENTID = ent.localGovernmentId;
 
                 context.TBL_CUSTOMER_ADDRESS.Add(address);
 
@@ -201,7 +213,7 @@ namespace FintrakBanking.Repositories.Customer
                     TBL_CUSTOMER_ADDRESS address;
                     // if (entity.addressId != 0 || entity.addressId < 0)  //Check if record is new or modified record
                     // {
-                    address = context.TBL_CUSTOMER_ADDRESS.Find(entity.addressId);
+                    address = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x=>x.ADDRESSID==entity.addressId);
                     var accountCompleted = context.TBL_CUSTOMER.Find(entity.customerId).ACCOUNTCREATIONCOMPLETE;
                     entity.homeTown = context.TBL_CITY.Where(x=>x.CITYID == entity.cityId).Select(m=>m.CITYNAME).FirstOrDefault();
                     //If Customer main table ACCOUNTCREATIONCOMPLETE column equal false and entity.canModified equal true, record insert directly to the main table 
@@ -217,6 +229,7 @@ namespace FintrakBanking.Repositories.Customer
                         address.STATEID = entity.stateId;
                         address.ELECTRICMETERNUMBER = entity.electricMeterNumber;
                         address.NEARESTLANDMARK = entity.nearestLandmark;
+                        address.LOCALGOVERNMENTID = entity.localGovernmentId;
                     }
                     else if (address == null && accountCompleted == false)
                     {
@@ -232,6 +245,8 @@ namespace FintrakBanking.Repositories.Customer
                         address.STATEID = entity.stateId;
                         address.ELECTRICMETERNUMBER = entity.electricMeterNumber;
                         address.NEARESTLANDMARK = entity.nearestLandmark;
+                        address.LOCALGOVERNMENTID = entity.localGovernmentId;
+
                         context.TBL_CUSTOMER_ADDRESS.Add(address);
                     }
                     else //If customer main table AccountCreationCompleted equals true then save record in temp table
@@ -272,7 +287,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.NEARESTLANDMARK = entity.nearestLandmark;
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+                            temp.LOCALGOVERNMENTID = entity.localGovernmentId;
                             modifiedTargetId = temp.TEMPADDRESSID;
+
                         }
                         else //if customer address information has no existing record being modified and approved, insert new row
                         {
@@ -294,6 +311,7 @@ namespace FintrakBanking.Repositories.Customer
                             temp.DATETIMECREATED = DateTime.Now;
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+                            temp.LOCALGOVERNMENTID = entity.localGovernmentId;
                             context.TBL_TEMP_CUSTOMER_ADDRESS.Add(temp);
                         }
 
@@ -880,6 +898,9 @@ namespace FintrakBanking.Repositories.Customer
                             company.PAIDUPCAPITAL = entity.paidUpCapital;
                             company.AUTHORISEDCAPITAL = entity.authorizedCapital;
                             company.SHAREHOLDER_FUND = entity.shareholderFund;
+                            company.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
+                            company.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
+                            company.COMPANYSTRUCTURE = entity.companyStructure;
                         }
                         else //If customer main table AccountCreationCompleted equals true then save record in temp table
                         {
@@ -905,6 +926,9 @@ namespace FintrakBanking.Repositories.Customer
                                 temp.SHAREHOLDER_FUND = entity.shareholderFund;
                                 temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                                 temp.ISCURRENT = true;
+                                temp.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
+                                temp.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
+                                temp.COMPANYSTRUCTURE = entity.companyStructure;
                             }
                             else //if customer company information has no existing record being modified and approved, insert new row
                             {
@@ -924,6 +948,9 @@ namespace FintrakBanking.Repositories.Customer
                                 temp.DATETIMECREATED = DateTime.Now;
                                 temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                                 temp.ISCURRENT = true;
+                                temp.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
+                                temp.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
+                                temp.COMPANYSTRUCTURE = entity.companyStructure;
 
                                 context.TBL_TEMP_CUSTOMER_COMPANYINFO.Add(temp);
                             }
@@ -984,6 +1011,9 @@ namespace FintrakBanking.Repositories.Customer
                         company.PAIDUPCAPITAL = entity.paidUpCapital;
                         company.AUTHORISEDCAPITAL = entity.authorizedCapital;
                         company.SHAREHOLDER_FUND = entity.shareholderFund;
+                        company.NUMBEROFEMPLOYEES = entity.numberOfEmployees;
+                        company.COUNTRYOFPARENTCOMPANYID = entity.countryOfParentCompanyId;
+                        company.COMPANYSTRUCTURE = entity.companyStructure;
                         context.TBL_CUSTOMER_COMPANYINFOMATION.Add(company);
 
                     }
@@ -1031,6 +1061,9 @@ namespace FintrakBanking.Repositories.Customer
                 info.REGISTRATIONNUMBER = ent.registrationNumber;
                 // info.paidUpCapital = ent.PaidUpCapital;
                 //info.authorizedCapital = ent.AuthorisedCapital;
+                info.NUMBEROFEMPLOYEES = ent.numberOfEmployees;
+                info.COUNTRYOFPARENTCOMPANYID = ent.countryOfParentCompanyId;
+                info.COMPANYSTRUCTURE = ent.companyStructure;
                 context.TBL_CUSTOMER_COMPANYINFOMATION.Add(info);
 
                 // Audit Section ---------------------------
@@ -1072,6 +1105,9 @@ namespace FintrakBanking.Repositories.Customer
                     info.CUSTOMERID = ent.customerId;
                     info.REGISTEREDOFFICE = ent.registeredOffice;
                     info.REGISTRATIONNUMBER = ent.registrationNumber;
+                    info.NUMBEROFEMPLOYEES = ent.numberOfEmployees;
+                    info.COUNTRYOFPARENTCOMPANYID = ent.countryOfParentCompanyId;
+                    info.COMPANYSTRUCTURE = ent.companyStructure;
                 }
             }
 
@@ -1129,7 +1165,8 @@ namespace FintrakBanking.Repositories.Customer
                                         EMAILADDRESS = item.email,
                                         CREATEDBY = entity.createdBy,
                                         DATECREATED = DateTime.Now,
-                                        DELETED = false
+                                        DELETED = false,
+                                        
                                     };
                                     beneficialList.Add(beneficial);
                                 }
@@ -1183,6 +1220,9 @@ namespace FintrakBanking.Repositories.Customer
                         directors.REGISTRATION_NUMBER = entity.rcNumber;
                         directors.TAX_NUMBER = entity.taxNumber;
                         directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
+                        directors.GENDER = entity.gender;
+                        directors.MARITALSTATUSID = entity.maritalStatusId;
+                        directors.DATEOFBIRTH = entity.dateOfBirth;
                         if (entity.isPoliticallyExposed == true)
                         {
                             if (CustomerRec.ISPOLITICALLYEXPOSED == false)
@@ -1213,6 +1253,10 @@ namespace FintrakBanking.Repositories.Customer
                         directors.TAX_NUMBER = entity.taxNumber;
                         directors.SHAREHOLDINGPERCENTAGE = entity.numberOfShares;
                         directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
+                        directors.GENDER = entity.gender;
+                        directors.MARITALSTATUSID = entity.maritalStatusId;
+                        directors.DATEOFBIRTH = entity.dateOfBirth;
+
                         if (entity.isPoliticallyExposed == true)
                         {
                             if (CustomerRec.ISPOLITICALLYEXPOSED == false)
@@ -1278,6 +1322,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.EMAILADDRESS = entity.email;
                             temp.CREATEDBY = entity.createdBy;
                             temp.DATECREATED = DateTime.Now;
+                            temp.GENDER = entity.gender;
+                            temp.MARITALSTATUSID = entity.maritalStatusId;
+                            temp.DATEOFBIRTH = entity.dateOfBirth;
                             // temp.TBL_TEMP_COMPANY_BENEFICIA = beneficialList;
 
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
@@ -1307,6 +1354,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.DATECREATED = DateTime.Now;
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+                            temp.GENDER = entity.gender;
+                            temp.MARITALSTATUSID = entity.maritalStatusId;
+                            temp.DATEOFBIRTH = entity.dateOfBirth;
                             context.TBL_TEMP_CUSTOMER_DIRECTOR.Add(temp);
 
                         }
@@ -1475,6 +1525,13 @@ namespace FintrakBanking.Repositories.Customer
                 history.EMPLOYERNAME = ent.employerName;
                 history.OFFICEPHONE = ent.officePhone;
                 history.PREVIOUSEMPLOYER = ent.previousEmployer;
+                history.YEAROFEMPLOYMENT = ent.yearOfEmployment;
+                history.TOTALWORKINGEXPERIENCE = ent.totalWorkingExperience;
+                history.YEARSOFCURRENTEMPLOYMENT = ent.yearsOfCurrentEmployment;
+                history.TERMINALBENEFITS = ent.terminalBenefits;
+                history.ANNUALINCOME = ent.annualIncome;
+                history.MONTHLYINCOME = ent.monthlyIncome;
+                history.EXPENDITURE = ent.expenditure;
                 context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Add(history);
             }
         }
@@ -1737,6 +1794,13 @@ namespace FintrakBanking.Repositories.Customer
                         history.EMPLOYERNAME = entity.employerName;
                         history.OFFICEPHONE = entity.officePhone;
                         history.PREVIOUSEMPLOYER = entity.previousEmployer;
+                        history.YEAROFEMPLOYMENT = entity.yearOfEmployment;
+                        history.TOTALWORKINGEXPERIENCE = entity.totalWorkingExperience;
+                        history.YEARSOFCURRENTEMPLOYMENT = entity.yearsOfCurrentEmployment;
+                        history.TERMINALBENEFITS = entity.terminalBenefits;
+                        history.ANNUALINCOME = entity.annualIncome;
+                        history.MONTHLYINCOME = entity.monthlyIncome;
+                        history.EXPENDITURE = entity.expenditure;
                         context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Add(history);
                     }
                     else //If customer main table AccountCreationCompleted equals true then save record in temp table
@@ -1806,6 +1870,13 @@ namespace FintrakBanking.Repositories.Customer
                             temp.PREVIOUSEMPLOYER = entity.previousEmployer;
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+                            temp.YEAROFEMPLOYMENT = entity.yearOfEmployment;
+                            temp.TOTALWORKINGEXPERIENCE = entity.totalWorkingExperience;
+                            temp.YEARSOFCURRENTEMPLOYMENT = entity.yearsOfCurrentEmployment;
+                            temp.TERMINALBENEFITS = entity.terminalBenefits;
+                            temp.ANNUALINCOME = entity.annualIncome;
+                            temp.MONTHLYINCOME = entity.monthlyIncome;
+                            temp.EXPENDITURE = entity.expenditure;
                             context.TBL_TEMP_CUSTOMEREMPLOYMENT.Add(temp);
                         }
 
@@ -2374,7 +2445,10 @@ namespace FintrakBanking.Repositories.Customer
                                    customerName = s.FIRSTNAME + " " + s.SURNAME,
                                    address = s.ADDRESS,
                                    phoneNumber = s.PHONENUMBER,
-                                   email = s.EMAILADDRESS
+                                   email = s.EMAILADDRESS,
+                                   dateOfBirth = s.DATEOFBIRTH,
+                                   gender = s.GENDER,
+                                   maritalStatusId = s.MARITALSTATUSID
                                }).ToList(),
                            CustomerCompanyShareholder = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s =>
                                    s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID ==
@@ -2424,7 +2498,7 @@ namespace FintrakBanking.Repositories.Customer
                 middleName = a.MIDDLENAME,
                 //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                 customerTypeName =
-                    a.TBL_CUSTOMER_TYPE
+                a.TBL_CUSTOMER_TYPE
                         .NAME, // context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                 misCode = a.MISCODE,
                 misStaff = a.MISSTAFF,
@@ -2447,8 +2521,20 @@ namespace FintrakBanking.Repositories.Customer
                 crmsCompanySizeId = (int)a.CRMSCOMPANYSIZEID,
                 // riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                 customerBVN = a.CUSTOMERBVN,
-                isProspect = a.ISPROSPECT
-            });
+                isProspect = a.ISPROSPECT,
+                pastDueObligations = a.PASTDUEOBLIGATIONS,
+                countryOfResidentId = a.COUNTRYOFRESIDENTID,
+                numberOfDependents = a.NUMBEROFDEPENDENTS,
+                numberOfLoansTaken = a.NUMBEROFLOANSTAKEN,
+                loanMonthlyRepaymentFromOtherBanks = a.MONTHLYLOANREPAYMENT,
+                dateOfRelationshipWithBank = a.DATEOFRELATIONSHIPWITHBANK,
+                relationshipTypeId = a.RELATIONSHIPTYPEID,
+                teamLDP = a.TEAMLDR,
+                teamNPL =a.TEAMNPL,
+                businessUnitId = a.BUSINESSUNTID,
+                corr = a.CORR,
+ 
+        });
         }
 
         public IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId)
@@ -2654,6 +2740,17 @@ namespace FintrakBanking.Repositories.Customer
                     customer.CUSTOMERBVN = entity.customerBVN;
                     customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                     customer.ISCURRENT = true;
+                    customer.COUNTRYOFRESIDENTID = entity.countryOfResidentId;
+                    customer.NUMBEROFDEPENDENTS = entity.numberOfDependents;
+                    customer.NUMBEROFLOANSTAKEN = entity.numberOfLoansTaken;
+                    customer.MONTHLYLOANREPAYMENT = entity.loanMonthlyRepaymentFromOtherBanks;
+                    customer.DATEOFRELATIONSHIPWITHBANK = entity.dateOfRelationshipWithBank;
+                    customer.RELATIONSHIPTYPEID = entity.relationshipTypeId;
+                    customer.TEAMLDR = entity.teamLDP;
+                    customer.TEAMNPL = entity.teamNPL;
+                    customer.CORR = entity.corr;
+                    customer.BUSINESSUNTID = entity.businessUnitId;
+                    customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
                 }
                 else
                 {
@@ -2694,6 +2791,17 @@ namespace FintrakBanking.Repositories.Customer
                     customer.DATETIMECREATED = DateTime.Now;
                     customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                     customer.ISCURRENT = true;
+                    customer.COUNTRYOFRESIDENTID = entity.countryOfResidentId;
+                    customer.NUMBEROFDEPENDENTS = entity.numberOfDependents;
+                    customer.NUMBEROFLOANSTAKEN = entity.numberOfLoansTaken;
+                    customer.MONTHLYLOANREPAYMENT = entity.loanMonthlyRepaymentFromOtherBanks;
+                    customer.DATEOFRELATIONSHIPWITHBANK = entity.dateOfRelationshipWithBank;
+                    customer.RELATIONSHIPTYPEID = entity.relationshipTypeId;
+                    customer.TEAMLDR = entity.teamLDP;
+                    customer.TEAMNPL = entity.teamNPL;
+                    customer.CORR = entity.corr;
+                    customer.BUSINESSUNTID = entity.businessUnitId;
+                    customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
                     context.TBL_TEMP_CUSTOMER.Add(customer);
                 }
 
@@ -3163,8 +3271,11 @@ namespace FintrakBanking.Repositories.Customer
                               registrationNumber = d.REGISTRATIONNUMBER,
                               paidUpCapital = d.PAIDUPCAPITAL,
                               authorizedCapital = d.AUTHORISEDCAPITAL,
-                              shareholderFund = d.SHAREHOLDER_FUND
-                          }).FirstOrDefault();
+                              shareholderFund = d.SHAREHOLDER_FUND,
+                              numberOfEmployees = d.NUMBEROFEMPLOYEES,
+                              countryOfParentCompanyId =d.COUNTRYOFPARENTCOMPANYID,
+                              companyStructure = d.COMPANYSTRUCTURE,
+        }).FirstOrDefault();
             return comany;
         }
 
@@ -3183,7 +3294,10 @@ namespace FintrakBanking.Repositories.Customer
                                electricMeterNumber = x.ELECTRICMETERNUMBER,
                                pobox = x.POBOX,
                                stateId = x.STATEID,
+                               stateName = x.TBL_STATE.STATENAME,
                                addressId = x.ADDRESSID,
+                               localGovernmentId = x.LOCALGOVERNMENTID,
+                               localGovernmentName = x.TBL_LOCALGOVERNMENT.NAME,
                                active = x.ACTIVE
                            }).ToList();
             return address;
@@ -3205,8 +3319,10 @@ namespace FintrakBanking.Repositories.Customer
                                electricMeterNumber = x.ELECTRICMETERNUMBER,
                                pobox = x.POBOX,
                                stateId = x.STATEID,
+                               stateName = x.TBL_STATE.STATENAME,
                                addressId = x.ADDRESSID,
-                               active = x.ACTIVE
+                               active = x.ACTIVE,
+                               localGovernmentName = x.TBL_LOCALGOVERNMENT.NAME
                            }).ToList();
             return address;
         }
@@ -3290,7 +3406,15 @@ namespace FintrakBanking.Repositories.Customer
                                          employerCountryId = s.EMPLOYERCOUNTRYID,
                                          employerName = s.EMPLOYERNAME,
                                          officePhone = s.OFFICEPHONE,
-                                         employerStateId = s.EMPLOYERSTATEID
+                                         employerStateId = s.EMPLOYERSTATEID,
+                                         yearOfEmployment = s.YEAROFEMPLOYMENT,
+                                         totalWorkingExperience = s.TOTALWORKINGEXPERIENCE,
+                                         yearsOfCurrentEmployment = s.YEARSOFCURRENTEMPLOYMENT,
+                                         terminalBenefits = s.TERMINALBENEFITS,
+                                         annualIncome = s.ANNUALINCOME,
+                                         monthlyIncome = s.MONTHLYINCOME,
+                                         expenditure = s.EXPENDITURE
+
                                      }).ToList();
             return employmentHistory;
         }
@@ -3313,6 +3437,13 @@ namespace FintrakBanking.Repositories.Customer
                                          officePhone = s.OFFICEPHONE,
                                          employerStateId = s.EMPLOYERSTATEID,
                                          employerState = s.EMPLOYERSTATE,
+                                         yearOfEmployment = s.YEAROFEMPLOYMENT,
+                                         totalWorkingExperience = s.TOTALWORKINGEXPERIENCE,
+                                         yearsOfCurrentEmployment = s.YEARSOFCURRENTEMPLOYMENT,
+                                         terminalBenefits = s.TERMINALBENEFITS,
+                                         annualIncome = s.ANNUALINCOME,
+                                         monthlyIncome = s.MONTHLYINCOME,
+                                         expenditure =s.EXPENDITURE
                                      }).ToList();
             return employmentHistory;
         }
@@ -3342,6 +3473,9 @@ namespace FintrakBanking.Repositories.Customer
                                         address = s.ADDRESS,
                                         phoneNumber = s.PHONENUMBER,
                                         email = s.EMAILADDRESS,
+                                        dateOfBirth = s.DATEOFBIRTH,
+                                        gender = s.GENDER,
+                                        maritalStatusId = s.MARITALSTATUSID,
                                         customerCompanyBeneficial = context.TBL_CUSTOMER_COMPANY_BENEFICIA
                                             .Where(a => a.COMPANYDIRECTORID == s.COMPANYDIRECTORID && a.DELETED == false).Select(x =>
                                                 new CustomerCompanyBeneficiaryViewModels()
@@ -3387,6 +3521,9 @@ namespace FintrakBanking.Repositories.Customer
                                         address = s.ADDRESS,
                                         phoneNumber = s.PHONENUMBER,
                                         email = s.EMAILADDRESS,
+                                        dateOfBirth = s.DATEOFBIRTH,
+                                        gender = s.GENDER,
+                                        maritalStatusId = s.MARITALSTATUSID,
                                         customerCompanyBeneficial = context.TBL_CUSTOMER_COMPANY_BENEFICIA
                                             .Where(a => a.COMPANYDIRECTORID == s.COMPANYDIRECTORID && a.DELETED == false).Select(x =>
                                                 new CustomerCompanyBeneficiaryViewModels()
@@ -3434,6 +3571,9 @@ namespace FintrakBanking.Repositories.Customer
                                         address = s.ADDRESS,
                                         phoneNumber = s.PHONENUMBER,
                                         email = s.EMAILADDRESS,
+                                        dateOfBirth = s.DATEOFBIRTH,
+                                        gender = s.GENDER,
+                                        maritalStatusId = s.MARITALSTATUSID
                                     }).ToList();
             return companyDirectors;
         }
@@ -3467,6 +3607,9 @@ namespace FintrakBanking.Repositories.Customer
                                         address = s.ADDRESS,
                                         phoneNumber = s.PHONENUMBER,
                                         email = s.EMAILADDRESS,
+                                        dateOfBirth = s.DATEOFBIRTH,
+                                        gender = s.GENDER,
+                                        maritalStatusId = s.MARITALSTATUSID,
                                     }).ToList();
             return companyDirectors;
         }
@@ -4232,6 +4375,7 @@ namespace FintrakBanking.Repositories.Customer
                     entity.STATEID = temp.STATEID;
                     entity.ELECTRICMETERNUMBER = temp.ELECTRICMETERNUMBER;
                     entity.NEARESTLANDMARK = temp.NEARESTLANDMARK;
+                    entity.LOCALGOVERNMENTID = temp.LOCALGOVERNMENTID;
                     context.TBL_CUSTOMER_ADDRESS.Add(entity);
                 }
             }
@@ -4252,6 +4396,7 @@ namespace FintrakBanking.Repositories.Customer
                     entity.STATEID = temp.STATEID;
                     entity.ELECTRICMETERNUMBER = temp.ELECTRICMETERNUMBER;
                     entity.NEARESTLANDMARK = temp.NEARESTLANDMARK;
+                    entity.LOCALGOVERNMENTID = temp.LOCALGOVERNMENTID;
                 }
             }
 
@@ -4368,7 +4513,16 @@ namespace FintrakBanking.Repositories.Customer
                     entity.EMPLOYERNAME = temp.EMPLOYERNAME;
                     entity.OFFICEPHONE = temp.OFFICEPHONE;
                     entity.PREVIOUSEMPLOYER = temp.PREVIOUSEMPLOYER;
+                    entity.YEAROFEMPLOYMENT = temp.YEAROFEMPLOYMENT;
+                    entity.TOTALWORKINGEXPERIENCE = temp.TOTALWORKINGEXPERIENCE;
+                    entity.YEARSOFCURRENTEMPLOYMENT = temp.YEARSOFCURRENTEMPLOYMENT;
+                    entity.TERMINALBENEFITS = temp.TERMINALBENEFITS;
+                    entity.ANNUALINCOME = temp.ANNUALINCOME;
+                    entity.MONTHLYINCOME = temp.MONTHLYINCOME;
+                    entity.EXPENDITURE = temp.EXPENDITURE;
+
                     context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Add(entity);
+
                     var saved = context.SaveChanges() > 0;
                 }
             }
@@ -4390,6 +4544,13 @@ namespace FintrakBanking.Repositories.Customer
                     entity.EMPLOYERNAME = temp.EMPLOYERNAME;
                     entity.OFFICEPHONE = temp.OFFICEPHONE;
                     entity.PREVIOUSEMPLOYER = temp.PREVIOUSEMPLOYER;
+                    entity.YEAROFEMPLOYMENT = temp.YEAROFEMPLOYMENT;
+                    entity.TOTALWORKINGEXPERIENCE = temp.TOTALWORKINGEXPERIENCE;
+                    entity.YEARSOFCURRENTEMPLOYMENT = temp.YEARSOFCURRENTEMPLOYMENT;
+                    entity.TERMINALBENEFITS = temp.TERMINALBENEFITS;
+                    entity.ANNUALINCOME = temp.ANNUALINCOME;
+                    entity.MONTHLYINCOME = temp.MONTHLYINCOME;
+                    entity.EXPENDITURE = temp.EXPENDITURE;
                 }
             }
 
@@ -4653,6 +4814,9 @@ namespace FintrakBanking.Repositories.Customer
                     entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                     entity.SHAREHOLDINGPERCENTAGE = temp.SHAREHOLDINGPERCENTAGE;
                     entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
+                    entity.MARITALSTATUSID = temp.MARITALSTATUSID;
+                    entity.GENDER = temp.GENDER;
+                    entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                     if (temp.ISPOLITICALLYEXPOSED == true)
                     {
                         if (CustomerRec.ISPOLITICALLYEXPOSED == false)
@@ -4691,6 +4855,9 @@ namespace FintrakBanking.Repositories.Customer
                     entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                     entity.SHAREHOLDINGPERCENTAGE = temp.SHAREHOLDINGPERCENTAGE;
                     entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
+                    entity.MARITALSTATUSID = temp.MARITALSTATUSID;
+                    entity.GENDER = temp.GENDER;
+                    entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                     if (temp.ISPOLITICALLYEXPOSED == true)
                     {
                         if (CustomerRec.ISPOLITICALLYEXPOSED == false)
@@ -5019,6 +5186,17 @@ namespace FintrakBanking.Repositories.Customer
                 customer.DATETIMECREATED = customerMain.DATETIMECREATED;
                 customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 customer.ISCURRENT = true;
+                customer.COUNTRYOFRESIDENTID = entity.countryOfResidentId;
+                customer.NUMBEROFDEPENDENTS = entity.numberOfDependents;
+                customer.NUMBEROFLOANSTAKEN = entity.numberOfLoansTaken;
+                customer.MONTHLYLOANREPAYMENT = entity.loanMonthlyRepaymentFromOtherBanks;
+                customer.DATEOFRELATIONSHIPWITHBANK = entity.dateOfRelationshipWithBank;
+                customer.RELATIONSHIPTYPEID = entity.relationshipTypeId;
+                customer.TEAMLDR = entity.teamLDP;
+                customer.TEAMNPL = entity.teamNPL;
+                customer.CORR = entity.corr;
+                customer.BUSINESSUNTID = entity.businessUnitId;
+                customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
                 context.TBL_TEMP_CUSTOMER.Add(customer);
                 //try
                 //{

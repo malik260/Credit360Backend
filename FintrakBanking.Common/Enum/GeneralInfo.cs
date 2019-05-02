@@ -293,6 +293,10 @@ namespace FintrakBanking.Common.Enum
         BusinessRuleAdded = 271,
         BusinessRuleUpdated = 272,
         BusinessRuleDeleted = 273,
+        //new by Ifeanyi
+        TermSheetAdded = 274,
+        TermSheetUpdated = 275,
+        TermSheetDeleted = 276,
     };
     public enum RegulatoryTypeEnum
     {

@@ -496,7 +496,7 @@ namespace FintrakBanking.Repositories.Admin
                                       userId = a.USERID,
                                       activityParentId = context.TBL_PROFILE_ACTIVITY.Where(x => x.ACTIVITYID == a.ACTIVITYID).Select(g => g.ACTIVITYPARENTID).FirstOrDefault(),
                                       activityParentName = context.TBL_PROFILE_ACTIVITY_PARENT.Where(x => x.ACTIVITYPARENTID == context.TBL_PROFILE_ACTIVITY.Where(b => b.ACTIVITYID == a.ACTIVITYID).Select(g => g.ACTIVITYPARENTID).FirstOrDefault()).Select(p => p.ACTIVITYPARENTNAME).FirstOrDefault(),
-
+                                      expireOn = a.EXPIREON,
                                       selected = true,
                                   }).ToList();
                 data.activities = activities;

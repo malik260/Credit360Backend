@@ -39,6 +39,12 @@ namespace FintrakBanking.Entities.Models
 
         public decimal? AUTHORISEDCAPITAL { get; set; }
 
+        public int? NUMBEROFEMPLOYEES { get; set; }
+
+        public int? COUNTRYOFPARENTCOMPANYID { get; set; }
+
+        public string COMPANYSTRUCTURE { get; set; }
+
         //[Column(TypeName = "money")]
         public decimal? SHAREHOLDER_FUND { get; set; }
 

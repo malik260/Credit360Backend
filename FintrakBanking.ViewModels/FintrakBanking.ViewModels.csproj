@@ -133,6 +133,7 @@
     <Compile Include="Credit\OfferLetterViewModel.cs" />
     <Compile Include="Credit\StalledPerfectionViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
+    <Compile Include="Credit\TermSheetViewModel.cs" />
     <Compile Include="Credit\UnearnedLoanInterestReport.cs" />
     <Compile Include="Credit\UserCurrencyViewFilter.cs" />
     <Compile Include="Credit\WeeklyRecoveryReportFINCON.cs" />
@@ -224,6 +225,7 @@
     <Compile Include="Setups\General\MessageLogViewModel.cs" />
     <Compile Include="Setups\General\ProductChargeFeeViewModel.cs" />
     <Compile Include="Report\ProfileActivityReportViewModel.cs" />
+    <Compile Include="Setups\General\ProfileBusinessUnitViewModel.cs" />
     <Compile Include="Setups\General\PublicHolidayViewModel.cs" />
     <Compile Include="Setups\General\SectorViewModel.cs" />
     <Compile Include="Setups\General\CustomFieldsDataViewModel.cs" />

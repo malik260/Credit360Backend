@@ -13,6 +13,10 @@
         public int customerId { get; set; }
         public short addressTypeId { get; set; }
         public bool active { get; set; }
+        public string mailingAddress { get; set; }
+        public int? localGovernmentId { get; set; }
+        public string localGovernmentName { get; set; }
+        public string stateName { get; set; }
     }
 
 

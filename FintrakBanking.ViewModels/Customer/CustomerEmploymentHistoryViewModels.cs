@@ -15,7 +15,13 @@ namespace FintrakBanking.ViewModels.Customer
         public string previousEmployer { get; set; }
         public int customerId { get; set; }
         public bool active { get; set; }
-
+        public int? yearOfEmployment { get; set; }
+        public int? totalWorkingExperience { get; set; }
+        public int? yearsOfCurrentEmployment { get; set; }
+        public decimal? terminalBenefits { get; set; }
+        public decimal? annualIncome { get; set; }
+        public decimal? monthlyIncome { get; set; }
+        public decimal? expenditure { get; set; }
     }
 
 

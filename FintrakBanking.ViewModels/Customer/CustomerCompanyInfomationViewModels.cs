@@ -20,7 +20,9 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerCompanyDirectorsViewModels> companyDirectors { get; set; }
         public List<CustomerCompanyShareholdersViewModels> companyShareholders { get; set; }
         public List<CustomerCompanyAccountSignatoryViewModels> companyAccountSignatories { get; set; }
-
+        public int? numberOfEmployees { get; set; }
+        public int? countryOfParentCompanyId { get; set; }
+        public string companyStructure { get; set; }
     }
 
   

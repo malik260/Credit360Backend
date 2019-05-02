@@ -25,7 +25,15 @@ namespace FintrakBanking.ViewModels.Customer
         public string companyDirectorTypeName { get; set; }
         public string address { get; set; }
         public string phoneNumber { get; set; }
-
+        public int? countryOfResidentId { get; set; }
+        public int? numberOfDependents { get; set; }
+        public int? numberOfLoansTaken { get; set; }
+        public decimal? loanMonthlyRepaymentFromOtherBanks { get; set; }
+        public DateTime? dateOfRelationshipWithBank { get; set; }
+        public int? relationshipTypeId { get; set; }
+        public string teamLDP { get; set; }
+        public string teamNPL { get; set; }
+        public string corr { get; set; }
         public CustomerViewModels()
         {
             CustomerAddresses = new List<CustomerAddressViewModels>();
@@ -104,7 +112,8 @@ namespace FintrakBanking.ViewModels.Customer
         public List<CustomerSupplierViewModels> CustomerSupplier { get; set; }
         public List<CollateralViewModel> CustomerCollateral { get; set; }
         public List<CustomerChildrenViewModel> CustomerChildren { get; set; }
-
+        public int? businessUnitId { get; set; }
+        public decimal? pastDueObligations { get; set; }
     }
     public class CustomerInformationStagingViewModels
     {

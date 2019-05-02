@@ -113,6 +113,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string ADDRESSOFNOK { get; set; }
 
+        public int? BUSINESSUNITID { get; set; }
+
         [StringLength(1)]
         public string GENDEROFNOK { get; set; }
 
@@ -190,6 +192,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CITY TBL_CITY { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+
+        public virtual TBL_PROFILE_BUSINESS_UNIT TBL_PROFILE_BUSINESS_UNIT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }

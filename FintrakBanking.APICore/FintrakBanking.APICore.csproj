@@ -410,6 +410,7 @@
     <Compile Include="Controllers\RiskController.cs" />
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
+    <Compile Include="Controllers\TermSheetController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Filters\AdministratorLockoutFilter.cs" />
     <Compile Include="Filters\AuthorizeActivity.cs" />

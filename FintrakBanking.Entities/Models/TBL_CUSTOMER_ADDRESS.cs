@@ -16,6 +16,8 @@ namespace FintrakBanking.Entities.Models
 
         public int STATEID { get; set; }
 
+        public int? LOCALGOVERNMENTID { get; set; }
+
         public int CITYID { get; set; }
 
         public short ADDRESSTYPEID { get; set; }
@@ -41,5 +43,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
         public virtual TBL_CUSTOMER_ADDRESS_TYPE TBL_CUSTOMER_ADDRESS_TYPE { get; set; }
+        public virtual TBL_LOCALGOVERNMENT TBL_LOCALGOVERNMENT { get; set; }
+        public virtual TBL_STATE TBL_STATE { get; set; }
     }
 }

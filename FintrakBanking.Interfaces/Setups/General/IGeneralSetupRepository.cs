@@ -54,5 +54,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         List<int> GetRouteLevels(int operationId, int depth);
 
         IEnumerable<LookupViewModel> GetRegionByType(int regionTypeId);
+
+        IEnumerable<ProfileBusinessUnitViewModel> GetProfileBusinessUnits();
     }
 }
