@@ -297,6 +297,21 @@ namespace FintrakBanking.Common.Enum
         TermSheetAdded = 274,
         TermSheetUpdated = 275,
         TermSheetDeleted = 276,
+        DocumentUploadAdded = 277,
+        DocumentUploadDeleted = 278,
+        DocumentUploadUpdated = 279,
+        DocumentUsageAdded = 280,
+        DocumentUsageUpdated = 281,
+        DocumentUsageDeleted = 282,
+        DocumentCategoryAdded = 283,
+        DocumentCategoryUpdated = 284,
+        DocumentCategoryDeleted = 285,
+        DocumentCategoryTypeAdded = 286,
+        DocumentCategoryTypeUpdated = 287,
+        DocumentCategoryTypeDeleted = 288,
+        DocumentTypeAdded = 289,
+        DocumentTypeUpdated = 290,
+        DocumentTypeDeleted = 291,
     };
     public enum RegulatoryTypeEnum
     {
