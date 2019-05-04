@@ -44,6 +44,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
+
         [HttpPut]
         [ClaimsAuthorization]
         [Route("save-collateral-type-crms")]

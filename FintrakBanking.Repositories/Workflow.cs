@@ -183,6 +183,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.RESPONSESTAFFID = this.staffId;
             }
 
+            MakerCheckerControl();
+
             SendNotifications();
 
             SetResponseInformation();
@@ -214,6 +216,15 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.saved) return true;
 
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
+        }
+
+        private void MakerCheckerControl()
+        {
+            if (statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
+            {
+                var firstRequest = trailLog.OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
+                if (firstRequest.REQUESTSTAFFID == this.staffId) throw new SecureException("You cannot approve a process you initiated!");
+            }
         }
 
         private void SkipLevelByAmount()
