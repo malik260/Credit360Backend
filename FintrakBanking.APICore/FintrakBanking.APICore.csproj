@@ -335,6 +335,11 @@
     <Compile Include="Controllers\ApprovalLevelController.cs" />
     <Compile Include="Controllers\ApprovalLevelStaffController.cs" />
     <Compile Include="Controllers\BusinessRuleController.cs" />
+    <Compile Include="Controllers\DocumentCategoryController.cs" />
+    <Compile Include="Controllers\DocumentCategoryTypeController.cs" />
+    <Compile Include="Controllers\DocumentTypeController.cs" />
+    <Compile Include="Controllers\DocumentUploadController.cs" />
+    <Compile Include="Controllers\DocumentUsageController.cs" />
     <Compile Include="Controllers\FinacleIntegrationController.cs" />
     <Compile Include="Controllers\LoanFeeChargeController.cs" />
     <Compile Include="Controllers\ProfileSettingsController.cs" />
