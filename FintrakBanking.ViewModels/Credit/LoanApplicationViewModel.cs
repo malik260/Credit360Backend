@@ -178,6 +178,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         private string SlaStatus(float sla, int? elapse)
         {
+            if (sla == 0) return "success";
             if (elapse == 0 || elapse == null) return "success";
             float factor = (float)(elapse / sla) * 100;
             if (factor <= 30) return "success";

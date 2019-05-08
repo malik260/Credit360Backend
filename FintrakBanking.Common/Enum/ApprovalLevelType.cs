@@ -9,6 +9,6 @@ namespace FintrakBanking.Common.Enum
         Routing = 2,
         OperationSwitch = 3,
         CreditCommittee = 4,
-        SkipLevelByAmount = 5
+        ValidationChecks = 5
     }
 }

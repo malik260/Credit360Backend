@@ -125,9 +125,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupName = data.PRODUCTCLASSNAME,
                         lookupTypeId = data.PRODUCTCLASSTYPEID,
                         lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
-                        businessUnitName = data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
-                        businessUnitId = data.BUSINESSUNITID,
-
+                        // businessUnitName = data.BUSINESSUNITID == null ? "" : data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        // businessUnitId = data.BUSINESSUNITID,
                     });
         }
 
@@ -157,7 +156,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupName = data.PRODUCTCLASSNAME,
                         lookupTypeId = data.PRODUCTCLASSTYPEID,
                         lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
-                        businessUnitName = data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        businessUnitName = data.BUSINESSUNITID == null ? "" : data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
                         businessUnitId = data.BUSINESSUNITID,
 
                     });

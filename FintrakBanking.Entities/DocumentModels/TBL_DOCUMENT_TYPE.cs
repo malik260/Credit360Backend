@@ -1,10 +1,11 @@
-namespace FintrakBanking.Entities.Models
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.Spatial;
+
+namespace FintrakBanking.Entities.DocumentModels
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
 
     [Table("TBL_DOCUMENT_TYPE")]
     public partial class TBL_DOCUMENT_TYPE
@@ -12,11 +13,11 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int DOCUMENTTYPEID { get; set; }
 
+        public int DOCUMENTCATEGORYID { get; set; }
+
         [Required]
         [StringLength(250)]
         public string DOCUMENTTYPENAME { get; set; }
-
-        public string DESCRIPTION { get; set; }
 
         public bool DELETED { get; set; }
 
@@ -31,6 +32,10 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
+
+        public virtual ICollection<TBL_DOCUMENT_UPLOAD> TBL_DOCUMENT_UPLOAD { get; set; }
+
+        public virtual TBL_DOCUMENT_CATEGORY TBL_DOCUMENT_CATEGORY { get; set; }
 
     }
 }

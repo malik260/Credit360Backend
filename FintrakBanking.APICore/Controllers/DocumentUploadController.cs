@@ -2,6 +2,7 @@ using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Media;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    [RoutePrefix("api/v1/credit")] // TODO: modify!
+    [RoutePrefix("api/v1/document")] // TODO: modify!
     public class DocumentUploadController : ApiControllerBase
     {
         private IDocumentUploadRepository repo;
@@ -29,7 +30,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("document-upload")]
         public HttpResponseMessage GetDocumentUploads()
         {
-            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads();
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-upload/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetDocumentUploads(int operationId, int targetId)
+        {
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
@@ -57,23 +67,27 @@ namespace FintrakBanking.APICore.Controllers
             MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
             await Request.Content.ReadAsMultipartAsync(provider);
 
-            var issueDate = provider.FormData["issueDate"];
-            var expiryDate = provider.FormData["expiryDate"];
-
-            var entity = new DocumentUploadViewModel
-            {
-                fileName = provider.FormData["fileName"],
-                fileExtension = provider.FormData["fileExtension"],
-                fileSize = provider.FormData["fileSize"],
-            };
-
             if (!provider.FileStreams.Any())
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
             }
 
-           // if (issueDate != null) { entity.issueDate = Convert.ToDateTime(issueDate); }
-           // if (expiryDate != null) { entity.expiryDate = Convert.ToDateTime(expiryDate); }
+            var entity = new DocumentUploadViewModel
+            {
+                fileName = provider.FormData["fileName"],
+                fileExtension = provider.FormData["fileExtension"],
+                fileSize = Convert.ToInt32(provider.FormData["fileSize"]),
+                documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]),
+                issueDate = GetCulture(provider.FormData["issueDate"]),
+                expiryDate = GetCulture(provider.FormData["expiryDate"]),
+                targetReferenceNumber = provider.FormData["targetReferenceNumber"],
+                operationId = Convert.ToInt32(provider.FormData["operationId"]),
+                customerId = Convert.ToInt32(provider.FormData["customerId"]),
+                targetId = Convert.ToInt32(provider.FormData["targetId"]),
+                overwrite = provider.FormData["overwrite"] == "true",
+            };
+
+
             entity.userBranchId = (short)token.GetBranchId;
             entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
             entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -82,11 +96,19 @@ namespace FintrakBanking.APICore.Controllers
 
             var file = provider.Contents.FirstOrDefault();
             var buffer = await file.ReadAsByteArrayAsync();
-            var response = repo.AddDocumentUpload(entity, buffer);
+            int response = repo.AddDocumentUpload(entity, buffer);
 
 
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
+            if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
+        }
+
+        private DateTime? GetCulture(string dt)
+        {
+            if (String.IsNullOrEmpty(dt)) return null;
+            var actualDate = dt.Substring(0, 15);
+            return DateTime.ParseExact(actualDate, "ddd MMM dd yyyy", System.Globalization.CultureInfo.InvariantCulture);
         }
 
         [HttpPut]
@@ -121,6 +143,68 @@ namespace FintrakBanking.APICore.Controllers
             };
             bool response = repo.DeleteDocumentUpload(id,user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("document-download")]
+        //public HttpResponseMessage GetUploadedDocument(DocumentUploadViewModel model)
+        //{
+        //    DocumentUploadViewModel response = repo.GetUploadedDocument(model);
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //}
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-download/{documentId}")]
+        public HttpResponseMessage GetDocument(int documentId)
+        {
+            DocumentUploadViewModel data = repo.GetDocument(documentId);
+            if (data == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
+
+
+
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-type/category/{id}")]
+        public HttpResponseMessage GetDocumentTypes(int id)
+        {
+            IEnumerable<DocumentTypeViewModel> response = repo.GetDocumentTypes(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-category")]
+        public HttpResponseMessage GetDocumentCategories()
+        {
+            IEnumerable<DocumentCategoryViewModel> response = repo.GetDocumentCategories();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("customer-document")]
+        public HttpResponseMessage GetCustomerDocuments([FromBody] DocumentUploadViewModel model)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            CustomerDocumentSearchViewModel response = repo.GetCustomerDocuments(model,user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.documents.Count() });
         }
     }
 }

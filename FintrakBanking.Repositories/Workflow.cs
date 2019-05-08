@@ -152,12 +152,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
             }
 
-            if(request !=null)
-                CustomJump(request.TOAPPROVALLEVELID, request.FROMAPPROVALLEVELID);
+            if(request !=null) CustomJump(request.TOAPPROVALLEVELID, request.FROMAPPROVALLEVELID);
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
 
-            if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
+            // if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
 
             if (this.useOrganogram == true) toStaffId = GetReportingLineStaffId();
 
@@ -226,7 +225,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (firstRequest.REQUESTSTAFFID == this.staffId) throw new SecureException("You cannot approve a process you initiated!");
             }
         }
-
+/*
         private void SkipLevelByAmount()
         {
             if (next.MaximumAmount < amount) SkipToNextApprovalLevel();
@@ -256,7 +255,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.nextLevelId = level.ApprovalLevelId;
             this.slaInterval = level.SlaInterval;
             this.useOrganogram = level.RouteViaStaffOrganogram;
-        }
+        }*/
 
         private int? ResolveReroute(int? toStaffId)
         {

@@ -760,7 +760,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff.STAFFROLEID;
                 userInfo.businessUnitId = staff.BUSINESSUNITID;
-                userInfo.businessUnitName = staff.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME;
+                userInfo.businessUnitName = (staff.BUSINESSUNITID == null) ? String.Empty : staff.TBL_PROFILE_BUSINESS_UNIT?.BUSINESSUNITNAME;
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
                 profile.FAILEDLOGONATTEMPT = 0;

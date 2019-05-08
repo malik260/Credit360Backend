@@ -14,7 +14,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public string fileExtension { get; set; }
 
-        public string fileSize { get; set; }
+        public int fileSize { get; set; }
 
         public string fileSizeUnit { get; set; }
 
@@ -53,6 +53,29 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? documentStatusId { get; set; }
 
         public bool isPrimaryDocument { get; set; }
+        public string documentTypeName { get; set; }
+        public string documentCategoryName { get; set; }
+        public bool owner { get; set; }
 
+        public string fileSizeString { get {
+                string[] suf = { "B", "KB", "MB", "GB", "TB", "PB", "EB" }; //Longs run out around EB
+                if (fileSize == 0)
+                    return "0" + suf[0];
+                long bytes = Math.Abs(fileSize);
+                int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+                double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+                return (Math.Sign(fileSize) * num).ToString() + suf[place];
+            } }
+
+        public int operationId { get; set; }
+        public int customerId { get; set; }
+        public bool overwrite { get; set; }
+    }
+
+    public class CustomerDocumentSearchViewModel
+    {
+        public string customerName { get; set; }
+
+        public IEnumerable<DocumentUploadViewModel> documents { get; set; }
     }
 }

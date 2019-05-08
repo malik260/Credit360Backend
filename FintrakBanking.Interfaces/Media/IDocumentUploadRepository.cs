@@ -13,12 +13,18 @@ namespace FintrakBanking.Interfaces.Media
     {
         DocumentUploadViewModel GetDocumentUpload(int id);
 
-        IEnumerable<DocumentUploadViewModel> GetDocumentUploads();
+        IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId);
 
-        bool AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer);
+        int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer);
 
         bool UpdateDocumentUpload(DocumentUploadViewModel model, int id, UserInfo user);
 
         bool DeleteDocumentUpload(int id, UserInfo user);
+        DocumentUploadViewModel GetDocument(int documentId);
+        IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int getStaffId, int operationId, int targetId);
+        IEnumerable<DocumentCategoryViewModel> GetDocumentCategories();
+        IEnumerable<DocumentTypeViewModel> GetDocumentTypes(int id);
+        CustomerDocumentSearchViewModel GetCustomerDocuments(DocumentUploadViewModel model, UserInfo user);
+        //DocumentUploadViewModel GetUploadedDocument(DocumentUploadViewModel model);
     }
 }

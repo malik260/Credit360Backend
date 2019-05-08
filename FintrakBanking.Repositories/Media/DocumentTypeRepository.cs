@@ -12,19 +12,20 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Interfaces.Media;
+using FintrakBanking.Entities.DocumentModels;
 
 namespace FintrakBanking.Repositories.Media
 {
     public class DocumentTypeRepository : IDocumentTypeRepository
     {
-        private FinTrakBankingContext context;
+        private FinTrakBankingDocumentsContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private IAdminRepository admin;
         private IWorkflow workflow;
 
         public DocumentTypeRepository(
-                FinTrakBankingContext _context,
+                FinTrakBankingDocumentsContext _context,
                 IGeneralSetupRepository _general,
                 IAuditTrailRepository _audit,
                 IAdminRepository _admin,
@@ -72,20 +73,20 @@ namespace FintrakBanking.Repositories.Media
 
             context.TBL_DOCUMENT_TYPE.Add(entity);
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.DocumentTypeAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"TBL_Document Type '{entity.DESCRIPTION}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            });
-            // Audit Section end ------------------------
+            //var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            //// Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.DocumentTypeAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"TBL_Document Type '{entity.DESCRIPTION}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
+            //// Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
         }
@@ -98,21 +99,21 @@ namespace FintrakBanking.Repositories.Media
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.DocumentTypeUpdated,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_Document Type '{entity.DESCRIPTION}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.DOCUMENTTYPEID
-            });
-            // Audit Section end ------------------------
+            //var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            //// Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.DocumentTypeUpdated,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Document Type '{entity.DESCRIPTION}' was updated by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.DOCUMENTTYPEID
+            //});
+            //// Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
         }
@@ -124,21 +125,21 @@ namespace FintrakBanking.Repositories.Media
             entity.DELETEDBY = user.createdBy;
             entity.DATETIMEDELETED = general.GetApplicationDate();
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.DocumentTypeDeleted,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_Document Type '{entity.DESCRIPTION}' was deleted by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.DOCUMENTTYPEID
-            });
-            // Audit Section end ------------------------
+            //var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            //// Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.DocumentTypeDeleted,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Document Type '{entity.DESCRIPTION}' was deleted by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.DOCUMENTTYPEID
+            //});
+            //// Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
         }        
