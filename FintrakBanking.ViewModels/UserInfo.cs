@@ -25,6 +25,7 @@ namespace FintrakBanking.ViewModels
         public DateTime? lastLoginDate { get; set; }
         public string staffRole { get; set; }
         public int staffRoleId { get; set; }
+        public string businessUnitName { get; set; }
     }
 
 }

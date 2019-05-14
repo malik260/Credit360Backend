@@ -14,7 +14,8 @@ namespace FintrakBanking.ViewModels
         public double value { get; set; }
         public string description { get; set; }
         public bool? isVisible { get; set; }
-
+        public string businessUnitName { get; set; }
+        public int? businessUnitId { get; set; }
     }
     public class CurrencyRateCodeViewModel
     {

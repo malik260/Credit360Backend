@@ -163,6 +163,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              loanLimit = c.LOAN_LIMIT,
                              workStartDuration = c.WORKSTARTDURATION,
                              workEndDuration = c.WORKENDDURATION,
+                             businessUnitId =c.BUSINESSUNITID,
+                             businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
                          }).ToList();
 
             var department = (from k in context.TBL_DEPARTMENT_UNIT
@@ -235,6 +237,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              loanLimit = c.LOAN_LIMIT,
                              workStartDuration = c.WORKSTARTDURATION,
                              workEndDuration = c.WORKENDDURATION,
+                             businessUnitId = c.BUSINESSUNITID,
+                             businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
                          }).SingleOrDefault();
             return staff;
         }
@@ -405,6 +409,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.LOAN_LIMIT = staffModel.loanLimit;
                 tempStaffToUpdate.WORKSTARTDURATION = staffModel.workStartDuration;
                 tempStaffToUpdate.WORKENDDURATION = staffModel.workEndDuration;
+                tempStaffToUpdate.BUSINESSUNITID = staffModel.businessUnitId;
                 context.Entry(tempStaffToUpdate).State = EntityState.Modified;
             }
             else
@@ -448,7 +453,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         LOAN_LIMIT = staffModel.loanLimit,
                         ISCURRENT = true,
                         WORKSTARTDURATION = staffModel.workStartDuration,
-                        WORKENDDURATION = staffModel.workEndDuration
+                        WORKENDDURATION = staffModel.workEndDuration,
+                        BUSINESSUNITID = staffModel.businessUnitId,
                     };
                 }
                 catch (Exception ex)
@@ -571,7 +577,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 newTempStaff.DATEOFBIRTH = targetStaff.DATEOFBIRTH;
                 newTempStaff.CUSTOMERSENSITIVITYLEVELID = targetStaff.CUSTOMERSENSITIVITYLEVELID;
                 newTempStaff.OPERATION = "Delete";
-
+                newTempStaff.BUSINESSUNITID = targetStaff.BUSINESSUNITID;
                 context.TBL_TEMP_STAFF.Add(newTempStaff);
 
                 using (var trans = context.Database.BeginTransaction())
@@ -756,7 +762,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
                              departmentUnitId = c.DEPARTMENTUNITID,
                              departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
-
+                             businessUnitId = c.BUSINESSUNITID,
+                             businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
                              OperationId = (short)OperationsEnum.DeleteStaff,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION
                          }).ToList();
@@ -1155,6 +1162,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     LOAN_LIMIT = tempStaff.LOAN_LIMIT,
                     WORKSTARTDURATION = tempStaff.WORKSTARTDURATION,
                     WORKENDDURATION = tempStaff.WORKENDDURATION,
+                    BUSINESSUNITID = tempStaff.BUSINESSUNITID,
                 };
                 if (tempStaff.CUSTOMERSENSITIVITYLEVELID >= 1) targetStaff.CUSTOMERSENSITIVITYLEVELID = tempStaff.CUSTOMERSENSITIVITYLEVELID;
                 context.TBL_STAFF.Add(targetStaff);
@@ -1435,6 +1443,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     entity.LOAN_LIMIT = temp.LOAN_LIMIT;
                     entity.WORKSTARTDURATION = temp.WORKSTARTDURATION;
                     entity.WORKENDDURATION = temp.WORKENDDURATION;
+                    entity.BUSINESSUNITID = temp.BUSINESSUNITID;
                 }
                 else
                 {
@@ -1470,6 +1479,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         CITYID = temp.CITYID,
                         LOAN_LIMIT = temp.LOAN_LIMIT,
                         WORKSTARTDURATION = temp.WORKSTARTDURATION,
+                        BUSINESSUNITID = temp.BUSINESSUNITID,
                     WORKENDDURATION = temp.WORKENDDURATION
                 };
                     if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
@@ -1638,7 +1648,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 ISCURRENT = true,
                 WORKSTARTDURATION = staffModel.workStartDuration,
-                WORKENDDURATION = staffModel.workEndDuration
+                WORKENDDURATION = staffModel.workEndDuration,
+                BUSINESSUNITID = staffModel.businessUnitId
             };
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -1782,8 +1793,9 @@ namespace FintrakBanking.Repositories.Setups.General
                              departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
                              departmentUnitId = c.DEPARTMENTUNITID,
                              departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
-
+                             businessUnitId = c.BUSINESSUNITID,
                              OperationId = t.OPERATIONID,
+                             businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION
                          }).ToList();
 
@@ -1841,6 +1853,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         departmentUnitId = c.DEPARTMENTUNITID,
                         departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
                         ApprovalStatusId = c.APPROVALSTATUSID,
+                        businessUnitId = c.BUSINESSUNITID,
+                        businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
                         SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                     }).FirstOrDefault();
         }
@@ -1897,6 +1911,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
                             departmentUnitId = (short)c.DEPARTMENTUNITID,
                             departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
+                            businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                            businessUnitId = c.BUSINESSUNITID,
                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                             loanLimit = c.LOAN_LIMIT,
                         });
@@ -2359,6 +2375,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFSIGNATURE = staffModel.StaffSignature,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 ISCURRENT = true,
+                BUSINESSUNITID = staffModel.businessUnitId,
                 TBL_TEMP_PROFILE_USER = userInfo
             };
             // Audit Section ---------------------------
@@ -2571,6 +2588,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 CITYID = staff.CITYID,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 ISCURRENT = true,
+                BUSINESSUNITID = staff.BUSINESSUNITID
             });
 
             context.SaveChanges();

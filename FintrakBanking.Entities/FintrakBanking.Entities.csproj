@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
+    <Compile Include="DocumentModels\TBL_DOCUMENT_UPLOAD.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_RELEASE.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
     <Compile Include="DocumentModels\TBL_DOC_INVOICE.cs" />
@@ -88,9 +89,14 @@
     <Compile Include="Models\TBL_COLLATERAL_RELEASE_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_RELEASE_STATUS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_RELEASE.cs" />
+    <Compile Include="Models\TBL_DOCUMENT_CATEGORY.cs" />
+    <Compile Include="Models\TBL_DOCUMENT_CATEGORY_TYPE.cs" />
+    <Compile Include="Models\TBL_DOCUMENT_TYPE.cs" />
+    <Compile Include="Models\TBL_DOCUMENT_USAGE.cs" />
     <Compile Include="Models\TBL_JOB_SOURCE.cs" />
     <Compile Include="Models\TBL_APPROVAL_BUSINESS_RULE.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PAYMENT.cs" />
+    <Compile Include="Models\TBL_PROFILE_BUSINESS_UNIT.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_INDEMNITY.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_ISPO.cs" />

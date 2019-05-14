@@ -193,6 +193,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_EOD_OPERATION> TBL_EOD_OPERATION { get; set; }
         public virtual DbSet<TBL_EOD_OPERATION_LOG> TBL_EOD_OPERATION_LOG { get; set; }
         public virtual DbSet<TBL_EOD_STATUS> TBL_EOD_STATUS { get; set; }
+        public virtual DbSet<TBL_PROFILE_BUSINESS_UNIT> TBL_PROFILE_BUSINESS_UNIT { get; set; }
 
         public virtual DbSet<TBL_FEE_TYPE> TBL_FEE_TYPE { get; set; }
         public virtual DbSet<TBL_FINANCE_ENDOFDAY> TBL_FINANCE_ENDOFDAY { get; set; }
@@ -465,6 +466,10 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_REPRICING_MODE> TBL_LOAN_REPRICING_MODE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_RELEASE_DOC> TBL_COLLATERAL_RELEASE_DOC { get; set; }
         public virtual DbSet<TBL_TERM_SHEET> TBL_TERM_SHEET { get; set; }
+        public virtual DbSet<TBL_DOCUMENT_USAGE> TBL_DOCUMENT_USAGE { get; set; }
+        public virtual DbSet<TBL_DOCUMENT_CATEGORY_TYPE> TBL_DOCUMENT_CATEGORY_TYPE { get; set; }
+        public virtual DbSet<TBL_DOCUMENT_CATEGORY> TBL_DOCUMENT_CATEGORY { get; set; }
+        public virtual DbSet<TBL_DOCUMENT_TYPE> TBL_DOCUMENT_TYPE { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

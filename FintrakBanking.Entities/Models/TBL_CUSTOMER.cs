@@ -177,6 +177,28 @@ namespace FintrakBanking.Entities.Models
 
         public int? CRMSCOMPANYSIZEID { get; set; }
 
+        public int? BUSINESSUNTID { get; set; }
+
+        public int? COUNTRYOFRESIDENTID { get; set; }
+
+        public int? NUMBEROFDEPENDENTS { get; set; }
+
+        public int? NUMBEROFLOANSTAKEN { get; set; }
+
+        public decimal? MONTHLYLOANREPAYMENT { get; set; }
+
+        public DateTime? DATEOFRELATIONSHIPWITHBANK { get; set; }
+
+        public int? RELATIONSHIPTYPEID { get; set; }
+
+        public string TEAMLDR { get; set; }
+
+        public string TEAMNPL { get; set; }
+
+        public string CORR { get; set; }
+
+        public decimal? PASTDUEOBLIGATIONS { get; set; }
+
         public int? CRMSRELATIONSHIPTYPEID { get; set; }
         public string OFFERLETTERTITLE { get; set; }
         public string OFFERLETTERSALUTATION { get; set; }

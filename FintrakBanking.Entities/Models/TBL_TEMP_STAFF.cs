@@ -39,6 +39,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? JOBTITLEID { get; set; }
 
+        public int? BUSINESSUNITID { get; set; }
+
+
         public int STAFFROLEID { get; set; }
 
         [StringLength(100)]
@@ -134,5 +137,7 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PROFILE_USER> TBL_TEMP_PROFILE_USER { get; set; }
+
+        public virtual TBL_PROFILE_BUSINESS_UNIT TBL_PROFILE_BUSINESS_UNIT { get; set; }
     }
 }

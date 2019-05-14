@@ -36,6 +36,9 @@ namespace FintrakBanking.ViewModels.Customer
         public string phoneNumber { get; set; }
         public string email { get; set; }
         public List<CustomerCompanyBeneficiaryViewModels> customerCompanyBeneficial { get; set; }
+        public DateTime? dateOfBirth { get; set; }
+        public int? maritalStatusId { get; set; }
+        public string gender { get; set; }
     }
 
     public class CustomerCompanyBeneficiaryViewModels
