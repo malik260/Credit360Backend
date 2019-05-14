@@ -10,6 +10,10 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int termSheetId { get; set; }
 
+        public string termSheetCode { get; set; }
+
+        public int? customerId { get; set; }
+
         public string borrower { get; set; }
 
         public decimal facilityAmount { get; set; }

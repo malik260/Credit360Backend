@@ -23,6 +23,7 @@ using System.Web;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Entities.StagingModels;
 using System.Data.Entity.Validation;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -327,6 +328,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingTempUser.ISCURRENT = true;
                     existingTempUser.TBL_TEMP_PROFILE_ADTN_ACTIVITY = userActivities;
                     existingTempUser.TBL_TEMP_PROFILE_USERGROUP = userGroups;
+                    context.Entry(existingTempUser).State = EntityState.Modified;
                 }
             }
             else
@@ -403,6 +405,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.LOAN_LIMIT = staffModel.loanLimit;
                 tempStaffToUpdate.WORKSTARTDURATION = staffModel.workStartDuration;
                 tempStaffToUpdate.WORKENDDURATION = staffModel.workEndDuration;
+                context.Entry(tempStaffToUpdate).State = EntityState.Modified;
             }
             else
             {
@@ -836,6 +839,9 @@ namespace FintrakBanking.Repositories.Setups.General
             List<TBL_PROFILE_USERGROUP> userGroups = new List<TBL_PROFILE_USERGROUP>();
             List<TBL_PROFILE_ADDITIONALACTIVITY> userActivities = new List<TBL_PROFILE_ADDITIONALACTIVITY>();
 
+            TBL_STAFF targetStaff = null;
+            TBL_PROFILE_USER targetUser = null;
+
             tempUser = (from a in context.TBL_TEMP_PROFILE_USER
                         where a.TEMPSTAFFID == staffid && a.ISCURRENT == true &&
                         a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
@@ -850,80 +856,141 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempUser.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
             }
 
-            TBL_STAFF entity = null;
-            TBL_PROFILE_USER targetUser = null;
-            var temp = context.TBL_TEMP_STAFF.Find(staffid);
-            if (temp != null)
+            
+            var tempStaff = context.TBL_TEMP_STAFF.Find(staffid);
+            if (tempStaff != null)
             {
-                entity = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == temp.STAFFCODE.ToLower());
-                // Removing existing groups and activities
-                if (entity != null)
+                targetStaff = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == tempStaff.STAFFCODE.ToLower());
+                // handling groups and activities
+                if (targetStaff != null)
                 {
 
                     targetUser = (from a in context.TBL_PROFILE_USER
-                                  where a.STAFFID == entity.STAFFID
+                                  where a.STAFFID == targetStaff.STAFFID
                                   select a).FirstOrDefault();
-                    if (targetUser != null)
+                    if (targetUser != null) //to take care of the existing users groups and activities
                     {
                         var targetGroups = context.TBL_PROFILE_USERGROUP.Where(x => x.USERID == targetUser.USERID).ToList();
                         var targetActivities = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == targetUser.USERID).ToList();
-                        if (targetGroups.Any())
+                        if (targetGroups.Any()) //if user already has existing groups
                         {
-                            // var comparedGroup = targetGroups.Where(t1 => !tempGroup.Any(t2 => t1.GROUPID == t2.GROUPID));
-                            // foreach (var item in comparedGroup)
-                            foreach (var item in targetGroups)
+                            foreach (var item in tempGroup) //check for selected groups not already existing
                             {
-                                context.TBL_PROFILE_USERGROUP.Remove(item);
+                                if (!targetGroups.Exists(a => a.GROUPID == item.GROUPID)) //if selected group isn't existing
+                                {
+                                    var grpItem = new TBL_PROFILE_USERGROUP()
+                                    {
+                                        GROUPID = item.GROUPID,
+                                        APPROVALSTATUS = false,
+                                        DATETIMECREATED = DateTime.Now,
+                                        CREATEDBY = item.CREATEDBY,
+                                        USERID = targetUser.USERID
+                                    };
+                                    context.TBL_PROFILE_USERGROUP.Add(grpItem);
+                                }
+                            }
+                            foreach (var item in targetGroups)// handles already exisiting groups
+                            {
+                                if (tempGroup.Exists(a => a.GROUPID == item.GROUPID)) // if already existing group was selected to remain
+                                {
+                                    var group = context.TBL_PROFILE_USERGROUP.Find(item.USERGROUPID);
+                                    group.GROUPID = item.GROUPID;
+                                    group.APPROVALSTATUS = false;
+                                    group.DATETIMEUPDATED = DateTime.Now;
+                                    group.LASTUPDATEDBY = item.LASTUPDATEDBY;
+                                    context.Entry(group).State = EntityState.Modified;
+                                }
+                                else // if already existing group was deselected
+                                {
+                                    context.TBL_PROFILE_USERGROUP.Remove(item);
+                                }
                             }
                         }
-                        if (targetActivities.Any())
+                        else // if user has no existing groups AT ALL for the user
                         {
-                            // var comparedactivities = targetActivities.Where(t1 => !tempActivities.Any(t2 => t1.ACTIVITYID == t2.ACTIVITYID));
-                            // foreach (var item in comparedactivities)
-                            foreach (var item in targetActivities)
+                            foreach (var item in tempGroup)
                             {
-                                context.TBL_PROFILE_ADDITIONALACTIVITY.Remove(item);
+                                var grpItem = new TBL_PROFILE_USERGROUP()
+                                {
+                                    GROUPID = item.GROUPID,
+                                    APPROVALSTATUS = false,
+                                    DATETIMECREATED = DateTime.Now,
+                                    CREATEDBY = item.CREATEDBY,
+                                    USERID = targetUser.USERID
+                                };
+                                context.TBL_PROFILE_USERGROUP.Add(grpItem);
                             }
                         }
-                      context.SaveChanges();
+                        
+                        if (targetActivities.Any()) //if user already has existing additionalactivities
+                        {
+                            foreach (var item in tempActivities) //check for selected additionalactivities not already existing
+                            {
+                                if (!targetActivities.Exists(a => a.ACTIVITYID == item.ACTIVITYID)) //if selected additionalactivity isn't existing
+                                {
+                                    var userActivity = new TBL_PROFILE_ADDITIONALACTIVITY()
+                                    {
+                                        ACTIVITYID = item.ACTIVITYID,
+                                        CANADD = false,
+                                        CANEDIT = false,
+                                        CANAPPROVE = false,
+                                        CANDELETE = false,
+                                        CANVIEW = false,
+                                        CREATEDBY = item.CREATEDBY,
+                                        DATETIMECREATED = DateTime.Now,
+                                        EXPIREON = item.EXPIREON,
+                                        USERID = targetUser.USERID
+                                    };
+                                    context.TBL_PROFILE_ADDITIONALACTIVITY.Add(userActivity);
+                                }
+                            }
+                            foreach (var item in targetActivities)// handles already exisiting additionalactivities
+                            {
+                                if (tempActivities.Exists(a => a.ACTIVITYID == item.ACTIVITYID)) //if already existing additionalactivity was selected to remain
+                                {
+                                    var activity = context.TBL_PROFILE_ADDITIONALACTIVITY.Find(item.ADDITIONALACTIVITYID);
+                                    activity.ACTIVITYID = item.ACTIVITYID;
+                                    activity.CANADD = false;
+                                    activity.CANEDIT = false;
+                                    activity.CANAPPROVE = false;
+                                    activity.CANDELETE = false;
+                                    activity.CANVIEW = false;
+                                    activity.CREATEDBY = item.CREATEDBY;
+                                    activity.DATETIMECREATED = DateTime.Now;
+                                    activity.EXPIREON = item.EXPIREON;
+                                    context.Entry(activity).State = EntityState.Modified;
+                                }
+                                else // if already existing additionalactivity was deselected
+                                {
+                                    context.TBL_PROFILE_ADDITIONALACTIVITY.Remove(item);
+                                }
+                            }
+                        }
+                        else // if user has no existing additionalactivities AT ALL
+                        { 
+                            foreach (var item in tempActivities)
+                            {
+                                var userActivity = new TBL_PROFILE_ADDITIONALACTIVITY()
+                                {
+                                    ACTIVITYID = item.ACTIVITYID,
+                                    CANADD = false,
+                                    CANEDIT = false,
+                                    CANAPPROVE = false,
+                                    CANDELETE = false,
+                                    CANVIEW = false,
+                                    CREATEDBY = item.CREATEDBY,
+                                    DATETIMECREATED = DateTime.Now,
+                                    EXPIREON = item.EXPIREON,
+                                    USERID = targetUser.USERID
+                                };
+                                context.TBL_PROFILE_ADDITIONALACTIVITY.Add(userActivity);
+                            }
+                        }
+                        context.SaveChanges();
                     }
                 }
             }
 
-            if (tempActivities.Count > 0)
-            {
-                foreach (var item in tempActivities)
-                {
-                        var userActivity = new TBL_PROFILE_ADDITIONALACTIVITY()
-                        {
-                            ACTIVITYID = item.ACTIVITYID,
-                            CANADD = false,
-                            CANEDIT = false,
-                            CANAPPROVE = false,
-                            CANDELETE = false,
-                            CANVIEW = false,
-                            CREATEDBY = item.CREATEDBY,
-                            DATETIMECREATED = DateTime.Now,
-                            EXPIREON = item.EXPIREON
-                        };
-                        userActivities.Add(userActivity);
-                }
-            }
-
-            if (tempGroup.Count > 0)
-            {
-                foreach (var item in tempGroup)
-                {
-                        var grpItem = new TBL_PROFILE_USERGROUP()
-                        {
-                            GROUPID = item.GROUPID,
-                            APPROVALSTATUS = false,
-                            DATETIMECREATED = DateTime.Now,
-                            CREATEDBY = item.CREATEDBY,
-                        };
-                        userGroups.Add(grpItem);
-                }
-            }
             foreach (var item in tempGroup)
             {
                 item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
@@ -952,11 +1019,44 @@ namespace FintrakBanking.Repositories.Setups.General
                     targetUser.FAILEDLOGONATTEMPT = 0;
                     targetUser.SECURITYQUESTION = tempUser.SECURITYQUESTION;
                     targetUser.SECURITYANSWER = tempUser.SECURITYANSWER;
-                    targetUser.TBL_PROFILE_USERGROUP = userGroups;
-                    targetUser.TBL_PROFILE_ADDITIONALACTIVITY = userActivities;
+                    //targetUser.TBL_PROFILE_USERGROUP = userGroups;
+                    //targetUser.TBL_PROFILE_ADDITIONALACTIVITY = userActivities;
                 }
-                else
+                else //creates an entirely new user with all new groups, activities and additional activities
                 {
+                    if (tempGroup.Count > 0)
+                    {
+                        foreach (var item in tempGroup)
+                        {
+                            var grpItem = new TBL_PROFILE_USERGROUP()
+                            {
+                                GROUPID = item.GROUPID,
+                                APPROVALSTATUS = false,
+                                DATETIMECREATED = DateTime.Now,
+                                CREATEDBY = item.CREATEDBY,
+                            };
+                            userGroups.Add(grpItem);
+                        }
+                    }
+                    if (tempActivities.Count > 0)
+                    {
+                        foreach (var item in tempActivities)
+                        {
+                            var userActivity = new TBL_PROFILE_ADDITIONALACTIVITY()
+                            {
+                                ACTIVITYID = item.ACTIVITYID,
+                                CANADD = false,
+                                CANEDIT = false,
+                                CANAPPROVE = false,
+                                CANDELETE = false,
+                                CANVIEW = false,
+                                CREATEDBY = item.CREATEDBY,
+                                DATETIMECREATED = DateTime.Now,
+                                EXPIREON = item.EXPIREON
+                            };
+                            userActivities.Add(userActivity);
+                        }
+                    }
                     targetUser = new TBL_PROFILE_USER()
                     {
                         USERNAME = tempUser.USERNAME,
@@ -968,7 +1068,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         SECURITYQUESTION = tempUser.SECURITYQUESTION,
                         SECURITYANSWER = tempUser.SECURITYANSWER,
                         NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER),
-                    //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                        //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
                         CREATEDBY = tempUser.CREATEDBY,
                         LASTUPDATEDBY = tempUser.CREATEDBY,
                         DATETIMECREATED = tempUser.DATETIMECREATED,
@@ -982,90 +1082,90 @@ namespace FintrakBanking.Repositories.Setups.General
             }
 
 
-            if (entity != null) //Update existing staff with tempStaff record
+            if (targetStaff != null) //Update existing staff with tempStaff record
             {
 
-                entity.FIRSTNAME = temp.FIRSTNAME;
-                entity.COMPANYID = temp.COMPANYID;
-                entity.MIDDLENAME = temp.MIDDLENAME;
-                entity.LASTNAME = temp.LASTNAME;
-                entity.STAFFCODE = temp.STAFFCODE;
-                entity.JOBTITLEID = temp.JOBTITLEID;
-                entity.STAFFROLEID = temp.STAFFROLEID;
-                entity.SUPERVISOR_STAFFID = temp.SUPERVISOR_STAFFID;
-                entity.ADDRESS = temp.ADDRESS;
-                entity.ADDRESSOFNOK = temp.ADDRESSOFNOK;
-                entity.BRANCHID = temp.BRANCHID;
-                entity.COMMENT = temp.COMMENT;
-                entity.CREATEDBY = temp.CREATEDBY;
-                if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
-                entity.DATEOFBIRTH = temp.DATEOFBIRTH;
-                entity.DATETIMEUPDATED = DateTime.Now;
+                targetStaff.FIRSTNAME = tempStaff.FIRSTNAME;
+                targetStaff.COMPANYID = tempStaff.COMPANYID;
+                targetStaff.MIDDLENAME = tempStaff.MIDDLENAME;
+                targetStaff.LASTNAME = tempStaff.LASTNAME;
+                targetStaff.STAFFCODE = tempStaff.STAFFCODE;
+                targetStaff.JOBTITLEID = tempStaff.JOBTITLEID;
+                targetStaff.STAFFROLEID = tempStaff.STAFFROLEID;
+                targetStaff.SUPERVISOR_STAFFID = tempStaff.SUPERVISOR_STAFFID;
+                targetStaff.ADDRESS = tempStaff.ADDRESS;
+                targetStaff.ADDRESSOFNOK = tempStaff.ADDRESSOFNOK;
+                targetStaff.BRANCHID = tempStaff.BRANCHID;
+                targetStaff.COMMENT = tempStaff.COMMENT;
+                targetStaff.CREATEDBY = tempStaff.CREATEDBY;
+                if (tempStaff.CUSTOMERSENSITIVITYLEVELID >= 1) targetStaff.CUSTOMERSENSITIVITYLEVELID = tempStaff.CUSTOMERSENSITIVITYLEVELID;
+                targetStaff.DATEOFBIRTH = tempStaff.DATEOFBIRTH;
+                targetStaff.DATETIMEUPDATED = DateTime.Now;
                 //entity.DEPARTMENTID = temp.DEPARTMENTID;
-                entity.DEPARTMENTUNITID = temp.DEPARTMENTUNITID;
-                entity.EMAIL = temp.EMAIL;
-                entity.EMAILOFNOK = temp.EMAILOFNOK;
-                entity.GENDER = temp.GENDER;
-                entity.GENDEROFNOK = temp.GENDEROFNOK;
-                entity.MISINFOID = temp.MISINFOID;
-                entity.NAMEOFNOK = temp.NAMEOFNOK;
-                entity.NOKRELATIONSHIP = temp.NOKRELATIONSHIP;
-                entity.PHONE = temp.PHONE;
-                entity.PHONEOFNOK = temp.PHONEOFNOK;
-                entity.STATEID = temp.STATEID;
-                entity.CITYID = temp.CITYID;
-                entity.LOAN_LIMIT = temp.LOAN_LIMIT;
-                entity.DELETED = false;
-                entity.WORKSTARTDURATION = temp.WORKSTARTDURATION;
-                entity.WORKENDDURATION = temp.WORKENDDURATION;
+                targetStaff.DEPARTMENTUNITID = tempStaff.DEPARTMENTUNITID;
+                targetStaff.EMAIL = tempStaff.EMAIL;
+                targetStaff.EMAILOFNOK = tempStaff.EMAILOFNOK;
+                targetStaff.GENDER = tempStaff.GENDER;
+                targetStaff.GENDEROFNOK = tempStaff.GENDEROFNOK;
+                targetStaff.MISINFOID = tempStaff.MISINFOID;
+                targetStaff.NAMEOFNOK = tempStaff.NAMEOFNOK;
+                targetStaff.NOKRELATIONSHIP = tempStaff.NOKRELATIONSHIP;
+                targetStaff.PHONE = tempStaff.PHONE;
+                targetStaff.PHONEOFNOK = tempStaff.PHONEOFNOK;
+                targetStaff.STATEID = tempStaff.STATEID;
+                targetStaff.CITYID = tempStaff.CITYID;
+                targetStaff.LOAN_LIMIT = tempStaff.LOAN_LIMIT;
+                targetStaff.DELETED = false;
+                targetStaff.WORKSTARTDURATION = tempStaff.WORKSTARTDURATION;
+                targetStaff.WORKENDDURATION = tempStaff.WORKENDDURATION;
             }
             else //Insert a new staff record into the real staff table
             {
-                entity = new TBL_STAFF()
+                targetStaff = new TBL_STAFF()
                 {
                     //STAFFID = 3000,
-                    FIRSTNAME = temp.FIRSTNAME,
-                    MIDDLENAME = temp.MIDDLENAME,
-                    COMPANYID = temp.COMPANYID,
-                    LASTNAME = temp.LASTNAME,
-                    STAFFCODE = temp.STAFFCODE,
-                    JOBTITLEID = temp.JOBTITLEID,
-                    STAFFROLEID = temp.STAFFROLEID,
-                    SUPERVISOR_STAFFID = temp.SUPERVISOR_STAFFID,
-                    DEPARTMENTUNITID = temp.DEPARTMENTUNITID,
-                    ADDRESS = temp.ADDRESS,
-                    ADDRESSOFNOK = temp.ADDRESSOFNOK,
-                    BRANCHID = temp.BRANCHID,
-                    COMMENT = temp.COMMENT,
-                    CREATEDBY = temp.CREATEDBY,
-                    DATEOFBIRTH = temp.DATEOFBIRTH,
+                    FIRSTNAME = tempStaff.FIRSTNAME,
+                    MIDDLENAME = tempStaff.MIDDLENAME,
+                    COMPANYID = tempStaff.COMPANYID,
+                    LASTNAME = tempStaff.LASTNAME,
+                    STAFFCODE = tempStaff.STAFFCODE,
+                    JOBTITLEID = tempStaff.JOBTITLEID,
+                    STAFFROLEID = tempStaff.STAFFROLEID,
+                    SUPERVISOR_STAFFID = tempStaff.SUPERVISOR_STAFFID,
+                    DEPARTMENTUNITID = tempStaff.DEPARTMENTUNITID,
+                    ADDRESS = tempStaff.ADDRESS,
+                    ADDRESSOFNOK = tempStaff.ADDRESSOFNOK,
+                    BRANCHID = tempStaff.BRANCHID,
+                    COMMENT = tempStaff.COMMENT,
+                    CREATEDBY = tempStaff.CREATEDBY,
+                    DATEOFBIRTH = tempStaff.DATEOFBIRTH,
                     DATETIMECREATED = DateTime.Now,
                     //DEPARTMENTID = temp.DEPARTMENTID,
-                    EMAIL = temp.EMAIL,
-                    EMAILOFNOK = temp.EMAILOFNOK,
-                    GENDER = temp.GENDER,
-                    GENDEROFNOK = temp.GENDEROFNOK,
-                    MISINFOID = temp.MISINFOID,
-                    NAMEOFNOK = temp.NAMEOFNOK,
-                    NOKRELATIONSHIP = temp.NOKRELATIONSHIP,
-                    PHONE = temp.PHONE,
-                    PHONEOFNOK = temp.PHONEOFNOK,
-                    STATEID = temp.STATEID,
-                    CITYID = temp.CITYID,
-                    LOAN_LIMIT = temp.LOAN_LIMIT,
-                    WORKSTARTDURATION = temp.WORKSTARTDURATION,
-                    WORKENDDURATION = temp.WORKENDDURATION,
+                    EMAIL = tempStaff.EMAIL,
+                    EMAILOFNOK = tempStaff.EMAILOFNOK,
+                    GENDER = tempStaff.GENDER,
+                    GENDEROFNOK = tempStaff.GENDEROFNOK,
+                    MISINFOID = tempStaff.MISINFOID,
+                    NAMEOFNOK = tempStaff.NAMEOFNOK,
+                    NOKRELATIONSHIP = tempStaff.NOKRELATIONSHIP,
+                    PHONE = tempStaff.PHONE,
+                    PHONEOFNOK = tempStaff.PHONEOFNOK,
+                    STATEID = tempStaff.STATEID,
+                    CITYID = tempStaff.CITYID,
+                    LOAN_LIMIT = tempStaff.LOAN_LIMIT,
+                    WORKSTARTDURATION = tempStaff.WORKSTARTDURATION,
+                    WORKENDDURATION = tempStaff.WORKENDDURATION,
                 };
-                if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
-                context.TBL_STAFF.Add(entity);
+                if (tempStaff.CUSTOMERSENSITIVITYLEVELID >= 1) targetStaff.CUSTOMERSENSITIVITYLEVELID = tempStaff.CUSTOMERSENSITIVITYLEVELID;
+                context.TBL_STAFF.Add(targetStaff);
                 var test = context.SaveChanges() > 0;
 
             }
 
-            temp.ISCURRENT = false;
-            temp.APPROVALSTATUSID = approvalStatusId;
-            temp.DATETIMEUPDATED = DateTime.Now;
-            temp.LASTUPDATEDBY = user.createdBy;
+            tempStaff.ISCURRENT = false;
+            tempStaff.APPROVALSTATUSID = approvalStatusId;
+            tempStaff.DATETIMEUPDATED = DateTime.Now;
+            tempStaff.LASTUPDATEDBY = user.createdBy;
             //if (temp.TEMPSTAFFID != entity.RELIEF_STAFFID) { UpdateDelegateStaff(entity.STAFFID, temp.TEMPSTAFFID); }
 
             // Audit Section ---------------------------
@@ -1074,7 +1174,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 AUDITTYPEID = (short)AuditTypeEnum.StaffApproved,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"Approved Staff '{temp?.FIRSTNAME + " " + temp?.LASTNAME}' with staff code'{temp?.STAFFCODE}'",
+                DETAIL = $"Approved Staff '{tempStaff?.FIRSTNAME + " " + tempStaff?.LASTNAME}' with staff code'{tempStaff?.STAFFCODE}'",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
@@ -1088,7 +1188,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 if (isUpdate == false && targetUser != null)
                 {
-                    targetUser.STAFFID = entity.STAFFID;
+                    targetUser.STAFFID = targetStaff.STAFFID;
                     context.TBL_PROFILE_USER.Add(targetUser);
                     return context.SaveChanges() > 0;
                 }
@@ -1105,6 +1205,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 throw new SecureException(ex.Message);
             }
         }
+
         public bool GoForBulkApproval(List<ApprovalViewModel> model, UserInfo userInfo)
         {
             if (model.Count == 0) return false;

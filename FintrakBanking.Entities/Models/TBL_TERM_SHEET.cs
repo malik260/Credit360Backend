@@ -12,6 +12,10 @@
         [Key]
         public int TERMSHEETID { get; set; }
 
+        public int? CUSTOMERID { get; set; }
+
+        public string TERMSHEETCODE { get; set; }
+
         [Required]
         [StringLength(500)]
         public string BORROWER { get; set; }

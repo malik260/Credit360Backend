@@ -78,6 +78,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int lmsApplicationDetailId { get; set; }
 
         public int? loanPreliminaryEvaluationId { get; set; }
+        public int? loanTermSheetId { get; set; }
         public double exchangeRate { get; set; }
         public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
         public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }
