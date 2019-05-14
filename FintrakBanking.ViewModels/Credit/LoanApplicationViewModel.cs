@@ -155,6 +155,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int? regionId { get; set; }
         public bool editMode { get; set; }
         public short? requireCollateralTypeId { get; set; }
+        public RacInformationViewModel rac { get; set; }
+
+        
 
         public string slaGlobalStatus
         {
@@ -193,6 +196,21 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isdone { get; set; } 
         public string messageStr { get; set; }
         public int checkListIndex { get; set; }
+    }
+
+
+    public class RacInformationViewModel
+    {
+        public List<RacFormControlValue> form { get; set; }
+        public int? operationId { get; set; }
+        public int? targetId { get; set; }
+        public int? checklistStatus { get; set; }
+        public int? productId { get; set; }
+    }
+    public class RacFormControlValue
+    {
+        public int criteriaId { get; set; }
+        public string value { get; set; }
     }
 
     public class LoanApplicationUpdateViewModel

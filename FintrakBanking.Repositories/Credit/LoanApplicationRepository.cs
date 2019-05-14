@@ -1167,7 +1167,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
-        {
+        {           
             ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId);
@@ -1202,7 +1202,7 @@ namespace FintrakBanking.Repositories.Credit
                     AddloanApplicationSub(loan);
                 }
 
-                if (loan.LoanApplicationDetail.Count > 0) AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
+                if (loan.LoanApplicationDetail.Count > 0) AddLoanApplicationDetail(loan);
             }
             else
             {
@@ -1211,18 +1211,140 @@ namespace FintrakBanking.Repositories.Credit
                 UpdateLoanApplication(loan);
             }
 
-            try
-            {
-                response = context.SaveChanges();
-            }catch(Exception e)
-            {
+            if (response == 0) response = context.SaveChanges();
 
-            }
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
             if (response > 0 && !loan.isNewApplication) returndate.closeApplication = true;
 
             return returndate;
+        }
+
+        private void SaveRac(RacInformationViewModel rac, int operationId, int targetId, int staffId)
+        {
+            var ids = rac.form.Select(x => x.criteriaId);
+
+            var definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                && x.OPERATIONID == operationId && ids.Contains(x.RACDEFINITIONID)
+            ).ToList();
+
+            List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
+
+            foreach(var definition in definitions)
+            {
+                var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
+                if (submission == null) continue;
+                if (ValidRacSubmission(definition, submission.value, operationId, targetId)) throw new SecureException("Cannot Proceed as RAC not met!");
+                details.Add(new TBL_RAC_DETAIL
+                {
+                    RACDEFINITIONID = definition.RACDEFINITIONID,
+                    OPERATIONID = operationId,
+                    TARGETID = targetId,
+                    ACTUALVALUE = submission.value,
+                    CREATEDBY = staffId,
+                    DATETIMECREATED = DateTime.Now,
+                });
+            }
+
+            context.TBL_RAC_DETAIL.AddRange(details);
+        }
+
+        private bool ValidRacSubmission(TBL_RAC_DEFINITION definition, string value, int operationId, int targetId)
+        {
+            if (definition.ISREQUIRED == false) return true;
+
+            if (definition.REQUIREUPLOAD)
+            {
+                var docContext = new Entities.DocumentModels.FinTrakBankingDocumentsContext();
+                if (!docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
+                        && x.OPERATIONID == operationId
+                        && x.TARGETID == targetId
+                ).Any())
+                    return false;
+            }
+
+            int integerConversion;
+            int? integerValue = null;
+            decimal? decimalValue = null;
+
+
+            // text
+            // numeric
+            // select
+            // radio
+            // textarea
+
+            switch (definition.RACINPUTTYPEID)
+            {
+                case 1:
+                    if (!String.IsNullOrEmpty(value)) { return true; }
+                    break;
+                case 2:
+                    decimalValue = decimal.Parse(value);
+                    break;
+                case 3:
+                    int.TryParse(value, out integerConversion);
+                    integerValue = integerConversion;
+                    break;
+                case 4:
+                    int.TryParse(value, out integerConversion);
+                    integerValue = integerConversion;
+                    break;
+                case 5:
+                    if (!String.IsNullOrEmpty(value)) return true;
+                    break;
+            }
+
+            /*
+            1   Equal To
+            2   Greater Than
+            3   Greater Than or Equal To
+            4   Less Than
+            5   Less Than or Equal To
+            6   Not Equal To
+            */
+
+
+            if (integerValue != null) // selects
+            {
+                return integerValue == definition.CONTROLOPTIONID;
+            }
+            else if (decimalValue != null) // amount
+            {
+                switch (definition.CONDITIONALOPERATORID)
+                {
+                    case 1:
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue == definition.CONTROLAMOUNT;
+                        else return decimalValue == GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                    case 2:
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue > definition.CONTROLAMOUNT;
+                        else return decimalValue > GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                    case 3:
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue >= definition.CONTROLAMOUNT;
+                        else return decimalValue >= GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                    case 4:
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue < definition.CONTROLAMOUNT;
+                        else return decimalValue < GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                    case 5:
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue <= definition.CONTROLAMOUNT;
+                        else return decimalValue <= GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                    case 6:
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue != definition.CONTROLAMOUNT;
+                        else return decimalValue != GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                    default:
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue == definition.CONTROLAMOUNT;
+                        else return decimalValue == GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                }
+            }
+            else
+            {
+                return !String.IsNullOrEmpty(value);
+            }
+        }
+
+        private decimal? GetDefinedFunctionAmount(int DEFINEDFUNCTIONID) // TODO...
+        {
+            throw new NotImplementedException();
         }
 
         private void AddloanApplicationSub(LoanApplicationViewModel loan)
@@ -1345,7 +1467,6 @@ namespace FintrakBanking.Repositories.Credit
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
             var update = loan.LoanApplicationDetail.SingleOrDefault();
             if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
-
 
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
@@ -1535,10 +1656,12 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETL_INV.AddRange(data);
         }
 
-        private void AddLoanApplicationDetail(List<LoanApplicationDetailViewModel> entity, int createdBy)
+        private void AddLoanApplicationDetail(LoanApplicationViewModel loan)//List<LoanApplicationDetailViewModel> entity, int createdBy)
         {
-            foreach (var a in entity)
-            {
+            var createdBy = loan.createdBy;
+            //foreach (var a in entity)
+            //{
+            var a = loan.LoanApplicationDetail.FirstOrDefault();
                 if (a.proposedTenor == 0)
                 {
                     throw new SecureException("Tenor can not be ZERO (0)");
@@ -1621,7 +1744,10 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("No fee is defined for this product(s)");
                 }
-            }
+            // }
+
+            response = context.SaveChanges();
+            if (response > 0) SaveRac(loan.rac, (int)loan.rac.operationId, data.LOANAPPLICATIONDETAILID, loan.createdBy); // todo 99999
         }
 
         public LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId)

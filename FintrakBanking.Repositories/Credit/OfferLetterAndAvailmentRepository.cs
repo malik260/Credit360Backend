@@ -2265,6 +2265,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var success = context.SaveChanges() > 0;
             workflow.Response.success = success;
+            workflow.Response.nextLevelName = "Drawdown";
+            workflow.Response.nextOperationName = "Drawdown";
             return workflow.Response;
         }
 
