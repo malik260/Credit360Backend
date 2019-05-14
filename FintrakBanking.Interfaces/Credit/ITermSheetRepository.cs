@@ -14,6 +14,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<TermSheetViewModel> GetTermSheets();
 
+        IEnumerable<LookupViewModel> GetCustomerTermSheets(int customerId);
+
         bool AddTermSheet(TermSheetViewModel model);
 
         bool UpdateTermSheet(TermSheetViewModel model, int id, UserInfo user);
