@@ -53,6 +53,12 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string reviewTypeHolder = "@{{ReviewType}}";
         private readonly string preparedByHolder = "@{{PreparedBy}}";
         private readonly string businessSectorsHolder = "@{BusinessSectors}}";
+        private readonly string directFacilitiesHolder = "@{{DirectFacilities}}";
+        private readonly string totalDirectsHolder = "@{{TotalDirects}}";
+        private readonly string contingentFacilitiesHolder = "@{{ContingentFacilities}}";
+        private readonly string totalContingentsHolder = "@{{TotalContingents}}";
+        private readonly string IFFHolder = "@{{IFF}}";
+        private readonly string totalIFFHolder = "@{{ttTotalIFF}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
         private readonly string securityDescriptionHolder = "@{{SecurityDescription}}";
@@ -88,6 +94,12 @@ namespace FintrakBanking.Repositories.Credit
         private string reviewType;
         private string preparedBy;
         private string businessSectors;
+        private string directFacilities;
+        private string totalDirects;
+        private string contingentFacilities;
+        private string totalContingents;
+        private string IFF;
+        private string totalIFF;
         // lms
         private string securityType;
         private string securityDescription;
@@ -136,7 +148,19 @@ namespace FintrakBanking.Repositories.Credit
                 this.misCode = this.loanApplication.MISCODE;
                 this.reviewType = "Initial";
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
-                this.businessSectors = 
+                foreach (var loanDetail in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL)
+                {
+                    this.businessSectors = this.businessSectors + loanDetail.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
+                }
+                foreach (var facility in context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID))
+                {
+                    directFacilities = directFacilities + $@"<tr><td>{facility.TBL_PRODUCT.PRODUCTNAME}</td></tr><tr><td>{(100/100)* facility.APPROVEDAMOUNT}</td></tr><tr><td>{facility.TBL_CURRENCY.CURRENCYNAME}</td></tr><tr><td>{facility.APPROVEDAMOUNT}</td></tr><tr><td>{facility.PROPOSEDAMOUNT}</td></tr><tr><td>{facility.PROPOSEDAMOUNT - facility.APPROVEDAMOUNT}</td></tr><tr><td>{facility.APPROVEDTENOR}</td></tr>";
+                }
+                //totalDirects;
+                //contingentFacilities;
+                //totalContingents;
+                //IFF;
+                //totalIFF;
             }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
@@ -257,6 +281,13 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(misCodeHolder, misCode);
             content = content.Replace(reviewTypeHolder, reviewType);
             content = content.Replace(preparedByHolder, preparedBy);
+            content = content.Replace(businessSectorsHolder, businessSectors);
+            content = content.Replace(directFacilitiesHolder, directFacilities);
+            content = content.Replace(totalDirectsHolder, totalDirects);
+            content = content.Replace(contingentFacilitiesHolder, contingentFacilities);
+            content = content.Replace(totalContingentsHolder, totalContingents);
+            content = content.Replace(IFFHolder, IFF);
+            content = content.Replace(totalIFFHolder, totalIFF);
 
             if (content.Contains(customerTurnoverHolder))
             {
