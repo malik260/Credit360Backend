@@ -29,8 +29,8 @@ namespace FintrakBanking.Repositories.Credit
         List<CustomerExposure> customerIds; // init
 
         // field variables
-        TBL_LOAN_APPLICATION loanAppllication = null;
-        TBL_LMSR_APPLICATION lmsrAppllication = null;
+        TBL_LOAN_APPLICATION loanApplication = null; 
+        TBL_LMSR_APPLICATION lmsrApplication = null;
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
 
         // place holders
@@ -115,55 +115,55 @@ namespace FintrakBanking.Repositories.Credit
 
             if (operationId == (int)OperationsEnum.CAM) // LOS 
             {
-                if (loanAppllication == null)
+                if (loanApplication == null)
                 {
-                    this.loanAppllication = context.TBL_LOAN_APPLICATION.Find(targetId);
+                    this.loanApplication = context.TBL_LOAN_APPLICATION.Find(targetId);
                     this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     this.customerExposure = CustomerExposureMarkup();
                 }
 
                 //string customerName = String.Empty;
-                if (loanAppllication.CUSTOMERGROUPID != null) this.customerName = loanAppllication.TBL_CUSTOMER_GROUP.GROUPNAME;
-                if (loanAppllication.CUSTOMERID != null) this.customerName = loanAppllication.TBL_CUSTOMER.FIRSTNAME + " " + loanAppllication.TBL_CUSTOMER.MIDDLENAME + " " + loanAppllication.TBL_CUSTOMER.LASTNAME;
+                if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+                if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
 
-                this.branchName = loanAppllication.TBL_BRANCH.BRANCHNAME;
-                this.locationName = loanAppllication.TBL_BRANCH.ADDRESSLINE1 + " " + loanAppllication.TBL_BRANCH.ADDRESSLINE2;
-                this.isRelatedParty = loanAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
-                this.recommendedInterestRate = loanAppllication.INTERESTRATE.ToString();
-                this.dateCreated = loanAppllication.DATETIMECREATED.ToShortDateString();
+                this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
+                this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
+                this.isRelatedParty = loanApplication.ISRELATEDPARTY == true ? "Yes" : "No";
+                this.recommendedInterestRate = loanApplication.INTERESTRATE.ToString();
+                this.dateCreated = loanApplication.DATETIMECREATED.ToShortDateString();
                 this.environmentalSocialRisk = GetEnvironmentalSocialRiskMarkup();
-                this.rmCountry = this.loanAppllication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
-                this.misCode = this.loanAppllication.MISCODE;
+                this.rmCountry = this.loanApplication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
+                this.misCode = this.loanApplication.MISCODE;
                 this.reviewType = "Initial";
-                this.preparedBy = this.loanAppllication.TBL_STAFF.FIRSTNAME + " " + this.loanAppllication.TBL_STAFF.LASTNAME;
-                //this.businessSectors = 
+                this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
+                this.businessSectors = 
             }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
             {
-                if (lmsrAppllication == null)
+                if (lmsrApplication == null)
                 {
-                    this.lmsrAppllication = context.TBL_LMSR_APPLICATION.Find(targetId);
+                    this.lmsrApplication = context.TBL_LMSR_APPLICATION.Find(targetId);
                     this.customerIds = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     this.customerExposure = CustomerExposureMarkup();
                 }
 
                 //string customerName = String.Empty;
                 // if (lmsrAppllication.CUSTOMERGROUPID != null) this.customerName = lmsrAppllication.TBL_CUSTOMER_GROUP.GROUPNAME;
-                if (lmsrAppllication.CUSTOMERID != null) this.customerName = lmsrAppllication.TBL_CUSTOMER.FIRSTNAME + " " + lmsrAppllication.TBL_CUSTOMER.MIDDLENAME + " " + lmsrAppllication.TBL_CUSTOMER.LASTNAME;
+                if (lmsrApplication.CUSTOMERID != null) this.customerName = lmsrApplication.TBL_CUSTOMER.FIRSTNAME + " " + lmsrApplication.TBL_CUSTOMER.MIDDLENAME + " " + lmsrApplication.TBL_CUSTOMER.LASTNAME;
 
-                this.branchName = lmsrAppllication.TBL_BRANCH.BRANCHNAME;
-                this.locationName = lmsrAppllication.TBL_BRANCH.ADDRESSLINE1 + " " + lmsrAppllication.TBL_BRANCH.ADDRESSLINE2;
+                this.branchName = lmsrApplication.TBL_BRANCH.BRANCHNAME;
+                this.locationName = lmsrApplication.TBL_BRANCH.ADDRESSLINE1 + " " + lmsrApplication.TBL_BRANCH.ADDRESSLINE2;
                 //this.isRelatedParty = lmsrAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
                 //this.recommendedInterestRate = lmsrAppllication.INTERESTRATE.ToString();
-                this.dateCreated = lmsrAppllication.DATETIMECREATED.ToShortDateString();
-                this.rmCountry = this.lmsrAppllication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
+                this.dateCreated = lmsrApplication.DATETIMECREATED.ToShortDateString();
+                this.rmCountry = this.lmsrApplication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
                 //this.misCode = this.lmsrAppllication.MISCODE;
                 this.reviewType = "Annual";
                 //this.preparedBy = this.lmsrAppllication.TBL_STAFF.FIRSTNAME + " " + this.lmsrAppllication.TBL_STAFF.LASTNAME;
 
                 // cam
-                var cam = ClassifiedAssetManagementReview(lmsrAppllication.APPLICATIONREFERENCENUMBER);
+                var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
 
                 if (cam != null)
                 {
