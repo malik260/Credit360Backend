@@ -105,7 +105,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupName = data.PRODUCTCLASSNAME,
                         lookupTypeId = data.PRODUCTCLASSTYPEID,
                         lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
-                        businessUnitName = data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        businessUnitName = data.BUSINESSUNITID !=null ? data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                         businessUnitId = data.BUSINESSUNITID,
                     });
         }
@@ -125,7 +125,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupName = data.PRODUCTCLASSNAME,
                         lookupTypeId = data.PRODUCTCLASSTYPEID,
                         lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
-                        businessUnitName = data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        businessUnitName = data.BUSINESSUNITID != null ? data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                         businessUnitId = data.BUSINESSUNITID,
 
                     });
@@ -141,7 +141,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupName = data.PRODUCTCLASSNAME,
                         lookupTypeId = data.PRODUCTCLASSTYPEID,
                         lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
-                        businessUnitName = data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        businessUnitName = data.BUSINESSUNITID != null ? data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                         businessUnitId = data.BUSINESSUNITID,
 
                     }).ToList();
@@ -157,7 +157,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         lookupName = data.PRODUCTCLASSNAME,
                         lookupTypeId = data.PRODUCTCLASSTYPEID,
                         lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
-                        businessUnitName = data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        businessUnitName = data.BUSINESSUNITID != null ? data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                         businessUnitId = data.BUSINESSUNITID,
 
                     });
@@ -3169,7 +3169,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             productClassProcess = p.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESS_NAME,
                             customerTypeId = p.CUSTOMERTYPEID,
                             customerType = p.TBL_CUSTOMER_TYPE.NAME,
-                            profileBusinessUnitName = p.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                            profileBusinessUnitName = p.BUSINESSUNITID != null ? p.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                             businessUnitId = p.BUSINESSUNITID,
 
                         }).ToList();

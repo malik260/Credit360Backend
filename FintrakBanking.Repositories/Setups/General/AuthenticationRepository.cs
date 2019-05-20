@@ -731,7 +731,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff1.STAFFROLEID;
                 userInfo.businessUnitId = staff1.BUSINESSUNITID;
-                userInfo.businessUnitName = staff1.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME;
+                userInfo.businessUnitName = staff1.BUSINESSUNITID != null ? staff1.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null;
 
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
@@ -760,7 +760,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff.STAFFROLEID;
                 userInfo.businessUnitId = staff.BUSINESSUNITID;
-                userInfo.businessUnitName = staff.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME;
+                userInfo.businessUnitName = staff.BUSINESSUNITID != null ? staff.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null;
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
                 profile.FAILEDLOGONATTEMPT = 0;
