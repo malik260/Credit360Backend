@@ -152,12 +152,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
             }
 
-            if(request !=null)
-                CustomJump(request.TOAPPROVALLEVELID, request.FROMAPPROVALLEVELID);
+            if(request !=null) CustomJump(request.TOAPPROVALLEVELID, request.FROMAPPROVALLEVELID);
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
 
-            if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
+            // if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
 
             if (this.useOrganogram == true) toStaffId = GetReportingLineStaffId();
 
@@ -182,6 +181,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.SYSTEMRESPONSEDATETIME = this.systemDate;
                 request.RESPONSESTAFFID = this.staffId;
             }
+
+            MakerCheckerControl();
 
             SendNotifications();
 
@@ -216,6 +217,15 @@ namespace FintrakBanking.Repositories.WorkFlow
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
         }
 
+        private void MakerCheckerControl()
+        {
+            if (statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
+            {
+                var firstRequest = trailLog.OrderBy(x => x.APPROVALTRAILID).FirstOrDefault();
+                if (firstRequest.REQUESTSTAFFID == this.staffId) throw new SecureException("You cannot approve a process you initiated!");
+            }
+        }
+/*
         private void SkipLevelByAmount()
         {
             if (next.MaximumAmount < amount) SkipToNextApprovalLevel();
@@ -245,7 +255,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.nextLevelId = level.ApprovalLevelId;
             this.slaInterval = level.SlaInterval;
             this.useOrganogram = level.RouteViaStaffOrganogram;
-        }
+        }*/
 
         private int? ResolveReroute(int? toStaffId)
         {
@@ -954,12 +964,16 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             bool validity = false;
             bool flagChecked = false;
-
             bool limitChecked = false;
-            if ((rule.MINIMUMAMOUNT > 0) && (rule.MINIMUMAMOUNT < levelBusinessRule.Amount)) limitChecked = true;
-            if ((rule.MAXIMUMAMOUNT > 0) && (levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) limitChecked = true;
-            if ((rule.MINIMUMAMOUNT > 0 && rule.MAXIMUMAMOUNT > 0) && (rule.MINIMUMAMOUNT < levelBusinessRule.Amount && levelBusinessRule.Amount <= rule.MAXIMUMAMOUNT)) limitChecked = true;
-            if ((rule.PEPAMOUNT > 0) && (rule.PEPAMOUNT <= levelBusinessRule.PepAmount)) limitChecked = true;
+            decimal pepAmount = rule.PEPAMOUNT ?? 0;
+            decimal minimumAmount = rule.MINIMUMAMOUNT ?? 0;
+            decimal maximumAmount = rule.MAXIMUMAMOUNT ?? 0;
+
+            if ((minimumAmount > 0 && maximumAmount == 0) && (minimumAmount < levelBusinessRule.Amount)) limitChecked = true;
+            if ((minimumAmount == 0 && maximumAmount > 0) && (levelBusinessRule.Amount <= maximumAmount)) limitChecked = true;
+            if ((minimumAmount > 0 && maximumAmount > 0) && (minimumAmount < levelBusinessRule.Amount && levelBusinessRule.Amount <= maximumAmount)) limitChecked = true;
+
+            if ((rule.PEP && pepAmount > 0) && (pepAmount <= levelBusinessRule.PepAmount)) limitChecked = true;
 
             if (rule.PEP && levelBusinessRule.Pep == true) flagChecked = true;
             if (rule.INSIDERRELATED && levelBusinessRule.InsiderRelated == true) flagChecked = true;

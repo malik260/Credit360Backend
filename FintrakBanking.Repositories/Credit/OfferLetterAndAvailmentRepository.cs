@@ -2186,12 +2186,13 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.LogActivity();
         }
 
+        [OperationBehavior(TransactionScopeRequired = true)]
         public WorkflowResponse ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel model)
         {
             var operationId = (int)OperationsEnum.OfferLetterApproval;
             var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber
-            && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-            && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted);
+                && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted);
             if (appl == null) throw new SecureException("Loan application with the given reference number not found!");
 
             // init
@@ -2208,68 +2209,64 @@ namespace FintrakBanking.Repositories.Credit
             // log
             workflow.LogActivity();
 
-            if (appl.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress)
-            {
-                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress;
-            }
-
+            if (appl.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress) appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress;
             if (appl.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress && model.approvalStatusId == (int)ApprovalStatusEnum.Referred)
-            {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-            }
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
                 bool cleared = OfferLetterChecklistValidation(appl.LOANAPPLICATIONID, 1);
-
                 if (cleared == false) throw new SecureException("Checklist not cleared to go further!");
-
-                appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
+                appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress; // TODO booking
 
                 if (appl.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees) // Bonds and Guarantees adapter
                 {
                     var bondAndGauranteeSent = false;
                     var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
-                    foreach(var item in detail)
-                    {
+
+                    foreach (var item in detail)
                         if (PendingBondsAndGuaranteeJobRequest(item.LOANAPPLICATIONDETAILID) == true) bondAndGauranteeSent = true;
-                    }
 
                     if (bondAndGauranteeSent == false)
                         throw new ConditionNotMetException("There is no Job Request sent to Legal for the B&G document. Please send one to proceed to availment!.");
-
-                    //appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
-                    //context.SaveChanges(); // save changes at this point
-
-                    //workflow.ProductClassId = appl.PRODUCTCLASSID;
-                    //workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                    //workflow.Comment = "Bonds and Guarantees document process started";
-                    //workflow.DeferredExecution = true;
-                    //workflow.ExternalInitialization = true;
-                    //workflow.LogActivity();
                 }
-                //else
-                //{
-                    int staffId = model.createdBy;
-                    int? receiverLevelId = null;
 
-                    receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.LoanAvailment, appl.PRODUCTCLASSID, true);
+                /*int staffId = model.createdBy;
+                int? productClassId = null; // appl.PRODUCTCLASSID <-------------- was this in fbn
+                // receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.LoanAvailment, productClassId, true); // appl.PRODUCTCLASSID
+                // workflow.NextLevelId = receiverLevelId; // BREAKING!
+                workflow.StaffId = staffId;
+                workflow.OperationId = (int)OperationsEnum.LoanAvailment; // TODO BOOKING
+                workflow.ProductClassId = productClassId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.Comment = "Offer letter approved";
+                workflow.DeferredExecution = true;
+                workflow.LogActivity(); // SECOND LOG!*/
 
-                    workflow.StaffId = staffId;
-                    workflow.NextLevelId = receiverLevelId; // BREAKING!
+                // adjustment to skip availment
+                appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                appl.AVAILMENTDATE = DateTime.Now;
 
-                    workflow.OperationId = (int)OperationsEnum.LoanAvailment;
-                    workflow.ProductClassId = appl.PRODUCTCLASSID;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                    workflow.Comment = "Offer letter approved";
-                    workflow.DeferredExecution = true;
+                var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL
+                    .Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.STATUSID == (int)ApprovalStatusEnum.Approved)
+                    .ToList();
 
-                    workflow.LogActivity();
-                //}
+                var systemdate = genSetup.GetApplicationDate();
+                // FinTrakBankingContext ctx = new FinTrakBankingContext();
+                foreach (var detail in loanApplicationDetails)
+                {
+                    //var currentLoanApplicationDetailRow = context.TBL_LOAN_APPLICATION_DETAIL.Find(detail.LOANAPPLICATIONDETAILID);
+                    detail.EFFECTIVEDATE = systemdate;
+                    detail.EXPIRYDATE = (systemdate.AddDays(detail.APPROVEDTENOR));
+                    // ctx.SaveChanges();
+                }
+
             }
 
             var success = context.SaveChanges() > 0;
             workflow.Response.success = success;
+            workflow.Response.nextLevelName = "Drawdown";
+            workflow.Response.nextOperationName = "Drawdown";
             return workflow.Response;
         }
 
@@ -2306,7 +2303,7 @@ namespace FintrakBanking.Repositories.Credit
             return count == 0;
         }
 
-        private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        private int? GetFirstReceiverLevel(int staffId, int operationId, int? productClassId, bool next = false)
         {
             var staff = context.TBL_STAFF.Find(staffId);
 
@@ -2727,7 +2724,6 @@ namespace FintrakBanking.Repositories.Credit
             }
            
         }
-
       
 
         public bool EditOfferLetterTitle(int custimerId, string data, int staffId, int branchId)

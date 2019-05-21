@@ -78,6 +78,18 @@ namespace FintrakBanking.Repositories.Credit
                 .ToList();
         }
 
+        public IEnumerable<LookupViewModel> GetCustomerTermSheets(int customerId)
+        {
+            var data = (from t in context.TBL_TERM_SHEET
+                       where t.CUSTOMERID == customerId
+                       select new LookupViewModel()
+                       {
+                           lookupId = (short)t.TERMSHEETID,
+                           lookupName = t.TERMSHEETCODE
+                       }).ToList();
+            return data;
+        }
+
         public TermSheetViewModel GetTermSheet(int id)
         {
             var entity = context.TBL_TERM_SHEET.FirstOrDefault(x => x.TERMSHEETID == id && x.DELETED == false);

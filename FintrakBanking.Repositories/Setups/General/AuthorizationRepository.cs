@@ -169,6 +169,24 @@ namespace FintrakBanking.Repositories.Setups.General
                 });
         }
 
+        public IEnumerable<Object> GetActivitiesByRoleId(int roleId)
+        {
+            return context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.Where(a => a.STAFFROLEID == roleId).Select(x => new
+            {
+                activityId = x.ACTIVITYID,
+                roleId = x.STAFFROLEID
+            });
+        }
+
+        public IEnumerable<Object> GetGroupsByRoleId(int roleId)
+        {
+            return context.TBL_PROFILE_STAFF_ROLE_GROUP.Where(a => a.STAFFROLEID == roleId).Select(x => new
+            {
+                groupId = x.GROUPID,
+                roleId = x.STAFFROLEID
+            });
+        }
+
         public int GetLoggedInUsersNumber(int? userId = null)
         {
             if (userId == null)

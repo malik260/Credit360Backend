@@ -1,4 +1,4 @@
-namespace FintrakBanking.Entities.Models
+namespace FintrakBanking.Entities.DocumentModels
 {
     using System;
     using System.Collections.Generic;
@@ -31,9 +31,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(20)]
         public string CUSTOMERCODE { get; set; }
 
-        public int DOCUMENTCATEGORYID { get; set; }
-
-        public int DOCUMENTTYPEID { get; set; }
+        public int OPERATIONID { get; set; }
 
         public int? APPROVALSTATUSID { get; set; }
 
@@ -54,8 +52,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
-
-        public virtual TBL_DOCUMENT_CATEGORY TBL_DOCUMENT_CATEGORY { get; set; }
 
     }
 }

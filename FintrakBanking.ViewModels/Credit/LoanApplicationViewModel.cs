@@ -78,6 +78,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int lmsApplicationDetailId { get; set; }
 
         public int? loanPreliminaryEvaluationId { get; set; }
+        public int? loanTermSheetId { get; set; }
         public double exchangeRate { get; set; }
         public List<LoanApplicationCollateralViewModel> LoanApplicationCollateral { get; set; }
         public List<LoanApplicationDetailViewModel> LoanApplicationDetail { get; set; }
@@ -155,19 +156,17 @@ namespace FintrakBanking.ViewModels.Credit
         public int? regionId { get; set; }
         public bool editMode { get; set; }
         public short? requireCollateralTypeId { get; set; }
+        public RacInformationViewModel rac { get; set; }
+
+        
 
         public string slaGlobalStatus
         {
             get
             {
                 float sla = globalsla;
-                float elapse = (float)Math.Abs(dateTimeCreated.Subtract(timeIn.HasValue ? timeIn.Value : default(DateTime)).TotalHours);
-                if (elapse == 0) return "success";
-                float factor = (elapse / sla) * 100;
-                if (factor <= 30) return "success";
-                if (factor <= 70) return "warning";
-                if (factor <= 100) return "danger";
-                return "danger";
+                int? elapse = (DateTime.Now - dateTimeCreated).Hours;
+                return SlaStatus(sla, elapse);
             }
         }
 
@@ -176,14 +175,20 @@ namespace FintrakBanking.ViewModels.Credit
             get
             {
                 float sla = currentApprovalLevelSlaInterval;
-                float elapse = (float)Math.Abs(dateTimeCreated.Subtract(timeIn.HasValue ? timeIn.Value : default(DateTime)).TotalHours);
-                if (elapse == 0) return "success";
-                float factor = (elapse / sla) * 100;
-                if (factor <= 30) return "success";
-                if (factor <= 70) return "warning";
-                if (factor <= 100) return "danger";
-                return "danger";
+                int? elapse = (DateTime.Now - timeIn)?.Hours;
+                return SlaStatus(sla, elapse);
             }
+        }
+
+        private string SlaStatus(float sla, int? elapse)
+        {
+            if (sla == 0) return "success";
+            if (elapse == 0 || elapse == null) return "success";
+            float factor = (float)(elapse / sla) * 100;
+            if (factor <= 30) return "success";
+            if (factor <= 70) return "warning";
+            if (factor <= 100) return "danger";
+            return "danger";
         }
     }
 
@@ -192,6 +197,21 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isdone { get; set; } 
         public string messageStr { get; set; }
         public int checkListIndex { get; set; }
+    }
+
+
+    public class RacInformationViewModel
+    {
+        public List<RacFormControlValue> form { get; set; }
+        public int? operationId { get; set; }
+        public int? targetId { get; set; }
+        public int? checklistStatus { get; set; }
+        public int? productId { get; set; }
+    }
+    public class RacFormControlValue
+    {
+        public int criteriaId { get; set; }
+        public string value { get; set; }
     }
 
     public class LoanApplicationUpdateViewModel

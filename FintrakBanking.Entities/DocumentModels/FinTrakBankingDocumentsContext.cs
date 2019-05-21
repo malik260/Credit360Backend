@@ -35,7 +35,12 @@ namespace FintrakBanking.Entities.DocumentModels
         public virtual DbSet<TBL_LOAN_CONTINGENT_USAGE_DOCS> TBL_LOAN_CONTINGENT_USAGE_DOCS { get; set; }
         public virtual DbSet<TBL_DOC_INVOICE> TBL_DOC_INVOICE { get; set; }
         public virtual DbSet<TBL_TEMP_DOC_INVOICE> TBL_TEMP_DOC_INVOICE { get; set; }
+
         public virtual DbSet<TBL_DOCUMENT_UPLOAD> TBL_DOCUMENT_UPLOAD { get; set; }
+        public virtual DbSet<TBL_DOCUMENT_USAGE> TBL_DOCUMENT_USAGE { get; set; }
+        public virtual DbSet<TBL_DOCUMENT_CATEGORY_TYPE> TBL_DOCUMENT_CATEGORY_TYPE { get; set; }
+        public virtual DbSet<TBL_DOCUMENT_CATEGORY> TBL_DOCUMENT_CATEGORY { get; set; }
+        public virtual DbSet<TBL_DOCUMENT_TYPE> TBL_DOCUMENT_TYPE { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -72,6 +77,17 @@ namespace FintrakBanking.Entities.DocumentModels
             modelBuilder.Entity<TBL_MEDIA_LOAN_MATURITY_INSTR>()
                 .Property(e => e.FILEEXTENSION)
                 .IsUnicode(false);
+
+
+            modelBuilder.Entity<TBL_DOCUMENT_CATEGORY>()
+                .HasMany(e => e.TBL_DOCUMENT_TYPE)
+                .WithRequired(e => e.TBL_DOCUMENT_CATEGORY)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_DOCUMENT_TYPE>()
+                .HasMany(e => e.TBL_DOCUMENT_UPLOAD)
+                .WithRequired(e => e.TBL_DOCUMENT_TYPE)
+                .WillCascadeOnDelete(false);
         }
     }
 }

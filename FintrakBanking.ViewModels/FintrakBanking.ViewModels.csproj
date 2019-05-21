@@ -168,6 +168,7 @@
     <Compile Include="Finance\IndexRateChangeViewModel.cs" />
     <Compile Include="GenaralEntity.cs" />
     <Compile Include="LookupViewModel.cs" />
+    <Compile Include="Media\DocumentArchiveViewModel.cs" />
     <Compile Include="Notification\NotificationViewModel.cs" />
     <Compile Include="Media\DocumentViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="Report\StaffRoleProfileActivityReportViewModel.cs" />
     <Compile Include="Report\StaffRoleProfileGroupReportViewModel.cs" />
     <Compile Include="Report\TransactionViewModel.cs" />
+    <Compile Include="Risk\RiskAcceptanceCriteriaViewModel.cs" />
     <Compile Include="Risk\RiskLoanApplicationViewModel.cs" />
     <Compile Include="Risk\RiskAssessmentViewModels.cs" />
     <Compile Include="Setups\Approval\ApprovalGroupMappingViewModel.cs" />

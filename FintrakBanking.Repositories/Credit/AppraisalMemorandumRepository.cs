@@ -325,7 +325,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ToStaffId = model.receiverStaffId;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
-            workflow.Amount = totalApplicationAmount; // appl.TOTALEXPOSUREAMOUNT; //model.amount;
+            // workflow.Amount = totalApplicationAmount; 
+            workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
             workflow.InvestmentGrade = model.investmentGrade;
             workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;

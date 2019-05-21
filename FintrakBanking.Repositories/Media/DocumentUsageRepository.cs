@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<DocumentUsageViewModel> GetDocumentUsages()
         {
-            return context.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false)
+            return docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false)
                 .Select(x => new DocumentUsageViewModel
                 {
                     documentUsageId = x.DOCUMENTUSAGEID,
@@ -52,8 +52,7 @@ namespace FintrakBanking.Repositories.Media
                     documentCode = x.DOCUMENTCODE,
                     documentTitle = x.DOCUMENTTITLE,
                     customerCode = x.CUSTOMERCODE,
-                    documentCategory = x.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                    documentTypeId = x.DOCUMENTTYPEID,
+                    //documentCategory = x.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
                     approvalStatusId = x.APPROVALSTATUSID,
                     documentStatusId = x.DOCUMENTSTATUSID,
                     isPrimaryDocument = x.ISPRIMARYDOCUMENT,
@@ -63,12 +62,12 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<DocumentUsageViewModel> SearchDocumentUsage(string parameter)
         {
-            var usageRecord = (from usage in context.TBL_DOCUMENT_USAGE
+            var usageRecord = (from usage in docContext.TBL_DOCUMENT_USAGE
                                join cus in context.TBL_CUSTOMER on usage.CUSTOMERCODE equals cus.CUSTOMERCODE
                                where parameter.Contains(cus.CUSTOMERCODE)
                                select new DocumentUsageViewModel
                                {
-                                   documentCategory = usage.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                                   //documentCategory = usage.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
                                    isPrimaryDocument = usage.ISPRIMARYDOCUMENT,
                                    documentCode = usage.DOCUMENTCODE,
                                    dateTimeCreated = usage.DATETIMECREATED,
@@ -81,7 +80,7 @@ namespace FintrakBanking.Repositories.Media
                 var file = docContext.TBL_DOCUMENT_UPLOAD.FirstOrDefault(o => o.DOCUMENTUPLOADID == x.documentUploadId);
                 if (file != null)
                 {
-                    x.documentTitle = context.TBL_DOCUMENT_TYPE.FirstOrDefault(o => o.DOCUMENTTYPEID == file.DOCUMENTTYPEID).DOCUMENTTYPENAME;
+                    x.documentTitle = docContext.TBL_DOCUMENT_TYPE.FirstOrDefault(o => o.DOCUMENTTYPEID == file.DOCUMENTTYPEID).DOCUMENTTYPENAME;
                     x.fileName = file.FILENAME;
                     x.fileType = file.FILEEXTENSION;
                 }
@@ -93,7 +92,7 @@ namespace FintrakBanking.Repositories.Media
 
         public DocumentUsageViewModel GetDocumentUsage(int id)
         {
-            var entity = context.TBL_DOCUMENT_USAGE.FirstOrDefault(x => x.DOCUMENTUSAGEID == id && x.DELETED == false);
+            var entity = docContext.TBL_DOCUMENT_USAGE.FirstOrDefault(x => x.DOCUMENTUSAGEID == id && x.DELETED == false);
 
             return new DocumentUsageViewModel
             {
@@ -105,8 +104,7 @@ namespace FintrakBanking.Repositories.Media
                 documentCode = entity.DOCUMENTCODE,
                 documentTitle = entity.DOCUMENTTITLE,
                 customerCode = entity.CUSTOMERCODE,
-                documentCategoryId = entity.DOCUMENTCATEGORYID,
-                documentTypeId = entity.DOCUMENTTYPEID,
+                documentCategoryId = entity.OPERATIONID,
                 approvalStatusId = entity.APPROVALSTATUSID,
                 documentStatusId = entity.DOCUMENTSTATUSID,
                 isPrimaryDocument = entity.ISPRIMARYDOCUMENT,
@@ -124,8 +122,7 @@ namespace FintrakBanking.Repositories.Media
                 DOCUMENTCODE = model.documentCode,
                 DOCUMENTTITLE = model.documentTitle,
                 CUSTOMERCODE = model.customerCode,
-                DOCUMENTCATEGORYID = model.documentCategoryId,
-                DOCUMENTTYPEID = model.documentTypeId,
+                OPERATIONID = model.documentCategoryId,
                 APPROVALSTATUSID = model.approvalStatusId,
                 DOCUMENTSTATUSID = model.documentStatusId,
                 ISPRIMARYDOCUMENT = model.isPrimaryDocument,
@@ -134,7 +131,7 @@ namespace FintrakBanking.Repositories.Media
                 DATETIMECREATED = general.GetApplicationDate(),
             };
 
-            context.TBL_DOCUMENT_USAGE.Add(entity);
+            docContext.TBL_DOCUMENT_USAGE.Add(entity);
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -156,7 +153,7 @@ namespace FintrakBanking.Repositories.Media
 
         public bool UpdateDocumentUsage(DocumentUsageViewModel model, int id, UserInfo user)
         {
-            var entity = this.context.TBL_DOCUMENT_USAGE.Find(id);
+            var entity = this.docContext.TBL_DOCUMENT_USAGE.Find(id);
             entity.DOCUMENTUPLOADID = model.documentUploadId;
             entity.TARGETID = model.targetId;
             entity.TARGETCODE = model.targetCode;
@@ -164,8 +161,7 @@ namespace FintrakBanking.Repositories.Media
             entity.DOCUMENTCODE = model.documentCode;
             entity.DOCUMENTTITLE = model.documentTitle;
             entity.CUSTOMERCODE = model.customerCode;
-            entity.DOCUMENTCATEGORYID = model.documentCategoryId;
-            entity.DOCUMENTTYPEID = model.documentTypeId;
+            entity.OPERATIONID = model.documentCategoryId;
             entity.APPROVALSTATUSID = model.approvalStatusId;
             entity.DOCUMENTSTATUSID = model.documentStatusId;
             entity.ISPRIMARYDOCUMENT = model.isPrimaryDocument;
@@ -194,7 +190,7 @@ namespace FintrakBanking.Repositories.Media
 
         public bool DeleteDocumentUsage(int id, UserInfo user)
         {
-            var entity = this.context.TBL_DOCUMENT_USAGE.Find(id);
+            var entity = this.docContext.TBL_DOCUMENT_USAGE.Find(id);
             entity.DELETED = true;
             entity.DELETEDBY = user.createdBy;
             entity.DATETIMEDELETED = general.GetApplicationDate();

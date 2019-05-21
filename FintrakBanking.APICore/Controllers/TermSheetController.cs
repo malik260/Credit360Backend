@@ -39,6 +39,16 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("term-sheets/{customerId}")]
+        public HttpResponseMessage GetCustomerIdTermSheet(int customerId)
+        {
+            var response = repo.GetCustomerTermSheets(customerId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("term-sheet/{id}")]
         public HttpResponseMessage GetTermSheet(int id)
         {

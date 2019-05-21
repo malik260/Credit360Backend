@@ -187,6 +187,24 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("setup/activities/role/{id}")]
+        public HttpResponseMessage GetActivitiesByRoleId(int id)
+        {
+            var activities = repo.GetActivitiesByRoleId(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = activities });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("setup/groups/role/{id}")]
+        public HttpResponseMessage GetGroupsByRoleId(int id)
+        {
+            var groups = repo.GetGroupsByRoleId(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = groups });
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("setup/group/activities")]

@@ -23,8 +23,7 @@ namespace FintrakBanking.Entities.DocumentModels
         [StringLength(10)]
         public string FILEEXTENSION { get; set; }
 
-        [StringLength(20)]
-        public string FILESIZE { get; set; }
+        public int FILESIZE { get; set; }
 
         [StringLength(3)]
         public string FILESIZEUNIT { get; set; }
@@ -57,6 +56,8 @@ namespace FintrakBanking.Entities.DocumentModels
         public DateTime? DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
+
+        public virtual TBL_DOCUMENT_TYPE TBL_DOCUMENT_TYPE { get; set; }
 
     }
 }

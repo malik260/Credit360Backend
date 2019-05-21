@@ -225,9 +225,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
         #region CREDIT BUREAU REPORT
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("credit-bureau-report/{customerCreditBureauId}")]
         public HttpResponseMessage GetCreditBureauReportDocument(int customerCreditBureauId)
         {

@@ -248,7 +248,9 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IDocumentCategoryTypeRepository>().To<DocumentCategoryTypeRepository>();
             kernel.Bind<IDocumentTypeRepository>().To<DocumentTypeRepository>();
             kernel.Bind<IDocumentUsageRepository>().To<DocumentUsageRepository>();
-            
+            kernel.Bind<IRiskAcceptanceCriteriaRepository>().To<RiskAcceptanceCriteriaRepository>();
+            kernel.Bind<ITermSheetRepository>().To<TermSheetRepository>();
+
         }
 
     }

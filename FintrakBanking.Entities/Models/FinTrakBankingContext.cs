@@ -466,10 +466,21 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_REPRICING_MODE> TBL_LOAN_REPRICING_MODE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_RELEASE_DOC> TBL_COLLATERAL_RELEASE_DOC { get; set; }
         public virtual DbSet<TBL_TERM_SHEET> TBL_TERM_SHEET { get; set; }
-        public virtual DbSet<TBL_DOCUMENT_USAGE> TBL_DOCUMENT_USAGE { get; set; }
-        public virtual DbSet<TBL_DOCUMENT_CATEGORY_TYPE> TBL_DOCUMENT_CATEGORY_TYPE { get; set; }
-        public virtual DbSet<TBL_DOCUMENT_CATEGORY> TBL_DOCUMENT_CATEGORY { get; set; }
-        public virtual DbSet<TBL_DOCUMENT_TYPE> TBL_DOCUMENT_TYPE { get; set; }
+
+        public virtual DbSet<TBL_DEFINED_FUNCTION> TBL_DEFINED_FUNCTION { get; set; }
+        public virtual DbSet<TBL_CONDITIONAL_OPERATOR> TBL_CONDITIONAL_OPERATOR { get; set; }
+        public virtual DbSet<TBL_RAC_DEFINITION> TBL_RAC_DEFINITION { get; set; }
+        public virtual DbSet<TBL_RAC_DETAIL> TBL_RAC_DETAIL { get; set; }
+        public virtual DbSet<TBL_RAC_INPUT_TYPE> TBL_RAC_INPUT_TYPE { get; set; }
+
+
+
+        public virtual DbSet<TBL_RAC_CATEGORY> TBL_RAC_CATEGORY { get; set; }
+        public virtual DbSet<TBL_RAC_ITEM> TBL_RAC_ITEM { get; set; }
+        public virtual DbSet<TBL_RAC_OPTION> TBL_RAC_OPTION { get; set; }
+        public virtual DbSet<TBL_RAC_OPTION_ITEM> TBL_RAC_OPTION_ITEM { get; set; }
+
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -8842,6 +8853,21 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_COLLATERAL_CUSTOMER>()
                 .HasMany(e => e.TBL_COLLATERAL_ISPO)
                 .WithRequired(e => e.TBL_COLLATERAL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_RAC_DEFINITION>()
+                .HasMany(e => e.TBL_RAC_DETAIL)
+                .WithRequired(e => e.TBL_RAC_DEFINITION)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_RAC_INPUT_TYPE>()
+                .HasMany(e => e.TBL_RAC_DEFINITION)
+                .WithRequired(e => e.TBL_RAC_INPUT_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_RAC_ITEM>()
+                .HasMany(e => e.TBL_RAC_DEFINITION)
+                .WithRequired(e => e.TBL_RAC_ITEM)
                 .WillCascadeOnDelete(false);
 
         }
