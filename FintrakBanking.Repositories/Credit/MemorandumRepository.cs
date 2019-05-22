@@ -48,6 +48,11 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string proposedConditionsHolder = "@{{ProposedConditions}}";
         private readonly string isSecurityHolder = "@{{IsSecurity}}";
         private readonly string isOwnerOccupiedHolder = "@{{IsOwnerOccupied}}";
+        private readonly string rmCountryHolder = "@{{RmCountry}}";
+        private readonly string misCodeHolder = "@{{MisCode}}";
+        private readonly string reviewTypeHolder = "@{{ReviewType}}";
+        private readonly string preparedByHolder = "@{{PreparedBy}}";
+        private readonly string businessSectorsHolder = "@{BusinessSectors}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
         private readonly string securityDescriptionHolder = "@{{SecurityDescription}}";
@@ -78,6 +83,11 @@ namespace FintrakBanking.Repositories.Credit
         private string environmentalSocialRisk;
         private string monitoringTriggers;
         private string proposedConditions;
+        private string rmCountry;
+        private string misCode;
+        private string reviewType;
+        private string preparedBy;
+        private string businessSectors;
         // lms
         private string securityType;
         private string securityDescription;
@@ -122,6 +132,11 @@ namespace FintrakBanking.Repositories.Credit
                 this.recommendedInterestRate = loanAppllication.INTERESTRATE.ToString();
                 this.dateCreated = loanAppllication.DATETIMECREATED.ToShortDateString();
                 this.environmentalSocialRisk = GetEnvironmentalSocialRiskMarkup();
+                this.rmCountry = this.loanAppllication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
+                this.misCode = this.loanAppllication.MISCODE;
+                this.reviewType = "Initial";
+                this.preparedBy = this.loanAppllication.TBL_STAFF.FIRSTNAME + " " + this.loanAppllication.TBL_STAFF.LASTNAME;
+                //this.businessSectors = 
             }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
@@ -142,6 +157,10 @@ namespace FintrakBanking.Repositories.Credit
                 //this.isRelatedParty = lmsrAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
                 //this.recommendedInterestRate = lmsrAppllication.INTERESTRATE.ToString();
                 this.dateCreated = lmsrAppllication.DATETIMECREATED.ToShortDateString();
+                this.rmCountry = this.lmsrAppllication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
+                //this.misCode = this.lmsrAppllication.MISCODE;
+                this.reviewType = "Annual";
+                //this.preparedBy = this.lmsrAppllication.TBL_STAFF.FIRSTNAME + " " + this.lmsrAppllication.TBL_STAFF.LASTNAME;
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrAppllication.APPLICATIONREFERENCENUMBER);
@@ -234,6 +253,10 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(proposedConditionsHolder, proposedConditions);
             content = content.Replace(monitoringTriggersHolder, monitoringTriggers);
             content = content.Replace(environmentalSocialRiskHolder, environmentalSocialRisk);
+            content = content.Replace(rmCountryHolder, rmCountry);
+            content = content.Replace(misCodeHolder, misCode);
+            content = content.Replace(reviewTypeHolder, reviewType);
+            content = content.Replace(preparedByHolder, preparedBy);
 
             if (content.Contains(customerTurnoverHolder))
             {

@@ -1222,6 +1222,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void SaveRac(RacInformationViewModel rac, int operationId, int targetId, int staffId)
         {
+            if (rac.form == null) return;
             var ids = rac.form.Select(x => x.criteriaId);
 
             var definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
