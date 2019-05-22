@@ -46,7 +46,9 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         StaffDetailsModel GetStaffDetail(string staffCode, int companyId);
 
-        IEnumerable<simpleStaffModel> GetStaffNames(int companyId); 
+        IEnumerable<simpleStaffModel> GetStaffNames(int companyId);
+
+        IEnumerable<simpleStaffModel> GetStaffRoles(int companyId);
 
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
 

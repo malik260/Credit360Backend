@@ -2702,5 +2702,19 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return branches.ToList();
         }
+
+        public IEnumerable<simpleStaffModel> GetStaffRoles(int companyId)
+        {
+            // context.TBL_STAFF_ROLE.Where(o => o.COMPANYID == companyId).Select(o => o).ToList();
+            var role = from x in context.TBL_STAFF_ROLE
+                       where x.COMPANYID == companyId
+                       select new simpleStaffModel
+                       {
+                           staffRoleId = x.STAFFROLEID,
+                           staffRoleName = x.STAFFROLENAME
+                       };
+
+            return role;
+        }
     }
 }

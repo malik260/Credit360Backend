@@ -312,6 +312,29 @@ namespace FintrakBanking.Common.Enum
         DocumentTypeAdded = 289,
         DocumentTypeUpdated = 290,
         DocumentTypeDeleted = 291,
+        RacCategoryDeleted = 292,
+        RacCategoryUpdated=293,
+        RacCategoryAdded = 294,
+        RacDefinitionAdded = 295,
+        RacDefinitionUpdated = 296,
+        RacDefinitionDeleted = 297,
+        RacDetailAdded = 298,
+        RacDetailUpdated = 299,
+        RacDetailDeleted =300,
+        RacInputTypeAdded = 301,
+        RacInputTypeUpdated =302,
+        RacInputTypeDeleted = 303,
+        RacItemAdded =304,
+        RacItemUpdated = 305,
+        RacItemDeleted = 306,
+        RacOptionAdded = 307,
+        RacOptionUpdated = 308,
+        RacOptionDeleted = 309,
+        RacOptionItemAdded =400,
+        RacOptionItemUpdated = 401,
+        RacOptionItemDeleted = 402,
+
+
     };
     public enum RegulatoryTypeEnum
     {
