@@ -3058,8 +3058,14 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.branchName.StartsWith(searchQuery)
                                    || x.customerId.ToString().StartsWith(searchQuery)
                              select x);
-
-            var customerInfo = customers.Where(c => context.TBL_CUSTOMER_GROUP_MAPPING.Find(c.customerId) == null).ToList();
+            var customerInfo = new List<CustomerViewModels>();
+            foreach (var customer in customers)
+            {
+                if (customerGroup.Find(customer.customerId) == null)
+                {
+                    customerInfo.Add(customer);
+                }
+            }
 
             if (customerInfo.Count > 0)
             {
