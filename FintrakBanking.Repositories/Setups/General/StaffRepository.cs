@@ -248,7 +248,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             bool isUpdate = false;
             TBL_TEMP_PROFILE_USER user = null;
-
+            var tempStaffForPassword = context.TBL_PROFILE_USER.FirstOrDefault(u => u.USERNAME == staffModel.user.username);
+            
 
 
             List<TBL_TEMP_PROFILE_USERGROUP> userGroups = new List<TBL_TEMP_PROFILE_USERGROUP>();
@@ -341,7 +342,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         TEMPSTAFFID = staffModel.staffId,
                         USERNAME = staffModel.user.username,
-                        PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password != null ? staffModel.user.password : context.TBL_PROFILE_USER.Where(x=>x.USERNAME == staffModel.user.username).Select(m=>m.PASSWORD).FirstOrDefault(), StaticHelpers.EncryptionKey),
+                        PASSWORD = tempStaffForPassword != null ? tempStaffForPassword.PASSWORD : StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
                         ISFIRSTLOGINATTEMPT = false,
                         ISACTIVE = false,
                         ISLOCKED = true,
