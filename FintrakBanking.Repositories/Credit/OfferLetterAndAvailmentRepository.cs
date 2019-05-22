@@ -2261,12 +2261,12 @@ namespace FintrakBanking.Repositories.Credit
                     // ctx.SaveChanges();
                 }
 
+                workflow.Response.nextLevelName = "Drawdown";
+                workflow.Response.nextOperationName = "Drawdown";
             }
 
             var success = context.SaveChanges() > 0;
             workflow.Response.success = success;
-            workflow.Response.nextLevelName = "Drawdown";
-            workflow.Response.nextOperationName = "Drawdown";
             return workflow.Response;
         }
 

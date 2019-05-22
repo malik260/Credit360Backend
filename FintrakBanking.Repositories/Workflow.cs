@@ -1163,6 +1163,57 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return response;
         }
+        
+        public void ResolveMultipleProductPath(int operationId, List<short> productIds)
+        {
+            TBL_PRODUCT product;
+            this.operationId = operationId;
+            if (productIds.Count() == 0) return;
+            var operationProducts = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && productIds.Contains((short)x.PRODUCTID)).Distinct().ToList();
+
+            // SINGLE PRODUCT
+            if (productIds.Count() == 1)
+            {
+                product= context.TBL_PRODUCT.Find(productIds.FirstOrDefault());
+                if (operationProducts.Any())
+                {
+                    this.productId = product.PRODUCTID;
+                    this.productClassId = product.PRODUCTCLASSID;
+                }
+                else
+                {
+                    if (context.TBL_APPROVAL_GROUP_MAPPING
+                        .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == product.PRODUCTCLASSID)
+                        .Distinct().Any())
+                    {
+                        this.productClassId = product.PRODUCTCLASSID;
+                    }
+                }
+                return;
+            };
+
+            // MULTIPLE PRODUCT CLASS
+            List<short> productClassIds = context.TBL_PRODUCT.Where(x => productIds.Contains((short)x.PRODUCTID)).Select(x => x.PRODUCTCLASSID).Distinct().ToList();
+            if (productClassIds.Count() == 1) this.productClassId = productClassIds.FirstOrDefault();
+            else this.productClassId = PreferedProductClassId(productClassIds);
+            // MULTIPLE PRODUCT
+            List<short> classProductIds = context.TBL_PRODUCT.Where(x => x.PRODUCTCLASSID == this.productClassId).Select(x => x.PRODUCTID).Distinct().ToList();
+            if (classProductIds.Count() == 1) this.productId = classProductIds.FirstOrDefault();
+            else this.productId = PreferedProductId(classProductIds);
+
+        }
+
+        private int? PreferedProductId(List<short> productIds)
+        {
+            var product = context.TBL_PRODUCT.Find(productIds.FirstOrDefault()); // TODO: COUTION! which product to be prioritized?
+            return product.PRODUCTID;
+        }
+
+        private int? PreferedProductClassId(List<short> productClassIds)
+        {
+            var productClass = context.TBL_PRODUCT_CLASS.Find(productClassIds.FirstOrDefault()); // TODO: COUTION! which product to be prioritized?
+            return productClass.PRODUCTCLASSID;
+        }
     }
 
     public class WorkflowSetup

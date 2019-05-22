@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.WorkFlow;
+﻿using System.Collections.Generic;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.Interfaces.WorkFlow
 {
@@ -52,6 +53,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
             );
 
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!
+        void ResolveMultipleProductPath(int operationId, List<short> productIds);
     }
 
     public class WorkflowResponse

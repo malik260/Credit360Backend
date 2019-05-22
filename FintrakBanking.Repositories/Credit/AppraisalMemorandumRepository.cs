@@ -314,13 +314,14 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             // WORKFLOW
+            workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
+            //workflow.OperationId = operationId;
+            //workflow.ProductClassId = appl.PRODUCTCLASSID;
+            //workflow.ProductId = model.productId;
             workflow.StaffId = model.createdBy;
-            workflow.OperationId = operationId;
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            workflow.ProductClassId = appl.PRODUCTCLASSID;
-            workflow.ProductId = model.productId;
             workflow.NextLevelId = model.receiverLevelId;
             workflow.ToStaffId = model.receiverStaffId;
             workflow.StatusId = model.forwardAction;
@@ -503,7 +504,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
                 workflow.SetResponse = false;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, null, "New pproved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, null, "New approved application", true, false);
             }
 
             //workflow.Response.success = true;
