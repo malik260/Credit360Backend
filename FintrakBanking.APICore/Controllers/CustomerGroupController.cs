@@ -270,7 +270,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var data = repo.SearchForCustomerGroup(token.GetCompanyId, searchQuery);
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data.ToList() });
+                    new { success = true, result = data?.ToList() });
                 //var data = repo.SearchForCustomerGroupRealtime(token.GetCompanyId, searchQuery);
                 //return Request.CreateResponse(HttpStatusCode.OK,
                 //    new { success = true, result = data.ToList() });

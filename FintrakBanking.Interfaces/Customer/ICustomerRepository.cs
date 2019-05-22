@@ -141,5 +141,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool UpdatePropectToCustomer(int customerId, CustomerViewModels entity);
         IEnumerable<CustomerRelatedDirectorViewModel> DirectorRelatedCustomer(string bvn);
         IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLMSLoanId(int loanApplicationId);
+        IEnumerable<CustomerViewModels> SearchRandomSingleCustomersBySearchQuery(string searchQuery);
+        IEnumerable<CustomerViewModels> SearchRandomGroupCustomersBySearchQuery(string searchQuery);
     }
 }
