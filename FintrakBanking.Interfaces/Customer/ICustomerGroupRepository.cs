@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
@@ -71,5 +72,7 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerGroupViewModel> SearchForCustomerGroup(int companyId, string searchQuery);
         IEnumerable<CustomerGroupMappingViewModel> GetAllCustomerGroupMappingByGroupId(int customerGroupId);
         #endregion tbl_Customer Group Mapping repository
+        List<CurrentCustomerExposure> GetGroupExposureByCustomerId(int customerId, int companyId);
+        List<CurrentCustomerExposure> GetGroupExposureByGroupId(int customerGroupId, int companyId);
     }
 }

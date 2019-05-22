@@ -4,6 +4,7 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class CurrentCustomerExposure
     {
+        public string customerName { get; set; }
         public string facilityType { get; set; }
         public decimal existingLimit { get; set; }
         public decimal proposedLimit { get; set; }
