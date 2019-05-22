@@ -1589,6 +1589,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string staffCode { get; set; }
         public string cap { get; set; }
     }
+
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
     //    public int maturityInstructionId { get; set; }

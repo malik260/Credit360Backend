@@ -2557,6 +2557,7 @@ namespace FintrakBanking.Repositories.Customer
 
 
 
+
         public IEnumerable<CustomerViewModels> GetCustomerByBranchId(int branchId)
         {
             return GetCustomers().Where(a => a.branchId == branchId);
@@ -3034,6 +3035,50 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.customerCode.StartsWith(searchQuery)
                                    || x.branchName.StartsWith(searchQuery)
                                    || x.customerId.ToString().StartsWith(searchQuery)
+                             select x);
+
+            var customerInfo = customers.ToList();
+
+            if (customerInfo.Count > 0)
+            {
+                return customerInfo;
+            }
+
+            return null;
+        }
+
+        public IEnumerable<CustomerViewModels> SearchRandomSingleCustomersBySearchQuery(string searchQuery)
+        {
+            var customerGroup = context.TBL_CUSTOMER_GROUP_MAPPING;
+            var customers = (from x in GetCustomersLite()
+                             where x.firstName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.customerCode.StartsWith(searchQuery)
+                                   || x.branchName.StartsWith(searchQuery)
+                                   || x.customerId.ToString().StartsWith(searchQuery)
+                             select x);
+
+            var customerInfo = customers.Where(c => context.TBL_CUSTOMER_GROUP_MAPPING.Find(c.customerId) == null).ToList();
+
+            if (customerInfo.Count > 0)
+            {
+                return customerInfo;
+            }
+
+            return null;
+        }
+
+        public IEnumerable<CustomerViewModels> SearchRandomGroupCustomersBySearchQuery(string searchQuery)
+        {
+            var customers = (from x in GetCustomersLite()
+                             where x.firstName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.customerCode.StartsWith(searchQuery)
+                                   || x.branchName.StartsWith(searchQuery)
+                                   || x.customerId.ToString().StartsWith(searchQuery)
+                                   && context.TBL_CUSTOMER_GROUP_MAPPING.Find(x.customerId) != null
                              select x);
 
             var customerInfo = customers.ToList();

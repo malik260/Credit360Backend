@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using System;
@@ -15,6 +16,7 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingContext context;
         private IAppraisalMemorandumRepository memo;
         private ILoanRepository loan;
+        private ICustomerGroupRepository group;
 
         public MemorandumRepository(FinTrakBankingContext context, IAppraisalMemorandumRepository memo, ILoanRepository loan)
         {
@@ -46,19 +48,29 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string environmentalSocialRiskHolder = "@{{EnvironmentalSocialRisk}}";
         private readonly string monitoringTriggersHolder = "@{{MonitoringTriggers}}";
         private readonly string proposedConditionsHolder = "@{{ProposedConditions}}";
+        private readonly string conditionsPrecedentToDrawdownHolder = "@{{ConditionsPrecedentToDrawdown}}";
+        private readonly string transactionsDynamicsHolder = "@{{TransactionsDynamics}}";
         private readonly string isSecurityHolder = "@{{IsSecurity}}";
         private readonly string isOwnerOccupiedHolder = "@{{IsOwnerOccupied}}";
         private readonly string rmCountryHolder = "@{{RmCountry}}";
         private readonly string misCodeHolder = "@{{MisCode}}";
         private readonly string reviewTypeHolder = "@{{ReviewType}}";
         private readonly string preparedByHolder = "@{{PreparedBy}}";
-        private readonly string businessSectorsHolder = "@{BusinessSectors}}";
+        private readonly string businessSectorsHolder = "@{{BusinessSectors}}";
+        private readonly string exchangeRateHolder = "@{{ExchangeRate}}";
         private readonly string directFacilitiesHolder = "@{{DirectFacilities}}";
         private readonly string totalDirectsHolder = "@{{TotalDirects}}";
         private readonly string contingentFacilitiesHolder = "@{{ContingentFacilities}}";
         private readonly string totalContingentsHolder = "@{{TotalContingents}}";
-        private readonly string IFFHolder = "@{{IFF}}";
-        private readonly string totalIFFHolder = "@{{ttTotalIFF}}";
+        private readonly string importFinanceFacilitiesHolder = "@{{ImportFinanceFacilities}}";
+        private readonly string totalImportFinanceFacilitiesHolder = "@{{TotalImportFinanceFacilities}}";
+        private readonly string foreignDirectFacilitiesHolder = "@{{ForeignDirectFacilities}}";
+        private readonly string totalForeignDirectsHolder = "@{{ForeignTotalDirects}}";
+        private readonly string foreignContingentFacilitiesHolder = "@{{ForeignContingentFacilities}}";
+        private readonly string totalForeignContingentsHolder = "@{{TotalForeignContingents}}";
+        private readonly string foreignImportFinanceFacilitiesHolder = "@{{ForeignImportFinanceFacilities}}";
+        private readonly string totalForeignImportFinanceFacilitiesHolder = "@{{TotalForeignImportFinanceFacilities}}";
+        private readonly string groupExposureHolder = "@{{GroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
         private readonly string securityDescriptionHolder = "@{{SecurityDescription}}";
@@ -89,17 +101,27 @@ namespace FintrakBanking.Repositories.Credit
         private string environmentalSocialRisk;
         private string monitoringTriggers;
         private string proposedConditions;
+        private string conditionsPrecedentToDrawdown;
+        private string transactionsDynamics;
         private string rmCountry;
         private string misCode;
         private string reviewType;
         private string preparedBy;
         private string businessSectors;
+        private string exchangeRate;
         private string directFacilities;
-        private string totalDirects;
+        private string totalDirectFacilities;
         private string contingentFacilities;
-        private string totalContingents;
-        private string IFF;
-        private string totalIFF;
+        private string totalContingentFacilities;
+        private string importFinanceFacilities;
+        private string totalImportFinanceFacilities;
+        private string foreignDirectFacilities;
+        private string totalForeignDirectFacilities;
+        private string foreignContingentFacilities;
+        private string totalForeignContingentFacilities;
+        private string foreignImportFinanceFacilities;
+        private string totalForeignImportFinanceFacilities;
+        private string groupExposure;
         // lms
         private string securityType;
         private string securityDescription;
@@ -144,23 +166,32 @@ namespace FintrakBanking.Repositories.Credit
                 this.recommendedInterestRate = loanApplication.INTERESTRATE.ToString();
                 this.dateCreated = loanApplication.DATETIMECREATED.ToShortDateString();
                 this.environmentalSocialRisk = GetEnvironmentalSocialRiskMarkup();
+                this.GetConditionsPrecedentToDrawdownMarkup();
+                this.GetTransactionsDynamicsMarkup();
                 this.rmCountry = this.loanApplication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
                 this.misCode = this.loanApplication.MISCODE;
                 this.reviewType = "Initial";
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
-                foreach (var loanDetail in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL)
-                {
-                    this.businessSectors = this.businessSectors + loanDetail.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
-                }
-                foreach (var facility in context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID))
-                {
-                    directFacilities = directFacilities + $@"<tr><td>{facility.TBL_PRODUCT.PRODUCTNAME}</td></tr><tr><td>{(100/100)* facility.APPROVEDAMOUNT}</td></tr><tr><td>{facility.TBL_CURRENCY.CURRENCYNAME}</td></tr><tr><td>{facility.APPROVEDAMOUNT}</td></tr><tr><td>{facility.PROPOSEDAMOUNT}</td></tr><tr><td>{facility.PROPOSEDAMOUNT - facility.APPROVEDAMOUNT}</td></tr><tr><td>{facility.APPROVEDTENOR}</td></tr>";
-                }
-                //totalDirects;
-                //contingentFacilities;
-                //totalContingents;
-                //IFF;
-                //totalIFF;
+                this.businessSectors = GetBusinessSectorsMarkupLOS();
+                this.exchangeRate = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().EXCHANGERATE.ToString();
+                this.directFacilities = GetDirectFacilitiesMarkupLOS();
+                this.totalDirectFacilities = GetTotalDirectFacilitiesMarkupLOS();
+                this.contingentFacilities = GetContingentFacilitiesMarkupLOS();
+                this.totalContingentFacilities = GetTotalContingentFacilitiesMarkupLOS();
+                //ImportFinanceFinance;
+                //totalImportFinanceFinance;
+                this.foreignDirectFacilities = GetForeignDirectFacilitiesMarkupLOS();
+                this.totalForeignDirectFacilities = GetTotalForeignDirectFacilitiesMarkupLOS();
+                this.foreignContingentFacilities = GetForeignContingentFacilitiesMarkupLOS();
+                this.totalForeignContingentFacilities = GetTotalForeignContingentFacilitiesMarkupLOS();
+                //foreignImportFinanceFinance;
+                //foreigntotalImportFinanceFinance;
+                this.groupExposure = GetGroupExposureMarkupLOS();
+
+
+
+
+
             }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
@@ -185,6 +216,23 @@ namespace FintrakBanking.Repositories.Credit
                 //this.misCode = this.lmsrAppllication.MISCODE;
                 this.reviewType = "Annual";
                 //this.preparedBy = this.lmsrAppllication.TBL_STAFF.FIRSTNAME + " " + this.lmsrAppllication.TBL_STAFF.LASTNAME;
+                this.businessSectors = GetBusinessSectorsMarkupLMS();
+                //this.exchangeRate = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault().EXCHANGERATE.ToString();
+                this.directFacilities = GetDirectFacilitiesMarkupLMS();
+                this.totalDirectFacilities = GetTotalDirectFacilitiesMarkupLMS();
+                this.contingentFacilities = GetContingentFacilitiesMarkupLMS();
+                this.totalContingentFacilities = GetTotalContingentFacilitiesMarkupLMS();
+                //ImportFinanceFinance;
+                //totalImportFinanceFinance;
+                this.foreignDirectFacilities = GetForeignDirectFacilitiesMarkupLMS();
+                this.totalForeignDirectFacilities = GetTotalForeignDirectFacilitiesMarkupLMS();
+                this.foreignContingentFacilities = GetForeignContingentFacilitiesMarkupLMS();
+                this.totalForeignContingentFacilities = GetTotalForeignContingentFacilitiesMarkupLMS();
+                //foreignImportFinanceFinance;
+                //foreigntotalImportFinanceFinance;
+                this.groupExposure = GetGroupExposureMarkupLMS();
+
+
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
@@ -262,6 +310,534 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public List<DropDownSelect> GetConditionsPrecedentToDrawdown()
+        {
+            var result = new List<DropDownSelect>();
+            if (operationId == (int)OperationsEnum.CAM)
+            {
+                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId);
+                foreach (var d in details)
+                {
+                    result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "CONDITION PRECEDENT: " + d.CONDITIONPRECIDENT });
+                }
+            }
+            return result;
+        }
+
+        private string GetConditionsPrecedentToDrawdownMarkup()
+        {
+            var conditions = GetConditionsPrecedentToDrawdown(); // new
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>CONDITIONS</th>
+                    </tr>
+                 ";
+            foreach (var e in conditions)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{e.name}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+
+        }
+
+        public List<DropDownSelect> GetTransactionsDynamics()
+        {
+            var result = new List<DropDownSelect>();
+            if (operationId == (int)OperationsEnum.CAM)
+            {
+                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId);
+                foreach (var d in details)
+                {
+                    result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "TRANSACTION DYNAMICS: " + d.TRANSACTIONDYNAMICS });
+                }
+            }
+            return result;
+        }
+
+        private string GetTransactionsDynamicsMarkup()
+        {
+            var transactions = GetTransactionsDynamics(); // new
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>TRANSACTION DYNAMICS</th>
+                    </tr>
+                 ";
+            foreach (var e in transactions)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{e.name}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+
+        }
+        
+        private string GetBusinessSectorsMarkupLOS()
+        {
+            var result = String.Empty;
+            foreach (var loanDetail in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL)
+            {
+                result = result + loanDetail.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
+            }
+            return result;
+        }
+
+        private string GetBusinessSectorsMarkupLMS()
+        {
+            var result = String.Empty;
+            foreach (var loanDetail in this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL)
+            {
+                result = result + loanDetail.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
+            }
+            return result;
+        }
+
+        private string GetDirectFacilitiesMarkupLOS()
+        {
+            var result = String.Empty;
+            var directs = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != 
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN);
+            var directGroups = directs.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+
+            foreach (var group in directGroups)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{group.Key}</td>
+                        <td>{String.Format("{0:0,0.00}", (100 / 100) * group.Sum(p => p.APPROVEDAMOUNT))}</td>
+                        <td>{group.First().TBL_CURRENCY.CURRENCYNAME}</td>
+                        <td>{String.Format("{0:0,0.00}", group.Sum(p => p.APPROVEDAMOUNT))}</td>
+                        <td>{String.Format("{0:0,0.00}", (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID == 
+                            group.FirstOrDefault().TBL_PRODUCT.PRODUCTID).Sum(p => p.PROPOSEDAMOUNT)) + group.Sum(q => q.APPROVEDAMOUNT))}</td>
+                        <td>{String.Format("{0:0,0.00}", group.Sum(p => p.PROPOSEDAMOUNT) - group.Sum(p => p.APPROVEDAMOUNT))}</td>
+                        <td>{group.Sum(p => p.APPROVEDTENOR)}</td>
+                    </tr>
+                    ";
+            }
+            return result;
+        }
+
+        private string GetTotalDirectFacilitiesMarkupLOS()
+        {
+            var result = String.Empty;
+            var directs = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != 
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN);
+
+            result = result + $@"
+                <tr>
+                    <td>{directs.Count()}</td>
+                    <td>{String.Format("{0:0,0.00}", (100 / 100) * directs.Sum(l => l.APPROVEDAMOUNT))}</td>
+                    <td><p>&nbsp;</p></td>
+                    <td>{String.Format("{0:0,0.00}", directs.Sum(l => l.APPROVEDAMOUNT))}</td>
+                    <td>{String.Format("{0:0,0.00}", directs.Sum(l => l.PROPOSEDAMOUNT))}</td>
+                    <td>{String.Format("{0:0,0.00}", directs.Sum(l => l.PROPOSEDAMOUNT) - directs.Sum(l => l.APPROVEDAMOUNT))}</td>
+                    <td>{directs.Sum(l => l.APPROVEDTENOR)}</td>
+                </tr>
+            ";
+            return result;
+        }
+
+        private string GetContingentFacilitiesMarkupLOS()
+        {
+            var result = String.Empty;
+            var contingents = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == 
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN);
+            var contingentGroups = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+            foreach (var facility in contingentGroups)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{facility.Key}</td>
+                        <td>{(1 / 3) * facility.Sum(p => p.APPROVEDAMOUNT)}</td>
+                        <td>{facility.First().TBL_CURRENCY.CURRENCYNAME}</td>
+                        <td>{facility.Sum(p => p.APPROVEDAMOUNT)}</td>
+                        <td>{facility.Sum(p => p.PROPOSEDAMOUNT)}</td>
+                        <td>{facility.Sum(p => p.PROPOSEDAMOUNT) - facility.Sum(p => p.APPROVEDAMOUNT)}</td>
+                        <td>{facility.Sum(p => p.APPROVEDTENOR)}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetTotalContingentFacilitiesMarkupLOS()
+        {
+            var result = String.Empty;
+            var contingents = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == 
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN);
+            if (contingents.Count() > 0)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{contingents.Count()}</td>
+                        <td>{(100 / 100) * contingents.Sum(l => (decimal?)l.APPROVEDAMOUNT ?? 0)}</td>
+                        <td>&nbsp;</td<td>{contingents.Sum(l => (decimal?)l.APPROVEDAMOUNT ?? 0)}</td>
+                        <td>{contingents.Sum(l => (decimal?)l.PROPOSEDAMOUNT ?? 0)}</td>
+                        <td>{contingents.Sum(l => (decimal?)l.PROPOSEDAMOUNT ?? 0) - contingents.Sum(l => (decimal?)l.APPROVEDAMOUNT ?? 0)}</td>
+                        <td>{contingents.Sum(l => (decimal?)l.APPROVEDTENOR ?? 0)}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetForeignDirectFacilitiesMarkupLOS()
+        {
+            var result = String.Empty;
+            var foreignDirects = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID !=
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN);
+            foreach (var facility in foreignDirects)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{facility.TBL_PRODUCT.PRODUCTNAME}</td>
+                        <td>{(100 / 100) * facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.TBL_CURRENCY.CURRENCYNAME}</td>
+                        <td>{facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT - facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.APPROVEDTENOR}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetTotalForeignDirectFacilitiesMarkupLOS()
+        {
+            var result = String.Empty;
+            var foreignDirects = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID !=
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN);
+            if (foreignDirects.Count() > 0)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{foreignDirects.Count()}</td>
+                        <td>{(100 / 100) * foreignDirects.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>&nbsp;</td>
+                        <td>{foreignDirects.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>{foreignDirects.Sum(l => l.PROPOSEDAMOUNT)}</td>
+                        <td>{foreignDirects.Sum(l => l.PROPOSEDAMOUNT) - foreignDirects.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>{foreignDirects.Sum(l => l.APPROVEDTENOR)}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetForeignContingentFacilitiesMarkupLOS()
+        {
+            var result = String.Empty;
+            var foreignContingents = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN);
+            foreach (var facility in foreignContingents)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{facility.TBL_PRODUCT.PRODUCTNAME}</td>
+                        <td>{(100 / 100) * facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.TBL_CURRENCY.CURRENCYNAME}</td>
+                        <td>{facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT - facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.APPROVEDTENOR}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetTotalForeignContingentFacilitiesMarkupLOS()
+        {
+            var result = String.Empty;
+            var foreignContingents = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN);
+            if (foreignContingents.Count() > 0)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{foreignContingents.Count()}</td>
+                        <td>{(100 / 100) * foreignContingents.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>&nbsp;</td>
+                        <td>{foreignContingents.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>{foreignContingents.Sum(l => l.PROPOSEDAMOUNT)}</td>
+                        <td>{foreignContingents.Sum(l => l.PROPOSEDAMOUNT) - foreignContingents.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>{foreignContingents.Sum(l => l.APPROVEDTENOR)}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetGroupExposureMarkupLOS()
+        {
+            var result = String.Empty;
+            var exposures = GetGroupExposurebyCustomerId((int)loanApplication.CUSTOMERID, 1);
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Customer Name</th>
+                        <th>Facility Type</th>
+                        <th>Application Reference Number</th>
+                        <th>Outstanding</th>
+                        <th>Existing Limit</th>
+                        <th>Loan Status</th>
+                    </tr>
+                 ";
+            foreach (var exposure in exposures)
+            {
+                ++n;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{exposure.customerName}</td>
+                        <td>{exposure.facilityType}</td>
+                        <td>{exposure.referenceNumber}</td>
+                        <td>{exposure.outstandings}</td>
+                        <td>{exposure.existingLimit}</td
+                        <td>{exposure.loanStatus}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+        }
+
+        private string GetDirectFacilitiesMarkupLMS()
+        {
+            var result = String.Empty;
+            foreach (var facility in context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == lmsrApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != 
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN))
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{facility.TBL_PRODUCT.PRODUCTNAME}</td>
+                        <td>{(100 / 100) * facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYNAME}</td>
+                        <td>{facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT - facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.APPROVEDTENOR}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetTotalDirectFacilitiesMarkupLMS()
+        {
+            var result = String.Empty;
+            var directs = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != 
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN);
+
+            result = result + $@"
+                <tr>
+                    <td>{directs.Count()}</td>
+                    <td>{(100 / 100) * directs.Sum(l => l.APPROVEDAMOUNT)}</td>
+                    <td>&nbsp;</td>
+                    <td>{directs.Sum(l => l.APPROVEDAMOUNT)}</td>
+                    <td>{directs.Sum(l => l.PROPOSEDAMOUNT)}</td>
+                    <td>{directs.Sum(l => l.PROPOSEDAMOUNT) - directs.Sum(l => l.APPROVEDAMOUNT)}</td>
+                    <td>{directs.Sum(l => l.APPROVEDTENOR)}</td>
+                </tr>
+            ";
+            return result;
+        }
+
+        private string GetContingentFacilitiesMarkupLMS()
+        {
+            var result = String.Empty;
+            var contingents = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN);
+
+            foreach (var facility in contingents)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{facility.TBL_PRODUCT.PRODUCTNAME}</td>
+                        <td>{(100 / 100) * facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYNAME}</td>
+                        <td>{facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT - facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.APPROVEDTENOR}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetTotalContingentFacilitiesMarkupLMS()
+        {
+            var result = String.Empty;
+            var contingents = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN);
+            if (contingents.Count() > 0)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{contingents.Count()}</td>
+                        <td>{(100 / 100) * contingents.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>&nbsp;</td>
+                        <td>{contingents.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>{contingents.Sum(l => l.PROPOSEDAMOUNT)}</td>
+                        <td>{contingents.Sum(l => l.PROPOSEDAMOUNT) - contingents.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>{contingents.Sum(l => l.APPROVEDTENOR)}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetForeignDirectFacilitiesMarkupLMS()
+        {
+            var result = String.Empty;
+            var foreignDirects = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID !=
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN);
+            foreach (var facility in foreignDirects)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{facility.TBL_PRODUCT.PRODUCTNAME}</td>
+                        <td>{(100 / 100) * facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYNAME}</td>
+                        <td>{facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT - facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.APPROVEDTENOR}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetTotalForeignDirectFacilitiesMarkupLMS()
+        {
+            var result = String.Empty;
+            var foreignDirects = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID !=
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN);
+
+            if (foreignDirects.Count() > 0)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{foreignDirects.Count()}</td>
+                        <td>{(100 / 100) * foreignDirects.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>&nbsp;</td>
+                        <td>{foreignDirects.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>{foreignDirects.Sum(l => l.PROPOSEDAMOUNT)}</td>
+                        <td>{foreignDirects.Sum(l => l.PROPOSEDAMOUNT) - foreignDirects.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>{foreignDirects.Sum(l => l.APPROVEDTENOR)}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetForeignContingentFacilitiesMarkupLMS()
+        {
+            var result = String.Empty;
+            var foreignContingents = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN);
+            foreach (var facility in foreignContingents)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{facility.TBL_PRODUCT.PRODUCTNAME}</td>
+                        <td>{(100 / 100) * facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYNAME}</td>
+                        <td>{facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT}</td>
+                        <td>{facility.PROPOSEDAMOUNT - facility.APPROVEDAMOUNT}</td>
+                        <td>{facility.APPROVEDTENOR}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetTotalForeignContingentFacilitiesMarkupLMS()
+        {
+            var result = String.Empty;
+            var foreignContingents = context.TBL_LMSR_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == 
+            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN);
+            if (foreignContingents.Count() > 0)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{foreignContingents.Count()}</td>
+                        <td>{(100 / 100) * foreignContingents.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>&nbsp;</td>
+                        <td>{foreignContingents.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>{foreignContingents.Sum(l => l.PROPOSEDAMOUNT)}</td>
+                        <td>{foreignContingents.Sum(l => l.PROPOSEDAMOUNT) - foreignContingents.Sum(l => l.APPROVEDAMOUNT)}</td>
+                        <td>{foreignContingents.Sum(l => l.APPROVEDTENOR)}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
+        private string GetGroupExposureMarkupLMS()
+        {
+            var result = String.Empty;
+            var exposures = GetGroupExposurebyCustomerId((int)lmsrApplication.CUSTOMERID, 1);
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Customer Name</th>
+                        <th>Facility Type</th>
+                        <th>Application Reference Number</th>
+                        <th>Outstanding</th>
+                        <th>Existing Limit</th>
+                        <th>Loan Status</th>
+                    </tr>
+                 ";
+            foreach (var exposure in exposures)
+            {
+                ++n;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{exposure.customerName}</td>
+                        <td>{exposure.facilityType}</td>
+                        <td>{exposure.referenceNumber}</td>
+                        <td>{exposure.outstandings}</td>
+                        <td>{exposure.existingLimit}</td
+                        <td>{exposure.loanStatus}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+        }
+
         // execute 
         public string Replace(string content) // placeholders replace
         {
@@ -275,6 +851,8 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(approvalLevelHolder, approvalLevel);
             content = content.Replace(accountNumbersHolder, accountNumbers);
             content = content.Replace(proposedConditionsHolder, proposedConditions);
+            content = content.Replace(conditionsPrecedentToDrawdownHolder, conditionsPrecedentToDrawdown);
+            content = content.Replace(transactionsDynamicsHolder, transactionsDynamics);
             content = content.Replace(monitoringTriggersHolder, monitoringTriggers);
             content = content.Replace(environmentalSocialRiskHolder, environmentalSocialRisk);
             content = content.Replace(rmCountryHolder, rmCountry);
@@ -283,11 +861,12 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(preparedByHolder, preparedBy);
             content = content.Replace(businessSectorsHolder, businessSectors);
             content = content.Replace(directFacilitiesHolder, directFacilities);
-            content = content.Replace(totalDirectsHolder, totalDirects);
+            content = content.Replace(totalDirectsHolder, totalDirectFacilities);
             content = content.Replace(contingentFacilitiesHolder, contingentFacilities);
-            content = content.Replace(totalContingentsHolder, totalContingents);
-            content = content.Replace(IFFHolder, IFF);
-            content = content.Replace(totalIFFHolder, totalIFF);
+            content = content.Replace(totalContingentsHolder, totalContingentFacilities);
+            content = content.Replace(importFinanceFacilitiesHolder, importFinanceFacilities);
+            content = content.Replace(totalImportFinanceFacilitiesHolder, totalImportFinanceFacilities);
+            content = content.Replace(groupExposureHolder, groupExposure);
 
             if (content.Contains(customerTurnoverHolder))
             {
@@ -573,6 +1152,56 @@ namespace FintrakBanking.Repositories.Credit
             });
 
             return exposures;
+        }
+
+        public List<CurrentCustomerExposure> GetGroupExposurebyCustomerId(int customerId, int companyId)
+        {
+            return group.GetGroupExposureByCustomerId(customerId, companyId);
+        }
+
+        public decimal GetCustomerTotalOutstandingBalanceForLoans(int customerId)
+        {
+            var loanData = context.TBL_LOAN.FirstOrDefault(x => x.CUSTOMERID == customerId);
+
+            decimal loanBalance = 0;
+
+            if (loanData != null)
+            {
+                var balance = (from a in context.TBL_LOAN where a.CUSTOMERID == customerId select a.OUTSTANDINGPRINCIPAL).Sum();
+                loanBalance = balance;
+            }
+
+            return loanBalance;
+        }
+
+        public decimal GetCustomerTotalOutstandingBalanceForOverdrafts(int customerId)
+        {
+            var overdraftData = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.CUSTOMERID == customerId);
+
+            decimal overdraftBalance = 0;
+
+            if (overdraftData != null)
+            {
+                var balance = (from a in context.TBL_LOAN_REVOLVING where a.CUSTOMERID == customerId select a.OVERDRAFTLIMIT).Sum();
+                overdraftBalance = balance;
+            }
+
+            return overdraftBalance;
+        }
+
+        public decimal GetCustomerTotalOutstandingBalanceForContingents(int customerId)
+        {
+            var contingentData = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CUSTOMERID == customerId);
+
+            decimal contingentBalance = 0;
+
+            if (contingentData != null)
+            {
+                var balance = (from a in context.TBL_LOAN_CONTINGENT where a.CUSTOMERID == customerId select a.CONTINGENTAMOUNT).Sum();
+                contingentBalance = balance;
+            }
+
+            return contingentBalance;
         }
 
         //Classified Assets Management
