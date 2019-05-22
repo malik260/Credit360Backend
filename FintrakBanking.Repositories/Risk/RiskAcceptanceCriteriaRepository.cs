@@ -33,7 +33,7 @@ namespace FintrakBanking.Repositories.Risk
             this.admin = _admin;
         }
 
-
+        #region
         public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId)
         {
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
@@ -86,8 +86,881 @@ namespace FintrakBanking.Repositories.Risk
 
             return rac;
         }
-        
+        #endregion
+
+        #region RacCategoryRepository
+        public IEnumerable<RacCategoryViewModel> GetRacCategorys()
+        {
+            return context.TBL_RAC_CATEGORY.Where(x => x.DELETED == false)
+                .Select(x => new RacCategoryViewModel
+                {
+                    racCategoryId = x.RACCATEGORYID,
+                    categoryName = x.CATEGORYNAME,
+                })
+                .ToList();
+        }
+
+        public RacCategoryViewModel GetRacCategory(int id)
+        {
+            var entity = context.TBL_RAC_CATEGORY.FirstOrDefault(x => x.RACCATEGORYID == id && x.DELETED == false);
+
+            return new RacCategoryViewModel
+            {
+                racCategoryId = entity.RACCATEGORYID,
+                categoryName = entity.CATEGORYNAME,
+            };
+        }
+
+        public bool AddRacCategory(RacCategoryViewModel model)
+        {
+            var entity = new TBL_RAC_CATEGORY
+            {
+                CATEGORYNAME = model.categoryName,
+                // COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_RAC_CATEGORY.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacCategoryAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"TBL_Rac Category with id '{entity.RACCATEGORYID}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateRacCategory(RacCategoryViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_CATEGORY.Find(id);
+            entity.CATEGORYNAME = model.categoryName;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacCategoryUpdated,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Category with id '{entity.RACCATEGORYID}' was updated by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACCATEGORYID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteRacCategory(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_CATEGORY.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacCategoryDeleted,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Category with id '{entity.RACCATEGORYID}' was deleted by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACCATEGORYID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
+        #region RacDefinitionRepository
+        public IEnumerable<RacDefinitionViewModel> GetRacDefinitions()
+        {
+            return context.TBL_RAC_DEFINITION.Where(x => x.DELETED == false)
+                .Select(x => new RacDefinitionViewModel
+                {
+                    racDefinitionId = x.RACDEFINITIONID,
+                    productId = x.PRODUCTID,
+                    racCategoryId = x.RACCATEGORYID,
+                    isActive = x.ISACTIVE,
+                    isRequired = x.ISREQUIRED,
+                    racItemId = x.RACITEMID,
+                    racInputTypeId = x.RACINPUTTYPEID,
+                    racOptionId = x.RACOPTIONID,
+                    conditionalOperatorId = x.CONDITIONALOPERATORID,
+                    definedFunctionId = x.DEFINEDFUNCTIONID,
+                    requireUpload = x.REQUIREUPLOAD,
+                    operationId = x.OPERATIONID,
+                    approvalLevelId = x.APPROVALLEVELID,
+                    roleId = x.ROLEID,
+                    productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == x.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                    CategoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
+                    racItemName = context.TBL_RAC_ITEM.Where(o => o.RACITEMID == x.RACITEMID).Select(o => o.CRITERIA).FirstOrDefault(),
+                    racInputType = context.TBL_RAC_INPUT_TYPE.Where(o => o.RACINPUTTYPEID == x.RACINPUTTYPEID).Select(o => o.INPUTTYPENAME).FirstOrDefault(),
+                    racOptionName = context.TBL_RAC_OPTION.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.OPTIONNAME).FirstOrDefault(),
+                    conditionalOperatorName = context.TBL_CONDITIONAL_OPERATOR.Where(o => o.CONDITIONALOPERATORID == x.CONDITIONALOPERATORID).Select(o => o.OPERATORNAME).FirstOrDefault(),
+                    definedFunctionName = context.TBL_DEFINED_FUNCTION.Where(o => o.DEFINEDFUNCTIONID == x.DEFINEDFUNCTIONID).Select(o => o.FUNCTIONNAME).FirstOrDefault(),
+                    operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == x.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
+                    approvalLevelName = context.TBL_APPROVAL_LEVEL.Where(o => o.APPROVALLEVELID == x.APPROVALLEVELID).Select(o => o.LEVELNAME).FirstOrDefault(),
+
+                })
+                .ToList();
+        }
+
+        public RacDefinitionViewModel GetRacDefinition(int id)
+        {
+            var entity = context.TBL_RAC_DEFINITION.FirstOrDefault(x => x.RACDEFINITIONID == id && x.DELETED == false);
+
+            return new RacDefinitionViewModel
+            {
+                racDefinitionId = entity.RACDEFINITIONID,
+                productId = entity.PRODUCTID,
+                racCategoryId = entity.RACCATEGORYID,
+                isActive = entity.ISACTIVE,
+                isRequired = entity.ISREQUIRED,
+                racItemId = entity.RACITEMID,
+                racInputTypeId = entity.RACINPUTTYPEID,
+                racOptionId = entity.RACOPTIONID,
+                conditionalOperatorId = entity.CONDITIONALOPERATORID,
+                definedFunctionId = entity.DEFINEDFUNCTIONID,
+                requireUpload = entity.REQUIREUPLOAD,
+                operationId = entity.OPERATIONID,
+                approvalLevelId = entity.APPROVALLEVELID,
+                roleId = entity.ROLEID,
+            };
+        }
+
+        public bool AddRacDefinition(RacDefinitionViewModel model)
+        {
+            var entity = new TBL_RAC_DEFINITION
+            {
+                PRODUCTID = model.productId,
+                RACCATEGORYID = model.racCategoryId,
+                ISACTIVE = model.isActive,
+                ISREQUIRED = model.isRequired,
+                RACITEMID = model.racItemId,
+                RACINPUTTYPEID = model.racInputTypeId,
+                RACOPTIONID = model.racOptionId,
+                CONDITIONALOPERATORID = model.conditionalOperatorId,
+                DEFINEDFUNCTIONID = model.definedFunctionId,
+                REQUIREUPLOAD = model.requireUpload,
+                OPERATIONID = model.operationId,
+                APPROVALLEVELID = model.approvalLevelId,
+                ROLEID = model.roleId,
+                // COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_RAC_DEFINITION.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacDefinitionAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"TBL_Rac Definition with id '{entity.RACDEFINITIONID}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateRacDefinition(RacDefinitionViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_DEFINITION.Find(id);
+            entity.PRODUCTID = model.productId;
+            entity.RACCATEGORYID = model.racCategoryId;
+            entity.ISACTIVE = model.isActive;
+            entity.ISREQUIRED = model.isRequired;
+            entity.RACITEMID = model.racItemId;
+            entity.RACINPUTTYPEID = model.racInputTypeId;
+            entity.RACOPTIONID = model.racOptionId;
+            entity.CONDITIONALOPERATORID = model.conditionalOperatorId;
+            entity.DEFINEDFUNCTIONID = model.definedFunctionId;
+            entity.REQUIREUPLOAD = model.requireUpload;
+            entity.OPERATIONID = model.operationId;
+            entity.APPROVALLEVELID = model.approvalLevelId;
+            entity.ROLEID = model.roleId;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacDefinitionUpdated,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Definitionwith id '{entity.RACDEFINITIONID}' was updated by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACDEFINITIONID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteRacDefinition(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_DEFINITION.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacDefinitionDeleted,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Definition with id '{entity.RACDEFINITIONID}' was deleted by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACDEFINITIONID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
+        #region DetailsRepository
+        public IEnumerable<RacDetailViewModel> GetRacDetails()
+        {
+            return context.TBL_RAC_DETAIL.Where(x => x.DELETED == false)
+                .Select(x => new RacDetailViewModel
+                {
+                    racDetailId = x.RACDETAILID,
+                    racDefinitionId = x.RACDEFINITIONID,
+                    operationId = x.OPERATIONID,
+                    targetId = x.TARGETID,
+                    actualValue = x.ACTUALVALUE,
+                    checklistStatus = x.CHECKLISTSTATUS,
+                    checklistStatus2 = x.CHECKLISTSTATUS2,
+                    checklistStatus3 = x.CHECKLISTSTATUS3,
+                })
+                .ToList();
+        }
+
+        public RacDetailViewModel GetRacDetail(int id)
+        {
+            var entity = context.TBL_RAC_DETAIL.FirstOrDefault(x => x.RACDETAILID == id && x.DELETED == false);
+
+            return new RacDetailViewModel
+            {
+                racDetailId = entity.RACDETAILID,
+                racDefinitionId = entity.RACDEFINITIONID,
+                operationId = entity.OPERATIONID,
+                targetId = entity.TARGETID,
+                actualValue = entity.ACTUALVALUE,
+                checklistStatus = entity.CHECKLISTSTATUS,
+                checklistStatus2 = entity.CHECKLISTSTATUS2,
+                checklistStatus3 = entity.CHECKLISTSTATUS3,
+            };
+        }
+
+        public bool AddRacDetail(RacDetailViewModel model)
+        {
+            var entity = new TBL_RAC_DETAIL
+            {
+                RACDEFINITIONID = model.racDefinitionId,
+                OPERATIONID = model.operationId,
+                TARGETID = model.targetId,
+                ACTUALVALUE = model.actualValue,
+                CHECKLISTSTATUS = model.checklistStatus,
+                CHECKLISTSTATUS2 = model.checklistStatus2,
+                CHECKLISTSTATUS3 = model.checklistStatus3,
+                // COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_RAC_DETAIL.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacDetailAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"TBL_Rac Detail with id '{entity.RACDETAILID}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateRacDetail(RacDetailViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_DETAIL.Find(id);
+            entity.RACDEFINITIONID = model.racDefinitionId;
+            entity.OPERATIONID = model.operationId;
+            entity.TARGETID = model.targetId;
+            entity.ACTUALVALUE = model.actualValue;
+            entity.CHECKLISTSTATUS = model.checklistStatus;
+            entity.CHECKLISTSTATUS2 = model.checklistStatus2;
+            entity.CHECKLISTSTATUS3 = model.checklistStatus3;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacDetailUpdated,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Detail with id '{entity.RACDETAILID}' was updated by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACDETAILID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteRacDetail(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_DETAIL.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacDetailDeleted,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Detail with id '{entity.RACDETAILID}' was deleted by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACDETAILID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
+        #region RacInputTypeRepository
+        public IEnumerable<RacInputTypeViewModel> GetRacInputTypes()
+        {
+            return context.TBL_RAC_INPUT_TYPE
+                .Select(x => new RacInputTypeViewModel
+                {
+                    racInputTypeId = x.RACINPUTTYPEID,
+                    inputTypeName = x.INPUTTYPENAME,
+                    inputTag = x.INPUTTAG,
+                })
+                .ToList();
+        }
+
+        public RacInputTypeViewModel GetRacInputType(int id)
+        {
+            var entity = context.TBL_RAC_INPUT_TYPE.FirstOrDefault(x => x.RACINPUTTYPEID == id);
+
+            return new RacInputTypeViewModel
+            {
+                racInputTypeId = entity.RACINPUTTYPEID,
+                inputTypeName = entity.INPUTTYPENAME,
+                inputTag = entity.INPUTTAG,
+            };
+        }
+
+        public bool AddRacInputType(RacInputTypeViewModel model)
+        {
+            var entity = new TBL_RAC_INPUT_TYPE
+            {
+                INPUTTYPENAME = model.inputTypeName,
+                INPUTTAG = model.inputTag,
+                // COMPANYID = model.companyId,
+                //CREATEDBY = model.createdBy,
+                //DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_RAC_INPUT_TYPE.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacInputTypeAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"TBL_Rac Input Type with id '{entity.RACINPUTTYPEID}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateRacInputType(RacInputTypeViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_INPUT_TYPE.Find(id);
+            entity.INPUTTYPENAME = model.inputTypeName;
+            entity.INPUTTAG = model.inputTag;
+
+           // entity.LASTUPDATEDBY = user.createdBy;
+           // entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacInputTypeUpdated,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Input Type with id '{entity.RACINPUTTYPEID}' was updated by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACINPUTTYPEID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteRacInputType(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_INPUT_TYPE.Find(id);
+           // entity.DELETED = true;
+           // entity.DELETEDBY = user.createdBy;
+           // entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacInputTypeDeleted,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Input Type with id '{entity.RACINPUTTYPEID}' was deleted by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACINPUTTYPEID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
+        #region  RecItemRepository
+        public IEnumerable<RacItemViewModel> GetRacItems()
+        {
+            return context.TBL_RAC_ITEM.Where(x => x.DELETED == false)
+                .Select(x => new RacItemViewModel
+                {
+                    racItemId = x.RACITEMID,
+                    criteria = x.CRITERIA,
+                    description = x.DESCRIPTION,
+                })
+                .ToList();
+        }
+
+        public RacItemViewModel GetRacItem(int id)
+        {
+            var entity = context.TBL_RAC_ITEM.FirstOrDefault(x => x.RACITEMID == id && x.DELETED == false);
+
+            return new RacItemViewModel
+            {
+                racItemId = entity.RACITEMID,
+                criteria = entity.CRITERIA,
+                description = entity.DESCRIPTION,
+            };
+        }
+
+        public bool AddRacItem(RacItemViewModel model)
+        {
+            var entity = new TBL_RAC_ITEM
+            {
+                CRITERIA = model.criteria,
+                DESCRIPTION = model.description,
+                // COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_RAC_ITEM.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacItemAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"TBL_Rac Item '{entity.DESCRIPTION}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateRacItem(RacItemViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_ITEM.Find(id);
+            entity.CRITERIA = model.criteria;
+            entity.DESCRIPTION = model.description;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacItemUpdated,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Item '{entity.DESCRIPTION}' was updated by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACITEMID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteRacItem(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_ITEM.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacItemDeleted,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Item '{entity.DESCRIPTION}' was deleted by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACITEMID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
+        #region RacOptionsRepository
+        public IEnumerable<RacOptionViewModel> GetRacOptions()
+        {
+            return context.TBL_RAC_OPTION.Where(x=>x.DELETED==false)
+                .Select(x => new RacOptionViewModel
+                {
+                    racOptionId = x.RACOPTIONID,
+                    optionName = x.OPTIONNAME,
+                })
+                .ToList();
+        }
+
+        public RacOptionViewModel GetRacOption(int id)
+        {
+            var entity = context.TBL_RAC_OPTION.Where(x => x.DELETED == false).FirstOrDefault(x => x.RACOPTIONID == id);
+
+            return new RacOptionViewModel
+            {
+                racOptionId = entity.RACOPTIONID,
+                optionName = entity.OPTIONNAME,
+            };
+        }
+
+        public bool AddRacOption(RacOptionViewModel model)
+        {
+            var entity = new TBL_RAC_OPTION
+            {
+                OPTIONNAME = model.optionName,
+                DELETED = false
+                // COMPANYID = model.companyId,
+            };
+
+            context.TBL_RAC_OPTION.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacOptionAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"TBL_Rac Option with id '{entity.RACOPTIONID}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateRacOption(RacOptionViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_OPTION.Find(id);
+            entity.OPTIONNAME = model.optionName;
+
+         //   entity.LASTUPDATEDBY = user.createdBy;
+         //   entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacOptionUpdated,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Option with id '{entity.RACOPTIONID}' was updated by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACOPTIONID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteRacOption(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_OPTION.Find(id);
+              entity.DELETED = true;
+          //  entity.DELETEDBY = user.createdBy;
+           // entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacOptionDeleted,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Option with id '{entity.RACOPTIONID}' was deleted by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACOPTIONID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
+        #region
+        public IEnumerable<RacOptionItemViewModel> GetRacOptionItems()
+        {
+            return context.TBL_RAC_OPTION_ITEM.Where(x => x.DELETED == false)
+                .Select(x => new RacOptionItemViewModel
+                {
+                    racOptionItemId = x.RACOPTIONITEMID,
+                    label = x.LABEL,
+                    key = x.KEY,
+                    isSystemDefined = x.ISSYSTEMDEFINED,
+                })
+                .ToList();
+        }
+
+        public RacOptionItemViewModel GetRacOptionItem(int id)
+        {
+            var entity = context.TBL_RAC_OPTION_ITEM.FirstOrDefault(x => x.RACOPTIONITEMID == id && x.DELETED == false);
+
+            return new RacOptionItemViewModel
+            {
+                racOptionItemId = entity.RACOPTIONITEMID,
+                label = entity.LABEL,
+                key = entity.KEY,
+                isSystemDefined = entity.ISSYSTEMDEFINED,
+            };
+        }
+
+        public bool AddRacOptionItem(RacOptionItemViewModel model)
+        {
+            var entity = new TBL_RAC_OPTION_ITEM
+            {
+                LABEL = model.label,
+                KEY = model.key,
+                ISSYSTEMDEFINED = model.isSystemDefined,
+                // COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_RAC_OPTION_ITEM.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacOptionItemAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"TBL_Rac Option Item with id '{entity.RACOPTIONITEMID}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateRacOptionItem(RacOptionItemViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_OPTION_ITEM.Find(id);
+            entity.LABEL = model.label;
+            entity.KEY = model.key;
+            entity.ISSYSTEMDEFINED = model.isSystemDefined;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacOptionItemUpdated,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Option Item with id '{entity.RACOPTIONITEMID}' was updated by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACOPTIONITEMID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteRacOptionItem(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_RAC_OPTION_ITEM.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.RacOptionItemDeleted,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Rac Option Item with id '{entity.RACOPTIONITEMID}' was deleted by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.RACOPTIONITEMID
+            //});
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
+
+        public IEnumerable<ConditionalOperatorViewModel> GetConditionalOperators()
+        {
+            return context.TBL_CONDITIONAL_OPERATOR
+                .Select(x => new ConditionalOperatorViewModel
+                {
+                    conditionalOperatorId = x.CONDITIONALOPERATORID,
+                    operatorName = x.OPERATORNAME,
+                })
+                .ToList();
+        }
+        public IEnumerable<DefinedFunctionViewModel> GetDefinedFunctions()
+        {
+            return context.TBL_DEFINED_FUNCTION
+                .Select(x => new DefinedFunctionViewModel
+                {
+                    definedFunctionId = x.DEFINEDFUNCTIONID,
+                    functionName = x.FUNCTIONNAME,
+                    description = x.DESCRIPTION,
+                    isSystemDefined = x.ISSYSTEMDEFINED,
+                })
+                .ToList();
+        }
+
     }
+
+
 }
 
            // kernel.Bind<IRiskAcceptanceCriteriaRepository>().To<RiskAcceptanceCriteriaRepository>();
