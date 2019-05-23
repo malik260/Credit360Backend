@@ -51,6 +51,133 @@ namespace FintrakBanking.ViewModels.Risk
         public int staffId { get; set; }
         public String comment { get; set; }
     }
+
+    public class RacCategoryViewModel : GeneralEntity
+    {
+        public int racCategoryId { get; set; }
+
+        public string categoryName { get; set; }
+
+    }
+
+    public class RacDefinitionViewModel : GeneralEntity
+    {
+        public int racDefinitionId { get; set; }
+
+        public int productId { get; set; }
+
+        public int racCategoryId { get; set; }
+
+        public bool isActive { get; set; }
+
+        public bool isRequired { get; set; }
+
+        public int racItemId { get; set; }
+
+        public int racInputTypeId { get; set; }
+
+        public int? racOptionId { get; set; }
+
+        public int conditionalOperatorId { get; set; }
+
+        public int definedFunctionId { get; set; }
+
+        public bool requireUpload { get; set; }
+
+        public int operationId { get; set; }
+
+        public int? approvalLevelId { get; set; }
+
+        public int? roleId { get; set; }
+        public string productName { get; set; }
+        public string CategoryName { get; set; }
+        public string racItemName { get; set; }
+        public string racInputType { get; set; }
+        public string racOptionName { get; set; }
+        public string conditionalOperatorName { get; set; }
+        public string definedFunctionName { get; set; }
+        public string operationName { get; set; }
+        public string approvalLevelName { get; set; }
+    }
+
+    public class RacDetailViewModel : GeneralEntity
+    {
+        public int racDetailId { get; set; }
+
+        public int racDefinitionId { get; set; }
+
+        public int operationId { get; set; }
+
+        public int targetId { get; set; }
+
+        public string actualValue { get; set; }
+
+        public int checklistStatus { get; set; }
+
+        public int checklistStatus2 { get; set; }
+
+        public int checklistStatus3 { get; set; }
+
+    }
+
+    public class RacInputTypeViewModel : GeneralEntity
+    {
+        public int racInputTypeId { get; set; }
+
+        public string inputTypeName { get; set; }
+
+        public string inputTag { get; set; }
+
+    }
+
+    public class RacItemViewModel : GeneralEntity
+    {
+        public int racItemId { get; set; }
+
+        public string criteria { get; set; }
+
+        public string description { get; set; }
+
+    }
+
+    public class RacOptionViewModel : GeneralEntity
+    {
+        public int racOptionId { get; set; }
+
+        public string optionName { get; set; }
+
+    }
+
+    public class RacOptionItemViewModel : GeneralEntity
+    {
+        public int racOptionItemId { get; set; }
+
+        public string label { get; set; }
+
+        public int key { get; set; }
+
+        public bool isSystemDefined { get; set; }
+
+    }
+
+    public class ConditionalOperatorViewModel : GeneralEntity
+    {
+        public int conditionalOperatorId { get; set; }
+
+        public string operatorName { get; set; }
+
+    }
+    public class DefinedFunctionViewModel : GeneralEntity
+    {
+        public int definedFunctionId { get; set; }
+
+        public string functionName { get; set; }
+
+        public string description { get; set; }
+
+        public bool isSystemDefined { get; set; }
+
+    }
 }
 
 /* rac = {

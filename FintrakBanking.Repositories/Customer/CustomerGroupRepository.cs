@@ -1378,9 +1378,12 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
         public List<CurrentCustomerExposure> GetGroupExposureByCustomerId(int customerId, int companyId)
         {
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
-            var customerGroup = GetCustomerGroupByCustomerId(customerId);
-            var customers = GetGroupMembersByGroupId(customerGroup.customerGroupId, companyId).Select(c => new { c.customerName, c.customerId });
-            exposures = GetGroupExposureByGroupId(customerGroup.customerGroupId, companyId);
+            var customerGroups = GetCustomerGroupMapping().Where(m => m.customerId == customerId).ToList();
+            //var customers = GetGroupMembersByGroupId(customerGroup.customerGroupId, companyId).Select(c => new { c.customerName, c.customerId });
+            foreach (var group in customerGroups)
+            {
+                exposures.AddRange(GetGroupExposureByGroupId(group.customerGroupId, companyId));
+            }
             return exposures;
         }
 

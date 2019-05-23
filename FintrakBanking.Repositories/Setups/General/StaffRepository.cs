@@ -164,7 +164,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              workStartDuration = c.WORKSTARTDURATION,
                              workEndDuration = c.WORKENDDURATION,
                              businessUnitId =c.BUSINESSUNITID,
-                             businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                             businessUnitName = c.BUSINESSUNITID != null ? c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                          }).ToList();
 
             var department = (from k in context.TBL_DEPARTMENT_UNIT
@@ -238,7 +238,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              workStartDuration = c.WORKSTARTDURATION,
                              workEndDuration = c.WORKENDDURATION,
                              businessUnitId = c.BUSINESSUNITID,
-                             businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                             businessUnitName = c.BUSINESSUNITID != null ? c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                          }).SingleOrDefault();
             return staff;
         }
@@ -248,7 +248,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             bool isUpdate = false;
             TBL_TEMP_PROFILE_USER user = null;
-
+            var tempStaffForPassword = context.TBL_PROFILE_USER.FirstOrDefault(u => u.USERNAME == staffModel.user.username);
+            
 
 
             List<TBL_TEMP_PROFILE_USERGROUP> userGroups = new List<TBL_TEMP_PROFILE_USERGROUP>();
@@ -341,7 +342,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         TEMPSTAFFID = staffModel.staffId,
                         USERNAME = staffModel.user.username,
-                        PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password != null ? staffModel.user.password : context.TBL_PROFILE_USER.Where(x=>x.USERNAME == staffModel.user.username).Select(m=>m.PASSWORD).FirstOrDefault(), StaticHelpers.EncryptionKey),
+                        PASSWORD = tempStaffForPassword != null ? tempStaffForPassword.PASSWORD : StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
                         ISFIRSTLOGINATTEMPT = false,
                         ISACTIVE = false,
                         ISLOCKED = true,
@@ -763,7 +764,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              departmentUnitId = c.DEPARTMENTUNITID,
                              departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
                              businessUnitId = c.BUSINESSUNITID,
-                             businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                             businessUnitName = c.BUSINESSUNITID != null ? c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                              OperationId = (short)OperationsEnum.DeleteStaff,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION
                          }).ToList();
@@ -1795,7 +1796,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
                              businessUnitId = c.BUSINESSUNITID,
                              OperationId = t.OPERATIONID,
-                             businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                             businessUnitName = c.BUSINESSUNITID != null ? c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                              SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION
                          }).ToList();
 
@@ -1854,7 +1855,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
                         ApprovalStatusId = c.APPROVALSTATUSID,
                         businessUnitId = c.BUSINESSUNITID,
-                        businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                        businessUnitName = c.BUSINESSUNITID != null ? c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                         SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                     }).FirstOrDefault();
         }
@@ -1911,7 +1912,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
                             departmentUnitId = (short)c.DEPARTMENTUNITID,
                             departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
-                            businessUnitName = c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME,
+                            businessUnitName = c.BUSINESSUNITID != null ? c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                             businessUnitId = c.BUSINESSUNITID,
                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.SingleOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION,
                             loanLimit = c.LOAN_LIMIT,
@@ -2701,6 +2702,20 @@ namespace FintrakBanking.Repositories.Setups.General
                            };
 
             return branches.ToList();
+        }
+
+        public IEnumerable<simpleStaffModel> GetStaffRoles(int companyId)
+        {
+            // context.TBL_STAFF_ROLE.Where(o => o.COMPANYID == companyId).Select(o => o).ToList();
+            var role = from x in context.TBL_STAFF_ROLE
+                       where x.COMPANYID == companyId
+                       select new simpleStaffModel
+                       {
+                           staffRoleId = x.STAFFROLEID,
+                           staffRoleName = x.STAFFROLENAME
+                       };
+
+            return role;
         }
     }
 }
