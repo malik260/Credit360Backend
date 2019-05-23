@@ -1252,7 +1252,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
         public List<CurrentCustomerExposure> GetGroupExposureByGroupId(int customerGroupId, int companyId)
         { 
             var exposures = new List<CurrentCustomerExposure>();
-            var customers = GetCustomerGroupMappingByGroupId(customerGroupId).Select(c => new { c.customerGroupId, c.customerName, c.customerId });
+            var customers = GetCustomerGroupMappingByGroupId(customerGroupId).Select(c => new { c.customerGroupId, c.customerName, c.customerId }).ToList();
             exposures = GetAllGroupCustomersExposure(customers.Select(c => new CustomerExposure { customerId = c.customerId }).ToList(), companyId);
             return exposures;
         }
@@ -1267,7 +1267,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
             {
                 var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
                 exposure = from a in context.TBL_LOAN
-                           join b in context.TBL_LOAN_APPLICATION on a.LOANREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                            join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                            select new CurrentCustomerExposure
@@ -1278,7 +1278,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                //proposedLimit = a.OUTSTANDINGPRINCIPAL,
                                proposedLimit = 0,
                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                               outstandings = a.OUTSTANDINGPRINCIPAL,
+                               outstandings = a.OUTSTANDINGPRINCIPAL + a.OUTSTANDINGINTEREST,
                                recommendedLimit = 0,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
@@ -1286,7 +1286,9 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                loanStatus = "Running",
                                referenceNumber = a.LOANREFERENCENUMBER,
-                               applicationStatusId = b.APPLICATIONSTATUSID
+                               applicationStatusId = b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                               currency = a.TBL_CURRENCY.CURRENCYNAME,
+                               maturityDate = a.MATURITYDATE
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
@@ -1312,7 +1314,9 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                 prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                 loanStatus = "Running",
                                 referenceNumber = a.LOANREFERENCENUMBER,
-                                applicationStatusId = b.APPLICATIONSTATUSID
+                                applicationStatusId = b.APPLICATIONSTATUSID,
+                                currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                maturityDate = a.MATURITYDATE
                             }).ToList();
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);

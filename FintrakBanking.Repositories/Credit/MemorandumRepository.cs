@@ -66,7 +66,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string importFinanceFacilitiesHolder = "@{{ImportFinanceFacilities}}";
         private readonly string totalImportFinanceFacilitiesHolder = "@{{TotalImportFinanceFacilities}}";
         private readonly string foreignDirectFacilitiesHolder = "@{{ForeignDirectFacilities}}";
-        private readonly string totalForeignDirectsHolder = "@{{ForeignTotalDirects}}";
+        private readonly string totalForeignDirectsHolder = "@{{TotalForeignDirects}}";
         private readonly string foreignContingentFacilitiesHolder = "@{{ForeignContingentFacilities}}";
         private readonly string totalForeignContingentsHolder = "@{{TotalForeignContingents}}";
         private readonly string foreignImportFinanceFacilitiesHolder = "@{{ForeignImportFinanceFacilities}}";
@@ -174,7 +174,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.reviewType = "Initial";
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
                 this.businessSectors = GetBusinessSectorsMarkupLOS();
-                this.exchangeRate = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().EXCHANGERATE.ToString();
+                this.exchangeRate = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().EXCHANGERATE.ToString();
                 this.directFacilities = GetDirectFacilitiesMarkupLOS();
                 this.totalDirectFacilities = GetTotalDirectFacilitiesMarkupLOS();
                 this.contingentFacilities = GetContingentFacilitiesMarkupLOS();
@@ -420,7 +420,6 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
             var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
-            var contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
 
             var loanGroups = loans.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
             foreach (var group in loanGroups)
@@ -472,36 +471,15 @@ namespace FintrakBanking.Repositories.Credit
                     ";
             }
 
-            var contingentsGroup = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
-            foreach (var group in contingentsGroup)
-            {
-                var facility = group.Key;
-                var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
-                var currentAmount = group.Sum(p => p.CONTINGENTAMOUNT);
-                var proposedAmount = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
-                                      group.FirstOrDefault().TBL_PRODUCT.PRODUCTID)?.Sum(p => p.PROPOSEDAMOUNT) + currentAmount);
-                var lLLImpact = (1/3) * proposedAmount;
-                var change = proposedAmount - currentAmount;
-                var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
-
-                result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
-                        <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
-                        <td>{currency}</td>
-                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", change)}</td>
-                        <td>{tenor}</td>
-                    </tr>
-                    ";
-            }
+            
             return result;
         }
 
         private string GetTotalDirectFacilitiesMarkupLOS()
         {
             var result = String.Empty;
+            var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
+            var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
             var directs = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != 
             (int)LoanProductTypeEnum.ContingentLiability && l.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN);
 
@@ -522,22 +500,30 @@ namespace FintrakBanking.Repositories.Credit
         private string GetContingentFacilitiesMarkupLOS()
         {
             var result = String.Empty;
-            var contingents = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == 
-            (int)LoanProductTypeEnum.ContingentLiability && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN);
-            var contingentGroups = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
-            foreach (var facility in contingentGroups)
+            var contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
+            var contingentsGroup = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
+            foreach (var group in contingentsGroup)
             {
+                var facility = group.Key;
+                var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
+                var currentAmount = group.Sum(p => p.CONTINGENTAMOUNT);
+                var proposedAmount = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
+                                      group.FirstOrDefault().TBL_PRODUCT.PRODUCTID)?.Sum(p => p.PROPOSEDAMOUNT) + currentAmount);
+                var lLLImpact = (1 / 3) * proposedAmount;
+                var change = proposedAmount - currentAmount;
+                var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+
                 result = result + $@"
                     <tr>
-                        <td>{facility.Key}</td>
-                        <td>{(1 / 3) * facility.Sum(p => p.APPROVEDAMOUNT)}</td>
-                        <td>{facility.First().TBL_CURRENCY.CURRENCYNAME}</td>
-                        <td>{facility.Sum(p => p.APPROVEDAMOUNT)}</td>
-                        <td>{facility.Sum(p => p.PROPOSEDAMOUNT)}</td>
-                        <td>{facility.Sum(p => p.PROPOSEDAMOUNT) - facility.Sum(p => p.APPROVEDAMOUNT)}</td>
-                        <td>{facility.Sum(p => p.APPROVEDTENOR)}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{tenor}</td>
                     </tr>
-                ";
+                    ";
             }
             return result;
         }
@@ -660,12 +646,11 @@ namespace FintrakBanking.Repositories.Credit
                 <table border=1>
                     <tr>
                         <th>S/N</th>
-                        <th>Customer Name</th>
                         <th>Facility Type</th>
-                        <th>Application Reference Number</th>
+                        <>Currency</>
                         <th>Outstanding</th>
-                        <th>Existing Limit</th>
-                        <th>Loan Status</th>
+                        <th>Maturity</th>
+                        <th>Application Reference Number</th>
                     </tr>
                  ";
             foreach (var exposure in exposures)
@@ -674,12 +659,11 @@ namespace FintrakBanking.Repositories.Credit
                 result = result + $@"
                     <tr>
                         <td>{n}</td>
-                        <td>{exposure.customerName}</td>
-                        <td>{exposure.facilityType}</td>
+                        <td>{exposure.customerName+", "+exposure.facilityType}</td>
+                        <td>{exposure.currency}</td>
+                        <td>{String.Format("{0:0,0.00}", exposure.outstandings)}</td>
+                        <td>{exposure.maturityDate}</td>
                         <td>{exposure.referenceNumber}</td>
-                        <td>{exposure.outstandings}</td>
-                        <td>{exposure.existingLimit}</td
-                        <td>{exposure.loanStatus}</td>
                     </tr>
                 ";
             }
@@ -920,6 +904,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(reviewTypeHolder, reviewType);
             content = content.Replace(preparedByHolder, preparedBy);
             content = content.Replace(businessSectorsHolder, businessSectors);
+            content = content.Replace(exchangeRateHolder, exchangeRate);
             content = content.Replace(directFacilitiesHolder, directFacilities);
             content = content.Replace(totalDirectsHolder, totalDirectFacilities);
             content = content.Replace(contingentFacilitiesHolder, contingentFacilities);
