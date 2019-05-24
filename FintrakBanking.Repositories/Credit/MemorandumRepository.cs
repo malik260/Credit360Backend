@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string transactionsDynamicsHolder = "@{{TransactionsDynamics}}";
         private readonly string isSecurityHolder = "@{{IsSecurity}}";
         private readonly string isOwnerOccupiedHolder = "@{{IsOwnerOccupied}}";
-        private readonly string rmCountryHolder = "@{{RmCountry}}";
+        private readonly string rmCountryHolder = "@{{Country}}";
         private readonly string misCodeHolder = "@{{MisCode}}";
         private readonly string reviewTypeHolder = "@{{ReviewType}}";
         private readonly string preparedByHolder = "@{{PreparedBy}}";
@@ -167,8 +167,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.recommendedInterestRate = loanApplication.INTERESTRATE.ToString();
                 this.dateCreated = loanApplication.DATETIMECREATED.ToShortDateString();
                 this.environmentalSocialRisk = GetEnvironmentalSocialRiskMarkup();
-                this.GetConditionsPrecedentToDrawdownMarkup();
-                this.GetTransactionsDynamicsMarkup();
+                this.conditionsPrecedentToDrawdown = GetConditionsPrecedentToDrawdownMarkup();
+                this.transactionsDynamics = GetTransactionsDynamicsMarkup();
                 this.rmCountry = this.loanApplication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
                 this.misCode = this.loanApplication.MISCODE;
                 this.reviewType = "Initial";
@@ -335,7 +335,7 @@ namespace FintrakBanking.Repositories.Credit
                 <table border=1>
                     <tr>
                         <th>S/N</th>
-                        <th>CONDITIONS</th>
+                        <th>CONDITIONS PRECEDENT TO DRAWDOWN</th>
                     </tr>
                  ";
             foreach (var e in conditions)
@@ -1290,6 +1290,12 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(totalContingentsHolder, totalContingentFacilities);
             content = content.Replace(importFinanceFacilitiesHolder, importFinanceFacilities);
             content = content.Replace(totalImportFinanceFacilitiesHolder, totalImportFinanceFacilities);
+            content = content.Replace(foreignDirectFacilitiesHolder, foreignDirectFacilities);
+            content = content.Replace(totalForeignDirectsHolder, totalForeignDirectFacilities);
+            content = content.Replace(foreignContingentFacilitiesHolder, foreignContingentFacilities);
+            content = content.Replace(totalForeignContingentsHolder, totalForeignContingentFacilities);
+            content = content.Replace(foreignImportFinanceFacilitiesHolder, foreignImportFinanceFacilities);
+            content = content.Replace(totalForeignImportFinanceFacilitiesHolder, totalForeignImportFinanceFacilities);
             content = content.Replace(groupExposureHolder, groupExposure);
 
             if (content.Contains(customerTurnoverHolder))
