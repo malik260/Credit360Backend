@@ -300,7 +300,9 @@ namespace FintrakBanking.Repositories.Risk
                     definedFunctionName = context.TBL_DEFINED_FUNCTION.Where(o => o.DEFINEDFUNCTIONID == x.DEFINEDFUNCTIONID).Select(o => o.FUNCTIONNAME).FirstOrDefault(),
                     operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == x.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                     approvalLevelName = context.TBL_APPROVAL_LEVEL.Where(o => o.APPROVALLEVELID == x.APPROVALLEVELID).Select(o => o.LEVELNAME).FirstOrDefault(),
-
+                    controlAmount = x.CONTROLAMOUNT,
+                    controlOptionId = x.CONTROLOPTIONID,
+                    controlOption = context.TBL_RAC_OPTION_ITEM.Where(o=>o.RACOPTIONID==x.RACOPTIONID).Select(o=>o.LABEL).FirstOrDefault()
                 })
                 .ToList();
         }
@@ -325,6 +327,8 @@ namespace FintrakBanking.Repositories.Risk
                 operationId = entity.OPERATIONID,
                 approvalLevelId = entity.APPROVALLEVELID,
                 roleId = entity.ROLEID,
+                controlAmount = entity.CONTROLAMOUNT,
+                controlOptionId = entity.CONTROLOPTIONID
             };
         }
 
@@ -348,6 +352,8 @@ namespace FintrakBanking.Repositories.Risk
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
+                CONTROLOPTIONID = model.controlOptionId,
+                CONTROLAMOUNT = model.controlAmount
             };
 
             context.TBL_RAC_DEFINITION.Add(entity);
@@ -386,6 +392,8 @@ namespace FintrakBanking.Repositories.Risk
             entity.OPERATIONID = model.operationId;
             entity.APPROVALLEVELID = model.approvalLevelId;
             entity.ROLEID = model.roleId;
+            entity.CONTROLAMOUNT = model.controlAmount;
+            entity.CONTROLOPTIONID = model.controlOptionId;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
@@ -792,7 +800,7 @@ namespace FintrakBanking.Repositories.Risk
         #region RacOptionsRepository
         public IEnumerable<RacOptionViewModel> GetRacOptions()
         {
-            return context.TBL_RAC_OPTION.Where(x=>x.DELETED==false)
+            return context.TBL_RAC_OPTION
                 .Select(x => new RacOptionViewModel
                 {
                     racOptionId = x.RACOPTIONID,
