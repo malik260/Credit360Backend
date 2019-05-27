@@ -12,6 +12,9 @@ namespace FintrakBanking.Interfaces.Risk
     {
         #region
         RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId);
+
+        RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProductAndTarget(int productId, int targetId);
+
         #endregion
 
         #region IRacCategoryRepository

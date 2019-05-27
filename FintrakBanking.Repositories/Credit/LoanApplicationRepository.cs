@@ -1211,7 +1211,8 @@ namespace FintrakBanking.Repositories.Credit
                 UpdateLoanApplication(loan);
             }
 
-            if (response == 0) response = context.SaveChanges();
+            // if (response == 0)
+                response = context.SaveChanges();
 
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
@@ -1235,7 +1236,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 if (submission == null) continue;
-                if (ValidRacSubmission(definition, submission.value, operationId, targetId)) throw new SecureException("Cannot Proceed as RAC not met!");
+                if (!ValidRacSubmission(definition, submission.value, operationId, targetId)) throw new SecureException("Cannot Proceed as RAC not met!");
                 details.Add(new TBL_RAC_DETAIL
                 {
                     RACDEFINITIONID = definition.RACDEFINITIONID,
@@ -1267,7 +1268,6 @@ namespace FintrakBanking.Repositories.Credit
             int integerConversion;
             int? integerValue = null;
             decimal? decimalValue = null;
-
 
             // text
             // numeric
@@ -1304,7 +1304,16 @@ namespace FintrakBanking.Repositories.Credit
             5   Less Than or Equal To
             6   Not Equal To
             */
+            /*
+            DEFINEDFUNCTIONID -- actual
 
+            RACOPTIONID --
+            CONTROLOPTIONID -- definition
+
+            CONTROLAMOUNT --
+
+            CONDITIONALOPERATORID --
+            */
 
             if (integerValue != null) // selects
             {

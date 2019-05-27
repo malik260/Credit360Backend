@@ -10,8 +10,7 @@ namespace FintrakBanking.ViewModels.Risk
     {
         public List<RacComment> comments { get; set; }
         public List<ProductRacCategory> categories { get; set; }
-
-
+        public int count { get; set; }
     }
 
     public class ProductRacCategory
@@ -33,10 +32,10 @@ namespace FintrakBanking.ViewModels.Risk
         public string type { get; set; }
         public int? typeId { get; set; }
         public int? optionId { get; set; }
-        public List<ProductRacOption> options { get; set; }
+        public IEnumerable<ProductRacOption> options { get; set; }
         public int status { get; set; }
         public bool fileUpload { get; set; }
-
+        public int definitionId { get; set; }
     }
 
     public class ProductRacOption

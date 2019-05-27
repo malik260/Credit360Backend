@@ -34,6 +34,7 @@ namespace FintrakBanking.Repositories.Risk
         }
 
         #region
+
         public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId)
         {
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
@@ -57,7 +58,8 @@ namespace FintrakBanking.Repositories.Risk
                 List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
                     .Select(x => new ProductRacItem
                     {
-                        id = x.TBL_RAC_ITEM.RACITEMID,
+                        id = x.RACDEFINITIONID,
+                        //id = x.TBL_RAC_ITEM.RACITEMID,
                         criteria = x.TBL_RAC_ITEM.CRITERIA,
                         required = x.TBL_RAC_ITEM.DESCRIPTION,
                         typeId = x.RACINPUTTYPEID,
@@ -65,27 +67,101 @@ namespace FintrakBanking.Repositories.Risk
                         optionId = x.RACOPTIONID,
                         fileUpload = x.REQUIREUPLOAD,
                         hasException = x.ISREQUIRED == false,
-                        options = x.RACOPTIONID == null ? new List<ProductRacOption>() 
+                        //options = x.RACOPTIONID == null ? null 
+                        //                                : context.TBL_RAC_OPTION_ITEM
+                        //                                            .Where(o => o.RACOPTIONID == x.RACOPTIONID)
+                        //                                            .Select(o => new ProductRacOption
+                        //                                            {
+                        //                                                key = o.KEY,
+                        //                                                label = o.LABEL
+                        //                                            })
+                        //                                            //.ToList()
+                    })
+                    .ToList();
+
+
+                foreach(var item in items)
+                {
+                    item.options = item.optionId == null ? null
                                                         : context.TBL_RAC_OPTION_ITEM
-                                                                    .Where(o => o.RACOPTIONID == (int)x.RACOPTIONID)
+                                                                    .Where(o => o.RACOPTIONID == item.optionId)
                                                                     .Select(o => new ProductRacOption
                                                                     {
                                                                         key = o.KEY,
                                                                         label = o.LABEL
                                                                     })
-                                                                    .ToList()
-                    })
-                    .ToList();
+                                                                    .ToList();
+                }
 
                 racCategory.rows = items;
                 racCategory.name = productRacCategory.CATEGORYNAME;
                 productCategories.Add(racCategory);
             }
 
+            rac.count = productCategories.Count();
             rac.categories = productCategories;
 
             return rac;
         }
+
+
+        public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProductAndTarget(int productId, int targetId)
+        {
+            RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
+            List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
+
+            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
+                .Select(x => x.RACCATEGORYID)
+                .ToList();
+
+            var productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID));
+
+            foreach (var productRacCategory in productRacCategories)
+            {
+                ProductRacCategory racCategory = new ProductRacCategory();
+
+                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
+                    .Join(context.TBL_RAC_DETAIL.Where(x => x.TARGETID == targetId), a => a.RACDEFINITIONID, b => b.RACDEFINITIONID, (a, b) => new { a, b })
+                    .Select(x => new ProductRacItem
+                    {
+                        id = x.a.RACDEFINITIONID,
+                        //id = x.TBL_RAC_ITEM.RACITEMID,
+                        criteria = x.a.TBL_RAC_ITEM.CRITERIA,
+                        required = x.a.TBL_RAC_ITEM.DESCRIPTION,
+                        typeId = x.a.RACINPUTTYPEID,
+                        type = context.TBL_RAC_INPUT_TYPE.FirstOrDefault(t => t.RACINPUTTYPEID == x.a.RACINPUTTYPEID).INPUTTAG,
+                        optionId = x.a.RACOPTIONID,
+                        fileUpload = x.a.REQUIREUPLOAD,
+                        hasException = x.a.ISREQUIRED == false,
+                        value = x.b.ACTUALVALUE
+                    })
+                    .ToList();
+
+
+                foreach (var item in items)
+                {
+                    item.options = item.optionId == null ? null
+                                                        : context.TBL_RAC_OPTION_ITEM
+                                                                    .Where(o => o.RACOPTIONID == item.optionId)
+                                                                    .Select(o => new ProductRacOption
+                                                                    {
+                                                                        key = o.KEY,
+                                                                        label = o.LABEL
+                                                                    })
+                                                                    .ToList();
+                }
+
+                racCategory.rows = items;
+                racCategory.name = productRacCategory.CATEGORYNAME;
+                productCategories.Add(racCategory);
+            }
+
+            rac.count = productCategories.Count();
+            rac.categories = productCategories;
+
+            return rac;
+        }
+
         #endregion
 
         #region RacCategoryRepository

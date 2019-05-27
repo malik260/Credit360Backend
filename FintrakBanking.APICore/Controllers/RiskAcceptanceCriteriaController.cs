@@ -31,6 +31,16 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region risk-acceptance-criteria
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("risk-acceptance-criteria/product/{productId}/target/{targetId}")]
+        public HttpResponseMessage GetRiskAcceptanceCriteriaByProductAndTarget(int productId, int targetId)
+        {
+            RiskAcceptanceCriteriaViewModel response = repo.GetRiskAcceptanceCriteriaByProductAndTarget(productId, targetId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.categories.Count() });
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("risk-acceptance-criteria/product/{productId}")]
@@ -39,6 +49,7 @@ namespace FintrakBanking.APICore.Controllers
             RiskAcceptanceCriteriaViewModel response = repo.GetRiskAcceptanceCriteriaByProduct(productId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.categories.Count() });
         }
+
         #endregion
 
         #region RacCategory 

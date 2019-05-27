@@ -326,8 +326,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ToStaffId = model.receiverStaffId;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
-            // workflow.Amount = totalApplicationAmount; 
-            workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
+            workflow.Amount = totalApplicationAmount; 
+            // workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
             workflow.InvestmentGrade = model.investmentGrade;
             workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
@@ -1132,8 +1132,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             // var declarations
             IQueryable<LoanApplicationViewModel> applications = null;
-            var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
-
+            var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+            
             // query
             var query = context.TBL_LOAN_APPLICATION.Where(x =>
                     x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
@@ -1206,12 +1206,15 @@ namespace FintrakBanking.Repositories.Credit
                 currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
                 dateTimeCreated = x.a.DATETIMECREATED
             })
-            .Where(x => x.currentApprovalLevelTypeId != 2) // hou
-            .ToList();
+            .ToList()
+            ;
 
             applications = query.AsQueryable()
+                .Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+
+            // var test = applications.Count();
 
             return applications;//.Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
