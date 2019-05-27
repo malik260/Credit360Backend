@@ -24,6 +24,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int productTypeId { get; set; }
         public int loanId { get; set; }
         public short applicationStatusId { get; set; }
+        public string currency { get; set; }
+        public DateTime maturityDate { get; set; }
     }
 
     public class FacilitySummary

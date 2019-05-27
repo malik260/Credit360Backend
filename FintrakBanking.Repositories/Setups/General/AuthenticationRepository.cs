@@ -193,6 +193,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (!user.isActive) result.grantMessage = "This account is INACTIVE";
             if (IsAccountLocked(user.username)) result.grantMessage = "This account is LOCKED";
             if (!ResumptionClosingTime(user)) result.grantMessage = "You cannot login at this time";
+            CheckAndUpdateUserAdditionalActivities(user);
 
             if (result.grantMessage != "valid")
             {
@@ -498,6 +499,26 @@ namespace FintrakBanking.Repositories.Setups.General
                     return true;
             }
             return false;
+        }
+
+        public void CheckAndUpdateUserAdditionalActivities(UserViewModel user)
+        {
+            var userActivities = context.TBL_PROFILE_USER.FirstOrDefault(u => u.USERID == user.user_id).TBL_PROFILE_ADDITIONALACTIVITY;
+            var deleteActivities = new List<TBL_PROFILE_ADDITIONALACTIVITY>();
+            if (userActivities.Count > 0)
+            {
+                foreach (var activity in userActivities)
+                {
+                    if (activity.EXPIREON?.CompareTo(DateTime.Now) < 0)
+                       deleteActivities.Add(activity);
+                }
+
+                foreach (var activity in deleteActivities)
+                {
+                    context.TBL_PROFILE_ADDITIONALACTIVITY.Remove(activity);
+                }
+                context.SaveChanges();
+            }
         }
 
         public bool IsAccountLocked(string userName) // ERROR POINT 1 - 
