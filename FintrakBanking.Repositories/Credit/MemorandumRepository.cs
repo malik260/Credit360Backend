@@ -435,8 +435,7 @@ namespace FintrakBanking.Repositories.Credit
                 var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
                 result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
+                            {facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
@@ -444,6 +443,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", change)}</td>
                         <td>{tenor}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                     ";
             }
 
@@ -461,8 +462,7 @@ namespace FintrakBanking.Repositories.Credit
                 var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
                 result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
+                            {facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
@@ -470,6 +470,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", change)}</td>
                         <td>{tenor}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                     ";
             }
 
@@ -489,8 +491,7 @@ namespace FintrakBanking.Repositories.Credit
                     var tenor = d.APPROVEDTENOR;
 
                     result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
+                            {facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
@@ -498,6 +499,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", change)}</td>
                         <td>{tenor}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                     ";
                 }
             }
@@ -576,8 +579,7 @@ namespace FintrakBanking.Repositories.Credit
             if (loans.Count() > 0 || overdrafts.Count() > 0 || numberOfNewFacilities > 0 )
             {
                 result = result + $@"
-                    <tr>
-                        <td>{loans.Count() + overdrafts.Count() + numberOfNewFacilities}</td>
+                        {loans.Count() + overdrafts.Count() + numberOfNewFacilities}</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>{String.Format("{0:0,0.00}", totalCurrentAmount)}</td>
@@ -585,6 +587,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", totalChange)}</td>
                         <td>{String.Format("{0:0,0.00}", totalTenors)}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                 ";
             }
             return result;
@@ -608,8 +612,7 @@ namespace FintrakBanking.Repositories.Credit
                 var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
                 result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
+                            {facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
@@ -617,10 +620,13 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", change)}</td>
                         <td>{tenor}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                     ";
             }
 
-            foreach (var d in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN))
+            foreach (var d in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+                                                                                    (int)LoanProductTypeEnum.ContingentLiability))
             {
                 var contingentExists = contingents.Exists(l => l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID);
 
@@ -635,8 +641,7 @@ namespace FintrakBanking.Repositories.Credit
                     var tenor = d.APPROVEDTENOR;
 
                     result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
+                            {facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
@@ -644,6 +649,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", change)}</td>
                         <td>{tenor}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                     ";
                 }
             }
@@ -677,7 +684,8 @@ namespace FintrakBanking.Repositories.Credit
                 totalTenors += tenor;
             }
 
-            foreach (var d in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN))
+            foreach (var d in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+                                                                                    (int)LoanProductTypeEnum.ContingentLiability))
             {
                 var contingentExists = contingents.Exists(l => l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID);
 
@@ -700,8 +708,7 @@ namespace FintrakBanking.Repositories.Credit
             if (contingents.Count() > 0 || numberOfNewFacilities > 0 || numberOfNewFacilities > 0)
             {
                 result = result + $@"
-                    <tr>
-                        <td>{contingents.Count() + numberOfNewFacilities}</td>
+                            {contingents.Count() + numberOfNewFacilities}</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>{String.Format("{0:0,0.00}", totalCurrentAmount)}</td>
@@ -709,6 +716,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", totalChange)}</td>
                         <td>{String.Format("{0:0,0.00}", totalTenors)}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                 ";
             }
             
@@ -735,8 +744,7 @@ namespace FintrakBanking.Repositories.Credit
                 var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
                 result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
+                            {facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
@@ -744,6 +752,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", change)}</td>
                         <td>{tenor}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                     ";
             }
 
@@ -761,8 +771,7 @@ namespace FintrakBanking.Repositories.Credit
                 var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
                 result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
+                            {facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
@@ -770,6 +779,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", change)}</td>
                         <td>{tenor}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                     ";
             }
 
@@ -789,8 +800,7 @@ namespace FintrakBanking.Repositories.Credit
                     var tenor = d.APPROVEDTENOR;
 
                     result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
+                            {facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
@@ -798,6 +808,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", change)}</td>
                         <td>{tenor}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                     ";
                 }
             }
@@ -875,8 +887,7 @@ namespace FintrakBanking.Repositories.Credit
             if (loans.Count() > 0 || overdrafts.Count() > 0 || numberOfNewFacilities > 0)
             {
                 result = result + $@"
-                    <tr>
-                        <td>{loans.Count() + overdrafts.Count() + numberOfNewFacilities}</td>
+                            {loans.Count() + overdrafts.Count() + numberOfNewFacilities}</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>{String.Format("{0:0,0.00}", totalCurrentAmount)}</td>
@@ -884,6 +895,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", totalChange)}</td>
                         <td>{String.Format("{0:0,0.00}", totalTenors)}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                 ";
             }
             return result;
@@ -907,8 +920,7 @@ namespace FintrakBanking.Repositories.Credit
                 var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
                 result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
+                            {facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
@@ -916,10 +928,13 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", change)}</td>
                         <td>{tenor}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                     ";
             }
 
-            foreach (var d in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN))
+            foreach (var d in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN && d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+                                                                                    (int)LoanProductTypeEnum.ContingentLiability))
             {
                 var contingentExists = contingents.Exists(l => l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID);
 
@@ -934,8 +949,7 @@ namespace FintrakBanking.Repositories.Credit
                     var tenor = d.APPROVEDTENOR;
 
                     result = result + $@"
-                    <tr>
-                        <td>{facility}</td>
+                            {facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
@@ -943,6 +957,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", change)}</td>
                         <td>{tenor}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                     ";
                 }
             }
@@ -979,7 +995,8 @@ namespace FintrakBanking.Repositories.Credit
                 totalTenors += tenor;
             }
 
-            foreach (var d in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN))
+            foreach (var d in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN && d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
+                                                                                    (int)LoanProductTypeEnum.ContingentLiability))
             {
                 var contingentExists = contingents.Exists(l => l.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID);
 
@@ -1002,8 +1019,7 @@ namespace FintrakBanking.Repositories.Credit
             if (contingents.Count() > 0 || numberOfNewFacilities > 0)
             {
                 result = result + $@"
-                    <tr>
-                        <td>{contingents.Count() + numberOfNewFacilities}</td>
+                            {contingents.Count() + numberOfNewFacilities}</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>{String.Format("{0:0,0.00}", totalCurrentAmount)}</td>
@@ -1011,6 +1027,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", totalChange)}</td>
                         <td>{String.Format("{0:0,0.00}", totalTenors)}</td>
                     </tr>
+                    <tr>
+                        <td>&nbsp;
                 ";
             }
             return result;

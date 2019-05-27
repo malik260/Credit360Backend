@@ -1987,7 +1987,7 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public int ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
         {
-            int operationId = (int)OperationsEnum.LoanAvailment;
+            int operationId = (int)OperationsEnum.LoanAvailment;// (int)OperationsEnum.LoanAvailment;
             var loanApplication = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
             var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID && x.STATUSID == (int)ApprovalStatusEnum.Approved);
 
@@ -2000,6 +2000,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var initiated = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == loanApplication.LOANAPPLICATIONID).Any();
             workflow.StaffId = entity.createdBy;
+            //workflow.OperationId = operationId;
             workflow.OperationId = operationId;
             workflow.TargetId = loanApplication.LOANAPPLICATIONID;
             workflow.CompanyId = loanApplication.COMPANYID;
