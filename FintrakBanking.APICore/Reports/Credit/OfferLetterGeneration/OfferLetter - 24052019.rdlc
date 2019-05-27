@@ -427,9 +427,8 @@
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
                       <FontWeight>Bold</FontWeight>
-                      <TextDecoration>None</TextDecoration>
+                      <TextDecoration>Underline</TextDecoration>
                       <Color>#000000</Color>
                     </Style>
                   </TextRun>
@@ -512,13 +511,13 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>CONDITIONS PRECEDENT TO DRAWDOWN</Value>
+                                  <Value>SECTION 3 (a) - Conditions Precedent to Drawdown</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
+                                    <TextDecoration>Underline</TextDecoration>
                                     <Color>#000000</Color>
                                   </Style>
                                 </TextRun>
@@ -633,7 +632,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionPrecident</DataSetName>
-            <Top>8.40266in</Top>
+            <Top>8.02766in</Top>
             <Left>0.20181in</Left>
             <Height>0.53124in</Height>
             <Width>6.59053in</Width>
@@ -667,13 +666,13 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>CONDITIONS SUBSEQUENT TO UTILIZATION</Value>
+                                  <Value>Section 4(a) Conditions Subsequent to Utilization:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
+                                    <TextDecoration>Underline</TextDecoration>
                                     <Color>#000000</Color>
                                   </Style>
                                 </TextRun>
@@ -788,7 +787,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionSubsequent</DataSetName>
-            <Top>9.00334in</Top>
+            <Top>8.62834in</Top>
             <Left>0.21223in</Left>
             <Height>0.51736in</Height>
             <Width>6.58011in</Width>
@@ -1231,6 +1230,108 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Repayment day</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>:</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="tenor1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!tenor.Value</Value>
+                                  <Style>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value> days </Value>
+                                  <Style>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>from set-up</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>tenor1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox19">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1319,6 +1420,94 @@
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox15">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Prepayment Terms/Early Liquidation Terms:</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value xml:space="preserve"> </Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox15</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox18">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Not applicable</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Normal</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox18</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox10">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1326,7 +1515,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Penal Rate for Late of Loans/Advances:</Value>
+                                  <Value>Late repayment:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -1362,12 +1551,10 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>1% flat on unpaid instalment in addition to the current interest rate applied on the outstanding debt.</Value>
+                                  <Value>These shall be penalties that will be borne by the borrower in the event of default in line with CBN guide to bank charges</Value>
                                   <Style>
-                                    <FontStyle>Normal</FontStyle>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
                                   </Style>
@@ -1377,6 +1564,81 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox14</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox86">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Grace period:</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox86</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox87">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>A grace period of seven (7) days will be allowed within which there will be no penal charge on late repayments, after which a monthly penal charge of 1% flat on overdue amount, in addition to current rate of interest and management fees on the unpaid sum until full repayment will be applicable.</Value>
+                                  <Style>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox87</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -1625,17 +1887,6 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>The interest rate for the facility shall be </Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
                                   <Value>=Fields!interestRate.Value.ToString + "%  " + First(Fields!productPriceIndex.Value, "OfferLetterLoanDetail")</Value>
                                   <Style>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -1643,34 +1894,20 @@
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value> per annum, which shall be subject to review from time to time in line with the prevailing money market condition. Any change in pricing of the facility notified by the Bank to customer/company shall be binding on the parties. However, any excess over the approved limit or any unliquidated expired facility shall attract an interest </Value>
+                                  <Value xml:space="preserve"> </Value>
                                   <Style>
-                                    <FontStyle>Normal</FontStyle>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
+                                    <Format>0.00;(0.00) %</Format>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>on authorized excess overdraft</Value>
+                                  <Value>per annum floating.  The interest rate advised is subject to change in line with money market conditions as advised by the Bank from time to time. Any future variation of interest rate as advised by the Bank will become effective after 10 business days notification to the Borrower unless the facility is fully repaid by the effective date of such reviewed rate</Value>
                                   <Style>
-                                    <FontStyle>Normal</FontStyle>
                                     <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value> at a rate of 12% per annum. </Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
                                   </Style>
@@ -1680,160 +1917,6 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>interestRate</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-                <TablixRow>
-                  <Height>0.25in</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox3">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Availability/Utilization:</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox3</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox4">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>This facility shall be available for utilization only upon satisfactory compliance with the conditions precedent to draw-down</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox4</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-                <TablixRow>
-                  <Height>0.25in</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox7">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Commencement Date:</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox7</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox8">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>This facility shall commence upon draw-down or on the date of disbursement notwithstanding the date on the offer letter or date of execution.</Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox8</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -1873,6 +1956,7 @@
                     <TablixMember />
                     <TablixMember />
                     <TablixMember />
+                    <TablixMember />
                   </TablixMembers>
                 </TablixMember>
               </TablixMembers>
@@ -1880,7 +1964,7 @@
             <DataSetName>OfferLetterLoanDetail</DataSetName>
             <Top>3.31107in</Top>
             <Left>0.20361in</Left>
-            <Height>3in</Height>
+            <Height>3.25in</Height>
             <Width>6.58873in</Width>
             <ZIndex>5</ZIndex>
             <Style>
@@ -2044,7 +2128,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterFee</DataSetName>
-            <Top>6.47774in</Top>
+            <Top>6.72774in</Top>
             <Left>0.20361in</Left>
             <Height>0.25in</Height>
             <Width>6.58873in</Width>
@@ -2151,7 +2235,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterCollateral</DataSetName>
-            <Top>7.21042in</Top>
+            <Top>7.46042in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>6.61487in</Width>
@@ -2169,13 +2253,13 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>COLLATERALSECURITY / SUPPORT</Value>
+                    <Value>SECTION 2 COLLATERAL</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Bold</FontWeight>
-                      <TextDecoration>None</TextDecoration>
+                      <TextDecoration>Underline</TextDecoration>
                       <Color>#000000</Color>
                     </Style>
                   </TextRun>
@@ -2184,7 +2268,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>6.91875in</Top>
+            <Top>7.16875in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
@@ -2476,7 +2560,7 @@
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>8.20486in</Top>
+            <Top>7.82986in</Top>
             <Left>0.22935in</Left>
             <Height>0.07479in</Height>
             <Width>6.60354in</Width>
@@ -2526,7 +2610,7 @@
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>10.18073in</Top>
+            <Top>9.80573in</Top>
             <Left>0.57892in</Left>
             <Height>0.07292in</Height>
             <Width>5.72917in</Width>
@@ -2557,7 +2641,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox33</rd:DefaultName>
-            <Top>9.69097in</Top>
+            <Top>9.31597in</Top>
             <Left>0.22935in</Left>
             <Height>0.25in</Height>
             <Width>6.56299in</Width>
@@ -2592,7 +2676,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox34</rd:DefaultName>
-            <Top>10.41806in</Top>
+            <Top>10.04306in</Top>
             <Left>0.22935in</Left>
             <Height>0.25in</Height>
             <Width>6.56299in</Width>
@@ -2607,156 +2691,8 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Textbox Name="Textbox1">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>COMMENCEMENT DATE</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value>:</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value />
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>This facility shall commence upon draw down or on the date of disbursement notwithstanding the date on the offer letter</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value />
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>AVAILABILITY / UTILIZATION:</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value />
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>This facility shall be available for utilization only upon satisfactory compliance with the conditions precedent to draw down</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>7.52153in</Top>
-            <Left>0.1995in</Left>
-            <Height>0.55209in</Height>
-            <Width>6.56299in</Width>
-            <ZIndex>15</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
         </ReportItems>
-        <Height>10.8139in</Height>
+        <Height>10.29306in</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2829,21 +2765,6 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Image Name="Image1">
-              <Source>Embedded</Source>
-              <Value>logomain</Value>
-              <Sizing>FitProportional</Sizing>
-              <Top>0.36333in</Top>
-              <Left>0.21223in</Left>
-              <Height>0.48959in</Height>
-              <Width>1.88464in</Width>
-              <ZIndex>1</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-              </Style>
-            </Image>
           </ReportItems>
           <Style>
             <Border>
@@ -3361,12 +3282,6 @@ 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</ImageData>
-    </EmbeddedImage>
-    <EmbeddedImage Name="logomain">
-      <MIMEType>image/png</MIMEType>
-      <ImageData>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</ImageData>
     </EmbeddedImage>
   </EmbeddedImages>
   <rd:ReportUnitType>Inch</rd:ReportUnitType>
