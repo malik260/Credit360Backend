@@ -98,6 +98,9 @@ namespace FintrakBanking.ViewModels.Risk
         public string definedFunctionName { get; set; }
         public string operationName { get; set; }
         public string approvalLevelName { get; set; }
+        public decimal? controlAmount { get; set; }
+        public int? controlOptionId { get; set; }
+        public string controlOption { get; set; }
     }
 
     public class RacDetailViewModel : GeneralEntity
