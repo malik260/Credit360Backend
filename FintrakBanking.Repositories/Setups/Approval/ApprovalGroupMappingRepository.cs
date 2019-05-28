@@ -44,6 +44,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public int AddApprovalGroupMapping(ApprovalGroupMappingViewModel model)
         {
+            if (context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                && x.OPERATIONID == model.operationId && x.PRODUCTCLASSID == model.productClassId
+                && x.PRODUCTID == model.productId).Any()) throw new SecureException("Duplicate mapping not allowed!");
+
             var recordExist = context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.GROUPID == model.groupId && x.POSITION == model.position).Any();
             if (recordExist)
                 throw new ConditionNotMetException("This operation has already been initiated and is approval pending");

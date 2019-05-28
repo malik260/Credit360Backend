@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string FUNCTIONNAME { get; set; }
 
-        [StringLength(10)]
+        [StringLength(250)]
         public string DESCRIPTION { get; set; }
 
         public bool ISSYSTEMDEFINED { get; set; }
