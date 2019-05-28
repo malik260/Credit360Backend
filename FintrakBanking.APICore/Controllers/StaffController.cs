@@ -601,16 +601,27 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("staff/search/")]
-        public HttpResponseMessage SearchStaff(string queryString="")
+        public HttpResponseMessage SearchStaff(string queryString = "")
         {
             if (queryString == null) queryString = string.Empty;
             var data = repo.SearchStaff(queryString, token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("staff/approver-search/operation/{operationId}/")]
+        public HttpResponseMessage SearchApprovers(int operationId, string queryString = "")
+        {
+            if (queryString == null) queryString = string.Empty;
+            var data = repo.SearchApprovers(operationId, queryString,token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("staff/{departmentId}/search/")]
         public HttpResponseMessage SearchStaffbyDepartmentId(string queryString, int departmentId)
         {
