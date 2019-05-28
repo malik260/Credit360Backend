@@ -71,6 +71,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string totalForeignContingentsHolder = "@{{TotalForeignContingents}}";
         private readonly string foreignImportFinanceFacilitiesHolder = "@{{ForeignImportFinanceFacilities}}";
         private readonly string totalForeignImportFinanceFacilitiesHolder = "@{{TotalForeignImportFinanceFacilities}}";
+        private readonly string totalFacilitiesHolder = "@{{TotalFacilities}}";
         private readonly string groupExposureHolder = "@{{GroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
@@ -122,6 +123,7 @@ namespace FintrakBanking.Repositories.Credit
         private string totalForeignContingentFacilities;
         private string foreignImportFinanceFacilities;
         private string totalForeignImportFinanceFacilities;
+        private string totalFacilities;
         private string groupExposure;
         // lms
         private string securityType;
@@ -186,7 +188,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.foreignContingentFacilities = GetForeignContingentFacilitiesMarkupLOS();
                 this.totalForeignContingentFacilities = GetTotalForeignContingentFacilitiesMarkupLOS();
                 //foreignImportFinanceFinance;
-                //foreigntotalImportFinanceFinance;
+                //totalForeignImportFinanceFinance;
+                this.totalFacilities = GetTotalFacilities();
                 this.groupExposure = GetGroupExposureMarkupLOS();
 
 
@@ -1032,6 +1035,11 @@ namespace FintrakBanking.Repositories.Credit
                 ";
             }
             return result;
+        }
+
+        private string GetTotalFacilities()
+        {
+            return "";
         }
 
         private string GetGroupExposureMarkupLOS()
