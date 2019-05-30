@@ -57,6 +57,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public SessionStatusInfo sessionStatusInfo { get; set; }
 
 
+        public int corrMatrixId { get; set; }
+        public string corrMatrixDescription { get; set; }
 
 
         public string strIsFirstLogin
