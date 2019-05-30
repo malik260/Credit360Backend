@@ -73,8 +73,15 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     this.ReportViewer.LocalReport.Refresh();
                     return;
                 }
+
+
             }
 
+
+        }
+
+        public void ddddddd()
+        {
 
         }
     }

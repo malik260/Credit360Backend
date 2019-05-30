@@ -250,6 +250,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IDocumentUsageRepository>().To<DocumentUsageRepository>();
             kernel.Bind<IRiskAcceptanceCriteriaRepository>().To<RiskAcceptanceCriteriaRepository>();
             kernel.Bind<ITermSheetRepository>().To<TermSheetRepository>();
+            kernel.Bind<IOutputDocumentRepository>().To<OutputDocumentRepository>();
             kernel.Bind<ICreditOfficerRiskRepository>().To<CreditOfficerRiskRepository>();
 
         }

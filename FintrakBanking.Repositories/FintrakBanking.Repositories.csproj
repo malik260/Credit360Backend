@@ -147,6 +147,7 @@
     <Compile Include="CRMS\CRMSCodeBookRepository.cs" />
     <Compile Include="Credit\TermSheetRepository.cs" />
     <Compile Include="Helper\DataExport.cs" />
+    <Compile Include="Reports\OutputDocumentRepository.cs" />
     <Compile Include="Risk\CreditOfficerRiskRepository.cs" />
     <Compile Include="Risk\RiskAcceptanceCriteriaRepository.cs" />
     <Compile Include="Setups\Credit\CrmsRegulatoryRepository.cs" />

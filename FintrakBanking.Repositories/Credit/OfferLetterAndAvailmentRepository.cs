@@ -2658,33 +2658,36 @@ namespace FintrakBanking.Repositories.Credit
 
         public void AddOfferLetterClauses(int applicationId, int staffId,bool isLMS, bool callSaveChanges)
         {
-            int? customerExist = null;
+            //int? customerExist = null;
             var detail = new OfferLetterViewModel();
 
             var clause = "";
-            var acceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+            var acceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
 
             if (isLMS) {
 
                 var approvedProduct = context.TBL_LMSR_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => o.TBL_PRODUCT.PRODUCTTYPEID).FirstOrDefault();
+                var customerExist = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId);
+                var customer = customerExist != null ? context.TBL_CUSTOMER.Where(b => b.CUSTOMERID == customerExist.CUSTOMERID).Select(b => b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME).FirstOrDefault() : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == customerExist.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault();
+                acceptance = acceptance.Replace("{@DATE}", DateTime.Now.ToLongDateString());
+                acceptance = acceptance.Replace("{@OBLIGUR}", customer);
 
-                if(approvedProduct==(int)LoanProductTypeEnum.ContingentLiability)
+
+                if (approvedProduct==(int)LoanProductTypeEnum.ContingentLiability)
                 {
                     clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE_BG").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
                 }
                 else
                 {
-                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
                 }
-
-                 customerExist = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
 
                 detail = (from a in context.TBL_LMSR_APPLICATION
                               join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                               where a.LOANAPPLICATIONID == applicationId
                               select new OfferLetterViewModel
                               {
-                                  customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                  customerName = customer,
                                   offerLetteracceptance = acceptance,
                                   offerLetterClauses = clause,
                                   customerId = b.CUSTOMERID,
@@ -2693,9 +2696,12 @@ namespace FintrakBanking.Repositories.Credit
                               }).FirstOrDefault();
 
             } else {
-                 customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
 
                 var approvedProduct = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => o.TBL_PRODUCT.PRODUCTTYPEID).FirstOrDefault();
+                var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId);
+                var customer = customerExist != null ? context.TBL_CUSTOMER.Where(b => b.CUSTOMERID == customerExist.CUSTOMERID).Select(b => b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME).FirstOrDefault() : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == customerExist.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault();
+                acceptance = acceptance.Replace("{@DATE}", DateTime.Now.ToLongDateString());
+                acceptance = acceptance.Replace("{@OBLIGUR}", customer);
 
                 if (approvedProduct == (int)LoanProductTypeEnum.ContingentLiability)
                 {
@@ -2703,7 +2709,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
                 }
 
                 detail = (from a in context.TBL_LOAN_APPLICATION
@@ -2711,7 +2717,7 @@ namespace FintrakBanking.Repositories.Credit
                               where a.LOANAPPLICATIONID == applicationId
                               select new OfferLetterViewModel
                               {
-                                  customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                  customerName = customer,
                                   offerLetteracceptance = acceptance,
                                   offerLetterClauses = clause,
                                   customerId = b.CUSTOMERID,
