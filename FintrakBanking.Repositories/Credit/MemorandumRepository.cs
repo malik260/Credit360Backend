@@ -17,13 +17,19 @@ namespace FintrakBanking.Repositories.Credit
         private IAppraisalMemorandumRepository memo;
         private ILoanRepository loan;
         private ICustomerGroupRepository group;
+        private ITransactionDynamicsRepository transactions;
+        private IConditionPrecedentRepository conditions;
 
-        public MemorandumRepository(FinTrakBankingContext context, IAppraisalMemorandumRepository memo, ILoanRepository loan, ICustomerGroupRepository group)
+        public MemorandumRepository(FinTrakBankingContext context, IAppraisalMemorandumRepository memo, ILoanRepository loan,
+                                    ICustomerGroupRepository group, ITransactionDynamicsRepository transactions,
+                                    IConditionPrecedentRepository conditions)
         {
             this.context = context;
             this.memo = memo;
             this.loan = loan;
             this.group = group;
+            this.transactions = transactions;
+            this.conditions = conditions;
         }
 
         // init
@@ -328,6 +334,7 @@ namespace FintrakBanking.Repositories.Credit
             if (operationId == (int)OperationsEnum.CAM)
             {
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
+                var detail = return this.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == detailId);
                 foreach (var d in details)
                 {
                     if (d.CONDITIONPRECIDENT != null)
@@ -372,12 +379,15 @@ namespace FintrakBanking.Repositories.Credit
             var result = new List<DropDownSelect>();
             if (operationId == (int)OperationsEnum.CAM)
             {
-                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
+
+                var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
+                var details = this.transactions.GetAllTransactionDynamics().Where(x => x.loanApplicationDetailId == (int)detail.FirstOrDefault()?.LOANAPPLICATIONDETAILID)
+                                .OrderBy(a => a.position);
                 foreach (var d in details)
                 {
-                    if (d.TRANSACTIONDYNAMICS != null)
+                    if (d.dynamics != null)
                     {
-                        result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = d.TRANSACTIONDYNAMICS });
+                        result.Add(new DropDownSelect { id = d.productId, name = d.dynamics });
                     }
                 }
             }
@@ -394,7 +404,7 @@ namespace FintrakBanking.Repositories.Credit
                 <table border=1>
                     <tr>
                         <th>S/N</th>
-                        <th>CONDITIONS</th>
+                        <th>TRANSACTIONS DYNAMICS</th>
                     </tr>
                  ";
             foreach (var e in transactions)
@@ -1256,7 +1266,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                      <tr>
                         <td>{totalExposure.facilityType}</td>
-                        <td>{exposures.FirstOrDefault().currency}</td>
+                        <td>{exposures.FirstOrDefault()?.currency}</td>
                         <td>{String.Format("{0:0,0.00}", totalExposure.outstandings)}</td>
                         <td>&nbsp;</td>
                     </tr>
