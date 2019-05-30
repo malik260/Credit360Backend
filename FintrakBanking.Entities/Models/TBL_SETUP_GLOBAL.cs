@@ -42,6 +42,5 @@ namespace FintrakBanking.Entities.Models
         public string SUPPORT_EMAIL { get; set; }
 
         public bool LOAN_ORIGINATION_ONLY { get; set; }
-
     }
 }

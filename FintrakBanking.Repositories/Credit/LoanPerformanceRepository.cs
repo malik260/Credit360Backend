@@ -37,9 +37,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var gerlist = GetTermLoan();
-                var rev = GetRevolvingLoan();
-                var res = gerlist.ToList().Concat(rev.ToList());
+                //var gerlist = GetTermLoan();
+                //var rev = GetRevolvingLoan();
+                //var res = gerlist.ToList().Concat(rev.ToList());
                 var test = GetTermLoan().Concat(GetRevolvingLoan());
                 return test;
             }
