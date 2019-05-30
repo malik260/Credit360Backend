@@ -17,6 +17,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalCurrentAmount { get; set; }
         public decimal totalProposedAmount { get; set; }
         public decimal totalChange { get; set; }
-        public decimal totalTenors { get; set; }
+        public int totalTenors { get; set; }
     }
 }

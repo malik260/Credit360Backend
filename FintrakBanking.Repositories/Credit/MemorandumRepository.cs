@@ -521,7 +521,7 @@ namespace FintrakBanking.Repositories.Credit
                     <tr><td>Total Contingents</td></tr>
                         {GetTotalForeignContingentFacilitiesMarkupLOS()}
                     <tr><td>Total Facilities (US$’000):</td></tr>
-                        {GetTotalForeignFacilitiesLOS()}
+                        {GetTotalForeignFacilitiesMarkupLOS()}
                     <tr>
                         <td>Legal Lending Limit (US$’000):</td>
                         <td>&nbsp;</td>
@@ -546,8 +546,9 @@ namespace FintrakBanking.Repositories.Credit
         private string GetDirectFacilitiesMarkupLOS()
         {
             var result = String.Empty;
-            var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
-            var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
+            var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true).ToList();
+            var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+                                                                && l.ISDISBURSED == true).ToList();
             var details = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && 
                                                                                  d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability).ToList();
 
@@ -647,7 +648,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", totalDirectsSummary.totalCurrentAmount)}</td>
                         <td>{String.Format("{0:0,0.00}", totalDirectsSummary.totalProposedAmount)}</td>
                         <td>{String.Format("{0:0,0.00}", totalDirectsSummary.totalChange)}</td>
-                        <td>{String.Format("{0:0,0.00}", totalDirectsSummary.totalTenors)}</td>
+                        <td>{totalDirectsSummary.totalTenors}</td>
                     </tr>
                 ";
             }
@@ -657,7 +658,8 @@ namespace FintrakBanking.Repositories.Credit
         private string GetContingentFacilitiesMarkupLOS()
         {
             var result = String.Empty;
-            var contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
+            var contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+                                                                && l.ISDISBURSED == true).ToList();
             var contingentsGroup = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
             foreach (var group in contingentsGroup)
             {
@@ -750,7 +752,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalCurrentAmount))}</td>
                         <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalProposedAmount))}</td>
                         <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalChange))}</td>
-                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalTenors))}</td>
+                        <td>{totalSummary.Sum(f => f.totalTenors)}</td>
                     </tr>
                 ";
             }
@@ -760,8 +762,9 @@ namespace FintrakBanking.Repositories.Credit
         private string GetForeignDirectFacilitiesMarkupLOS()
         {
             var result = String.Empty;
-            var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN).ToList();
-            var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN).ToList();
+            var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN && l.ISDISBURSED == true).ToList();
+            var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
+                                                                 && l.ISDISBURSED == true).ToList();
 
             var loanGroups = loans.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
             foreach (var group in loanGroups)
@@ -870,7 +873,8 @@ namespace FintrakBanking.Repositories.Credit
         private string GetForeignContingentFacilitiesMarkupLOS()
         {
             var result = String.Empty;
-            var contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN).ToList();
+            var contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN 
+                                                                && l.ISDISBURSED == true).ToList();
             var contingentsGroup = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
             foreach (var group in contingentsGroup)
             {
@@ -950,6 +954,27 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        private string GetTotalForeignFacilitiesMarkupLOS()
+        {
+            var result = String.Empty;
+            var totalSummary = GetTotalForeignFacilitiesLOS();
+            if (totalSummary.Count() > 0)
+            {
+                result = result + $@"
+                     <tr>
+                        <td>{totalSummary.Sum(l => l.numberOfLoans) + totalSummary.Sum(o => o.numberOfOverdrafts) + totalSummary.Sum(n => n.numberOfNewFacilities)}</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalCurrentAmount))}</td>
+                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalProposedAmount))}</td>
+                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalChange))}</td>
+                        <td>{totalSummary.Sum(f => f.totalTenors)}</td>
+                    </tr>
+                ";
+            }
+            return result;
+        }
+
         private TotalFacilitiesSummaryViewModel GetTotalDirectFacilitiesSummaryLOS(int currencyId)
         {
             var directSummary = new TotalFacilitiesSummaryViewModel();
@@ -959,14 +984,16 @@ namespace FintrakBanking.Repositories.Credit
             var appDetails = new List<TBL_LOAN_APPLICATION_DETAIL>();
             if (currencyId == (int)CurrencyEnum.NGN)
             {
-                loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
-                overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
+                loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true).ToList();
+                overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+                                                                && l.ISDISBURSED == true).ToList();
                 appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
             }
             else
             {
-                loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN).ToList();
-                overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN).ToList();
+                loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN && l.ISDISBURSED == true).ToList();
+                overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
+                                                                && l.ISDISBURSED == true).ToList();
                 appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN).ToList();
             }
             directSummary.numberOfLoans = loans.Count();
@@ -1047,13 +1074,15 @@ namespace FintrakBanking.Repositories.Credit
             var appDetails = new List<TBL_LOAN_APPLICATION_DETAIL>();
             if (currencyId == (int)CurrencyEnum.NGN)
             {
-                contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
+                contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+                                                                && l.ISDISBURSED == true).ToList();
                 appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN &&
                               d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
             }
             else
             {
-                contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
+                contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
+                                                                && l.ISDISBURSED == true).ToList();
                 appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN &&
                               d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID == (int)LoanProductTypeEnum.ContingentLiability).ToList();
             }
@@ -1104,7 +1133,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         private TotalFacilitiesSummaryViewModel GetTotalImportFinanceFacilitiesSummaryLOS()
-        {
+        {   //not yet implemented, just code for dummy data
             var directSummary = new TotalFacilitiesSummaryViewModel();
             int numberOfNewFacilities = 0;
             var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
