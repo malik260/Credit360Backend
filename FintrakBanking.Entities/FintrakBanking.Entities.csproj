@@ -94,6 +94,7 @@
     <Compile Include="DocumentModels\TBL_DOCUMENT_TYPE.cs" />
     <Compile Include="DocumentModels\TBL_DOCUMENT_USAGE.cs" />
     <Compile Include="Models\TBL_CONDITIONAL_OPERATOR.cs" />
+    <Compile Include="Models\TBL_CREDIT_OFFICER_RISK.cs" />
     <Compile Include="Models\TBL_DEFINED_FUNCTION.cs" />
     <Compile Include="Models\TBL_JOB_SOURCE.cs" />
     <Compile Include="Models\TBL_APPROVAL_BUSINESS_RULE.cs" />

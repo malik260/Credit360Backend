@@ -481,6 +481,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RAC_OPTION_ITEM> TBL_RAC_OPTION_ITEM { get; set; }
 
 
+        public virtual DbSet<TBL_CREDIT_OFFICER_RISK> TBL_CREDIT_OFFICER_RISK { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
