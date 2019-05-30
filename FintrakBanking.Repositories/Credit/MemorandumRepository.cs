@@ -334,12 +334,12 @@ namespace FintrakBanking.Repositories.Credit
             if (operationId == (int)OperationsEnum.CAM)
             {
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
-                var detail = return this.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == detailId);
-                foreach (var d in details)
+                var detail = this.conditions.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == details.FirstOrDefault()?.LOANAPPLICATIONDETAILID);
+                foreach (var d in detail)
                 {
-                    if (d.CONDITIONPRECIDENT != null)
+                    if (d.condition != null)
                     {
-                        result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "CONDITION PRECEDENT: " + d.CONDITIONPRECIDENT });
+                        result.Add(new DropDownSelect { id = d.conditionId, name = d.condition });
                     }
                 }
             }
