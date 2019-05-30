@@ -734,6 +734,10 @@ namespace FintrakBanking.Repositories.Setups.General
                           where a.USERNAME.ToUpper() == username.ToUpper() && !b.DELETED
                           select a).FirstOrDefault();
 
+
+            int corrMatrixId = 2;//TODO
+            string corrMatrixDescription = "MODERATE RISK";//TODO
+
             if (record != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {
                 var staff1 = context.TBL_STAFF.Find(profile.STAFFID);
@@ -752,8 +756,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff1.STAFFROLEID;
                 userInfo.businessUnitId = staff1.BUSINESSUNITID;
-                userInfo.corrMatrixId = 2;//TODO
-                userInfo.corrMatrixDescription = "MODERATE RISK";//TODO
+                userInfo.corrMatrixId = corrMatrixId;
+                userInfo.corrMatrixDescription = corrMatrixDescription;
                 userInfo.businessUnitName = staff1.BUSINESSUNITID != null ? staff1.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : "";
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
@@ -782,8 +786,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff.STAFFROLEID;
                 userInfo.businessUnitId = staff.BUSINESSUNITID;
-                userInfo.corrMatrixId = 1;//TODO
-                userInfo.corrMatrixDescription = "MODERATE RISK";//TODO
+                userInfo.corrMatrixId = corrMatrixId;
+                userInfo.corrMatrixDescription = corrMatrixDescription;
                 userInfo.businessUnitName = staff.BUSINESSUNITID != null ? staff.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : "";
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
