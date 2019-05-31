@@ -720,6 +720,13 @@
     <Compile Include="Reports\ReportViews\NonPeformingLoans.aspx.designer.cs">
       <DependentUpon>NonPeformingLoans.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\OutPutTemplate.aspx.cs">
+      <DependentUpon>OutPutTemplate.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OutPutTemplate.aspx.designer.cs">
+      <DependentUpon>OutPutTemplate.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\OverDraft.aspx.cs">
       <DependentUpon>OverDraft.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1088,6 +1095,7 @@
     <Content Include="Reports\ReportViews\LoggingStatus.aspx" />
     <Content Include="Reports\ReportViews\MiddleOfficeReport.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
+    <Content Include="Reports\ReportViews\OutPutTemplate.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\ProfileActivityReport.aspx" />
@@ -1390,6 +1398,7 @@
     <EmbeddedResource Include="Reports\Report\LoggingStatus.rdlc" />
     <EmbeddedResource Include="Reports\Report\MiddleOfficeReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\OutputDocument.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
     <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
