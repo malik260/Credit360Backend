@@ -726,13 +726,13 @@ namespace FintrakBanking.Repositories.Setups.General
         private UserViewModel UserLoginDetails(string username, string password) // ERROR POINT 3 - underlying provider...
         {
             TBL_PROFILE_USER profile = new TBL_PROFILE_USER();
-            profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToUpper() == username.ToUpper());// && c.PASSWORD == password);
+
+            profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToUpper() == username.ToUpper()); // && c.PASSWORD == password);
 
             var record = (from a in context.TBL_PROFILE_USER
                           join b in context.TBL_STAFF on a.STAFFID equals b.STAFFID
                           where a.USERNAME.ToUpper() == username.ToUpper() && !b.DELETED
                           select a).FirstOrDefault();
-
 
             if (record != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {
@@ -752,6 +752,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff1.STAFFROLEID;
                 userInfo.businessUnitId = staff1.BUSINESSUNITID;
+                userInfo.corrMatrixId = 2;//TODO
+                userInfo.corrMatrixDescription = "MODERATE RISK";//TODO
                 userInfo.businessUnitName = staff1.BUSINESSUNITID != null ? staff1.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : "";
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
@@ -780,6 +782,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff.STAFFROLEID;
                 userInfo.businessUnitId = staff.BUSINESSUNITID;
+                userInfo.corrMatrixId = 1;//TODO
+                userInfo.corrMatrixDescription = "MODERATE RISK";//TODO
                 userInfo.businessUnitName = staff.BUSINESSUNITID != null ? staff.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : "";
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;

@@ -262,6 +262,8 @@ namespace FintrakBanking.APICore.Controllers
                     applicationDate = _genSetup.GetApplicationDate(),
                     lastLoginDate = currUser.lastLoginDate,
                     staffRole = userRole.lookupName,
+                    corrMatrixId = currUser.corrMatrixId,
+                    corrMatrixDescription = currUser.corrMatrixDescription,
                     businessUnitName = currUser.businessUnitName
                 }
             });

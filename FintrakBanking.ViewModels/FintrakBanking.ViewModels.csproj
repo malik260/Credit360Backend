@@ -134,6 +134,7 @@
     <Compile Include="Credit\StalledPerfectionViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
     <Compile Include="Credit\TermSheetViewModel.cs" />
+    <Compile Include="Credit\TotalFacilitiesSummaryViewModel.cs" />
     <Compile Include="Credit\UnearnedLoanInterestReport.cs" />
     <Compile Include="Credit\UserCurrencyViewFilter.cs" />
     <Compile Include="Credit\WeeklyRecoveryReportFINCON.cs" />

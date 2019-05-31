@@ -76,5 +76,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         simpleStaffModel StaffInformation(int staffId, string staffCode, int companyId);
         StaffMISDetailsModel StaffMIS(int staffId, string staffCode);
         IEnumerable<simpleStaffModel> GetSearchedStaff(string search);
+
+        IQueryable<simpleStaffModel> SearchApprovers(int operationId, string queryString, int getCompanyId);
     }
 }

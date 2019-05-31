@@ -26,6 +26,8 @@ namespace FintrakBanking.ViewModels
         public string staffRole { get; set; }
         public int staffRoleId { get; set; }
         public string businessUnitName { get; set; }
+        public int corrMatrixId { get; set; }
+        public string corrMatrixDescription { get; set; }
     }
 
 }

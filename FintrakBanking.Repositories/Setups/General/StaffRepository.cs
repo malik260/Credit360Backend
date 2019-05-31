@@ -2016,6 +2016,42 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
+
+        public IQueryable<simpleStaffModel> SearchApprovers(int operationId, string searchQuery ="", int companyId=0)
+        {
+            IQueryable<simpleStaffModel> staff = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.Trim().ToLower();
+
+                staff =
+                    context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL, mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
+                    .Join(context.TBL_STAFF.Where(x => x.DELETED == false)
+                        .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
+                        || x.MIDDLENAME.ToLower().Contains(searchQuery)
+                        || x.LASTNAME.ToLower().Contains(searchQuery)
+                        || x.STAFFCODE.ToLower().Contains(searchQuery))
+                    , mgl => mgl.l.STAFFROLEID, s => s.STAFFROLEID, (mgl, s) => new { mgl, s })
+                    .Select(o => new simpleStaffModel
+                    {
+                        staffId = o.s.STAFFID,
+                        firstName = o.s.FIRSTNAME,
+                        middleName = o.s.MIDDLENAME,
+                        lastName = o.s.LASTNAME,
+                        staffCode = o.s.STAFFCODE,
+                        staffRoleName = o.s.TBL_STAFF_ROLE.STAFFROLENAME,
+                    })
+                    .Distinct()
+                    .Take(12);
+            }
+
+            return staff;
+        }
+
+
         public IQueryable<simpleStaffModel> SearchStaffbyDepartmentId(string searchQuery, int companyId, int departmentId)
         {
             IQueryable<simpleStaffModel> staff = null;
