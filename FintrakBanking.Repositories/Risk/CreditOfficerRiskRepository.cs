@@ -16,78 +16,148 @@ namespace FintrakBanking.Repositories.Risk
     public class CreditOfficerRiskRepository : ICreditOfficerRiskRepository
     {
         private FinTrakBankingContext context;
-        private IGeneralSetupRepository general;
-        private IAuditTrailRepository audit;
-        private IAdminRepository admin;
-        // private IWorkflow workflow;
+        private TBL_STAFF officer;
+        private TBL_CORR_FREQUENCY_SETUP frequencySetup;
+        private TBL_RISK_MATRIX matrix;
+        private TBL_CORR_OFFICER_RATING currentRating;
+        private decimal totalExposure;
+        private int totalBorrowingCustomers;
+        private List<int> creditOfficerRoleIds = new List<int> { 6, 7, 9 };
 
         public CreditOfficerRiskRepository(
-                FinTrakBankingContext _context,
-                IGeneralSetupRepository _general,
-                IAuditTrailRepository _audit,
-                IAdminRepository _admin
-                // IWorkflow _workflow
+                FinTrakBankingContext _context
             )
         {
             this.context = _context;
-            this.general = _general;
-            this.audit = _audit;
-            this.admin = _admin;
-            // this.workflow = _workflow;
         }
 
-        public IEnumerable<CreditOfficerRiskViewModel> GetCreditOfficerRisks()
+        private void Init(string username)
         {
-            return context.TBL_CREDIT_OFFICER_RISK//.Where(x => x.DELETED == false)
-                .Select(x => new CreditOfficerRiskViewModel
+            if (frequencySetup == null) frequencySetup = context.TBL_CORR_FREQUENCY_SETUP.FirstOrDefault();
+            if (officer == null) officer = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE == username);
+            if (currentRating == null) currentRating = context.TBL_CORR_OFFICER_RATING.Where(x => x.STAFFID == officer.STAFFID).OrderByDescending(x => x.OFFICERRATINGID).FirstOrDefault();
+            if (matrix == null) matrix = context.TBL_RISK_MATRIX.FirstOrDefault(x => x.RISKMATRIXID == officer.CORRMATRIXGRIDRATINGID);
+        }
+
+        private void ComputeCreditOfficerRiskRating()
+        {
+            // init
+            totalExposure = GetTotalExposure();
+            totalBorrowingCustomers = GetTotalBorrowingCustomers();
+
+            // rating
+            var rating = context.TBL_CORR_OFFICER_RATING.Add(new TBL_CORR_OFFICER_RATING
+            {
+                STAFFID = officer.STAFFID,
+                BRANCHID = (int)officer.BRANCHID,
+                BUSINESSUNITID = (int)officer.BUSINESSUNITID,
+                BORROWINGCUSTOMERS = totalBorrowingCustomers,
+                EXPOSURE = totalExposure,
+                // METRICS
+                COMMENT = String.Empty,
+                DATERATED = DateTime.Now,
+                FROMDATE = frequencySetup.NEXTRATINGDATE.AddMonths((-1) * frequencySetup.RATINGPERIOD),
+                TODATE = frequencySetup.NEXTRATINGDATE,
+            });
+
+            bool ratingSaved = context.SaveChanges() != 0;
+            if (!ratingSaved) return;
+
+            // indexes
+            var definedIndexes = context.TBL_CORR_RATING_INDEX_SETUP.Where(x => x.ISACTIVE == true);
+
+            foreach (var setup in definedIndexes)
+            {
+                context.TBL_CORR_RATING_INDEX_DETAIL.Add(new TBL_CORR_RATING_INDEX_DETAIL
                 {
-                    creditOfficerRiskId = x.CREDITOFFICERRISKID,
-                })
-                .ToList();
+                    OFFICERRATINGID = rating.OFFICERRATINGID,
+                    RATINGINDEXSETUPID = setup.RATINGINDEXSETUPID,
+                    PERCENTAGEWEIGHT = setup.PERCENTAGEWEIGHT,
+                    SCORE = ComputeScoreFromMetrics(setup.DEFINEDFUNCTIONID),
+                });
+            }
+
+            bool ratingIndexesSaved = context.SaveChanges() != 0;
+            if (!ratingIndexesSaved) return; // TODO rollback
+
+            // update rating comment
+            rating.COMMENT = GetMatrixDescription(rating.OFFICERRATINGID).description;
+            context.SaveChanges();
         }
 
-        public CreditOfficerRiskViewModel GetCreditOfficerRisk(int id)
-        {
-            var entity = context.TBL_CREDIT_OFFICER_RISK;//.FirstOrDefault(x => x.CREDITOFFICERRISKID == id && x.DELETED == false);
 
-            return new CreditOfficerRiskViewModel
+        private MatrixGrid GetMatrixDescription(int officerRatingId)
+        {
+            var score = context.TBL_CORR_RATING_INDEX_DETAIL.Where(x => x.OFFICERRATINGID == officerRatingId).Sum(x => x.SCORE);
+            var matrix = context.TBL_RISK_MATRIX.FirstOrDefault(x => x.GRADINGMINIMUM <= score && score <= x.GRADINGMAXIMUM);
+            return new MatrixGrid
             {
-                //creditOfficerRiskId = entity.CREDITOFFICERRISKID,
+                id = matrix.RISKMATRIXID,
+                rating = matrix.RATING,
+                description = matrix.DESCRIPTION,
             };
         }
 
-        public bool AddCreditOfficerRisk(CreditOfficerRiskViewModel model)
+        public MatrixGrid GetCreditOfficerRiskRating(string username)
         {
-            var entity = new TBL_CREDIT_OFFICER_RISK
+            Init(username);
+            if (!IsCreditOfficer()) return new MatrixGrid();
+            if (RatingExpired()) ComputeAndUpdateRating();
+            return GetCurrentRiskRating();
+        }
+
+        private void ComputeAndUpdateRating()
+        {
+            ComputeCreditOfficerRiskRating();
+            UpdateCreditOfficerRating();
+        }
+
+        private void UpdateCreditOfficerRating()
+        {
+            officer.CORRMATRIXGRIDRATINGID = GetMatrixDescription(currentRating.OFFICERRATINGID).id;
+            context.SaveChanges();
+        }
+
+        private MatrixGrid GetCurrentRiskRating()
+        {
+            if (matrix == null) return new MatrixGrid();
+            return new MatrixGrid
             {
-                CREDITOFFICERRISKID = model.creditOfficerRiskId,
-                // COMPANYID = model.companyId,
+                id = matrix.RISKMATRIXID,
+                rating = matrix.RATING,
+                description = matrix.DESCRIPTION
             };
-
-            context.TBL_CREDIT_OFFICER_RISK.Add(entity);
-
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
-       
-            return context.SaveChanges() != 0;
         }
 
-        public bool UpdateCreditOfficerRisk(CreditOfficerRiskViewModel model, int id, UserInfo user)
+        private bool RatingExpired()
         {
-            var entity = this.context.TBL_CREDIT_OFFICER_RISK.Find(id);
-            entity.CREDITOFFICERRISKID = model.creditOfficerRiskId;
-            
-            return context.SaveChanges() != 0;
+            if (officer.CORRMATRIXGRIDRATINGID == null) return false;
+            return frequencySetup.NEXTRATINGDATE < currentRating.DATERATED 
+                && DateTime.Now > frequencySetup.NEXTRATINGDATE
+                ;
         }
 
-        public bool DeleteCreditOfficerRisk(int id, UserInfo user)
+        private bool IsCreditOfficer()
         {
-            var entity = this.context.TBL_CREDIT_OFFICER_RISK.Find(id);
+            return creditOfficerRoleIds.Contains(officer.STAFFROLEID);
+        }
 
-            return context.SaveChanges() != 0;
-        }        
+        // COMPUTATIONS
 
+        private int GetTotalBorrowingCustomers()
+        {
+            throw new NotImplementedException();
+        }
+
+        private decimal GetTotalExposure()
+        {
+            throw new NotImplementedException();
+        }
+
+        private int ComputeScoreFromMetrics(int? functionId)
+        {
+            if (functionId == null) return 0;
+            throw new NotImplementedException();
+        }
     }
 }
-
-           // kernel.Bind<ICreditOfficerRiskRepository>().To<CreditOfficerRiskRepository>();
-           // CreditOfficerRiskAdded = ???, CreditOfficerRiskUpdated = ???, CreditOfficerRiskDeleted = ???,

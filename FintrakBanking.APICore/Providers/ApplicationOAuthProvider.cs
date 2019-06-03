@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Providers
                 ClaimsIdentity identity;
 
                 FinTrakBankingContext _bankingContext = new FinTrakBankingContext();
-                var authRepo = new AuthenticationRepository(_bankingContext,null);
+                var authRepo = new AuthenticationRepository(_bankingContext,null,null);
 
                
                 ActiveUserDetails userInfo = authRepo.GetUserAuthenticationInfo(userVm.username);

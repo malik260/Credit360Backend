@@ -39,7 +39,7 @@ namespace FintrakBanking.Repositories.Risk
         {
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
-            
+
             var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
@@ -80,7 +80,7 @@ namespace FintrakBanking.Repositories.Risk
                     .ToList();
 
 
-                foreach(var item in items)
+                foreach (var item in items)
                 {
                     item.options = item.optionId == null ? null
                                                         : context.TBL_RAC_OPTION_ITEM
@@ -302,7 +302,7 @@ namespace FintrakBanking.Repositories.Risk
                     approvalLevelName = context.TBL_APPROVAL_LEVEL.Where(o => o.APPROVALLEVELID == x.APPROVALLEVELID).Select(o => o.LEVELNAME).FirstOrDefault(),
                     controlAmount = x.CONTROLAMOUNT,
                     controlOptionId = x.CONTROLOPTIONID,
-                    controlOption = context.TBL_RAC_OPTION_ITEM.Where(o=>o.RACOPTIONID==x.RACOPTIONID).Select(o=>o.LABEL).FirstOrDefault()
+                    controlOption = context.TBL_RAC_OPTION_ITEM.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.LABEL).FirstOrDefault()
                 })
                 .ToList();
         }
@@ -637,8 +637,8 @@ namespace FintrakBanking.Repositories.Risk
             entity.INPUTTYPENAME = model.inputTypeName;
             entity.INPUTTAG = model.inputTag;
 
-           // entity.LASTUPDATEDBY = user.createdBy;
-           // entity.DATETIMEUPDATED = DateTime.Now;
+            // entity.LASTUPDATEDBY = user.createdBy;
+            // entity.DATETIMEUPDATED = DateTime.Now;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -662,9 +662,9 @@ namespace FintrakBanking.Repositories.Risk
         public bool DeleteRacInputType(int id, UserInfo user)
         {
             var entity = this.context.TBL_RAC_INPUT_TYPE.Find(id);
-           // entity.DELETED = true;
-           // entity.DELETEDBY = user.createdBy;
-           // entity.DATETIMEDELETED = general.GetApplicationDate();
+            // entity.DELETED = true;
+            // entity.DELETEDBY = user.createdBy;
+            // entity.DATETIMEDELETED = general.GetApplicationDate();
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -811,7 +811,7 @@ namespace FintrakBanking.Repositories.Risk
 
         public RacOptionViewModel GetRacOption(int id)
         {
-            var entity = context.TBL_RAC_OPTION.Where(x => x.DELETED == false).FirstOrDefault(x => x.RACOPTIONID == id);
+            var entity = context.TBL_RAC_OPTION.FirstOrDefault(x => x.RACOPTIONID == id);
 
             return new RacOptionViewModel
             {
@@ -825,7 +825,7 @@ namespace FintrakBanking.Repositories.Risk
             var entity = new TBL_RAC_OPTION
             {
                 OPTIONNAME = model.optionName,
-                DELETED = false
+                //  DELETED = false
                 // COMPANYID = model.companyId,
             };
 
@@ -854,8 +854,8 @@ namespace FintrakBanking.Repositories.Risk
             var entity = this.context.TBL_RAC_OPTION.Find(id);
             entity.OPTIONNAME = model.optionName;
 
-         //   entity.LASTUPDATEDBY = user.createdBy;
-         //   entity.DATETIMEUPDATED = DateTime.Now;
+            //   entity.LASTUPDATEDBY = user.createdBy;
+            //   entity.DATETIMEUPDATED = DateTime.Now;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -879,9 +879,9 @@ namespace FintrakBanking.Repositories.Risk
         public bool DeleteRacOption(int id, UserInfo user)
         {
             var entity = this.context.TBL_RAC_OPTION.Find(id);
-              entity.DELETED = true;
-          //  entity.DELETEDBY = user.createdBy;
-           // entity.DATETIMEDELETED = general.GetApplicationDate();
+            // entity.DELETED = true;
+            //  entity.DELETEDBY = user.createdBy;
+            // entity.DATETIMEDELETED = general.GetApplicationDate();
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -912,6 +912,7 @@ namespace FintrakBanking.Repositories.Risk
                     racOptionItemId = x.RACOPTIONITEMID,
                     label = x.LABEL,
                     key = x.KEY,
+                    optionName = context.TBL_RAC_OPTION.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.OPTIONNAME).FirstOrDefault(),
                     isSystemDefined = x.ISSYSTEMDEFINED,
                 })
                 .ToList();
@@ -1047,5 +1048,5 @@ namespace FintrakBanking.Repositories.Risk
 
 }
 
-           // kernel.Bind<IRiskAcceptanceCriteriaRepository>().To<RiskAcceptanceCriteriaRepository>();
-           // RiskAcceptanceCriteriaAdded = ???, RiskAcceptanceCriteriaUpdated = ???, RiskAcceptanceCriteriaDeleted = ???,
+// kernel.Bind<IRiskAcceptanceCriteriaRepository>().To<RiskAcceptanceCriteriaRepository>();
+// RiskAcceptanceCriteriaAdded = ???, RiskAcceptanceCriteriaUpdated = ???, RiskAcceptanceCriteriaDeleted = ???,

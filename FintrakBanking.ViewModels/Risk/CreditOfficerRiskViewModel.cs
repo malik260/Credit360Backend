@@ -8,8 +8,14 @@ namespace FintrakBanking.ViewModels.Risk
 {
     public class CreditOfficerRiskViewModel : GeneralEntity
     {
-
         public int creditOfficerRiskId { get; set; }
 
+    }
+
+    public class MatrixGrid
+    {
+        public int id { get; set; }
+        public string description { get; set; }
+        public string rating { get; set; }
     }
 }

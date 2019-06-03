@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Filters
             int? roleId = Int32.Parse(new ClaimsIdentity(HttpContext.Current.User.Identity).Claims.First(x => x.Type == "roleId").Value);
             if (roleId == 2 || roleId == 0 || roleId == null) return true;
             var countryId = Int32.Parse(new ClaimsIdentity(HttpContext.Current.User.Identity).Claims.First(x => x.Type == "countryId").Value);
-            var auth = new AuthenticationRepository(context, null);
+            var auth = new AuthenticationRepository(context, null,null);
             if (auth.GetRunningEndOfDayProcess(countryId)) return false;
             return true;
         }

@@ -16,6 +16,9 @@ using FintrakBanking.Interfaces;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Repositories.Admin;
+using FintrakBanking.Repositories.Risk;
+using FintrakBanking.Interfaces.Risk;
+using FintrakBanking.ViewModels.Risk;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -25,6 +28,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingContext context;
         private  IAuditTrailRepository _auditTrail;
         private SessionStatusInfo _sessionInfo;
+        private ICreditOfficerRiskRepository _creditOfficerRisk;
 
         TBL_PROFILE_SETTING profileSetting = null;
         TBL_FINANCECURRENTDATE applicationDate = null;
@@ -34,9 +38,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public string LogCode { get; set; }
 
-        public AuthenticationRepository(FinTrakBankingContext _context, IAuditTrailRepository auditTrail)
+        public AuthenticationRepository(
+            FinTrakBankingContext _context, 
+            IAuditTrailRepository auditTrail,
+            ICreditOfficerRiskRepository creditOfficerRisk
+            )
         {
             context = _context;
+            _creditOfficerRisk = creditOfficerRisk;
             _auditTrail = auditTrail != null ? auditTrail : new AuditTrailRepository(_context);
         }
 
@@ -734,9 +743,10 @@ namespace FintrakBanking.Repositories.Setups.General
                           where a.USERNAME.ToUpper() == username.ToUpper() && !b.DELETED
                           select a).FirstOrDefault();
 
-
-            int corrMatrixId = 2;//TODO
-            string corrMatrixDescription = "MODERATE RISK";//TODO
+            _creditOfficerRisk = new CreditOfficerRiskRepository(context);
+            MatrixGrid corrMatrix = _creditOfficerRisk.GetCreditOfficerRiskRating(username);
+            int corrMatrixId = corrMatrix.id;
+            string corrMatrixDescription = corrMatrix.description;
 
             if (record != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {

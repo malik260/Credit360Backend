@@ -884,7 +884,6 @@
         </Paragraphs>
         <rd:DefaultName>Textbox3</rd:DefaultName>
         <Top>2.07812in</Top>
-        <Left>0in</Left>
         <Height>0.25in</Height>
         <Width>4.51958in</Width>
         <ZIndex>2</ZIndex>
@@ -1526,7 +1525,6 @@
         </TablixRowHierarchy>
         <DataSetName>CustomerFacilities</DataSetName>
         <Top>2.39757in</Top>
-        <Left>0in</Left>
         <Height>0.75in</Height>
         <Width>7.012in</Width>
         <ZIndex>3</ZIndex>
@@ -1559,7 +1557,6 @@
         </Paragraphs>
         <rd:DefaultName>Textbox3</rd:DefaultName>
         <Top>3.4375in</Top>
-        <Left>0in</Left>
         <Height>0.25in</Height>
         <Width>4.51958in</Width>
         <ZIndex>4</ZIndex>
@@ -1966,7 +1963,6 @@
         </TablixRowHierarchy>
         <DataSetName>MonthsActivity</DataSetName>
         <Top>3.75694in</Top>
-        <Left>0in</Left>
         <Height>0.5in</Height>
         <Width>7.012in</Width>
         <ZIndex>5</ZIndex>
@@ -2385,7 +2381,6 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <Top>4.39458in</Top>
-        <Left>0in</Left>
         <Height>1.25in</Height>
         <Width>7.012in</Width>
         <ZIndex>6</ZIndex>
@@ -3025,7 +3020,7 @@
         <Top>7.9841in</Top>
         <Left>0.00663in</Left>
         <Height>0.25in</Height>
-        <Width>7.01579in</Width>
+        <Width>7.0158in</Width>
         <ZIndex>10</ZIndex>
         <Style>
           <Border>
@@ -4262,7 +4257,7 @@
         <Top>13.28694in</Top>
         <Left>0.00663in</Left>
         <Height>0.5in</Height>
-        <Width>7.00537in</Width>
+        <Width>7.00538in</Width>
         <ZIndex>18</ZIndex>
         <Style>
           <Border>
@@ -4310,7 +4305,7 @@
     <Height>13.8425in</Height>
     <Style />
   </Body>
-  <Width>7.02242in</Width>
+  <Width>7.02243in</Width>
   <Page>
     <PageHeader>
       <Height>1.90625in</Height>
@@ -4719,8 +4714,8 @@
           <DataField>actual</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="exception(Y/N)">
-          <DataField>exception(Y/N)</DataField>
+        <Field Name="exception">
+          <DataField>exception</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="checklistType">

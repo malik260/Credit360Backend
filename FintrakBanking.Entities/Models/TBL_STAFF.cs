@@ -133,7 +133,8 @@ namespace FintrakBanking.Entities.Models
         public int? STATEID { get; set; }
 
         public int? CITYID { get; set; }
-
+        public int? CORRMATRIXGRIDRATINGID { get; set; }
+        
         public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
         public bool NPL_LIMITEXCEEDED { get; set; }

@@ -19,5 +19,6 @@ namespace FintrakBanking.Interfaces.Risk
         //bool UpdateCreditOfficerRisk(CreditOfficerRiskViewModel model, int id);
 
         //bool DeleteCreditOfficerRisk(int id);
+        MatrixGrid GetCreditOfficerRiskRating(string username);
     }
 }

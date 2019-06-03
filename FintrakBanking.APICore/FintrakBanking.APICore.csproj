@@ -458,6 +458,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\OutputDocument.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OutputDocument.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\StaffInfoDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1206,6 +1211,17 @@
     </None>
     <Content Include="Reports\ReportDataset\MiddleOffice.xss">
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\OutputDocument.xsc">
+      <DependentUpon>OutputDocument.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\OutputDocument.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>OutputDocument.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\OutputDocument.xss">
+      <DependentUpon>OutputDocument.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\StaffInfoDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
