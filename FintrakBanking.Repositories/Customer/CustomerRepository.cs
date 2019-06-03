@@ -3035,7 +3035,7 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.customerCode.StartsWith(searchQuery)
                                    || x.branchName.StartsWith(searchQuery)
                                    || x.customerId.ToString().StartsWith(searchQuery)
-                             select x);
+                             select x).ToList();
 
             var customerInfo = customers.ToList();
 
@@ -3049,7 +3049,37 @@ namespace FintrakBanking.Repositories.Customer
 
         public IEnumerable<CustomerViewModels> SearchRandomSingleCustomersBySearchQuery(string searchQuery)
         {
-            var customerGroup = context.TBL_CUSTOMER_GROUP_MAPPING;
+            var customerGroup = (from m in context.TBL_CUSTOMER_GROUP_MAPPING
+                                 select m).ToList();
+            var customers = (from x in GetCustomersLite()
+                             where x.firstName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.customerCode.StartsWith(searchQuery)
+                                   || x.branchName.StartsWith(searchQuery)
+                                   || x.customerId.ToString().StartsWith(searchQuery)
+                             select x).ToList();
+            var customerInfo = new List<CustomerViewModels>();
+            foreach (var customer in customers)
+            {
+                if (!customerGroup.Exists(c => c.CUSTOMERID == customer.customerId))
+                {
+                    customerInfo.Add(customer);
+                }
+            }
+
+            if (customerInfo.Count > 0)
+            {
+                return customerInfo;
+            }
+
+            return null;
+        }
+
+        public IEnumerable<CustomerViewModels> SearchRandomSingleCorporateCustomersBySearchQuery(string searchQuery)
+        {
+            var customerGroup = (from m in context.TBL_CUSTOMER_GROUP_MAPPING
+                                 select m).ToList();
             var customers = (from x in GetCustomersLite()
                              where x.firstName.ToLower().StartsWith(searchQuery.ToLower())
                                    || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
@@ -3061,7 +3091,7 @@ namespace FintrakBanking.Repositories.Customer
             var customerInfo = new List<CustomerViewModels>();
             foreach (var customer in customers)
             {
-                if (customerGroup.Find(customer.customerId) == null)
+                if (customerGroup.Exists(c => c.CUSTOMERID == customer.customerId))
                 {
                     customerInfo.Add(customer);
                 }

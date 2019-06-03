@@ -11,6 +11,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal change { get { return (proposedLimit - recommendedLimit); } }
         //public decimal outstandings { get { return proposedLimit; } }
         public decimal outstandings { get; set; }
+        public decimal approvedAmount { get; set; }
 
         public decimal PastDueObligationsPrincipal { get; set; }
         public decimal PastDueObligationsInterest { get; set; }
