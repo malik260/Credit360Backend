@@ -3169,83 +3169,91 @@ namespace FintrakBanking.Repositories.Credit
 
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId)
         {
-
-            using (var trans = context.Database.BeginTransaction())
+            if (context.TBL_SETUP_GLOBAL.First().LOAN_ORIGINATION_ONLY == true)
             {
-
-                try
+                return 0; //code to be implemented here
+            }
+            else
+            {
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    //var loan = context.TBL_LOAN.Where(x => x.TERMLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
-                    //if (loan == null)
-                    //{
-                    //    var revolving = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
-                    //    if (revolving == null)
-                    //    {
-                    //        var od = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
-                    //        if (od == null)
-                    //        {
-                    //            throw new ConditionNotMetException("CRMS Reference Number is missing");
-                    //        }
-                    //    }
-                    //}
 
-
-                    workflow.StaffId = entity.createdBy;
-                    workflow.CompanyId = entity.companyId;
-                    workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
-                    workflow.TargetId = loanBookingRequestId;
-                    workflow.Comment = entity.comment;
-                    workflow.OperationId = entity.operationId;
-                    workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = false;
-
-                    workflow.LogActivity();
-
-                    context.SaveChanges();
-
-                    if (ApproveLoanBooking(entity.targetId, loanBookingRequestId, (short)workflow.StatusId, entity))
+                    try
                     {
-                        trans.Commit();
-                        if (workflow.NewState != (int)ApprovalState.Ended)
-                        {
+                        //var loan = context.TBL_LOAN.Where(x => x.TERMLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
+                        //if (loan == null)
+                        //{
+                        //    var revolving = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
+                        //    if (revolving == null)
+                        //    {
+                        //        var od = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
+                        //        if (od == null)
+                        //        {
+                        //            throw new ConditionNotMetException("CRMS Reference Number is missing");
+                        //        }
+                        //    }
+                        //}
 
-                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 1;
-                            else return 3;
+
+                        workflow.StaffId = entity.createdBy;
+                        workflow.CompanyId = entity.companyId;
+                        workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
+                        workflow.TargetId = loanBookingRequestId;
+                        workflow.Comment = entity.comment;
+                        workflow.OperationId = entity.operationId;
+                        workflow.DeferredExecution = true;
+                        workflow.ExternalInitialization = false;
+
+                        workflow.LogActivity();
+
+                        context.SaveChanges();
+
+                        if (ApproveLoanBooking(entity.targetId, loanBookingRequestId, (short)workflow.StatusId, entity))
+                        {
+                            trans.Commit();
+                            if (workflow.NewState != (int)ApprovalState.Ended)
+                            {
+
+                                if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 1;
+                                else return 3;
+                            }
+                            else
+                            {
+                                if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 2;
+                                else return 3;
+                            }
                         }
                         else
                         {
-                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 2;
-                            else return 3;
+                            trans.Rollback();
+                            return 0;
                         }
                     }
-                    else
+                    catch (ConditionNotMetException ce)
                     {
-                        trans.Rollback();
-                        return 0;
+                        throw new ConditionNotMetException(ce.Message);
+                    }
+                    catch (BadLogicException be)
+                    {
+                        throw new BadLogicException(be.Message);
+                    }
+                    catch (APIErrorException e)
+                    {
+                        throw new APIErrorException(e.Message);
+                    }
+                    catch (TwoFactorAuthenticationException e)
+                    {
+                        throw new TwoFactorAuthenticationException(e.Message);
+                    }
+                    catch (Exception e)
+                    {
+                        //trans.Rollback();
+                        throw new ConditionNotMetException("Approval failed. Operation unsuccessful. " + e.Message);
                     }
                 }
-                catch (ConditionNotMetException ce)
-                {
-                    throw new ConditionNotMetException(ce.Message);
-                }
-                catch (BadLogicException be)
-                {
-                    throw new BadLogicException(be.Message);
-                }
-                catch (APIErrorException e)
-                {
-                    throw new APIErrorException(e.Message);
-                }
-                catch (TwoFactorAuthenticationException e)
-                {
-                    throw new TwoFactorAuthenticationException(e.Message);
-                }
-                catch (Exception e)
-                {
-                    //trans.Rollback();
-                    throw new ConditionNotMetException("Approval failed. Operation unsuccessful. " + e.Message);
-                }
             }
+
+            
         }
 
         private bool ApproveLoanBooking(int loanId, int loanBookingRequestId, short approvalStatusId, ApprovalViewModel user)
@@ -3466,8 +3474,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                 var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-
+              
                 DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
+            
             }
         }
 
@@ -7011,6 +7020,7 @@ namespace FintrakBanking.Repositories.Credit
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                        join atrail in context.TBL_APPROVAL_TRAIL on loanBookingRequestId equals atrail.TARGETID
                         where d.LOANAPPLICATIONDETAILID == applicationDetailId && d.DELETED == false && s.DELETED == false
                         && s.LOAN_BOOKING_REQUESTID == loanBookingRequestId
                         orderby s.LOAN_BOOKING_REQUESTID descending
@@ -7100,6 +7110,7 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = d.DATETIMECREATED,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
                             isLocalCurrrency = company.CURRENCYID == d.CURRENCYID ? true : false,
+                            timeIn = atrail.SYSTEMARRIVALDATETIME,
                         }).ToList();
 
 

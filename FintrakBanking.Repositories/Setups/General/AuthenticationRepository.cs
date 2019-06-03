@@ -509,15 +509,18 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 foreach (var activity in userActivities)
                 {
-                    if (activity.EXPIREON?.CompareTo(DateTime.Now) < 0)
+                    var isExpired = activity.EXPIREON?.CompareTo(DateTime.Now);
+                    if (isExpired < 0)
                        deleteActivities.Add(activity);
                 }
-
-                foreach (var activity in deleteActivities)
+                if (deleteActivities.Count() > 0)
                 {
-                    context.TBL_PROFILE_ADDITIONALACTIVITY.Remove(activity);
+                    foreach (var activity in deleteActivities)
+                    {
+                        context.TBL_PROFILE_ADDITIONALACTIVITY.Remove(activity);
+                    }
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
             }
         }
 

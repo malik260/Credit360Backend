@@ -480,6 +480,30 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("single-corporate-customers-information/")]
+        public HttpResponseMessage SearchRandomSingleCorporateCustomersBySearchQuery(string searchQuery)
+
+        {
+            try
+            {
+                var data = repo.SearchRandomSingleCorporateCustomersBySearchQuery(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("group-customers-information/")]
         public HttpResponseMessage SearchRandomGroupCustomersBySearchQuery(string searchQuery)
 
