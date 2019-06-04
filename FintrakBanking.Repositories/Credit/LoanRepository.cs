@@ -2540,6 +2540,8 @@ namespace FintrakBanking.Repositories.Credit
                 var applicationRecord = GetAvailedLoanApplicationDetailById(staffId, companyId, item.loanApplicationDetailId, item.loanBookingRequestId).FirstOrDefault();
 
                 applicationRecord.bookedLoanData = item;
+                applicationRecord.applicationReferenceNumber = item.applicationReferenceNumber;
+                applicationRecord.loanReferenceNumber = item.loanReferenceNumber;
                 data.Add(applicationRecord);
             }
             foreach (var item in revolvingFacilityRecord)

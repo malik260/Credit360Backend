@@ -459,7 +459,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <table align=center border=1 width=1000px cellpadding=15 cellspacing=0>
+                <table border=1 width=1000px cellpadding=15 cellspacing=0>
                     < tr>
                         <th>S/N</th>
                         <th>Facility Type</th>
@@ -487,7 +487,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <table align=center border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th>S/N</th>
                         <th>CONDITIONS PRECEDENT TO DRAWDOWN</th>
@@ -515,7 +515,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <table align=center border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th>S/N</th>
                         <th>TRANSACTIONS DYNAMICS</th>
@@ -559,7 +559,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table align=center border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th>Facility</th>
                         <th>ILLImpact</th>
@@ -604,7 +604,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table align=center border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th>Facility</th>
                         <th>ILLImpact</th>
@@ -1346,7 +1346,7 @@ namespace FintrakBanking.Repositories.Credit
             var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerName);
             var n = 0;
             result = result + $@"
-                <table align=center border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th>Customer Name</th>
                         <th>Facility Type</th>
@@ -1424,7 +1424,7 @@ namespace FintrakBanking.Repositories.Credit
             var bcc = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("bcc"));
             var bod = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("board of directors"));
             result = result + $@"
-                <table align=center border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th>Level</th>
                         <th>Name</th>
@@ -1433,13 +1433,13 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
             
                     <tr>
-                        <td>{rm?.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{(rm != null ? rm.fromApprovalLevelName.ToUpper() : "Relationship Manager")}</td>
                         <td>{rm?.fromStaffName}</td>
                         <td>{rm?.comment}</td>
                         <td>{rm?.systemArrivalDateTime}</td>
                     </tr>
                     <tr>
-                        <td>{gh?.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{(gh != null ? gh.fromApprovalLevelName.ToUpper() : "Group Head")}</td>
                         <td>{gh?.fromStaffName}</td>
                         <td>{gh?.comment}</td>
                         <td>{gh?.systemArrivalDateTime}</td>
@@ -1716,7 +1716,7 @@ namespace FintrakBanking.Repositories.Credit
             var exposures = GetGroupExposurebyCustomerId((int)lmsrApplication.CUSTOMERID, 1);
             var n = 0;
             result = result + $@"
-                <table align=center border=1>
+                <table border=1>
                     <tr>
                         <th>S/N</th>
                         <th>Customer Name</th>
@@ -1831,7 +1831,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <table align=center border=1>
+                <table border=1>
                     <tr>
                         <th>S/N</th>
                         <th>Facility Type</th>
@@ -1910,7 +1910,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var n = 0;
             result = result + $@"
-                <table align=center border=1>
+                <table border=1>
                     <tr>
                         <th>S/N</th>
                         <th>Facility</th>
@@ -1954,7 +1954,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var n = 0;
             result = result + $@"
-                <table align=center border=1>
+                <table border=1>
                     <tr>
                         <th>S/N</th>
                         <th>Facility</th>
@@ -2228,7 +2228,7 @@ namespace FintrakBanking.Repositories.Credit
             //var turnover = GetCustomerTurnover();
             //var n = 0;
             //result = result + $@"
-            //    <table align=center border=1>
+            //    <table border=1>
             //        <tr>
             //            <th>S/N</th>
             //            <th>Account ID</th>
