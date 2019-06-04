@@ -458,6 +458,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\OutputDocument.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OutputDocument.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\StaffInfoDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1147,6 +1152,20 @@
     <Content Include="Reports\Credit\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Agribusiness Report - 2019-03-14.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Autos Report - 2019-04-02.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Banking &amp; Financial Services Report -2019-03-19.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Consumer &amp; Retail Report - 2019-04-16.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Country Risk Report - 2019-05-23.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Food &amp; Drink Report - 2019-05-02.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Infrastructure Report - 2019-05-30.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Insurance Report - 2019-05-28.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Logistics Risk Report - 2019-03-27.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Medical Devices Report - 2019-04-23.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Oil &amp; Gas Report - 2019-05-14 %281%29.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Pharmaceuticals &amp; Healthcare Report -2019-05-29.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Power Report - 2019-05-08.pdf" />
+    <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Telecommunications Report - 2019-03-13.pdf" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1206,6 +1225,17 @@
     </None>
     <Content Include="Reports\ReportDataset\MiddleOffice.xss">
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\OutputDocument.xsc">
+      <DependentUpon>OutputDocument.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\OutputDocument.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>OutputDocument.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\OutputDocument.xss">
+      <DependentUpon>OutputDocument.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\StaffInfoDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>

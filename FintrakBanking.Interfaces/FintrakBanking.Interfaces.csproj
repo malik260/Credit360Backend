@@ -92,6 +92,7 @@
     <Compile Include="Credit\ILaonCamSolRepository.cs" />
     <Compile Include="Credit\IMemorandumRepository.cs" />
     <Compile Include="Reports\IOutputDocumentRepository.cs" />
+    <Compile Include="Risk\ICreditOfficerRiskRepository.cs" />
     <Compile Include="Risk\IRiskAcceptanceCriteriaRepository.cs" />
     <Compile Include="Setups\Credit\ICrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\IFXAccountCreationRepository.cs" />

@@ -45,8 +45,8 @@ namespace FintrakBanking.APICore.Filters
             //Task.Run(() => LogUnhandledExceptionAsync(context));
             LogUnhandledException(context);
 
-            // context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred. Try again or contact the system administrator." });
-            context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = context.Exception.Message + " inner exception " + innerException });
+            context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred. Try again or contact the system administrator." });
+            //context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = context.Exception.Message + " inner exception " + innerException });
 
             base.OnException(context);
         }

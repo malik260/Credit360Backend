@@ -33,6 +33,9 @@ namespace FintrakBanking.Entities.Models
 
         public short COLLATERALSEARCHCHARGETYPEID { get; set; }
 
+        public DateTime NEXT_CORR_DATE { get; set; }
+
+
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 
         public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
