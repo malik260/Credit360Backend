@@ -479,12 +479,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RAC_ITEM> TBL_RAC_ITEM { get; set; }
         public virtual DbSet<TBL_RAC_OPTION> TBL_RAC_OPTION { get; set; }
         public virtual DbSet<TBL_RAC_OPTION_ITEM> TBL_RAC_OPTION_ITEM { get; set; }
-        public virtual DbSet<TBL_RISK_MATRIX> TBL_RISK_MATRIX { get; set; }
-        public virtual DbSet<TBL_CORR_RATING_INDEX_DETAIL> TBL_CORR_RATING_INDEX_DETAIL { get; set; }
-        public virtual DbSet<TBL_CORR_RATING_METRIC_DETAIL> TBL_CORR_RATING_METRIC_DETAIL { get; set; }
+
+
+        public virtual DbSet<TBL_CORR_RISK_MATRIX> TBL_CORR_RISK_MATRIX { get; set; }
         public virtual DbSet<TBL_CORR_OFFICER_RATING> TBL_CORR_OFFICER_RATING { get; set; }
         public virtual DbSet<TBL_CORR_FREQUENCY_SETUP> TBL_CORR_FREQUENCY_SETUP { get; set; }
-        public virtual DbSet<TBL_CORR_RATING_INDEX_SETUP> TBL_CORR_RATING_INDEX_SETUP { get; set; }
 
 
 
@@ -8875,16 +8874,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_RAC_DEFINITION)
                 .WithRequired(e => e.TBL_RAC_ITEM)
                 .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CORR_RATING_INDEX_DETAIL>()
-                .HasMany(e => e.TBL_CORR_RATING_METRIC_DETAIL)
-                .WithRequired(e => e.TBL_CORR_RATING_INDEX_DETAIL)
-                .WillCascadeOnDelete(false);
-
-            modelBuilder.Entity<TBL_CORR_OFFICER_RATING>()
-                .HasMany(e => e.TBL_CORR_RATING_INDEX_DETAIL)
-                .WithRequired(e => e.TBL_CORR_OFFICER_RATING)
-                .WillCascadeOnDelete(false);
+            
         }
     }
 }

@@ -18,7 +18,7 @@ namespace FintrakBanking.Repositories.Risk
         private FinTrakBankingContext context;
         private TBL_STAFF officer;
         private TBL_CORR_FREQUENCY_SETUP frequencySetup;
-        private TBL_RISK_MATRIX matrix;
+        private TBL_CORR_RISK_MATRIX matrix;
         private TBL_CORR_OFFICER_RATING currentRating;
         private decimal totalExposure;
         private int totalBorrowingCustomers;
@@ -31,12 +31,17 @@ namespace FintrakBanking.Repositories.Risk
             this.context = _context;
         }
 
-        private void Init(string username)
+        private bool Init(string username)
         {
+            if (officer == null) officer = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == username.ToLower());
+            if (officer == null) return false;
             if (frequencySetup == null) frequencySetup = context.TBL_CORR_FREQUENCY_SETUP.FirstOrDefault();
-            if (officer == null) officer = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE == username);
-            if (currentRating == null) currentRating = context.TBL_CORR_OFFICER_RATING.Where(x => x.STAFFID == officer.STAFFID).OrderByDescending(x => x.OFFICERRATINGID).FirstOrDefault();
-            if (matrix == null) matrix = context.TBL_RISK_MATRIX.FirstOrDefault(x => x.RISKMATRIXID == officer.CORRMATRIXGRIDRATINGID);
+            if (currentRating == null) currentRating = context.TBL_CORR_OFFICER_RATING
+                    .Where(x => x.STAFFID == officer.STAFFID)
+                    .OrderByDescending(x => x.OFFICERRATINGID)
+                    .FirstOrDefault();
+            if (matrix == null) matrix = context.TBL_CORR_RISK_MATRIX.FirstOrDefault(x => x.RISKMATRIXID == officer.CORRMATRIXGRIDRATINGID);
+            return true;
         }
 
         private void ComputeCreditOfficerRiskRating()
@@ -44,6 +49,16 @@ namespace FintrakBanking.Repositories.Risk
             // init
             totalExposure = GetTotalExposure();
             totalBorrowingCustomers = GetTotalBorrowingCustomers();
+            
+            RiskIndexMetrics riskIndexMetrics = new RiskIndexMetrics();
+
+            riskIndexMetrics.keyRiskDrivers = GetKeyRiskDrivers();
+            riskIndexMetrics.borrowingCustomersCount = totalBorrowingCustomers;
+            riskIndexMetrics.borrowingCustomersExposure = totalExposure;
+            // todo..
+
+            // update rating comment
+            var comment = GetMatrixDescription(riskIndexMetrics.creditOfficerRiskRating).description;
 
             // rating
             var rating = context.TBL_CORR_OFFICER_RATING.Add(new TBL_CORR_OFFICER_RATING
@@ -53,43 +68,20 @@ namespace FintrakBanking.Repositories.Risk
                 BUSINESSUNITID = (int)officer.BUSINESSUNITID,
                 BORROWINGCUSTOMERS = totalBorrowingCustomers,
                 EXPOSURE = totalExposure,
-                // METRICS
-                COMMENT = String.Empty,
+                // METRICS...
+                CORRSCORE = riskIndexMetrics.creditOfficerRiskRating,
+                CORRCOMMENT = comment,
                 DATERATED = DateTime.Now,
                 FROMDATE = frequencySetup.NEXTRATINGDATE.AddMonths((-1) * frequencySetup.RATINGPERIOD),
                 TODATE = frequencySetup.NEXTRATINGDATE,
             });
 
-            bool ratingSaved = context.SaveChanges() != 0;
-            if (!ratingSaved) return;
-
-            // indexes
-            var definedIndexes = context.TBL_CORR_RATING_INDEX_SETUP.Where(x => x.ISACTIVE == true);
-
-            foreach (var setup in definedIndexes)
-            {
-                context.TBL_CORR_RATING_INDEX_DETAIL.Add(new TBL_CORR_RATING_INDEX_DETAIL
-                {
-                    OFFICERRATINGID = rating.OFFICERRATINGID,
-                    RATINGINDEXSETUPID = setup.RATINGINDEXSETUPID,
-                    PERCENTAGEWEIGHT = setup.PERCENTAGEWEIGHT,
-                    SCORE = ComputeScoreFromMetrics(setup.DEFINEDFUNCTIONID),
-                });
-            }
-
-            bool ratingIndexesSaved = context.SaveChanges() != 0;
-            if (!ratingIndexesSaved) return; // TODO rollback
-
-            // update rating comment
-            rating.COMMENT = GetMatrixDescription(rating.OFFICERRATINGID).description;
             context.SaveChanges();
         }
-
-
-        private MatrixGrid GetMatrixDescription(int officerRatingId)
+        
+        private MatrixGrid GetMatrixDescription(int score)
         {
-            var score = context.TBL_CORR_RATING_INDEX_DETAIL.Where(x => x.OFFICERRATINGID == officerRatingId).Sum(x => x.SCORE);
-            var matrix = context.TBL_RISK_MATRIX.FirstOrDefault(x => x.GRADINGMINIMUM <= score && score <= x.GRADINGMAXIMUM);
+            var matrix = context.TBL_CORR_RISK_MATRIX.FirstOrDefault(x => x.GRADINGMINIMUM <= score && score <= x.GRADINGMAXIMUM);
             return new MatrixGrid
             {
                 id = matrix.RISKMATRIXID,
@@ -100,8 +92,7 @@ namespace FintrakBanking.Repositories.Risk
 
         public MatrixGrid GetCreditOfficerRiskRating(string username)
         {
-            Init(username);
-            if (!IsCreditOfficer()) return new MatrixGrid();
+            if (Init(username) == false || !IsCreditOfficer()) return new MatrixGrid();
             if (RatingExpired()) ComputeAndUpdateRating();
             return GetCurrentRiskRating();
         }
@@ -114,7 +105,11 @@ namespace FintrakBanking.Repositories.Risk
 
         private void UpdateCreditOfficerRating()
         {
-            officer.CORRMATRIXGRIDRATINGID = GetMatrixDescription(currentRating.OFFICERRATINGID).id;
+            var lastRating = context.TBL_CORR_OFFICER_RATING
+                .Where(x => x.STAFFID == officer.STAFFID)
+                .OrderByDescending(x => x.OFFICERRATINGID)
+                .FirstOrDefault();
+            officer.CORRMATRIXGRIDRATINGID = GetMatrixDescription(lastRating.CORRSCORE).id;
             context.SaveChanges();
         }
 
@@ -154,10 +149,37 @@ namespace FintrakBanking.Repositories.Risk
             throw new NotImplementedException();
         }
 
-        private int ComputeScoreFromMetrics(int? functionId)
+
+        private KeyRiskDrivers GetKeyRiskDrivers()
         {
-            if (functionId == null) return 0;
-            throw new NotImplementedException();
+            return new KeyRiskDrivers // hardcoded for now!
+            {
+                UnpaidObligationsCount = 5,
+                UnpaidObligationsVolume = 15,
+                OverdraftNoLimitOverlineVolume = 5,
+                OverdraftNoLimitOverlineCount = 5,
+                Watchlist = 5,
+                NonPerformingLoans = 15,
+                Cer = 5,
+                OverdraftWithAgeLastCreditDate = 5,
+                DefferalExistence = 5,
+                DefferalVolume = 5,
+                PastDueDefferal = 2,
+                RepeatedDeferral = 3,
+                InternalSolLimitAdherence = 2,
+                LoanDepositRatioLimitAdherence = 3,
+                IncompleteDocumentationFile = 5,
+                ExpiredValuation = 1,
+                ExpiredInsurance = 1,
+                NonPerfectedCollateral = 1,
+                SiteVisitationReportAbsence = 1,
+                FinancialsAbsence = 1,
+                GovernmentExposure = 10,
+                SolBreach = 10,
+                CapitalConsumingExposure = 10,
+                SectorConcentration = 10,
+            };
         }
+
     }
 }

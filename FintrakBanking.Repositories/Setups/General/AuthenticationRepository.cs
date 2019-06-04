@@ -746,10 +746,10 @@ namespace FintrakBanking.Repositories.Setups.General
                           where a.USERNAME.ToUpper() == username.ToUpper() && !b.DELETED
                           select a).FirstOrDefault();
 
-            _creditOfficerRisk = new CreditOfficerRiskRepository(context);
-            MatrixGrid corrMatrix = _creditOfficerRisk.GetCreditOfficerRiskRating(username);
-            int corrMatrixId = corrMatrix.id;
-            string corrMatrixDescription = corrMatrix.description;
+            //_creditOfficerRisk = new CreditOfficerRiskRepository(context);
+            //MatrixGrid corrMatrix = _creditOfficerRisk.GetCreditOfficerRiskRating(username);
+            int corrMatrixId = 0;// corrMatrix.id;
+            string corrMatrixDescription = "";// corrMatrix.description;
 
             if (record != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {

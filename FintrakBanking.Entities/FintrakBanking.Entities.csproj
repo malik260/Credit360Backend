@@ -96,9 +96,6 @@
     <Compile Include="Models\TBL_CONDITIONAL_OPERATOR.cs" />
     <Compile Include="Models\TBL_CORR_FREQUENCY_SETUP.cs" />
     <Compile Include="Models\TBL_CORR_OFFICER_RATING.cs" />
-    <Compile Include="Models\TBL_CORR_RATING_INDEX_DETAIL.cs" />
-    <Compile Include="Models\TBL_CORR_RATING_METRIC_DETAIL.cs" />
-    <Compile Include="Models\TBL_CORR_RATING_METRIC_SETUP.cs" />
     <Compile Include="Models\TBL_DEFINED_FUNCTION.cs" />
     <Compile Include="Models\TBL_JOB_SOURCE.cs" />
     <Compile Include="Models\TBL_APPROVAL_BUSINESS_RULE.cs" />
@@ -111,7 +108,7 @@
     <Compile Include="Models\TBL_RAC_ITEM.cs" />
     <Compile Include="Models\TBL_RAC_OPTION.cs" />
     <Compile Include="Models\TBL_RAC_OPTION_ITEM.cs" />
-    <Compile Include="Models\TBL_RISK_MATRIX.cs" />
+    <Compile Include="Models\TBL_CORR_RISK_MATRIX.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_INDEMNITY.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_ISPO.cs" />

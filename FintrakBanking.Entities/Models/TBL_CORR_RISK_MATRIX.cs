@@ -6,8 +6,8 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_RISK_MATRIX")]
-    public partial class TBL_RISK_MATRIX
+    [Table("TBL_CORR_RISK_MATRIX")]
+    public partial class TBL_CORR_RISK_MATRIX
     {
         [Key]
         public int RISKMATRIXID { get; set; }
