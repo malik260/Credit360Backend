@@ -1428,7 +1428,7 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <th>Level</th>
                         <th>Name</th>
-                        <th>Signature</th>
+                        <th>Comment</th>
                         <th>Date</th>
                     </tr>
             
