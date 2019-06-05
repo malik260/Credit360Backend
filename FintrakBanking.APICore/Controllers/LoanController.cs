@@ -939,6 +939,20 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [Route("loans-disbursed")]
+        public HttpResponseMessage GetdisbursedLoansApplicationDetails()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var data = repo.GetdisbursedLoansApplicationDetails(token.GetStaffId, token.GetCompanyId);
+
+            if (data.Any() == false)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        }
+
+        [HttpGet]
         [Route("loan-booking/revolving/awaiting-approval")]
         public HttpResponseMessage GetRevolvingFacilityBookingAwaitingApproval()
         {

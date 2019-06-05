@@ -587,6 +587,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("isLLLViolated/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetIsLLLViolated(int operationId, int targetId)
+        {
+            try
+            {
+                bool response = repo.GetIsLLLVilated(operationId, targetId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         #endregion DOCUMENT TEMPLATE IMPL
 
     }

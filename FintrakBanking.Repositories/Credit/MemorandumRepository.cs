@@ -449,6 +449,10 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public bool IsLLLViolated()
+        {
+            return ((getTotalLLLImpact() > legalLendingLimit) ? true : false);
+        }
 
 
         //markups
@@ -475,7 +479,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 ";
             }
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
 
         }
@@ -503,7 +507,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 ";
             }
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
 
         }
@@ -531,7 +535,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                 ";
             }
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
         }
         
@@ -562,22 +566,20 @@ namespace FintrakBanking.Repositories.Credit
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th>Facility</th>
-                        <th>ILLImpact</th>
+                        <th>LLL Impact</th>
                         <th>Currency</th>
                         <th>Current Amount</th>
                         <th>Proposed Amount</th>
                         <th>Change</th>
                         <th>Tenor (Months)</th>
                     </tr>
-                    <tr><td colspan=7 >Direct Facilities:</td></tr>
+                    <tr><td>Direct Facilities:</td></tr>
                         {GetDirectFacilitiesMarkupLOS()}
-                    <tr><td colspan=7>Total Direct</td></tr>
                         {GetTotalDirectFacilitiesMarkupLOS()}
-                    <tr><td colspan=7>Contingent Facilities:</td></tr>
+                    <tr><td>Contingent Facilities:</td></tr>
                         {GetContingentFacilitiesMarkupLOS()}
-                    <tr><td colspan=7>Total Contingents</td></tr>
+                    <tr><td>Total Contingents</td></tr>
                         {GetTotalContingentFacilitiesMarkupLOS()}
-                    <tr><td colspan=7>Total Facilities:</td></tr>
                         {GetTotalFacilitiesMarkupLOS()}
                     <tr>
                         <td>Legal Lending Limit:</td>
@@ -589,14 +591,14 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     <tr>
                         <td>Any LLL violation? (Yes / No):</td>
-                        <td>{((getTotalLLLImpact() > legalLendingLimit) ? "Yes" : "No")}</td>
+                        <td>{(IsLLLViolated() ? "Yes" : "No")}</td>
                     </tr>
                     <tr>
                         <td>Director-related? (Yes / No):</td>
                         <td>{getIsDirectorRelated()}</td>
                     </tr>
                  ";
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
         }
 
@@ -607,22 +609,22 @@ namespace FintrakBanking.Repositories.Credit
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th>Facility</th>
-                        <th>ILLImpact</th>
+                        <th>LLL Impact</th>
                         <th>Currency</th>
                         <th>Current Amount</th>
                         <th>Proposed Amount</th>
                         <th>Change</th>
                         <th>Tenor</th>
                     </tr>
-                    <tr><td colspan=7>Direct Facilities:</td></tr>
+                    <tr><td>Direct Facilities:</td></tr>
                         {GetForeignDirectFacilitiesMarkupLOS()}
-                    <tr><td colspan=7>Total Direct</td></tr>
+                    <tr><td>Total Direct</td></tr>
                         {GetTotalForeignDirectFacilitiesMarkupLOS()}
-                    <tr><td colspan=7>Contingent Facilities:</td></tr>
+                    <tr><td>Contingent Facilities:</td></tr>
                         {GetForeignContingentFacilitiesMarkupLOS()}
-                    <tr><td colspan=7>Total Contingents</td></tr>
+                    <tr><td>Total Contingents</td></tr>
                         {GetTotalForeignContingentFacilitiesMarkupLOS()}
-                    <tr><td colspan=7>Total Facilities:</td></tr>
+                    <tr><td>Total Facilities:</td></tr>
                         {GetTotalForeignFacilitiesMarkupLOS()}
                     <tr>
                         <td>Legal Lending Limit:</td>
@@ -641,7 +643,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{getIsDirectorRelated()}</td>
                     </tr>
                  ";
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
         }
 
@@ -750,7 +752,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                     <tr>
-                        <td>&nbsp;</td>
+                        <td>Total Direct</td>
                         <td>{String.Format("{0:0,0.00}", totalDirectsSummary.totalLLLImpact)}</td>
                         <td>{totalDirectsSummary.currency}</td>
                         <td>{String.Format("{0:0,0.00}", totalDirectsSummary.totalCurrentAmount)}</td>
@@ -835,7 +837,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                     <tr>
-                        <td>&nbsp;</td>
+                        <td>Total Contingents</td>
                         <td>{String.Format("{0:0,0.00}", totalContingentSummary.totalLLLImpact)}</td>
                         <td>{totalContingentSummary.currency}</td>
                         <td>{String.Format("{0:0,0.00}", totalContingentSummary.totalCurrentAmount)}</td>
@@ -856,7 +858,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                      <tr>
-                        <td>&nbsp;</td>
+                        <td>Total Facilities</td>
                         <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalLLLImpact))}</td>
                         <td>{totalSummary.FirstOrDefault()?.currency}</td>
                         <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalCurrentAmount))}</td>
@@ -1381,7 +1383,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     {GetTotalGroupExposureMarkup()}
                 ";
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
         }
 
@@ -1414,15 +1416,15 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetApprovalsMarkupLOS()
         {
-            var appraisals = GetAppraisalMemorandumTrail(this.targetId).ToList();
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
-            var rm = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("relationship manager"));
-            var gh = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("group head"));
-            var gdmd = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("gdmd"));
-            var gmd = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("gmd"));
-            var gmcc = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("group mcc"));
-            var bcc = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("bcc"));
-            var bod = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("board of directors"));
+            //var rm = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("relationship manager"));
+            //var gh = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("group head"));
+            //var gdmd = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("gdmd"));
+            //var gmd = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("gmd"));
+            //var gmcc = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("group mcc"));
+            //var bcc = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("bcc"));
+            //var bod = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("board of directors"));
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
@@ -1431,106 +1433,20 @@ namespace FintrakBanking.Repositories.Credit
                         <th>Comment</th>
                         <th>Date</th>
                     </tr>
-            
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
                     <tr>
-                        <td>{(rm != null ? rm.fromApprovalLevelName.ToUpper() : "Relationship Manager")}</td>
-                        <td>{rm?.fromStaffName}</td>
-                        <td>{rm?.comment}</td>
-                        <td>{rm?.systemArrivalDateTime}</td>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{trail.comment}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
                     </tr>
-                    <tr>
-                        <td>{(gh != null ? gh.fromApprovalLevelName.ToUpper() : "Group Head")}</td>
-                        <td>{gh?.fromStaffName}</td>
-                        <td>{gh?.comment}</td>
-                        <td>{gh?.systemArrivalDateTime}</td>
-                    </tr>
-                    <tr>
-                        <td><b><i>Required Concurrences</i></b></td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Group Relationship Manager (if applicable)</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Legal</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Country, CRM</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Country MD</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Country MCC</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>CRO, Subsidiaries</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td><b><i>Credit Approval</i></b></td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>Head, African Subsidiaries</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td>{(gdmd != null ? gdmd.fromApprovalLevelName.ToUpper() : "GDMD")}</td>
-                        <td>{gdmd?.fromStaffName}</td>
-                        <td>{gdmd?.comment}</td>
-                        <td>{gdmd?.systemArrivalDateTime}</td>
-                    </tr>
-                    <tr>
-                        <td>{(gmd != null ? gmd?.fromApprovalLevelName.ToUpper() : "GMD")}</td>
-                        <td>{gmd?.fromStaffName}</td>
-                        <td>{gmd?.comment}</td>
-                        <td>{gmd?.systemArrivalDateTime}</td>
-                    </tr>
-                    <tr>
-                        <td>{(gmcc != null ? gmcc.fromApprovalLevelName.ToUpper() : "Group MCC")}</td>
-                        <td>{gmcc?.fromStaffName}</td>
-                        <td>{gmcc?.comment}</td>
-                        <td>{gmcc?.systemArrivalDateTime}</td>
-                    </tr>
-                    <tr>
-                        <td>{(bcc != null ? bcc.fromApprovalLevelName.ToUpper() : "BCC")}</td>
-                        <td>{bcc?.fromStaffName}</td>
-                        <td>{bcc?.comment}</>
-                        <td>{bcc?.systemArrivalDateTime}</td>
-                    </tr>
-                    <tr>
-                        <td>{(bod != null ? bod.fromApprovalLevelName.ToUpper() : "Board Of Directors")}</td>
-                        <td>{bod?.fromStaffName}</td>
-                        <td>{bod?.comment}</td>
-                        <td>{bod?.systemArrivalDateTime}</td>
-                    </tr>
+                ";
+            }
 
-";
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
 
         }
@@ -1742,7 +1658,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 ";
             }
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
         }
 
@@ -1861,7 +1777,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 ";
             }
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
 
             /*
@@ -1928,7 +1844,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 ";
             }
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
         }
 
@@ -1974,7 +1890,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 ";
             }
-            result = result + $"</table align=center>";
+            result = result + $"</table>";
             return result;
         }
 
@@ -2258,7 +2174,7 @@ namespace FintrakBanking.Repositories.Credit
             //        </tr>
             //    ";
             //}
-            //result = result + $"</table align=center>";
+            //result = result + $"</table>";
             return result;
         }
     }
