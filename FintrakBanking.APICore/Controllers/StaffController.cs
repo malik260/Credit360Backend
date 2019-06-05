@@ -617,7 +617,7 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage SearchApprovers(int operationId, string queryString = "")
         {
             if (queryString == null) queryString = string.Empty;
-            var data = repo.SearchApprovers(operationId, queryString,token.GetCompanyId);
+            var data = repo.SearchApprovers(operationId, token.GetRoleId, queryString,token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 

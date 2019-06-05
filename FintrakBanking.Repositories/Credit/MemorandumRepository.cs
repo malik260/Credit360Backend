@@ -334,14 +334,20 @@ namespace FintrakBanking.Repositories.Credit
             if (operationId == (int)OperationsEnum.CAM)
             {
 
-                var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
-                var details = this.transactionsRepo.GetAllTransactionDynamics().Where(x => x.loanApplicationDetailId == (int)detail.FirstOrDefault()?.LOANAPPLICATIONDETAILID)
-                                .OrderBy(a => a.position);
+                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
+                var transactions = new List<TransactionDynamicsViewModel>();
                 foreach (var d in details)
                 {
-                    if (d.dynamics != null)
+                   var transaction  = this.transactionsRepo.GetAllTransactionDynamics().Where(x => x.loanApplicationDetailId == d.LOANAPPLICATIONDETAILID)
+                                     .OrderBy(a => a.position);
+                    transactions.AddRange(transaction);
+                }
+                var transactionsgroup = transactions.GroupBy(t => t.loanApplicationDetailId);
+                foreach (var t in transactions)
+                {
+                    if (t.dynamics != null)
                     {
-                        result.Add(new DropDownSelect { id = d.productId, name = d.dynamics });
+                        result.Add(new DropDownSelect { id = t.productId, name = t.dynamics });
                     }
                 }
             }
