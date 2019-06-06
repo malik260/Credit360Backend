@@ -34,14 +34,14 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
-        //[HttpGet]
-        //[ClaimsAuthorization]
-        //[Route("document-upload/{operationId}/target/{targetId}")]
-        //public HttpResponseMessage GetDocumentUploads(int operationId, int targetId)
-        //{
-        //    IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId);
-        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        //}
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-upload/operation/{operationId}/target/{targetId}")]
+        public HttpResponseMessage GetDocumentUploads(int operationId, int targetId)
+        {
+            IEnumerable<DocumentUploadViewModel> response = repo.GetDocumentUploads(token.GetStaffId, operationId, targetId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
 
         [HttpGet]
         [ClaimsAuthorization]
