@@ -40,7 +40,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity);
         LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId);
         List<DocumentTemplateViewModel> GetDocumentTemplates(int staffId, int operationId, int companyId);
-
+        bool GetIsLLLVilated(int operationId, int targetId);
 
     }
 }

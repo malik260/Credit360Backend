@@ -112,7 +112,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\Users\Gbenga\Desktop\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +147,7 @@
     <Compile Include="CRMS\CRMSCodeBookRepository.cs" />
     <Compile Include="Credit\TermSheetRepository.cs" />
     <Compile Include="Helper\DataExport.cs" />
+    <Compile Include="Risk\CreditOfficerRiskRepository.cs" />
     <Compile Include="Risk\RiskAcceptanceCriteriaRepository.cs" />
     <Compile Include="Setups\Credit\CrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\FXAccountCreationRepository.cs" />

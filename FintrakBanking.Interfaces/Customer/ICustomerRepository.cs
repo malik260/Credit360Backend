@@ -142,6 +142,7 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerRelatedDirectorViewModel> DirectorRelatedCustomer(string bvn);
         IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLMSLoanId(int loanApplicationId);
         IEnumerable<CustomerViewModels> SearchRandomSingleCustomersBySearchQuery(string searchQuery);
+        IEnumerable<CustomerViewModels> SearchRandomSingleCorporateCustomersBySearchQuery(string searchQuery);
         IEnumerable<CustomerViewModels> SearchRandomGroupCustomersBySearchQuery(string searchQuery);
     }
 }

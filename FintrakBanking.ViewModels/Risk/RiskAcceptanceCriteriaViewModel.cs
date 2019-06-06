@@ -36,6 +36,7 @@ namespace FintrakBanking.ViewModels.Risk
         public int status { get; set; }
         public bool fileUpload { get; set; }
         public int definitionId { get; set; }
+        public int categoryId { get; set; }
     }
 
     public class ProductRacOption

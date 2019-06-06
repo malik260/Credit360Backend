@@ -16,6 +16,9 @@ using FintrakBanking.Interfaces;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Repositories.Admin;
+using FintrakBanking.Repositories.Risk;
+using FintrakBanking.Interfaces.Risk;
+using FintrakBanking.ViewModels.Risk;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -25,6 +28,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingContext context;
         private  IAuditTrailRepository _auditTrail;
         private SessionStatusInfo _sessionInfo;
+        private ICreditOfficerRiskRepository _creditOfficerRisk;
 
         TBL_PROFILE_SETTING profileSetting = null;
         TBL_FINANCECURRENTDATE applicationDate = null;
@@ -34,9 +38,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public string LogCode { get; set; }
 
-        public AuthenticationRepository(FinTrakBankingContext _context, IAuditTrailRepository auditTrail)
+        public AuthenticationRepository(
+            FinTrakBankingContext _context, 
+            IAuditTrailRepository auditTrail,
+            ICreditOfficerRiskRepository creditOfficerRisk
+            )
         {
             context = _context;
+            _creditOfficerRisk = creditOfficerRisk;
             _auditTrail = auditTrail != null ? auditTrail : new AuditTrailRepository(_context);
         }
 
@@ -509,15 +518,18 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 foreach (var activity in userActivities)
                 {
-                    if (activity.EXPIREON?.CompareTo(DateTime.Now) < 0)
+                    var isExpired = activity.EXPIREON?.CompareTo(DateTime.Now);
+                    if (isExpired < 0)
                        deleteActivities.Add(activity);
                 }
-
-                foreach (var activity in deleteActivities)
+                if (deleteActivities.Count() > 0)
                 {
-                    context.TBL_PROFILE_ADDITIONALACTIVITY.Remove(activity);
+                    foreach (var activity in deleteActivities)
+                    {
+                        context.TBL_PROFILE_ADDITIONALACTIVITY.Remove(activity);
+                    }
+                    context.SaveChanges();
                 }
-                context.SaveChanges();
             }
         }
 
@@ -734,6 +746,11 @@ namespace FintrakBanking.Repositories.Setups.General
                           where a.USERNAME.ToUpper() == username.ToUpper() && !b.DELETED
                           select a).FirstOrDefault();
 
+            //_creditOfficerRisk = new CreditOfficerRiskRepository(context);
+            //MatrixGrid corrMatrix = _creditOfficerRisk.GetCreditOfficerRiskRating(username);
+            int corrMatrixId = 0;// corrMatrix.id;
+            string corrMatrixDescription = "";// corrMatrix.description;
+
             if (record != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {
                 var staff1 = context.TBL_STAFF.Find(profile.STAFFID);
@@ -752,8 +769,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff1.STAFFROLEID;
                 userInfo.businessUnitId = staff1.BUSINESSUNITID;
-                userInfo.corrMatrixId = 2;//TODO
-                userInfo.corrMatrixDescription = "MODERATE RISK";//TODO
+                userInfo.corrMatrixId = corrMatrixId;
+                userInfo.corrMatrixDescription = corrMatrixDescription;
                 userInfo.businessUnitName = staff1.BUSINESSUNITID != null ? staff1.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : "";
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
@@ -782,8 +799,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 userInfo.lastLoginDate = profile.LASTLOGINDATE;
                 userInfo.roleId = staff.STAFFROLEID;
                 userInfo.businessUnitId = staff.BUSINESSUNITID;
-                userInfo.corrMatrixId = 1;//TODO
-                userInfo.corrMatrixDescription = "MODERATE RISK";//TODO
+                userInfo.corrMatrixId = corrMatrixId;
+                userInfo.corrMatrixDescription = corrMatrixDescription;
                 userInfo.businessUnitName = staff.BUSINESSUNITID != null ? staff.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : "";
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;

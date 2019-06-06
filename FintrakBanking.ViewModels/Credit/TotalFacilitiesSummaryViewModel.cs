@@ -14,6 +14,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int numberOfImportFinanceFacilities { get; set; }
         public int numberOfNewFacilities { get; set; }
         public string currency { get; set; }
+        public decimal totalLLLImpact { get; set; }
         public decimal totalCurrentAmount { get; set; }
         public decimal totalProposedAmount { get; set; }
         public decimal totalChange { get; set; }

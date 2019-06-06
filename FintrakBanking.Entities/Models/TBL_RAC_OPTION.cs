@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(200)]
         public string OPTIONNAME { get; set; }
-      //  public bool DELETED { get; set; }
+       // public bool DELETED { get; set; }
 
         // public bool DELETE { get; set; }
 

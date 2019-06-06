@@ -363,6 +363,12 @@ var qry = Foo.GroupJoin(
                 .ToList();
         }
 
+        public bool GetIsLLLVilated(int operationId, int targetId)
+        {
+            memo.Init(operationId, targetId);
+            return memo.IsLLLViolated();
+        }
+
         #endregion DOCUMENT TEMPLATE IMPL
 
         #region DOCUMENT TEMPLATE SETUP

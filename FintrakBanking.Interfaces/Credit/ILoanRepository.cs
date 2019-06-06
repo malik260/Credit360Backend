@@ -105,6 +105,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetBookedLoanApplicationForBookingVerification(int staffId, int companyId);
 
+        IEnumerable<CamProcessedLoanViewModel> GetdisbursedLoansApplicationDetails(int staffId, int companyId);
+
         IEnumerable<RevolvingLoanViewModel> GetRevolvingFacilityBookingAwaitingApproval(int staffId, int companyId);
 
         IEnumerable<ContingentLoanViewModel> GetContingentFacilityBookingAwaitingApproval(int staffId, int companyId);

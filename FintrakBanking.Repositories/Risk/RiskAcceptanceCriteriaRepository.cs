@@ -39,8 +39,8 @@ namespace FintrakBanking.Repositories.Risk
         {
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
-            
-            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
+
+            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
 
@@ -55,10 +55,11 @@ namespace FintrakBanking.Repositories.Risk
             {
                 ProductRacCategory racCategory = new ProductRacCategory();
 
-                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
+                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                     .Select(x => new ProductRacItem
                     {
                         id = x.RACDEFINITIONID,
+                        categoryId = x.RACCATEGORYID,
                         //id = x.TBL_RAC_ITEM.RACITEMID,
                         criteria = x.TBL_RAC_ITEM.CRITERIA,
                         required = x.TBL_RAC_ITEM.DESCRIPTION,
@@ -80,7 +81,7 @@ namespace FintrakBanking.Repositories.Risk
                     .ToList();
 
 
-                foreach(var item in items)
+                foreach (var item in items)
                 {
                     item.options = item.optionId == null ? null
                                                         : context.TBL_RAC_OPTION_ITEM
@@ -93,7 +94,7 @@ namespace FintrakBanking.Repositories.Risk
                                                                     .ToList();
                 }
 
-                racCategory.rows = items;
+                racCategory.rows = items.Where(x => x.categoryId == productRacCategory.RACCATEGORYID).ToList();
                 racCategory.name = productRacCategory.CATEGORYNAME;
                 productCategories.Add(racCategory);
             }
@@ -110,7 +111,7 @@ namespace FintrakBanking.Repositories.Risk
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
 
-            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
+            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
 
@@ -120,11 +121,12 @@ namespace FintrakBanking.Repositories.Risk
             {
                 ProductRacCategory racCategory = new ProductRacCategory();
 
-                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
+                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                     .Join(context.TBL_RAC_DETAIL.Where(x => x.TARGETID == targetId), a => a.RACDEFINITIONID, b => b.RACDEFINITIONID, (a, b) => new { a, b })
                     .Select(x => new ProductRacItem
                     {
                         id = x.a.RACDEFINITIONID,
+                        categoryId = x.a.RACCATEGORYID,
                         //id = x.TBL_RAC_ITEM.RACITEMID,
                         criteria = x.a.TBL_RAC_ITEM.CRITERIA,
                         required = x.a.TBL_RAC_ITEM.DESCRIPTION,
@@ -151,7 +153,7 @@ namespace FintrakBanking.Repositories.Risk
                                                                     .ToList();
                 }
 
-                racCategory.rows = items;
+                racCategory.rows = items.Where(x => x.categoryId == productRacCategory.RACCATEGORYID).ToList();
                 racCategory.name = productRacCategory.CATEGORYNAME;
                 productCategories.Add(racCategory);
             }
@@ -302,7 +304,7 @@ namespace FintrakBanking.Repositories.Risk
                     approvalLevelName = context.TBL_APPROVAL_LEVEL.Where(o => o.APPROVALLEVELID == x.APPROVALLEVELID).Select(o => o.LEVELNAME).FirstOrDefault(),
                     controlAmount = x.CONTROLAMOUNT,
                     controlOptionId = x.CONTROLOPTIONID,
-                    controlOption = context.TBL_RAC_OPTION_ITEM.Where(o=>o.RACOPTIONID==x.RACOPTIONID).Select(o=>o.LABEL).FirstOrDefault()
+                    controlOption = context.TBL_RAC_OPTION_ITEM.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.LABEL).FirstOrDefault()
                 })
                 .ToList();
         }
@@ -637,8 +639,8 @@ namespace FintrakBanking.Repositories.Risk
             entity.INPUTTYPENAME = model.inputTypeName;
             entity.INPUTTAG = model.inputTag;
 
-           // entity.LASTUPDATEDBY = user.createdBy;
-           // entity.DATETIMEUPDATED = DateTime.Now;
+            // entity.LASTUPDATEDBY = user.createdBy;
+            // entity.DATETIMEUPDATED = DateTime.Now;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -662,9 +664,9 @@ namespace FintrakBanking.Repositories.Risk
         public bool DeleteRacInputType(int id, UserInfo user)
         {
             var entity = this.context.TBL_RAC_INPUT_TYPE.Find(id);
-           // entity.DELETED = true;
-           // entity.DELETEDBY = user.createdBy;
-           // entity.DATETIMEDELETED = general.GetApplicationDate();
+            // entity.DELETED = true;
+            // entity.DELETEDBY = user.createdBy;
+            // entity.DATETIMEDELETED = general.GetApplicationDate();
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -825,7 +827,7 @@ namespace FintrakBanking.Repositories.Risk
             var entity = new TBL_RAC_OPTION
             {
                 OPTIONNAME = model.optionName,
-              //  DELETED = false
+                //  DELETED = false
                 // COMPANYID = model.companyId,
             };
 
@@ -854,8 +856,8 @@ namespace FintrakBanking.Repositories.Risk
             var entity = this.context.TBL_RAC_OPTION.Find(id);
             entity.OPTIONNAME = model.optionName;
 
-         //   entity.LASTUPDATEDBY = user.createdBy;
-         //   entity.DATETIMEUPDATED = DateTime.Now;
+            //   entity.LASTUPDATEDBY = user.createdBy;
+            //   entity.DATETIMEUPDATED = DateTime.Now;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -879,9 +881,9 @@ namespace FintrakBanking.Repositories.Risk
         public bool DeleteRacOption(int id, UserInfo user)
         {
             var entity = this.context.TBL_RAC_OPTION.Find(id);
-             // entity.DELETED = true;
-          //  entity.DELETEDBY = user.createdBy;
-           // entity.DATETIMEDELETED = general.GetApplicationDate();
+            // entity.DELETED = true;
+            //  entity.DELETEDBY = user.createdBy;
+            // entity.DATETIMEDELETED = general.GetApplicationDate();
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -912,7 +914,7 @@ namespace FintrakBanking.Repositories.Risk
                     racOptionItemId = x.RACOPTIONITEMID,
                     label = x.LABEL,
                     key = x.KEY,
-                    optionName = context.TBL_RAC_OPTION.Where(o=>o.RACOPTIONID==x.RACOPTIONID).Select(o=>o.OPTIONNAME).FirstOrDefault(),
+                    optionName = context.TBL_RAC_OPTION.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.OPTIONNAME).FirstOrDefault(),
                     isSystemDefined = x.ISSYSTEMDEFINED,
                 })
                 .ToList();
@@ -1048,5 +1050,5 @@ namespace FintrakBanking.Repositories.Risk
 
 }
 
-           // kernel.Bind<IRiskAcceptanceCriteriaRepository>().To<RiskAcceptanceCriteriaRepository>();
-           // RiskAcceptanceCriteriaAdded = ???, RiskAcceptanceCriteriaUpdated = ???, RiskAcceptanceCriteriaDeleted = ???,
+// kernel.Bind<IRiskAcceptanceCriteriaRepository>().To<RiskAcceptanceCriteriaRepository>();
+// RiskAcceptanceCriteriaAdded = ???, RiskAcceptanceCriteriaUpdated = ???, RiskAcceptanceCriteriaDeleted = ???,
