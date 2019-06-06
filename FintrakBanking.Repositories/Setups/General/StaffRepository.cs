@@ -2017,7 +2017,7 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
 
-        public List<simpleStaffModel> SearchApprovers(int operationId, int roleId, string searchQuery ="", int companyId=0)
+        public IQueryable<simpleStaffModel> SearchApprovers(int operationId, int roleId, string searchQuery ="", int companyId=0)
         {
             var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId);
             IQueryable<simpleStaffModel> staff = null;
@@ -2031,7 +2031,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId)
                     .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                     .Join(context.TBL_APPROVAL_LEVEL, mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-                    .Join(context.TBL_STAFF.Where(x => x.DELETED == false)
+                    .Join(context.TBL_STAFF.Where(x => x.DELETED == false
+                         && x.STAFFROLEID == nextApprovalLvlRoleId)
                         .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
                         || x.MIDDLENAME.ToLower().Contains(searchQuery)
                         || x.LASTNAME.ToLower().Contains(searchQuery)
@@ -2046,11 +2047,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         staffCode = o.s.STAFFCODE,
                         staffRoleName = o.s.TBL_STAFF_ROLE.STAFFROLENAME,
                         staffRoleId = o.s.STAFFROLEID,
-                    });
+                    }).Distinct();
             }
-            var test = staff.ToList();
-            var selectedStaffs = test.Where(s => s.staffRoleId == nextApprovalLvlRoleId);
-            return selectedStaffs.ToList();
+            return staff;
         }
 
         public int GetNextApprovalLvlRoleId(int roleId, int groupId=261)
