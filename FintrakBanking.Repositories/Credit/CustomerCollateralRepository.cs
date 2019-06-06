@@ -1318,6 +1318,25 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
+        public List<CollateralViewModel> GetCustomerPropertyCollaterals(int? customerId, int companyId)
+        {
+            var company = context.TBL_COMPANY.Find(companyId);
+            if (customerId != null)
+            {
+                var collaterals = (from cc in context.TBL_COLLATERAL_CUSTOMER
+                                   join ct in context.TBL_COLLATERAL_TYPE on cc.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                                   join cip in context.TBL_COLLATERAL_IMMOVE_PROPERTY on cc.COLLATERALCUSTOMERID equals cip.COLLATERALCUSTOMERID
+                                   where cc.TBL_COMPANY.CURRENCYID == company.CURRENCYID
+                                   && cc.DELETED == false && cc.CUSTOMERID == customerId
+                                   select new CollateralViewModel()
+                                   {
+
+                                   }).ToList();
+                return collaterals;
+            }
+            return null;
+        }
+
         public IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId)
         {
             var typeIds = new List<int>();
