@@ -2703,15 +2703,15 @@ namespace FintrakBanking.Repositories.Credit
                 acceptance = acceptance.Replace("{@DATE}", DateTime.Now.ToLongDateString());
                 acceptance = acceptance.Replace("{@OBLIGUR}", customer);
 
-                if (approvedProduct == (int)ProductEnum.BandG)
+                if (approvedProduct == (int)ProductClassEnum.ContingentFacilities)
                 {
                     clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE_BG").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
                 }
-                else if (approvedProduct == (int)ProductEnum.AssetLeaseFinance || approvedProduct == (int)ProductEnum.ConsumerAssetLease)
+                else if (approvedProduct == (int)ProductClassEnum.AutoLoans )
                 {
                     clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTER_LEASE_FACILITY").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
 
-                } else if (approvedProduct == (int)ProductEnum.IVF)
+                } else if (approvedProduct == (int)ProductClassEnum.ImportFinanceFacilities)
                 {
                     clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTER_IMPORT_FINANCE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
                 }else

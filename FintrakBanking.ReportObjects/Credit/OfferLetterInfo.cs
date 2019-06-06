@@ -222,6 +222,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        //customerName = c.FIRSTNAME + " " + c.LASTNAME,
                                        //customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
                                        approvedProductId = b.APPROVEDPRODUCTID,
+                                       productClassId = a.PRODUCTCLASSID,
                                        currencyName = h.CURRENCYCODE,//b.TBL_CURRENCY.CURRENCYNAME,
                                        tenor = b.APPROVEDTENOR,
                                        interestRate = b.APPROVEDINTERESTRATE,
@@ -461,6 +462,20 @@ namespace FintrakBanking.ReportObjects.Credit
             body = body.Replace("{InterestRate}", interestRate);
 
             return body;
+        }
+
+
+        public IEnumerable<LeaseFacility> GetLeaseFacility(string applicationRefNumber)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var leaseFacilty = (from a in context.TBL_LOAN_APPLICATION
+                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                      select new LeaseFacility()
+                                      {
+                                      }).ToList();
+
+            return leaseFacilty;
         }
 
         #region FORM3800B LOS report

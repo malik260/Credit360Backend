@@ -1542,7 +1542,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
       [HttpGet] [ClaimsAuthorization]  
-        [Route("collateral-value-base-type/{collateralType}")]
+       [Route("collateral-value-base-type/{collateralType}")]
         public HttpResponseMessage GetCollateralValueBaseType(short collateralType)
         {
             try

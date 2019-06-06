@@ -17,7 +17,11 @@ namespace FintrakBanking.Common.Enum
         FirstEdu = 7,
         FirstTrader = 8,
         ImportFinance = 9,
-        BondAndGuarantees = 10
+        BondAndGuarantees = 10,
+        ImportFinanceFacilities = 41,
+        EmergingBusiness = 33,
+        ContingentFacilities = 40,
+        AutoLoans = 22
     }
     public enum ProductGroupEnum
     {
