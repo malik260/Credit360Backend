@@ -74,7 +74,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
         public int? SOURCELOANID { get; set; }
         public short? SOURCELOANSYSTEMTYPEID { get; set; }
-        public bool ISDEFERRED { get; set; }
+        public bool? ISDEFERRED { get; set; }
         public DateTime? EFFECTIVEDATE { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
