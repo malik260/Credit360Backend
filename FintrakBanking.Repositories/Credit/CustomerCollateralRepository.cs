@@ -6094,6 +6094,20 @@ namespace FintrakBanking.Repositories.Credit
                         mainMetal.WEIGHTINGRAMMES = tempMetal.WEIGHTINGRAMMES;
 
                     }
+                    else
+                    {
+                        context.TBL_COLLATERAL_PRECIOUSMETAL.Add(new TBL_COLLATERAL_PRECIOUSMETAL
+                        {
+                            COLLATERALCUSTOMERID = newCollateralId,
+                            REMARK = tempMetal.REMARK,
+                            METALTYPE = tempMetal.METALTYPE,
+                            PRECIOUSMETALFORM = tempMetal.PRECIOUSMETALFORM,
+                            PRECIOUSMETALNAME = tempMetal.PRECIOUSMETALNAME,
+                            UNITRATE = tempMetal.UNITRATE,
+                            VALUATIONAMOUNT = tempMetal.VALUATIONAMOUNT,
+                            WEIGHTINGRAMMES = tempMetal.WEIGHTINGRAMMES,
+                    });
+                    }
                 }
             }
             else
@@ -6960,7 +6974,7 @@ namespace FintrakBanking.Repositories.Credit
                 var collateral = (from x in context.TBL_COLLATERAL_ISPO
                                   join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                   where c.COLLATERALCODE == collateralcode
-                                  select (x)).FirstOrDefault();
+                                  select (x )).FirstOrDefault();
 
                 if (collateral != null)
                 {

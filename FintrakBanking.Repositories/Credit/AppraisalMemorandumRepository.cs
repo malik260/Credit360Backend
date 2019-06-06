@@ -18,6 +18,8 @@ using FintrakBanking.ViewModels.Setups.General;
 using System.Configuration;
 using FintrakBanking.Common;
 using FintrakBanking.Interfaces.AlertMonitoring;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -292,7 +294,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse ForwardAppraisalMemorandum(ForwardViewModel model)
         {
+         //   Task.Run(() => CreateOutPutDocument(model.applicationId));
+
             bool updateApprovedAmount = false;
+            bool generateOutPutDocument = false;
             int operationId = (int)OperationsEnum.CAM;
             var applicationDate = general.GetApplicationDate();
             List<TBL_LOAN_APPLICATION_DETAIL> items = null;
@@ -449,6 +454,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     //generate offer letter doc
                     offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
+
+                    generateOutPutDocument = true;
                 }
                 else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                 {
@@ -508,6 +515,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             //workflow.Response.success = true;
+            workflow.Response.isFinal = generateOutPutDocument;
             return workflow.Response;
         }
 
@@ -2071,8 +2079,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return workflow.Response;
         }
-
-
     }
 
 

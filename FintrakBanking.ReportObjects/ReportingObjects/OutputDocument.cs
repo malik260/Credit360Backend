@@ -1,6 +1,8 @@
 ﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Report;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,20 +12,35 @@ using System.Threading.Tasks;
 namespace FintrakBanking.ReportObjects.ReportingObjects
 {
    public class OutputDocument
-    {
+    { 
+        #region OUTPUT DOCUMENT
+
+        FinTrakBankingContext context = new FinTrakBankingContext();
+        FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
         public IEnumerable<OutPutDocumentApprovalViewModel> GetApplicationApproval(int loanApplicationId)
         {
-            throw new NotImplementedException();
+
+            return (from b in context.TBL_LOAN_APPLICATION
+                    where b.LOANAPPLICATIONID == loanApplicationId
+                    select new OutPutDocumentApprovalViewModel
+                    {
+
+                    }).ToList();
         }
 
         public IEnumerable<OutPutDocumentChecklistViewModel> GetChecklist(int loanApplicationId)
         {
-            throw new NotImplementedException();
+
+            return (from b in context.TBL_LOAN_APPLICATION
+                    where b.LOANAPPLICATIONID == loanApplicationId
+                    select new OutPutDocumentChecklistViewModel
+                    {
+
+                    }).ToList();
         }
 
         public IEnumerable<OutPutDocumentCollateralViewModel> GetCollateral(int loanApplicationId)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
 
             var collateral = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
                               join b in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -40,12 +57,17 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<OutPutDocumentConcurrencesViewModel> GetConcurrences(int loanApplicationId)
         {
-            throw new NotImplementedException();
+
+            return (from b in context.TBL_LOAN_APPLICATION
+                    where b.LOANAPPLICATIONID == loanApplicationId
+                    select new OutPutDocumentConcurrencesViewModel
+                    {
+
+                    }).ToList();
         }
 
         public IEnumerable<OutPutDocumentCustomerFacilitiesViewModel> GetCustomerFacilities(int loanApplicationId)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
 
             var loanDetails = (from a in context.TBL_LOAN_APPLICATION
                                join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -64,9 +86,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                    amount = e.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
                                    maturity = b.EXPIRYDATE,
                                    security = "",
-                                   performance = ""
-
-
+                                   performance = "",
+                                   operationId = a.OPERATIONID,
+                                   customerId = c.CUSTOMERID,
+                                   customerCode = c.CUSTOMERCODE,
+                                   createdBy = a.CREATEDBY,
+                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                   targetReferenceNumber = a.APPLICATIONREFERENCENUMBER
                                }).ToList();
 
 
@@ -76,7 +102,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<OutPutDocumentCustomerInformationViewModel> GetCustomerInformation(int loanApplicationId)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
 
             var loanDetails = (from a in context.TBL_LOAN_APPLICATION
                                join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -112,7 +137,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<OutPutDocumentFeeViewModel> GetFee(int loanApplicationId)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
 
             var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
@@ -136,12 +160,168 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<OutPutDocumentMonthsActivityViewModel> GetMonthsActivity(int loanApplicationId)
         {
-            throw new NotImplementedException();
+
+            return (from b in context.TBL_LOAN_APPLICATION
+                    where b.LOANAPPLICATIONID == loanApplicationId
+                    select new OutPutDocumentMonthsActivityViewModel
+                    {
+
+                    }).ToList();
         }
 
         public IEnumerable<OutPutDocumentMonthActivitySignViewModel> MonthActivitySignature(int loanApplicationId)
         {
-            throw new NotImplementedException();
+
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            return (from b in context.TBL_LOAN_APPLICATION
+                    where b.LOANAPPLICATIONID == loanApplicationId
+                    select new OutPutDocumentMonthActivitySignViewModel
+                    {
+
+                    }).ToList();
         }
+
+        public IEnumerable<CurrentRequestViewModel> GetCurrentRequest(int loanApplicationId)
+        {
+
+            return (from b in context.TBL_LOAN_APPLICATION
+                    where b.LOANAPPLICATIONID == loanApplicationId
+                    select new CurrentRequestViewModel
+                    {
+
+                    }).ToList();
+        }
+
+
+        public IEnumerable<OutputDocumentSummaryViewModel> GetSummary(int loanApplicationId)
+        {
+
+            return (from b in context.TBL_LOAN_APPLICATION
+                    where b.LOANAPPLICATIONID == loanApplicationId
+                    select new OutputDocumentSummaryViewModel
+                    {
+
+                    }).ToList();
+        }
+
+        public int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer)
+        {
+            var existing = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
+                    && x.OPERATIONID == model.operationId
+                    && x.TARGETID == model.targetId
+                    && x.CUSTOMERCODE == model.customerCode)
+                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false && x.FILENAME == model.fileName)
+                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) => new { us, up }
+            )
+            .Select(x => new DocumentUploadViewModel
+            {
+                documentUploadId = x.up.DOCUMENTUPLOADID,
+                documentUsageId = x.us.DOCUMENTUSAGEID,
+                fileName = x.up.FILENAME,
+                fileExtension = x.up.FILEEXTENSION,
+                fileSize = x.up.FILESIZE,
+                fileSizeUnit = x.up.FILESIZEUNIT,
+                companyId = x.up.COMPANYID,
+                issueDate = x.up.ISSUEDATE,
+                expiryDate = x.up.EXPIRYDATE,
+                createdBy = (int)x.up.CREATEDBY
+            })
+                .FirstOrDefault();
+
+            if (existing != null && model.overwrite == false) return 3;
+
+
+            var entity = new TBL_DOCUMENT_UPLOAD
+            {
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension.ToLower(),
+                FILESIZE = model.fileSize,
+                FILESIZEUNIT = model.fileSizeUnit,
+                FILEDATA = buffer,
+                COMPANYID = model.companyId,
+                ISSUEDATE = model.issueDate,
+                EXPIRYDATE = model.expiryDate,
+                PHYSICALFILENUMBER = model.physicalFilenumber,
+                PHYSICALLOCATION = model.physicalLocation,
+                DOCUMENTTYPEID = model.documentTypeId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+            };
+
+            docContext.TBL_DOCUMENT_UPLOAD.Add(entity);
+
+            if (docContext.SaveChanges() > 0)
+            {
+                var usage = new TBL_DOCUMENT_USAGE
+                {
+                    DOCUMENTUPLOADID = entity.DOCUMENTUPLOADID,
+                    TARGETID = model.targetId,
+                    TARGETCODE = model.targetCode,
+                    TARGETREFERENCENUMBER = model.targetReferenceNumber,
+                    DOCUMENTCODE = model.documentCode,
+                    DOCUMENTTITLE = model.documentTitle,
+                    CUSTOMERCODE = model.customerCode,
+                    OPERATIONID = model.operationId,
+                    APPROVALSTATUSID = model.approvalStatusId,
+                    DOCUMENTSTATUSID = model.documentStatusId,
+                    ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE
+                };
+
+                if (model.overwrite == true)
+                {
+                    usage.DATETIMEUPDATED = DateTime.Now;
+                    usage.LASTUPDATEDBY = model.createdBy;
+                }
+
+                docContext.TBL_DOCUMENT_USAGE.Add(usage);
+
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+                // Audit Section ---------------------------
+                //this.audit.AddAuditTrail(new TBL_AUDIT
+                //{
+                //    AUDITTYPEID = (short)AuditTypeEnum.DocumentUploadAdded,
+                //    STAFFID = model.createdBy,
+                //    BRANCHID = (short)model.userBranchId,
+                //    DETAIL = $"TBL_Document Upload '{model.targetCode}' created by {auditStaff}",
+                //    IPADDRESS = model.userIPAddress,
+                //    URL = model.applicationUrl,
+                //    APPLICATIONDATE = general.GetApplicationDate(),
+                //    SYSTEMDATETIME = DateTime.Now
+                //});
+
+                if (existing != null && model.overwrite == true)
+                {
+                    var oldUpload = docContext.TBL_DOCUMENT_UPLOAD.Find(existing.documentUploadId);
+                    var oldUsage = docContext.TBL_DOCUMENT_USAGE.Find(existing.documentUsageId);
+
+                    oldUpload.DELETED = true;
+                    oldUpload.DELETEDBY = model.createdBy;
+                    oldUpload.DATETIMEDELETED = DateTime.Now;
+
+                    oldUsage.DELETED = true;
+                    oldUsage.DELETEDBY = model.createdBy;
+                    oldUsage.DATETIMEDELETED = DateTime.Now;
+                }
+
+            }
+
+            if (docContext.SaveChanges() < 1)
+            {
+                var file = docContext.TBL_DOCUMENT_UPLOAD.Where(o => o.DOCUMENTUPLOADID == entity.DOCUMENTUPLOADID).Select(o => o).FirstOrDefault();
+                if (file != null)
+                {
+                    docContext.TBL_DOCUMENT_UPLOAD.Remove(file);
+                    docContext.SaveChanges();
+                }
+                return 1;
+            }
+
+            return 2;
+        }
+        #endregion
+
     }
 }

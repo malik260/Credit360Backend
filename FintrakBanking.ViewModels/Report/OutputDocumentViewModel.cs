@@ -31,6 +31,12 @@ namespace FintrakBanking.ViewModels.Report
         public DateTime? maturity { get; set; }
         public string security { get; set; }
         public string performance { get; set; }
+        public int operationId { get; set; }
+        public int customerId { get; set; }
+        public string customerCode { get; set; }
+        public int createdBy { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public string targetReferenceNumber { get; set; }
     }
 
     public class OutPutDocumentMonthsActivityViewModel
@@ -85,5 +91,22 @@ namespace FintrakBanking.ViewModels.Report
         public string otherBankers { get; set; }
         public string exixstingFacility { get; set; }
         public string securitySuppport { get; set; }
+    }
+    public class CurrentRequestViewModel
+    {
+        public string productName { get; set; }
+        public decimal loanAmount { get; set; }
+        public string purpose { get; set; }
+        public int tenor { get; set; }
+        public string repaymentSchedule { get; set; }
+    }
+
+    public class OutputDocumentSummaryViewModel
+    {
+        public decimal currentBookBalance { get; set; }
+        public decimal averageMonthlyCreditTurnover { get; set; }
+        public string purpose { get; set; }
+        public int tenor { get; set; }
+        public string repaymentPlan { get; set; }
     }
 }

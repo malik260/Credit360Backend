@@ -811,7 +811,7 @@ namespace FintrakBanking.Repositories.Risk
 
         public RacOptionViewModel GetRacOption(int id)
         {
-            var entity = context.TBL_RAC_OPTION.Where(x => x.DELETED == false).FirstOrDefault(x => x.RACOPTIONID == id);
+            var entity = context.TBL_RAC_OPTION.FirstOrDefault(x => x.RACOPTIONID == id);
 
             return new RacOptionViewModel
             {
@@ -825,7 +825,7 @@ namespace FintrakBanking.Repositories.Risk
             var entity = new TBL_RAC_OPTION
             {
                 OPTIONNAME = model.optionName,
-                DELETED = false
+              //  DELETED = false
                 // COMPANYID = model.companyId,
             };
 
@@ -879,7 +879,7 @@ namespace FintrakBanking.Repositories.Risk
         public bool DeleteRacOption(int id, UserInfo user)
         {
             var entity = this.context.TBL_RAC_OPTION.Find(id);
-              entity.DELETED = true;
+             // entity.DELETED = true;
           //  entity.DELETEDBY = user.createdBy;
            // entity.DATETIMEDELETED = general.GetApplicationDate();
 
@@ -912,6 +912,7 @@ namespace FintrakBanking.Repositories.Risk
                     racOptionItemId = x.RACOPTIONITEMID,
                     label = x.LABEL,
                     key = x.KEY,
+                    optionName = context.TBL_RAC_OPTION.Where(o=>o.RACOPTIONID==x.RACOPTIONID).Select(o=>o.OPTIONNAME).FirstOrDefault(),
                     isSystemDefined = x.ISSYSTEMDEFINED,
                 })
                 .ToList();

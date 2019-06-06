@@ -68,6 +68,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short operarionId { get; set; }
         public string offerLetterIntroduction { get; set; }
         public bool isRenewal { get; set; }
+        public short approvedProductId { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity

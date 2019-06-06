@@ -97,6 +97,7 @@
     <Compile Include="Enum\ChargeTypeEnum.cs" />
     <Compile Include="Enum\CollateralReleaseStatus.cs" />
     <Compile Include="Enum\CurrencyEnum.cs" />
+    <Compile Include="Enum\DocumentTypeEnum.cs" />
     <Compile Include="Enum\EodOperationEnum.cs" />
     <Compile Include="Enum\EodOperationStatusEnum.cs" />
     <Compile Include="Enum\OtherOperationEnum.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Enum\ProductBehaviourEnum.cs" />
     <Compile Include="Enum\ProductClassProcessEnum.cs" />
     <Compile Include="Enum\ProductClassEnum.cs" />
+    <Compile Include="Enum\ProductEnum.cs" />
     <Compile Include="Enum\RequestStatusEnum.cs" />
     <Compile Include="Enum\RequireCollateralTypeEnum.cs" />
     <Compile Include="Enum\SourceApplicationEnum.cs" />
