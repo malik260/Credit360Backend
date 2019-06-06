@@ -133,19 +133,19 @@ namespace FintrakBanking.Repositories.Media
 
             docContext.TBL_DOCUMENT_USAGE.Add(entity);
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.DocumentUsageAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"TBL_Document Usage '{model.targetCode}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            });
+            //var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            //// Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.DocumentUsageAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"TBL_Document Usage '{model.targetCode}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
             // Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
@@ -170,20 +170,20 @@ namespace FintrakBanking.Repositories.Media
             entity.DATETIMEUPDATED = DateTime.Now;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.DocumentUsageUpdated,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_Document Usage '{model.targetCode}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.DOCUMENTUSAGEID
-            });
-            // Audit Section end ------------------------
+            //// Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.DocumentUsageUpdated,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Document Usage '{model.targetCode}' was updated by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.DOCUMENTUSAGEID
+            //});
+            //// Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
         }

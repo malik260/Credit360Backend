@@ -2697,17 +2697,24 @@ namespace FintrakBanking.Repositories.Credit
 
             } else {
 
-                var approvedProduct = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => o.TBL_PRODUCT.PRODUCTTYPEID).FirstOrDefault();
+                var approvedProduct = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => o.APPROVEDPRODUCTID).FirstOrDefault();
                 var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId);
                 var customer = customerExist != null ? context.TBL_CUSTOMER.Where(b => b.CUSTOMERID == customerExist.CUSTOMERID).Select(b => b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME).FirstOrDefault() : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == customerExist.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault();
                 acceptance = acceptance.Replace("{@DATE}", DateTime.Now.ToLongDateString());
                 acceptance = acceptance.Replace("{@OBLIGUR}", customer);
 
-                if (approvedProduct == (int)LoanProductTypeEnum.ContingentLiability)
+                if (approvedProduct == (int)ProductEnum.BandG)
                 {
                     clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE_BG").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
                 }
-                else
+                else if (approvedProduct == (int)ProductEnum.AssetLeaseFinance || approvedProduct == (int)ProductEnum.ConsumerAssetLease)
+                {
+                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTER_LEASE_FACILITY").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+
+                } else if (approvedProduct == (int)ProductEnum.IVF)
+                {
+                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTER_IMPORT_FINANCE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                }else
                 {
                     clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
                 }

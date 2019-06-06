@@ -923,6 +923,14 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/ApprovedForm3800BFacilities.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId  + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
+
+
+        public string GetOutPutDocument(int loanApplicationId)
+        {
+            string path = string.Empty;
+            path = reportPath + "ReportViews/OutPutTemplate.aspx?loanApplicationId=" + loanApplicationId;
+            return path;
+        }
     }
 
 }

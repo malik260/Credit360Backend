@@ -17,6 +17,7 @@ using System.Web.Http.Cors;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ReportObjects;
+using System.Diagnostics;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -2058,6 +2059,31 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("output-document/loanApplicationId/{loanApplicationId}")]
+        public HttpResponseMessage GetOutputDocument(int loanApplicationId)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetOutPutDocument(loanApplicationId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data });  //Ok(accounts);
             }

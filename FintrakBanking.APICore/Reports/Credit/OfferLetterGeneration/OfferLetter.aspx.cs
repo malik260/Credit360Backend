@@ -1,5 +1,7 @@
-﻿using FintrakBanking.Common.Extensions;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Common.Extensions;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.ReportObjects.Credit;
 using FintrakBanking.Repositories.Setups.General;
 using Microsoft.Reporting.WebForms;
 using System;
@@ -20,41 +22,13 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
             {
                 try
                 {
-                    string inputDateInfo = Request.QueryString["key1"];
-                    string inputHashValue = Request.QueryString["key2"];
+                    string applicationRefNumber = Request.QueryString["applicationRefNumber"];
 
-                    HashHelper hash = new HashHelper();
+                    GenerateOutPutDocument(applicationRefNumber);
 
-                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
-
-                    //if (inputHashValue != incomingDateHash)
-                    //{
-                    //    this.offerLetterReport.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    //    this.offerLetterReport.LocalReport.Refresh();
-                    //    return;
-                    //}
-
-                    var currentDate = DateTime.Now;
-
-                    var dateDifference = currentDate - incomingDate;
-
-                    //if (dateDifference.Seconds > 60)
-                    //{
-                    //    this.offerLetterReport.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    //    this.offerLetterReport.LocalReport.Refresh();
-                    //    return;
-                    //}
-
-                    FinTrakBankingContext context = new FinTrakBankingContext();
-                    GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
-                    //ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToString("dd/MM/yyyy"));
-
-                  //  offerLetterReport.LocalReport.SetParameters(new ReportParameter[] { date });
-                    offerLetterReport.LocalReport.Refresh();
-
-                }catch(Exception ex)
+                }
+                catch(Exception ex)
                 {
                     //throw new Exception(ex.Message);
                     this.offerLetterReport.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
@@ -63,5 +37,85 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
                 }
             }
         }
+
+        void GenerateOutPutDocument(string applicationRefNumber)
+        {
+
+            OfferLetterInfo offerLetter = new OfferLetterInfo();
+
+            var offerLetterDetails = offerLetter.GenerateOfferLetter(applicationRefNumber);
+            this.offerLetterReport.LocalReport.DataSources.Clear();
+            ReportDataSource dsOfferLetterDetails = new ReportDataSource();
+            dsOfferLetterDetails.Value = offerLetterDetails;
+            dsOfferLetterDetails.Name = "OfferLetterDetails";
+
+            var loanApplicationDetail = offerLetter.GetLoanApplicationDetail(applicationRefNumber);
+            ReportDataSource dsLoanApplicationDetail = new ReportDataSource();
+            dsLoanApplicationDetail.Value = loanApplicationDetail;
+            dsLoanApplicationDetail.Name = "OfferLetterLoanDetail";
+
+            var conditionPrecident = offerLetter.GetLoanApplicationConditionPrecident(applicationRefNumber);
+            ReportDataSource dsConditionPrecident = new ReportDataSource();
+            dsConditionPrecident.Value = conditionPrecident;
+            dsConditionPrecident.Name = "OfferLetterConditionPrecident";
+
+            var conditionSubsequent = offerLetter.GetLoanApplicationConditionSubsequent(applicationRefNumber);
+            ReportDataSource dsConditionSubsequent = new ReportDataSource();
+            dsConditionSubsequent.Value = conditionSubsequent;
+            dsConditionSubsequent.Name = "OfferLetterConditionSubsequent";
+
+            var fee = offerLetter.GetLoanApplicationFee(applicationRefNumber);
+            ReportDataSource dsFee = new ReportDataSource();
+            dsFee.Value = fee;
+            dsFee.Name = "OfferLetterFee";
+
+            var signatory = offerLetter.GetLoanApplicationSignatory(applicationRefNumber);
+            ReportDataSource dsSignatory = new ReportDataSource();
+            dsSignatory.Value = signatory;
+            dsSignatory.Name = "OfferLetterSignatory";
+
+            var collateral = offerLetter.GetLoanCollateral(applicationRefNumber);
+            ReportDataSource dsCollateral = new ReportDataSource();
+            dsCollateral.Value = collateral;
+            dsCollateral.Name = "OfferLetterCollateral";
+
+            var generateOfferLetter = offerLetter.GenerateOfferLetter(applicationRefNumber);
+            ReportDataSource dsGenerateOfferLetter = new ReportDataSource();
+            dsGenerateOfferLetter.Value = generateOfferLetter;
+            dsGenerateOfferLetter.Name = "OfferLetterBorrowerDetail";
+
+            offerLetterReport.LocalReport.DataSources.Add(dsOfferLetterDetails);
+            offerLetterReport.LocalReport.DataSources.Add(dsLoanApplicationDetail);
+            offerLetterReport.LocalReport.DataSources.Add(dsConditionPrecident);
+            offerLetterReport.LocalReport.DataSources.Add(dsConditionSubsequent);
+            offerLetterReport.LocalReport.DataSources.Add(dsCollateral);
+            offerLetterReport.LocalReport.DataSources.Add(dsFee);
+            offerLetterReport.LocalReport.DataSources.Add(dsSignatory);
+            offerLetterReport.LocalReport.DataSources.Add(dsCollateral);
+            offerLetterReport.LocalReport.DataSources.Add(dsGenerateOfferLetter);
+
+            var reportLink = string.Empty;
+
+            foreach(var x in loanApplicationDetail)
+            {
+                switch (x.approvedProductId)
+                {
+                    case (int)ProductEnum.AssetLeaseFinance:
+                        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_ImportFinance.rdlc");
+                        break;
+                    case (int)ProductEnum.ConsumerAssetLease:
+                        reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_LeaseFacility.rdlc");
+                        break;
+
+                    default: reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter.rdlc");
+                        break;
+                }
+            }
+            
+            this.offerLetterReport.LocalReport.ReportPath = reportLink;
+            this.offerLetterReport.LocalReport.Refresh();
+
+        }
+
     }
 }

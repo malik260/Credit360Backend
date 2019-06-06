@@ -1369,6 +1369,8 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter - 24052019.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_ImportFinance.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_LeaseFacility.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
@@ -1428,7 +1430,9 @@
     <EmbeddedResource Include="Reports\Report\LoggingStatus.rdlc" />
     <EmbeddedResource Include="Reports\Report\MiddleOfficeReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
-    <EmbeddedResource Include="Reports\Report\OutputDocument.rdlc" />
+    <EmbeddedResource Include="Reports\Report\OutputDocument.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
     <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />

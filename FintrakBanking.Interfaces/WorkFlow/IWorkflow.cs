@@ -70,6 +70,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public string nextOperationName { get; set; }
         public bool success { get; set; }
         public int? fromLevelId { get; set; }
+        public bool isFinal { get; set; }
     }
 
     public class AlertPlaceholders
