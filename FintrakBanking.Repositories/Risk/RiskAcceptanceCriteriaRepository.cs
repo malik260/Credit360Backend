@@ -40,7 +40,7 @@ namespace FintrakBanking.Repositories.Risk
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
 
-            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
+            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
 
@@ -55,10 +55,11 @@ namespace FintrakBanking.Repositories.Risk
             {
                 ProductRacCategory racCategory = new ProductRacCategory();
 
-                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
+                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                     .Select(x => new ProductRacItem
                     {
                         id = x.RACDEFINITIONID,
+                        categoryId = x.RACCATEGORYID,
                         //id = x.TBL_RAC_ITEM.RACITEMID,
                         criteria = x.TBL_RAC_ITEM.CRITERIA,
                         required = x.TBL_RAC_ITEM.DESCRIPTION,
@@ -93,7 +94,7 @@ namespace FintrakBanking.Repositories.Risk
                                                                     .ToList();
                 }
 
-                racCategory.rows = items;
+                racCategory.rows = items.Where(x => x.categoryId == productRacCategory.RACCATEGORYID).ToList();
                 racCategory.name = productRacCategory.CATEGORYNAME;
                 productCategories.Add(racCategory);
             }
@@ -110,7 +111,7 @@ namespace FintrakBanking.Repositories.Risk
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
 
-            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
+            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
 
@@ -120,11 +121,12 @@ namespace FintrakBanking.Repositories.Risk
             {
                 ProductRacCategory racCategory = new ProductRacCategory();
 
-                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId)
+                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                     .Join(context.TBL_RAC_DETAIL.Where(x => x.TARGETID == targetId), a => a.RACDEFINITIONID, b => b.RACDEFINITIONID, (a, b) => new { a, b })
                     .Select(x => new ProductRacItem
                     {
                         id = x.a.RACDEFINITIONID,
+                        categoryId = x.a.RACCATEGORYID,
                         //id = x.TBL_RAC_ITEM.RACITEMID,
                         criteria = x.a.TBL_RAC_ITEM.CRITERIA,
                         required = x.a.TBL_RAC_ITEM.DESCRIPTION,
@@ -151,7 +153,7 @@ namespace FintrakBanking.Repositories.Risk
                                                                     .ToList();
                 }
 
-                racCategory.rows = items;
+                racCategory.rows = items.Where(x => x.categoryId == productRacCategory.RACCATEGORYID).ToList();
                 racCategory.name = productRacCategory.CATEGORYNAME;
                 productCategories.Add(racCategory);
             }
