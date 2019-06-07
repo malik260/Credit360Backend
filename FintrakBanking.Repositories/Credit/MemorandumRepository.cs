@@ -223,7 +223,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.groupExposure = GetGroupExposureMarkup();
                 this.approvals = GetApprovalsMarkupLOS();
                 this.currentDate = DateTime.Now.ToShortDateString();
-                this.annualReviewDate = DateTime.Now.AddYears(1).ToShortDateString();
+                this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
 
