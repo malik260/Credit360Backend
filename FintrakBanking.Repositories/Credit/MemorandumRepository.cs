@@ -822,7 +822,7 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var LLLImpact = (1 / 3) * proposedAmount;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
 
@@ -1039,7 +1039,7 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var lLLImpact = (100 / 100) * proposedAmount;
+                    var lLLImpact = (1 / 3) * proposedAmount;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
 
@@ -1251,7 +1251,7 @@ namespace FintrakBanking.Repositories.Credit
                                           (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
                 var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                var LLLImpact = (100 / 100) * proposedAmount;
+                var LLLImpact = (1 / 3) * proposedAmount;
                 var change = proposedAmount - currentAmount;
                 var tenor = tenorTest;
                 contingentsSummary.totalLLLImpact += LLLImpact;
@@ -1273,7 +1273,7 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var LLLImpact = (1 / 3) * proposedAmount;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
                     contingentsSummary.totalLLLImpact += LLLImpact;
@@ -1480,15 +1480,15 @@ namespace FintrakBanking.Repositories.Credit
                     ";
             foreach (var c in collaterals)
             { ++n;
-                totalMarketValue += (decimal)c.openMarketValue;
-                result = result + $@"
-                    <tr>
-                        <td>{n}</td>
-                        <td>{c.collateralTypeName + ": " + c.collateralDetail}</td>
-                        <td>{String.Format("{0:0,0.00}", c.openMarketValue)}</td>
-                        <td>{String.Format("{0:0,0.00}", c.forcedSaleValue)}</td>
-                    </tr>
-                ";
+                //totalMarketValue += (decimal)c.openMarketValue;
+                //result = result + $@"
+                //    <tr>
+                //        <td>{n}</td>
+                //        <td>{c.collateralTypeName + ": " + c.collateralDetail}</td>
+                //        <td>{String.Format("{0:0,0.00}", c.openMarketValue)}</td>
+                //        <td>{String.Format("{0:0,0.00}", c.forcedSaleValue)}</td>
+                //    </tr>
+                //";
             }
             result = result + $@"
                 <tr>
