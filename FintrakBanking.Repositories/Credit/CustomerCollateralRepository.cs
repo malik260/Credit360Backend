@@ -1330,7 +1330,10 @@ namespace FintrakBanking.Repositories.Credit
                                    && cc.DELETED == false && cc.CUSTOMERID == customerId
                                    select new CollateralViewModel()
                                    {
-
+                                       collateralDetail = cip.PROPERTYNAME,
+                                       collateralType = ct.COLLATERALTYPENAME,
+                                       openMarketValue = cip.OPENMARKETVALUE,
+                                       forcedSaleValue = cip.FORCEDSALEVALUE,
                                    }).ToList();
                 return collaterals;
             }
