@@ -794,7 +794,7 @@ namespace FintrakBanking.Repositories.Credit
                 var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
                                          group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
                 var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                var LLLImpact = (1 / 3) * proposedAmount;
+                var LLLImpact = proposedAmount / 3;
                 var change = proposedAmount - currentAmount;
                 var tenor = tenorTest;
 
@@ -822,7 +822,7 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var LLLImpact = (1 / 3) * proposedAmount;
+                    var LLLImpact = proposedAmount / 3;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
 
@@ -1011,14 +1011,14 @@ namespace FintrakBanking.Repositories.Credit
                 var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
                                          group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
                 var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : 0;
-                var lLLImpact = (1 / 3) * proposedAmount;
+                var LLLImpact = proposedAmount / 3;
                 var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
                 var tenor = tenorTest;
 
                 result = result + $@"
                      <tr>
                         <td>{facility}</td>
-                        <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
                         <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
@@ -1039,14 +1039,14 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var lLLImpact = (1 / 3) * proposedAmount;
+                    var LLLImpact = proposedAmount / 3;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
 
                     result = result + $@"
                      <tr>
                         <td>{facility}</td>
-                        <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
                         <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
@@ -1251,7 +1251,7 @@ namespace FintrakBanking.Repositories.Credit
                                           (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
                 var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                var LLLImpact = (1 / 3) * proposedAmount;
+                var LLLImpact = proposedAmount / 3;
                 var change = proposedAmount - currentAmount;
                 var tenor = tenorTest;
                 contingentsSummary.totalLLLImpact += LLLImpact;
@@ -1273,7 +1273,7 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var LLLImpact = (1 / 3) * proposedAmount;
+                    var LLLImpact = proposedAmount / 3;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
                     contingentsSummary.totalLLLImpact += LLLImpact;
@@ -1480,15 +1480,15 @@ namespace FintrakBanking.Repositories.Credit
                     ";
             foreach (var c in collaterals)
             { ++n;
-                //totalMarketValue += (decimal)c.openMarketValue;
-                //result = result + $@"
-                //    <tr>
-                //        <td>{n}</td>
-                //        <td>{c.collateralTypeName + ": " + c.collateralDetail}</td>
-                //        <td>{String.Format("{0:0,0.00}", c.openMarketValue)}</td>
-                //        <td>{String.Format("{0:0,0.00}", c.forcedSaleValue)}</td>
-                //    </tr>
-                //";
+                totalMarketValue += (decimal)c.openMarketValue;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{c.collateralTypeName + ": " + c.collateralDetail}</td>
+                        <td>{String.Format("{0:0,0.00}", c.openMarketValue)}</td>
+                        <td>{String.Format("{0:0,0.00}", c.forcedSaleValue)}</td>
+                    </tr>
+                ";
             }
             result = result + $@"
                 <tr>
@@ -1500,13 +1500,13 @@ namespace FintrakBanking.Repositories.Credit
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>TOTAL FACILITY AMOUNT</b></td>
-                    <td>{String.Format("{0:0,0.00}", this.loanApplication.APPROVEDAMOUNT)}</td>
+                    <td>{String.Format("{0:0,0.00}", (this.loanApplication.APPLICATIONAMOUNT))}</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>NET COVERAGE</b></td>
-                    <td>{String.Format("{0:0,0.00}", totalMarketValue - this.loanApplication.APPROVEDAMOUNT)}</td>
+                    <td>{String.Format("{0:0,0.00}", totalMarketValue - this.loanApplication.APPLICATIONAMOUNT)}</td>
                     <td>&nbsp;</td>
                 </tr>
             ";
