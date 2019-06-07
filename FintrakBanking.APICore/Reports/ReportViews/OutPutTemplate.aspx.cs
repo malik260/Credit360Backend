@@ -146,5 +146,5 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             };
             outputDocument.AddDocumentUpload(model, bytes);
         }
-    }
+     }
 }

@@ -69,6 +69,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string offerLetterIntroduction { get; set; }
         public bool isRenewal { get; set; }
         public short approvedProductId { get; set; }
+        public short? productClassId { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity
@@ -99,6 +100,15 @@ namespace FintrakBanking.ViewModels.Credit
     public class Form3800ViewModel: GeneralEntity
     {
         public string documentTemplate { get; set; }
+    }
+
+    public class LeaseFacility
+    {
+        public int qty { get; set; }
+        public string model { get; set; }
+        public decimal unitCost { get; set; }
+        public decimal totalCost { get; set; }
+        public string dealer { get; set; }
     }
 
 }

@@ -84,6 +84,11 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
             dsGenerateOfferLetter.Value = generateOfferLetter;
             dsGenerateOfferLetter.Name = "OfferLetterBorrowerDetail";
 
+            var getLeaseFacility = offerLetter.GetLeaseFacility(applicationRefNumber);
+            ReportDataSource dsGetLeaseFacility = new ReportDataSource();
+            dsGetLeaseFacility.Value = getLeaseFacility;
+            dsGetLeaseFacility.Name = "LeaseFacility";
+
             offerLetterReport.LocalReport.DataSources.Add(dsOfferLetterDetails);
             offerLetterReport.LocalReport.DataSources.Add(dsLoanApplicationDetail);
             offerLetterReport.LocalReport.DataSources.Add(dsConditionPrecident);
@@ -93,17 +98,18 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
             offerLetterReport.LocalReport.DataSources.Add(dsSignatory);
             offerLetterReport.LocalReport.DataSources.Add(dsCollateral);
             offerLetterReport.LocalReport.DataSources.Add(dsGenerateOfferLetter);
+            offerLetterReport.LocalReport.DataSources.Add(dsGetLeaseFacility);
 
             var reportLink = string.Empty;
 
             foreach(var x in loanApplicationDetail)
             {
-                switch (x.approvedProductId)
+                switch (x.productClassId)
                 {
-                    case (int)ProductEnum.AssetLeaseFinance:
+                    case (int)ProductClassEnum.ImportFinanceFacilities:
                         reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_ImportFinance.rdlc");
                         break;
-                    case (int)ProductEnum.ConsumerAssetLease:
+                    case (int)ProductClassEnum.EmergingBusiness:
                         reportLink = Server.MapPath("~/Reports/Credit/OfferLetterGeneration/OfferLetter_LeaseFacility.rdlc");
                         break;
 
