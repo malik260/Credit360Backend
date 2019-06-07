@@ -223,7 +223,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.groupExposure = GetGroupExposureMarkup();
                 this.approvals = GetApprovalsMarkupLOS();
                 this.currentDate = DateTime.Now.ToShortDateString();
-                this.annualReviewDate = DateTime.Now.AddYears(1).ToShortDateString();
+                this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
 
@@ -444,6 +444,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 approvalTrailId = x.APPROVALTRAILID,
                 comment = x.COMMENT,
+                vote = x.VOTE,
                 targetId = x.TARGETID,
                 arrivalDate = x.ARRIVALDATE,
                 systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
@@ -1430,18 +1431,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
-            //var rm = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("relationship manager"));
-            //var gh = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("group head"));
-            //var gdmd = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("gdmd"));
-            //var gmd = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("gmd"));
-            //var gmcc = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("group mcc"));
-            //var bcc = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("bcc"));
-            //var bod = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("board of directors"));
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>Level</b></th>
                         <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
                         <th><b>Comment</b></th>
                         <th><b>Date</b></th>
                     </tr>
@@ -1452,6 +1447,7 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
                         <td>{trail.comment}</td>
                         <td>{trail.systemArrivalDateTime}</td>
                     </tr>
@@ -1461,6 +1457,15 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             return result;
 
+        }
+
+        private string GetDecision(short? vote)
+        {
+            if (vote == 1) return "Decline";
+            if (vote == 2) return "Accept";
+            if (vote == 3) return "Decline";
+            if (vote == 4) return "Accept";
+            return String.Empty;
         }
 
         private string GetCollateralCoverageMarkupLOS()
