@@ -1318,24 +1318,24 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
-        public List<TBL_COLLATERAL_IMMOVE_PROPERTY> GetCustomerPropertyCollaterals(int? customerId, int companyId)
+        public List<CollateralViewModel> GetCustomerPropertyCollaterals(int? customerId, int companyId)
         {
             var company = context.TBL_COMPANY.Find(companyId);
             if (customerId != null)
             {
-                var collaterals = (from a in context.TBL_COLLATERAL_IMMOVE_PROPERTY select new { a }).ToList();
-                var test1 = context.TBL_COLLATERAL_CUSTOMER.ToList();
-                var test2 = context.TBL_COLLATERAL_TYPE.ToList();
-                                   //on cc.COLLATERALCUSTOMERID equals cip.COLLATERALCUSTOMERID
-                                   //where (cc.DELETED == false && cc.CUSTOMERID == customerId)
-                                   //select new CollateralViewModel()
-                                   //{
-                                   //    collateralDetail = cip.PROPERTYNAME,
-                                   //    //collateralType = ct.COLLATERALTYPENAME,
-                                   //    openMarketValue = cip.OPENMARKETVALUE,
-                                   //    forcedSaleValue = cip.FORCEDSALEVALUE,
-                                   //}).ToList();
-                return new List<TBL_COLLATERAL_IMMOVE_PROPERTY>();
+                var collaterals = (from cc in context.TBL_COLLATERAL_CUSTOMER
+                                   join ct in context.TBL_COLLATERAL_TYPE on cc.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                                   join cip in context.TBL_COLLATERAL_IMMOVE_PROPERTY on cc.COLLATERALCUSTOMERID equals cip.COLLATERALCUSTOMERID
+                                   where cc.TBL_COMPANY.CURRENCYID == company.CURRENCYID
+                                   && cc.DELETED == false && cc.CUSTOMERID == customerId
+                                   select new CollateralViewModel()
+                                   {
+                                       collateralDetail = cip.PROPERTYNAME,
+                                       collateralType = ct.COLLATERALTYPENAME,
+                                       openMarketValue = cip.OPENMARKETVALUE,
+                                       forcedSaleValue = cip.FORCEDSALEVALUE,
+                                   }).ToList();
+                return collaterals;
             }
             return null;
         }
