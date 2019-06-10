@@ -16,26 +16,29 @@ namespace FintrakBanking.Repositories.Credit
         // dependencies
         private FinTrakBankingContext context;
         private IAppraisalMemorandumRepository memo;
-        private ILoanRepository loan;
+        private ILoanRepository loanRepo;
         private ICustomerGroupRepository groupRepo;
         private ITransactionDynamicsRepository transactionsRepo;
         private IConditionPrecedentRepository conditionsRepo;
+        private ICustomerCollateralRepository collateralRepo;
 
         public MemorandumRepository(
             FinTrakBankingContext context, 
             IAppraisalMemorandumRepository memo, 
-            ILoanRepository loan,     
+            ILoanRepository loanRepo,     
             ICustomerGroupRepository groupRepo, 
             ITransactionDynamicsRepository transactionsRepo,
-            IConditionPrecedentRepository conditionsRepo
+            IConditionPrecedentRepository conditionsRepo,
+            ICustomerCollateralRepository collateralRepo
             )
         {
             this.context = context;
             this.memo = memo;
-            this.loan = loan;
+            this.loanRepo = loanRepo;
             this.groupRepo = groupRepo;
             this.transactionsRepo = transactionsRepo;
             this.conditionsRepo = conditionsRepo;
+            this.collateralRepo = collateralRepo;
         }
 
         // init
@@ -89,6 +92,9 @@ namespace FintrakBanking.Repositories.Credit
         //private readonly string totalFacilitiesHolder = "@{{TotalFacilities}}";
         private readonly string groupExposureHolder = "@{{GroupExposure}}";
         private readonly string approvalsHolder = "@{{Approvals}}";
+        private readonly string currentDateHolder = "@{{CurrentDate}}";
+        private readonly string annualReviewDateHolder = "@{{AnnualReviewDate}}";
+        private readonly string collateralCoverageHolder = "@{{CollateralCoverage}}";
         //private readonly string totalGroupExposureHolder = "@{{TotalGroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
@@ -145,6 +151,9 @@ namespace FintrakBanking.Repositories.Credit
         //private string totalFacilities;
         private string groupExposure;
         private string approvals;
+        private string currentDate;
+        private string annualReviewDate;
+        private string collateralCoverage;
         //private string totalGroupExposure;
         // lms
         private string securityType;
@@ -213,6 +222,9 @@ namespace FintrakBanking.Repositories.Credit
                 //totalForeignImportFinanceFinance;
                 this.groupExposure = GetGroupExposureMarkup();
                 this.approvals = GetApprovalsMarkupLOS();
+                this.currentDate = DateTime.Now.ToShortDateString();
+                this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
+                this.collateralCoverage = GetCollateralCoverageMarkupLOS();
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
 
 
@@ -335,19 +347,18 @@ namespace FintrakBanking.Repositories.Credit
             {
 
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
+                var allTransactions = this.transactionsRepo.GetAllTransactionDynamics().OrderBy(a => a.position);
                 var transactions = new List<TransactionDynamicsViewModel>();
                 foreach (var d in details)
                 {
-                   var transaction  = this.transactionsRepo.GetAllTransactionDynamics().Where(x => x.loanApplicationDetailId == d.LOANAPPLICATIONDETAILID)
-                                     .OrderBy(a => a.position);
-                    transactions.AddRange(transaction);
+                    var transactionSelect = allTransactions.Where(x => x.loanApplicationDetailId == d.LOANAPPLICATIONDETAILID).ToList();
+                    transactions.AddRange(transactionSelect);
                 }
-                var transactionsgroup = transactions.GroupBy(t => t.loanApplicationDetailId);
                 foreach (var t in transactions)
                 {
                     if (t.dynamics != null)
                     {
-                        result.Add(new DropDownSelect { id = t.productId, name = t.dynamics });
+                        result.Add(new DropDownSelect { id = (int)t.position, typeId = t.loanApplicationDetailId, name = t.dynamics });
                     }
                 }
             }
@@ -433,6 +444,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 approvalTrailId = x.APPROVALTRAILID,
                 comment = x.COMMENT,
+                vote = x.VOTE,
                 targetId = x.TARGETID,
                 arrivalDate = x.ARRIVALDATE,
                 systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
@@ -471,8 +483,8 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1 width=1000px cellpadding=15 cellspacing=0>
                     < tr>
-                        <th>S/N</th>
-                        <th>Facility Type</th>
+                        <th><b>S/N</b></th>
+                        <th><b>Facility Type</b></th>
                     </tr>
                  ";
             foreach (var e in conditions)
@@ -499,8 +511,8 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
-                        <th>S/N</th>
-                        <th>CONDITIONS PRECEDENT TO DRAWDOWN</th>
+                        <th><b>S/N</b></th>
+                        <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
                     </tr>
                  ";
             foreach (var e in conditions)
@@ -527,8 +539,8 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
-                        <th>S/N</th>
-                        <th>TRANSACTIONS DYNAMICS</th>
+                        <th><b>S/N</b></th>
+                        <th><b>TRANSACTIONS DYNAMICS</b></th>
                     </tr>
                  ";
             foreach (var e in transactions)
@@ -571,20 +583,19 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
-                        <th>Facility</th>
-                        <th>LLL Impact</th>
-                        <th>Currency</th>
-                        <th>Current Amount</th>
-                        <th>Proposed Amount</th>
-                        <th>Change</th>
-                        <th>Tenor (Months)</th>
+                        <th><b>Facility</b></th>
+                        <th><b>LLL Impact</b></th>
+                        <th><b>Currency</b></th>
+                        <th><b>Current Amount</b></th>
+                        <th><b>Proposed Amount</b></th>
+                        <th><b>Change</b></th>
+                        <th><b>Tenor (Months)</b></th>
                     </tr>
                     <tr><td>Direct Facilities:</td></tr>
                         {GetDirectFacilitiesMarkupLOS()}
                         {GetTotalDirectFacilitiesMarkupLOS()}
                     <tr><td>Contingent Facilities:</td></tr>
                         {GetContingentFacilitiesMarkupLOS()}
-                    <tr><td>Total Contingents</td></tr>
                         {GetTotalContingentFacilitiesMarkupLOS()}
                         {GetTotalFacilitiesMarkupLOS()}
                     <tr>
@@ -614,31 +625,28 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
-                        <th>Facility</th>
-                        <th>LLL Impact</th>
-                        <th>Currency</th>
-                        <th>Current Amount</th>
-                        <th>Proposed Amount</th>
-                        <th>Change</th>
-                        <th>Tenor</th>
+                        <th><b>Facility</b></th>
+                        <th><b>LLL Impact</b></th>
+                        <th><b>Currency</b></th>
+                        <th><b>Current Amount</b></th>
+                        <th><b>Proposed Amount</b></th>
+                        <th><b>Change</b></th>
+                        <th><b>Tenor</b></th>
                     </tr>
                     <tr><td>Direct Facilities:</td></tr>
                         {GetForeignDirectFacilitiesMarkupLOS()}
-                    <tr><td>Total Direct</td></tr>
                         {GetTotalForeignDirectFacilitiesMarkupLOS()}
                     <tr><td>Contingent Facilities:</td></tr>
                         {GetForeignContingentFacilitiesMarkupLOS()}
-                    <tr><td>Total Contingents</td></tr>
                         {GetTotalForeignContingentFacilitiesMarkupLOS()}
-                    <tr><td>Total Facilities:</td></tr>
                         {GetTotalForeignFacilitiesMarkupLOS()}
                     <tr>
                         <td>Legal Lending Limit:</td>
-                        <td>{String.Format("{0:0,0.00}", legalLendingLimit)}</td>
+                        <td>{String.Format("{0:0,0.00}", legalLendingLimit)} Naira</td>
                     </tr>
                     <tr>
                         <td>LLL Impact of Proposed Facilities:</td>
-                        <td>{String.Format("{0:0,0.00}", getTotalLLLImpact())}</td>
+                        <td>{String.Format("{0:0,0.00}", getTotalLLLImpactFCY())}</td>
                     </tr>
                     <tr>
                         <td>Any LLL violation? (Yes / No):</td>
@@ -758,13 +766,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                     <tr>
-                        <td>Total Direct</td>
-                        <td>{String.Format("{0:0,0.00}", totalDirectsSummary.totalLLLImpact)}</td>
-                        <td>{totalDirectsSummary.currency}</td>
-                        <td>{String.Format("{0:0,0.00}", totalDirectsSummary.totalCurrentAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", totalDirectsSummary.totalProposedAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", totalDirectsSummary.totalChange)}</td>
-                        <td>{(totalDirectsSummary.totalTenors / 30)}</td>
+                        <td><b>Total Direct<b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.totalLLLImpact)}</b></td>
+                        <td><b>{totalDirectsSummary.currency}</td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.totalCurrentAmount)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.totalProposedAmount)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.totalChange)}</b></td>
+                        <td><b>{(totalDirectsSummary.totalTenors / 30)}</b></td>
                     </tr>
                 ";
             }
@@ -787,7 +795,7 @@ namespace FintrakBanking.Repositories.Credit
                 var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
                                          group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
                 var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                var LLLImpact = (1 / 3) * proposedAmount;
+                var LLLImpact = proposedAmount / 3;
                 var change = proposedAmount - currentAmount;
                 var tenor = tenorTest;
 
@@ -815,7 +823,7 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var LLLImpact = proposedAmount / 3;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
 
@@ -843,13 +851,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                     <tr>
-                        <td>Total Contingents</td>
-                        <td>{String.Format("{0:0,0.00}", totalContingentSummary.totalLLLImpact)}</td>
-                        <td>{totalContingentSummary.currency}</td>
-                        <td>{String.Format("{0:0,0.00}", totalContingentSummary.totalCurrentAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", totalContingentSummary.totalProposedAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", totalContingentSummary.totalChange)}</td>
-                        <td>{(totalContingentSummary.totalTenors / 30)}</td>
+                        <td><b>Total Contingents</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalLLLImpact)}</b></td>
+                        <td><b>{totalContingentSummary.currency}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalCurrentAmount)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalProposedAmount)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalChange)}</b></td>
+                        <td><b>{(totalContingentSummary.totalTenors / 30)}</b></td>
                     </tr>
                 ";
             }
@@ -864,13 +872,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                      <tr>
-                        <td>Total Facilities</td>
-                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalLLLImpact))}</td>
-                        <td>{totalSummary.FirstOrDefault()?.currency}</td>
-                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalCurrentAmount))}</td>
-                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalProposedAmount))}</td>
-                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalChange))}</td>
-                        <td>{(totalSummary.Sum(f => f.totalTenors) / 30)}</td>
+                        <td><b>Total Facilities</td>
+                        <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalLLLImpact))}</b></td>
+                        <td><b>{totalSummary.FirstOrDefault()?.currency}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalCurrentAmount))}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalProposedAmount))}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalChange))}</b></td>
+                        <td><b>{(totalSummary.Sum(f => f.totalTenors) / 30)}</b></td>
                     </tr>
                 ";
             }
@@ -975,13 +983,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                      <tr>
-                        <td>{totalDirectSummary.numberOfLoans + totalDirectSummary.numberOfOverdrafts + totalDirectSummary.numberOfNewFacilities}</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>{String.Format("{0:0,0.00}", totalDirectSummary.totalCurrentAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", totalDirectSummary.totalProposedAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", totalDirectSummary.totalChange)}</td>
-                        <td>{(totalDirectSummary.totalTenors / 30)}</td>
+                        <td><b>Total Directs<b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectSummary.totalLLLImpact)}</b></td>
+                        <td><b>{totalDirectSummary.currency}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectSummary.totalCurrentAmount)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectSummary.totalProposedAmount)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalDirectSummary.totalChange)}</b></td>
+                        <td><b>{(totalDirectSummary.totalTenors / 30)}</b></td>
                     </tr>
                 ";
             }
@@ -1004,14 +1012,14 @@ namespace FintrakBanking.Repositories.Credit
                 var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
                                          group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
                 var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : 0;
-                var lLLImpact = (1 / 3) * proposedAmount;
+                var LLLImpact = proposedAmount / 3;
                 var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
                 var tenor = tenorTest;
 
                 result = result + $@"
                      <tr>
                         <td>{facility}</td>
-                        <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
                         <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
@@ -1032,14 +1040,14 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var lLLImpact = (100 / 100) * proposedAmount;
+                    var LLLImpact = proposedAmount / 3;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
 
                     result = result + $@"
                      <tr>
                         <td>{facility}</td>
-                        <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
                         <td>{currency}</td>
                         <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
                         <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
@@ -1060,13 +1068,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                      <tr>
-                        <td>&nbsp;</td>
-                        <td>{String.Format("{0:0,0.00}", totalContingentSummary.totalLLLImpact)}</td>
-                        <td>{totalContingentSummary.currency}</td>
-                        <td>{String.Format("{0:0,0.00}", totalContingentSummary.totalCurrentAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", totalContingentSummary.totalProposedAmount)}</td>
-                        <td>{String.Format("{0:0,0.00}", totalContingentSummary.totalChange)}</td>
-                        <td>{(totalContingentSummary.totalTenors / 30)}</td>
+                        <td><b>Total Contingents</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalLLLImpact)}</b></td>
+                        <td><b>{totalContingentSummary.currency}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalCurrentAmount)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalProposedAmount)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalChange)}</b></td>
+                        <td><b>{(totalContingentSummary.totalTenors / 30)}</b></td>
                     </tr>
                 ";
             }
@@ -1081,13 +1089,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                      <tr>
-                        <td>&nbsp;</td>
-                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalLLLImpact))}</td>
-                        <td>{totalSummary.FirstOrDefault()?.currency}</td>
-                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalCurrentAmount))}</td>
-                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalProposedAmount))}</td>
-                        <td>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalChange))}</td>
-                        <td>{(totalSummary.Sum(f => f.totalTenors) / 30)}</td>
+                        <td><b>Total Facilities</td>
+                        <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalLLLImpact))}</b></td>
+                        <td><b>{totalSummary.FirstOrDefault()?.currency}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalCurrentAmount))}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalProposedAmount))}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalChange))}</b></td>
+                        <td><b>{(totalSummary.Sum(f => f.totalTenors) / 30)}</b></td>
                     </tr>
                 ";
             }
@@ -1106,14 +1114,16 @@ namespace FintrakBanking.Repositories.Credit
                 loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true).ToList();
                 overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                                                                 && l.ISDISBURSED == true).ToList();
-                appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN).ToList();
+                appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN 
+                && d.TBL_PRODUCT.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability).ToList();
             }
             else
             {
                 loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN && l.ISDISBURSED == true).ToList();
                 overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
                                                                 && l.ISDISBURSED == true).ToList();
-                appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN).ToList();
+                appDetails = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN
+                && d.TBL_PRODUCT.PRODUCTTYPEID != (int)LoanProductTypeEnum.ContingentLiability).ToList();
             }
             directSummary.numberOfLoans = loans.Count();
             directSummary.numberOfOverdrafts = overdrafts.Count();
@@ -1242,7 +1252,7 @@ namespace FintrakBanking.Repositories.Credit
                                           (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
                 var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                var LLLImpact = (100 / 100) * proposedAmount;
+                var LLLImpact = proposedAmount / 3;
                 var change = proposedAmount - currentAmount;
                 var tenor = tenorTest;
                 contingentsSummary.totalLLLImpact += LLLImpact;
@@ -1264,7 +1274,7 @@ namespace FintrakBanking.Repositories.Credit
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
                     var proposedAmount = d.PROPOSEDAMOUNT;
-                    var LLLImpact = (100 / 100) * proposedAmount;
+                    var LLLImpact = proposedAmount / 3;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
                     contingentsSummary.totalLLLImpact += LLLImpact;
@@ -1350,18 +1360,18 @@ namespace FintrakBanking.Repositories.Credit
         private string GetGroupExposureMarkup()
         {
             var result = String.Empty;
-            var exposures = GetGroupExposurebyCustomerId((int)loanApplication.CUSTOMERID, 1);
+            var exposures = GetGroupExposurebyCustomerId((int)loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
             var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerName);
             var n = 0;
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
-                        <th>Customer Name</th>
-                        <th>Facility Type</th>
-                        <th>Approved Amount</th>
-                        <th>Currency</th>
-                        <th>Current Amount</th>
-                        <th>Maturity</th>
+                        <th><b>Customer Name</b></th>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Currency</b></th>
+                        <th><b>Approved Amount</b></th>
+                        <th><b>Current Amount</b></th>
+                        <th><b>Maturity</b></th>
                     </tr>
                 ";
             foreach (var customerGroups in exposureGroupsByCustomer)
@@ -1375,8 +1385,8 @@ namespace FintrakBanking.Repositories.Credit
                      <tr>
                         <td>{customerName}</td>
                         <td>{facility.Key}</td>
-                        <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.approvedAmount))}</td>
                         <td>{facility.FirstOrDefault()?.currency}</td>
+                        <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.approvedAmount))}</td>
                         <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.outstandings))}</td>
                         <td>{facility.Max(f => f.maturityDate).ToShortDateString()}</td>
                     </tr>
@@ -1384,9 +1394,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
             result = result + $@"
-                    <tr>
-                        <td>Total:</td>
-                    </tr>
                     {GetTotalGroupExposureMarkup()}
                 ";
             result = result + $"</table>";
@@ -1396,7 +1403,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetTotalGroupExposureMarkup()
         {
             var result = String.Empty;
-            var exposures = GetGroupExposurebyCustomerId((int)loanApplication.CUSTOMERID, 1);
+            var exposures = GetGroupExposurebyCustomerId((int)loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
             CurrentCustomerExposure totalExposure;
             
             totalExposure = new CurrentCustomerExposure()
@@ -1408,11 +1415,11 @@ namespace FintrakBanking.Repositories.Credit
             
             result = result + $@"
                      <tr>
+                        <td><b>{totalExposure.facilityType}</b></td>
                         <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>{String.Format("{0:0,0.00}", totalExposure.approvedAmount)}</td>
-                        <td>{exposures.FirstOrDefault()?.currency}</td>
-                        <td>{String.Format("{0:0,0.00}", totalExposure.outstandings)}</td>
+                        <td><b>{exposures.FirstOrDefault()?.currency}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalExposure.approvedAmount)}</b></td>
+                        <td><b>{String.Format("{0:0,0.00}", totalExposure.outstandings)}</b></td>
                         <td>&nbsp;</td>
                     </tr>
                 ";
@@ -1424,20 +1431,14 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
-            //var rm = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("relationship manager"));
-            //var gh = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("group head"));
-            //var gdmd = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("gdmd"));
-            //var gmd = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("gmd"));
-            //var gmcc = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("group mcc"));
-            //var bcc = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("bcc"));
-            //var bod = appraisals.Find(a => a.fromApprovalLevelName.ToLower().Contains("board of directors"));
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
-                        <th>Level</th>
-                        <th>Name</th>
-                        <th>Comment</th>
-                        <th>Date</th>
+                        <th><b>Level</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Decision</b></th>
+                        <th><b>Comment</b></th>
+                        <th><b>Date</b></th>
                     </tr>
                     ";
             foreach (var trail in appraisals)
@@ -1446,6 +1447,7 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <td>{trail.fromApprovalLevelName.ToUpper()}</td>
                         <td>{trail.fromStaffName}</td>
+                        <td>{GetDecision(trail.vote)}</td>
                         <td>{trail.comment}</td>
                         <td>{trail.systemArrivalDateTime}</td>
                     </tr>
@@ -1457,6 +1459,69 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        private string GetDecision(short? vote)
+        {
+            if (vote == 1) return "Decline";
+            if (vote == 2) return "Accept";
+            if (vote == 3) return "Decline";
+            if (vote == 4) return "Accept";
+            return String.Empty;
+        }
+
+        private string GetCollateralCoverageMarkupLOS()
+        {
+            var collaterals = this.collateralRepo.GetCustomerPropertyCollaterals(this.loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
+            var result = String.Empty;
+            decimal totalMarketValue = 0;
+            int n = 0;
+            result = result + $@"
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>DESCRIPTION</b></th>
+                        <th><b>MARKET VALUE</b></th>
+                        <th><b>FORCED SALE VALUE</b></th>
+                    </tr>
+                    ";
+            foreach (var c in collaterals)
+            { ++n;
+                totalMarketValue += (decimal)c.openMarketValue;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{c.collateralTypeName + ": " + c.collateralDetail}</td>
+                        <td>{String.Format("{0:0,0.00}", c.openMarketValue)}</td>
+                        <td>{String.Format("{0:0,0.00}", c.forcedSaleValue)}</td>
+                    </tr>
+                ";
+            }
+            result = result + $@"
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><b>TOTAL</b></td>
+                    <td>{String.Format("{0:0,0.00}", totalMarketValue)}</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><b>TOTAL FACILITY AMOUNT</b></td>
+                    <td>{String.Format("{0:0,0.00}", (this.loanApplication.APPLICATIONAMOUNT))}</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><b>NET COVERAGE</b></td>
+                    <td>{String.Format("{0:0,0.00}", totalMarketValue - this.loanApplication.APPLICATIONAMOUNT)}</td>
+                    <td>&nbsp;</td>
+                </tr>
+            ";
+
+            result = result + $"</table>";
+            return result;
+        }
+
+
+        //lms
         private string GetDirectFacilitiesMarkupLMS()
         {
             var result = String.Empty;
@@ -1635,18 +1700,18 @@ namespace FintrakBanking.Repositories.Credit
         private string GetGroupExposureMarkupLMS()
         {
             var result = String.Empty;
-            var exposures = GetGroupExposurebyCustomerId((int)lmsrApplication.CUSTOMERID, 1);
+            var exposures = GetGroupExposurebyCustomerId((int)lmsrApplication.CUSTOMERID, this.lmsrApplication.COMPANYID);
             var n = 0;
             result = result + $@"
                 <table border=1>
                     <tr>
-                        <th>S/N</th>
-                        <th>Customer Name</th>
-                        <th>Facility Type</th>
-                        <th>Application Reference Number</th>
-                        <th>Outstanding</th>
-                        <th>Existing Limit</th>
-                        <th>Loan Status</th>
+                        <th><b>S/N</b></th>
+                        <th><b>Customer Name</b></th>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Application Reference Number</b></th>
+                        <th><b>Outstanding</b></th>
+                        <th><b>Existing Limit</b></th>
+                        <th><b>Loan Status</b></th>
                     </tr>
                  ";
             foreach (var exposure in exposures)
@@ -1708,6 +1773,9 @@ namespace FintrakBanking.Repositories.Credit
             //content = content.Replace(totalFacilitiesHolder, totalFacilities);
             content = content.Replace(groupExposureHolder, groupExposure);
             content = content.Replace(approvalsHolder, approvals);
+            content = content.Replace(currentDateHolder, currentDate);
+            content = content.Replace(annualReviewDateHolder, annualReviewDate);
+            content = content.Replace(collateralCoverageHolder, collateralCoverage);
             //content = content.Replace(totalGroupExposureHolder, totalGroupExposure);
 
             if (content.Contains(customerTurnoverHolder))
@@ -1740,7 +1808,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<CurrentCustomerExposure> GetCustomerExposure(List<CustomerExposure> customerIds, int companyId) // not used!
         {
-            return loan.GetCurrentCustomerExposure(customerIds, companyId); // old maurer impl
+            return loanRepo.GetCurrentCustomerExposure(customerIds, companyId); // old maurer impl
         }
 
         // html markup
@@ -1755,15 +1823,15 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1>
                     <tr>
-                        <th>S/N</th>
-                        <th>Facility Type</th>
-                        <th>Existing Limit</th>
-                        <th>Proposed Limit</th>
-                        <th>Change</th>
-                        <th>Outstandings</th>
-                        <th>Past Due Obligations Principal</th>
-                        <th>Past Due Obligations Interest</th>
-                        <th>Review Date</th>
+                        <th><b>S/N</b></th>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Existing Limit</b></th>
+                        <th><b>Proposed Limit</b></th>
+                        <th><b>Change</b></th>
+                        <th><b>Outstandings</b></th>
+                        <th><b>Past Due Obligations Principal</b></th>
+                        <th><b>Past Due Obligations Interest</b></th>
+                        <th><b>Review Date</b></th>
                     </tr>
                  ";
             foreach (var e in exposures)
@@ -1834,9 +1902,9 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1>
                     <tr>
-                        <th>S/N</th>
-                        <th>Facility</th>
-                        <th>Monitoring Trigger</th>
+                        <th><b>S/N</b></th>
+                        <th><b>Facility</b></th>
+                        <th><b>Monitoring Trigger</b></th>
                     </tr>
                  ";
             foreach (var t in triggers)
@@ -1878,10 +1946,10 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1>
                     <tr>
-                        <th>S/N</th>
-                        <th>Facility</th>
-                        <th>Summary</th>
-                        <th>Rating</th>
+                        <th><b>S/N</b></th>
+                        <th><b>Facility</b></th>
+                        <th><b>Summary</b></th>
+                        <th><b>Rating</b></th>
                     </tr>
                  ";
             foreach (var s in summary)
@@ -2152,15 +2220,15 @@ namespace FintrakBanking.Repositories.Credit
             //result = result + $@"
             //    <table border=1>
             //        <tr>
-            //            <th>S/N</th>
-            //            <th>Account ID</th>
-            //            <th>Scheme Type</th>
-            //            <th>Min Debit Balance</th>
-            //            <th>Max Debit Balance</th>
-            //            <th>Min Creit Balance</th>
-            //            <th>Max Credit Balance</th>
-            //            <th>Debit Turnover</th>
-            //            <th>Credit Turnover</th>
+            //            <th><b>S/N</b></th>
+            //            <th><b>Account ID</b></th>
+            //            <th><b>Scheme Type</b></th>
+            //            <th><b>Min Debit Balance</b></th>
+            //            <th><b>Max Debit Balance</b></th>
+            //            <th><b>Min Creit Balance</b></th>
+            //            <th><b>Max Credit Balance</b></th>
+            //            <th><b>Debit Turnover</b></th>
+            //            <th><b>Credit Turnover</b></th>
             //        </tr>
             //     ";
             //foreach (var t in turnover)
