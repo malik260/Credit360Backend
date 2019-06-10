@@ -1197,7 +1197,7 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
                 var mainPol = (from x in context.TBL_COLLATERAL_ITEM_POLICY
-                               where x.COLLATERALCUSTOMERID == entity.collateralCustomerId
+                               where x.COLLATERALCUSTOMERID == collateralId
                                select (x)).FirstOrDefault();
 
                 if (mainPol != null)
@@ -1216,7 +1216,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    try {
                         context.TBL_COLLATERAL_ITEM_POLICY.Add(new TBL_COLLATERAL_ITEM_POLICY
                         {
                             COLLATERALCUSTOMERID = collateralId,
@@ -1231,7 +1230,6 @@ namespace FintrakBanking.Repositories.Credit
                             SUMINSURED = entity.sumInsured,
                             PREMIUMAMOUNT = entity.premiumAmount
                         });
-                    } catch (Exception ex) { };
                     
                 }
             }
@@ -1253,7 +1251,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 });
             }
-               
+
+
         }
 
         public bool AddNewItemInsurancePolicy(InsurancePolicies entity)
@@ -6266,7 +6265,7 @@ namespace FintrakBanking.Repositories.Credit
                         DATETIMECREATED = genSetup.GetApplicationDate(),
                         ACTEDONBY = model.createdBy,
                         RELATEDCOLLATERALCODE = model.relatedCollateralCode,
-                        ISLOANAPPLICATIONREG = true
+                        LOANAPPLICATIONID = model.loanApplicationId
                     });
 
                     if (context.SaveChanges() == 1)

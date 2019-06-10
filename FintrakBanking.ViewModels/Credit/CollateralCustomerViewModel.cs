@@ -370,6 +370,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int registrationTypeId { get; set; }
         public int loanApplicationCustomerId { get; set; }
         public int applicationCustomerId { get; set; }
+        public int? loanApplicationId { get; set; }
     }
 
     public class crossGarantee
