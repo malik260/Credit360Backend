@@ -85,6 +85,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATEACTEDON { get; set; }
 
         public int? ACTEDONBY { get; set; }
+        public int? REGISTRATIONTYPEID { get; set; }
 
         public string RELATEDCOLLATERALCODE { get; set; }
 
