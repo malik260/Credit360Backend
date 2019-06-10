@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ReportObjects.ReportingObjects
 {
-   public class OutputDocument
-    { 
+    public class OutputDocument
+    {
         #region OUTPUT DOCUMENT
 
         FinTrakBankingContext context = new FinTrakBankingContext();
@@ -20,12 +20,16 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         public IEnumerable<OutPutDocumentApprovalViewModel> GetApplicationApproval(int loanApplicationId)
         {
 
-            return (from b in context.TBL_LOAN_APPLICATION
-                    where b.LOANAPPLICATIONID == loanApplicationId
-                    select new OutPutDocumentApprovalViewModel
-                    {
+            return context.TBL_LOAN_APPLICATION_DETL_LOG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId)
+                .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a, b })
+                .Select(x => new OutPutDocumentApprovalViewModel
+                {
+                    officer = context.TBL_STAFF_ROLE.Where(o => o.STAFFROLEID == x.b.STAFFROLEID).Select(o => o.STAFFROLENAME).FirstOrDefault(),
+                    name = x.b.FIRSTNAME + " " + x.b.MIDDLENAME + " " + x.b.LASTNAME,
+                    signature = "",// x.a.DECISION,
+                    id = x.a.LOAN_APPLICATION_DETAIL_LOGID
 
-                    }).ToList();
+                }).OrderByDescending(p => p.id);
         }
 
         public IEnumerable<OutPutDocumentChecklistViewModel> GetChecklist(int loanApplicationId)
@@ -58,12 +62,16 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         public IEnumerable<OutPutDocumentConcurrencesViewModel> GetConcurrences(int loanApplicationId)
         {
 
-            return (from b in context.TBL_LOAN_APPLICATION
-                    where b.LOANAPPLICATIONID == loanApplicationId
-                    select new OutPutDocumentConcurrencesViewModel
-                    {
+            return context.TBL_LOAN_APPLICATION_DETL_LOG.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId)
+            .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a, b })
+            .Select(x => new OutPutDocumentConcurrencesViewModel
+            {
+                officer = context.TBL_STAFF_ROLE.Where(o => o.STAFFROLEID == x.b.STAFFROLEID).Select(o => o.STAFFROLENAME).FirstOrDefault(),
+                name = x.b.FIRSTNAME + " " + x.b.MIDDLENAME + " " + x.b.LASTNAME,
+                signature = "",// x.a.DECISION,
+                id = x.a.LOAN_APPLICATION_DETAIL_LOGID
 
-                    }).ToList();
+            }).OrderByDescending(p => p.id);
         }
 
         public IEnumerable<OutPutDocumentCustomerFacilitiesViewModel> GetCustomerFacilities(int loanApplicationId)
@@ -185,12 +193,17 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         public IEnumerable<CurrentRequestViewModel> GetCurrentRequest(int loanApplicationId)
         {
 
-            return (from b in context.TBL_LOAN_APPLICATION
-                    where b.LOANAPPLICATIONID == loanApplicationId
-                    select new CurrentRequestViewModel
-                    {
+            return (from a in context.TBL_LOAN_APPLICATION
+                               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                               where a.LOANAPPLICATIONID == loanApplicationId
+                                select new CurrentRequestViewModel()
+                               {
+                                   productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTNAME,
+                                    purpose = b.LOANPURPOSE,
+                                    tenor = b.APPROVEDTENOR,
+                                    repaymentSchedule = b.REPAYMENTSCHEDULE ?? "Not applicable",
 
-                    }).ToList();
+                               }).ToList();
         }
 
 

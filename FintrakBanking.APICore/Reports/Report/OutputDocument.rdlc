@@ -1195,7 +1195,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Customer Facilities as @ xx/xx/xxxx (Specify Date)</Value>
+                <Value>Customer Facilities as @ </Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -1203,6 +1203,14 @@
                   <FontWeight>Bold</FontWeight>
                   <TextDecoration>None</TextDecoration>
                   <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>=First(Fields!newApplicationDate.Value, "CurrentRequest")</Value>
+                <Style>
+                  <FontFamily>Frutiger LT 45 Light</FontFamily>
+                  <FontSize>11pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -3875,7 +3883,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Concurrences</DataSetName>
-        <Top>12.34249in</Top>
+        <Top>12.67999in</Top>
         <Left>0.00663in</Left>
         <Height>0.5in</Height>
         <Width>7.00537in</Width>
@@ -4289,7 +4297,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Checklist</DataSetName>
-        <Top>13.56124in</Top>
+        <Top>13.77374in</Top>
         <Left>0.00663in</Left>
         <Height>0.5in</Height>
         <Width>7.00537in</Width>
@@ -4322,7 +4330,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox130</rd:DefaultName>
-        <Top>13.15568in</Top>
+        <Top>13.36818in</Top>
         <Left>0.00663in</Left>
         <Height>0.25in</Height>
         <Width>2.79817in</Width>
@@ -5113,6 +5121,42 @@
           </Border>
         </Style>
       </Tablix>
+      <Textbox Name="Textbox132">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>CONCURRENCES:</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox130</rd:DefaultName>
+        <Top>12.29388in</Top>
+        <Left>0.04451in</Left>
+        <Height>0.25in</Height>
+        <Width>2.79817in</Width>
+        <ZIndex>20</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
     </ReportItems>
     <Height>15.54943in</Height>
     <Style />
@@ -5158,7 +5202,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>CREDIT PROGRAM SHEET (CASH COLLATERIZED</Value>
+                  <Value>CREDIT PROGRAM SHEET (</Value>
                   <Style>
                     <FontStyle>Normal</FontStyle>
                     <FontFamily>Humnst777 BT</FontFamily>
@@ -5169,14 +5213,29 @@
                   </Style>
                 </TextRun>
                 <TextRun>
+                  <Value>=StrConv(First(Fields!productName.Value, "CurrentRequest"), vbProperCase)</Value>
+                  <Style>
+                    <FontFamily>Humnst777 BT</FontFamily>
+                    <FontSize>14pt</FontSize>
+                    <Color>Gray</Color>
+                  </Style>
+                </TextRun>
+                <TextRun>
                   <Value>)</Value>
                   <Style>
                     <FontStyle>Normal</FontStyle>
                     <FontFamily>Humnst777 BT</FontFamily>
-                    <FontSize>17pt</FontSize>
+                    <FontSize>14pt</FontSize>
                     <FontWeight>Normal</FontWeight>
                     <TextDecoration>None</TextDecoration>
                     <Color>Gray</Color>
+                  </Style>
+                </TextRun>
+                <TextRun>
+                  <Value xml:space="preserve"> </Value>
+                  <Style>
+                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                    <FontSize>11pt</FontSize>
                   </Style>
                 </TextRun>
               </TextRuns>
@@ -5498,6 +5557,10 @@
         </Field>
         <Field Name="isRenewal">
           <DataField>isRenewal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="newApplicationDate">
+          <DataField>newApplicationDate</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
