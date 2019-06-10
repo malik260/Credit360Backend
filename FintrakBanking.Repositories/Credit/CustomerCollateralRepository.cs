@@ -1216,20 +1216,23 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    context.TBL_COLLATERAL_ITEM_POLICY.Add(new TBL_COLLATERAL_ITEM_POLICY
-                    {
-                        COLLATERALCUSTOMERID = collateralId,
-                        CREATEDBY = entity.createdBy,
-                        DATETIMECREATED = entity.dateTimeCreated,
-                        ENDDATE = (DateTime)entity.endDate,
-                        INSURANCECOMPANYNAME = entity.insuranceCompanyName,
-                        INSURANCETYPE = entity.insuranceType,
-                        LASTUPDATEDBY = entity.lastUpdatedBy,
-                        POLICYREFERENCENUMBER = entity.referenceNumber,
-                        STARTDATE = (DateTime)entity.startDate,
-                        SUMINSURED = entity.sumInsured,
-                        PREMIUMAMOUNT = entity.premiumAmount
-                    });
+                    try {
+                        context.TBL_COLLATERAL_ITEM_POLICY.Add(new TBL_COLLATERAL_ITEM_POLICY
+                        {
+                            COLLATERALCUSTOMERID = collateralId,
+                            CREATEDBY = entity.createdBy,
+                            DATETIMECREATED = entity.dateTimeCreated,
+                            ENDDATE = (DateTime)entity.endDate,
+                            INSURANCECOMPANYNAME = entity.insuranceCompanyName,
+                            INSURANCETYPE = entity.insuranceType,
+                            LASTUPDATEDBY = entity.lastUpdatedBy,
+                            POLICYREFERENCENUMBER = entity.referenceNumber,
+                            STARTDATE = (DateTime)entity.startDate,
+                            SUMINSURED = entity.sumInsured,
+                            PREMIUMAMOUNT = entity.premiumAmount
+                        });
+                    } catch (Exception ex) { };
+                    
                 }
             }
             else
@@ -6240,8 +6243,8 @@ namespace FintrakBanking.Repositories.Credit
                         CREATEDBY = model.loanApplicationCustomerId,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
                         ACTEDONBY = model.createdBy,
-                        RELATEDCOLLATERALCODE = model.relatedCollateralCode
-
+                        RELATEDCOLLATERALCODE = model.relatedCollateralCode,
+                        ISLOANAPPLICATIONREG = true
                     });
 
                     if (context.SaveChanges() == 1)
