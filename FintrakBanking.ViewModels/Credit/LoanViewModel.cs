@@ -852,6 +852,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
         public short loanSystemTypeId { get; set; }
+        public int loanDetailId { get; set; }
         public int loanId { get; set; }
         public int productId { get; set; }
         public string chargeFeeName { get; set; }
@@ -877,9 +878,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationId { get; set; }
         public decimal loanAmount { get; set; }
         public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
-        public DateTime date  { get; set; }
+        public DateTime effectiveDate  { get; set; }
         public decimal feeRate { get; set; }
-        public double? rate { get; set; }
+        public string description { get; set; }
+        public bool isDeferred { get; set; }
+        //public double? rate { get; set; }
 
     }
 
@@ -1000,6 +1003,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? nextCovenantDate { get; set; }
         public short loanSystemTypeId { get; set; }
         public string productCustomerName { get; set; }
+        public bool isFinancial { get; set; }
     }
 
     public class LoanMonitoringTriggerViewModel : GeneralEntity

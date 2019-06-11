@@ -183,6 +183,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             var convenant = new TBL_LOAN_COVENANT_TYPE
             {
+                ISFINANCIAL = entity.isFinancial,
                 COMPANYID = entity.companyId,
                 COVENANTTYPENAME = entity.covenantTypeName,
                 REQUIREAMOUNT = entity.requireAmount,
@@ -209,6 +210,7 @@ namespace FintrakBanking.Repositories.Customer
         public async Task<bool> UpdateLoanCovenantType(short id, LoanCovenantTypeViewModel entity)
         {
             var convenant = context.TBL_LOAN_COVENANT_TYPE.Find(id);
+            convenant.ISFINANCIAL = entity.isFinancial;
             convenant.COMPANYID = entity.companyId;
             convenant.COVENANTTYPENAME = entity.covenantTypeName;
             convenant.REQUIREAMOUNT = entity.requireAmount;
@@ -235,6 +237,7 @@ namespace FintrakBanking.Repositories.Customer
             return context.TBL_LOAN_COVENANT_TYPE.Where(c => c.COMPANYID == companyId).Select(c => new LoanCovenantTypeViewModel
             {
                 companyId = c.COMPANYID,
+                isFinancial = c.ISFINANCIAL,
                 covenantTypeId = c.COVENANTTYPEID,
                 covenantTypeName = c.COVENANTTYPENAME,
                 requireAmount = c.REQUIREAMOUNT,
@@ -273,9 +276,10 @@ namespace FintrakBanking.Repositories.Customer
                     nextCovenantDate = c.NEXTCOVENANTDATE,
                     casaAccountId = c.CASAACCOUNTID,
 
+                    isFinancial = c.TBL_LOAN_COVENANT_TYPE.ISFINANCIAL,
                     companyId = c.COMPANYID,
                     productCustomerName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
-
+                    
                 });
         }
 
@@ -298,6 +302,7 @@ namespace FintrakBanking.Repositories.Customer
                     nextCovenantDate = c.NEXTCOVENANTDATE,
                     casaAccountId = c.CASAACCOUNTID,
 
+                    isFinancial = c.TBL_LOAN_COVENANT_TYPE.ISFINANCIAL,
                     companyId = c.COMPANYID,
                     productCustomerName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
 
@@ -460,6 +465,7 @@ namespace FintrakBanking.Repositories.Customer
                     nextCovenantDate = c.NEXTCOVENANTDATE,
                     casaAccountId = c.CASAACCOUNTID,
 
+                    isFinancial = c.TBL_LOAN_COVENANT_TYPE.ISFINANCIAL,
                     companyId = c.COMPANYID,
                     productCustomerName = c.TBL_LMSR_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + c.TBL_LMSR_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LMSR_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LMSR_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
 

@@ -335,6 +335,7 @@
     <Compile Include="Controllers\ApprovalLevelController.cs" />
     <Compile Include="Controllers\ApprovalLevelStaffController.cs" />
     <Compile Include="Controllers\BusinessRuleController.cs" />
+    <Compile Include="Controllers\DeferredFeeController.cs" />
     <Compile Include="Controllers\DocumentCategoryController.cs" />
     <Compile Include="Controllers\DocumentCategoryTypeController.cs" />
     <Compile Include="Controllers\DocumentTypeController.cs" />

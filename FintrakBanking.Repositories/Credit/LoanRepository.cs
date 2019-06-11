@@ -796,6 +796,7 @@ namespace FintrakBanking.Repositories.Credit
                         AddLoanCovenant(model, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
                         //............save Loan Fees..........
                         AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail);
+                        //AddDeferredFees(model.loanChargeFee, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail);
 
                         model.loanReferenceNumber = loanReferenceNumber;
 
@@ -1020,6 +1021,7 @@ namespace FintrakBanking.Repositories.Credit
                     AddLoanCovenant(entity, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
                     //............save Loan Fees..........
                     AddLoanFees(entity.loanChargeFee, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity, applicationDetail);
+                    //AddDeferredFees(entity.loanChargeFee, (short)LoanSystemTypeEnum.ContingentLiability, entity, applicationDetail);
                     entity.loanReferenceNumber = loanReferenceNumber;
 
                     //...................Saving Loan Collaterals Mapping.......................
@@ -1421,14 +1423,15 @@ namespace FintrakBanking.Repositories.Credit
                                 }
                             }
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            
+
                             AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
+                            //AddDeferredFees(entity.loanChargeFee, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
-                            if (!entity.feeOverride) PostLoanFees(entity);
+                            //if (!entity.feeOverride) PostLoanFees(entity);
                             context.SaveChanges();
 
                             trans.Commit();
@@ -2049,7 +2052,8 @@ namespace FintrakBanking.Repositories.Credit
                         if (LogApproval(approvalModel, (int)OperationsEnum.ForeignExchangeLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                         {
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee,  loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity,applicationDetail);
+                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
+                            //AddDeferredFees(entity.loanChargeFee, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
 
                             //...................Saving FX Loan Collaterals Mapping.......................
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
@@ -5055,6 +5059,11 @@ namespace FintrakBanking.Repositories.Credit
             var chargeByApprovedAmount = false;
             foreach (var ent in feeModel)
             {
+                if (ent.isDeferred)
+                {
+                    AddDeferredFees(ent, loanSystemTypeId, loanModel, facilityDetail);
+                    break;
+                }
                 var chargeFee = context.TBL_CHARGE_FEE.Find(ent.chargeFeeId);
                 if(chargeFee != null & chargeFee.FEETARGETID == (short)ChargeFeeTargetEnum.ApprovedLoanAmount)
                 {
@@ -5097,6 +5106,52 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
             //return context.SaveChanges() > 0;
+        }
+
+        private void AddDeferredFees(LoanChargeFeeViewModel feeModel, short loanSystemTypeId, LoanViewModel loanModel, TBL_LOAN_APPLICATION_DETAIL facilityDetail)
+        {
+            var chargeByApprovedAmount = false;
+                var chargeFee = context.TBL_CHARGE_FEE.Find(feeModel.chargeFeeId);
+                if (chargeFee != null & chargeFee.FEETARGETID == (short)ChargeFeeTargetEnum.ApprovedLoanAmount)
+                {
+                    if (context.TBL_DEFERRED_LOAN_FEE.Where(x => x.LOANAPPLICATIONDETAILID == facilityDetail.LOANAPPLICATIONDETAILID && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).Any())
+                    {
+                        chargeByApprovedAmount = false;
+                    }
+                    else { chargeByApprovedAmount = true; }
+                }
+
+
+            if (feeModel.dealTypeId != (short)ChargeFeeDealTypeEnum.Tax)
+            {
+
+                var fee = new TBL_DEFERRED_LOAN_FEE
+                {
+                    CHARGEFEEID = feeModel.chargeFeeId,
+                    FEEAMOUNT = chargeByApprovedAmount ? facilityDetail.APPROVEDAMOUNT : feeModel.feeAmount,
+                    FEEDEPENDENTAMOUNT = chargeByApprovedAmount ? facilityDetail.APPROVEDAMOUNT : feeModel.feeDependentAmount,
+                    FEERATEVALUE = feeModel.feeRateValue,
+                    ISINTEGRALFEE = feeModel.isIntegralFee,
+                    LOANAPPLICATIONDETAILID = feeModel.loanDetailId,
+                    //LOANAPPLICATIONDETAILID = chargeByApprovedAmount ? facilityDetail.LOANAPPLICATIONDETAILID : loanId,
+                    //SOURCELOANID = loanId,
+                    LOANSYSTEMTYPEID = chargeByApprovedAmount ? (short)LoanSystemTypeEnum.LineFacility : loanSystemTypeId,
+                    //SOURCELOANSYSTEMTYPEID = loanSystemTypeId,
+                    //ISRECURRING = ent.recurring,
+                    //RECURRINGPAYMENTDAY = 28,
+                    CREATEDBY = loanModel.createdBy,
+                    DATETIMECREATED = DateTime.Now.Date,
+                    ISPOSTED = feeModel.isPosted
+                };
+                if (loanModel.feeOverride)
+                {
+                    fee.ISPOSTED = false;
+                }
+                else fee.ISPOSTED = true;
+
+                context.TBL_DEFERRED_LOAN_FEE.Add(fee);
+                //return context.SaveChanges() > 0;
+            }
         }
 
         public List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTrigger()
