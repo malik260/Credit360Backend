@@ -82,4 +82,107 @@ namespace FintrakBanking.ViewModels.Risk
         public int creditOfficerRiskRating { get { return 20; } } // todo..
 
     }
+
+
+
+
+
+
+
+
+    public class CreditOfficerRatingViewModel
+    {
+        public string creditOfficerName { get { return firstName + " " + middleName + " " + lastName; } }
+
+        public int staffId { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string staffCode { get; set; }
+
+        public string corrScore { get { return currentRating == null ? "NOT RATED" : currentRating.score.ToString(); } }
+        public string corrComment { get { return currentRating == null ? "NOT RATED" : currentRating.comment; } }
+        //public DateTime dateRated { get { return currentRating == null ? "NOT RATED" : currentRating.date; } }
+
+        public ParameterScoreViewModel currentRating { get; set; }
+    }
+
+    public class CreditOfficerSearchViewModel
+    {
+        public string searchString { get; set; }
+
+    }
+
+    public class RatingPeriodViewModel : GeneralEntity
+    {
+        public int ratingPeriodId { get; set; }
+        
+        public DateTime startDate { get; set; }
+
+        public DateTime endDate { get; set; }
+
+    }
+
+    public class OfficerRatingViewModel : GeneralEntity
+    {
+        public OfficerRatingViewModel()
+        {
+            assessment = new List<ParameterScoreViewModel>();
+        }
+        public int creditOfficerId { get; set; }
+        public  List<ParameterScoreViewModel> assessment { get; set; }
+    }
+
+    public class ParameterScoreViewModel
+    {
+        public int id { get; set; }
+        public int weight { get; set; }
+        public string parameterName { get; set; }
+
+        public int parameterId { get; set; }
+        public int score { get; set; }
+        public int keyIndicatorId { get; set; }
+        public string comment { get; set; }
+    }
+
+    public class KeyIndicatorAssessmentParametersViewModel
+    {
+        public int count { get; set; }
+        public List<KeyIndicator> keyIndicators { get; set; }
+    }
+
+    public class KeyIndicator
+    {
+        public string keyIndicatorName { get; set; }
+        public List<ParameterScoreViewModel> parameters { get; set; }
+        public int keyIndicatorWeight { get; set; }
+        public int score { get; set; }
+    }
+
+    public class CreditOfficerRiskRatingDetail
+    {
+        public CreditOfficerRiskRatingDetail()
+        {
+            indicators = new List<GenericRiskScore>();
+        }
+
+        public int score { get; set; }
+        public string comment { get; set; }
+
+        public List<GenericRiskScore> indicators { get; set; }
+        public List<GenericRiskScore> parameters { get; set; }
+
+    }
+
+    public class GenericRiskScore
+    {
+
+        public int id { get; set; }
+        public string name { get; set; }
+        public int score { get; set; }
+        public int weight { get; set; }
+        public int indicatorId { get; set; }
+        public string indicatorName { get; set; }
+        public int indicatorWeight { get; set; }
+    }
 }
