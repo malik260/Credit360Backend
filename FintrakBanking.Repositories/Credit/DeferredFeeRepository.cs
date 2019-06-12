@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Credit
             var entity = context.TBL_DEFERRED_LOAN_FEE.FirstOrDefault(x => x.DEFERREDLOANFEEID == id && x.DELETED == false);
             return new LoanChargeFeeViewModel
                 {
-                    loanDetailId = entity.LOANAPPLICATIONDETAILID,
+                    applicationDetailIdId = entity.LOANAPPLICATIONDETAILID,
                     feeTargetId = entity.CHARGEFEEID,
                     loanSystemTypeId = entity.LOANSYSTEMTYPEID,
                     description = entity.DESCRIPTION,
@@ -55,7 +55,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.TBL_DEFERRED_LOAN_FEE.Where(x => x.DELETED == false)
                 .Select(x => new LoanChargeFeeViewModel
                 {
-                    loanDetailId = x.LOANAPPLICATIONDETAILID,
+                    applicationDetailIdId = x.LOANAPPLICATIONDETAILID,
                     feeTargetId = x.CHARGEFEEID,
                     loanSystemTypeId = x.LOANSYSTEMTYPEID,
                     description = x.DESCRIPTION,
@@ -72,7 +72,7 @@ namespace FintrakBanking.Repositories.Credit
                             where x.LOANAPPLICATIONDETAILID == loanDetailId
                             select new LoanChargeFeeViewModel()
                             {
-                                loanDetailId = x.LOANAPPLICATIONDETAILID,
+                                applicationDetailIdId = x.LOANAPPLICATIONDETAILID,
                                 feeTargetId = x.CHARGEFEEID,
                                 loanSystemTypeId = x.LOANSYSTEMTYPEID,
                                 description = x.DESCRIPTION,
@@ -90,7 +90,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                     var entity = new TBL_DEFERRED_LOAN_FEE
                 {
-                    LOANAPPLICATIONDETAILID = fee.loanDetailId,
+                    LOANAPPLICATIONDETAILID = fee.applicationDetailIdId,
                     LOANSYSTEMTYPEID = fee.loanSystemTypeId,
                     CASAACCOUNTID = fee.casaAccountId,
                     CHARGEFEEID = fee.chargeFeeId,
@@ -124,7 +124,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateDeferredFee(LoanChargeFeeViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_DEFERRED_LOAN_FEE.Find(id);
-            entity.LOANAPPLICATIONDETAILID = model.loanDetailId;
+            entity.LOANAPPLICATIONDETAILID = model.applicationDetailIdId;
             entity.LOANSYSTEMTYPEID = model.loanSystemTypeId;
             entity.CASAACCOUNTID = model.casaAccountId;
             entity.CHARGEFEEID = model.chargeFeeId;

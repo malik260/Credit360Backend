@@ -1088,12 +1088,12 @@ namespace FintrakBanking.Repositories.Credit
             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
 
             int? receiverLevelId = null;
-            receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CAM, appl.PRODUCTCLASSID);
+            receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID);
 
             workflow.StaffId = staffId;
             workflow.ToStaffId = staffId; //
             workflow.NextLevelId = receiverLevelId; // BREAKING!
-            workflow.OperationId = (int)OperationsEnum.CAM;
+            workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
@@ -1429,9 +1429,10 @@ namespace FintrakBanking.Repositories.Credit
                 LOANTERMSHEETID = loan.loanTermSheetId,
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
-                OPERATIONID = (int)OperationsEnum.CAM,
+                OPERATIONID = (int)OperationsEnum.CreditAppraisal,
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
-                COLLATERALDETAIL = loan.collateralDetail
+                COLLATERALDETAIL = loan.collateralDetail,
+                ISADHOCAPPLICATION = loan.isadhocapplication,
             };
 
             if (isGroupLoan)
@@ -1597,6 +1598,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId;
             this.loanData.LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId;
             this.loanData.LOANTERMSHEETID = loan.loanTermSheetId;
+            this.loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -2523,7 +2525,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
         {
-            int[] operations = { (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.CAM, (int)OperationsEnum.ContigentLoanBooking ,
+            int[] operations = { (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.ContigentLoanBooking ,
            (int)OperationsEnum.ContingentLiabilityRenewal,(int)OperationsEnum.ContingentLiabilityUsage,(int)OperationsEnum.ContingentRequestBooking,
             (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.LoanAvailment};
 
@@ -2670,11 +2672,11 @@ namespace FintrakBanking.Repositories.Credit
             if (applicationTypeId == 1)
             {
                 applicationType = "Loan Origination";
-                ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CAM).ToList();
+                ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditAppraisal).ToList();
                 applications = context.TBL_LOAN_APPLICATION
                     //.Join(context.TBL_LOAN_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
                     .Join(context.TBL_CUSTOMER, a => a.CUSTOMERID, c => c.CUSTOMERID, (a, c) => new { a, c })
-                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.CAM
+                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.CreditAppraisal
                             && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended
                             && ids.Contains((int)t.TOAPPROVALLEVELID)
                         ),
@@ -3231,7 +3233,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
 
-                var operationId = (int)OperationsEnum.CAM;
+                var operationId = (int)OperationsEnum.CreditAppraisal;
                 workflow.StaffId = model.createdBy;
                 workflow.OperationId = operationId;
                 workflow.TargetId = request.LOANAPPLICATIONID;
@@ -3625,7 +3627,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveCancelledApplcation(LoanApplicationViewModel data)
         {
-            var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CAM, data.loanApplicationId, data.companyId, data.createdBy);
+            var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CreditAppraisal, data.loanApplicationId, data.companyId, data.createdBy);
             var ApprovalStaffCount = ApprovalTrail.Where(a => a.requestStaffId != data.createdBy).Count();
             if (ApprovalStaffCount == 0)
             {

@@ -336,7 +336,7 @@ namespace FintrakBanking.Repositories.Credit
                         operationId = (int)OperationsEnum.LoanApplication;
                     } else if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.CAPChecklist)
                     {
-                        operationId = (int)OperationsEnum.CAM;
+                        operationId = (int)OperationsEnum.CreditAppraisal;
                     }
                 } else
                 {

@@ -86,7 +86,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            int operationId = (int)OperationsEnum.CAM;
+            int operationId = (int)OperationsEnum.CreditAppraisal;
             path = reportPath + "ReportViews/ApprovalTrailWith_SLA.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId +  "&operationId=" + operationId + "&loanApplicationId=" + loanApplicationId.ToString() + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue; 
             return path;
         }

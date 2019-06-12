@@ -852,7 +852,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int productFeeId { get; set; }
         public int loanChargeFeeId { get; set; }
         public short loanSystemTypeId { get; set; }
-        public int loanDetailId { get; set; }
+        public int applicationDetailIdId { get; set; }
         public int loanId { get; set; }
         public int productId { get; set; }
         public string chargeFeeName { get; set; }

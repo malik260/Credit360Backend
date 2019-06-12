@@ -122,6 +122,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string cancellationReason { get; set; }
         public int globalsla { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
+        public bool? isadhocapplication { get; set; }
 
         public string tenorString
         {

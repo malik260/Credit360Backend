@@ -5062,7 +5062,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (ent.isDeferred)
                 {
                     AddDeferredFees(ent, loanSystemTypeId, loanModel, facilityDetail);
-                    break;
+                    continue;
                 }
                 var chargeFee = context.TBL_CHARGE_FEE.Find(ent.chargeFeeId);
                 if(chargeFee != null & chargeFee.FEETARGETID == (short)ChargeFeeTargetEnum.ApprovedLoanAmount)
@@ -5128,14 +5128,15 @@ namespace FintrakBanking.Repositories.Credit
                 var fee = new TBL_DEFERRED_LOAN_FEE
                 {
                     CHARGEFEEID = feeModel.chargeFeeId,
-                    FEEAMOUNT = chargeByApprovedAmount ? facilityDetail.APPROVEDAMOUNT : feeModel.feeAmount,
-                    FEEDEPENDENTAMOUNT = chargeByApprovedAmount ? facilityDetail.APPROVEDAMOUNT : feeModel.feeDependentAmount,
+                    FEEAMOUNT = feeModel.feeAmount,
+                    FEEDEPENDENTAMOUNT = feeModel.feeDependentAmount,
                     FEERATEVALUE = feeModel.feeRateValue,
                     ISINTEGRALFEE = feeModel.isIntegralFee,
-                    LOANAPPLICATIONDETAILID = feeModel.loanDetailId,
+                    LOANAPPLICATIONDETAILID = feeModel.applicationDetailIdId,
                     //LOANAPPLICATIONDETAILID = chargeByApprovedAmount ? facilityDetail.LOANAPPLICATIONDETAILID : loanId,
                     //SOURCELOANID = loanId,
-                    LOANSYSTEMTYPEID = chargeByApprovedAmount ? (short)LoanSystemTypeEnum.LineFacility : loanSystemTypeId,
+                    LOANSYSTEMTYPEID = loanSystemTypeId,
+                    //LOANSYSTEMTYPEID = chargeByApprovedAmount ? (short)LoanSystemTypeEnum.LineFacility : loanSystemTypeId,
                     //SOURCELOANSYSTEMTYPEID = loanSystemTypeId,
                     //ISRECURRING = ent.recurring,
                     //RECURRINGPAYMENTDAY = 28,
@@ -6372,6 +6373,49 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex) { throw ex; }
         }
+
+        public IEnumerable<CamProcessedLoanViewModel> getApplicationsToBeAdhocApprovedForInitiateBooking(int companyId, int staffId, int branchId)
+        {
+            try
+            {
+                //var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
+                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId);
+                data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
+
+                foreach (var item in data)
+                {
+
+                    var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+
+                    if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
+                        item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED);
+
+                    if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
+                        item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
+
+                    if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
+                        item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
+
+                    item.disapprovedCount = (int)requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Count();
+
+                    if (item.disapprovedCount > 0)
+                        item.disApprovedAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Sum(s => s.AMOUNT_REQUESTED);
+
+                    item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
+
+                    var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
+                    if (disbursedLoan.Any())
+                    {
+                        item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
+                    }
+
+                }
+
+                return data;
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
 
         public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int staffId, int companyId, int applicationDetailId, int loanBookingRequestId)
         {

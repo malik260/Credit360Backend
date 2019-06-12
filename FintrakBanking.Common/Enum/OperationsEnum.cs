@@ -18,7 +18,7 @@ namespace FintrakBanking.Common.Enum
 
         TermLoanBooking = 1,
         LoanApplication = 2,
-        CAM = 6,
+        CreditAppraisal = 6,
         LoanPreliminaryEvaluation = 9,
         CollateralSearchInitiation = 12,
         RevolvingLoanBooking = 13,
@@ -121,6 +121,7 @@ namespace FintrakBanking.Common.Enum
         APS_ReleasePrincipaRequest =109,
         DailyWriteoffInterestAccural = 112,
         LoanRecoveryPayment = 113,
-
+        //
+        AdhocApproval = 133,
     }
 }

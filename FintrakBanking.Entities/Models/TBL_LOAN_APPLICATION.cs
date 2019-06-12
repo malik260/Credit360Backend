@@ -152,6 +152,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISCHECKLISTLOADED { get; set; }
 
+        public bool? ISADHOCAPPLICATION { get; set; }
+
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
