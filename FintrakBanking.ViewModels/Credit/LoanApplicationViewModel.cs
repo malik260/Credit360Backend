@@ -123,6 +123,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int globalsla { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
         public bool? isadhocapplication { get; set; }
+        public int approvedTenor { get; set; }
+        public List<LoanApplicationDatailViewModel> applicationDetails { get; set; }
 
         public string tenorString
         {
@@ -180,6 +182,8 @@ namespace FintrakBanking.ViewModels.Credit
                 return SlaStatus(sla, elapse);
             }
         }
+
+        public string customerType { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {

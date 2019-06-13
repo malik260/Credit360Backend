@@ -1088,12 +1088,24 @@ namespace FintrakBanking.Repositories.Credit
             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
 
             int? receiverLevelId = null;
-            receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID);
 
+            if (appl.ISADHOCAPPLICATION == true)
+            {
+                workflow.OperationId = (int)OperationsEnum.AdhocApproval;
+                receiverLevelId = GetFirstAdhocReceiverLevel(staffId, (int)OperationsEnum.AdhocApproval, appl.PRODUCTCLASSID);
+                var nextStaffId = GetFirstLevelStaffId((int)receiverLevelId);
+                workflow.ToStaffId = nextStaffId; //
+                appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                context.SaveChanges();
+            }
+            else
+            {
+                workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
+                receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID);
+                workflow.ToStaffId = staffId; //
+            }
             workflow.StaffId = staffId;
-            workflow.ToStaffId = staffId; //
             workflow.NextLevelId = receiverLevelId; // BREAKING!
-            workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
@@ -1146,8 +1158,8 @@ namespace FintrakBanking.Repositories.Credit
                         .ToList()
                         ;
 
-            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
-            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID).ToList();
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId).ToList();
             var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
 
             if (next == false) return staffRoleLevelId;
@@ -1155,6 +1167,41 @@ namespace FintrakBanking.Repositories.Credit
             var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
 
             return nextLevelId;
+        }
+
+        public int? GetFirstAdhocReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var staffRoleLevelId = levels.FirstOrDefault().levelId;
+
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
+
+            return nextLevelId;
+        }
+
+        public int? GetFirstLevelStaffId(int levelId)
+        {
+            var staffId = context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId).FirstOrDefault().STAFFID;
+            return staffId;
         }
 
         public string GetRefrenceNumber()
