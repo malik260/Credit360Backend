@@ -559,6 +559,29 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-facilities/{customerId}")]
+        public HttpResponseMessage GetCustomerFacilities(int customerId)
+        {
+            try
+            {
+                var data = repo.GetCustomerFacilities(customerId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
         [Route("loan-tranche-history/{loanReferenceNumber}")]
         public HttpResponseMessage GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber)
         {

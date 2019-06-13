@@ -5517,6 +5517,21 @@ namespace FintrakBanking.Repositories.Credit
                     }).ToList();
         }
 
+        public IEnumerable<LoanApplicationDetailViewModel> GetCustomerFacilities(int customerId)
+        {
+            var customerFacilities = (from a in context.TBL_LOAN_APPLICATION
+                                      join b in context.TBL_LOAN_APPLICATION_DETAIL 
+                                      on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                      where a.CUSTOMERID == customerId
+                                      select new LoanApplicationDetailViewModel()
+                                      {
+                                          loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                                          loanApplicationId = a.LOANAPPLICATIONID,
+                                          approvedProductName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME + " " + b.TBL_PRODUCT.PRODUCTNAME,
+                                      }).ToList();
+            return customerFacilities;
+        }
+
         public LoanViewModel GetLoan(int loanId)
         {
             var dataRecord = (from data in context.TBL_LOAN

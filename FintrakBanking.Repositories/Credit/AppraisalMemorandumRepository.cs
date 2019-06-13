@@ -621,14 +621,17 @@ namespace FintrakBanking.Repositories.Credit
                              tranchLevelId = a.TRANCHEAPPROVAL_LEVELID,
                              applicationDetails = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                                                    where d.LOANAPPLICATIONID == a.LOANAPPLICATIONID
-                                                   select new LoanApplicationDatailViewModel()
+                                                   select new LoanApplicationDetailViewModel()
                                                    {
-                                                       applicationDetailedId = d.LOANAPPLICATIONDETAILID,
+                                                       loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                                        proposedTenor = d.APPROVEDTENOR,
                                                        proposedProductId = d.PROPOSEDPRODUCTID,
-                                                       proposedProduct = d.TBL_PRODUCT.PRODUCTNAME,
+                                                       proposedProductName = d.TBL_PRODUCT.PRODUCTNAME,
                                                        proposedAmount = d.PROPOSEDAMOUNT,
-                                                       proposedRate = (int)d.PROPOSEDINTERESTRATE,
+                                                       proposedInterestRate = (int)d.PROPOSEDINTERESTRATE,
+                                                       customerName = a.CUSTOMERID.HasValue ? a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME : "",
+                                                       exchangeRate = d.EXCHANGERATE,
+                                                       currencyName = d.TBL_CURRENCY.CURRENCYNAME,
                                                    }).ToList(),
                                     //globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                     //                            .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID)
@@ -680,7 +683,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StaffId = model.createdBy;
                 workflow.TargetId = model.applicationId;
                 workflow.CompanyId = model.companyId;
-                workflow.Vote = model.vote;
+                //workflow.Vote = model.vote;
                 var test = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
                 workflow.NextLevelId = model.receiverLevelId;
                 var test2 = loanApp.GetFirstLevelStaffId((int)test);

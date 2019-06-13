@@ -1480,6 +1480,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
                 COLLATERALDETAIL = loan.collateralDetail,
                 ISADHOCAPPLICATION = loan.isadhocapplication,
+                LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
             };
 
             if (isGroupLoan)

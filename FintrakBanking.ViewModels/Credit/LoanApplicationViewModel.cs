@@ -123,8 +123,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int globalsla { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
         public bool? isadhocapplication { get; set; }
+        public int? loanApprovedLimitId { get; set; }
         public int approvedTenor { get; set; }
-        public List<LoanApplicationDatailViewModel> applicationDetails { get; set; }
+        public List<LoanApplicationDetailViewModel> applicationDetails { get; set; }
 
         public string tenorString
         {
