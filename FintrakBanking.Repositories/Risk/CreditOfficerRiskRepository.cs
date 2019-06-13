@@ -89,7 +89,7 @@ namespace FintrakBanking.Repositories.Risk
         public MatrixGrid GetCreditOfficerRiskRating(string username)
         {
             if (Init(username) == false || !IsCreditOfficer()) return new MatrixGrid();
-            if (RatingExpired()) ComputeAndUpdateRating();
+            // if (RatingExpired()) ComputeAndUpdateRating();
             return GetCurrentRiskRating();
         }
 
@@ -111,12 +111,19 @@ namespace FintrakBanking.Repositories.Risk
 
         private MatrixGrid GetCurrentRiskRating()
         {
-            if (matrix == null) return new MatrixGrid();
+
+            var lastRating = context.TBL_CORR_OFFICER_RATING
+               .Where(x => x.STAFFID == officer.STAFFID)
+               .OrderByDescending(x => x.OFFICERRATINGID)
+               .FirstOrDefault();
+
+            if (lastRating == null) return new MatrixGrid();
+            var matrix = GetMatrixDescription(lastRating.CORRSCORE);
             return new MatrixGrid
             {
-                id = matrix.RISKMATRIXID,
-                rating = matrix.RATING,
-                description = matrix.DESCRIPTION
+                id = matrix.id,
+                rating = matrix.rating,
+                description = matrix.description
             };
         }
 
@@ -189,6 +196,7 @@ namespace FintrakBanking.Repositories.Risk
                 })
                 .ToList();
         }
+
         public bool AddRatingPeriod(RatingPeriodViewModel model)
         {
             if (model.startDate >= model.endDate) throw new SecureException("End Date must be greater than Start Date!");

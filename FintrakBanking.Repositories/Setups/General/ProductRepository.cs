@@ -117,7 +117,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 customerTypeId = 2;
             }
             return (from data in context.TBL_PRODUCT_CLASS
-                    where data.CUSTOMERTYPEID == customerTypeId && data.PRODUCT_CLASS_PROCESSID == processId
+                    where data.PRODUCT_CLASS_PROCESSID == processId
+                    //where data.CUSTOMERTYPEID == customerTypeId && data.PRODUCT_CLASS_PROCESSID == processId
                     //where data.OperationTypeId == operationTypeId
                     select new LookupViewModel()
                     {
@@ -146,10 +147,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     }).ToList();
         }
+
         public IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId)
         {
             return (from data in context.TBL_PRODUCT_CLASS
-                    where data.CUSTOMERTYPEID == customerTypeId
+                    //where data.CUSTOMERTYPEID == customerTypeId
                     //where data.OperationTypeId == operationTypeId
                     select new LookupViewModel()
                     {
@@ -563,11 +565,11 @@ namespace FintrakBanking.Repositories.Setups.General
                                    productClassId = data.PRODUCTCLASSID,
                                    productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                                    riskRatingId = data.RISKRATINGID,
-                                   customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
+                                   //customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
                                    penalChargeGl = data.PENALCHARGEGL,
                                    penalChargeGlCode = (data.PENALCHARGEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                                   customerTypeId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
+                                   //customerTypeId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
 
                                    productPriceIndexId = data.PRODUCTPRICEINDEXID,
                                    productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
@@ -3167,8 +3169,8 @@ namespace FintrakBanking.Repositories.Setups.General
                             productClassType = p.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
                             productClassProcessId = p.PRODUCT_CLASS_PROCESSID,
                             productClassProcess = p.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESS_NAME,
-                            customerTypeId = p.CUSTOMERTYPEID,
-                            customerType = p.TBL_CUSTOMER_TYPE.NAME,
+                            //customerTypeId = p.CUSTOMERTYPEID,
+                            ////customerType = p.TBL_CUSTOMER_TYPE.NAME,
                             profileBusinessUnitName = p.BUSINESSUNITID != null ? p.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                             businessUnitId = p.BUSINESSUNITID,
 
@@ -3191,7 +3193,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             productClass.PRODUCTCLASSNAME = model.productClassName;
                             productClass.PRODUCTCLASSTYPEID = model.productClassTypeId;
                             productClass.PRODUCT_CLASS_PROCESSID = model.productClassProcessId;
-                            productClass.CUSTOMERTYPEID = model.customerTypeId;
+                            //productClass.CUSTOMERTYPEID = model.customerTypeId;
                             productClass.GLOBALSLA = model.globalSla;
                             productClass.BUSINESSUNITID = model.businessUnitId;
                         }
@@ -3203,7 +3205,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             PRODUCTCLASSNAME = model.productClassName,
                             PRODUCTCLASSTYPEID = model.productClassTypeId,
                             PRODUCT_CLASS_PROCESSID = model.productClassProcessId,
-                            CUSTOMERTYPEID = model.customerTypeId,
+                            //CUSTOMERTYPEID = model.customerTypeId,
                             GLOBALSLA = model.globalSla
                         };
                         context.TBL_PRODUCT_CLASS.Add(productClass);
