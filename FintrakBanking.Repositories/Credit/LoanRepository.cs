@@ -5527,7 +5527,12 @@ namespace FintrakBanking.Repositories.Credit
                                       {
                                           loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                                           loanApplicationId = a.LOANAPPLICATIONID,
-                                          approvedProductName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME + " " + b.TBL_PRODUCT.PRODUCTNAME,
+                                          approvedProductName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME + " " + b.TBL_PRODUCT.PRODUCTNAME + " " + a.APPLICATIONREFERENCENUMBER,
+                                          loanTypeId = b.TBL_PRODUCT.PRODUCTTYPEID,
+                                          requireCollateralTypeId = a.REQUIRECOLLATERALTYPEID,
+                                          relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                          loanPurpose = a.LOANINFORMATION,
+                                          productClassId = a.PRODUCTCLASSID,
                                       }).ToList();
             return customerFacilities;
         }

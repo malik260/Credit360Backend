@@ -390,6 +390,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public double? productPriceIndexRate { get; set; }
 
+        public int loanTypeId { get; set; }
+
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
 
         public EducationLoanViewModel educationLoan { get; set; }
@@ -449,6 +451,8 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string email { get; set; }
+        public short? requireCollateralTypeId { get; set; }
+        public int relationshipOfficerId { get; set; }
 
         // public int? loanreViewApplicationId { get; set; }
     }
