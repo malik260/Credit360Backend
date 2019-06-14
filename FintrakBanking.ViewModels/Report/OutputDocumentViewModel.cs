@@ -53,6 +53,7 @@ namespace FintrakBanking.ViewModels.Report
         public string officer { get; set; }
         public string name { get; set; }
         public string signature { get; set; }
+        public int id { get; set; }
     }
 
     public class OutPutDocumentCollateralViewModel
@@ -75,6 +76,7 @@ namespace FintrakBanking.ViewModels.Report
         public string officer { get; set; }
         public string name { get; set; }
         public string signature { get; set; }
+        public int id { get; set; }
     }
 
     public class OutPutDocumentFeeViewModel

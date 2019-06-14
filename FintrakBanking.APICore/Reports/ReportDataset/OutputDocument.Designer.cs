@@ -1652,6 +1652,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnisRenewal;
             
+            private global::System.Data.DataColumn columnnewApplicationDate;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public CurrentRequestDataTable() {
@@ -1863,6 +1865,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn newApplicationDateColumn {
+                get {
+                    return this.columnnewApplicationDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1920,7 +1930,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         string purpose, 
                         string productPriceIndex, 
                         string offerLetterIntroduction, 
-                        string isRenewal) {
+                        string isRenewal, 
+                        string newApplicationDate) {
                 CurrentRequestRow rowCurrentRequestRow = ((CurrentRequestRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         loanApplicationId,
@@ -1944,7 +1955,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         purpose,
                         productPriceIndex,
                         offerLetterIntroduction,
-                        isRenewal};
+                        isRenewal,
+                        newApplicationDate};
                 rowCurrentRequestRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowCurrentRequestRow);
                 return rowCurrentRequestRow;
@@ -1989,6 +2001,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnproductPriceIndex = base.Columns["productPriceIndex"];
                 this.columnofferLetterIntroduction = base.Columns["offerLetterIntroduction"];
                 this.columnisRenewal = base.Columns["isRenewal"];
+                this.columnnewApplicationDate = base.Columns["newApplicationDate"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2038,6 +2051,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnofferLetterIntroduction);
                 this.columnisRenewal = new global::System.Data.DataColumn("isRenewal", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnisRenewal);
+                this.columnnewApplicationDate = new global::System.Data.DataColumn("newApplicationDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnnewApplicationDate);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5155,6 +5170,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string newApplicationDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableCurrentRequest.newApplicationDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'newApplicationDate\' in table \'CurrentRequest\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCurrentRequest.newApplicationDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsloanApplicationIdNull() {
                 return this.IsNull(this.tableCurrentRequest.loanApplicationIdColumn);
             }
@@ -5415,6 +5446,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetisRenewalNull() {
                 this[this.tableCurrentRequest.isRenewalColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsnewApplicationDateNull() {
+                return this.IsNull(this.tableCurrentRequest.newApplicationDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetnewApplicationDateNull() {
+                this[this.tableCurrentRequest.newApplicationDateColumn] = global::System.Convert.DBNull;
             }
         }
         

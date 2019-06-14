@@ -241,6 +241,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        repaymentTerms = b.REPAYMENTTERMS ?? "Not applicable",
                                        purpose = b.LOANPURPOSE,
                                        productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x=>x.PRODUCTPRICEINDEXID==b.PRODUCTPRICEINDEXID).Select(x=>x.PRICEINDEXNAME).FirstOrDefault() : "",
+                                       newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE
                                    }).ToList();
 
                 if (loanDetails != null)

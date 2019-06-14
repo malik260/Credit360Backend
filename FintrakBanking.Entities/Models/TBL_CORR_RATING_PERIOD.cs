@@ -6,26 +6,15 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CORR_OFFICER_RATING")]
-    public partial class TBL_CORR_OFFICER_RATING
+    [Table("TBL_CORR_RATING_PERIOD")]
+    public partial class TBL_CORR_RATING_PERIOD
     {
-        public TBL_CORR_OFFICER_RATING()
-        {
-            TBL_CORR_OFFICER_RATING_DETAIL = new HashSet<TBL_CORR_OFFICER_RATING_DETAIL>();
-        }
-
         [Key]
-        public int OFFICERRATINGID { get; set; }
-
-        public int STAFFID { get; set; }
-
         public int RATINGPERIODID { get; set; }
 
-        public int CORRSCORE { get; set; }
+        public DateTime STARTDATE { get; set; }
 
-        [Required]
-        [StringLength(20)]
-        public string CORRCOMMENT { get; set; }
+        public DateTime ENDDATE { get; set; }
 
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
@@ -35,7 +24,10 @@
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public virtual ICollection<TBL_CORR_OFFICER_RATING_DETAIL> TBL_CORR_OFFICER_RATING_DETAIL { get; set; }
-
     }
 }
+/*
+
+public virtual DbSet<TBL_CORR_RATING_PERIOD> TBL_CORR_RATING_PERIOD { get; set; }
+
+*/

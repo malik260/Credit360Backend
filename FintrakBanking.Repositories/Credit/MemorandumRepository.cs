@@ -1434,7 +1434,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
-                        <th><b>Level</b></th>
+                        <th><b>Role</b></th>
                         <th><b>Name</b></th>
                         <th><b>Decision</b></th>
                         <th><b>Comment</b></th>

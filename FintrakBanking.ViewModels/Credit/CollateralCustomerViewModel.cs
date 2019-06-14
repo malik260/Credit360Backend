@@ -6,7 +6,9 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class CollateralViewModel : GeneralEntity 
     {
+
         public bool requireInsurancePolicy;
+        public int isRegistrationDoneViaLoanApplication;
         public string collateralDetail { get; set; }
         public decimal? collateralSearchAmount { get; set; }
         public decimal? chartingAmount { get; set; }
@@ -365,6 +367,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string interval { get; set; }
         public string relatedCollateralCode { get; set; }
         public decimal? estimatedValue { get; set; }
+        public int registrationTypeId { get; set; }
+        public int loanApplicationCustomerId { get; set; }
+        public int applicationCustomerId { get; set; }
+        public int? loanApplicationId { get; set; }
     }
 
     public class crossGarantee

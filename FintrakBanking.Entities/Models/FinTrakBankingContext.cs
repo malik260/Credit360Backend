@@ -483,7 +483,11 @@ namespace FintrakBanking.Entities.Models
 
         public virtual DbSet<TBL_CORR_RISK_MATRIX> TBL_CORR_RISK_MATRIX { get; set; }
         public virtual DbSet<TBL_CORR_OFFICER_RATING> TBL_CORR_OFFICER_RATING { get; set; }
-        public virtual DbSet<TBL_CORR_FREQUENCY_SETUP> TBL_CORR_FREQUENCY_SETUP { get; set; }
+        public virtual DbSet<TBL_CORR_RATING_PERIOD> TBL_CORR_RATING_PERIOD { get; set; }
+        public virtual DbSet<TBL_CORR_OFFICER_RATING_DETAIL> TBL_CORR_OFFICER_RATING_DETAIL { get; set; }
+        public virtual DbSet<TBL_CORR_KEY_INDICATOR> TBL_CORR_KEY_INDICATOR { get; set; }
+        public virtual DbSet<TBL_CORR_ASSESSMENT_PARAMETER> TBL_CORR_ASSESSMENT_PARAMETER { get; set; }
+
 
         public virtual DbSet<TBL_DEFERRED_LOAN_FEE> TBL_DEFERRED_LOAN_FEE { get; set; }
 
