@@ -5524,10 +5524,10 @@ namespace FintrakBanking.Repositories.Credit
                                       on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                                       where a.CUSTOMERID != customerId &&
                                       ((a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.AvailmentCompleted)
-                                        || (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestInitiated)
-                                        || (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestCompleted)
-                                        || (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LoanBookingInProgress)
-                                        || (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LoanBookingCompleted))
+                                        && (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestInitiated)
+                                        && (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestCompleted)
+                                        && (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LoanBookingInProgress)
+                                        && (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LoanBookingCompleted))
                                         && a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                                         && a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                                       select new LoanApplicationDetailViewModel()
@@ -5540,7 +5540,7 @@ namespace FintrakBanking.Repositories.Credit
                                           relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                                           loanPurpose = a.LOANINFORMATION,
                                           productClassId = a.PRODUCTCLASSID,
-                                      }).ToList();
+                                      }).OrderBy(d => d.approvedProductName);
             return customerFacilities;
         }
 
