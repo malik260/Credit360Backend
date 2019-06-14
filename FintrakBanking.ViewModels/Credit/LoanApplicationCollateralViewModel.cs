@@ -73,6 +73,16 @@ namespace FintrakBanking.ViewModels.Credit
         public int proposedTenor { get; set; }
 
         public decimal proposedAmount { get; set; } 
+
+        public string proposedProduct { get; set; }
+
+        public string customerName { get; set; }
+
+        public string currencyName { get; set; }
+
+        public decimal exchangeAmount { get; set; }
+
+        public double exchangeRate { get; set; }
     }
 
     public class LoanApplicationCommentViewModel 

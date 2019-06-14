@@ -122,6 +122,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string cancellationReason { get; set; }
         public int globalsla { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
+        public bool? isadhocapplication { get; set; }
+        public int? loanApprovedLimitId { get; set; }
+        public int approvedTenor { get; set; }
+        public List<LoanApplicationDetailViewModel> applicationDetails { get; set; }
 
         public string tenorString
         {
@@ -179,6 +183,8 @@ namespace FintrakBanking.ViewModels.Credit
                 return SlaStatus(sla, elapse);
             }
         }
+
+        public string customerType { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {
@@ -384,6 +390,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public double? productPriceIndexRate { get; set; }
 
+        public int loanTypeId { get; set; }
+
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
 
         public EducationLoanViewModel educationLoan { get; set; }
@@ -443,6 +451,8 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string email { get; set; }
+        public short? requireCollateralTypeId { get; set; }
+        public int relationshipOfficerId { get; set; }
 
         // public int? loanreViewApplicationId { get; set; }
     }

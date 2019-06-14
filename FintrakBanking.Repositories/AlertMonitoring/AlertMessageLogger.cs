@@ -3313,7 +3313,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
             foreach (var slaAlert in notification)
             {
-                if (slaAlert.operationId == (int)OperationsEnum.LoanApplication || slaAlert.operationId == (int)OperationsEnum.CAM || slaAlert.operationId == (int)OperationsEnum.OfferLetterApproval )
+                if (slaAlert.operationId == (int)OperationsEnum.LoanApplication || slaAlert.operationId == (int)OperationsEnum.CreditAppraisal || slaAlert.operationId == (int)OperationsEnum.OfferLetterApproval )
                 {
                   var applicationaReferenceNumber =  context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == slaAlert.targetId).Select(x=>x.APPLICATIONREFERENCENUMBER).FirstOrDefault();
 

@@ -713,7 +713,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         //Saheed
         public IEnumerable<SLANotificationViewModel> SLAMonitoring(DateTime startDate, DateTime endDate, int approvalStatus, int operationId)
         {
-            int[] operations = { (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.CAM, (int)OperationsEnum.ContigentLoanBooking ,
+            int[] operations = { (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.ContigentLoanBooking ,
            (int)OperationsEnum.ContingentLiabilityRenewal,(int)OperationsEnum.ContingentLiabilityUsage,(int)OperationsEnum.ContingentRequestBooking,
             (int)OperationsEnum.CommercialLoanBooking};
 

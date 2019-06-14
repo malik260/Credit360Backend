@@ -489,6 +489,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CORR_ASSESSMENT_PARAMETER> TBL_CORR_ASSESSMENT_PARAMETER { get; set; }
 
 
+        public virtual DbSet<TBL_DEFERRED_LOAN_FEE> TBL_DEFERRED_LOAN_FEE { get; set; }
+
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

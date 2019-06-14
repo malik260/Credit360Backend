@@ -112,7 +112,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\Gbenga\Desktop\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -134,6 +134,7 @@
     <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="Credit\CreditCommonRepository.cs" />
     <Compile Include="Credit\DashboardRepository.cs" />
+    <Compile Include="Credit\DeferredFeeRepository.cs" />
     <Compile Include="Media\DocumentCategoryRepository.cs" />
     <Compile Include="Media\DocumentCategoryTypeRepository.cs" />
     <Compile Include="Media\DocumentTypeRepository.cs" />
