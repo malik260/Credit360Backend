@@ -860,12 +860,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ProductViewModel> GetAllProductByProductClassAndCustomerType(int productClassId, int customerTypeId)
         {
-            if (customerTypeId == 0)
-            {
-                customerTypeId = 2;
-            }
-            //var productData = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
-            var product = AllProduct().Where(c => c.productClassId == productClassId && c.customerTypeId == customerTypeId && (c.productGroupId == 1)).ToList();
+            List<ProductViewModel> product = new List<ProductViewModel>();
+
+            if (customerTypeId == 0) customerTypeId = 3;
+            if (customerTypeId == 3) product = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1)).ToList();
+            else product = AllProduct().Where(c => c.productClassId == productClassId && c.customerTypeId == customerTypeId && (c.productGroupId == 1)).ToList();
+
             foreach (var item in product)
             {
                 var ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
