@@ -2578,6 +2578,18 @@ namespace FintrakBanking.Repositories.Customer
             var type = from a in context.TBL_CUSTOMER_TYPE
                        select new CustomerTypeViewModels
                        {
+                           isHybrid = a.ISHYBRID,
+                           name = a.NAME,
+                           customerTypeId = a.CUSTOMERTYPEID
+                       };
+            return type.Where(x => x.isHybrid == false).ToList();
+        }
+
+        public IEnumerable<CustomerTypeViewModels> GetCustomerTypeWithHybrid()
+        {
+            var type = from a in context.TBL_CUSTOMER_TYPE
+                       select new CustomerTypeViewModels
+                       {
                            name = a.NAME,
                            customerTypeId = a.CUSTOMERTYPEID
                        };

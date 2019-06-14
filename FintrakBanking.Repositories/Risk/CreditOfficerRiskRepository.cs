@@ -17,11 +17,11 @@ namespace FintrakBanking.Repositories.Risk
     {
         private FinTrakBankingContext context;
         private TBL_STAFF officer;
-        private TBL_CORR_RATING_PERIOD frequencySetup;
-        private TBL_CORR_RISK_MATRIX matrix;
+        private TBL_CORR_RATING_PERIOD currentRatingPeriod;
+        //private TBL_CORR_RISK_MATRIX matrix;
         private TBL_CORR_OFFICER_RATING currentRating;
-        private decimal totalExposure;
-        private int totalBorrowingCustomers;
+        //private decimal totalExposure;
+        //private int totalBorrowingCustomers;
         private List<int> creditOfficerRoleIds = new List<int> { 6, 7, 9 };
 
         public CreditOfficerRiskRepository(
@@ -35,12 +35,12 @@ namespace FintrakBanking.Repositories.Risk
         {
             if (officer == null) officer = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == username.ToLower());
             if (officer == null) return false;
-            if (frequencySetup == null) frequencySetup = context.TBL_CORR_RATING_PERIOD.OrderByDescending(x => x.STARTDATE).FirstOrDefault();
+            if (currentRatingPeriod == null) currentRatingPeriod = context.TBL_CORR_RATING_PERIOD.OrderByDescending(x => x.STARTDATE).FirstOrDefault();
             if (currentRating == null) currentRating = context.TBL_CORR_OFFICER_RATING
                     .Where(x => x.STAFFID == officer.STAFFID)
                     .OrderByDescending(x => x.OFFICERRATINGID)
                     .FirstOrDefault();
-            if (matrix == null) matrix = context.TBL_CORR_RISK_MATRIX.FirstOrDefault(x => x.RISKMATRIXID == officer.CORRMATRIXGRIDRATINGID);
+            //if (matrix == null) matrix = context.TBL_CORR_RISK_MATRIX.FirstOrDefault(x => x.RISKMATRIXID == currentRating.CORRSCORE);
             return true;
         }
 
@@ -96,42 +96,28 @@ namespace FintrakBanking.Repositories.Risk
         private void ComputeAndUpdateRating()
         {
             ComputeCreditOfficerRiskRating();
-            UpdateCreditOfficerRating();
+            //UpdateCreditOfficerRating();
         }
 
-        private void UpdateCreditOfficerRating()
-        {
-            var lastRating = context.TBL_CORR_OFFICER_RATING
-                .Where(x => x.STAFFID == officer.STAFFID)
-                .OrderByDescending(x => x.OFFICERRATINGID)
-                .FirstOrDefault();
-            officer.CORRMATRIXGRIDRATINGID = GetMatrixDescription(lastRating.CORRSCORE).id;
-            context.SaveChanges();
-        }
+        //private void UpdateCreditOfficerRating()
+        //{
+        //    var lastRating = context.TBL_CORR_OFFICER_RATING
+        //        .Where(x => x.STAFFID == officer.STAFFID)
+        //        .OrderByDescending(x => x.OFFICERRATINGID)
+        //        .FirstOrDefault();
+        //    officer.CORRMATRIXGRIDRATINGID = GetMatrixDescription(lastRating.CORRSCORE).id;
+        //    context.SaveChanges();
+        //}
 
         private MatrixGrid GetCurrentRiskRating()
         {
-
-            var lastRating = context.TBL_CORR_OFFICER_RATING
-               .Where(x => x.STAFFID == officer.STAFFID)
-               .OrderByDescending(x => x.OFFICERRATINGID)
-               .FirstOrDefault();
-
-            if (lastRating == null) return new MatrixGrid();
-            var matrix = GetMatrixDescription(lastRating.CORRSCORE);
-            return new MatrixGrid
-            {
-                id = matrix.id,
-                rating = matrix.rating,
-                description = matrix.description
-            };
+            if (currentRating == null) return new MatrixGrid();
+            return GetMatrixDescription(currentRating.CORRSCORE);
         }
 
         private bool RatingExpired()
         {
-            if (officer.CORRMATRIXGRIDRATINGID == null) return false;
-            return frequencySetup.RATINGPERIODID != currentRating.RATINGPERIODID
-                ;
+            return currentRatingPeriod.RATINGPERIODID != currentRating.RATINGPERIODID;
         }
 
         private bool IsCreditOfficer()

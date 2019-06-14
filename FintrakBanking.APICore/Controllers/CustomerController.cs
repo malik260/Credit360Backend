@@ -703,6 +703,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customertype-with-hybrid")]
+        public HttpResponseMessage GetCustomerTypeWithHybrid()
+        {
+            try
+            {
+                var data = repo.GetCustomerTypeWithHybrid();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpPut]
         [ClaimsAuthorization]
         [Route("{customerId}")]

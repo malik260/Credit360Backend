@@ -564,6 +564,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                    productCategoryName = data.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
                                    productClassId = data.PRODUCTCLASSID,
                                    productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                                   customerTypeId = data.CUSTOMERTYPEID,
                                    riskRatingId = data.RISKRATINGID,
                                    //customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
                                    penalChargeGl = data.PENALCHARGEGL,
@@ -854,6 +855,49 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return ProductSearch(companyId).Where(c => c.productGroupId == (int)ProductGroupEnum.LoansAndAdvances);
         }
+
+
+
+        public IEnumerable<ProductViewModel> GetAllProductByProductClassAndCustomerType(int productClassId, int customerTypeId)
+        {
+            if (customerTypeId == 0)
+            {
+                customerTypeId = 2;
+            }
+            //var productData = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
+            var product = AllProduct().Where(c => c.productClassId == productClassId && c.customerTypeId == customerTypeId && (c.productGroupId == 1)).ToList();
+            foreach (var item in product)
+            {
+                var ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
+                {
+                    customerLimit = d.CUSTOMER_LIMIT,
+                    collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                    collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+                    productLimit = d.PRODUCT_LIMIT,
+                    isInvoiceBased = d.ISINVOICEBASED
+
+                }).FirstOrDefault();
+
+                item.productBehaviour = ProductBehaviour;
+
+
+                var currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
+                                .Select(c => new ProductCurrencyViewModel()
+                                {
+                                    productId = c.PRODUCTID,
+                                    productCurrencyId = c.PRODUCTCURRENCYID,
+                                    currencyId = c.CURRENCYID,
+                                    currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
+                                }).ToList();
+                item.currencies = currencies;
+            }
+
+
+            return product;
+
+            //return AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
+        }
+
 
         public IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId, int customerTypeId)
         {
@@ -1458,6 +1502,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         productModel.APPROVALSTATUSID = approvalStatusId;
                         existingProduct.PRODUCTCLASSID = productModel.PRODUCTCLASSID;
+                        existingProduct.CUSTOMERTYPEID = productModel.CUSTOMERTYPEID;
                         //existingProduct.PRODUCTCODE = productModel.PRODUCTCODE;
                         existingProduct.PRODUCTNAME = productModel.PRODUCTNAME;
                         existingProduct.PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION;
@@ -1562,6 +1607,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         {
                             COMPANYID = productModel.COMPANYID,
                             PRODUCTTYPEID = productModel.PRODUCTTYPEID,
+                            CUSTOMERTYPEID = productModel.CUSTOMERTYPEID,
                             PRODUCTCATEGORYID = productModel.PRODUCTCATEGORYID,
                             PRODUCTCLASSID = productModel.PRODUCTCLASSID,
                             PRODUCTCODE = productModel.PRODUCTCODE,
@@ -1798,6 +1844,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 PENALCHARGERATE = productModel.penalChargeRate,
                 USEDBYLOS = productModel.usedByLos,
                 COMPANYID = productModel.companyId,
+                CUSTOMERTYPEID = productModel.customerTypeId,
                 PRODUCTTYPEID = productModel.productTypeId,
                 PRODUCTCATEGORYID = productModel.productCategoryId,
                 PRODUCTCLASSID = (short)productModel.productClassId,
