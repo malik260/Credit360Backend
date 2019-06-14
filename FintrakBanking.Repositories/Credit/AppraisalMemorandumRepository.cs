@@ -534,12 +534,13 @@ namespace FintrakBanking.Repositories.Credit
                                 && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                 && a.COMPANYID == companyId
                                 && (classId == null) ? true : (a.PRODUCTCLASSID == (short?)classId)
-                                && (a.ISADHOCAPPLICATION == true && a.OPERATIONID == (int)OperationsEnum.AdhocApproval) select a
+                                && a.ISADHOCAPPLICATION == true select a
                             ).ToList();
 
             var querytest2 = (from b in context.TBL_APPROVAL_TRAIL where
                      
-                                 b.OPERATIONID == operationId
+                                 (b.OPERATIONID == (int)OperationsEnum.CreditAppraisal
+                                 || b.OPERATIONID == (int)OperationsEnum.AdhocApproval)
                                  && b.APPROVALSTATEID != (int)ApprovalState.Ended
                                  && b.RESPONSESTAFFID == null
                                  && levelIds.Contains((int)b.TOAPPROVALLEVELID)
@@ -558,7 +559,8 @@ namespace FintrakBanking.Repositories.Credit
                          orderby a.LOANAPPLICATIONID
                          join b in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals b.TARGETID where
                      (
-                         b.OPERATIONID == operationId
+                         (b.OPERATIONID == (int)OperationsEnum.CreditAppraisal
+                          || b.OPERATIONID == (int)OperationsEnum.AdhocApproval)
                          && b.APPROVALSTATEID != (int)ApprovalState.Ended
                          && b.RESPONSESTAFFID == null
                          && levelIds.Contains((int)b.TOAPPROVALLEVELID)
@@ -677,17 +679,17 @@ namespace FintrakBanking.Repositories.Credit
 
                 // WORKFLOW
                 workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
-                workflow.OperationId = operationId;
+                //workflow.OperationId = operationId;
                 //workflow.ProductClassId = appl.PRODUCTCLASSID;
                 //workflow.ProductId = model.productId;
                 workflow.StaffId = model.createdBy;
                 workflow.TargetId = model.applicationId;
                 workflow.CompanyId = model.companyId;
                 //workflow.Vote = model.vote;
-                var test = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
-                workflow.NextLevelId = model.receiverLevelId;
+                var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
+                workflow.NextLevelId = test;
                 var test2 = loanApp.GetFirstLevelStaffId((int)test);
-                workflow.ToStaffId = model.receiverStaffId;
+                workflow.ToStaffId = test2;
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
                 string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);

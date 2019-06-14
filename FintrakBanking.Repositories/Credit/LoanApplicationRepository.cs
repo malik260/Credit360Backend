@@ -1093,21 +1093,20 @@ namespace FintrakBanking.Repositories.Credit
 
             if (appl.ISADHOCAPPLICATION == true)
             {
-                workflow.OperationId = (int)OperationsEnum.AdhocApproval;
                 receiverLevelId = GetFirstAdhocReceiverLevel(staffId, (int)OperationsEnum.AdhocApproval, appl.PRODUCTCLASSID);
                 var nextStaffId = GetFirstLevelStaffId((int)receiverLevelId);
                 workflow.ToStaffId = nextStaffId; //
-                appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                //appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
                 context.SaveChanges();
             }
             else
             {
-                workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
                 receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID);
                 workflow.ToStaffId = staffId; //
             }
             workflow.StaffId = staffId;
             workflow.NextLevelId = receiverLevelId; // BREAKING!
+            workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
@@ -1175,7 +1174,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var staff = context.TBL_STAFF.Find(staffId);
 
-            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
                     .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                     .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
@@ -1257,6 +1256,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     loanData.APPLICATIONAMOUNT = loan.applicationAmount;
                     loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
+                    loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
+                    loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
                 }
 
                 if (loanData == null) // first time
@@ -1663,6 +1664,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId;
             this.loanData.LOANTERMSHEETID = loan.loanTermSheetId;
             this.loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
+            this.loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
