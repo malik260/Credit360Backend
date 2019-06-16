@@ -1098,6 +1098,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.ToStaffId = nextStaffId; //
                 workflow.OperationId = (int)OperationsEnum.AdhocApproval;
                 appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
             }
             else
@@ -1202,7 +1203,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public int? GetFirstLevelStaffId(int levelId)
         {
-            var staffId = context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId).FirstOrDefault().STAFFID;
+            if (levelId == 0)
+            {
+                //var staffId1 = context.TBL_APPROVAL_LEVEL_STAFF.LastOrDefault();
+            }
+            var staffId = (int?)context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId).FirstOrDefault()?.STAFFID ?? 0;
             return staffId;
         }
 

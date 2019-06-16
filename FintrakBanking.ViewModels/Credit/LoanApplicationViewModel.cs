@@ -22,7 +22,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerId { get; set; }
         public int? operationId { get; set; }
         public bool requireCollateral { get; set; }
-        public DateTime newApplicationDate { get; set; }
+        public DateTime? newApplicationDate { get; set; }
         
         public short? branchId { get; set; }
         public short? productClassId { get; set; }
@@ -282,6 +282,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime applicationDate { get; set; }
         public short applicationStatusId { get; set; }
         public int approvalStatusId { get; set; }
+        public DateTime systemArrivalDate { get; set; }
         public string firstName { get; set; }
         public string middleName { get; set; }
         public string lastName { get; set; }

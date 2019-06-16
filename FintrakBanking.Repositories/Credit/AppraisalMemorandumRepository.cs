@@ -583,6 +583,7 @@ namespace FintrakBanking.Repositories.Credit
                              relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                              relationshipManagerId = a.RELATIONSHIPMANAGERID,
                              applicationDate = a.APPLICATIONDATE,
+                             newApplicationDate = a.DATEACTEDON,
                              //newApplicationDate = x.a.APPLICATIONDATE,
                              applicationAmount = a.APPLICATIONAMOUNT,
                              approvedAmount = a.APPROVEDAMOUNT,
@@ -679,18 +680,19 @@ namespace FintrakBanking.Repositories.Credit
 
                 // WORKFLOW
                 workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
-                workflow.OperationId = operationId;
+                //workflow.OperationId = operationId;
                 //workflow.ProductClassId = appl.PRODUCTCLASSID;
                 //workflow.ProductId = model.productId;
                 workflow.StaffId = model.createdBy;
                 workflow.TargetId = model.applicationId;
                 workflow.CompanyId = model.companyId;
                 //workflow.Vote = model.vote;
-                var test3 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
+                var test4 = model.receiverLevelId;
+                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
                 var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
-                var test2 = loanApp.GetFirstLevelStaffId((int)test3);
-                workflow.NextLevelId = test3;
-                workflow.ToStaffId = test2;
+                var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel);
+                workflow.NextLevelId = nextLevel;
+                workflow.ToStaffId = nextStaff;
                 workflow.StatusId = 0;
                 workflow.Comment = model.comment;
                 string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
@@ -784,17 +786,18 @@ namespace FintrakBanking.Repositories.Credit
       */
 
                 //            LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate,model.vote , (short)model.forwardAction); // LOG CHANGES
-                context.SaveChanges();
 
                 //var lastStatus = workflow.StatusId; // prevents the nex
 
                 if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
                     appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
+                    appl.AVAILMENTDATE = DateTime.Now;
                     workflow.SetResponse = false;
                     workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.LoanBookingRequest, model.applicationId, null, "New approved application", true, false);
                 }
-
+                appl.DATEACTEDON = DateTime.Now;
+                context.SaveChanges();
                 //workflow.Response.success = true;
                 workflow.Response.isFinal = generateOutPutDocument;
                 return workflow.Response;

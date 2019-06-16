@@ -668,7 +668,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
             }
 
-
             //            var productData = (from data in context.TBL_PRODUCT
             //                               select new ProductViewModel()
             //                               {
