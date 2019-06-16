@@ -679,18 +679,19 @@ namespace FintrakBanking.Repositories.Credit
 
                 // WORKFLOW
                 workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
-                //workflow.OperationId = operationId;
+                workflow.OperationId = operationId;
                 //workflow.ProductClassId = appl.PRODUCTCLASSID;
                 //workflow.ProductId = model.productId;
                 workflow.StaffId = model.createdBy;
                 workflow.TargetId = model.applicationId;
                 workflow.CompanyId = model.companyId;
                 //workflow.Vote = model.vote;
+                var test3 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
                 var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
-                workflow.NextLevelId = test;
-                var test2 = loanApp.GetFirstLevelStaffId((int)test);
+                var test2 = loanApp.GetFirstLevelStaffId((int)test3);
+                workflow.NextLevelId = test3;
                 workflow.ToStaffId = test2;
-                workflow.StatusId = model.forwardAction;
+                workflow.StatusId = 0;
                 workflow.Comment = model.comment;
                 string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
 

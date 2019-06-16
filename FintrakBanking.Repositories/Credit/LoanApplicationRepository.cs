@@ -1096,17 +1096,18 @@ namespace FintrakBanking.Repositories.Credit
                 receiverLevelId = GetFirstAdhocReceiverLevel(staffId, (int)OperationsEnum.AdhocApproval, appl.PRODUCTCLASSID);
                 var nextStaffId = GetFirstLevelStaffId((int)receiverLevelId);
                 workflow.ToStaffId = nextStaffId; //
-                //appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                workflow.OperationId = (int)OperationsEnum.AdhocApproval;
+                appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
                 context.SaveChanges();
             }
             else
             {
                 receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID);
                 workflow.ToStaffId = staffId; //
+                workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
             }
             workflow.StaffId = staffId;
             workflow.NextLevelId = receiverLevelId; // BREAKING!
-            workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
