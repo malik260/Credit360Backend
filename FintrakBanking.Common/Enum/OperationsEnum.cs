@@ -123,7 +123,7 @@ namespace FintrakBanking.Common.Enum
         LoanRecoveryPayment = 113,
         //
         AdhocApproval = 133,
-        OriginalDocumentApproval = 133,
+        OriginalDocumentApproval = 134,
 
     }
 }
