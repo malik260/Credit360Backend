@@ -133,7 +133,7 @@ namespace FintrakBanking.LoanRepaymentBackgroundService
             Bind<ICreditLimitValidationsRepository>().To<CreditLimitValidationsRepository>();
             Bind<IPublicHolidayRepository>().To<PublicHolidayRepository>();
             Bind<IAccreditedConsultantsRepository>().To<AccreditedConsultantsRepository>();
-            Bind<IReportRoutes>().To<ReportRoutes>();
+           // Bind<IReportRoutes>().To<ReportRoutes>();
             Bind<ICallMemoRepository>().To<CallMemoRepository>();
             Bind<IConditionPrecedentRepository>().To<ConditionPrecedentRepository>();
             Bind<ITransactionDynamicsRepository>().To<TransactionDynamicsRepository>();

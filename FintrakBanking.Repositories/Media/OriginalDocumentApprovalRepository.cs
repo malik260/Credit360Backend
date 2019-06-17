@@ -42,12 +42,13 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<OriginalDocumentApprovalViewModel> GetOriginalDocumentApprovals(int staffId)
         {
+            var data = new List<OriginalDocumentApprovalViewModel>();
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OriginalDocumentApproval).ToList();
 
-            return (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+            data = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                     join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
-                   join a in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                   join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    join a in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                     where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
@@ -77,7 +78,8 @@ namespace FintrakBanking.Repositories.Media
 
 
                     })
-                .ToList();
+               .ToList();
+            return data;
         }
 
         public OriginalDocumentApprovalViewModel GetOriginalDocumentApproval(int id)
@@ -97,17 +99,17 @@ namespace FintrakBanking.Repositories.Media
         }
         public List<OriginalDocumentApprovalViewModel> GetOriginalDocumentByLoanApplicationId(int id)
         {
-            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && x.APPROVALSTATUSID==(int)ApprovalStatusEnum.Pending)
-                .Select(x=> new OriginalDocumentApprovalViewModel
-            {
-                originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
-                loanApplicationId = x.LOANAPPLICATIONID,
-                description = x.DESCRIPTION,
-                approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o=>o.APPROVALSTATUSID== x.APPROVALSTATUSID).Select(o=>o.APPROVALSTATUSNAME).FirstOrDefault(),
-                applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
-                referenceNumber = x.REFERENCENUMBER,
-                dateTimeCreated = x.DATETIMECREATED
-            }).ToList();
+            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                .Select(x => new OriginalDocumentApprovalViewModel
+                {
+                    originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                    loanApplicationId = x.LOANAPPLICATIONID,
+                    description = x.DESCRIPTION,
+                    approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                    applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                    referenceNumber = x.REFERENCENUMBER,
+                    dateTimeCreated = x.DATETIMECREATED
+                }).ToList();
 
             return entity;
         }
@@ -123,9 +125,9 @@ namespace FintrakBanking.Repositories.Media
                 DATETIMECREATED = general.GetApplicationDate(),
                 APPLICATIONREFERNECENUMBER = model.applicationReferenceNumber,
                 REFERENCENUMBER = referenceNumber,
-                DELETED =false,
+                DELETED = false,
                 CREATEDBY = model.createdBy,
-                
+
 
             };
 
@@ -208,37 +210,37 @@ namespace FintrakBanking.Repositories.Media
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
         {
             return (from x in context.TBL_LOAN_APPLICATION
-                                join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                                join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                     where x.APPLICATIONREFERENCENUMBER == searchString
                  || c.FIRSTNAME.ToLower().Contains(searchString.Trim())
                  || c.LASTNAME.ToLower().Contains(searchString.Trim())
                  || c.MIDDLENAME.ToLower().Contains(searchString.Trim())
 
-                                select new LoanApplicationViewModel
-                                {
-                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
-                                    customerCode = c.CUSTOMERCODE,
-                                    applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
-                                    loanApplicationId = x.LOANAPPLICATIONID,
-                                    customerId = c.CUSTOMERID,
-                                    branchName = context.TBL_BRANCH.Where(o=>o.BRANCHID==c.BRANCHID).Select(o=>o.BRANCHNAME).FirstOrDefault(),
-                                    applicationDate = x.APPLICATIONDATE,
-                                    applicationAmount = x.APPLICATIONAMOUNT,
-                                    interestRate = x.INTERESTRATE,
-                                    productName = context.TBL_PRODUCT.Where(o=>o.PRODUCTID==a.APPROVEDPRODUCTID).Select(o=>o.PRODUCTNAME).FirstOrDefault(),
-                                    relationshipOfficerId = x.RELATIONSHIPOFFICERID,
-                                    relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                                    relationshipManagerId = x.RELATIONSHIPMANAGERID,
-                                    relationshipManagerName =context.TBL_STAFF.Where(o=>o.STAFFID==x.RELATIONSHIPMANAGERID).Select(o=>o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                                    operationId = (int)OperationsEnum.OriginalDocumentApproval
-                                }).ToList();
+                    select new LoanApplicationViewModel
+                    {
+                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        customerCode = c.CUSTOMERCODE,
+                        applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                        loanApplicationId = x.LOANAPPLICATIONID,
+                        customerId = c.CUSTOMERID,
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        applicationDate = x.APPLICATIONDATE,
+                        applicationAmount = x.APPLICATIONAMOUNT,
+                        interestRate = x.INTERESTRATE,
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        operationId = (int)OperationsEnum.OriginalDocumentApproval
+                    }).ToList();
         }
 
         public bool GoForApproval(OriginalDocumentApprovalViewModel entity)
         {
             var document = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(entity.originalDocumentApprovalId);
-            if(document != null)
+            if (document != null)
             {
                 document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
@@ -255,14 +257,14 @@ namespace FintrakBanking.Repositories.Media
 
             return context.SaveChanges() != 0;
 
-            
+
         }
 
         public bool SubmitApproval(OriginalDocumentApprovalViewModel model)
         {
-            bool responce =false;
+            bool responce = false;
 
-            using (var transaction = context.Database.BeginTransaction())
+            try
             {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
@@ -272,33 +274,26 @@ namespace FintrakBanking.Repositories.Media
                 workflow.OperationId = (int)OperationsEnum.OriginalDocumentApproval;
                 workflow.DeferredExecution = true;
                 workflow.LogActivity();
-                try
+
+                if (workflow.NewState == (int)ApprovalState.Ended)
                 {
-                    if (workflow.NewState == (int)ApprovalState.Ended)
+                    var document = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(o => o.ORIGINALDOCUMENTAPPROVALID == model.originalDocumentApprovalId).FirstOrDefault();
+                    if (document != null)
                     {
-                       var document = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(o => o.ORIGINALDOCUMENTAPPROVALID == model.originalDocumentApprovalId).FirstOrDefault();
-                        if (document!=null)
-                        {
-                            document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                        }
-                        
+                        document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     }
 
-                    responce = context.SaveChanges() > 0;
-                    transaction.Commit();
-
-                    return responce;
                 }
-                catch (Exception ex)
-                {
 
-                    transaction.Rollback();
+                responce = context.SaveChanges() > 0;
 
-
-                    throw ex;
-                }
-                //return false;
+                return responce;
             }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
     }
 }

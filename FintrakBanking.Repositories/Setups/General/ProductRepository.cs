@@ -863,8 +863,12 @@ namespace FintrakBanking.Repositories.Setups.General
             List<ProductViewModel> product = new List<ProductViewModel>();
 
             if (customerTypeId == 0) customerTypeId = 3;
-            if (customerTypeId == 3) product = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1)).ToList();
-            else product = AllProduct().Where(c => c.productClassId == productClassId && c.customerTypeId == customerTypeId && (c.productGroupId == 1)).ToList();
+
+            product = AllProduct().Where(c => 
+                    c.productClassId == productClassId 
+                    && (c.customerTypeId == customerTypeId || c.customerTypeId == 3) 
+                    && (c.productGroupId == 1)
+                ).ToList();
 
             foreach (var item in product)
             {
