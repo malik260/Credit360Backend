@@ -85,6 +85,8 @@ namespace FintrakBanking.Entities.Models
 
         public short? SCHEDULETYPEID { get; set; }
 
+        public short CUSTOMERTYPEID { get; set; }
+
         public bool ALLOWSCHEDULETYPEOVERRIDE { get; set; }
 
         public int MAXIMUMTENOR { get; set; }
@@ -265,6 +267,5 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
-        public short CUSTOMERTYPEID { get; set; }
     }
 }
