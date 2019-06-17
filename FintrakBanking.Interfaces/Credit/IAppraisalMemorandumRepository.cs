@@ -18,6 +18,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         WorkflowResponse ForwardAppraisalMemorandum(ForwardViewModel model);
 
+        WorkflowResponse AdhocAppraisalMemorandum(ForwardViewModel model);
+
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 
         IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all);
@@ -36,6 +38,8 @@ namespace FintrakBanking.Interfaces.Credit
         //bool Confirmation(int type, int applicationId);
 
         IQueryable<LoanApplicationViewModel> GetPendingLoanApplications(int applicationId, int countryId, int branchId, int staffId, int? classId);
+
+        IQueryable<LoanApplicationViewModel> GetPendingAdhocApplications(int applicationId, int countryId, int branchId, int staffId, int? classId);
 
         IEnumerable<CurrentCommitteeViewModel> GetCurrentCommittee(int loanApplicationId);
 

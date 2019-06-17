@@ -129,6 +129,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("adhoc-appraisal/forward")]
+        public HttpResponseMessage AdhocAppraisalMemorandum([FromBody] ForwardViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                WorkflowResponse response = repo.AdhocAppraisalMemorandum(entity);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
         [HttpGet]
         [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/all/{all}")]
         public HttpResponseMessage GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all)
@@ -315,6 +337,49 @@ namespace FintrakBanking.APICore.Controllers
                     .OrderByDescending(x => x.applicationReferenceNumber) // OrderBy() must be called for Skip() to work!
                     .Skip(page)
                     .Take(itemsPerPage)
+                    .ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+        [HttpGet, Route("adhoc-approval/{operationId}/class/{classId}")]
+        public HttpResponseMessage getApplicationsToBeAdhocApprovedForInitiateBooking(int operationId, int? classId)
+        {
+            try
+            {
+                IQueryable<LoanApplicationViewModel> items;
+                items = repo.GetPendingAdhocApplications(operationId, token.GetCountryId, token.GetBranchId, token.GetStaffId, classId);
+
+
+                //if (!String.IsNullOrEmpty(searchString))
+                //{
+
+                //    searchString = searchString.Trim().ToLower();
+                //    items = (from x in items
+                //             where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
+                //             || x.applicantName.ToLower().StartsWith(searchString)
+                //             || x.applicationAmount.ToString() == searchString
+                //             //|| x.customerGroupName.ToLower().StartsWith(searchString)
+                //             select x);
+
+                //    items = items.Take(itemsPerPage);
+
+                //    //items = items.Where(x =>
+                //    //    (searchString.StartsWith(x.applicationReferenceNumber))
+                //    //    || (searchString.StartsWith(x.customerName.ToLower()))
+                //    //    || (searchString.StartsWith(x.customerGroupName.ToLower()))
+                //    //    ).Take(itemsPerPage);
+                //}
+
+                var data = items
+                    .OrderByDescending(x => x.applicationReferenceNumber) // OrderBy() must be called for Skip() to work!
+                    //.Skip(page)
+                    //.Take(itemsPerPage)
                     .ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });

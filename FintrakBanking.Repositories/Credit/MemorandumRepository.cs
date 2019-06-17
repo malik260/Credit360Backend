@@ -180,7 +180,7 @@ namespace FintrakBanking.Repositories.Credit
             this.targetId = targetId;
             this.operationId = operationId;
 
-            if (operationId == (int)OperationsEnum.CAM) // LOS 
+            if (operationId == (int)OperationsEnum.CreditAppraisal) // LOS 
             {
                 if (loanApplication == null)
                 {
@@ -309,7 +309,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<DropDownSelect> GetProposedConditions()
         {
             var result = new List<DropDownSelect>();
-            if (operationId == (int)OperationsEnum.CAM)
+            if (operationId == (int)OperationsEnum.CreditAppraisal)
             {
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId);
                 foreach (var d in details)
@@ -325,7 +325,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<DropDownSelect> GetConditionsPrecedentToDrawdown()
         {
             var result = new List<DropDownSelect>();
-            if (operationId == (int)OperationsEnum.CAM)
+            if (operationId == (int)OperationsEnum.CreditAppraisal)
             {
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
                 var detail = this.conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == details.FirstOrDefault()?.LOANAPPLICATIONDETAILID);
@@ -343,7 +343,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<DropDownSelect> GetTransactionsDynamics()
         {
             var result = new List<DropDownSelect>();
-            if (operationId == (int)OperationsEnum.CAM)
+            if (operationId == (int)OperationsEnum.CreditAppraisal)
             {
 
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
@@ -1889,7 +1889,7 @@ namespace FintrakBanking.Repositories.Credit
         // monitoring triggers
         public IEnumerable<MonitoringTriggersViewModel> GetMonitoringTriggers()
         {
-            if (operationId == (int)OperationsEnum.CAM) return memo.GetApplicationMonitoringTriggers(targetId);
+            if (operationId == (int)OperationsEnum.CreditAppraisal) return memo.GetApplicationMonitoringTriggers(targetId);
             return memo.GetApplicationMonitoringTriggersLms(targetId);
         }
 
@@ -1984,7 +1984,7 @@ namespace FintrakBanking.Repositories.Credit
             IQueryable<CurrentCustomerExposure> exposure = null;
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
 
-            if (operationId == (int)OperationsEnum.CAM)
+            if (operationId == (int)OperationsEnum.CreditAppraisal)
                 details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerProduct { CUSTOMERID = x.CUSTOMERID, PRODUCTID = x.APPROVEDPRODUCTID }).ToList();
             else
                 details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerProduct { CUSTOMERID = x.CUSTOMERID, PRODUCTID = x.PRODUCTID }).ToList();

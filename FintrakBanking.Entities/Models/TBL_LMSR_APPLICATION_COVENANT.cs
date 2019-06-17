@@ -35,8 +35,6 @@
 
         public int? CASAACCOUNTID { get; set; }
 
-        public int ISFINANCIAL { get; set; }
-
         public int COMPANYID { get; set; }
 
         public int CREATEDBY { get; set; }

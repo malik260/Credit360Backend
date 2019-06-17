@@ -81,6 +81,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId);
+        IEnumerable<CamProcessedLoanViewModel> getApplicationsToBeAdhocApprovedForInitiateBooking(int companyId, int staffId, int branchId);
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForCrmsCode(int companyId, int staffId);
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId);
@@ -221,6 +222,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanByApplicationDetailId(int loanApplicationDetailId);
         IEnumerable<LoanViewModel> GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber);
         IEnumerable<LoanBookingRequestViewModel> GetLoanRequestsByApplicationDetailId(int loanApplicationDetailId);
+        IEnumerable<LoanApplicationDetailViewModel> GetCustomerFacilities(int customerId);
 
         decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate, DayCountConventionEnum dayCountConventionId);
         List<LookupViewModel> GetLoanRepricingModes();

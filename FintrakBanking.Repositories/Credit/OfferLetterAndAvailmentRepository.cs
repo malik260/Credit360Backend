@@ -2371,7 +2371,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool OfferLetterRejection(ForwardViewModel model)
         {
-            var operationId = (int)OperationsEnum.CAM;
+            var operationId = (int)OperationsEnum.CreditAppraisal;
             var o = context.TBL_APPROVAL_TRAIL.Find(model.trailId); // here we try to get the staffid on the trail row
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
 
@@ -2611,7 +2611,7 @@ namespace FintrakBanking.Repositories.Credit
 
             List<int> operations = new List<int>();
             operations.Add((int)OperationsEnum.LoanApplication);
-            operations.Add((int)OperationsEnum.CAM);
+            operations.Add((int)OperationsEnum.CreditAppraisal);
             operations.Add((int)OperationsEnum.LoanAvailment);
 
             var applicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId 

@@ -17,7 +17,7 @@ namespace FintrakBanking.Repositories.Risk
     {
         private FinTrakBankingContext context;
         private TBL_STAFF officer;
-        private TBL_CORR_FREQUENCY_SETUP frequencySetup;
+        private TBL_CORR_RATING_PERIOD frequencySetup;
         private TBL_CORR_RISK_MATRIX matrix;
         private TBL_CORR_OFFICER_RATING currentRating;
         private decimal totalExposure;
@@ -35,7 +35,7 @@ namespace FintrakBanking.Repositories.Risk
         {
             if (officer == null) officer = context.TBL_STAFF.FirstOrDefault(x => x.STAFFCODE.ToLower() == username.ToLower());
             if (officer == null) return false;
-            if (frequencySetup == null) frequencySetup = context.TBL_CORR_FREQUENCY_SETUP.FirstOrDefault();
+            if (frequencySetup == null) frequencySetup = context.TBL_CORR_RATING_PERIOD.OrderByDescending(x => x.STARTDATE).FirstOrDefault();
             if (currentRating == null) currentRating = context.TBL_CORR_OFFICER_RATING
                     .Where(x => x.STAFFID == officer.STAFFID)
                     .OrderByDescending(x => x.OFFICERRATINGID)
@@ -47,34 +47,30 @@ namespace FintrakBanking.Repositories.Risk
         private void ComputeCreditOfficerRiskRating()
         {
             // init
-            totalExposure = GetTotalExposure();
-            totalBorrowingCustomers = GetTotalBorrowingCustomers();
+            //totalExposure = GetTotalExposure();
+            //totalBorrowingCustomers = GetTotalBorrowingCustomers();
             
-            RiskIndexMetrics riskIndexMetrics = new RiskIndexMetrics();
+            //RiskIndexMetrics riskIndexMetrics = new RiskIndexMetrics();
 
-            riskIndexMetrics.keyRiskDrivers = GetKeyRiskDrivers();
-            riskIndexMetrics.borrowingCustomersCount = totalBorrowingCustomers;
-            riskIndexMetrics.borrowingCustomersExposure = totalExposure;
+            //riskIndexMetrics.keyRiskDrivers = GetKeyRiskDrivers();
+            //riskIndexMetrics.borrowingCustomersCount = totalBorrowingCustomers;
+            //riskIndexMetrics.borrowingCustomersExposure = totalExposure;
+
             // todo..
 
             // update rating comment
-            var comment = GetMatrixDescription(riskIndexMetrics.creditOfficerRiskRating).description;
+            //var comment = GetMatrixDescription(riskIndexMetrics.creditOfficerRiskRating).description;
 
             // rating
-            var rating = context.TBL_CORR_OFFICER_RATING.Add(new TBL_CORR_OFFICER_RATING
-            {
-                STAFFID = officer.STAFFID,
-                BRANCHID = (int)officer.BRANCHID,
-                BUSINESSUNITID = (int)officer.BUSINESSUNITID,
-                BORROWINGCUSTOMERS = totalBorrowingCustomers,
-                EXPOSURE = totalExposure,
-                // METRICS...
-                CORRSCORE = riskIndexMetrics.creditOfficerRiskRating,
-                CORRCOMMENT = comment,
-                DATERATED = DateTime.Now,
-                FROMDATE = frequencySetup.NEXTRATINGDATE.AddMonths((-1) * frequencySetup.RATINGPERIOD),
-                TODATE = frequencySetup.NEXTRATINGDATE,
-            });
+            //var rating = context.TBL_CORR_OFFICER_RATING.Add(new TBL_CORR_OFFICER_RATING
+            //{
+            //    STAFFID = officer.STAFFID,
+            //    // METRICS...
+            //    CORRSCORE = riskIndexMetrics.creditOfficerRiskRating,
+            //    CORRCOMMENT = comment,
+            //    DATERATED = DateTime.Now,
+            //    //FROMDATE = frequencySetup.NEXTRATINGDATE.AddMonths((-1) * frequencySetup.RATINGPERIOD),
+            //});
 
             context.SaveChanges();
         }
@@ -127,8 +123,7 @@ namespace FintrakBanking.Repositories.Risk
         private bool RatingExpired()
         {
             if (officer.CORRMATRIXGRIDRATINGID == null) return false;
-            return frequencySetup.NEXTRATINGDATE < currentRating.DATERATED 
-                && DateTime.Now > frequencySetup.NEXTRATINGDATE
+            return frequencySetup.RATINGPERIODID != currentRating.RATINGPERIODID
                 ;
         }
 
@@ -181,5 +176,212 @@ namespace FintrakBanking.Repositories.Risk
             };
         }
 
+        public IEnumerable<RatingPeriodViewModel> GetRatingPeriods()
+        {
+            return context.TBL_CORR_RATING_PERIOD
+                .Where(x => x.DELETED == false)
+                .OrderByDescending(x => x.RATINGPERIODID)
+                .Select(x => new RatingPeriodViewModel
+                {
+                    ratingPeriodId = x.RATINGPERIODID,
+                    startDate = x.STARTDATE,
+                    endDate = x.ENDDATE,
+                })
+                .ToList();
+        }
+        public bool AddRatingPeriod(RatingPeriodViewModel model)
+        {
+            if (model.startDate >= model.endDate) throw new SecureException("End Date must be greater than Start Date!");
+            if (context.TBL_CORR_RATING_PERIOD.Where(x => x.ENDDATE > model.startDate).Any()) throw new SecureException("Rating periods can not overlap!");
+
+            var entity = new TBL_CORR_RATING_PERIOD
+            {
+                STARTDATE = model.startDate,
+                ENDDATE = model.endDate,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now,
+            };
+
+            context.TBL_CORR_RATING_PERIOD.Add(entity);
+            return context.SaveChanges() != 0;
+        }
+
+        public List<CreditOfficerRatingViewModel> GetCreditOfficerSearch(CreditOfficerSearchViewModel model)
+        {
+            List<CreditOfficerRatingViewModel> officerRating = new List<CreditOfficerRatingViewModel>();
+
+            if (!string.IsNullOrWhiteSpace(model.searchString))
+            {
+                var searchString = model.searchString.Trim().ToLower();
+
+                officerRating = context.TBL_STAFF.Where(x => x.DELETED == false)// && x.c == companyId)
+                        .Where(x => creditOfficerRoleIds.Contains(x.STAFFROLEID) &&
+                        (x.FIRSTNAME.ToLower().Contains(searchString)
+                        || x.MIDDLENAME.ToLower().Contains(searchString)
+                        || x.LASTNAME.ToLower().Contains(searchString)
+                        || x.STAFFCODE.ToLower().Contains(searchString))
+                    )
+                    .Select(o => new CreditOfficerRatingViewModel
+                    {
+                        staffId = o.STAFFID,
+                        firstName = o.FIRSTNAME,
+                        middleName = o.MIDDLENAME,
+                        lastName = o.LASTNAME,
+                        staffCode = o.STAFFCODE,
+                        currentRating = context.TBL_CORR_OFFICER_RATING
+                                            .Where(x => x.STAFFID == o.STAFFID)
+                                            .OrderByDescending(x => x.OFFICERRATINGID)
+                                            .Select(x => new ParameterScoreViewModel
+                                            {
+                                                score = x.CORRSCORE,
+                                                comment = x.CORRCOMMENT
+                                            })
+                                            .FirstOrDefault(),
+                    })
+                    .Take(10)
+                    .ToList();
+            }
+
+            return officerRating;
+
+        }
+
+
+        public bool AddOfficerRating(OfficerRatingViewModel model)
+        {
+            // init
+            var periods = GetRatingPeriods();
+            if (periods.Count() == 0) throw new SecureException("No rating period exist in setup!");
+            ValidateScoreWithinWeight(model.assessment);
+            int ratingPeriodId = periods.FirstOrDefault().ratingPeriodId;
+            int corrScore = model.assessment.Sum(x => x.score);
+            string corrComment = GetMatrixDescription(corrScore).description;
+
+            // parent
+            var rating = context.TBL_CORR_OFFICER_RATING.Add(new TBL_CORR_OFFICER_RATING
+            {
+                STAFFID = model.creditOfficerId,
+                RATINGPERIODID = ratingPeriodId,
+                CORRSCORE = corrScore,//update
+                CORRCOMMENT = corrComment,//update
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now,
+            });
+            
+            bool ratingSaved = context.SaveChanges() != 0;
+
+            if (ratingSaved)
+            {
+                foreach(var param in model.assessment)
+                {
+                    context.TBL_CORR_OFFICER_RATING_DETAIL.Add(new TBL_CORR_OFFICER_RATING_DETAIL
+                    {
+                        OFFICERRATINGID = rating.OFFICERRATINGID,
+                        ASSESSMENTPARAMETERID = param.parameterId,
+                        SCORE = param.score,
+                    });
+                }
+                bool detailSaved = context.SaveChanges() != 0;
+                if (detailSaved) return true;
+                else DeleteOfficerRating(rating.OFFICERRATINGID);
+            }
+
+            return false;
+        }
+
+        private void ValidateScoreWithinWeight(List<ParameterScoreViewModel> assessment)
+        {
+            // throw new NotImplementedException();
+        }
+
+        public bool DeleteOfficerRating(int id)
+        {
+            var entity = this.context.TBL_CORR_OFFICER_RATING.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = 1;
+            entity.DATETIMEDELETED = DateTime.Now;
+
+            return context.SaveChanges() != 0;
+        }
+
+        public KeyIndicatorAssessmentParametersViewModel GetKeyIndicatorAssessmentParameters()
+        {
+            KeyIndicatorAssessmentParametersViewModel corr = new KeyIndicatorAssessmentParametersViewModel();
+            List<KeyIndicator> keyIndicators = new List<KeyIndicator>();
+
+            List<ParameterScoreViewModel> parameters = context.TBL_CORR_ASSESSMENT_PARAMETER
+                .Where(x => x.ISACTIVE == true)
+                .Select(x => new ParameterScoreViewModel
+                {
+                    keyIndicatorId = x.KEYINDICATORID,
+                    id = x.ASSESSMENTPARAMETERID,
+                    weight = x.PERCENTAGEWEIGHT,
+                    parameterName = x.PARAMETERNAME
+                })
+                .ToList();
+
+            var indicators = context.TBL_CORR_KEY_INDICATOR.Where(x => x.ISACTIVE == true).ToList();
+
+            foreach (var indicator in indicators)
+            {
+                KeyIndicator indicatorCategory = new KeyIndicator();
+                indicatorCategory.keyIndicatorWeight = indicator.KEYINDICATORID;
+                indicatorCategory.parameters = parameters.Where(x => x.keyIndicatorId == indicator.KEYINDICATORID).ToList();
+                indicatorCategory.keyIndicatorName = indicator.INDICATORNAME;
+                keyIndicators.Add(indicatorCategory);
+            }
+
+            corr.count = keyIndicators.Count();
+            corr.keyIndicators = keyIndicators;
+
+            return corr;
+        }
+
+        public CreditOfficerRiskRatingDetail GetCurrentCreditOfficerRiskRating(int id)
+        {
+            CreditOfficerRiskRatingDetail result = new CreditOfficerRiskRatingDetail();
+
+            var lastRating = context.TBL_CORR_OFFICER_RATING
+               .Where(x => x.STAFFID == id)
+               .OrderByDescending(x => x.OFFICERRATINGID)
+               .FirstOrDefault();
+
+            if (lastRating != null)
+            {
+                result.score = lastRating.CORRSCORE;
+                result.comment = lastRating.CORRCOMMENT;
+            }
+
+            result.parameters = context.TBL_CORR_OFFICER_RATING_DETAIL
+                .Join(context.TBL_CORR_ASSESSMENT_PARAMETER, d => d.ASSESSMENTPARAMETERID, p => p.ASSESSMENTPARAMETERID, (d, p) => new { d, p })
+                .Select(x => new GenericRiskScore
+                {
+                    id = x.d.OFFICERRATINGDETAILID,
+                    name = x.p.PARAMETERNAME,
+                    score = x.d.SCORE,
+                    weight = x.p.PERCENTAGEWEIGHT,
+                    indicatorId = x.p.KEYINDICATORID,
+                    indicatorName = x.p.TBL_CORR_KEY_INDICATOR.INDICATORNAME,
+                    indicatorWeight = x.p.TBL_CORR_KEY_INDICATOR.PERCENTAGEWEIGHT,
+                })
+                .ToList();
+
+            var indicators = context.TBL_CORR_KEY_INDICATOR.Where(x => x.ISACTIVE == true).ToList();
+
+            foreach (var indicator in indicators)
+            {
+                if (result.parameters.Where(x => x.indicatorId == indicator.KEYINDICATORID).Any())
+                {
+                    GenericRiskScore temp = new GenericRiskScore();
+                    temp.id = indicator.KEYINDICATORID;
+                    temp.name = indicator.INDICATORNAME;
+                    temp.weight = indicator.PERCENTAGEWEIGHT;
+                    temp.score = result.parameters.Where(x => x.indicatorId == indicator.KEYINDICATORID).Sum(x => x.score);
+                    result.indicators.Add(temp);
+                }
+            }
+
+            return result;
+        }
     }
 }
