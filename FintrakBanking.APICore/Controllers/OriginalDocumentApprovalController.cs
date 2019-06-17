@@ -1,0 +1,150 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+
+using FintrakBanking.APICore.JWTAuth;
+using FintrakBanking.APICore.core;
+using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.Interfaces.Media;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.Approval;
+using FintrakBanking.ViewModels.Media;
+
+namespace FintrakBanking.APICore.Controllers
+{
+    [RoutePrefix("api/v1/document")] // TODO: modify!
+    public class OriginalDocumentApprovalController : ApiControllerBase
+    {
+        private IOriginalDocumentApprovalRepository repo;
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+        public OriginalDocumentApprovalController(IOriginalDocumentApprovalRepository _repo)
+        {
+            this.repo = _repo;
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("original-document-approval")]
+        public HttpResponseMessage GetOriginalDocumentApprovals()
+        {
+            IEnumerable<OriginalDocumentApprovalViewModel> response = repo.GetOriginalDocumentApprovals(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("original-document-approval/{id}")]
+        public HttpResponseMessage GetOriginalDocumentApproval(int id)
+        {
+            OriginalDocumentApprovalViewModel response = repo.GetOriginalDocumentApproval(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("original-document/{id}")]
+        public HttpResponseMessage GetOriginalDocument(int id)
+        {
+            var response = repo.GetOriginalDocumentByLoanApplicationId(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("original-document-approval")]
+        public HttpResponseMessage AddOriginalDocumentApproval([FromBody] OriginalDocumentApprovalViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddOriginalDocumentApproval(model);
+            if (response !=null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("original-document-approval/{id}")]
+        public HttpResponseMessage UpdateOriginalDocumentApproval([FromBody] OriginalDocumentApprovalViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdateOriginalDocumentApproval(model,id,user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("original-document-approval/{id}")]
+        public HttpResponseMessage DeleteOriginalDocumentApproval(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteOriginalDocumentApproval(id,user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loanapplication-search/{parameter}")]
+        public HttpResponseMessage Search(string parameter)
+        {
+            var response = repo.Search(parameter);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("original-document/approval")]
+        public HttpResponseMessage GoForApproval([FromBody] OriginalDocumentApprovalViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+
+            var response = repo.GoForApproval(model);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("original-document/submit-approval")]
+        public HttpResponseMessage SubmitApproval([FromBody] OriginalDocumentApprovalViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+
+            var response = repo.SubmitApproval(model);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+    }
+}

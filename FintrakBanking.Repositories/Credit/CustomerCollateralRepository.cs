@@ -1512,6 +1512,8 @@ namespace FintrakBanking.Repositories.Credit
                         collateralReleaseStatusId = c.c.COLLATERALRELEASESTATUSID,
                         collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == c.c.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
                         accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
+                        collateralUsageStatus = c.c.COLLATERALUSAGESTATUSID,
+                        loanApplicationId = c.c.LOANAPPLICATIONID
                     })
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First())
@@ -1523,6 +1525,27 @@ namespace FintrakBanking.Repositories.Credit
             //var test = collaterals;
 
             return collaterals.OrderByDescending(x => x.collateralId);
+        }
+        public IEnumerable<CollateralViewModel> GetProposedCustomerCollateral(int customerId, int? applicationId, int companyId)
+        {
+            var collaterals = (from x in context.TBL_COLLATERAL_CUSTOMER
+                              join c in context.TBL_COLLATERAL_TYPE on x.COLLATERALTYPEID equals c.COLLATERALTYPEID
+                              join s in context.TBL_COLLATERAL_TYPE_SUB on x.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
+                              where x.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.Propose && x.LOANAPPLICATIONID == applicationId
+
+                              select new CollateralViewModel
+                              {
+                                  collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                  collateralCode = x.COLLATERALCODE,
+                                  collateralType = c.COLLATERALTYPENAME,
+                                  collateralSubTypeName = s.COLLATERALSUBTYPENAME,
+                                  collateralValue = x.COLLATERALVALUE,
+                                  haircut = x.HAIRCUT,
+                                  collateralSubTypeId = (short)x.COLLATERALTYPEID,
+                                  collateralUsageStatus =  x.COLLATERALUSAGESTATUSID
+                              }).OrderByDescending(x => x.collateralCustomerId);
+
+            return collaterals.ToList();
         }
 
         public IEnumerable<CollateralViewModel> GetCustomerCollateralReport(string searchParam, int companyId)
@@ -6265,7 +6288,8 @@ namespace FintrakBanking.Repositories.Credit
                         DATETIMECREATED = genSetup.GetApplicationDate(),
                         ACTEDONBY = model.createdBy,
                         RELATEDCOLLATERALCODE = model.relatedCollateralCode,
-                        LOANAPPLICATIONID = model.loanApplicationId
+                        LOANAPPLICATIONID = model.loanApplicationId,
+                        COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
                     });
 
                     if (context.SaveChanges() == 1)
@@ -6301,7 +6325,8 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     ACTEDONBY = model.staffId,
                     ISCURRENT = true,
-                    RELATEDCOLLATERALCODE = model.relatedCollateralCode
+                    RELATEDCOLLATERALCODE = model.relatedCollateralCode,
+                    COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
 
                 });
 
@@ -8215,8 +8240,42 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion
 
+       public bool RejectProposedCollateralForUsage(int collateralCustomerId)
+        {
+          var collateral =  context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralCustomerId).Select(x => x).FirstOrDefault();
+            if (collateral!=null)
+                collateral.COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Rejected;
+
+            return context.SaveChanges() > 0;
+
+        }
+      public  bool ProposeCollateralForUsage(int collateralCustomerId)
+        {
+            var collateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralCustomerId).Select(x => x).FirstOrDefault();
+
+            if (collateral != null)
+            {
+                if (collateral.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.Rejected)
+                    return false;
+
+                collateral.COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose;
+            }
+            return context.SaveChanges() > 0;
+        }
+
+        public IEnumerable<CollateralUsageStatus> GetCollateralUsageStatus()
+        {
+           return (from x in context.TBL_COLLATERAL_USAGE_STATUS
+                  select new CollateralUsageStatus{
+               collateralStatusId = x.COLLATERALUSAGESTATUSID,
+               collateralStatusName =x.USAGESTATUSNAME,
+    
+           }).ToList();
+        }
 
     }
+
+   
 
 }
 

@@ -170,6 +170,7 @@
     <Compile Include="GenaralEntity.cs" />
     <Compile Include="LookupViewModel.cs" />
     <Compile Include="Media\DocumentArchiveViewModel.cs" />
+    <Compile Include="Media\OriginalDocumentApprovalViewModel.cs" />
     <Compile Include="Notification\NotificationViewModel.cs" />
     <Compile Include="Media\DocumentViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

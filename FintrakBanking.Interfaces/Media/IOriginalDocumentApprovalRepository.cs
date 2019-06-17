@@ -1,0 +1,31 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Media;
+
+namespace FintrakBanking.Interfaces.Media
+{
+    public interface IOriginalDocumentApprovalRepository
+    {
+        OriginalDocumentApprovalViewModel GetOriginalDocumentApproval(int id);
+
+        IEnumerable<OriginalDocumentApprovalViewModel> GetOriginalDocumentApprovals(int staffId);
+
+        int AddOriginalDocumentApproval(OriginalDocumentApprovalViewModel model);
+
+        bool UpdateOriginalDocumentApproval(OriginalDocumentApprovalViewModel model, int id, UserInfo user);
+
+        bool DeleteOriginalDocumentApproval(int id, UserInfo user);
+
+        IEnumerable<LoanApplicationViewModel> Search(string parameter);
+
+        List<OriginalDocumentApprovalViewModel> GetOriginalDocumentByLoanApplicationId(int id);
+
+        bool GoForApproval(OriginalDocumentApprovalViewModel model);
+       bool SubmitApproval(OriginalDocumentApprovalViewModel entity);
+    }
+}

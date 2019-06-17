@@ -264,7 +264,8 @@ namespace FintrakBanking.APICore.Controllers
                     staffRole = userRole.lookupName,
                     corrMatrixId = currUser.corrMatrixId,
                     corrMatrixDescription = currUser.corrMatrixDescription,
-                    businessUnitName = currUser.businessUnitName
+                    businessUnitName = currUser.businessUnitName,
+                    staffRoleId = userRole.lookupId
                 }
             });
 

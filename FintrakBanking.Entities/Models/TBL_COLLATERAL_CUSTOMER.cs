@@ -86,6 +86,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? ACTEDONBY { get; set; }
         public int? LOANAPPLICATIONID { get; set; }
+        public int? COLLATERALUSAGESTATUSID { get; set; }
 
         public string RELATEDCOLLATERALCODE { get; set; }
 
