@@ -45,6 +45,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductSearchViewModel> GetAllLoanProduct(int companyId);
         //IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId);
         IEnumerable<ProductViewModel> GetAllProductByProductClass(int productClassId, int customerTypeId);
+        IEnumerable<ProductViewModel> GetAllProductsByProductClassIdAndCustomerTypeId(int productClassId, int customerTypeId);
         IEnumerable<LookupViewModel> GetProductCurrency(int productId);
         #endregion Product
 

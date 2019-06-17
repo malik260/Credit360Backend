@@ -861,7 +861,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 customerTypeId = 2;
             }
             //var productData = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
-            var product = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1)).ToList();
+            var product = AllProduct().Where(c => (c.productClassId == productClassId) && (c.productGroupId == 1)).ToList();
             foreach (var item in product)
             {
                 var ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
@@ -892,6 +892,37 @@ namespace FintrakBanking.Repositories.Setups.General
             return product;
 
             //return AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
+        }
+
+        public IEnumerable<ProductViewModel> GetAllProductsByProductClassIdAndCustomerTypeId(int productClassId, int customerTypeId)
+        {
+            var product = AllProduct().Where(c => ((c.productClassId == productClassId) && (c.customerTypeId == (short)customerTypeId || c.customerTypeId == 3) && (c.productGroupId == 1))).ToList();
+            foreach (var item in product)
+            {
+                var ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
+                {
+                    customerLimit = d.CUSTOMER_LIMIT,
+                    collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                    collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+                    productLimit = d.PRODUCT_LIMIT,
+                    isInvoiceBased = d.ISINVOICEBASED
+
+                }).FirstOrDefault();
+
+                item.productBehaviour = ProductBehaviour;
+
+
+                var currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
+                                .Select(c => new ProductCurrencyViewModel()
+                                {
+                                    productId = c.PRODUCTID,
+                                    productCurrencyId = c.PRODUCTCURRENCYID,
+                                    currencyId = c.CURRENCYID,
+                                    currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
+                                }).ToList();
+                item.currencies = currencies;
+            }
+            return product;
         }
 
         public ProductViewModel GetProductById(int productId)

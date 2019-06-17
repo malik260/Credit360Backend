@@ -370,6 +370,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
+
         }
 
       [HttpGet] [ClaimsAuthorization]  
@@ -618,7 +619,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product/productclass/{productclassId}/customerType/{customerTypeId}")]
+        public HttpResponseMessage GetAllProductsByProductClassIdAndCustomerTypeId(int productclassId, int customerTypeId)
+        {
+            try
+            {
+
+                var data = repo.GetAllProductsByProductClassIdAndCustomerTypeId(productclassId, customerTypeId).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("product")]
         public HttpResponseMessage GetAllProduct()
         {
