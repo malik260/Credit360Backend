@@ -333,8 +333,9 @@ namespace FintrakBanking.Common.Enum
         RacOptionItemAdded =400,
         RacOptionItemUpdated = 401,
         RacOptionItemDeleted = 402,
-
-
+        OriginalDocumentApprovalAdded = 403,
+        OriginalDocumentApprovalUpdated = 404,
+        OriginalDocumentApprovalDeleted = 405,
     };
     public enum RegulatoryTypeEnum
     {

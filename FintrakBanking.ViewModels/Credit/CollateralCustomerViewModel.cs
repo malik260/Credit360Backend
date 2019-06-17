@@ -371,6 +371,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationCustomerId { get; set; }
         public int applicationCustomerId { get; set; }
         public int? loanApplicationId { get; set; }
+        public int? collateralUsageStatus { get; set; }
+        public int? status { get; set; }
     }
 
     public class crossGarantee
@@ -982,5 +984,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int currencyId { get; set; }
         public string currencyCode { get; set; }
         public string currency { get; set; }
+    }
+
+    public class CollateralUsageStatus
+    {
+        public int collateralStatusId { get; set; }
+        public string collateralStatusName { get; set; }
     }
 }
