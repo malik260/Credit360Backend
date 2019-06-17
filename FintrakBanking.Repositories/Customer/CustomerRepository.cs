@@ -3058,22 +3058,23 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.customerCode.StartsWith(searchQuery)
                                    || x.branchName.StartsWith(searchQuery)
                                    || x.customerId.ToString().StartsWith(searchQuery)
+                                   && x.customerTypeId == 1
                              select x).ToList();
-            var customerInfo = new List<CustomerViewModels>();
-            foreach (var customer in customers)
-            {
-                if (!customerGroup.Exists(c => c.CUSTOMERID == customer.customerId))
-                {
-                    customerInfo.Add(customer);
-                }
-            }
+            //var customerInfo = new List<CustomerViewModels>();
+            //foreach (var customer in customers)
+            //{
+            //    if (!customerGroup.Exists(c => c.CUSTOMERID == customer.customerId))
+            //    {
+            //        customerInfo.Add(customer);
+            //    }
+            //}
+            return customers.ToList();
+            //if (customerInfo.Count > 0)
+            //{
+            //    return customerInfo;
+            //}
 
-            if (customerInfo.Count > 0)
-            {
-                return customerInfo;
-            }
-
-            return null;
+            //return null;
         }
 
         public IEnumerable<CustomerViewModels> SearchRandomSingleCorporateCustomersBySearchQuery(string searchQuery)
@@ -3087,22 +3088,23 @@ namespace FintrakBanking.Repositories.Customer
                                    || x.customerCode.StartsWith(searchQuery)
                                    || x.branchName.StartsWith(searchQuery)
                                    || x.customerId.ToString().StartsWith(searchQuery)
+                                   && x.customerTypeId == 2
                              select x);
-            var customerInfo = new List<CustomerViewModels>();
-            foreach (var customer in customers)
-            {
-                if (customerGroup.Exists(c => c.CUSTOMERID == customer.customerId))
-                {
-                    customerInfo.Add(customer);
-                }
-            }
+            //var customerInfo = new List<CustomerViewModels>();
+            //foreach (var customer in customers)
+            //{
+            //    if (customerGroup.Exists(c => c.CUSTOMERID == customer.customerId))
+            //    {
+            //        customerInfo.Add(customer);
+            //    }
+            //}
 
-            if (customerInfo.Count > 0)
-            {
-                return customerInfo;
-            }
-
-            return null;
+            //if (customerInfo.Count > 0)
+            //{
+            //    return customerInfo;
+            //}
+            return customers.ToList();
+            //return null;
         }
 
         public IEnumerable<CustomerViewModels> SearchRandomGroupCustomersBySearchQuery(string searchQuery)

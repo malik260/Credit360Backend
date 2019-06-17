@@ -307,47 +307,47 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("product-class-by-cusstomertype/{id}")]
-        public HttpResponseMessage GetAllProductClassByCustomerTypeId(int id)
-        {
-            try
-            {
-                var data = repo.GetAllProductClassByCustomerTypeId(id).ToList();
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+      //[HttpGet] [ClaimsAuthorization]  
+      //  [Route("product-class-by-cusstomertype/{id}")]
+      //  public HttpResponseMessage GetAllProductClassByCustomerTypeId(int id)
+      //  {
+      //      try
+      //      {
+      //          var data = repo.GetAllProductClassByCustomerTypeId(id).ToList();
+      //          if (data == null)
+      //          {
+      //              return Request.CreateResponse(HttpStatusCode.OK,
+      //                  new { success = false, message = "No record found" });
+      //          }
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
 
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+      //      }
+      //      catch (SecureException ex)
+      //      {
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+      //      }
+      //  }
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("product-class/customertype/{customertypeid}/process/{processId}")]
-        public HttpResponseMessage GetAllProductClass(int customertypeid, int processId)
-        {
-            try
-            {
-                var data = repo.GetAllProductClass(customertypeid, processId).ToList();
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+      //[HttpGet] [ClaimsAuthorization]  
+      //  [Route("product-class/customertype/{customertypeid}/process/{processId}")]
+      //  public HttpResponseMessage GetAllProductClass(int customertypeid, int processId)
+      //  {
+      //      try
+      //      {
+      //          var data = repo.GetAllProductClass(customertypeid, processId).ToList();
+      //          if (data == null)
+      //          {
+      //              return Request.CreateResponse(HttpStatusCode.OK,
+      //                  new { success = false, message = "No record found" });
+      //          }
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
 
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+      //      }
+      //      catch (SecureException ex)
+      //      {
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+      //      }
+      //  }
 
         //1137
         //@B@cus7#12

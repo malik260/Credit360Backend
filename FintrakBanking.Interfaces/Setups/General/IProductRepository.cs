@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<RevolvingTypeViewModel> GetRevolvingTypes();
         IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId);
         IEnumerable<LookupViewModel> GetAllProductClass();
-        IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId);
+        //IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId);
         IEnumerable<LookupViewModel> GetAllCRMSType(int companyId);
         IEnumerable<LookupViewModel> GetAllRiskRatingType(int companyId);
 
@@ -22,7 +22,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         
        // IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId);
         ProductPriceIndexViewModel GetProductPriceIndexByProductId(int productId);
-        IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId);
+        //IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId);
         #region Product
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
         ProductViewModel GetProductDetail(string productCode, int companyId);
