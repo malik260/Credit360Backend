@@ -31,6 +31,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
+        IEnumerable<CollateralViewModel> GetProposedCustomerCollateral(int customerId, int? applicationId, int companyId);
         CollateralViewModel GetCustomerCollateralInformation(int collateralCustomerId, int companyId);
         List<CollateralViewModel> GetCustomerPropertyCollaterals(int? customerId, int companyId);
 
@@ -125,6 +126,11 @@ namespace FintrakBanking.Interfaces.Credit
 
         TDAccountRecordViewModel GetFixedDepositAccountDetail(string AccpuntNumber);
         IEnumerable<CollateralViewModel> GetCustomerCollateralReport(string searchParam, int companyId);
+
+        bool ProposeCollateralForUsage(int collateralCustomerId);
+        bool RejectProposedCollateralForUsage(int collateralCustomerId);
+
+        IEnumerable<CollateralUsageStatus> GetCollateralUsageStatus();
 
     }
 }

@@ -121,6 +121,7 @@ namespace FintrakBanking.Common.Enum
         APS_ReleasePrincipaRequest =109,
         DailyWriteoffInterestAccural = 112,
         LoanRecoveryPayment = 113,
+        OriginalDocumentApproval = 133,
 
     }
 }

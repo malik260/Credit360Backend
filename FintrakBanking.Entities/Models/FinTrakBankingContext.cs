@@ -32,6 +32,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL> TBL_TEMP_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
         public virtual DbSet<TBL_APPROVAL_BUSINESS_RULE> TBL_APPROVAL_BUSINESS_RULE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_USAGE_STATUS> TBL_COLLATERAL_USAGE_STATUS { get; set; }
 
 
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL_STAFF> TBL_TEMP_APPROVAL_LEVEL_STAFF { get; set; }
@@ -484,6 +485,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CORR_RISK_MATRIX> TBL_CORR_RISK_MATRIX { get; set; }
         public virtual DbSet<TBL_CORR_OFFICER_RATING> TBL_CORR_OFFICER_RATING { get; set; }
         public virtual DbSet<TBL_CORR_FREQUENCY_SETUP> TBL_CORR_FREQUENCY_SETUP { get; set; }
+        public virtual DbSet<TBL_ORIGINAL_DOCUMENT_APPROVAL> TBL_ORIGINAL_DOCUMENT_APPROVAL { get; set; }
 
 
 

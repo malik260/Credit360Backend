@@ -1,5 +1,8 @@
-﻿using FintrakBanking.Interfaces.AlertMonitoring;
+﻿using FintrakBanking.BackgroundTasksService.Container;
+using FintrakBanking.Interfaces.AlertMonitoring;
 using FintrakBanking.Repositories.AlertMonitoring;
+using FintrakBanking.Repositories.Credit;
+using FintrakBanking.Repositories.Setups.General;
 using Hangfire;
 using Hangfire.Oracle.Core;
 using Microsoft.Owin;
@@ -7,6 +10,7 @@ using Owin;
 using System;
 using System.Configuration;
 using System.Data;
+using Unity;
 
 [assembly: OwinStartup(typeof(FintrakBanking.BackgroundTasksService.Startup))]
 
@@ -20,6 +24,7 @@ namespace FintrakBanking.BackgroundTasksService
         ExchangeRate exchangeRate = new ExchangeRate();
         string title = string.Empty;
         string body = string.Empty;
+        private string emailNoticationRecuranceInterval = ConfigurationManager.AppSettings["emailNoticationRecuranceInterval"];
 
         public void Configuration(IAppBuilder app)
         {
@@ -40,6 +45,10 @@ namespace FintrakBanking.BackgroundTasksService
                         TransactionTimeout = TimeSpan.FromMinutes(10),
                         // SchemaName = "HANGFIRE"
                     }));
+
+            var hangfireContainer = new UnityContainer();
+            GlobalConfiguration.Configuration.UseActivator(new Hangfire.UnityJobActivator(hangfireContainer));
+
             // var options = new DashboardOptions { AppPath = VirtualPathUtility.ToAbsolute("/url")}
             app.UseHangfireDashboard("/hangfire");
             app.UseHangfireServer();
@@ -49,7 +58,13 @@ namespace FintrakBanking.BackgroundTasksService
             //  BackgroundJob.Schedule(() => Console.WriteLine("Hello, world"), TimeSpan.FromDays(1));
 
 
-            RecurringJob.AddOrUpdate(() => emailSender.SendEmails(), Cron.Minutely);
+            //RecurringJob.AddOrUpdate(() => emailSender.SendEmails(), Cron.MinuteInterval(Convert.ToInt32(emailNoticationRecuranceInterval)));
+
+            // BackgroundJob.Schedule<LoanOperationsRepository>(myService => myService.RepaymentBackgroundService(), Cron.Minutely);
+             RecurringJob.AddOrUpdate<LoanOperationsRepository>(myService => myService.GetRepaymentFromStaging(), Cron.MinuteInterval(10));
+            //RecurringJob.AddOrUpdate<GeneralSetupRepository>(myService => myService.GetAllCurrency(), Cron.Minutely);
+            //RecurringJob.AddOrUpdate<GeneralSetupRepository>(myService => myService.GetAllCustomerType(), Cron.Minutely);
+
             //RecurringJob.AddOrUpdate(() => exchangeRate.MigrateExchangeRate(), Cron.Minutely);
 
             //RecurringJob.AddOrUpdate(() => alertMessageLogger.SendAlertsForCovenantsApproachingDueDate(title, body), Cron.Minutely);

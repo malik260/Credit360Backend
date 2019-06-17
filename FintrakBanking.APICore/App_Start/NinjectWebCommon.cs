@@ -251,6 +251,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IRiskAcceptanceCriteriaRepository>().To<RiskAcceptanceCriteriaRepository>();
             kernel.Bind<ITermSheetRepository>().To<TermSheetRepository>();
             kernel.Bind<ICreditOfficerRiskRepository>().To<CreditOfficerRiskRepository>();
+            kernel.Bind<IOriginalDocumentApprovalRepository>().To<OriginalDocumentApprovalRepository>();
 
         }
 
