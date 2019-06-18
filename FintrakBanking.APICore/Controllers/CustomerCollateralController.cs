@@ -471,6 +471,19 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+        [HttpGet, Route("collateral/customer/{id}/application/{applicationId}")]
+        public HttpResponseMessage GetProposedCustomerCollateral(int id, int? applicationId)
+        {
+            try
+            {
+                var response = repo.GetProposedCustomerCollateral(id, applicationId, token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
 
         [HttpGet, Route("customer-collateral/searchParam/{searchParam}")]
         public HttpResponseMessage GetCustomerCollateralReport(string searchParam)
@@ -1764,6 +1777,57 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.GetFixedDepositAccountDetail(accountNumber);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("reject-propose/collateral/{collateralCustomerId}/collateralCustomerId")]
+        public HttpResponseMessage RejectCollateral(int collateralCustomerId)
+        {
+            try
+            {
+                var response = repo.RejectProposedCollateralForUsage(collateralCustomerId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("propose-collateral/{collateralCustomerId}/collateralCustomerId")]
+        public HttpResponseMessage ProposeCollateral(int collateralCustomerId)
+        {
+            try
+            {
+                var response = repo.ProposeCollateralForUsage(collateralCustomerId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-usage")]
+        public HttpResponseMessage CollateralUsage()
+        {
+            try
+            {
+                var response = repo.GetCollateralUsageStatus();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }

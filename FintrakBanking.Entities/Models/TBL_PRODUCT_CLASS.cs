@@ -33,8 +33,6 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCT_CLASS_PROCESSID { get; set; }
 
-        public short CUSTOMERTYPEID { get; set; }
-
         public int GLOBALSLA { get; set; }
 
         public virtual TBL_PROFILE_BUSINESS_UNIT TBL_PROFILE_BUSINESS_UNIT { get; set; }

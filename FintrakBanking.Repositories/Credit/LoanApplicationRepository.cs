@@ -1096,17 +1096,19 @@ namespace FintrakBanking.Repositories.Credit
                 receiverLevelId = GetFirstAdhocReceiverLevel(staffId, (int)OperationsEnum.AdhocApproval, appl.PRODUCTCLASSID);
                 var nextStaffId = GetFirstLevelStaffId((int)receiverLevelId);
                 workflow.ToStaffId = nextStaffId; //
-                //appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                workflow.OperationId = (int)OperationsEnum.AdhocApproval;
+                appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
             }
             else
             {
                 receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID);
                 workflow.ToStaffId = staffId; //
+                workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
             }
             workflow.StaffId = staffId;
             workflow.NextLevelId = receiverLevelId; // BREAKING!
-            workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
@@ -1201,7 +1203,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public int? GetFirstLevelStaffId(int levelId)
         {
-            var staffId = context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId).FirstOrDefault().STAFFID;
+            if (levelId == 0)
+            {
+                //var staffId1 = context.TBL_APPROVAL_LEVEL_STAFF.LastOrDefault();
+            }
+            var staffId = (int?)context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId).FirstOrDefault()?.STAFFID ?? 0;
             return staffId;
         }
 

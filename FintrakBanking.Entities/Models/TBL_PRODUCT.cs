@@ -85,6 +85,8 @@ namespace FintrakBanking.Entities.Models
 
         public short? SCHEDULETYPEID { get; set; }
 
+        public short CUSTOMERTYPEID { get; set; }
+
         public bool ALLOWSCHEDULETYPEOVERRIDE { get; set; }
 
         public int MAXIMUMTENOR { get; set; }
