@@ -110,26 +110,26 @@ namespace FintrakBanking.Repositories.Setups.General
                     });
         }
 
-        public IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId)
-        {
-            if (customerTypeId == 0)
-            {
-                customerTypeId = 2;
-            }
-            return (from data in context.TBL_PRODUCT_CLASS
-                    where data.CUSTOMERTYPEID == customerTypeId && data.PRODUCT_CLASS_PROCESSID == processId
-                    //where data.OperationTypeId == operationTypeId
-                    select new LookupViewModel()
-                    {
-                        lookupId = (short)data.PRODUCTCLASSID,
-                        lookupName = data.PRODUCTCLASSNAME,
-                        lookupTypeId = data.PRODUCTCLASSTYPEID,
-                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
-                        businessUnitName = data.BUSINESSUNITID != null ? data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
-                        businessUnitId = data.BUSINESSUNITID,
+        //public IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId)
+        //{
+        //    if (customerTypeId == 0)
+        //    {
+        //        customerTypeId = 2;
+        //    }
+        //    return (from data in context.TBL_PRODUCT_CLASS
+        //            where data.CUSTOMERTYPEID == customerTypeId && data.PRODUCT_CLASS_PROCESSID == processId
+        //            //where data.OperationTypeId == operationTypeId
+        //            select new LookupViewModel()
+        //            {
+        //                lookupId = (short)data.PRODUCTCLASSID,
+        //                lookupName = data.PRODUCTCLASSNAME,
+        //                lookupTypeId = data.PRODUCTCLASSTYPEID,
+        //                lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
+        //                businessUnitName = data.BUSINESSUNITID != null ? data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
+        //                businessUnitId = data.BUSINESSUNITID,
 
-                    });
-        }
+        //            });
+        //}
 
         public IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId)
         {
@@ -146,22 +146,24 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     }).ToList();
         }
-        public IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId)
-        {
-            return (from data in context.TBL_PRODUCT_CLASS
-                    where data.CUSTOMERTYPEID == customerTypeId
-                    //where data.OperationTypeId == operationTypeId
-                    select new LookupViewModel()
-                    {
-                        lookupId = (short)data.PRODUCTCLASSID,
-                        lookupName = data.PRODUCTCLASSNAME,
-                        lookupTypeId = data.PRODUCTCLASSTYPEID,
-                        lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
-                        businessUnitName = data.BUSINESSUNITID != null ? data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
-                        businessUnitId = data.BUSINESSUNITID,
 
-                    });
-        }
+        //public IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId)
+        //{
+        //    return (from data in context.TBL_PRODUCT_CLASS
+        //            where data.CUSTOMERTYPEID == customerTypeId
+        //            //where data.OperationTypeId == operationTypeId
+        //            select new LookupViewModel()
+        //            {
+        //                lookupId = (short)data.PRODUCTCLASSID,
+        //                lookupName = data.PRODUCTCLASSNAME,
+        //                lookupTypeId = data.PRODUCTCLASSTYPEID,
+        //                lookupTypeName = data.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
+        //                businessUnitName = data.BUSINESSUNITID != null ? data.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
+        //                businessUnitId = data.BUSINESSUNITID,
+
+        //            });
+        //}
+
         public ProductBehaviourViewModel GetProductBehaviour(int productId)
         {
             ProductBehaviourViewModel data;
@@ -563,11 +565,11 @@ namespace FintrakBanking.Repositories.Setups.General
                                    productClassId = data.PRODUCTCLASSID,
                                    productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                                    riskRatingId = data.RISKRATINGID,
-                                   customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
+                                   customerId = data.CUSTOMERTYPEID,
                                    penalChargeGl = data.PENALCHARGEGL,
                                    penalChargeGlCode = (data.PENALCHARGEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
-                                   customerTypeId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
+                                   customerTypeId = data.CUSTOMERTYPEID,
 
                                    productPriceIndexId = data.PRODUCTPRICEINDEXID,
                                    productPriceIndexName = data.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
@@ -667,7 +669,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 }).FirstOrDefault();
 
             }
-
 
             //            var productData = (from data in context.TBL_PRODUCT
             //                               select new ProductViewModel()
@@ -860,7 +861,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 customerTypeId = 2;
             }
             //var productData = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
-            var product = AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1)).ToList();
+            var product = AllProduct().Where(c => (c.productClassId == productClassId) && (c.productGroupId == 1)).ToList();
             foreach (var item in product)
             {
                 var ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
@@ -891,6 +892,37 @@ namespace FintrakBanking.Repositories.Setups.General
             return product;
 
             //return AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
+        }
+
+        public IEnumerable<ProductViewModel> GetAllProductsByProductClassIdAndCustomerTypeId(int productClassId, int customerTypeId)
+        {
+            var product = AllProduct().Where(c => ((c.productClassId == productClassId) && (c.customerTypeId == (short)customerTypeId || c.customerTypeId == 3) && (c.productGroupId == 1))).ToList();
+            foreach (var item in product)
+            {
+                var ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
+                {
+                    customerLimit = d.CUSTOMER_LIMIT,
+                    collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
+                    collateralLcyLimit = d.COLLATERAL_LCY_LIMIT ?? 0,
+                    productLimit = d.PRODUCT_LIMIT,
+                    isInvoiceBased = d.ISINVOICEBASED
+
+                }).FirstOrDefault();
+
+                item.productBehaviour = ProductBehaviour;
+
+
+                var currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
+                                .Select(c => new ProductCurrencyViewModel()
+                                {
+                                    productId = c.PRODUCTID,
+                                    productCurrencyId = c.PRODUCTCURRENCYID,
+                                    currencyId = c.CURRENCYID,
+                                    currencyName = c.TBL_CURRENCY.CURRENCYCODE + " -- " + c.TBL_CURRENCY.CURRENCYNAME
+                                }).ToList();
+                item.currencies = currencies;
+            }
+            return product;
         }
 
         public ProductViewModel GetProductById(int productId)
@@ -3167,7 +3199,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             productClassType = p.TBL_PRODUCT_CLASS_TYPE.PRODUCTCLASSTYPENAME,
                             productClassProcessId = p.PRODUCT_CLASS_PROCESSID,
                             productClassProcess = p.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESS_NAME,
-                            customerTypeId = p.CUSTOMERTYPEID,
+                            //customerTypeId = p.TBL_PRODUCT.CUSTOMERTYPEID,
                             customerType = p.TBL_CUSTOMER_TYPE.NAME,
                             profileBusinessUnitName = p.BUSINESSUNITID != null ? p.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                             businessUnitId = p.BUSINESSUNITID,
@@ -3191,7 +3223,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             productClass.PRODUCTCLASSNAME = model.productClassName;
                             productClass.PRODUCTCLASSTYPEID = model.productClassTypeId;
                             productClass.PRODUCT_CLASS_PROCESSID = model.productClassProcessId;
-                            productClass.CUSTOMERTYPEID = model.customerTypeId;
+                            //productClass.CUSTOMERTYPEID = model.customerTypeId;
                             productClass.GLOBALSLA = model.globalSla;
                             productClass.BUSINESSUNITID = model.businessUnitId;
                         }
@@ -3203,7 +3235,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             PRODUCTCLASSNAME = model.productClassName,
                             PRODUCTCLASSTYPEID = model.productClassTypeId,
                             PRODUCT_CLASS_PROCESSID = model.productClassProcessId,
-                            CUSTOMERTYPEID = model.customerTypeId,
+                            //CUSTOMERTYPEID = model.customerTypeId,
                             GLOBALSLA = model.globalSla
                         };
                         context.TBL_PRODUCT_CLASS.Add(productClass);
