@@ -165,10 +165,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("filter-job-request-by-status/{filter}/{startNumber}")]
-        public HttpResponseMessage GetJobRequestByFilter(string filter,int? startNumber)
+        [Route("filter-job-request-by-status/{filter}")]
+        public HttpResponseMessage GetJobRequestByFilter(string filter)
         {
-            var data = repo.GetJobRequestByFilter(token.GetStaffId, token.GetBranchId, filter, startNumber);
+            var data = repo.GetJobRequestByFilter(token.GetStaffId, token.GetBranchId, filter);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
@@ -182,10 +182,10 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet] [ClaimsAuthorization]  
-        [Route("application-detail-job-request/{targetId}/Operation/{operationId}/source/{jobSourceId}")]
-        public HttpResponseMessage GetApplicationJobRequest(int targetId, int operationId,short jobSourceId)
+        [Route("application-detail-job-request/{targetId}/Operation/{operationId}")]
+        public HttpResponseMessage GetApplicationJobRequest(int targetId, int operationId)
         {
-            var data = repo.GetApplicationJobRequest(targetId, operationId, jobSourceId);
+            var data = repo.GetApplicationJobRequest(targetId, operationId);
 
             if (data == null)
             {
@@ -250,10 +250,10 @@ namespace FintrakBanking.APICore.Controllers
             var data = repo.saveCollateralJobsChargesSpecifiedByLegal(entity);
             if (data)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Search charge instruction sent Successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Collateral Search charge instruction sent Successfully" });
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Search charge Instructions failed to save " });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Collateral Search charge Instructions failed to save " });
         }
 
         [HttpPost]
@@ -381,27 +381,6 @@ namespace FintrakBanking.APICore.Controllers
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Job response was successfully saved" });
-            }
-
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
-        }
-
-        [HttpPut]
-        [ClaimsAuthorization]
-        [Route("re-route-job")]
-        public HttpResponseMessage ReRouteJobRequest([FromBody] JobRequestViewModel entity)
-        {
-            entity.userBranchId = (short)token.GetBranchId;
-            entity.companyId = token.GetCompanyId;
-            entity.lastUpdatedBy = token.GetStaffId;
-            entity.createdBy = token.GetStaffId;
-            entity.applicationUrl = HttpContext.Current.Request.Path;
-            entity.staffId = token.GetStaffId;
-
-            var data = repo.ReRouteJobRequest(entity);
-            if (data)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job re-route was successful" });
             }
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });

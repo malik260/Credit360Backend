@@ -56,8 +56,9 @@ namespace FintrakBanking.Common.Enum
         OverdraftBookingAndApproval = 3,
         ContingentLiabilityBookingAndApproval = 4,
         LMSApplication = 5,
-        LMSOperationAndApproval = 6
-
+        LMSOperationAndApproval = 6,
+        CollateralReleaseApproval = 7,
+        LoanApplicationCaptureCRMS = 9,
+        TranchBooking = 10
     }
-
 }

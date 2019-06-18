@@ -10,7 +10,12 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
-        public string jobSourceName;
+        public int loanApplicationId;
+
+        public string jobSourceName { get; set; }
+        public string sourceBranchName { get; set; }
+        public string sourceBranchCode { get; set; }
+        public string sourceRegionName { get; set; }
 
         public string recievingHub { get; set; }
 
@@ -91,7 +96,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string fromSender { get; set; }
         public string fromBranchName { get; set; }
         public string toBranchName { get; set; }
-        
+
         public string to { get; set; }
         public string assignee { get; set; }
         public Array emailList { get; set; }
@@ -101,7 +106,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public IEnumerable<RequestDocumentViewModel> jobDocuments { get; set; }
     }
 
-    public  class JobRequestMessageViewModel : GeneralEntity
+    public class JobRequestMessageViewModel : GeneralEntity
     {
         public int jobRequestMessageId { get; set; }
 
