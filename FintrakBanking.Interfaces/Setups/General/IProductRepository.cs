@@ -48,6 +48,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductViewModel> GetAllProductByProductClassAndCustomerType(int productClassId, int customerTypeId);
         IEnumerable<ProductViewModel> GetAllProductsByProductClassIdAndCustomerTypeId(int productClassId, int customerTypeId);
         IEnumerable<LookupViewModel> GetProductCurrency(int productId);
+
+        IEnumerable<ProductViewModel> Products();
         #endregion Product
 
         #region Product Price Index

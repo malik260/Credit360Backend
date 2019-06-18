@@ -629,9 +629,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                        usedByLos = data.USEDBYLOS,
                                        penalChargeRate = data.PENALCHARGERATE,
 
-                                   });
-                var Productdata = productData.ToList();
-                foreach (var item in Productdata)
+                                   }).ToList();
+                var Productdata = productData;
+                foreach (var item in productData)
                 {
                     item.currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
                                   .Select(c => new ProductCurrencyViewModel()
@@ -777,8 +777,22 @@ namespace FintrakBanking.Repositories.Setups.General
                 return Productdata;
             }
 
+        public IEnumerable<ProductViewModel> Products()
+        {
+            var productData = (from data in context.TBL_PRODUCT
+                               select new ProductViewModel()
+                               {
+                                   productId = data.PRODUCTID,
+                                   productName = data.PRODUCTNAME
 
-            public IEnumerable<ProductLiteViewModel> GetAllProductLite()
+                               }).ToList();
+           
+
+            return productData;
+        }
+
+
+        public IEnumerable<ProductLiteViewModel> GetAllProductLite()
             {
                 var productData = (from data in context.TBL_PRODUCT
                                    join g in context.TBL_PRODUCT_TYPE on data.PRODUCTTYPEID equals g.PRODUCTTYPEID
@@ -864,8 +878,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (customerTypeId == 0) customerTypeId = 3;
 
                 product = AllProduct().Where(c =>
-                        c.productClassId == productClassId
-                        && (c.customerTypeId == customerTypeId || c.customerTypeId == 3)
+                        c.productClassId == (short?)productClassId
+                        //&& (c.customerTypeId == (short)customerTypeId || c.customerTypeId == 3)
                         && (c.productGroupId == 1)
                     ).ToList();
 

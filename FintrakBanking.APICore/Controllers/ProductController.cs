@@ -689,6 +689,26 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("all-products")]
+        public HttpResponseMessage GetProducts()
+        {
+            try
+            {
+                var data = repo.Products().ToList().OrderBy(p => p.productName);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("product/")]
         public HttpResponseMessage SearchRandomProductBySearchQuery(string searchQuery)
         {
