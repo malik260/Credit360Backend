@@ -3200,7 +3200,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             productClassProcessId = p.PRODUCT_CLASS_PROCESSID,
                             productClassProcess = p.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESS_NAME,
                             //customerTypeId = p.TBL_PRODUCT.CUSTOMERTYPEID,
-                            customerType = p.TBL_CUSTOMER_TYPE.NAME,
+                            //customerType = p.TBL_CUSTOMER_TYPE.NAME,
                             profileBusinessUnitName = p.BUSINESSUNITID != null ? p.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                             businessUnitId = p.BUSINESSUNITID,
 
