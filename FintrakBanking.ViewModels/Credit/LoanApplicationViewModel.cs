@@ -883,4 +883,15 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isOnLending { get; set; }
         public bool isInterventionFunds { get; set; }
     }
+
+    public class ApprovalLevelDetailsModel : GeneralEntity
+    {
+        public int? approvalLevelId { get; set; }
+        public int? staffRoleId { get; set; }
+        public string levelName { get; set; }
+        public int? groupPosition { get; set; }
+        public int? levelPosition { get; set; }
+
+    }
 }
+

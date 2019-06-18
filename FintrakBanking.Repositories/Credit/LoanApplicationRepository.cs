@@ -1193,7 +1193,6 @@ namespace FintrakBanking.Repositories.Credit
                         ;
 
             var staffRoleLevelId = levels.FirstOrDefault().levelId;
-
             if (next == false) return staffRoleLevelId;
             int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
             var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
@@ -1203,12 +1202,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public int? GetFirstLevelStaffId(int levelId)
         {
-            if (levelId == 0)
+            if (levelId == 0) return 2;
+            int staffId;
+            var designatedStaff = (int?)context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId && l.DELETED == false).FirstOrDefault()?.STAFFID ?? 0;
+            if (designatedStaff == 0)
             {
-                //var staffId1 = context.TBL_APPROVAL_LEVEL_STAFF.LastOrDefault();
+                var staffLevel = context.TBL_APPROVAL_LEVEL.Find(levelId);
+                staffId = (int?)context.TBL_STAFF.Where(s => s.STAFFROLEID == staffLevel.STAFFROLEID && s.DELETED == false).FirstOrDefault()?.STAFFID ?? 0;
+                return staffId;
             }
-            var staffId = (int?)context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId).FirstOrDefault()?.STAFFID ?? 0;
-            return staffId;
+            return designatedStaff;
         }
 
         public string GetRefrenceNumber()
