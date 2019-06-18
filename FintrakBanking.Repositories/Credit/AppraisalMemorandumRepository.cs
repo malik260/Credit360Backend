@@ -1426,7 +1426,7 @@ namespace FintrakBanking.Repositories.Credit
             // var declarations
             IQueryable<LoanApplicationViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
-            
+
             // query
             var query = context.TBL_LOAN_APPLICATION.Where(x =>
                     x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
@@ -1499,9 +1499,7 @@ namespace FintrakBanking.Repositories.Credit
                                             .FirstOrDefault(),
                 currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
                 dateTimeCreated = x.a.DATETIMECREATED
-            })
-            .ToList()
-            ;
+            }).ToList();
 
             applications = query.AsQueryable()
                 .Where(x => x.currentApprovalLevelTypeId != 2)
