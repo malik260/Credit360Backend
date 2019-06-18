@@ -300,6 +300,39 @@ namespace FintrakBanking.Repositories.Media
                 //return false;
             }
         }
+        public IEnumerable<OriginalDocumentApprovalViewModel> SearchForApprovedOriginalDocument(string searchString)
+        {
+            return (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                    join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                    join a in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    where x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && l.APPLICATIONREFERENCENUMBER == searchString
+                 || c.FIRSTNAME.ToLower().Contains(searchString.Trim())
+                 || c.LASTNAME.ToLower().Contains(searchString.Trim())
+                 || c.MIDDLENAME.ToLower().Contains(searchString.Trim())
+
+                    select new OriginalDocumentApprovalViewModel
+                    {
+                        originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                        loanApplicationId = x.LOANAPPLICATIONID,
+                        description = x.DESCRIPTION,
+                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                        applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                        referenceNumber = x.REFERENCENUMBER,
+                        dateTimeCreated = x.DATETIMECREATED,
+                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        customerCode = c.CUSTOMERCODE,
+                        customerId = c.CUSTOMERID,
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        applicationDate = l.APPLICATIONDATE,
+                        applicationAmount = l.APPLICATIONAMOUNT,
+                        interestRate = l.INTERESTRATE,
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        operationId = (int)OperationsEnum.OriginalDocumentApproval
+                    }).ToList();
+        }
     }
 }
 

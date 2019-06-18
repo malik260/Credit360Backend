@@ -26,6 +26,9 @@ namespace FintrakBanking.Interfaces.Media
         List<OriginalDocumentApprovalViewModel> GetOriginalDocumentByLoanApplicationId(int id);
 
         bool GoForApproval(OriginalDocumentApprovalViewModel model);
+
        bool SubmitApproval(OriginalDocumentApprovalViewModel entity);
+
+        IEnumerable<OriginalDocumentApprovalViewModel> SearchForApprovedOriginalDocument(string searchString);
     }
 }
