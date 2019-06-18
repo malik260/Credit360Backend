@@ -146,5 +146,15 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.SubmitApproval(model);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approved-original-document/{parameter}")]
+        public HttpResponseMessage SearchForApprovedOriginalDocument(string parameter)
+        {
+            var response = repo.SearchForApprovedOriginalDocument(parameter);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
     }
 }
