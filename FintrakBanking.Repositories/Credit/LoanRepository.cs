@@ -5555,7 +5555,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
 
                     var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-
+                    var multipleProductFacilities = context.TBL_LOAN_APPLICATION.Where(l => l.LOANAPPROVEDLIMITID == item.loanApplicationId).ToList();
+                    var multipleProductApprovedAmount = multipleProductFacilities.Sum(f => f.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT));
                     if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
                         item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED);
 
@@ -5570,7 +5571,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (item.disapprovedCount > 0)
                         item.disApprovedAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Sum(s => s.AMOUNT_REQUESTED);
 
-                    item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
+                    item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount) - multipleProductApprovedAmount;
 
                     var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
                     if (disbursedLoan.Any())
