@@ -322,10 +322,10 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             // WORKFLOW
-            workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
-            //workflow.OperationId = operationId;
-            //workflow.ProductClassId = appl.PRODUCTCLASSID;
-            //workflow.ProductId = model.productId;
+            //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
+            workflow.OperationId = operationId;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            workflow.ProductId = appl.PRODUCTID;
             workflow.StaffId = model.createdBy;
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
