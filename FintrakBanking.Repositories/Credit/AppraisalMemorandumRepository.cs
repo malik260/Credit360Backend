@@ -814,6 +814,124 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public WorkflowResponse LcAppraisalMemorandum(LcForwardViewModel model)
+        {
+            int operationId = (int)OperationsEnum.AdhocApproval; // CHANGE
+            var applicationDate = general.GetApplicationDate();
+            var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
+            // VALIDATION TODO if (model.recommendedChanges.Count() > 0)
+            //items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
+
+            //var approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
+
+            //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
+            //if (appl.RISKRATINGID != null && model.isBusiness == false)
+            //{
+            //    ValidateCustomerExposure(1, appl.LOANAPPLICATIONID, totalApprovedAmount, appl.CUSTOMERID, appl.CUSTOMERGROUPID);
+            //}
+
+            // WORKFLOW
+            //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
+            //workflow.OperationId = operationId;
+            workflow.StaffId = model.createdBy;
+            workflow.TargetId = model.LcIssuanceId;
+            workflow.CompanyId = model.companyId;
+            //workflow.Vote = model.vote;
+            var test4 = model.receiverLevelId;
+            var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, true);
+            var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
+            var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel);
+            workflow.NextLevelId = nextLevel;
+            workflow.ToStaffId = nextStaff;
+            workflow.StatusId = 0;
+            workflow.Comment = model.comment;
+            var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
+
+            var placeholders = new AlertPlaceholders();
+            placeholders.customerName = "<br />CUSTOMER NAME: " + c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME;
+            placeholders.referenceNumber = "<br />LC REFERENCENUMBER: " + lc.LCREFERENCENUMBER;
+            placeholders.facilityType = "<br />FACILITY INFORMATION: LETTER OF CREDIT";
+            placeholders.operationName = "<br />OPERATION NAME: LC ISSUANCE";
+            placeholders.branchName = "<br />BRANCH NAME: " + c.TBL_BRANCH.BRANCHNAME;
+            workflow.Placeholders = placeholders;
+
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
+
+            // UPDATE APPLICATION
+            lc.APPROVALSTATUSID = (short)workflow.StatusId;
+            //            if (model.vote == 1) { appl.DISPUTED = true; }
+            lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
+            if (lc.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { lc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
+
+            if (workflow.NewState == (int)ApprovalState.Ended) // cam status
+            {
+                lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                {
+                    lc.APPROVEDDATE = applicationDate;
+                    lc.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
+                    lc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                }
+                else if (lc.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                {
+                    SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
+                }
+
+                if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+                if (lc.NEXTAPPLICATIONSTATUSID != null && lc.FINALAPPROVAL_LEVELID != null) { lc.APPLICATIONSTATUSID = (short)lc.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
+                                                                                                                                                                    // MEMORANDUM update
+                                                                                                                                                                    //          var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
+                                                                                                                                                                    //        if (memo != null) { memo.ISCOMPLETED = true; }
+                if (contextControl != null) contextControl.SaveChanges();
+            }
+
+            // UPDATE APPROVED AMOUNT
+            //if (updateApprovedAmount == true && items != null) appl.APPROVEDAMOUNT = totalApprovedAmount;
+
+            // Audit Section ---------------------------
+            /*  var audit = new TBL_AUDIT
+              {
+                  AUDITTYPEID = (short)AuditTypeEnum.ForwardAppraisalMemorandum,
+                  STAFFID = model.createdBy,
+                  BRANCHID = (short)model.userBranchId,
+                  DETAIL = $"Loan Application Reference Number: '{ appl.APPLICATIONREFERENCENUMBER }', " +
+                              $"StaffId: '{ model.createdBy }', " +
+                              $"TargetId: '{ model.applicationId }', " +
+                              $"Vote: '{ model.vote }', " +
+                              $"NextLevelId: '{ model.receiverLevelId }', " +
+                              $"ToStaffId: '{ model.receiverStaffId }', " +
+                              $"StatusId: '{ model.forwardAction }', " +
+                              $"Comment: '{ model.comment }', " +
+                              $"LINE CHANGES:" +
+                              $"'{ LineItemChanges(model.recommendedChanges) }'",
+
+                  IPADDRESS = model.userIPAddress,
+                  URL = model.applicationUrl,
+                  APPLICATIONDATE = applicationDate,
+                  SYSTEMDATETIME = DateTime.Now
+              };
+              this.audit.AddAuditTrail(audit);
+              // End of Audit Section ---------------------
+  */
+
+            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+            {
+                lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
+                lc.APPROVEDDATE = DateTime.Now;
+                workflow.SetResponse = false;
+                workflow.NextProcess(lc.COMPANYID, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false);
+            }
+            lc.DATEACTEDON = DateTime.Now;
+            context.SaveChanges();
+            //workflow.Response.success = true;
+            return workflow.Response;
+
+        }
+
+
         private Dictionary<string, int> GetRepresentStepdownItems(int applicationId, int action, int operationId)
         {
             int levelId;

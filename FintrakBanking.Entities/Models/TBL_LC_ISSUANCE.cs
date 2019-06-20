@@ -83,6 +83,22 @@ namespace FintrakBanking.Entities.Models
 
         public bool? APPROVED { get; set; }
 
+        public int APPROVALSTATUSID { get; set; }
+
+        public short APPLICATIONSTATUSID { get; set; }
+
+        public int? FINALAPPROVAL_LEVELID { get; set; }
+
+        public short? NEXTAPPLICATIONSTATUSID { get; set; }
+
+        public DateTime? DATEACTEDON { get; set; }
+
+        public int? ACTEDONBY { get; set; }
+
+        public DateTime? APPROVEDDATE { get; set; }
+
+        public int COMPANYID { get; set; }
+
         public virtual ICollection<TBL_LC_DOCUMENT> TBL_LC_DOCUMENT { get; set; }
 
         public virtual ICollection<TBL_LC_CONDITION> TBL_LC_CONDITION { get; set; }
