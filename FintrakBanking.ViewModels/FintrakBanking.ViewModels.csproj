@@ -101,6 +101,7 @@
     <Compile Include="Credit\CRMSRegulatoryViewModel.cs" />
     <Compile Include="Credit\DashboardViewModel.cs" />
     <Compile Include="Credit\DisbursalCreditTurnoverViewModel.cs" />
+    <Compile Include="Credit\LcIssuanceViewModel.cs" />
     <Compile Include="Credit\LoanCAMSOLViewModel.cs" />
     <Compile Include="Credit\ChecklistApprovalViewModel.cs" />
     <Compile Include="Credit\CollateralCustomerViewModel.cs" />

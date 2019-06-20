@@ -104,6 +104,10 @@
     <Compile Include="Models\TBL_DEFINED_FUNCTION.cs" />
     <Compile Include="Models\TBL_JOB_SOURCE.cs" />
     <Compile Include="Models\TBL_APPROVAL_BUSINESS_RULE.cs" />
+    <Compile Include="Models\TBL_LC_CONDITION.cs" />
+    <Compile Include="Models\TBL_LC_DOCUMENT.cs" />
+    <Compile Include="Models\TBL_LC_ISSUANCE.cs" />
+    <Compile Include="Models\TBL_LC_SHIPPING.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PAYMENT.cs" />
     <Compile Include="Models\TBL_ORIGINAL_DOCUMENT_APPROVAL.cs" />
     <Compile Include="Models\TBL_PROFILE_BUSINESS_UNIT.cs" />

@@ -672,8 +672,8 @@ namespace FintrakBanking.Repositories.Credit
                 decimal totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
                 decimal totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
 
-                //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
-                if (appl.RISKRATINGID != null && model.isBusiness == false)
+            //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
+            if (appl.RISKRATINGID != null && model.isBusiness == false)
                 {
                     ValidateCustomerExposure(1, appl.LOANAPPLICATIONID, totalApprovedAmount, appl.CUSTOMERID, appl.CUSTOMERGROUPID);
                 }
@@ -732,14 +732,23 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         appl.APPROVEDDATE = applicationDate;
                         appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
+                    appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    foreach (var item in items)
+                    {
+                        item.STATUSID = (short)ApprovalStatusEnum.Approved;
 
-                        //Send Email to Customer
-                        //                SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
+                    }
+                    approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
+                    totalApprovedAmount = approvedList.Sum(x => x.APPROVEDAMOUNT);
+                    totalApplicationAmount = items.Sum(x => x.APPROVEDAMOUNT);
+                    appl.APPROVEDAMOUNT = totalApprovedAmount;
+                    //Send Email to Customer
+                    //                SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
 
-                        //generate offer letter doc
-                        //                  offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
+                    //generate offer letter doc
+                    //                  offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
 
-                        generateOutPutDocument = true;
+                    generateOutPutDocument = true;
                     }
                     else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                     {
@@ -793,6 +802,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
                     appl.AVAILMENTDATE = DateTime.Now;
+                    appl.APPROVEDDATE = DateTime.Now;
                     workflow.SetResponse = false;
                     workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.LoanBookingRequest, model.applicationId, null, "New approved application", true, false);
                 }
