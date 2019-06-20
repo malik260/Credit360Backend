@@ -18,7 +18,7 @@ namespace FintrakBanking.Interfaces.credit
 
         //IEnumerable<LcIssuanceViewModel> GetLcIssuanceByIssuanceId(int id);
 
-        bool AddLcIssuance(LcIssuanceViewModel model);
+        LcIssuanceViewModel AddLcIssuance(LcIssuanceViewModel model);
 
         bool UpdateLcIssuance(LcIssuanceViewModel model, int id, UserInfo user);
 

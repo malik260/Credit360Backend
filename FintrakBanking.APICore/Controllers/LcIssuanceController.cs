@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
             model.createdBy = token.GetStaffId;
             model.companyId = token.GetCompanyId;
             var response = repo.AddLcIssuance(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            if (response.lcIssuanceId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 

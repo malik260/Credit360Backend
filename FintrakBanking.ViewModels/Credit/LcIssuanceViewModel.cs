@@ -11,6 +11,8 @@ namespace FintrakBanking.ViewModels.credit
         #region LCISSUANCE
         public int lcIssuanceId { get; set; }
 
+        public string lcReferenceNumber { get; set; }
+
         public string beneficiaryName { get; set; }
 
         public decimal totalApprovedAmount { get; set; }

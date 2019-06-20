@@ -11,6 +11,7 @@ using FintrakBanking.Interfaces.credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -123,10 +124,12 @@ namespace FintrakBanking.Repositories.credit
             };
         }
 
-        public bool AddLcIssuance(LcIssuanceViewModel model)
+        public LcIssuanceViewModel AddLcIssuance(LcIssuanceViewModel model)
         {
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             var entity = new TBL_LC_ISSUANCE
             {
+                LCREFERENCENUMBER = referenceNumber,
                 BENEFICIARYNAME = model.beneficiaryName,
                 TOTALAPPROVEDAMOUNT = model.totalApprovedAmount,
                 LETTEROFCREDITTYPEID = model.letterOfCreditTypeId,
@@ -167,7 +170,11 @@ namespace FintrakBanking.Repositories.credit
             });
             // Audit Section end ------------------------
 
-            return context.SaveChanges() != 0;
+            context.SaveChanges();
+            var createdlc = context.TBL_LC_ISSUANCE.FirstOrDefault(lc => lc.LCREFERENCENUMBER == referenceNumber);
+            model.lcIssuanceId = createdlc.LCISSUANCEID;
+            model.lcReferenceNumber = createdlc.LCREFERENCENUMBER;
+            return model;
         }
 
         public bool UpdateLcIssuance(LcIssuanceViewModel model, int id, UserInfo user)
