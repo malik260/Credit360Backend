@@ -54,6 +54,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lc-issuance/approval")]
+        public HttpResponseMessage GetLcIssuancesForApproval()
+        {
+            IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForApproval(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lc-issuance/{id}")]
         public HttpResponseMessage GetLcIssuance(int id)
         {

@@ -63,38 +63,89 @@ namespace FintrakBanking.Repositories.credit
                     letterOfcreditExpirydate = x.LETTEROFCREDITEXPIRYDATE,
                     invoiceDate = x.INVOICEDATE,
                     invoiceDueDate = x.INVOICEDUEDATE,
+                    lcReferenceNumber = x.LCREFERENCENUMBER,
                 })
                 .ToList();
         }
 
-        //public IEnumerable<LcIssuanceViewModel> GetLcIssuanceByIssuanceId(int id)
-        //{
-        //    return context.TBL_LC_ISSUANCE.Where(x => x.LCISSUANCEID == id && x.DELETED == false)
-        //        .Select(x => new LcIssuanceViewModel
-        //        {
-        //            lcIssuanceId = x.LCISSUANCEID,
-        //            beneficiaryName = x.BENEFICIARYNAME,
-        //            totalApprovedAmount = x.TOTALAPPROVEDAMOUNT,
-        //            letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
-        //            isDraftRequired = x.ISDRAFTREQUIRED,
-        //            beneficiaryAddress = x.BENEFICIARYADDRESS,
-        //            beneficiaryEmail = x.BENEFICIARYEMAIL,
-        //            customerId = x.CUSTOMERID,
-        //            fundSourceId = x.FUNDSOURCEID,
-        //            formNumber = x.FORMNUMBER,
-        //            beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
-        //            beneficiaryBankId = x.BENEFICIARYBANKID,
-        //            currencyId = x.CURRENCYID,
-        //            proformaInvoiceId = x.PROFORMAINVOICEID,
-        //            availableAmount = x.AVAILABLEAMOUNT,
-        //            letterOfCreditAmount = x.LETTEROFCREDITAMOUNT,
-        //            letterOfcreditExpirydate = x.LETTEROFCREDITEXPIRYDATE,
-        //            invoiceDate = x.INVOICEDATE,
-        //            invoiceDueDate = x.INVOICEDUEDATE,
-        //        })
-        //        .ToList();
-        //}
-        
+        public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForApproval(int staffId)
+        {
+            var operationId = (int)OperationsEnum.lcIssuance;
+            IQueryable<LcIssuanceApprovalViewModel> applications = null;
+            var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+
+            var querytest1 = (from a in context.TBL_LC_ISSUANCE where
+                                 a.DELETED == false && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                 && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                              select a).ToList();
+
+            var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
+                              where
+                                (b.OPERATIONID == operationId)
+                                && b.APPROVALSTATEID != (int)ApprovalState.Ended
+                                && b.RESPONSESTAFFID == null
+                                && levelIds.Contains((int)b.TOAPPROVALLEVELID)
+                                && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
+                                select b).ToList();
+                                    // query
+           var query = (from a in context.TBL_LC_ISSUANCE where
+                        (a.DELETED == false 
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
+                        orderby a.LCISSUANCEID
+                        join b in context.TBL_APPROVAL_TRAIL on a.LCISSUANCEID equals b.TARGETID where
+                        (
+                        (b.OPERATIONID == operationId)
+                        && b.APPROVALSTATEID != (int)ApprovalState.Ended
+                        && b.RESPONSESTAFFID == null
+                        && levelIds.Contains((int)b.TOAPPROVALLEVELID)
+                        && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
+                        )
+                            select new LcIssuanceApprovalViewModel()
+                            {
+                                lcIssuanceId = a.LCISSUANCEID,
+                                isDraftRequired = a.ISDRAFTREQUIRED,
+                                lcReferenceNumber = a.LCREFERENCENUMBER,
+                                letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
+                                beneficiaryName = a.BENEFICIARYNAME,
+                                totalApprovedAmount = a.TOTALAPPROVEDAMOUNT,
+                                beneficiaryAddress = a.BENEFICIARYADDRESS,
+                                beneficiaryEmail = a.BENEFICIARYEMAIL,
+                                customerId = a.CUSTOMERID,
+                                fundSourceId = a.FUNDSOURCEID,
+                                formNumber = a.FORMNUMBER,
+                                beneficiaryPhoneNumber = a.BENEFICIARYPHONENUMBER,
+                                beneficiaryBankId = a.BENEFICIARYBANKID,
+                                currencyId = a.CURRENCYID,
+                                proformaInvoiceId = a.PROFORMAINVOICEID,
+                                availableAmount = a.AVAILABLEAMOUNT,
+                                letterOfCreditAmount = a.LETTEROFCREDITAMOUNT,
+                                letterOfcreditExpirydate = a.LETTEROFCREDITEXPIRYDATE,
+                                invoiceDate = a.INVOICEDATE,
+                                invoiceDueDate = a.INVOICEDUEDATE,
+                                lastComment = b.COMMENT,
+                                currentApprovalStateId = b.APPROVALSTATEID,
+                                currentApprovalLevelId = b.TOAPPROVALLEVELID,
+                                currentApprovalLevel = b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                                currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
+                                approvalTrailId = b == null ? 0 : b.APPROVALTRAILID, // for inner sequence ordering
+                                toStaffId = b.TOSTAFFID,
+                                approvalStatusId = (short)a.APPROVALSTATUSID,
+                                applicationStatusId = a.APPLICATIONSTATUSID,
+                                createdBy = (int)a.CREATEDBY,
+                                customerName = context.TBL_CUSTOMER.Find(a.CUSTOMERID).FIRSTNAME + context.TBL_CUSTOMER.Find(a.CUSTOMERID).LASTNAME,
+                                operationId = operationId,
+                                dateTimeCreated = (DateTime)a.DATETIMECREATED
+                            }).ToList();
+
+            applications = query.AsQueryable()
+                .Where(x => x.currentApprovalLevelTypeId != 2)
+                .GroupBy(d => d.lcIssuanceId)
+                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+
+            return applications.ToList();
+        }
+
 
         public LcIssuanceViewModel GetLcIssuance(int id)
         {
@@ -121,6 +172,7 @@ namespace FintrakBanking.Repositories.credit
                 letterOfcreditExpirydate = entity.LETTEROFCREDITEXPIRYDATE,
                 invoiceDate = entity.INVOICEDATE,
                 invoiceDueDate = entity.INVOICEDUEDATE,
+                lcReferenceNumber = entity.LCREFERENCENUMBER,
             };
         }
 
@@ -148,7 +200,7 @@ namespace FintrakBanking.Repositories.credit
                 LETTEROFCREDITEXPIRYDATE = model.letterOfcreditExpirydate,
                 INVOICEDATE = model.invoiceDate,
                 INVOICEDUEDATE = model.invoiceDueDate,
-                // COMPANYID = model.companyId,
+                COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
@@ -157,7 +209,7 @@ namespace FintrakBanking.Repositories.credit
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
+            var aud = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LcIssuanceAdded,
                 STAFFID = model.createdBy,
@@ -167,7 +219,8 @@ namespace FintrakBanking.Repositories.credit
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
-            });
+            };
+            context.TBL_AUDIT.Add(aud);
             // Audit Section end ------------------------
 
             context.SaveChanges();

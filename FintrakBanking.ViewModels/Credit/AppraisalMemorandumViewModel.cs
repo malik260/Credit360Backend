@@ -71,9 +71,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string comment { get; set; }
         public decimal principal { get; set; }
         public double rate { get; set; }
-        //public int tenor { get; set; }
         public bool investmentGrade { get; set; }
-        public List<RecommendedChangesViewModel> recommendedChanges { get; set; }
         public int applicationTenor { get; set; }
         public int operationId { get; set; }
         public bool untenored { get; set; }

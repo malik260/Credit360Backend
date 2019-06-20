@@ -152,7 +152,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("lc-approval/forward")]
+        [Route("lc-issuance/forward")]
         public HttpResponseMessage LcAppraisalMemorandum([FromBody] LcForwardViewModel entity)
         {
             try

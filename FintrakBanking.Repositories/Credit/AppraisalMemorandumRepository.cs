@@ -819,24 +819,14 @@ namespace FintrakBanking.Repositories.Credit
             int operationId = (int)OperationsEnum.AdhocApproval; // CHANGE
             var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
-            // VALIDATION TODO if (model.recommendedChanges.Count() > 0)
-            //items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
-
-            //var approvedList = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
-
-            //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
-            //if (appl.RISKRATINGID != null && model.isBusiness == false)
-            //{
-            //    ValidateCustomerExposure(1, appl.LOANAPPLICATIONID, totalApprovedAmount, appl.CUSTOMERID, appl.CUSTOMERGROUPID);
-            //}
 
             // WORKFLOW
             //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
-            //workflow.OperationId = operationId;
+            workflow.OperationId = operationId;
             workflow.StaffId = model.createdBy;
             workflow.TargetId = model.LcIssuanceId;
             workflow.CompanyId = model.companyId;
-            //workflow.Vote = model.vote;
+            workflow.Vote = model.vote;
             var test4 = model.receiverLevelId;
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, true);
             var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
