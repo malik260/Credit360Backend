@@ -596,7 +596,32 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Product Region
 
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product/product-class/{productclassId}/customer-type/{customerTypeId}")]
+        public HttpResponseMessage GetAllProductByProductClassAndCustomerType(int productclassId, int customerTypeId)
+        {
+            try
+            {
+
+                var data = repo.GetAllProductByProductClassAndCustomerType(productclassId, customerTypeId).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("product-by-productclass/{id}/customerType/{cid}")]
         public HttpResponseMessage GetAllProduct(int id, int cid)
         {
@@ -655,6 +680,26 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("all-products")]
+        public HttpResponseMessage GetProducts()
+        {
+            try
+            {
+                var data = repo.Products().ToList().OrderBy(p => p.productName);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
             }
             catch (SecureException ex)
             {

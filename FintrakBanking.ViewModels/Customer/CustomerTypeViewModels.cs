@@ -4,6 +4,7 @@
     {
         public short customerTypeId { get; set; }
         public string name { get; set; }
+        public bool isHybrid { get; set; }
     }
 
     public class CustomerAddressTypeViewModels

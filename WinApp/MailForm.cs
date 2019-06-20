@@ -10,8 +10,8 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Windows.Forms;
-using TextmagicRest;
-using TextmagicRest.Model;
+//using TextmagicRest;
+//using TextmagicRest.Model;
 using System.Net.Http;
 
 
