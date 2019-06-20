@@ -62,16 +62,6 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
-        //[HttpGet]
-        //[ClaimsAuthorization]
-        //[Route("lc-issuance/{IssuanceId}")]
-        //public HttpResponseMessage GetLcIssuanceByIssuanceId(int id)
-        //{
-        //    IEnumerable<LcIssuanceViewModel> response = repo.GetLcIssuanceByIssuanceId(id);
-        //    if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-        //}
-
         [HttpPost]
         [ClaimsAuthorization]
         [Route("lc-issuance")]

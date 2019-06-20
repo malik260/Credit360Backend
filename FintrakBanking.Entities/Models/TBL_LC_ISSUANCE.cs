@@ -89,7 +89,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? FINALAPPROVAL_LEVELID { get; set; }
 
-        public short? NEXTAPPLICATIONSTATUSID { get; set; }
+        //public short? NEXTLCSTATUSID { get; set; }
 
         public DateTime? DATEACTEDON { get; set; }
 
