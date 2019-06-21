@@ -322,10 +322,10 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             // WORKFLOW
-            workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
-            //workflow.OperationId = operationId;
-            //workflow.ProductClassId = appl.PRODUCTCLASSID;
-            //workflow.ProductId = model.productId;
+            //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
+            workflow.OperationId = operationId;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            workflow.ProductId = appl.PRODUCTID;
             workflow.StaffId = model.createdBy;
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
@@ -686,8 +686,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.CompanyId = model.companyId;
                 //workflow.Vote = model.vote;
                 var test4 = model.receiverLevelId;
-                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
-                var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
+                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, true);
                 var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel);
                 workflow.NextLevelId = nextLevel;
                 workflow.ToStaffId = nextStaff;

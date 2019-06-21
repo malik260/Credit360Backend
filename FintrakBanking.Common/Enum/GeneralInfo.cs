@@ -349,6 +349,14 @@ namespace FintrakBanking.Common.Enum
         LcShippingUpdated = 416,
         LcShippingDeleted = 417,
 
+        AtcLodgmentAdded = 418,
+        AtcLodgmentUpdated = 419,
+        AtcLodgmentDeleted = 420,
+        AtcLodgmentDetailAdded = 421,
+        AtcLodgmentDetailUpdated = 422,
+        AtcLodgmentDetailDeleted = 423,
+        AtcReleaseAdded = 424,
+        AtcReleaseDeleted = 425,
     };
     public enum RegulatoryTypeEnum
     {

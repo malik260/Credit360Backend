@@ -9,6 +9,7 @@ namespace FintrakBanking.Entities.Models
     [Table("TBL_LOAN_APPLICATION")]
     public partial class TBL_LOAN_APPLICATION
     {
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public TBL_LOAN_APPLICATION()
         {
@@ -62,6 +63,7 @@ namespace FintrakBanking.Entities.Models
         public int OPERATIONID { get; set; }
 
         public short? PRODUCTCLASSID { get; set; }
+        public int? PRODUCTID { get; set; }
 
         public short PRODUCT_CLASS_PROCESSID { get; set; }
 
