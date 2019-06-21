@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<JobTypeHubViewModel> GetAllJobTypeHub(short jobTypeId);
         // bool ChargeCustomerJob(CollateralViewModel model, string actionName, string actionType, int loanApplicationDetailId);
         bool AddJobDocumentOnly(RequestDocumentViewModel model, byte[] file);
-        IEnumerable<JobRequestViewModel> GetJobRequestByFilter(int staffId, int branchId, string filter);
+        IEnumerable<JobRequestViewModel> GetJobRequestByFilter(int staffId, int branchId, string filter, int? startNumber);
         bool UpdateInvoiceStatus(JobRequestInvoiceViewModel model);
         List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId);
         //List<jobReasignment> GetJobTypeReasignmentAdminStaff(int companyId);
@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<JobRequestStatusFeedbackViewModel> GetJobRequestStatusFeedback(short statusId, short jobTypeId);
         JobRequestViewModel GetJobRequest(int jobRequestId);
 
-        List<JobRequestViewModel> GetApplicationJobRequest(int targetId, int operationId);
+        List<JobRequestViewModel> GetApplicationJobRequest(int targetId, int operationId, short jobSourceId);
 
         IEnumerable<ApplicationJobRequest> GetLoanApplicationJobsById(int loanApplicationId, int companyId);
 
@@ -42,6 +42,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         bool ReplyJobRequest(JobRequestViewModel model, int jobRequestId);
 
+        bool ReRouteJobRequest(JobRequestViewModel model);
         bool ReassignJobRequest(JobRequestViewModel model, int jobRequestId);
 
         // Legal jobs

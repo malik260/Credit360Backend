@@ -3933,10 +3933,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER_TYPE)
                 .WillCascadeOnDelete(false);
 
-            modelBuilder.Entity<TBL_CUSTOMER_TYPE>()
-                .HasMany(e => e.TBL_PRODUCT_CLASS)
-                .WithRequired(e => e.TBL_CUSTOMER_TYPE)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<TBL_CUSTOMER_TYPE>()
+            //    .HasMany(e => e.TBL_PRODUCT_CLASS)
+            //    .WithRequired(e => e.TBL_CUSTOMER_TYPE)
+            //    .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_DAILY_ACCRUAL>()
                 .Property(e => e.REFERENCENUMBER)
