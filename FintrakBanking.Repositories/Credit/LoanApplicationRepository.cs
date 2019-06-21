@@ -1081,7 +1081,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
         {
+
             var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+
+            if (appl.LOANAPPROVEDLIMITID > 0)
+            {
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.LoanBookingRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
+                context.SaveChanges();
+                return true;
+            }
 
             if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
             {
@@ -1172,14 +1181,46 @@ namespace FintrakBanking.Repositories.Credit
             return nextLevelId;
         }
 
+        public int? GetFirstAdhocReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var staffRoleLevelId = levels.FirstOrDefault().levelId;
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
+
+            return nextLevelId;
+        }
+
         public int? GetFirstLevelStaffId(int levelId)
         {
-            if (levelId == 0)
+            if (levelId == 0) return 2;
+            int staffId;
+            var designatedStaff = (int?)context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId && l.DELETED == false).FirstOrDefault()?.STAFFID ?? 0;
+            if (designatedStaff == 0)
             {
-                //var staffId1 = context.TBL_APPROVAL_LEVEL_STAFF.LastOrDefault();
+                var staffLevel = context.TBL_APPROVAL_LEVEL.Find(levelId);
+                staffId = (int?)context.TBL_STAFF.Where(s => s.STAFFROLEID == staffLevel.STAFFROLEID && s.DELETED == false).FirstOrDefault()?.STAFFID ?? 0;
+                return staffId;
             }
-            var staffId = (int?)context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId).FirstOrDefault()?.STAFFID ?? 0;
-            return staffId;
+            return designatedStaff;
         }
 
         public string GetRefrenceNumber()
@@ -1193,20 +1234,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            if (loan.loanApprovedLimitId > 0)
-            {
-                var appl = context.TBL_LOAN_APPLICATION.Find(loan.loanApprovedLimitId);
-                if (appl != null)
-                {
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                    workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.LoanBookingRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
-                    context.SaveChanges();
-                }
-                if (!(loan.loanApplicationId > 0))
-                {
-                    return loan;
-                }
-            }
+
+            
             ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();

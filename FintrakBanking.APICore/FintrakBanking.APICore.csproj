@@ -344,6 +344,7 @@
     <Compile Include="Controllers\DocumentUploadController.cs" />
     <Compile Include="Controllers\DocumentUsageController.cs" />
     <Compile Include="Controllers\FinacleIntegrationController.cs" />
+    <Compile Include="Controllers\LcIssuanceController.cs" />
     <Compile Include="Controllers\LoanFeeChargeController.cs" />
     <Compile Include="Controllers\OriginalDocumentApprovalController.cs" />
     <Compile Include="Controllers\ProfileSettingsController.cs" />

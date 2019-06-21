@@ -5542,6 +5542,7 @@ namespace FintrakBanking.Repositories.Credit
                                           loanPurpose = a.LOANINFORMATION,
                                           productClassId = a.PRODUCTCLASSID,
                                           currencyCode = b.TBL_CURRENCY.CURRENCYCODE,
+                                          approvedAmount = a.APPROVEDAMOUNT,
                                       }).OrderBy(d => d.productName);
             return customerFacilities;
         }
