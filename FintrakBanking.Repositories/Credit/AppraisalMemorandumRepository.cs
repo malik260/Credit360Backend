@@ -688,8 +688,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.CompanyId = model.companyId;
                 //workflow.Vote = model.vote;
                 var test4 = model.receiverLevelId;
-                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
-                var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, true);
+                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, true);
                 var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel);
                 workflow.NextLevelId = nextLevel;
                 workflow.ToStaffId = nextStaff;

@@ -1090,25 +1090,23 @@ namespace FintrakBanking.Repositories.Credit
 
             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
 
-            int? receiverLevelId = null;
+
+            int operationId = (int)OperationsEnum.CreditAppraisal;
 
             if (appl.ISADHOCAPPLICATION == true)
             {
-                receiverLevelId = GetFirstAdhocReceiverLevel(staffId, (int)OperationsEnum.AdhocApproval, appl.PRODUCTCLASSID);
-                var nextStaffId = GetFirstLevelStaffId((int)receiverLevelId);
-                workflow.ToStaffId = nextStaffId; //
-                workflow.OperationId = (int)OperationsEnum.AdhocApproval;
+                operationId = (int)OperationsEnum.AdhocApproval;
+                workflow.OperationId = operationId;
                 appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
             }
-            else
-            {
-                receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID);
-                workflow.ToStaffId = staffId; //
-                workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
-            }
+            int? receiverLevelId = null;
+
+            receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
+
             workflow.StaffId = staffId;
+            workflow.OperationId = operationId;
             workflow.NextLevelId = receiverLevelId; // BREAKING!
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
@@ -1143,11 +1141,11 @@ namespace FintrakBanking.Repositories.Credit
             return requests.Count() > 0;
         }
 
-        public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, bool next = false)
         {
             var staff = context.TBL_STAFF.Find(staffId);
 
-            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
                     .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                     .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
@@ -1166,35 +1164,6 @@ namespace FintrakBanking.Repositories.Credit
             var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID).ToList();
             var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId).ToList();
             var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
-
-            if (next == false) return staffRoleLevelId;
-            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
-            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
-
-            return nextLevelId;
-        }
-
-        public int? GetFirstAdhocReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
-        {
-            var staff = context.TBL_STAFF.Find(staffId);
-
-            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
-                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
-                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
-                        {
-                            groupPosition = mg.m.POSITION,
-                            levelPosition = l.POSITION,
-                            levelId = l.APPROVALLEVELID,
-                            levelName = l.LEVELNAME,
-                            staffRoleId = l.STAFFROLEID,
-                        })
-                        .OrderBy(x => x.groupPosition)
-                        .ThenBy(x => x.levelPosition)
-                        .ToList()
-                        ;
-
-            var staffRoleLevelId = levels.FirstOrDefault().levelId;
 
             if (next == false) return staffRoleLevelId;
             int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
