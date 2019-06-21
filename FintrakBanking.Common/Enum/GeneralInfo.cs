@@ -336,14 +336,14 @@ namespace FintrakBanking.Common.Enum
         OriginalDocumentApprovalAdded = 403,
         OriginalDocumentApprovalUpdated = 404,
         OriginalDocumentApprovalDeleted = 405,
-        AtcLodgmentAdded = 406,
-        AtcLodgmentUpdated = 407,
-        AtcLodgmentDeleted = 408,
-        AtcLodgmentDetailAdded = 409,
-        AtcLodgmentDetailUpdated = 410,
-        AtcLodgmentDetailDeleted = 411,
-        AtcReleaseAdded = 412,
-        AtcReleaseDeleted = 413,
+        AtcLodgmentAdded = 418,
+        AtcLodgmentUpdated = 419,
+        AtcLodgmentDeleted = 420,
+        AtcLodgmentDetailAdded = 421,
+        AtcLodgmentDetailUpdated = 422,
+        AtcLodgmentDetailDeleted = 423,
+        AtcReleaseAdded = 424,
+        AtcReleaseDeleted = 425,
     };
     public enum RegulatoryTypeEnum
     {
