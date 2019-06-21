@@ -480,6 +480,10 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RAC_ITEM> TBL_RAC_ITEM { get; set; }
         public virtual DbSet<TBL_RAC_OPTION> TBL_RAC_OPTION { get; set; }
         public virtual DbSet<TBL_RAC_OPTION_ITEM> TBL_RAC_OPTION_ITEM { get; set; }
+        public virtual DbSet<TBL_ATC_LODGMENT> TBL_ATC_LODGMENT { get; set; }
+        public virtual DbSet<TBL_ATC_LODGMENT_DETAIL> TBL_ATC_LODGMENT_DETAIL { get; set; }
+        public virtual DbSet<TBL_ATC_TYPE> TBL_ATC_TYPE { get; set; }
+        public virtual DbSet<TBL_ATC_RELEASE> TBL_ATC_RELEASE { get; set; }
 
 
         public virtual DbSet<TBL_CORR_RISK_MATRIX> TBL_CORR_RISK_MATRIX { get; set; }
