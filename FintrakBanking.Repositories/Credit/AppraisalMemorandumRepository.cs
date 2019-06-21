@@ -539,8 +539,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var querytest2 = (from b in context.TBL_APPROVAL_TRAIL where
                      
-                                 (b.OPERATIONID == (int)OperationsEnum.CreditAppraisal
-                                 || b.OPERATIONID == (int)OperationsEnum.AdhocApproval)
+                                 (b.OPERATIONID == (int)OperationsEnum.AdhocApproval)
                                  && b.APPROVALSTATEID != (int)ApprovalState.Ended
                                  && b.RESPONSESTAFFID == null
                                  && levelIds.Contains((int)b.TOAPPROVALLEVELID)
@@ -559,8 +558,7 @@ namespace FintrakBanking.Repositories.Credit
                          orderby a.LOANAPPLICATIONID
                          join b in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals b.TARGETID where
                      (
-                         (b.OPERATIONID == (int)OperationsEnum.CreditAppraisal
-                          || b.OPERATIONID == (int)OperationsEnum.AdhocApproval)
+                         (b.OPERATIONID == (int)OperationsEnum.AdhocApproval)
                          && b.APPROVALSTATEID != (int)ApprovalState.Ended
                          && b.RESPONSESTAFFID == null
                          && levelIds.Contains((int)b.TOAPPROVALLEVELID)
@@ -693,7 +691,7 @@ namespace FintrakBanking.Repositories.Credit
                 var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel);
                 workflow.NextLevelId = nextLevel;
                 workflow.ToStaffId = nextStaff;
-                workflow.StatusId = 0;
+                workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
                 string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
 
@@ -816,7 +814,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse LcAppraisalMemorandum(LcForwardViewModel model)
         {
-            int operationId = (int)OperationsEnum.AdhocApproval; // CHANGE
+            int operationId = (int)OperationsEnum.lcIssuance; // CHANGE
             var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
 
@@ -833,7 +831,7 @@ namespace FintrakBanking.Repositories.Credit
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel);
             workflow.NextLevelId = nextLevel;
             workflow.ToStaffId = nextStaff;
-            workflow.StatusId = 0;
+            workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
 
@@ -858,7 +856,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
-                lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
+                lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
                     lc.APPROVEDDATE = applicationDate;
@@ -912,7 +910,7 @@ namespace FintrakBanking.Repositories.Credit
                 lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
                 lc.APPROVEDDATE = DateTime.Now;
                 workflow.SetResponse = false;
-                workflow.NextProcess(lc.COMPANYID, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false);
+                //workflow.NextProcess(lc.COMPANYID, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false);
             }
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();

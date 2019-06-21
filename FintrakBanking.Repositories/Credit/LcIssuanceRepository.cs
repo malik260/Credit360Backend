@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.credit
         #region LCISSUANCE
         public IEnumerable<LcIssuanceViewModel> GetLcIssuances()
         {
-            return context.TBL_LC_ISSUANCE.Where(x => x.DELETED == false)
+            var lcs = context.TBL_LC_ISSUANCE.Where(x => x.DELETED == false)
                 .Select(x => new LcIssuanceViewModel
                 {
                     lcIssuanceId = x.LCISSUANCEID,
@@ -64,8 +64,10 @@ namespace FintrakBanking.Repositories.credit
                     invoiceDate = x.INVOICEDATE,
                     invoiceDueDate = x.INVOICEDUEDATE,
                     lcReferenceNumber = x.LCREFERENCENUMBER,
+                    dateTimeCreated = (DateTime)x.DATETIMECREATED,
                 })
                 .ToList();
+            return lcs;
         }
 
         public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForApproval(int staffId)
@@ -133,7 +135,7 @@ namespace FintrakBanking.Repositories.credit
                                 approvalStatusId = (short)a.APPROVALSTATUSID,
                                 applicationStatusId = a.APPLICATIONSTATUSID,
                                 createdBy = (int)a.CREATEDBY,
-                                customerName = context.TBL_CUSTOMER.Find(a.CUSTOMERID).FIRSTNAME + context.TBL_CUSTOMER.Find(a.CUSTOMERID).LASTNAME,
+                                //customerName = context.TBL_CUSTOMER.Find(a.CUSTOMERID).FIRSTNAME + context.TBL_CUSTOMER.Find(a.CUSTOMERID).LASTNAME,
                                 operationId = operationId,
                                 dateTimeCreated = (DateTime)a.DATETIMECREATED
                             }).ToList();
@@ -200,7 +202,7 @@ namespace FintrakBanking.Repositories.credit
                 LETTEROFCREDITEXPIRYDATE = model.letterOfcreditExpirydate,
                 INVOICEDATE = model.invoiceDate,
                 INVOICEDUEDATE = model.invoiceDueDate,
-                COMPANYID = model.companyId,
+                //COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
             };

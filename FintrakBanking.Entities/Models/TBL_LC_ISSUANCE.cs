@@ -79,8 +79,6 @@ namespace FintrakBanking.Entities.Models
 
         public int? APPROVEDBY { get; set; }
 
-        public bool? COMPLETED { get; set; }
-
         public bool? APPROVED { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
@@ -89,15 +87,11 @@ namespace FintrakBanking.Entities.Models
 
         public int? FINALAPPROVAL_LEVELID { get; set; }
 
-        //public short? NEXTLCSTATUSID { get; set; }
-
         public DateTime? DATEACTEDON { get; set; }
 
         public int? ACTEDONBY { get; set; }
 
         public DateTime? APPROVEDDATE { get; set; }
-
-        public int COMPANYID { get; set; }
 
         public virtual ICollection<TBL_LC_DOCUMENT> TBL_LC_DOCUMENT { get; set; }
 

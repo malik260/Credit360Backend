@@ -1080,7 +1080,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
         {
+
             var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+
+            if (appl.LOANAPPROVEDLIMITID > 0)
+            {
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.LoanBookingRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
+                context.SaveChanges();
+                return true;
+            }
 
             if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
             {
@@ -1225,20 +1234,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            if (loan.loanApprovedLimitId > 0)
-            {
-                var appl = context.TBL_LOAN_APPLICATION.Find(loan.loanApprovedLimitId);
-                if (appl != null)
-                {
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                    workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.LoanBookingRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
-                    context.SaveChanges();
-                }
-                if (!(loan.loanApplicationId > 0))
-                {
-                    return loan;
-                }
-            }
+
+            
             ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId);
