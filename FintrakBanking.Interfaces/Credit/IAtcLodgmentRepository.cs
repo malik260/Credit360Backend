@@ -14,6 +14,8 @@ namespace FintrakBanking.Interfaces.credit
 
         IEnumerable<AtcLodgmentViewModel> GetAtcLodgments();
 
+        IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForRelease();
+
         bool AddAtcLodgment(AtcLodgmentViewModel model);
 
         bool UpdateAtcLodgment(AtcLodgmentViewModel model, int id, UserInfo user);

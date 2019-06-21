@@ -468,6 +468,32 @@ namespace FintrakBanking.Repositories.credit
             return context.SaveChanges() != 0;
         }
 
+        public IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForRelease()
+        {
+            return (from x in context.TBL_ATC_LODGMENT
+                    join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                    where x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                    select new AtcLodgmentViewModel
+                    {
+                        atcLodgmentId = x.ATCLODGMENTID,
+                        customerId = x.CUSTOMERID,
+                        atcTypeId = x.ATCTYPEID,
+                        description = x.DESCRIPTION,
+                        depot = x.DEPOT,
+                        unitValue = x.UNITVALUE,
+                        unitNumber = x.UNITNUMBER,
+
+                        certificateNumber = x.CERTIFICATENUMBER,
+                        statusId = x.STATUSID,
+                        approvalStatusId = x.APPROVALSTATUSID,
+                        dateTimeCreated = x.DATETIMECREATED,
+                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        customerCode = c.CUSTOMERCODE,
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                    })
+             .ToList(); 
+        }
     }
 }
 

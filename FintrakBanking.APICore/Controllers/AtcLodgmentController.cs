@@ -41,6 +41,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("atc-lodgment-for-release")]
+        public HttpResponseMessage GetAtcLodgmentForRelase()
+        {
+            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcLodgmentForRelease();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("atc-lodgment-approval")]
         public HttpResponseMessage GetAtcLodgmentApproval()
         {
