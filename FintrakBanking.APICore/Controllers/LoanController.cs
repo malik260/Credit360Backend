@@ -560,12 +560,12 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("customer-facilities/{customerId}")]
-        public HttpResponseMessage GetCustomerFacilities(int customerId)
+        [Route("customer-lines/{customerId}")]
+        public HttpResponseMessage GetCustomerLines(int customerId)
         {
             try
             {
-                var data = repo.GetCustomerFacilities(customerId);
+                var data = repo.GetCustomerLines(customerId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
