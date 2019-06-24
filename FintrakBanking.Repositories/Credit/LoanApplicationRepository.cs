@@ -1111,7 +1111,7 @@ namespace FintrakBanking.Repositories.Credit
                 var test = GetFirstAdhocReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, true);
                 var test2 = GetFirstLevelStaffId((int)receiverLevelId);
                 workflow.NextLevelId = receiverLevelId;
-                workflow.ToStaffId = test2;
+                //workflow.ToStaffId = test2;
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
             } else

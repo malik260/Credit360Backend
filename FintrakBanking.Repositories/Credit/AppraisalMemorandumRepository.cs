@@ -689,7 +689,7 @@ namespace FintrakBanking.Repositories.Credit
                 var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, true);
                 var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel);
                 workflow.NextLevelId = nextLevel;
-                workflow.ToStaffId = nextStaff;
+                //workflow.ToStaffId = nextStaff;
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
                 string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
