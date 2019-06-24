@@ -1099,24 +1099,31 @@ namespace FintrakBanking.Repositories.Credit
 
             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
 
-
-            int operationId = (int)OperationsEnum.CreditAppraisal;
+            int? receiverLevelId = null;
+            int operationId;
 
             if (appl.ISADHOCAPPLICATION == true)
             {
                 operationId = (int)OperationsEnum.AdhocApproval;
                 workflow.OperationId = operationId;
                 appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                receiverLevelId = GetFirstAdhocReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, false);
+                var test = GetFirstAdhocReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, true);
+                var test2 = GetFirstLevelStaffId((int)receiverLevelId);
+                workflow.NextLevelId = receiverLevelId;
+                workflow.ToStaffId = test2;
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
+            } else
+            {
+                operationId = (int)OperationsEnum.CreditAppraisal;
+                workflow.OperationId = operationId;
+                appl.OPERATIONID = operationId;
+                receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
+                workflow.NextLevelId = receiverLevelId; // BREAKING!
             }
-            int? receiverLevelId = null;
-
-            receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
-
+            
             workflow.StaffId = staffId;
-            workflow.OperationId = operationId;
-            workflow.NextLevelId = receiverLevelId; // BREAKING!
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
