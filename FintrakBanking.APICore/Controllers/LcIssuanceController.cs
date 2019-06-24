@@ -61,15 +61,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("lc-issuance/{id}")]
-        public HttpResponseMessage GetLcIssuance(int id)
-        {
-            LcIssuanceViewModel response = repo.GetLcIssuance(id);
-            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-        }
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("lc-issuance/{id}")]
+        //public HttpResponseMessage GetLcIssuance(int id)
+        //{
+        //    LcIssuanceViewModel response = repo.GetLcIssuance(id);
+        //    if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        //}
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -359,6 +359,24 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion LCCONDITIONS
 
+        #region RELEASEOFSHIPPINGDOCUMENTS
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-issuance/release")]
+        public HttpResponseMessage GetLcIssuancesForRelease()
+        {
+            IEnumerable<LcIssuanceViewModel> response = repo.GetLcIssuancesForRelease();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-issuance/release-approval")]
+        public HttpResponseMessage GetLcIssuancesForReleaseApproval()
+        {
+            IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForReleaseApproval(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+        #endregion RELEASEOFSHIPPINGDOCUMENTS
     }
 }

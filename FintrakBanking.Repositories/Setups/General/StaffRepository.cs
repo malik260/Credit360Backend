@@ -311,8 +311,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     else
                     {
-                        existingTempUser.SECURITYQUESTION = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempStaff.STAFFCODE.ToLower()).FirstOrDefault().SECURITYQUESTION;
-                        existingTempUser.SECURITYANSWER = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempStaff.STAFFCODE.ToLower()).FirstOrDefault().SECURITYANSWER;
+                        existingTempUser.SECURITYQUESTION = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempUser.USERNAME.ToLower()).FirstOrDefault().SECURITYQUESTION;
+                        existingTempUser.SECURITYANSWER = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempUser.USERNAME.ToLower()).FirstOrDefault().SECURITYANSWER;
                     }
                     if (staffModel.user.changePassword)
                     {
@@ -321,8 +321,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     else
                     {
-                        existingTempUser.PASSWORD = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempStaff.STAFFCODE.ToLower()).FirstOrDefault().PASSWORD;
-                        existingTempUser.NEXTPASSWORDCHANGEDATE = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempStaff.STAFFCODE.ToLower()).FirstOrDefault().NEXTPASSWORDCHANGEDATE;
+                        existingTempUser.PASSWORD = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempUser.USERNAME.ToLower()).FirstOrDefault().PASSWORD;
+                        existingTempUser.NEXTPASSWORDCHANGEDATE = context.TBL_PROFILE_USER.Where(a => a.USERNAME.ToLower() == existingTempUser.USERNAME.ToLower()).FirstOrDefault().NEXTPASSWORDCHANGEDATE;
                     }
                     //existingTempUser.PASSWORD = context.TBL_PROFILE_USER.Where(a=>a.USERNAME.ToLower() == existingTempStaff.STAFFCODE.ToLower()).FirstOrDefault().PASSWORD;
                     //existingTempUser.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);

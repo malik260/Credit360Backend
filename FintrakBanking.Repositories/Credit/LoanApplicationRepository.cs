@@ -1109,7 +1109,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
                 receiverLevelId = GetFirstAdhocReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, false);
                 var test = GetFirstAdhocReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, true);
-                var test2 = GetFirstLevelStaffId((int)receiverLevelId);
+                var test2 = GetFirstLevelStaffId((int)receiverLevelId, appl.BRANCHID);
                 workflow.NextLevelId = receiverLevelId;
                 //workflow.ToStaffId = test2;
                 appl.DATEACTEDON = DateTime.Now;
@@ -1216,7 +1216,7 @@ namespace FintrakBanking.Repositories.Credit
             return nextLevelId;
         }
 
-        public int? GetFirstLevelStaffId(int levelId)
+        public int? GetFirstLevelStaffId(int levelId, int userBranch)
         {
             if (levelId == 0) return 2;
             int staffId;
@@ -1224,7 +1224,7 @@ namespace FintrakBanking.Repositories.Credit
             if (designatedStaff == 0)
             {
                 var staffLevel = context.TBL_APPROVAL_LEVEL.Find(levelId);
-                staffId = (int?)context.TBL_STAFF.Where(s => s.STAFFROLEID == staffLevel.STAFFROLEID && s.DELETED == false).FirstOrDefault()?.STAFFID ?? 0;
+                staffId = (int?)context.TBL_STAFF.Where(s => s.STAFFROLEID == staffLevel.STAFFROLEID && s.DELETED == false && s.BRANCHID == userBranch).FirstOrDefault()?.STAFFID ?? 0;
                 return staffId;
             }
             return designatedStaff;

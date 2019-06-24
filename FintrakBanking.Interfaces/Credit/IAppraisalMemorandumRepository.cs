@@ -22,6 +22,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         WorkflowResponse LcAppraisalMemorandum(LcForwardViewModel model);
 
+        WorkflowResponse LcReleaseMemorandum(LcForwardViewModel model);
+
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 
         IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all);
