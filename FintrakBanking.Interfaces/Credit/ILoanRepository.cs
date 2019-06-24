@@ -222,7 +222,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanByApplicationDetailId(int loanApplicationDetailId);
         IEnumerable<LoanViewModel> GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber);
         IEnumerable<LoanBookingRequestViewModel> GetLoanRequestsByApplicationDetailId(int loanApplicationDetailId);
-        IEnumerable<CamProcessedLoanViewModel> GetCustomerFacilities(int customerId);
+        IEnumerable<CamProcessedLoanViewModel> GetCustomerLines(int customerId);
 
         decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate, DayCountConventionEnum dayCountConventionId);
         List<LookupViewModel> GetLoanRepricingModes();

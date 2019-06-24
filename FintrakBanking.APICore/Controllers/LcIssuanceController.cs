@@ -100,7 +100,7 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = repo.UpdateLcIssuance(model, id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been updated successfully" });
         }
 
         [HttpDelete]
@@ -117,7 +117,7 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = repo.DeleteLcIssuance(id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been deleted successfully" });
         }
         #endregion LCISSUANCE
 
@@ -133,7 +133,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lc-document/{lcIssuanceId}")]
+        [Route("lc-documents/{lcIssuanceId}")]
         public HttpResponseMessage GetLcDocumentsByIssuanceId(int lcIssuanceId)
         {
             IEnumerable<LcDocumentViewModel> response = documentRepo.GetLcDocumentsBylcIssuanceId(lcIssuanceId);
@@ -180,7 +180,7 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = documentRepo.UpdateLcDocument(model, id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been updated successfully" });
         }
 
         [HttpDelete]
@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = documentRepo.DeleteLcDocument(id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been deleted successfully" });
         }
         #endregion LCDOCUMENT
 
@@ -213,7 +213,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lc-shipping/{lcIssuanceId}")]
+        [Route("lc-shippings/{lcIssuanceId}")]
         public HttpResponseMessage GetLcShippingsByLcIssuanceId(int lcIssuanceId)
         {
             IEnumerable<LcShippingViewModel> response = shippingRepo.GetLcShippingsByIssuanceId(lcIssuanceId);
@@ -259,7 +259,7 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = shippingRepo.UpdateLcShipping(model, id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been updated successfully" });
         }
 
         [HttpDelete]
@@ -276,7 +276,7 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = shippingRepo.DeleteLcShipping(id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been deleted successfully" });
         }
         #endregion SHIPPING
 
@@ -292,7 +292,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lc-condition/{lcIssuanceId}")]
+        [Route("lc-conditions/{lcIssuanceId}")]
         public HttpResponseMessage GetLcConditionsBylcIssuanceId(int lcIssuanceId)
         {
             IEnumerable<LcConditionViewModel> response = conditionRepo.GetLcConditionsBylcIssuanceId(lcIssuanceId);
@@ -338,7 +338,7 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = conditionRepo.UpdateLcCondition(model, id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been updated successfully" });
         }
 
         [HttpDelete]
@@ -355,7 +355,7 @@ namespace FintrakBanking.APICore.Controllers
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
             bool response = conditionRepo.DeleteLcCondition(id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "The record has been deleted successfully" });
         }
         #endregion LCCONDITIONS
 

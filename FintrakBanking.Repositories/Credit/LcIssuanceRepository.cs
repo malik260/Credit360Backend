@@ -41,7 +41,11 @@ namespace FintrakBanking.Repositories.credit
         #region LCISSUANCE
         public IEnumerable<LcIssuanceViewModel> GetLcIssuances()
         {
-            var lcs = context.TBL_LC_ISSUANCE.Where(x => x.DELETED == false)
+            var lcs = context.TBL_LC_ISSUANCE.Where(x => x.DELETED == false
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CAMInProgress)
                 .Select(x => new LcIssuanceViewModel
                 {
                     lcIssuanceId = x.LCISSUANCEID,
@@ -79,6 +83,7 @@ namespace FintrakBanking.Repositories.credit
             var querytest1 = (from a in context.TBL_LC_ISSUANCE where
                                  a.DELETED == false && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                  && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                 && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
                               select a).ToList();
 
             var querytest2 = (from b in context.TBL_APPROVAL_TRAIL

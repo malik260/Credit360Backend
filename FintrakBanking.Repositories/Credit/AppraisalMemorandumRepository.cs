@@ -689,7 +689,7 @@ namespace FintrakBanking.Repositories.Credit
                 var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, appl.PRODUCTCLASSID, null, true);
                 var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel);
                 workflow.NextLevelId = nextLevel;
-                workflow.ToStaffId = nextStaff;
+                //workflow.ToStaffId = nextStaff;
                 workflow.StatusId = model.forwardAction;
                 workflow.Comment = model.comment;
                 string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
@@ -826,7 +826,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Vote = model.vote;
             var test4 = model.receiverLevelId;
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
-            var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
+            var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel);
             workflow.NextLevelId = nextLevel;
             workflow.ToStaffId = nextStaff;
@@ -864,7 +864,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else if (lc.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                 {
-                    SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
+                    //SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
                 }
 
                 if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
