@@ -125,9 +125,9 @@ namespace FintrakBanking.Common.Enum
         AdhocApproval = 133,
         OriginalDocumentApproval = 134,
         lcIssuance = 135,
-        //lcReleaseOfShippingDocuments = 136,
         AtcReleaseApproval = 137,
         AtcLodgementApproval = 136,
+        lcReleaseOfShippingDocuments = 138,
 
     }
 }
