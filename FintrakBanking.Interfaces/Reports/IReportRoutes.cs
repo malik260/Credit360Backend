@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Finance.ViewModels;
 using FintrakBanking.ViewModels.Admin;
 using FintrakBanking.ViewModels.Reports;
+using FintrakBanking.ViewModels.Setups.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,6 +60,9 @@ namespace FintrakBanking.Interfaces.Reports
         IEnumerable<AuditViewModel> AuditType(string searchValue);
         List<GLAccountSearchViewModel> GLAccount(string searchValue);
         string GetGeneratedFORM3800BLOS(string applicationRefNumber);
+        int GetLoanApplicationIdByReferenceNumber(string applicationRefNumber);
+        int GetLmsrApplicationIdByReferenceNumber(string applicationRefNumber);
+        //List<LoadedDocumentSectionViewModel> GetGeneratedFORM3800BLOS(string applicationRefNumber, int staffId);
         string GetGeneratedFORM3800BLMS(string applicationRefNumber);
         string GetStalledPerfection(DateRange dateRange);
         string GetCollateralPerfectionYetToCommence(DateRange dateRange);

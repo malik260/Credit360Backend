@@ -185,7 +185,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.staffId = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                WorkflowResponse response = repo.LcAppraisalMemorandum(entity);
+                WorkflowResponse response = repo.LcReleaseMemorandum(entity);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The LC SHIPPING DOCUMENTS RELEASE request has been acted on successfully" });
             }

@@ -261,6 +261,28 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
+        public int GetLoanApplicationIdByReferenceNumber(string applicationRefNumber)
+        {
+            int loanAppId;
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var appl = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).FirstOrDefault();
+                loanAppId = appl.LOANAPPLICATIONID;
+            }
+            return loanAppId;
+        }
+
+        public int GetLmsrApplicationIdByReferenceNumber(string applicationRefNumber)
+        {
+            int loanAppId;
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var appl = context.TBL_LMSR_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).FirstOrDefault();
+                loanAppId = appl.LOANAPPLICATIONID;
+            }
+            return loanAppId;
+        }
+
         public string GetGeneratedFORM3800BLOS(string applicationRefNumber)
         {
             try

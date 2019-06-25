@@ -30,15 +30,17 @@ namespace FintrakBanking.APICore.Controllers
         IFinanceTransactionsReport reportRepo;
         ILoanOperationsRepository flow;
         ILoanRepository loanRepo;
+        ICreditTemplateRepository creditTemplateRepo;
 
         public ReportsController(IReportRoutes _repo, IFinanceTransactionsReport reportRepo, IErrorLogRepository _errorLogger,
-            ILoanOperationsRepository _flow, ILoanRepository _loanRepo) {
+            ILoanOperationsRepository _flow, ILoanRepository _loanRepo, ICreditTemplateRepository _creditTemplateRepo) {
 
             this.repo = _repo;
             this.reportRepo = reportRepo;
             errorLogger = _errorLogger;
             flow = _flow;
             loanRepo = _loanRepo;
+            creditTemplateRepo = _creditTemplateRepo;
         }
 
       [HttpGet] [ClaimsAuthorization]  
@@ -266,7 +268,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
+                var loanAppId = repo.GetLoanApplicationIdByReferenceNumber(applicationRefNumber);
+                var data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
+                //var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -289,7 +293,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetGeneratedFORM3800BLMS(applicationRefNumber);
+                var loanAppId = repo.GetLmsrApplicationIdByReferenceNumber(applicationRefNumber);
+                var data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
+                //var data = repo.GetGeneratedFORM3800BLMS(applicationRefNumber);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
