@@ -12,6 +12,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -155,6 +156,31 @@ namespace FintrakBanking.Repositories.credit
             return applications.ToList();
         }
 
+        public IEnumerable<LoanApplicationViewModel> GetIFFLinesForLCByCustomerId(int customerId)
+        {
+            var lines = context.TBL_LOAN_APPLICATION.Where(l => l.DELETED == false
+                                                           && l.CUSTOMERID == customerId
+                                                           && l.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities
+                                                           ).Select(a => new LoanApplicationViewModel
+                                                           {
+                                                               loanApplicationId = a.LOANAPPLICATIONID,
+                                                               //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                                                               applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                                               relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
+                                                               branchId = a.BRANCHID,
+                                                               productClassId = a.PRODUCTCLASSID,
+                                                               productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                                                               //currencyCode = c.TBL_CURRENCY.CURRENCYCODE,
+                                                               loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
+                                                               relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                                               relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                                               applicationDate = a.APPLICATIONDATE,
+                                                               newApplicationDate = a.DATEACTEDON,
+                                                           }
+                                                           ).ToList();
+
+            return lines;
+        }
 
         public LcIssuanceViewModel GetLcIssuance(int id)
         {

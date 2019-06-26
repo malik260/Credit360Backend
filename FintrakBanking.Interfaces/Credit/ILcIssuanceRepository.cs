@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Interfaces.credit
 {
@@ -15,6 +16,8 @@ namespace FintrakBanking.Interfaces.credit
         LcIssuanceViewModel GetLcIssuance(int id);
 
         IEnumerable<LcIssuanceViewModel> GetLcIssuances();
+
+        IEnumerable<LoanApplicationViewModel> GetIFFLinesForLCByCustomerId(int CustomerId);
 
         IEnumerable<LcIssuanceViewModel> GetLcIssuancesForRelease();
 
