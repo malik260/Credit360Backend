@@ -12,6 +12,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -57,9 +58,10 @@ namespace FintrakBanking.Repositories.credit
                     beneficiaryEmail = x.BENEFICIARYEMAIL,
                     customerId = x.CUSTOMERID,
                     fundSourceId = x.FUNDSOURCEID,
+                    fundSourceDetails = x.FUNDSOURCEDETAILS,
                     formNumber = x.FORMMNUMBER,
                     beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
-                    beneficiaryBankId = x.BENEFICIARYBANKID,
+                    beneficiaryBank = x.BENEFICIARYBANK,
                     currencyId = x.CURRENCYID,
                     proformaInvoiceId = x.PROFORMAINVOICEID,
                     availableAmount = x.AVAILABLEAMOUNT,
@@ -120,9 +122,10 @@ namespace FintrakBanking.Repositories.credit
                                 beneficiaryEmail = a.BENEFICIARYEMAIL,
                                 customerId = a.CUSTOMERID,
                                 fundSourceId = a.FUNDSOURCEID,
+                                fundSourceDetails = a.FUNDSOURCEDETAILS,
                                 formNumber = a.FORMMNUMBER,
                                 beneficiaryPhoneNumber = a.BENEFICIARYPHONENUMBER,
-                                beneficiaryBankId = a.BENEFICIARYBANKID,
+                                beneficiaryBank = a.BENEFICIARYBANK,
                                 currencyId = a.CURRENCYID,
                                 proformaInvoiceId = a.PROFORMAINVOICEID,
                                 availableAmount = a.AVAILABLEAMOUNT,
@@ -153,6 +156,31 @@ namespace FintrakBanking.Repositories.credit
             return applications.ToList();
         }
 
+        public IEnumerable<LoanApplicationViewModel> GetIFFLinesForLCByCustomerId(int customerId)
+        {
+            var lines = context.TBL_LOAN_APPLICATION.Where(l => l.DELETED == false
+                                                           && l.CUSTOMERID == customerId
+                                                           && l.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities
+                                                           ).Select(a => new LoanApplicationViewModel
+                                                           {
+                                                               loanApplicationId = a.LOANAPPLICATIONID,
+                                                               //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                                                               applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                                               relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
+                                                               branchId = a.BRANCHID,
+                                                               productClassId = a.PRODUCTCLASSID,
+                                                               productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                                                               //currencyCode = c.TBL_CURRENCY.CURRENCYCODE,
+                                                               loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
+                                                               relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                                               relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                                               applicationDate = a.APPLICATIONDATE,
+                                                               newApplicationDate = a.DATEACTEDON,
+                                                           }
+                                                           ).ToList();
+
+            return lines;
+        }
 
         public LcIssuanceViewModel GetLcIssuance(int id)
         {
@@ -169,9 +197,10 @@ namespace FintrakBanking.Repositories.credit
                 beneficiaryEmail = entity.BENEFICIARYEMAIL,
                 customerId = entity.CUSTOMERID,
                 fundSourceId = entity.FUNDSOURCEID,
+                fundSourceDetails = entity.FUNDSOURCEDETAILS,
                 formNumber = entity.FORMMNUMBER,
                 beneficiaryPhoneNumber = entity.BENEFICIARYPHONENUMBER,
-                beneficiaryBankId = entity.BENEFICIARYBANKID,
+                beneficiaryBank = entity.BENEFICIARYBANK,
                 currencyId = entity.CURRENCYID,
                 proformaInvoiceId = entity.PROFORMAINVOICEID,
                 availableAmount = entity.AVAILABLEAMOUNT,
@@ -197,9 +226,10 @@ namespace FintrakBanking.Repositories.credit
                 BENEFICIARYEMAIL = model.beneficiaryEmail,
                 CUSTOMERID = model.customerId,
                 FUNDSOURCEID = model.fundSourceId,
+                FUNDSOURCEDETAILS = model.fundSourceDetails,
                 FORMMNUMBER = model.formNumber,
                 BENEFICIARYPHONENUMBER = model.beneficiaryPhoneNumber,
-                BENEFICIARYBANKID = model.beneficiaryBankId,
+                BENEFICIARYBANK = model.beneficiaryBank,
                 CURRENCYID = model.currencyId,
                 PROFORMAINVOICEID = model.proformaInvoiceId,
                 AVAILABLEAMOUNT = model.availableAmount,
@@ -248,9 +278,10 @@ namespace FintrakBanking.Repositories.credit
             entity.BENEFICIARYEMAIL = model.beneficiaryEmail;
             entity.CUSTOMERID = model.customerId;
             entity.FUNDSOURCEID = model.fundSourceId;
+            entity.FUNDSOURCEDETAILS = model.fundSourceDetails;
             entity.FORMMNUMBER = model.formNumber;
             entity.BENEFICIARYPHONENUMBER = model.beneficiaryPhoneNumber;
-            entity.BENEFICIARYBANKID = model.beneficiaryBankId;
+            entity.BENEFICIARYBANK = model.beneficiaryBank;
             entity.CURRENCYID = model.currencyId;
             entity.PROFORMAINVOICEID = model.proformaInvoiceId;
             entity.AVAILABLEAMOUNT = model.availableAmount;
@@ -325,9 +356,10 @@ namespace FintrakBanking.Repositories.credit
                     beneficiaryEmail = x.BENEFICIARYEMAIL,
                     customerId = x.CUSTOMERID,
                     fundSourceId = x.FUNDSOURCEID,
+                    fundSourceDetails = x.FUNDSOURCEDETAILS,
                     formNumber = x.FORMMNUMBER,
                     beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
-                    beneficiaryBankId = x.BENEFICIARYBANKID,
+                    beneficiaryBank = x.BENEFICIARYBANK,
                     currencyId = x.CURRENCYID,
                     proformaInvoiceId = x.PROFORMAINVOICEID,
                     availableAmount = x.AVAILABLEAMOUNT,
@@ -389,9 +421,10 @@ namespace FintrakBanking.Repositories.credit
                              beneficiaryEmail = a.BENEFICIARYEMAIL,
                              customerId = a.CUSTOMERID,
                              fundSourceId = a.FUNDSOURCEID,
+                             fundSourceDetails = a.FUNDSOURCEDETAILS,
                              formNumber = a.FORMMNUMBER,
                              beneficiaryPhoneNumber = a.BENEFICIARYPHONENUMBER,
-                             beneficiaryBankId = a.BENEFICIARYBANKID,
+                             beneficiaryBank = a.BENEFICIARYBANK,
                              currencyId = a.CURRENCYID,
                              proformaInvoiceId = a.PROFORMAINVOICEID,
                              availableAmount = a.AVAILABLEAMOUNT,

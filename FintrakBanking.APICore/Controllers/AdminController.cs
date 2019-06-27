@@ -299,6 +299,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-user-activities")]
+        public HttpResponseMessage GetUserActivitiesByCurrentUser()
+        {
+            try
+            {
+                var act = repo.GetUserActivitiesByUser(token.GetStaffId);
+
+                if (act == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = act });
+            }
+            catch (SecureException ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         //[HttpPut]
         //[ClaimsAuthorization]
         //[Route("manage-account-status/user/{userId}/lock-status/{lockStatus}")]

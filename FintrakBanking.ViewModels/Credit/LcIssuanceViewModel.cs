@@ -29,11 +29,13 @@ namespace FintrakBanking.ViewModels.credit
 
         public int fundSourceId { get; set; }
 
+        public int fundSourceDetails { get; set; }
+
         public int formNumber { get; set; }
 
         public int beneficiaryPhoneNumber { get; set; }
 
-        public int beneficiaryBankId { get; set; }
+        public string beneficiaryBank { get; set; }
 
         public int currencyId { get; set; }
 
@@ -130,11 +132,13 @@ namespace FintrakBanking.ViewModels.credit
 
         public int fundSourceId { get; set; }
 
+        public int fundSourceDetails { get; set; }
+
         public int formNumber { get; set; }
 
         public int beneficiaryPhoneNumber { get; set; }
 
-        public int beneficiaryBankId { get; set; }
+        public string beneficiaryBank { get; set; }
 
         public int currencyId { get; set; }
 
