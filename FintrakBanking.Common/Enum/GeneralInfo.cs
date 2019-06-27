@@ -357,6 +357,9 @@ namespace FintrakBanking.Common.Enum
         AtcLodgmentDetailDeleted = 423,
         AtcReleaseAdded = 424,
         AtcReleaseDeleted = 425,
+        ProjectSiteReportAdded = 426,
+        ProjectSiteReportUpdated = 427,
+        ProjectSiteReportDeleted = 428,
     };
     public enum RegulatoryTypeEnum
     {

@@ -57,7 +57,7 @@ namespace FintrakBanking.Repositories.credit
                     beneficiaryEmail = x.BENEFICIARYEMAIL,
                     customerId = x.CUSTOMERID,
                     fundSourceId = x.FUNDSOURCEID,
-                    formNumber = x.FORMNUMBER,
+                    formNumber = x.FORMMNUMBER,
                     beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
                     beneficiaryBankId = x.BENEFICIARYBANKID,
                     currencyId = x.CURRENCYID,
@@ -120,7 +120,7 @@ namespace FintrakBanking.Repositories.credit
                                 beneficiaryEmail = a.BENEFICIARYEMAIL,
                                 customerId = a.CUSTOMERID,
                                 fundSourceId = a.FUNDSOURCEID,
-                                formNumber = a.FORMNUMBER,
+                                formNumber = a.FORMMNUMBER,
                                 beneficiaryPhoneNumber = a.BENEFICIARYPHONENUMBER,
                                 beneficiaryBankId = a.BENEFICIARYBANKID,
                                 currencyId = a.CURRENCYID,
@@ -169,7 +169,7 @@ namespace FintrakBanking.Repositories.credit
                 beneficiaryEmail = entity.BENEFICIARYEMAIL,
                 customerId = entity.CUSTOMERID,
                 fundSourceId = entity.FUNDSOURCEID,
-                formNumber = entity.FORMNUMBER,
+                formNumber = entity.FORMMNUMBER,
                 beneficiaryPhoneNumber = entity.BENEFICIARYPHONENUMBER,
                 beneficiaryBankId = entity.BENEFICIARYBANKID,
                 currencyId = entity.CURRENCYID,
@@ -197,7 +197,7 @@ namespace FintrakBanking.Repositories.credit
                 BENEFICIARYEMAIL = model.beneficiaryEmail,
                 CUSTOMERID = model.customerId,
                 FUNDSOURCEID = model.fundSourceId,
-                FORMNUMBER = model.formNumber,
+                FORMMNUMBER = model.formNumber,
                 BENEFICIARYPHONENUMBER = model.beneficiaryPhoneNumber,
                 BENEFICIARYBANKID = model.beneficiaryBankId,
                 CURRENCYID = model.currencyId,
@@ -248,7 +248,7 @@ namespace FintrakBanking.Repositories.credit
             entity.BENEFICIARYEMAIL = model.beneficiaryEmail;
             entity.CUSTOMERID = model.customerId;
             entity.FUNDSOURCEID = model.fundSourceId;
-            entity.FORMNUMBER = model.formNumber;
+            entity.FORMMNUMBER = model.formNumber;
             entity.BENEFICIARYPHONENUMBER = model.beneficiaryPhoneNumber;
             entity.BENEFICIARYBANKID = model.beneficiaryBankId;
             entity.CURRENCYID = model.currencyId;
@@ -325,7 +325,7 @@ namespace FintrakBanking.Repositories.credit
                     beneficiaryEmail = x.BENEFICIARYEMAIL,
                     customerId = x.CUSTOMERID,
                     fundSourceId = x.FUNDSOURCEID,
-                    formNumber = x.FORMNUMBER,
+                    formNumber = x.FORMMNUMBER,
                     beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
                     beneficiaryBankId = x.BENEFICIARYBANKID,
                     currencyId = x.CURRENCYID,
@@ -389,7 +389,7 @@ namespace FintrakBanking.Repositories.credit
                              beneficiaryEmail = a.BENEFICIARYEMAIL,
                              customerId = a.CUSTOMERID,
                              fundSourceId = a.FUNDSOURCEID,
-                             formNumber = a.FORMNUMBER,
+                             formNumber = a.FORMMNUMBER,
                              beneficiaryPhoneNumber = a.BENEFICIARYPHONENUMBER,
                              beneficiaryBankId = a.BENEFICIARYBANKID,
                              currencyId = a.CURRENCYID,

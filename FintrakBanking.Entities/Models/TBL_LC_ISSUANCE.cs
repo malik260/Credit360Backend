@@ -43,7 +43,7 @@ namespace FintrakBanking.Entities.Models
 
         public int FUNDSOURCEID { get; set; }
 
-        public int FORMNUMBER { get; set; }
+        public int FORMMNUMBER { get; set; }
 
         public int BENEFICIARYPHONENUMBER { get; set; }
 
