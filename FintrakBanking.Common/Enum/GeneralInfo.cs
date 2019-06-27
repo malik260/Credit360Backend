@@ -368,6 +368,13 @@ namespace FintrakBanking.Common.Enum
         PsrPerformanceEvaluationDeleted = 434,
         PsrObservationAdded = 435,
         PsrObservationUpdated = 436,
+        PsrObservationDeleted = 437,
+        PsrNextInspectionTaskAdded = 438,
+        PsrNextInspectionTaskUpdated = 439,
+        PsrNextInspectionTaskDeleted = 440,
+        PsrCommentAdded = 441,
+        PsrCommentUpdated = 442,
+        PsrCommentDeleted = 443,
     };
     public enum RegulatoryTypeEnum
     {

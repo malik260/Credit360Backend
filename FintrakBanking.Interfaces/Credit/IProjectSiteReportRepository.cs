@@ -29,25 +29,21 @@ namespace FintrakBanking.Interfaces.credit
 
         #region
 
-        IEnumerable<PsrCommentViewModel> GetPsrComment(int id);
+        IEnumerable<PsrCommentViewModel> GetPsrComments(int id);
 
         bool AddPsrComment(PsrCommentViewModel model);
 
-        bool UpdatePsrComment(PsrCommentViewModel model, int id);
-
-        bool DeletePsrComment(int id);
+        bool DeletePsrComment(int id, UserInfo user);
 
 
         #endregion
 
         #region
-        IEnumerable<PsrNextInspectionTaskViewModel> GetPsrNextInspectionTask(int id);
+        IEnumerable<PsrNextInspectionTaskViewModel> GetPsrNextInspectionTasks(int id);
 
         bool AddPsrNextInspectionTask(PsrNextInspectionTaskViewModel model);
 
-        bool UpdatePsrNextInspectionTask(PsrNextInspectionTaskViewModel model, int id);
-
-        bool DeletePsrNextInspectionTask(int id);
+        bool DeletePsrNextInspectionTask(int id, UserInfo user);
 
         #endregion
 
@@ -57,9 +53,7 @@ namespace FintrakBanking.Interfaces.credit
 
         bool AddPsrObservation(PsrObservationViewModel model);
 
-        bool UpdatePsrObservation(PsrObservationViewModel model, int id);
-
-        bool DeletePsrObservation(int id);
+        bool DeletePsrObservation(int id, UserInfo user);
 
         #endregion
 
@@ -70,9 +64,7 @@ namespace FintrakBanking.Interfaces.credit
 
         bool AddPsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model);
 
-        bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id);
-
-        bool DeletePsrPerformanceEvaluation(int id);
+        bool DeletePsrPerformanceEvaluation(int id, UserInfo user);
 
         #endregion
 
@@ -82,9 +74,7 @@ namespace FintrakBanking.Interfaces.credit
 
         bool AddPsrRecommendation(PsrRecommendationViewModel model);
 
-        bool UpdatePsrRecommendation(PsrRecommendationViewModel model, int id);
-
-        bool DeletePsrRecommendation(int id);
+        bool DeletePsrRecommendation(int id, UserInfo user);
 
         #endregion
 

@@ -80,49 +80,49 @@ namespace FintrakBanking.MonitoringMessagesSender
 
 
                     //LOG SLA APPROVAL NOTIFICATIONS
-                    if (slaEscalationIntervalInHours != null)
-                    {
-                        DateTime currentDate = DateTime.Now;
-                        TimeSpan escalationTime = currentDate.AddHours(Convert.ToInt32(slaEscalationIntervalInHours)).TimeOfDay;
-                        TimeSpan endOfescalationTime = DateTime.Now.AddMinutes(5).TimeOfDay;
-                        TimeSpan timeAtTheMoment = DateTime.Now.TimeOfDay;
+                    //if (slaEscalationIntervalInHours != null)
+                    //{
+                    //    DateTime currentDate = DateTime.Now;
+                    //    TimeSpan escalationTime = currentDate.AddHours(Convert.ToInt32(slaEscalationIntervalInHours)).TimeOfDay;
+                    //    TimeSpan endOfescalationTime = DateTime.Now.AddMinutes(5).TimeOfDay;
+                    //    TimeSpan timeAtTheMoment = DateTime.Now.TimeOfDay;
 
-                        if (escalationTime >= timeAtTheMoment && escalationTime <= endOfescalationTime)
-                        {
-                            _log.Info("");
-                            _log.Info("==================================================================");
-                            _log.Info("SLA notification has started successfully at : " + DateTime.Now);
+                    //    if (escalationTime >= timeAtTheMoment && escalationTime <= endOfescalationTime)
+                    //    {
+                    //        _log.Info("");
+                    //        _log.Info("==================================================================");
+                    //        _log.Info("SLA notification has started successfully at : " + DateTime.Now);
 
-                            logger.LogSLAApprovalNotification();
+                    //        logger.LogSLAApprovalNotification();
 
-                            _log.Info("");
-                            _log.Info("==================================================================");
-                            _log.Info("SLA notification has ends at : " + DateTime.Now);
-                        }
+                    //        _log.Info("");
+                    //        _log.Info("==================================================================");
+                    //        _log.Info("SLA notification has ends at : " + DateTime.Now);
+                    //    }
 
-                    }
+                    //}
 
-                    // LOG MONITORING ALERTS
-                    TimeSpan currentTime = DateTime.Now.TimeOfDay;
-                    TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
+                    //// LOG MONITORING ALERTS
+                    //TimeSpan currentTime = DateTime.Now.TimeOfDay;
+                    //TimeSpan LoggeingTimeFromConfig = Convert.ToDateTime(alertMessageLoggertime).TimeOfDay;
 
-                    TimeSpan alertLoggerMaxRuntime = TimeSpan.FromMinutes(30);
-                    TimeSpan LoggeingTimeFromConfigExtended = LoggeingTimeFromConfig.Add(alertLoggerMaxRuntime);
+                    //TimeSpan alertLoggerMaxRuntime = TimeSpan.FromMinutes(30);
+                    //TimeSpan LoggeingTimeFromConfigExtended = LoggeingTimeFromConfig.Add(alertLoggerMaxRuntime);
 
 
-                    if (currentTime >= LoggeingTimeFromConfig && currentTime <= LoggeingTimeFromConfigExtended)
-                    {
-                        //  _log.Info("##############   started at " + currentTime + "     ##################### ");
-                        _log.Info("==================================================================");
-                        _log.Info("Monitoring alert has started successfully");
+                    //if (currentTime >= LoggeingTimeFromConfig && currentTime <= LoggeingTimeFromConfigExtended)
+                    //{
+                    //    //  _log.Info("##############   started at " + currentTime + "     ##################### ");
+                    //    _log.Info("==================================================================");
+                    //    _log.Info("Monitoring alert has started successfully");
 
-                       emailSender.LogMonitorringAlert();
-                        currencyAndRateUpdate.MigrateExchangeRate();
+                    //   emailSender.LogMonitorringAlert();
+                    //    currencyAndRateUpdate.MigrateExchangeRate();
 
-                        _log.Info("");
-                        _log.Info("==================================================================");
-                        _log.Info("Monitoring alert has finished logging successfully ");
-                    }
+                    //    _log.Info("");
+                    //    _log.Info("==================================================================");
+                    //    _log.Info("Monitoring alert has finished logging successfully ");
+                    //}
 
 
 

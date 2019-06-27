@@ -27,7 +27,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public virtual TBL_PSR_PROJECT_SITE_REPORT TBL_PSR_PROJECT_SITE_REPORT { get; set; }
-
+        public int PROJECTSITEREPORTID { get; set; }
+        public int NEXTINSPECTIONDATE { get; set; }
     }
 }
         /*

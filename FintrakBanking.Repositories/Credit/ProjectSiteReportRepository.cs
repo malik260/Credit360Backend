@@ -226,7 +226,7 @@ namespace FintrakBanking.Repositories.credit
         #region
         public IEnumerable<PsrRecommendationViewModel> GetPsrRecommendations(int id)
         {
-            return context.TBL_PSR_RECOMMENDATION.Where(x => x.DELETED == false)
+            return context.TBL_PSR_RECOMMENDATION.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
                 .Select(x => new PsrRecommendationViewModel
                 {
                     psrRecommendationId = x.PSRRECOMMENDATIONID,
@@ -266,33 +266,6 @@ namespace FintrakBanking.Repositories.credit
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdatePsrRecommendation(PsrRecommendationViewModel model, int id, UserInfo user)
-        {
-            var entity = this.context.TBL_PSR_RECOMMENDATION.Find(id);
-            entity.COMMENT = model.comment;
-
-            entity.LASTUPDATEDBY = user.createdBy;
-            entity.DATETIMEUPDATED = DateTime.Now;
-
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.PsrRecommendationUpdated,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_Psr Recommendation '{entity.PSRRECOMMENDATIONID}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.PSRRECOMMENDATIONID
-            });
-            // Audit Section end ------------------------
-
-            return context.SaveChanges() != 0;
-        }
-
         public bool DeletePsrRecommendation(int id, UserInfo user)
         {
             var entity = this.context.TBL_PSR_RECOMMENDATION.Find(id);
@@ -324,7 +297,7 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<PsrPerformanceEvaluationViewModel> GetPsrPerformanceEvaluations(int id)
         {
-            return context.TBL_PSR_PERFORMANCE_EVALUATION.Where(x => x.DELETED == false)
+            return context.TBL_PSR_PERFORMANCE_EVALUATION.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
                 .Select(x => new PsrPerformanceEvaluationViewModel
                 {
                     psrPerformanceEvaluationId = x.PSRPERFORMANCEEVALUATIONID,
@@ -377,40 +350,6 @@ namespace FintrakBanking.Repositories.credit
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id, UserInfo user)
-        {
-            var entity = this.context.TBL_PSR_PERFORMANCE_EVALUATION.Find(id);
-            entity.GROSSAMOUNT = model.grossAmount;
-            entity.AMOUNTRECEIVED = model.amountReceived;
-            entity.PROGRESSPAYMENT = model.progressPayment;
-            entity.CERTIFIEDVALUEWORKDONE = model.certifiedValueWorkDone;
-            entity.MANAGEMENTUNITVALUEWORKDONE = model.managementUnitValueWorkDone;
-            entity.CONSULTANTVALUEWORKDONE = model.consultantValueWorkDone;
-            entity.COSTVARIATION = model.costVariation;
-            entity.TIMEVARIATION = model.timeVariation;
-
-            entity.LASTUPDATEDBY = user.createdBy;
-            entity.DATETIMEUPDATED = DateTime.Now;
-
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.PsrPerformanceEvaluationUpdated,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_Psr Performance Evaluation '{entity.PSRPERFORMANCEEVALUATIONID}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.PSRPERFORMANCEEVALUATIONID
-            });
-            // Audit Section end ------------------------
-
-            return context.SaveChanges() != 0;
-        }
-
         public bool DeletePsrPerformanceEvaluation(int id, UserInfo user)
         {
             var entity = this.context.TBL_PSR_PERFORMANCE_EVALUATION.Find(id);
@@ -438,6 +377,222 @@ namespace FintrakBanking.Repositories.credit
         }
         #endregion
 
+
+        #region
+        public IEnumerable<PsrObservationViewModel> GetPsrObservations(int id)
+        {
+            return context.TBL_PSR_OBSERVATION.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrObservationViewModel
+                {
+                    psrObservationId = x.PSROBSERVATIONID,
+                    comment = x.COMMENT,
+                })
+                .ToList();
+        }
+
+        public bool AddPsrObservation(PsrObservationViewModel model)
+        {
+            var entity = new TBL_PSR_OBSERVATION
+            {
+                COMMENT = model.comment,
+                // COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_PSR_OBSERVATION.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrObservationAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_Psr Observation '{entity.PSROBSERVATIONID}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeletePsrObservation(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_OBSERVATION.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrObservationDeleted,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                //DETAIL = $"TBL_Psr Observation '{entity.DESCRIPTION}' was deleted by {auditStaff}",
+                DETAIL = $"TBL_Psr Observation was deleted by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSROBSERVATIONID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
+
+        #region
+
+        public IEnumerable<PsrNextInspectionTaskViewModel> GetPsrNextInspectionTasks( int id)
+        {
+            return context.TBL_PSR_NEXT_INSPECTION_TASK.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrNextInspectionTaskViewModel
+                {
+                    psrNextInspectionTaskId = x.PSRNEXTINSPECTIONTASKID,
+                    comment = x.COMMENT,
+                    isDone = x.ISDONE,
+                    nextInspectionDate =  x.NEXTINSPECTIONDATE
+                })
+                .ToList();
+        }
+        
+        public bool AddPsrNextInspectionTask(PsrNextInspectionTaskViewModel model)
+        {
+            var entity = new TBL_PSR_NEXT_INSPECTION_TASK
+            {
+                COMMENT = model.comment,
+                ISDONE = model.isDone,
+                // COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                NEXTINSPECTIONDATE = model.nextInspectionDate,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_PSR_NEXT_INSPECTION_TASK.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrNextInspectionTaskAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_Psr Next Inspection Task '{entity.PSRNEXTINSPECTIONTASKID}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeletePsrNextInspectionTask(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_NEXT_INSPECTION_TASK.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrNextInspectionTaskDeleted,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Next Inspection Task '{entity.PSRNEXTINSPECTIONTASKID}' was deleted by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRNEXTINSPECTIONTASKID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        #endregion
+
+        #region
+        public IEnumerable<PsrCommentViewModel> GetPsrComments(int id)
+        {
+            return context.TBL_PSR_COMMENT.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrCommentViewModel
+                {
+                    psrCommentId = x.PSRCOMMENTID,
+                    comment = x.COMMENT,
+                })
+                .ToList();
+        }
+
+        public bool AddPsrComment(PsrCommentViewModel model)
+        {
+            var entity = new TBL_PSR_COMMENT
+            {
+                COMMENT = model.comment,
+                // COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_PSR_COMMENT.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrCommentAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_Psr Comment '{entity.PSRCOMMENTID}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeletePsrComment(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_COMMENT.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrCommentDeleted,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Comment '{entity.PSRCOMMENTID}' was deleted by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRCOMMENTID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        #endregion
     }
 }
 

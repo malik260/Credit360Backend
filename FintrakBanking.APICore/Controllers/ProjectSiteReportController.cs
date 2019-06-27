@@ -121,5 +121,223 @@ namespace FintrakBanking.APICore.Controllers
             IEnumerable<PsrReportTypeViewModel> response = repo.GetPsrReportTypes();
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
+
+        #region
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-next-inspection-task/{id}")]
+        public HttpResponseMessage GetPsrNextInspectionTasks(int id)
+        {
+            IEnumerable<PsrNextInspectionTaskViewModel> response = repo.GetPsrNextInspectionTasks(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("psr-next-inspection-task")]
+        public HttpResponseMessage AddPsrNextInspectionTask([FromBody] PsrNextInspectionTaskViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddPsrNextInspectionTask(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("psr-next-inspection-task/{id}")]
+        public HttpResponseMessage DeletePsrNextInspectionTask(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeletePsrNextInspectionTask(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+        #endregion
+
+        #region
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-comment/{id}")]
+        public HttpResponseMessage GetPsrComments(int id)
+        {
+            IEnumerable<PsrCommentViewModel> response = repo.GetPsrComments(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("psr-comment")]
+        public HttpResponseMessage AddPsrComment([FromBody] PsrCommentViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddPsrComment(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("psr-comment/{id}")]
+        public HttpResponseMessage DeletePsrComment(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeletePsrComment(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+        #endregion
+
+        #region
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-observation/{id}")]
+        public HttpResponseMessage GetPsrObservations(int id)
+        {
+            IEnumerable<PsrObservationViewModel> response = repo.GetPsrObservations(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+        
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("psr-observation")]
+        public HttpResponseMessage AddPsrObservation([FromBody] PsrObservationViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddPsrObservation(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("psr-observation/{id}")]
+        public HttpResponseMessage DeletePsrObservation(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeletePsrObservation(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+        #endregion
+
+        #region
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-performance-evaluation/{id}")]
+        public HttpResponseMessage GetPsrPerformanceEvaluations(int id)
+        {
+            IEnumerable<PsrPerformanceEvaluationViewModel> response = repo.GetPsrPerformanceEvaluations(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("psr-performance-evaluation")]
+        public HttpResponseMessage AddPsrPerformanceEvaluation([FromBody] PsrPerformanceEvaluationViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddPsrPerformanceEvaluation(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+       
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("psr-performance-evaluation/{id}")]
+        public HttpResponseMessage DeletePsrPerformanceEvaluation(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeletePsrPerformanceEvaluation(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+        #endregion
+
+        #region
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-recommendation/{id}")]
+        public HttpResponseMessage GetPsrRecommendations(int id)
+        {
+            IEnumerable<PsrRecommendationViewModel> response = repo.GetPsrRecommendations(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+        
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("psr-recommendation")]
+        public HttpResponseMessage AddPsrRecommendation([FromBody] PsrRecommendationViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddPsrRecommendation(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("psr-recommendation/{id}")]
+        public HttpResponseMessage DeletePsrRecommendation(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeletePsrRecommendation(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+        #endregion
     }
 }
