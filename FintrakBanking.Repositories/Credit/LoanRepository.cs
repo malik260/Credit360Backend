@@ -5517,20 +5517,20 @@ namespace FintrakBanking.Repositories.Credit
                     }).ToList();
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetCustomerFacilitiesForApprovedLimit(int customerId)
+        public IEnumerable<CamProcessedLoanViewModel> GetCustomerApprovedLines(int customerId)
         {
             var customerFacilities = (from a in context.TBL_LOAN_APPLICATION
                                       join b in context.TBL_LOAN_APPLICATION_DETAIL
                                       on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                                       where a.CUSTOMERID == customerId &&
-                                      ((a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.AvailmentCompleted)
-                                        && (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestInitiated)
-                                        && (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.BookingRequestCompleted)
-                                        && (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LoanBookingInProgress)
-                                        && (a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LoanBookingCompleted))
+                                      ((a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted)
+                                        || (a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestInitiated)
+                                        || (a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestCompleted)
+                                        || (a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingInProgress)
+                                        || (a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingCompleted))
                                         && a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                                         && a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                                        //&& a.ISMULTIPLEPRODUCTDRAWDOWN == true;
+                                        && !(a.LOANAPPROVEDLIMITID > 0)
                                       select new CamProcessedLoanViewModel()
                                       {
                                           loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
@@ -5542,21 +5542,22 @@ namespace FintrakBanking.Repositories.Credit
                                           loanPurpose = a.LOANINFORMATION,
                                           productClassId = a.PRODUCTCLASSID,
                                           currencyCode = b.TBL_CURRENCY.CURRENCYCODE,
+                                          approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT),
                                       }).OrderBy(d => d.productName);
             return customerFacilities;
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetCustomerFacilities(int customerId)
+        public IEnumerable<CamProcessedLoanViewModel> GetCustomerLines(int customerId)
         {
             try
             {
-                var data = GetCustomerFacilitiesForApprovedLimit(customerId).ToList();
+                var data = GetCustomerApprovedLines(customerId).ToList();
                 foreach (var item in data)
                 {
 
                     var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-                    var multipleProductFacilities = context.TBL_LOAN_APPLICATION.Where(l => l.LOANAPPROVEDLIMITID == item.loanApplicationId).ToList();
-                    var multipleProductApprovedAmount = multipleProductFacilities.Sum(f => f.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.APPROVEDAMOUNT));
+                    var multipleDrawnFacilities = context.TBL_LOAN_APPLICATION.Where(l => l.LOANAPPROVEDLIMITID == item.loanApplicationId).ToList();
+                    var multipleDrawnFacilitiesAmount = multipleDrawnFacilities.Sum(f => f.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT));
                     if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
                         item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED);
 
@@ -5571,7 +5572,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (item.disapprovedCount > 0)
                         item.disApprovedAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Sum(s => s.AMOUNT_REQUESTED);
 
-                    item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount) - multipleProductApprovedAmount;
+                    item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount) - multipleDrawnFacilitiesAmount;
 
                     var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
                     if (disbursedLoan.Any())

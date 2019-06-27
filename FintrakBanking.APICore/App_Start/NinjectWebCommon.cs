@@ -75,6 +75,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.AlertMonitoring;
     using FintrakBanking.Interfaces.Media;
     using FintrakBanking.Repositories.Media;
+    using FintrakBanking.Interfaces.credit;
+    using FintrakBanking.Repositories.credit;
 
     public static class NinjectWebCommon
     {
@@ -252,6 +254,13 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ITermSheetRepository>().To<TermSheetRepository>();
             kernel.Bind<ICreditOfficerRiskRepository>().To<CreditOfficerRiskRepository>();
             kernel.Bind<IOriginalDocumentApprovalRepository>().To<OriginalDocumentApprovalRepository>();
+            kernel.Bind<ILcIssuanceRepository>().To<LcIssuanceRepository>();
+            kernel.Bind<ILcDocumentRepository>().To<LcDocumentRepository>();
+            kernel.Bind<ILcShippingRepository>().To<LcShippingRepository>();
+            kernel.Bind<ILcConditionRepository>().To<LcConditionRepository>();
+
+            kernel.Bind<IAtcLodgmentRepository>().To<AtcLodgmentRepository>();
+            kernel.Bind<IAtcLodgmentDetailRepository>().To<AtcLodgmentDetailRepository>();
 
         }
 

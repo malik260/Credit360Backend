@@ -480,6 +480,10 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RAC_ITEM> TBL_RAC_ITEM { get; set; }
         public virtual DbSet<TBL_RAC_OPTION> TBL_RAC_OPTION { get; set; }
         public virtual DbSet<TBL_RAC_OPTION_ITEM> TBL_RAC_OPTION_ITEM { get; set; }
+        public virtual DbSet<TBL_ATC_LODGMENT> TBL_ATC_LODGMENT { get; set; }
+        public virtual DbSet<TBL_ATC_LODGMENT_DETAIL> TBL_ATC_LODGMENT_DETAIL { get; set; }
+        public virtual DbSet<TBL_ATC_TYPE> TBL_ATC_TYPE { get; set; }
+        public virtual DbSet<TBL_ATC_RELEASE> TBL_ATC_RELEASE { get; set; }
 
 
         public virtual DbSet<TBL_CORR_RISK_MATRIX> TBL_CORR_RISK_MATRIX { get; set; }
@@ -493,6 +497,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DEFERRED_LOAN_FEE> TBL_DEFERRED_LOAN_FEE { get; set; }
       //  public virtual DbSet<TBL_CORR_FREQUENCY_SETUP> TBL_CORR_FREQUENCY_SETUP { get; set; }
         public virtual DbSet<TBL_ORIGINAL_DOCUMENT_APPROVAL> TBL_ORIGINAL_DOCUMENT_APPROVAL { get; set; }
+        public virtual DbSet<TBL_LC_ISSUANCE> TBL_LC_ISSUANCE { get; set; }
+        public virtual DbSet<TBL_LC_DOCUMENT> TBL_LC_DOCUMENT { get; set; }
+        public virtual DbSet<TBL_LC_SHIPPING> TBL_LC_SHIPPING { get; set; }
+        public virtual DbSet<TBL_LC_CONDITION> TBL_LC_CONDITION { get; set; }
+
 
 
 
@@ -502,6 +511,20 @@ namespace FintrakBanking.Entities.Models
                 System.Configuration.ConfigurationManager.AppSettings["BankingOracleDatabaseUsername"];
             modelBuilder.HasDefaultSchema(databaseUsername);
 
+            modelBuilder.Entity<TBL_LC_ISSUANCE>()
+                .HasMany(e => e.TBL_LC_DOCUMENT)
+                .WithRequired(e => e.TBL_LC_ISSUANCE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LC_ISSUANCE>()
+                .HasMany(e => e.TBL_LC_SHIPPING)
+                .WithRequired(e => e.TBL_LC_ISSUANCE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LC_ISSUANCE>()
+                .HasMany(e => e.TBL_LC_CONDITION)
+                .WithRequired(e => e.TBL_LC_ISSUANCE)
+                .WillCascadeOnDelete(false);
             //modelBuilder.Entity<ELMAH_ERROR>()
             //    .Property(e => e.ERRORID)
             //    .IsFixedLength()

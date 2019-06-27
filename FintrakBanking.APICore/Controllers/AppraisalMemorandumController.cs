@@ -151,6 +151,50 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("lc-approval/forward")]
+        public HttpResponseMessage LcAppraisalMemorandum([FromBody] LcForwardViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                WorkflowResponse response = repo.LcAppraisalMemorandum(entity);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The LC ISSUANCE request has been acted on successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+        [HttpPost]
+        [Route("lc-release/forward")]
+        public HttpResponseMessage LcReleaseMemorandum([FromBody] LcForwardViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                WorkflowResponse response = repo.LcReleaseMemorandum(entity);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The LC SHIPPING DOCUMENTS RELEASE request has been acted on successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
         [HttpGet]
         [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/all/{all}")]
         public HttpResponseMessage GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all)

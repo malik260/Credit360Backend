@@ -41,6 +41,7 @@ namespace FintrakBanking.Repositories.Credit
         private IIntegrationWithFinacle integration;
         private IApprovalLevelStaffRepository approvalLevel;
         private CreditCommonRepository creditCommon;
+        private int? workflowProductId = null;
 
         public int response { get; set; }
         public bool isGroupLoan { get; set; }
@@ -1080,7 +1081,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
         {
+
             var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+
+            if (appl.LOANAPPROVEDLIMITID > 0)
+            {
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.LoanBookingRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
+                context.SaveChanges();
+                return true;
+            }
 
             if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
             {
@@ -1090,28 +1100,34 @@ namespace FintrakBanking.Repositories.Credit
             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
 
             int? receiverLevelId = null;
+            int operationId;
 
             if (appl.ISADHOCAPPLICATION == true)
             {
-                receiverLevelId = GetFirstAdhocReceiverLevel(staffId, (int)OperationsEnum.AdhocApproval, appl.PRODUCTCLASSID);
-                var nextStaffId = GetFirstLevelStaffId((int)receiverLevelId);
-                workflow.ToStaffId = nextStaffId; //
-                workflow.OperationId = (int)OperationsEnum.AdhocApproval;
+                operationId = (int)OperationsEnum.AdhocApproval;
+                workflow.OperationId = operationId;
                 appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
+                receiverLevelId = GetFirstAdhocReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, false);
+                var test = GetFirstAdhocReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, true);
+                var test2 = GetFirstLevelStaffId((int)receiverLevelId, appl.BRANCHID);
+                workflow.NextLevelId = receiverLevelId;
+                //workflow.ToStaffId = test2;
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
-            }
-            else
+            } else
             {
-                receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID);
-                workflow.ToStaffId = staffId; //
-                workflow.OperationId = (int)OperationsEnum.CreditAppraisal;
+                operationId = (int)OperationsEnum.CreditAppraisal;
+                workflow.OperationId = operationId;
+                appl.OPERATIONID = operationId;
+                receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
+                workflow.NextLevelId = receiverLevelId; // BREAKING!
             }
+            
             workflow.StaffId = staffId;
-            workflow.NextLevelId = receiverLevelId; // BREAKING!
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
+            workflow.ProductId = appl.PRODUCTID;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
 
@@ -1141,11 +1157,11 @@ namespace FintrakBanking.Repositories.Credit
             return requests.Count() > 0;
         }
 
-        public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, bool next = false)
         {
             var staff = context.TBL_STAFF.Find(staffId);
 
-            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
                     .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                     .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
@@ -1193,7 +1209,6 @@ namespace FintrakBanking.Repositories.Credit
                         ;
 
             var staffRoleLevelId = levels.FirstOrDefault().levelId;
-
             if (next == false) return staffRoleLevelId;
             int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
             var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
@@ -1201,14 +1216,18 @@ namespace FintrakBanking.Repositories.Credit
             return nextLevelId;
         }
 
-        public int? GetFirstLevelStaffId(int levelId)
+        public int? GetFirstLevelStaffId(int levelId, int userBranch)
         {
-            if (levelId == 0)
+            if (levelId == 0) return 2;
+            int staffId;
+            var designatedStaff = (int?)context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId && l.DELETED == false).FirstOrDefault()?.STAFFID ?? 0;
+            if (designatedStaff == 0)
             {
-                //var staffId1 = context.TBL_APPROVAL_LEVEL_STAFF.LastOrDefault();
+                var staffLevel = context.TBL_APPROVAL_LEVEL.Find(levelId);
+                staffId = (int?)context.TBL_STAFF.Where(s => s.STAFFROLEID == staffLevel.STAFFROLEID && s.DELETED == false && s.BRANCHID == userBranch).FirstOrDefault()?.STAFFID ?? 0;
+                return staffId;
             }
-            var staffId = (int?)context.TBL_APPROVAL_LEVEL_STAFF.Where(l => l.APPROVALLEVELID == levelId).FirstOrDefault()?.STAFFID ?? 0;
-            return staffId;
+            return designatedStaff;
         }
 
         public string GetRefrenceNumber()
@@ -1222,23 +1241,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            if (loan.loanApprovedLimitId > 0)
-            {
-                var appl = context.TBL_LOAN_APPLICATION.Find(loan.loanApprovedLimitId);
-                if (appl != null)
-                {
-                    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                    workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.LoanBookingRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
-                    context.SaveChanges();
-                }
-                if (!(loan.loanApplicationId > 0))
-                {
-                    return loan;
-                }
-            }
+
+            
             ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
-            var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId);
+            var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
 
             decimal cumulativeSum = 0;
             foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
@@ -1291,6 +1298,14 @@ namespace FintrakBanking.Repositories.Credit
             return returndate;
         }
 
+        private int? GetWorkflowProductId(short productId)
+        {
+            if (context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                && x.OPERATIONID == (int)OperationsEnum.CreditAppraisal //&& x.PRODUCTCLASSID == model.productClassId
+                && x.PRODUCTID == productId).Any()) return productId;
+            return null;
+        }
+
         private void SaveRac(RacInformationViewModel rac, int operationId, int targetId, int staffId)
         {
             if (rac.form == null) return;
@@ -1306,7 +1321,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 if (submission == null) continue;
-                if (!ValidRacSubmission(definition, submission.value, operationId, targetId)) throw new SecureException("Cannot Proceed as RAC not met!");
+                if (!ValidRacSubmission(definition, submission.value, operationId, targetId)) throw new SecureException("Cannot Proceed as RAC not met for " + definition.TBL_RAC_ITEM.CRITERIA);
                 details.Add(new TBL_RAC_DETAIL
                 {
                     RACDEFINITIONID = definition.RACDEFINITIONID,
@@ -1387,7 +1402,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (integerValue != null) // selects
             {
-                return integerValue == definition.CONTROLOPTIONID;
+                var optionItem = context.TBL_RAC_OPTION_ITEM.FirstOrDefault(x => x.RACOPTIONITEMID == definition.CONTROLOPTIONID);
+                if (optionItem != null) return integerValue == optionItem.KEY;
+                return false;
             }
             else if (decimalValue != null) // amount
             {
@@ -1397,19 +1414,19 @@ namespace FintrakBanking.Repositories.Credit
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue == definition.CONTROLAMOUNT;
                         else return decimalValue == GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
                     case 2:
-                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue > definition.CONTROLAMOUNT;
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue != definition.CONTROLAMOUNT;
                         else return decimalValue > GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
                     case 3:
-                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue >= definition.CONTROLAMOUNT;
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue > definition.CONTROLAMOUNT;
                         else return decimalValue >= GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
                     case 4:
-                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue < definition.CONTROLAMOUNT;
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue >= definition.CONTROLAMOUNT;
                         else return decimalValue < GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
                     case 5:
-                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue <= definition.CONTROLAMOUNT;
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue < definition.CONTROLAMOUNT;
                         else return decimalValue <= GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
                     case 6:
-                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue != definition.CONTROLAMOUNT;
+                        if (definition.DEFINEDFUNCTIONID == 1) return decimalValue <= definition.CONTROLAMOUNT;
                         else return decimalValue != GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
                     default:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue == definition.CONTROLAMOUNT;
@@ -1434,8 +1451,10 @@ namespace FintrakBanking.Repositories.Credit
             isGroupLoan = false;
             response = 0;
             int loanId = 0;
+            var proposedProductId = loan.LoanApplicationDetail.FirstOrDefault().proposedProductId;
 
             // ValidateLoanApplicationLimits(loan); // init only
+            workflowProductId = GetWorkflowProductId(proposedProductId);
 
             if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
@@ -1504,6 +1523,7 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALDETAIL = loan.collateralDetail,
                 ISADHOCAPPLICATION = loan.isadhocapplication,
                 LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
+                PRODUCTID = workflowProductId,
             };
 
             if (isGroupLoan)

@@ -87,6 +87,8 @@
     <Compile Include="Credit\AppraisalMemorandumLoanDetailViewModel2.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
+    <Compile Include="Credit\AtcLodgmentDetailViewModel.cs" />
+    <Compile Include="Credit\AtcLodgmentViewModel.cs" />
     <Compile Include="Credit\BatchPostingViewModel.cs" />
     <Compile Include="Credit\CallMemoViewModel.cs" />
     <Compile Include="Credit\CashBacked.cs" />
@@ -101,6 +103,7 @@
     <Compile Include="Credit\CRMSRegulatoryViewModel.cs" />
     <Compile Include="Credit\DashboardViewModel.cs" />
     <Compile Include="Credit\DisbursalCreditTurnoverViewModel.cs" />
+    <Compile Include="Credit\LcIssuanceViewModel.cs" />
     <Compile Include="Credit\LoanCAMSOLViewModel.cs" />
     <Compile Include="Credit\ChecklistApprovalViewModel.cs" />
     <Compile Include="Credit\CollateralCustomerViewModel.cs" />
@@ -285,6 +288,9 @@
       <Project>{18CEFC20-2662-4757-94DE-23D623FFC98D}</Project>
       <Name>FintrakBanking.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

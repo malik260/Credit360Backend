@@ -55,6 +55,35 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class LcForwardViewModel : GeneralEntity
+    {
+        public int forwardAction { get; set; } // statusId
+        public int LcIssuanceId { get; set; } // targetId
+        public int appraisalMemorandumId { get; set; }
+        public int? productClassId { get; set; }
+        public int? productId { get; set; }
+        public int receiverLevelId { get; set; }
+        public int? receiverStaffId { get; set; }
+        public int? trailId { get; set; }
+        public decimal amount { get; set; }
+        public bool politicallyExposed { get; set; }
+        public short? vote { get; set; }
+        public string comment { get; set; }
+        public decimal principal { get; set; }
+        public double rate { get; set; }
+        public bool investmentGrade { get; set; }
+        public int applicationTenor { get; set; }
+        public int operationId { get; set; }
+        public bool untenored { get; set; }
+        public bool isBusiness { get; set; }
+        public float? interestRateConcession { get; set; }
+        public float? feeRateConcession { get; set; }
+        public int targetId { get; set; }
+        public int nextOperationId { get; set; }
+        public int nextApprovalLevelId { get; set; }
+
+    }
+
     public class ApprovedLoanDetailViewModel : GeneralEntity
     {
         public int loanApplicationDetailId { get; set; }

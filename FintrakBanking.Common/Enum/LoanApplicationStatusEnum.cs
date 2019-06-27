@@ -30,6 +30,9 @@ namespace FintrakBanking.Common.Enum
         OfferLetterRejected = 20,
         CancellationInProgress=21,
         CancellationCompleted =22,
+        LcIssuanceCompleted = 23,
+        LcShippingReleaseInProgress = 24,
+        LcShippingReleaseCompleted = 25,
         //AdhocApprovalInProgress =23,
     }
 }

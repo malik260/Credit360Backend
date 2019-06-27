@@ -81,6 +81,10 @@
     <Compile Include="DocumentModels\TBL_JOB_REQUEST_MSG_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_MEDIA_LOAN_DOCUMENTS.cs" />
     <Compile Include="Models\TBL_APPROVAL_LEVEL_SETTING.cs" />
+    <Compile Include="Models\TBL_ATC_LODGMENT.cs" />
+    <Compile Include="Models\TBL_ATC_LODGMENT_DETAIL.cs" />
+    <Compile Include="Models\TBL_ATC_RELEASE.cs" />
+    <Compile Include="Models\TBL_ATC_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOMICILIATION.cs" />
     <Compile Include="Models\TBL_COLLATERAL_INDEMNITY.cs" />
@@ -104,6 +108,10 @@
     <Compile Include="Models\TBL_DEFINED_FUNCTION.cs" />
     <Compile Include="Models\TBL_JOB_SOURCE.cs" />
     <Compile Include="Models\TBL_APPROVAL_BUSINESS_RULE.cs" />
+    <Compile Include="Models\TBL_LC_CONDITION.cs" />
+    <Compile Include="Models\TBL_LC_DOCUMENT.cs" />
+    <Compile Include="Models\TBL_LC_ISSUANCE.cs" />
+    <Compile Include="Models\TBL_LC_SHIPPING.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PAYMENT.cs" />
     <Compile Include="Models\TBL_ORIGINAL_DOCUMENT_APPROVAL.cs" />
     <Compile Include="Models\TBL_PROFILE_BUSINESS_UNIT.cs" />

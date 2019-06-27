@@ -407,6 +407,48 @@ namespace FintrakBanking.Repositories.Setups.General
             return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
         }
 
+        public IEnumerable<int> GetStaffApprovalLevelIdsForAdhoc(int staffId, int operationId = 0)
+        {
+            var relievedLevelids = GetRelievedStaffApprovalLevelIds(staffId, operationId); // for approval delegation
+
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var roleLevelIds = context.TBL_APPROVAL_LEVEL
+                .Where(x => x.DELETED == false && x.STAFFROLEID == staff.STAFFROLEID)
+                .Select(x => x.APPROVALLEVELID)
+                .Distinct();
+
+            int scope = (int)ProcessViewScopeEnum.Level; // default 1
+
+            var allLevels = context.TBL_APPROVAL_GROUP_MAPPING
+                .Where(x => x.OPERATIONID == operationId)
+                .Select(g => g.TBL_APPROVAL_GROUP)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL
+                .Where(l => l.DELETED == false && l.ISACTIVE == true)).ToList();
+
+            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId).ToList();
+
+            if (staffWorkflow.Count() > 0) scope = staffWorkflow.Max(x => x.PROCESSVIEWSCOPEID);
+
+            if (scope == 3) return allLevels.Select(x => x.APPROVALLEVELID).Distinct().Union(roleLevelIds).Union(relievedLevelids);
+
+            var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
+
+            if (scope == 2)
+            {
+                var groups = context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
+                return context.TBL_APPROVAL_LEVEL
+                    .Where(x => groups.Contains(x.GROUPID))
+                    .Select(x => x.APPROVALLEVELID)
+                    .Distinct()
+                    .Union(roleLevelIds)
+                    .Union(relievedLevelids);
+            }
+
+            //return staffLevels.Union(roleLevelIds); // without relief code
+            return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
+        }
+
         public List<int> GetRouteLevels(int operationId, int depth)
         {
             var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
