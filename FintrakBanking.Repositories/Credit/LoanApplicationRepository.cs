@@ -1134,6 +1134,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl.PRODUCTID == 2)
             {
                 workflow.ProductClassId = null;
+                workflow.ProductId = null;
             }
 
             return workflow.LogActivity();
