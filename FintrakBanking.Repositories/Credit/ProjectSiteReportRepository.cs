@@ -222,6 +222,222 @@ namespace FintrakBanking.Repositories.credit
                 })
                 .ToList();
         }
+
+        #region
+        public IEnumerable<PsrRecommendationViewModel> GetPsrRecommendations(int id)
+        {
+            return context.TBL_PSR_RECOMMENDATION.Where(x => x.DELETED == false)
+                .Select(x => new PsrRecommendationViewModel
+                {
+                    psrRecommendationId = x.PSRRECOMMENDATIONID,
+                    comment = x.COMMENT,
+                })
+                .ToList();
+        }
+
+        
+        public bool AddPsrRecommendation(PsrRecommendationViewModel model)
+        {
+            var entity = new TBL_PSR_RECOMMENDATION
+            {
+                COMMENT = model.comment,
+                // COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_PSR_RECOMMENDATION.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrRecommendationAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_Psr Recommendation '{entity.PSRRECOMMENDATIONID}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdatePsrRecommendation(PsrRecommendationViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_RECOMMENDATION.Find(id);
+            entity.COMMENT = model.comment;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrRecommendationUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Recommendation '{entity.PSRRECOMMENDATIONID}' was updated by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRRECOMMENDATIONID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeletePsrRecommendation(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_RECOMMENDATION.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrRecommendationDeleted,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Recommendation '{entity.PSRRECOMMENDATIONID}' was deleted by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRRECOMMENDATIONID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
+        #region
+
+        public IEnumerable<PsrPerformanceEvaluationViewModel> GetPsrPerformanceEvaluations(int id)
+        {
+            return context.TBL_PSR_PERFORMANCE_EVALUATION.Where(x => x.DELETED == false)
+                .Select(x => new PsrPerformanceEvaluationViewModel
+                {
+                    psrPerformanceEvaluationId = x.PSRPERFORMANCEEVALUATIONID,
+                    grossAmount = x.GROSSAMOUNT,
+                    amountReceived = x.AMOUNTRECEIVED,
+                    progressPayment = x.PROGRESSPAYMENT,
+                    certifiedValueWorkDone = x.CERTIFIEDVALUEWORKDONE,
+                    managementUnitValueWorkDone = x.MANAGEMENTUNITVALUEWORKDONE,
+                    consultantValueWorkDone = x.CONSULTANTVALUEWORKDONE,
+                    costVariation = x.COSTVARIATION,
+                    timeVariation = x.TIMEVARIATION,
+                })
+                .ToList();
+        }
+
+        public bool AddPsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model)
+        {
+            var entity = new TBL_PSR_PERFORMANCE_EVALUATION
+            {
+                GROSSAMOUNT = model.grossAmount,
+                AMOUNTRECEIVED = model.amountReceived,
+                PROGRESSPAYMENT = model.progressPayment,
+                CERTIFIEDVALUEWORKDONE = model.certifiedValueWorkDone,
+                MANAGEMENTUNITVALUEWORKDONE = model.managementUnitValueWorkDone,
+                CONSULTANTVALUEWORKDONE = model.consultantValueWorkDone,
+                COSTVARIATION = model.costVariation,
+                TIMEVARIATION = model.timeVariation,
+                // COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate(),
+            };
+
+            context.TBL_PSR_PERFORMANCE_EVALUATION.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrPerformanceEvaluationAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_Psr Performance Evaluation '{entity.PSRPERFORMANCEEVALUATIONID}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_PERFORMANCE_EVALUATION.Find(id);
+            entity.GROSSAMOUNT = model.grossAmount;
+            entity.AMOUNTRECEIVED = model.amountReceived;
+            entity.PROGRESSPAYMENT = model.progressPayment;
+            entity.CERTIFIEDVALUEWORKDONE = model.certifiedValueWorkDone;
+            entity.MANAGEMENTUNITVALUEWORKDONE = model.managementUnitValueWorkDone;
+            entity.CONSULTANTVALUEWORKDONE = model.consultantValueWorkDone;
+            entity.COSTVARIATION = model.costVariation;
+            entity.TIMEVARIATION = model.timeVariation;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrPerformanceEvaluationUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Performance Evaluation '{entity.PSRPERFORMANCEEVALUATIONID}' was updated by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRPERFORMANCEEVALUATIONID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeletePsrPerformanceEvaluation(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_PERFORMANCE_EVALUATION.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrPerformanceEvaluationDeleted,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Performance Evaluation '{entity.PSRPERFORMANCEEVALUATIONID}' was deleted by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRPERFORMANCEEVALUATIONID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
     }
 }
 

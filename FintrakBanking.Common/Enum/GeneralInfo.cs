@@ -360,6 +360,14 @@ namespace FintrakBanking.Common.Enum
         ProjectSiteReportAdded = 426,
         ProjectSiteReportUpdated = 427,
         ProjectSiteReportDeleted = 428,
+        PsrRecommendationAdded = 429,
+        PsrRecommendationUpdated = 430,
+        PsrRecommendationDeleted = 431,
+        PsrPerformanceEvaluationAdded = 432,
+        PsrPerformanceEvaluationUpdated = 433,
+        PsrPerformanceEvaluationDeleted = 434,
+        PsrObservationAdded = 435,
+        PsrObservationUpdated = 436,
     };
     public enum RegulatoryTypeEnum
     {

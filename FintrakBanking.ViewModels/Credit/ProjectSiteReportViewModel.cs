@@ -28,7 +28,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public DateTime nextVisitationDate { get; set; }
         public int loanApplicationId { get; set; }
-        public string projectLocation { get; set; }
         public int approvalStatusId { get; set; }
+        public string projectLocation { get; set; }
     }
 }
