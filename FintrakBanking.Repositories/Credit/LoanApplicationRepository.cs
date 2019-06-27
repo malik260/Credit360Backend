@@ -1122,6 +1122,7 @@ namespace FintrakBanking.Repositories.Credit
                 receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
                 workflow.NextLevelId = receiverLevelId; // BREAKING!
             }
+
             
             workflow.StaffId = staffId;
             workflow.TargetId = appl.LOANAPPLICATIONID;
@@ -1130,6 +1131,10 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductId = appl.PRODUCTID;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
+            if (appl.PRODUCTID == 2)
+            {
+                workflow.ProductClassId = null;
+            }
 
             return workflow.LogActivity();
         }
