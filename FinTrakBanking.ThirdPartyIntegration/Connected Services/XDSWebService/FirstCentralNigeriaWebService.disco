@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="https://online.firstcentralcreditbureau.com/firstcentralnigeriawebservice/FirstCentralNigeriaWebService.asmx?wsdl" docRef="https://online.firstcentralcreditbureau.com/firstcentralnigeriawebservice/FirstCentralNigeriaWebService.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="https://online.firstcentralcreditbureau.com/firstcentralnigeriawebservice/FirstCentralNigeriaWebService.asmx" xmlns:q1="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService" binding="q1:FirstCentralNigeriaWebServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="https://online.firstcentralcreditbureau.com/firstcentralnigeriawebservice/FirstCentralNigeriaWebService.asmx" xmlns:q2="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService" binding="q2:FirstCentralNigeriaWebServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

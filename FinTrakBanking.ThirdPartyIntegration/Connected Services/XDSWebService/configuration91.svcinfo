@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="k9IXXwzXRSInRrnr04/rmpjXuVA=">
+<SavedWcfConfigurationInformation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="9.1" CheckSum="uQuyMIF6JQMTr0ppLnegc0prWY4=">
   <bindingConfigurations>
-    <bindingConfiguration bindingType="basicHttpBinding" name="XDSNigeriaWebServiceSoap">
+    <bindingConfiguration bindingType="basicHttpBinding" name="FirstCentralNigeriaWebServiceSoap">
       <properties>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>XDSNigeriaWebServiceSoap</serializedValue>
+          <serializedValue>FirstCentralNigeriaWebServiceSoap</serializedValue>
         </property>
         <property path="/closeTimeout" isComplexType="false" isExplicitlyDefined="true" clrType="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -110,10 +110,10 @@
         </property>
       </properties>
     </bindingConfiguration>
-    <bindingConfiguration bindingType="basicHttpBinding" name="XDSNigeriaWebServiceSoap1">
+    <bindingConfiguration bindingType="basicHttpBinding" name="FirstCentralNigeriaWebServiceSoap1">
       <properties>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>XDSNigeriaWebServiceSoap1</serializedValue>
+          <serializedValue>FirstCentralNigeriaWebServiceSoap1</serializedValue>
         </property>
         <property path="/closeTimeout" isComplexType="false" isExplicitlyDefined="true" clrType="System.TimeSpan, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -221,10 +221,10 @@
     </bindingConfiguration>
   </bindingConfigurations>
   <endpoints>
-    <endpoint name="XDSNigeriaWebServiceSoap" contract="XDSWebService.XDSNigeriaWebServiceSoap" bindingType="basicHttpBinding" address="https://online.xdscreditbureau.com/XdsNigeriaWebservice/XDSNigeriaWebService.asmx" bindingConfiguration="XDSNigeriaWebServiceSoap">
+    <endpoint name="FirstCentralNigeriaWebServiceSoap" contract="XDSWebService.FirstCentralNigeriaWebServiceSoap" bindingType="basicHttpBinding" address="https://online.firstcentralcreditbureau.com/firstcentralnigeriawebservice/FirstCentralNigeriaWebService.asmx" bindingConfiguration="FirstCentralNigeriaWebServiceSoap">
       <properties>
         <property path="/address" isComplexType="false" isExplicitlyDefined="true" clrType="System.Uri, System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>https://online.xdscreditbureau.com/XdsNigeriaWebservice/XDSNigeriaWebService.asmx</serializedValue>
+          <serializedValue>https://online.firstcentralcreditbureau.com/firstcentralnigeriawebservice/FirstCentralNigeriaWebService.asmx</serializedValue>
         </property>
         <property path="/behaviorConfiguration" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />
@@ -233,10 +233,10 @@
           <serializedValue>basicHttpBinding</serializedValue>
         </property>
         <property path="/bindingConfiguration" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>XDSNigeriaWebServiceSoap</serializedValue>
+          <serializedValue>FirstCentralNigeriaWebServiceSoap</serializedValue>
         </property>
         <property path="/contract" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>XDSWebService.XDSNigeriaWebServiceSoap</serializedValue>
+          <serializedValue>XDSWebService.FirstCentralNigeriaWebServiceSoap</serializedValue>
         </property>
         <property path="/headers" isComplexType="true" isExplicitlyDefined="false" clrType="System.ServiceModel.Configuration.AddressHeaderCollectionElement, System.ServiceModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue>System.ServiceModel.Configuration.AddressHeaderCollectionElement</serializedValue>
@@ -296,7 +296,7 @@
           <serializedValue>False</serializedValue>
         </property>
         <property path="/name" isComplexType="false" isExplicitlyDefined="true" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-          <serializedValue>XDSNigeriaWebServiceSoap</serializedValue>
+          <serializedValue>FirstCentralNigeriaWebServiceSoap</serializedValue>
         </property>
         <property path="/kind" isComplexType="false" isExplicitlyDefined="false" clrType="System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
           <serializedValue />

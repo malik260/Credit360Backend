@@ -14,9 +14,9 @@ using System.Xml;
 
 namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
 {
-    public class XDSService //: IXDSServiceRepository
+    public class XDSService //: IXDSServiceRepository 
     {
-        XDSWebService.XDSNigeriaWebServiceSoapClient proxy = new XDSWebService.XDSNigeriaWebServiceSoapClient();
+        XDSWebService.FirstCentralNigeriaWebServiceSoapClient proxy = new XDSWebService.FirstCentralNigeriaWebServiceSoapClient();
         CreditBureauHelp helper = new CreditBureauHelp();
         FinTrakBankingContext innerContext = new FinTrakBankingContext();
 

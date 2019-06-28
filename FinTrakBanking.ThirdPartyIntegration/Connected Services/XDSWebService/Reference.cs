@@ -12,146 +12,158 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", ConfigurationName="XDSWebService.XDSNigeriaWebServiceSoap")]
-    public interface XDSNigeriaWebServiceSoap {
+    [System.ServiceModel.ServiceContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", ConfigurationName="XDSWebService.FirstCentralNigeriaWebServiceSoap")]
+    public interface FirstCentralNigeriaWebServiceSoap {
         
-        // CODEGEN: Generating message contract since element name UserName from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/Login", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name UserName from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/Login", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponse Login(FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/Login", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/Login", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponse> LoginAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginRequest request);
         
-        // CODEGEN: Generating message contract since element name XDSNigeriaWebServiceTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/IsTicketValid", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name FirstCentralNigeriaWebServiceTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/IsTicke" +
+            "tValid", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponse IsTicketValid(FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/IsTicketValid", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/IsTicke" +
+            "tValid", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponse> IsTicketValidAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/ConnectConsumerMatch", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/Connect" +
+            "ConsumerMatch", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchResponse ConnectConsumerMatch(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/ConnectConsumerMatch", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/Connect" +
+            "ConsumerMatch", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchResponse> ConnectConsumerMatchAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/ConnectCommercialMatch", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/Connect" +
+            "CommercialMatch", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse ConnectCommercialMatch(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/ConnectCommercialMatch", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/Connect" +
+            "CommercialMatch", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse> ConnectCommercialMatchAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerAccountMatch", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerAccountMatch", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchResponse GetConsumerAccountMatch(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerAccountMatch", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerAccountMatch", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchResponse> GetConsumerAccountMatchAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerEnquiryReport", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerEnquiryReport", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportResponse GetConsumerEnquiryReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerEnquiryReport", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerEnquiryReport", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportResponse> GetConsumerEnquiryReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetCommercialEnquiryRepor" +
-            "t", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetComm" +
+            "ercialEnquiryReport", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportResponse GetCommercialEnquiryReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetCommercialEnquiryRepor" +
-            "t", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetComm" +
+            "ercialEnquiryReport", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportResponse> GetCommercialEnquiryReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerBasicTraceRepo" +
-            "rt", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerBasicTraceReport", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportResponse GetConsumerBasicTraceReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerBasicTraceRepo" +
-            "rt", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerBasicTraceReport", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportResponse> GetConsumerBasicTraceReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerBasicCreditRep" +
-            "ort", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerBasicCreditReport", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportResponse GetConsumerBasicCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerBasicCreditRep" +
-            "ort", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerBasicCreditReport", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportResponse> GetConsumerBasicCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetXSCoreConsumerFullCred" +
-            "itReport", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetXSCo" +
+            "reConsumerFullCreditReport", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportResponse GetXSCoreConsumerFullCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetXSCoreConsumerFullCred" +
-            "itReport", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetXSCo" +
+            "reConsumerFullCreditReport", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportResponse> GetXSCoreConsumerFullCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerFullCreditRepo" +
-            "rt", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerFullCreditReport", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportResponse GetConsumerFullCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerFullCreditRepo" +
-            "rt", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerFullCreditReport", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportResponse> GetConsumerFullCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetCommercialBasicCreditR" +
-            "eport", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetComm" +
+            "ercialBasicCreditReport", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportResponse GetCommercialBasicCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetCommercialBasicCreditR" +
-            "eport", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetComm" +
+            "ercialBasicCreditReport", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportResponse> GetCommercialBasicCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetCommercialFullCreditRe" +
-            "port", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetComm" +
+            "ercialFullCreditReport", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportResponse GetCommercialFullCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetCommercialFullCreditRe" +
-            "port", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetComm" +
+            "ercialFullCreditReport", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportResponse> GetCommercialFullCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetXSCoreConsumerFullCred" +
-            "itReportBinary", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetXSCo" +
+            "reConsumerFullCreditReportBinary", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryResponse GetXSCoreConsumerFullCreditReportBinary(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetXSCoreConsumerFullCred" +
-            "itReportBinary", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetXSCo" +
+            "reConsumerFullCreditReportBinary", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryResponse> GetXSCoreConsumerFullCreditReportBinaryAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerFullCreditRepo" +
-            "rtBinary", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerFullCreditReportBinary", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryResponse GetConsumerFullCreditReportBinary(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetConsumerFullCreditRepo" +
-            "rtBinary", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetCons" +
+            "umerFullCreditReportBinary", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryResponse> GetConsumerFullCreditReportBinaryAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetCommercialFullCreditRe" +
-            "portBinary", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetComm" +
+            "ercialFullCreditReportBinary", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryResponse GetCommercialFullCreditReportBinary(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetCommercialFullCreditRe" +
-            "portBinary", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetComm" +
+            "ercialFullCreditReportBinary", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryResponse> GetCommercialFullCreditReportBinaryAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryRequest request);
         
-        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.xdscreditbureau.com/XDSNigeriaWebService is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetReport", ReplyAction="*")]
+        // CODEGEN: Generating message contract since element name DataTicket from namespace https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetRepo" +
+            "rt", ReplyAction="*")]
         FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportResponse GetReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="https://online.xdscreditbureau.com/XDSNigeriaWebService/GetReport", ReplyAction="*")]
+        [System.ServiceModel.OperationContractAttribute(Action="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetRepo" +
+            "rt", ReplyAction="*")]
         System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportResponse> GetReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportRequest request);
     }
     
@@ -161,7 +173,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class LoginRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="Login", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="Login", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginRequestBody Body;
         
         public LoginRequest() {
@@ -175,7 +187,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class LoginRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -199,7 +211,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class LoginResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="LoginResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="LoginResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponseBody Body;
         
         public LoginResponse() {
@@ -213,7 +225,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class LoginResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -233,7 +245,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class IsTicketValidRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="IsTicketValid", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="IsTicketValid", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequestBody Body;
         
         public IsTicketValidRequest() {
@@ -247,17 +259,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class IsTicketValidRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
-        public string XDSNigeriaWebServiceTicket;
+        public string FirstCentralNigeriaWebServiceTicket;
         
         public IsTicketValidRequestBody() {
         }
         
-        public IsTicketValidRequestBody(string XDSNigeriaWebServiceTicket) {
-            this.XDSNigeriaWebServiceTicket = XDSNigeriaWebServiceTicket;
+        public IsTicketValidRequestBody(string FirstCentralNigeriaWebServiceTicket) {
+            this.FirstCentralNigeriaWebServiceTicket = FirstCentralNigeriaWebServiceTicket;
         }
     }
     
@@ -267,7 +279,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class IsTicketValidResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="IsTicketValidResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="IsTicketValidResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponseBody Body;
         
         public IsTicketValidResponse() {
@@ -281,7 +293,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class IsTicketValidResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(Order=0)]
@@ -301,7 +313,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class ConnectConsumerMatchRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="ConnectConsumerMatch", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="ConnectConsumerMatch", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchRequestBody Body;
         
         public ConnectConsumerMatchRequest() {
@@ -315,7 +327,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class ConnectConsumerMatchRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -359,7 +371,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class ConnectConsumerMatchResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="ConnectConsumerMatchResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="ConnectConsumerMatchResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchResponseBody Body;
         
         public ConnectConsumerMatchResponse() {
@@ -373,7 +385,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class ConnectConsumerMatchResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -393,7 +405,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class ConnectCommercialMatchRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="ConnectCommercialMatch", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="ConnectCommercialMatch", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchRequestBody Body;
         
         public ConnectCommercialMatchRequest() {
@@ -407,7 +419,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class ConnectCommercialMatchRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -447,7 +459,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class ConnectCommercialMatchResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="ConnectCommercialMatchResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="ConnectCommercialMatchResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponseBody Body;
         
         public ConnectCommercialMatchResponse() {
@@ -461,7 +473,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class ConnectCommercialMatchResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -481,7 +493,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerAccountMatchRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerAccountMatch", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerAccountMatch", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchRequestBody Body;
         
         public GetConsumerAccountMatchRequest() {
@@ -495,7 +507,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerAccountMatchRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -523,7 +535,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerAccountMatchResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerAccountMatchResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerAccountMatchResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchResponseBody Body;
         
         public GetConsumerAccountMatchResponse() {
@@ -537,7 +549,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerAccountMatchResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -557,7 +569,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerEnquiryReportRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerEnquiryReport", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerEnquiryReport", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportRequestBody Body;
         
         public GetConsumerEnquiryReportRequest() {
@@ -571,7 +583,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerEnquiryReportRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -599,7 +611,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerEnquiryReportResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerEnquiryReportResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerEnquiryReportResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportResponseBody Body;
         
         public GetConsumerEnquiryReportResponse() {
@@ -613,7 +625,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerEnquiryReportResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -633,7 +645,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetCommercialEnquiryReportRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialEnquiryReport", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialEnquiryReport", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportRequestBody Body;
         
         public GetCommercialEnquiryReportRequest() {
@@ -647,7 +659,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetCommercialEnquiryReportRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -675,7 +687,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetCommercialEnquiryReportResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialEnquiryReportResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialEnquiryReportResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportResponseBody Body;
         
         public GetCommercialEnquiryReportResponse() {
@@ -689,7 +701,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetCommercialEnquiryReportResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -709,7 +721,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerBasicTraceReportRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerBasicTraceReport", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerBasicTraceReport", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportRequestBody Body;
         
         public GetConsumerBasicTraceReportRequest() {
@@ -723,7 +735,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerBasicTraceReportRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -759,7 +771,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerBasicTraceReportResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerBasicTraceReportResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerBasicTraceReportResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportResponseBody Body;
         
         public GetConsumerBasicTraceReportResponse() {
@@ -773,7 +785,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerBasicTraceReportResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -793,7 +805,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerBasicCreditReportRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerBasicCreditReport", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerBasicCreditReport", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportRequestBody Body;
         
         public GetConsumerBasicCreditReportRequest() {
@@ -807,7 +819,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerBasicCreditReportRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -843,7 +855,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerBasicCreditReportResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerBasicCreditReportResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerBasicCreditReportResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportResponseBody Body;
         
         public GetConsumerBasicCreditReportResponse() {
@@ -857,7 +869,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerBasicCreditReportResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -877,7 +889,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetXSCoreConsumerFullCreditReportRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetXSCoreConsumerFullCreditReport", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetXSCoreConsumerFullCreditReport", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportRequestBody Body;
         
         public GetXSCoreConsumerFullCreditReportRequest() {
@@ -891,7 +903,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetXSCoreConsumerFullCreditReportRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -927,7 +939,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetXSCoreConsumerFullCreditReportResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetXSCoreConsumerFullCreditReportResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetXSCoreConsumerFullCreditReportResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportResponseBody Body;
         
         public GetXSCoreConsumerFullCreditReportResponse() {
@@ -941,7 +953,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetXSCoreConsumerFullCreditReportResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -961,7 +973,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerFullCreditReportRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerFullCreditReport", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerFullCreditReport", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportRequestBody Body;
         
         public GetConsumerFullCreditReportRequest() {
@@ -975,7 +987,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerFullCreditReportRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1011,7 +1023,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerFullCreditReportResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerFullCreditReportResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerFullCreditReportResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportResponseBody Body;
         
         public GetConsumerFullCreditReportResponse() {
@@ -1025,7 +1037,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerFullCreditReportResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1045,7 +1057,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetCommercialBasicCreditReportRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialBasicCreditReport", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialBasicCreditReport", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportRequestBody Body;
         
         public GetCommercialBasicCreditReportRequest() {
@@ -1059,7 +1071,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetCommercialBasicCreditReportRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1095,7 +1107,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetCommercialBasicCreditReportResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialBasicCreditReportResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialBasicCreditReportResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportResponseBody Body;
         
         public GetCommercialBasicCreditReportResponse() {
@@ -1109,7 +1121,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetCommercialBasicCreditReportResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1129,7 +1141,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetCommercialFullCreditReportRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialFullCreditReport", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialFullCreditReport", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportRequestBody Body;
         
         public GetCommercialFullCreditReportRequest() {
@@ -1143,7 +1155,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetCommercialFullCreditReportRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1179,7 +1191,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetCommercialFullCreditReportResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialFullCreditReportResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialFullCreditReportResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportResponseBody Body;
         
         public GetCommercialFullCreditReportResponse() {
@@ -1193,7 +1205,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetCommercialFullCreditReportResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1213,7 +1225,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetXSCoreConsumerFullCreditReportBinaryRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetXSCoreConsumerFullCreditReportBinary", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetXSCoreConsumerFullCreditReportBinary", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryRequestBody Body;
         
         public GetXSCoreConsumerFullCreditReportBinaryRequest() {
@@ -1227,7 +1239,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetXSCoreConsumerFullCreditReportBinaryRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1263,7 +1275,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetXSCoreConsumerFullCreditReportBinaryResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetXSCoreConsumerFullCreditReportBinaryResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetXSCoreConsumerFullCreditReportBinaryResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryResponseBody Body;
         
         public GetXSCoreConsumerFullCreditReportBinaryResponse() {
@@ -1277,7 +1289,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetXSCoreConsumerFullCreditReportBinaryResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1297,7 +1309,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerFullCreditReportBinaryRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerFullCreditReportBinary", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerFullCreditReportBinary", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryRequestBody Body;
         
         public GetConsumerFullCreditReportBinaryRequest() {
@@ -1311,7 +1323,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerFullCreditReportBinaryRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1347,7 +1359,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetConsumerFullCreditReportBinaryResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerFullCreditReportBinaryResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetConsumerFullCreditReportBinaryResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryResponseBody Body;
         
         public GetConsumerFullCreditReportBinaryResponse() {
@@ -1361,7 +1373,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetConsumerFullCreditReportBinaryResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1381,7 +1393,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetCommercialFullCreditReportBinaryRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialFullCreditReportBinary", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialFullCreditReportBinary", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryRequestBody Body;
         
         public GetCommercialFullCreditReportBinaryRequest() {
@@ -1395,7 +1407,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetCommercialFullCreditReportBinaryRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1431,7 +1443,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetCommercialFullCreditReportBinaryResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialFullCreditReportBinaryResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetCommercialFullCreditReportBinaryResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryResponseBody Body;
         
         public GetCommercialFullCreditReportBinaryResponse() {
@@ -1445,7 +1457,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetCommercialFullCreditReportBinaryResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1465,7 +1477,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetReportRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetReport", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetReport", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportRequestBody Body;
         
         public GetReportRequest() {
@@ -1479,7 +1491,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetReportRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1503,7 +1515,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
     public partial class GetReportResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetReportResponse", Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService", Order=0)]
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetReportResponse", Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService", Order=0)]
         public FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportResponseBody Body;
         
         public GetReportResponse() {
@@ -1517,7 +1529,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.xdscreditbureau.com/XDSNigeriaWebService")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService")]
     public partial class GetReportResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
@@ -1532,34 +1544,34 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface XDSNigeriaWebServiceSoapChannel : FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap, System.ServiceModel.IClientChannel {
+    public interface FirstCentralNigeriaWebServiceSoapChannel : FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class XDSNigeriaWebServiceSoapClient : System.ServiceModel.ClientBase<FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap>, FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap {
+    public partial class FirstCentralNigeriaWebServiceSoapClient : System.ServiceModel.ClientBase<FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap>, FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap {
         
-        public XDSNigeriaWebServiceSoapClient() {
+        public FirstCentralNigeriaWebServiceSoapClient() {
         }
         
-        public XDSNigeriaWebServiceSoapClient(string endpointConfigurationName) : 
+        public FirstCentralNigeriaWebServiceSoapClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName) {
         }
         
-        public XDSNigeriaWebServiceSoapClient(string endpointConfigurationName, string remoteAddress) : 
+        public FirstCentralNigeriaWebServiceSoapClient(string endpointConfigurationName, string remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public XDSNigeriaWebServiceSoapClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public FirstCentralNigeriaWebServiceSoapClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress) {
         }
         
-        public XDSNigeriaWebServiceSoapClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public FirstCentralNigeriaWebServiceSoapClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress) {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.Login(FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.Login(FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginRequest request) {
             return base.Channel.Login(request);
         }
         
@@ -1568,12 +1580,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body = new FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginRequestBody();
             inValue.Body.UserName = UserName;
             inValue.Body.Password = Password;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).Login(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).Login(inValue);
             return retVal.Body.LoginResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.LoginAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.LoginAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginRequest request) {
             return base.Channel.LoginAsync(request);
         }
         
@@ -1582,36 +1594,36 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body = new FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginRequestBody();
             inValue.Body.UserName = UserName;
             inValue.Body.Password = Password;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).LoginAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).LoginAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.IsTicketValid(FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.IsTicketValid(FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequest request) {
             return base.Channel.IsTicketValid(request);
         }
         
-        public bool IsTicketValid(string XDSNigeriaWebServiceTicket) {
+        public bool IsTicketValid(string FirstCentralNigeriaWebServiceTicket) {
             FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequest inValue = new FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequest();
             inValue.Body = new FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequestBody();
-            inValue.Body.XDSNigeriaWebServiceTicket = XDSNigeriaWebServiceTicket;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).IsTicketValid(inValue);
+            inValue.Body.FirstCentralNigeriaWebServiceTicket = FirstCentralNigeriaWebServiceTicket;
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).IsTicketValid(inValue);
             return retVal.Body.IsTicketValidResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.IsTicketValidAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.IsTicketValidAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequest request) {
             return base.Channel.IsTicketValidAsync(request);
         }
         
-        public System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponse> IsTicketValidAsync(string XDSNigeriaWebServiceTicket) {
+        public System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidResponse> IsTicketValidAsync(string FirstCentralNigeriaWebServiceTicket) {
             FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequest inValue = new FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequest();
             inValue.Body = new FinTrakBanking.ThirdPartyIntegration.XDSWebService.IsTicketValidRequestBody();
-            inValue.Body.XDSNigeriaWebServiceTicket = XDSNigeriaWebServiceTicket;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).IsTicketValidAsync(inValue);
+            inValue.Body.FirstCentralNigeriaWebServiceTicket = FirstCentralNigeriaWebServiceTicket;
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).IsTicketValidAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.ConnectConsumerMatch(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.ConnectConsumerMatch(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchRequest request) {
             return base.Channel.ConnectConsumerMatch(request);
         }
         
@@ -1625,12 +1637,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.Identification = Identification;
             inValue.Body.AccountNumber = AccountNumber;
             inValue.Body.ProductID = ProductID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).ConnectConsumerMatch(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).ConnectConsumerMatch(inValue);
             return retVal.Body.ConnectConsumerMatchResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.ConnectConsumerMatchAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.ConnectConsumerMatchAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectConsumerMatchRequest request) {
             return base.Channel.ConnectConsumerMatchAsync(request);
         }
         
@@ -1644,11 +1656,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.Identification = Identification;
             inValue.Body.AccountNumber = AccountNumber;
             inValue.Body.ProductID = ProductID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).ConnectConsumerMatchAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).ConnectConsumerMatchAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.ConnectCommercialMatch(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.ConnectCommercialMatch(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchRequest request) {
             return base.Channel.ConnectCommercialMatch(request);
         }
         
@@ -1661,12 +1673,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.BusinessRegistrationNumber = BusinessRegistrationNumber;
             inValue.Body.AccountNumber = AccountNumber;
             inValue.Body.ProductID = ProductID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).ConnectCommercialMatch(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).ConnectCommercialMatch(inValue);
             return retVal.Body.ConnectCommercialMatchResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.ConnectCommercialMatchAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.ConnectCommercialMatchAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchRequest request) {
             return base.Channel.ConnectCommercialMatchAsync(request);
         }
         
@@ -1679,11 +1691,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.BusinessRegistrationNumber = BusinessRegistrationNumber;
             inValue.Body.AccountNumber = AccountNumber;
             inValue.Body.ProductID = ProductID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).ConnectCommercialMatchAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).ConnectCommercialMatchAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerAccountMatch(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerAccountMatch(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchRequest request) {
             return base.Channel.GetConsumerAccountMatch(request);
         }
         
@@ -1693,12 +1705,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.DataTicket = DataTicket;
             inValue.Body.AccountNo = AccountNo;
             inValue.Body.Subscriberid = Subscriberid;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerAccountMatch(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerAccountMatch(inValue);
             return retVal.Body.GetConsumerAccountMatchResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerAccountMatchAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerAccountMatchAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerAccountMatchRequest request) {
             return base.Channel.GetConsumerAccountMatchAsync(request);
         }
         
@@ -1708,11 +1720,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.DataTicket = DataTicket;
             inValue.Body.AccountNo = AccountNo;
             inValue.Body.Subscriberid = Subscriberid;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerAccountMatchAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerAccountMatchAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerEnquiryReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerEnquiryReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportRequest request) {
             return base.Channel.GetConsumerEnquiryReport(request);
         }
         
@@ -1722,12 +1734,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.DataTicket = DataTicket;
             inValue.Body.ConsumerID = ConsumerID;
             inValue.Body.ProductID = ProductID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerEnquiryReport(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerEnquiryReport(inValue);
             return retVal.Body.GetConsumerEnquiryReportResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerEnquiryReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerEnquiryReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerEnquiryReportRequest request) {
             return base.Channel.GetConsumerEnquiryReportAsync(request);
         }
         
@@ -1737,11 +1749,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.DataTicket = DataTicket;
             inValue.Body.ConsumerID = ConsumerID;
             inValue.Body.ProductID = ProductID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerEnquiryReportAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerEnquiryReportAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetCommercialEnquiryReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetCommercialEnquiryReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportRequest request) {
             return base.Channel.GetCommercialEnquiryReport(request);
         }
         
@@ -1751,12 +1763,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.DataTicket = DataTicket;
             inValue.Body.CommercialID = CommercialID;
             inValue.Body.ProductID = ProductID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetCommercialEnquiryReport(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetCommercialEnquiryReport(inValue);
             return retVal.Body.GetCommercialEnquiryReportResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetCommercialEnquiryReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetCommercialEnquiryReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialEnquiryReportRequest request) {
             return base.Channel.GetCommercialEnquiryReportAsync(request);
         }
         
@@ -1766,11 +1778,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.DataTicket = DataTicket;
             inValue.Body.CommercialID = CommercialID;
             inValue.Body.ProductID = ProductID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetCommercialEnquiryReportAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetCommercialEnquiryReportAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerBasicTraceReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerBasicTraceReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportRequest request) {
             return base.Channel.GetConsumerBasicTraceReport(request);
         }
         
@@ -1782,12 +1794,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerBasicTraceReport(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerBasicTraceReport(inValue);
             return retVal.Body.GetConsumerBasicTraceReportResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerBasicTraceReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerBasicTraceReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicTraceReportRequest request) {
             return base.Channel.GetConsumerBasicTraceReportAsync(request);
         }
         
@@ -1799,11 +1811,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerBasicTraceReportAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerBasicTraceReportAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerBasicCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerBasicCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportRequest request) {
             return base.Channel.GetConsumerBasicCreditReport(request);
         }
         
@@ -1815,12 +1827,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerBasicCreditReport(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerBasicCreditReport(inValue);
             return retVal.Body.GetConsumerBasicCreditReportResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerBasicCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerBasicCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerBasicCreditReportRequest request) {
             return base.Channel.GetConsumerBasicCreditReportAsync(request);
         }
         
@@ -1832,11 +1844,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerBasicCreditReportAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerBasicCreditReportAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetXSCoreConsumerFullCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetXSCoreConsumerFullCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportRequest request) {
             return base.Channel.GetXSCoreConsumerFullCreditReport(request);
         }
         
@@ -1848,12 +1860,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetXSCoreConsumerFullCreditReport(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetXSCoreConsumerFullCreditReport(inValue);
             return retVal.Body.GetXSCoreConsumerFullCreditReportResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetXSCoreConsumerFullCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetXSCoreConsumerFullCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportRequest request) {
             return base.Channel.GetXSCoreConsumerFullCreditReportAsync(request);
         }
         
@@ -1865,11 +1877,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetXSCoreConsumerFullCreditReportAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetXSCoreConsumerFullCreditReportAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerFullCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerFullCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportRequest request) {
             return base.Channel.GetConsumerFullCreditReport(request);
         }
         
@@ -1881,12 +1893,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerFullCreditReport(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerFullCreditReport(inValue);
             return retVal.Body.GetConsumerFullCreditReportResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerFullCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerFullCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportRequest request) {
             return base.Channel.GetConsumerFullCreditReportAsync(request);
         }
         
@@ -1898,11 +1910,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerFullCreditReportAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerFullCreditReportAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetCommercialBasicCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetCommercialBasicCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportRequest request) {
             return base.Channel.GetCommercialBasicCreditReport(request);
         }
         
@@ -1914,12 +1926,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.commercialMergeList = commercialMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetCommercialBasicCreditReport(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetCommercialBasicCreditReport(inValue);
             return retVal.Body.GetCommercialBasicCreditReportResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetCommercialBasicCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetCommercialBasicCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialBasicCreditReportRequest request) {
             return base.Channel.GetCommercialBasicCreditReportAsync(request);
         }
         
@@ -1931,11 +1943,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.commercialMergeList = commercialMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetCommercialBasicCreditReportAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetCommercialBasicCreditReportAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetCommercialFullCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetCommercialFullCreditReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportRequest request) {
             return base.Channel.GetCommercialFullCreditReport(request);
         }
         
@@ -1947,12 +1959,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.commercialMergeList = commercialMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetCommercialFullCreditReport(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetCommercialFullCreditReport(inValue);
             return retVal.Body.GetCommercialFullCreditReportResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetCommercialFullCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetCommercialFullCreditReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportRequest request) {
             return base.Channel.GetCommercialFullCreditReportAsync(request);
         }
         
@@ -1964,11 +1976,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.commercialMergeList = commercialMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetCommercialFullCreditReportAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetCommercialFullCreditReportAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetXSCoreConsumerFullCreditReportBinary(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetXSCoreConsumerFullCreditReportBinary(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryRequest request) {
             return base.Channel.GetXSCoreConsumerFullCreditReportBinary(request);
         }
         
@@ -1980,12 +1992,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetXSCoreConsumerFullCreditReportBinary(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetXSCoreConsumerFullCreditReportBinary(inValue);
             return retVal.Body.GetXSCoreConsumerFullCreditReportBinaryResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetXSCoreConsumerFullCreditReportBinaryAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetXSCoreConsumerFullCreditReportBinaryAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetXSCoreConsumerFullCreditReportBinaryRequest request) {
             return base.Channel.GetXSCoreConsumerFullCreditReportBinaryAsync(request);
         }
         
@@ -1997,11 +2009,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetXSCoreConsumerFullCreditReportBinaryAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetXSCoreConsumerFullCreditReportBinaryAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerFullCreditReportBinary(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerFullCreditReportBinary(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryRequest request) {
             return base.Channel.GetConsumerFullCreditReportBinary(request);
         }
         
@@ -2013,12 +2025,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerFullCreditReportBinary(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerFullCreditReportBinary(inValue);
             return retVal.Body.GetConsumerFullCreditReportBinaryResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetConsumerFullCreditReportBinaryAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetConsumerFullCreditReportBinaryAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetConsumerFullCreditReportBinaryRequest request) {
             return base.Channel.GetConsumerFullCreditReportBinaryAsync(request);
         }
         
@@ -2030,11 +2042,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.consumerMergeList = consumerMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetConsumerFullCreditReportBinaryAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetConsumerFullCreditReportBinaryAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetCommercialFullCreditReportBinary(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetCommercialFullCreditReportBinary(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryRequest request) {
             return base.Channel.GetCommercialFullCreditReportBinary(request);
         }
         
@@ -2046,12 +2058,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.commercialMergeList = commercialMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetCommercialFullCreditReportBinary(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetCommercialFullCreditReportBinary(inValue);
             return retVal.Body.GetCommercialFullCreditReportBinaryResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetCommercialFullCreditReportBinaryAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetCommercialFullCreditReportBinaryAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetCommercialFullCreditReportBinaryRequest request) {
             return base.Channel.GetCommercialFullCreditReportBinaryAsync(request);
         }
         
@@ -2063,11 +2075,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body.commercialMergeList = commercialMergeList;
             inValue.Body.SubscriberEnquiryEngineID = SubscriberEnquiryEngineID;
             inValue.Body.enquiryID = enquiryID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetCommercialFullCreditReportBinaryAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetCommercialFullCreditReportBinaryAsync(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportRequest request) {
+        FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportResponse FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetReport(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportRequest request) {
             return base.Channel.GetReport(request);
         }
         
@@ -2076,12 +2088,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body = new FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportRequestBody();
             inValue.Body.DataTicket = DataTicket;
             inValue.Body.SubscriberEnquiryResultID = SubscriberEnquiryResultID;
-            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetReport(inValue);
+            FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportResponse retVal = ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetReport(inValue);
             return retVal.Body.GetReportResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap.GetReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportRequest request) {
+        System.Threading.Tasks.Task<FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportResponse> FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap.GetReportAsync(FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportRequest request) {
             return base.Channel.GetReportAsync(request);
         }
         
@@ -2090,7 +2102,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.XDSWebService {
             inValue.Body = new FinTrakBanking.ThirdPartyIntegration.XDSWebService.GetReportRequestBody();
             inValue.Body.DataTicket = DataTicket;
             inValue.Body.SubscriberEnquiryResultID = SubscriberEnquiryResultID;
-            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.XDSNigeriaWebServiceSoap)(this)).GetReportAsync(inValue);
+            return ((FinTrakBanking.ThirdPartyIntegration.XDSWebService.FirstCentralNigeriaWebServiceSoap)(this)).GetReportAsync(inValue);
         }
     }
 }
