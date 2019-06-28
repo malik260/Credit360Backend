@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(1000)]
-        public string COMMENT { get; set; }
+        public string COMMENTS { get; set; }
 
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }

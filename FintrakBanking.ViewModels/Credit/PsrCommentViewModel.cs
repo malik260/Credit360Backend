@@ -11,6 +11,6 @@ namespace FintrakBanking.ViewModels.credit
         public int psrCommentId { get; set; }
 
         public string comment { get; set; }
-
+        public int projectSiteReportId { get; set; }
     }
 }

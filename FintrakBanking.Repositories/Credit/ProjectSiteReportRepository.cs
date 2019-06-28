@@ -67,9 +67,9 @@ namespace FintrakBanking.Repositories.credit
                     }).ToList();
         }
 
-        public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports()
+        public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports(int id)
         {
-            return context.TBL_PSR_PROJECT_SITE_REPORT.Where(x => x.DELETED == false)
+            return context.TBL_PSR_PROJECT_SITE_REPORT.Where(x => x.DELETED == false && x.LOANAPPLICATIONID == id)
                 .Select(x => new ProjectSiteReportViewModel
                 {
                     projectSiteReportId = x.PROJECTSITEREPORTID,
@@ -89,27 +89,7 @@ namespace FintrakBanking.Repositories.credit
                 .ToList();
         }
 
-        public ProjectSiteReportViewModel GetProjectSiteReport(int id)
-        {
-            var entity = context.TBL_PSR_PROJECT_SITE_REPORT.FirstOrDefault(x => x.LOANAPPLICATIONID == id && x.DELETED == false);
-
-            return new ProjectSiteReportViewModel
-            {
-                projectSiteReportId = entity.PROJECTSITEREPORTID,
-                psrReportTypeId = entity.PSRREPORTTYPEID,
-                clientName = entity.CLIENTNAME,
-                contractorName = entity.CONTRACTORNAME,
-                consultantName = entity.CONSULTANTNAME,
-                projectAmount = entity.PROJECTAMOUNT,
-                projectDescription = entity.PROJECTDESCRIPTION,
-                commencementDate = entity.COMMENCEMENTDATE,
-                completionDate = entity.COMPLETIONDATE,
-                nextVisitationDate = entity.NEXTVISITATIONDATE,
-                loanApplicationId = entity.LOANAPPLICATIONID,
-                projectLocation = entity.PROJECTLOCATION,
-                approvalStatusId = entity.APPROVALSTATUSID,
-            };
-        }
+       
 
         public bool AddProjectSiteReport(ProjectSiteReportViewModel model)
         {
@@ -230,7 +210,8 @@ namespace FintrakBanking.Repositories.credit
                 .Select(x => new PsrRecommendationViewModel
                 {
                     psrRecommendationId = x.PSRRECOMMENDATIONID,
-                    comment = x.COMMENT,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    comment = x.COMMENTS,
                 })
                 .ToList();
         }
@@ -240,8 +221,8 @@ namespace FintrakBanking.Repositories.credit
         {
             var entity = new TBL_PSR_RECOMMENDATION
             {
-                COMMENT = model.comment,
-                // COMPANYID = model.companyId,
+                COMMENTS = model.comment,
+                PROJECTSITEREPORTID = model.projectSiteReportId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
@@ -309,6 +290,7 @@ namespace FintrakBanking.Repositories.credit
                     consultantValueWorkDone = x.CONSULTANTVALUEWORKDONE,
                     costVariation = x.COSTVARIATION,
                     timeVariation = x.TIMEVARIATION,
+                    projectSiteReportId = x.PROJECTSITEREPORTID
                 })
                 .ToList();
         }
@@ -328,6 +310,7 @@ namespace FintrakBanking.Repositories.credit
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
+                PROJECTSITEREPORTID = model.projectSiteReportId
             };
 
             context.TBL_PSR_PERFORMANCE_EVALUATION.Add(entity);
@@ -385,7 +368,8 @@ namespace FintrakBanking.Repositories.credit
                 .Select(x => new PsrObservationViewModel
                 {
                     psrObservationId = x.PSROBSERVATIONID,
-                    comment = x.COMMENT,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    comment = x.COMMENTS,
                 })
                 .ToList();
         }
@@ -394,8 +378,8 @@ namespace FintrakBanking.Repositories.credit
         {
             var entity = new TBL_PSR_OBSERVATION
             {
-                COMMENT = model.comment,
-                // COMPANYID = model.companyId,
+                COMMENTS = model.comment,
+                PROJECTSITEREPORTID = model.projectSiteReportId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
@@ -457,9 +441,10 @@ namespace FintrakBanking.Repositories.credit
                 .Select(x => new PsrNextInspectionTaskViewModel
                 {
                     psrNextInspectionTaskId = x.PSRNEXTINSPECTIONTASKID,
-                    comment = x.COMMENT,
+                    comment = x.COMMENTS,
                     isDone = x.ISDONE,
-                    nextInspectionDate =  x.NEXTINSPECTIONDATE
+                    nextInspectionDate =  x.NEXTINSPECTIONDATE,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
                 })
                 .ToList();
         }
@@ -468,9 +453,9 @@ namespace FintrakBanking.Repositories.credit
         {
             var entity = new TBL_PSR_NEXT_INSPECTION_TASK
             {
-                COMMENT = model.comment,
+                COMMENTS = model.comment,
                 ISDONE = model.isDone,
-                // COMPANYID = model.companyId,
+                PROJECTSITEREPORTID = model.projectSiteReportId,
                 CREATEDBY = model.createdBy,
                 NEXTINSPECTIONDATE = model.nextInspectionDate,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -531,7 +516,8 @@ namespace FintrakBanking.Repositories.credit
                 .Select(x => new PsrCommentViewModel
                 {
                     psrCommentId = x.PSRCOMMENTID,
-                    comment = x.COMMENT,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    comment = x.COMMENTS,
                 })
                 .ToList();
         }
@@ -540,8 +526,8 @@ namespace FintrakBanking.Repositories.credit
         {
             var entity = new TBL_PSR_COMMENT
             {
-                COMMENT = model.comment,
-                // COMPANYID = model.companyId,
+                COMMENTS = model.comment,
+                PROJECTSITEREPORTID = model.projectSiteReportId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
             };

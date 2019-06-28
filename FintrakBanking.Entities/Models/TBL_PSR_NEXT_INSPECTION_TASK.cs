@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         [StringLength(1000)]
-        public string COMMENT { get; set; }
+        public string COMMENTS { get; set; }
 
         public bool ISDONE { get; set; }
 
@@ -28,7 +28,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_PSR_PROJECT_SITE_REPORT TBL_PSR_PROJECT_SITE_REPORT { get; set; }
         public int PROJECTSITEREPORTID { get; set; }
-        public int NEXTINSPECTIONDATE { get; set; }
+        public DateTime NEXTINSPECTIONDATE { get; set; }
     }
 }
         /*

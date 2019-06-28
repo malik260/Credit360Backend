@@ -383,6 +383,11 @@ namespace FintrakBanking.Repositories.Credit
             placeholders.branchName = "<br />BRANCH NAME: " + appl.TBL_BRANCH.BRANCHNAME;
             workflow.Placeholders = placeholders;
 
+            //if (appl.PRODUCTID == 2)
+            //{
+            //    //workflow.ProductClassId = null;
+            //    workflow.ProductId = null;
+            //}
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 

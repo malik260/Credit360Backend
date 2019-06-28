@@ -32,21 +32,16 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("project-site-report")]
-        public HttpResponseMessage GetProjectSiteReports()
-        {
-            IEnumerable<ProjectSiteReportViewModel> response = repo.GetProjectSiteReports();
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        }
-
-        [HttpGet]
-        [ClaimsAuthorization]
         [Route("project-site-report/{id}")]
         public HttpResponseMessage GetProjectSiteReport(int id)
         {
-            ProjectSiteReportViewModel response = repo.GetProjectSiteReport(id);
-            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            try
+            {
+                IEnumerable<ProjectSiteReportViewModel> response = repo.GetProjectSiteReports(id);
+                if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "No record found" }); }
         }
 
         [HttpGet]
@@ -64,15 +59,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("project-site-report")]
         public HttpResponseMessage AddProjectSiteReport([FromBody] ProjectSiteReportViewModel model)
         {
-            try { 
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddProjectSiteReport(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.AddProjectSiteReport(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (Exception ex)
             {
@@ -93,7 +89,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.UpdateProjectSiteReport(model,id,user);
+            bool response = repo.UpdateProjectSiteReport(model, id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
@@ -110,7 +106,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.DeleteProjectSiteReport(id,user);
+            bool response = repo.DeleteProjectSiteReport(id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
         [HttpGet]
@@ -137,17 +133,24 @@ namespace FintrakBanking.APICore.Controllers
         [Route("psr-next-inspection-task")]
         public HttpResponseMessage AddPsrNextInspectionTask([FromBody] PsrNextInspectionTaskViewModel model)
         {
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddPsrNextInspectionTask(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.AddPsrNextInspectionTask(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "There was an error creating this record" });
+            }
         }
 
-        
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("psr-next-inspection-task/{id}")]
@@ -181,14 +184,21 @@ namespace FintrakBanking.APICore.Controllers
         [Route("psr-comment")]
         public HttpResponseMessage AddPsrComment([FromBody] PsrCommentViewModel model)
         {
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddPsrComment(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.AddPsrComment(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "There was an error creating this record" });
+            }
         }
 
 
@@ -219,20 +229,27 @@ namespace FintrakBanking.APICore.Controllers
             IEnumerable<PsrObservationViewModel> response = repo.GetPsrObservations(id);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
-        
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("psr-observation")]
         public HttpResponseMessage AddPsrObservation([FromBody] PsrObservationViewModel model)
         {
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddPsrObservation(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.AddPsrObservation(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "There was an error creating this record" });
+            }
         }
 
         [HttpDelete]
@@ -268,17 +285,24 @@ namespace FintrakBanking.APICore.Controllers
         [Route("psr-performance-evaluation")]
         public HttpResponseMessage AddPsrPerformanceEvaluation([FromBody] PsrPerformanceEvaluationViewModel model)
         {
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddPsrPerformanceEvaluation(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.AddPsrPerformanceEvaluation(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "There was an error creating this record" });
+            }
         }
 
-       
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("psr-performance-evaluation/{id}")]
@@ -306,20 +330,27 @@ namespace FintrakBanking.APICore.Controllers
             IEnumerable<PsrRecommendationViewModel> response = repo.GetPsrRecommendations(id);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
-        
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("psr-recommendation")]
         public HttpResponseMessage AddPsrRecommendation([FromBody] PsrRecommendationViewModel model)
         {
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddPsrRecommendation(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.AddPsrRecommendation(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "There was an error creating this record" });
+            }
         }
 
         [HttpDelete]

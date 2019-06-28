@@ -25,6 +25,6 @@ namespace FintrakBanking.ViewModels.credit
         public decimal costVariation { get; set; }
 
         public int timeVariation { get; set; }
-
+        public int projectSiteReportId { get; set; }
     }
 }

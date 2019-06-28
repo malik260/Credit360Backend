@@ -13,7 +13,7 @@ namespace FintrakBanking.ViewModels.credit
         public string comment { get; set; }
 
         public bool isDone { get; set; }
-        public int nextInspectionDate { get; set; }
-
+        public DateTime nextInspectionDate { get; set; }
+        public int projectSiteReportId { get; set; }
     }
 }
