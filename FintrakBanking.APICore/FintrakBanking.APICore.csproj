@@ -411,6 +411,7 @@
     <Compile Include="Controllers\ProductCollateralTypeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductFeeController.cs" />
+    <Compile Include="Controllers\ProjectSiteReportController.cs" />
     <Compile Include="Controllers\PrudentialGuidelineController.cs" />
     <Compile Include="Controllers\PublicHolidayController.cs" />
     <Compile Include="Controllers\RiskAcceptanceCriteriaController.cs" />

@@ -33,6 +33,13 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
         public virtual DbSet<TBL_APPROVAL_BUSINESS_RULE> TBL_APPROVAL_BUSINESS_RULE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_USAGE_STATUS> TBL_COLLATERAL_USAGE_STATUS { get; set; }
+        public virtual DbSet<TBL_PSR_PROJECT_SITE_REPORT> TBL_PSR_PROJECT_SITE_REPORT { get; set; }
+        public virtual DbSet<TBL_PSR_REPORT_TYPE> TBL_PSR_REPORT_TYPE { get; set; }
+        public virtual DbSet<TBL_PSR_COMMENT> TBL_PSR_COMMENT { get; set; }
+        public virtual DbSet<TBL_PSR_NEXT_INSPECTION_TASK> TBL_PSR_NEXT_INSPECTION_TASK { get; set; }
+        public virtual DbSet<TBL_PSR_OBSERVATION> TBL_PSR_OBSERVATION { get; set; }
+        public virtual DbSet<TBL_PSR_PERFORMANCE_EVALUATION> TBL_PSR_PERFORMANCE_EVALUATION { get; set; }
+        public virtual DbSet<TBL_PSR_RECOMMENDATION> TBL_PSR_RECOMMENDATION { get; set; }
 
 
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL_STAFF> TBL_TEMP_APPROVAL_LEVEL_STAFF { get; set; }

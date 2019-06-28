@@ -1122,6 +1122,7 @@ namespace FintrakBanking.Repositories.Credit
                 receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
                 workflow.NextLevelId = receiverLevelId; // BREAKING!
             }
+
             
             workflow.StaffId = staffId;
             workflow.TargetId = appl.LOANAPPLICATIONID;

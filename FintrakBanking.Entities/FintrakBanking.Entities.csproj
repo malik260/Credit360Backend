@@ -115,6 +115,13 @@
     <Compile Include="Models\TBL_LOAN_RECOVERY_PAYMENT.cs" />
     <Compile Include="Models\TBL_ORIGINAL_DOCUMENT_APPROVAL.cs" />
     <Compile Include="Models\TBL_PROFILE_BUSINESS_UNIT.cs" />
+    <Compile Include="Models\TBL_PSR_COMMENT.cs" />
+    <Compile Include="Models\TBL_PSR_NEXT_INSPECTION_TASK.cs" />
+    <Compile Include="Models\TBL_PSR_OBSERVATION.cs" />
+    <Compile Include="Models\TBL_PSR_PERFORMANCE_EVALUATION.cs" />
+    <Compile Include="Models\TBL_PSR_PROJECT_SITE_REPORT.cs" />
+    <Compile Include="Models\TBL_PSR_RECOMMENDATION.cs" />
+    <Compile Include="Models\TBL_PSR_REPORT_TYPE.cs" />
     <Compile Include="Models\TBL_RAC_CATEGORY.cs" />
     <Compile Include="Models\TBL_RAC_DEFINITION.cs" />
     <Compile Include="Models\TBL_RAC_DETAIL.cs" />
@@ -1022,7 +1029,6 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
