@@ -343,6 +343,10 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+            if (appl.PRODUCTID == 2)
+            {
+                workflow.ProductId = null;
+            }
             // workflow.Disputed = appl.DISPUTED; // buggy
 
             workflow.LevelBusinessRule = new LevelBusinessRule {

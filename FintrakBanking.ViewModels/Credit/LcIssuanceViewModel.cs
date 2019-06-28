@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public int letterOfCreditTypeId { get; set; }
 
-        public bool isDraftRequired { get; set; }
+        public bool? isDraftRequired { get; set; }
 
         public string beneficiaryAddress { get; set; }
 
@@ -122,7 +122,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public int letterOfCreditTypeId { get; set; }
 
-        public bool isDraftRequired { get; set; }
+        public bool? isDraftRequired { get; set; }
 
         public string beneficiaryAddress { get; set; }
 

@@ -29,7 +29,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LETTEROFCREDITTYPEID { get; set; }
 
-        public bool ISDRAFTREQUIRED { get; set; }
+        public bool? ISDRAFTREQUIRED { get; set; }
 
         [Required]
         [StringLength(50)]
