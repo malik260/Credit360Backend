@@ -836,11 +836,13 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
             var test4 = model.receiverLevelId;
+            var test5 = model.toStaffId;
+            var test6 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null);
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
             var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = nextLevel;
-            workflow.ToStaffId = nextStaff;
+            //workflow.ToStaffId = nextStaff;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
@@ -947,7 +949,7 @@ namespace FintrakBanking.Repositories.Credit
             var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = nextLevel;
-            workflow.ToStaffId = nextStaff;
+            //workflow.ToStaffId = nextStaff;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
