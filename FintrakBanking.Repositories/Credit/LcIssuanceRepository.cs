@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Common;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -23,13 +24,15 @@ namespace FintrakBanking.Repositories.credit
         private IAuditTrailRepository audit;
         private IAdminRepository admin;
         private IWorkflow workflow;
+        private ILoanRepository loanRepository;
 
         public LcIssuanceRepository(
                 FinTrakBankingContext _context,
                 IGeneralSetupRepository _general,
                 IAuditTrailRepository _audit,
                 IAdminRepository _admin,
-                IWorkflow _workflow
+                IWorkflow _workflow,
+                ILoanRepository _loanRepository
             )
         {
             this.context = _context;
@@ -37,6 +40,7 @@ namespace FintrakBanking.Repositories.credit
             this.audit = _audit;
             this.admin = _admin;
             this.workflow = _workflow;
+            this.loanRepository = _loanRepository;
         }
         
         #region LCISSUANCE
@@ -156,28 +160,10 @@ namespace FintrakBanking.Repositories.credit
             return applications.ToList();
         }
 
-        public IEnumerable<LoanApplicationViewModel> GetIFFLinesForLCByCustomerId(int customerId)
+        public IEnumerable<CamProcessedLoanViewModel> GetIFFLinesForLCByCustomerId(int customerId, int companyId, int staffId, int branchId)
         {
-            var lines = context.TBL_LOAN_APPLICATION.Where(l => l.DELETED == false
-                                                           && l.CUSTOMERID == customerId
-                                                           && l.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities
-                                                           ).Select(a => new LoanApplicationViewModel
-                                                           {
-                                                               loanApplicationId = a.LOANAPPLICATIONID,
-                                                               //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
-                                                               applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                                               relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
-                                                               branchId = a.BRANCHID,
-                                                               productClassId = a.PRODUCTCLASSID,
-                                                               productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-                                                               //currencyCode = c.TBL_CURRENCY.CURRENCYCODE,
-                                                               loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
-                                                               relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                                                               relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                               applicationDate = a.APPLICATIONDATE,
-                                                               newApplicationDate = a.DATEACTEDON,
-                                                           }
-                                                           ).ToList();
+            var lines = loanRepository.GetAvailedLoanApplicationsDueForInitiateBooking(companyId, staffId, branchId).Where
+                (l => l.customerId == customerId && l.productClassId == (int)ProductClassEnum.ImportFinanceFacilities).ToList();
 
             return lines;
         }

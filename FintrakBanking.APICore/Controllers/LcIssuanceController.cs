@@ -64,9 +64,9 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("lc-issuance/lines/{customerId}")]
-        public HttpResponseMessage GetIFFLinesForLCByCustomerId(int CustomerId)
+        public HttpResponseMessage GetIFFLinesForLCByCustomerId(int customerId)
         {
-            IEnumerable<LcIssuanceViewModel> response = repo.GetLcIssuances();
+            IEnumerable<CamProcessedLoanViewModel> response = repo.GetIFFLinesForLCByCustomerId(customerId, token.GetCompanyId, token.GetStaffId, token.GetBranchId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 

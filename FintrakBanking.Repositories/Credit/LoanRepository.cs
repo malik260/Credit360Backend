@@ -6320,6 +6320,7 @@ namespace FintrakBanking.Repositories.Credit
                                 productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                                 productName = d.TBL_PRODUCT.PRODUCTNAME,
                                 productClassProcessId = m.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
+                                productClassId = m.PRODUCTCLASSID,
                                 misCode = m.MISCODE,
                                 teamMisCode = m.TEAMMISCODE,
                                 casaAccountId = d.CASAACCOUNTID,
