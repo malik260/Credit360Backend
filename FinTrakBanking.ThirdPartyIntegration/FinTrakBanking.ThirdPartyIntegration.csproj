@@ -218,7 +218,7 @@
     <None Include="Connected Services\XDSWebService\FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Connected Services\XDSWebService\XDSNigeriaWebService.asmx.wsdl" />
+    <None Include="Connected Services\XDSWebService\FirstCentralNigeriaWebService.wsdl" />
     <None Include="Connected Services\XDSWebService\XDSNigeriaWebService.wsdl" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -227,9 +227,6 @@
     <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthService\" />
     <WCFMetadataStorage Include="Connected Services\XDSWebService\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Connected Services\XDSWebService\XDSNigeriaWebService.disco" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\XDSWebService\configuration91.svcinfo" />
@@ -286,6 +283,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Connected Services\XDSWebService\FirstCentralNigeriaWebService.disco" />
     <Content Include="Connected Services\XDSWebService\XDSNigeriaWebService.asmx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

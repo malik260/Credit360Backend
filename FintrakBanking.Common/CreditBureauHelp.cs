@@ -12,10 +12,11 @@ namespace FintrakBanking.Common
 {
     public class CreditBureauHelp
     {
+        public object XDSWebService { get; private set; }
         public string Ticket(string ticket)
         {
 
-            return $" <string xmlns='https://www.online.xdscreditbureau.com/XDSNigeriaWebService'>{ticket}</string>";
+            return $" <string xmlns='{XDSWebService.ToString()}'>{ticket}</string>";
         }
 
         public string CBNApprovedEnquiryReason()
