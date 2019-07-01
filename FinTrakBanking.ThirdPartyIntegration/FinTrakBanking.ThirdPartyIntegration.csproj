@@ -69,7 +69,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="Finacle\CWGAPI\StaffDetails.cs" />
+    <Compile Include="Flexcube\CWGAPI\StaffDetails.cs" />
     <Compile Include="StagingDatabase\Finacle\StaffMIS.cs" />
     <Compile Include="TwoFactorAuthIntegration\TwoFactorAuthIntegrationService.cs" />
     <Compile Include="Connected Services\CRCWebService\Reference.cs">
@@ -90,13 +90,13 @@
     <Compile Include="CreditBureau\CRC\CRCService.cs" />
     <Compile Include="CreditBureau\CreditBureauProcess.cs" />
     <Compile Include="CreditBureau\XDS\XDSService.cs" />
-    <Compile Include="Finacle\CWGAPI\AccountDetail.cs" />
-    <Compile Include="Finacle\CWGAPI\BulkTransactionPosting.cs" />
-    <Compile Include="Finacle\CWGAPI\CustomerDetails.cs" />
-    <Compile Include="Finacle\CWGAPI\ForeignCurrencyAccount.cs" />
-    <Compile Include="Finacle\CWGAPI\OverDraft.cs" />
-    <Compile Include="Finacle\IntegrationWithFinacle.cs" />
-    <Compile Include="Finacle\CWGAPI\TransactionPosting.cs" />
+    <Compile Include="Flexcube\CWGAPI\AccountDetail.cs" />
+    <Compile Include="Flexcube\CWGAPI\BulkTransactionPosting.cs" />
+    <Compile Include="Flexcube\CWGAPI\CustomerDetails.cs" />
+    <Compile Include="Flexcube\CWGAPI\ForeignCurrencyAccount.cs" />
+    <Compile Include="Flexcube\CWGAPI\OverDraft.cs" />
+    <Compile Include="Flexcube\IntegrationWithFlexcube.cs" />
+    <Compile Include="Flexcube\CWGAPI\TransactionPosting.cs" />
     <Compile Include="Notification\SMS\SMSIntegration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

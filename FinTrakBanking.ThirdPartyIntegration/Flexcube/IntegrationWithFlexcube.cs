@@ -22,7 +22,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using FintrakBanking.ViewModels.Admin;
     using FinTrakBanking.ThirdPartyIntegration.StaffInfo;
 
-    public class IntegrationWithFinacle : IIntegrationWithFinacle
+    public class IntegrationWithFlexcube : IIntegrationWithFinacle
     {
         private FinTrakBankingContext context;
         private TransactionPosting transaction;
@@ -34,7 +34,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         private ITwoFactorAuthIntegrationService twoFactorAuth;
         bool USE_TWO_FACTOR_AUTHENTICATION = false;
 
-        public IntegrationWithFinacle(FinTrakBankingContext context, TransactionPosting transaction,
+        public IntegrationWithFlexcube(FinTrakBankingContext context, TransactionPosting transaction,
             CustomerDetails customer, StaffDetails staff, OverDraft overDraft, ForeignCurrencyAccount account, AccountDetail accountDetail,
             ITwoFactorAuthIntegrationService _twoFactorAuth)
         {

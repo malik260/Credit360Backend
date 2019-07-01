@@ -56,7 +56,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 ServicePointManager.ServerCertificateValidationCallback +=
                     (sender, cert, chain, sslPolicyErrors) => true;
                 requestDatetime = DateTime.Now;
-                response = await client.GetAsync($"api/OfficeAccount/GetGeneralLedgerAccountRecord?accountNumber={glNumber}");
+                response = await client.GetAsync($"api/Office/GetGeneralLedgerAccountRecord/{glNumber}");
                 responseDateTime = DateTime.Now;
                 GLAccountDetailsViewModel result = null;
                 if (response.IsSuccessStatusCode)
@@ -88,7 +88,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                         var logs = new TBL_CUSTOM_API_LOGS
                         {
-                            APIURL = $"api/OfficeAccount/GetGeneralLedgerAccountRecord?accountNumber={glNumber}",
+                            APIURL = $"api/Office/GetGeneralLedgerAccountRecord/{glNumber}",
                             LOGTYPEID = 8,
                             REFERENCENUMBER = glNumber,
                             REQUESTDATETIME = requestDatetime,
@@ -136,7 +136,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     (sender, cert, chain, sslPolicyErrors) => true;
                 requestDatetime = DateTime.Now;
                 response = await client.GetAsync(
-                    $"api/OfficeAccount/GetTermDepositAccountRecord?accountNumber={teamDepositAccountNumber}");
+                    $"api/Office/GetTermDepositAccountRecord/{teamDepositAccountNumber}");
                 responseDateTime = DateTime.Now;
                 var result = new TDAccountRecordViewModel();
                 if (response.IsSuccessStatusCode)
@@ -163,7 +163,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"api/OfficeAccount/GetTermDepositAccountRecord?accountNumber={teamDepositAccountNumber}",
+                        APIURL = $"api/Office/GetTermDepositAccountRecord/{teamDepositAccountNumber}",
                         LOGTYPEID = 9,
                         REFERENCENUMBER = teamDepositAccountNumber,
                         REQUESTDATETIME = requestDatetime,

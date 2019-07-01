@@ -343,10 +343,10 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
-            if (appl.PRODUCTID == 2)
-            {
-                workflow.ProductId = null;
-            }
+            //if (appl.PRODUCTID == 2)
+            //{
+            //    workflow.ProductId = null;
+            //}
             // workflow.Disputed = appl.DISPUTED; // buggy
 
             workflow.LevelBusinessRule = new LevelBusinessRule {
@@ -523,8 +523,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
                 workflow.SetResponse = false;
-                workflow.ProductClassId = null;
-                workflow.ProductId = null;
+                //workflow.ProductClassId = null;
+                //workflow.ProductId = null;
                 workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, null, "New approved application", true, false);
             }
 

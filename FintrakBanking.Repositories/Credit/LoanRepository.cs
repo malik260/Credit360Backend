@@ -51,7 +51,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IOverRideRepository overrider;
         private IChartOfAccountRepository chartOfAccount;
-        private IntegrationWithFinacle integration;
+        private IntegrationWithFlexcube integration;
         private FinTrakBankingStagingContext stgCon;
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
@@ -68,7 +68,7 @@ namespace FintrakBanking.Repositories.Credit
                                         IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
                                         ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
                                         IChartOfAccountRepository _chartOfAccount, IFinanceTransactionRepository _transRepo,
-                                        IOverRideRepository _overrider, IntegrationWithFinacle _integration,
+                                        IOverRideRepository _overrider, IntegrationWithFlexcube _integration,
             IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin//, CreditCommonRepository creditCommon
 
             )

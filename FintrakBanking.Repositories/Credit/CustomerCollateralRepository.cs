@@ -8265,12 +8265,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CollateralUsageStatus> GetCollateralUsageStatus()
         {
-           return (from x in context.TBL_COLLATERAL_USAGE_STATUS
-                  select new CollateralUsageStatus{
-               collateralStatusId = x.COLLATERALUSAGESTATUSID,
-               collateralStatusName =x.USAGESTATUSNAME,
-    
-           }).ToList();
+            var m = new List<CollateralUsageStatus> { new CollateralUsageStatus { } };
+            return m;
+           //return (from x in context.TBL_COLLATERAL_USAGE_STATUS
+           //       select new CollateralUsageStatus{
+           //    collateralStatusId = x.COLLATERALUSAGESTATUSID,
+           //    collateralStatusName =x.USAGESTATUSNAME,
+
+            //}).ToList();
         }
 
     }
