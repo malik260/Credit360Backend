@@ -1132,11 +1132,11 @@ namespace FintrakBanking.Repositories.Credit
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
 
-            if (appl.PRODUCTID == (int)ProductEnum.TemporaryOverdraft)
-            {
-                workflow.ProductClassId = null;
-                workflow.ProductId = null;
-            }
+            //if (appl.PRODUCTID == (int)ProductEnum.TemporaryOverdraft)
+            //{
+            //    workflow.ProductClassId = null;
+            //    workflow.ProductId = null;
+            //}
 
             return workflow.LogActivity();
         }

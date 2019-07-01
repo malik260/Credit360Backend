@@ -53,7 +53,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CURRENCYID { get; set; }
 
-        public int PROFORMAINVOICEID { get; set; }
+        public string PROFORMAINVOICEID { get; set; }
 
         public decimal AVAILABLEAMOUNT { get; set; }
 
@@ -94,6 +94,19 @@ namespace FintrakBanking.Entities.Models
         public int? ACTEDONBY { get; set; }
 
         public DateTime? APPROVEDDATE { get; set; }
+
+
+        public int TOTALAPPROVEDAMOUNTCURRENCYID { get; set; }
+
+        public int AVAILABLEAMOUNTCURRENCYID { get; set; }
+
+        public bool? CASHBUILDUPAVAILABLE { get; set; }
+
+        public string CASHBUILDUPREFERENCETYPE { get; set; }
+
+        public string CASHBUILDUPREFERENCENUMBER { get; set; }
+
+        public int? PERCENTAGETOCOVER { get; set; }
 
         public virtual ICollection<TBL_LC_DOCUMENT> TBL_LC_DOCUMENT { get; set; }
 
