@@ -1132,12 +1132,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
 
-            //if (appl.PRODUCTID == (int)ProductEnum.TemporaryOverdraft)
-            //{
-            //    workflow.ProductClassId = null;
-            //    workflow.ProductId = null;
-            //}
-
             return workflow.LogActivity();
         }
 
@@ -1248,8 +1242,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-
-            
             ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
@@ -1451,6 +1443,17 @@ namespace FintrakBanking.Repositories.Credit
             throw new NotImplementedException();
         }
 
+        private bool isProductBasedWorkflowApplicable = false;
+        private bool isProductClassBasedWorkflowApplicable = false;
+        private void determineWorkFlowAdjustment(int productId, int productClassId)
+        {
+            if (context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.PRODUCTID == productId 
+                                                            && x.OPERATIONID == (short)OperationsEnum.CreditAppraisal 
+                                                            && x.DELETED ==false).Any()) isProductBasedWorkflowApplicable = true;
+            if (context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.PRODUCTCLASSID == productClassId
+                                                            && x.OPERATIONID == (short)OperationsEnum.CreditAppraisal
+                                                            && x.DELETED == false).Any()) isProductClassBasedWorkflowApplicable = true;
+        }
         private void AddloanApplicationSub(LoanApplicationViewModel loan)
         {
             short productClassProcessId = 0;
@@ -1477,16 +1480,22 @@ namespace FintrakBanking.Repositories.Credit
             var dat = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == loan.productClassId).FirstOrDefault();
             if (dat != null)
             {
-                if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
-                {
-                    productClassId = null;
-                    productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
-                }
-                if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
-                {
-                    productClassId = loan.productClassId;
-                    productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
-                }
+                productClassId = loan.productClassId;
+                productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+                //if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                //{
+                //    //productClassId = null;
+                //    //if(loan.productId == (short))
+                //    productClassId = loan.productClassId;
+                //    productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+                //    //if(dat.TBL_PRODUCT.p)
+                //}
+                //if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                //{
+                //    productClassId = loan.productClassId;
+                //    productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+                //}
+
             }
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
             var loanStatusId = (short)LoanStatusEnum.Inactive;

@@ -10,21 +10,27 @@ namespace FintrakBanking.ViewModels.credit
     {
         public int psrPerformanceEvaluationId { get; set; }
 
-        public decimal grossAmount { get; set; }
-
-        public decimal amountReceived { get; set; }
-
-        public decimal progressPayment { get; set; }
-
-        public int certifiedValueWorkDone { get; set; }
-
-        public int managementUnitValueWorkDone { get; set; }
-
-        public int consultantValueWorkDone { get; set; }
-
-        public decimal costVariation { get; set; }
-
-        public int timeVariation { get; set; }
+        public string projectSum { get; set; }
+        public string paymentToDate { get; set; }
+        public string disbursedTodate { get; set; }
+        public string initialProjectSum { get; set; }
+        public string vowdToDate { get; set; }
+        public string pmuAssessed { get; set; }
+        public string consoltantVowd { get; set; }
+        public string amortisedApg { get; set; }
+        public string apgReceived { get; set; }
+        public string costVariation { get; set; }
+        public string timeVariation { get; set; }
+        public string apgIssued { get; set; }
+        public string amountReceived { get; set; }
         public int projectSiteReportId { get; set; }
+        public int psrReportTypeId { get; set; }
+        public string projectSiteReportName { get; set; }
+        public string psrReportType { get; set; }
+        public string progressPayment { get; set; }
+        public string certifiedVowd { get; set; }
+        public short BranchId { get; set; }
+        public int approvalStatusId { get; set; }
+        public string approvalStatusName { get; set; }
     }
 }

@@ -37,7 +37,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IFinanceTransactionRepository financeTransaction;
-        private IntegrationWithFinacle integration;
+        private IntegrationWithFlexcube integration;
         private CreditBureauProcess _creditBureau;
         private IChartOfAccountRepository chartOfAccount;
         private ITwoFactorAuthIntegrationService twoFactoeAuth;
@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
             IGeneralSetupRepository _genSetup,
             FinTrakBankingDocumentsContext _docContext,
             FinTrakBankingContext _context,
-            IFinanceTransactionRepository _financials, IntegrationWithFinacle integration,
+            IFinanceTransactionRepository _financials, IntegrationWithFlexcube integration,
             CreditBureauProcess creditBureau, IChartOfAccountRepository _chartOfAccount,
             ITwoFactorAuthIntegrationService _twoFactoeAuth,
             IAdminRepository _admin)

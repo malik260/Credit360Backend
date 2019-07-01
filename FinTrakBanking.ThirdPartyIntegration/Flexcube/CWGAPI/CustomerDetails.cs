@@ -80,7 +80,7 @@
 
                 requestDatetime = DateTime.Now;
                 //ServicePointManager.FindServicePoint(client.BaseAddress).ConnectionLeaseTimeout = 60 * 1000;
-                response = await client.GetAsync($"api/Customer/GetCustomerByAccountNumber?accountNumber={customerAccount}");
+                response = await client.GetAsync($"api/Customer/GetCustomerByAccountNumber/{customerAccount}");
                 responseDateTime = DateTime.Now;
                 if (response.IsSuccessStatusCode)
                 { 
@@ -104,7 +104,7 @@
 
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
-                    APIURL = $"api/Customer/GetCustomerByAccountNumber?accountNumber={customerAccount}",
+                    APIURL = $"api/Customer/GetCustomerByAccountNumber/{customerAccount}",
                     LOGTYPEID = 4,
                     REFERENCENUMBER = customerAccount,
                     REQUESTDATETIME = requestDatetime,
@@ -493,7 +493,8 @@
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"api/InterestRateInquiry/GetInterestRateInquiry?model.accountNumber={accountNumber}&model.accountType={accountType}");
+                    //response = await client.GetAsync($"api/InterestRateInquiry/GetInterestRateInquiry?model.accountNumber={accountNumber}&model.accountType={accountType}",
+                    response = await client.GetAsync($"api/InterestRate/GetInterestRateInquiry/{accountNumber}");
 
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
@@ -534,7 +535,8 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"api/InterestRateInquiry/GetInterestRateInquiry?model.accountNumber={accountNumber}&model.accountType={accountType}",
+                        //APIURL = $"api/InterestRateInquiry/GetInterestRateInquiry?model.accountNumber={accountNumber}&model.accountType={accountType}",
+                        APIURL = $"api / InterestRate / GetInterestRateInquiry /{ accountNumber }",
                         LOGTYPEID = 18,
                         REFERENCENUMBER = accountNumber,
                         REQUESTDATETIME = requestDatetime,
