@@ -11,23 +11,19 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int PSRPERFORMANCEEVALUATIONID { get; set; }
-
-        public decimal GROSSAMOUNT { get; set; }
-
-        public decimal AMOUNTRECEIVED { get; set; }
-
-        public decimal PROGRESSPAYMENT { get; set; }
-
-        public int CERTIFIEDVALUEWORKDONE { get; set; }
-
-        public int MANAGEMENTUNITVALUEWORKDONE { get; set; }
-
-        public int CONSULTANTVALUEWORKDONE { get; set; }
-
-        public decimal COSTVARIATION { get; set; }
-
-        public int TIMEVARIATION { get; set; }
-
+        public string PROJECTSUM { get; set; }
+        public string PAYMENTTODATE { get; set; }
+        public string DISBURSEDTODATE { get; set; }
+        public string INITIALPROJECTSUM { get; set; }
+        public string VOWDTODATE { get; set; }
+        public string PMUASSESSED { get; set; }
+        public string CONSULTANTVOWD { get; set; }
+        public string COSTVARIATION { get; set; }
+        public string TIMEVARIATION { get; set; }
+        public string APGISSUED { get; set; }
+        public string AMOUNTRECEIVED { get; set; }
+        public string PROGRESSPAYMENT { get; set; }
+        public string CERTIFIEDVOWD { get; set; }
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
         public int? LASTUPDATEDBY { get; set; }
@@ -38,6 +34,9 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_PSR_PROJECT_SITE_REPORT TBL_PSR_PROJECT_SITE_REPORT { get; set; }
         public int PROJECTSITEREPORTID { get; set; }
+        public int PSRREPORTTYPEID { get; set; }
+        public string AMORTISEDAPG { get; set; }
+        public int APPROVALSTATUSID { get; set; }
     }
 }
         /*
