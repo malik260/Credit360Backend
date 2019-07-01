@@ -158,7 +158,7 @@ namespace FintrakBanking.LoanRepaymentBackgroundService
             Bind<IContingentLoanUsageRepository>().To<ContingentLoanUsageRepository>();
             Bind<IOverRideRepository>().To<OverRideRepository>();
             Bind<IStaffAccountHistoryRepository>().To<StaffAccountHistoryRepository>();
-            Bind<IIntegrationWithFinacle>().To<IntegrationWithFinacle>();
+            Bind<IIntegrationWithFinacle>().To<IntegrationWithFlexcube>();
             Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>();
             Bind<IOverDraftValidation>().To<OverDraftValidation>();
             Bind<ICustomChartOfAccountRepository>().To<CustomChartOfAccountRepository>();

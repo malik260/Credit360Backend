@@ -2093,7 +2093,8 @@ namespace FintrakBanking.Repositories.Customer
                            taxNumber = a.TAXNUMBER,
                            riskRatingId = a.RISKRATINGID,
                            //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                           customerBVN = a.CUSTOMERBVN
+                           customerBVN = a.CUSTOMERBVN,
+                           isProspect = a.ISPROSPECT
                        };
 
             var cust = data.FirstOrDefault();

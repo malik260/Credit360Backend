@@ -162,7 +162,7 @@ namespace WinApp
         {
             kernel.Bind<FinTrakBankingContext>().To<FinTrakBankingContext>();
             kernel.Bind<FinTrakBankingDocumentsContext>().To<FinTrakBankingDocumentsContext>();
-            kernel.Bind<IIntegrationWithFinacle>().To<IntegrationWithFinacle>();
+            kernel.Bind<IIntegrationWithFinacle>().To<IntegrationWithFlexcube>();
             //kernel.Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
             //kernel.Bind<IAuthenticationRepository>().To<AuthenticationRepository>();
             //kernel.Bind<IAuthorizationRepository>().To<AuthorizationRepository>();

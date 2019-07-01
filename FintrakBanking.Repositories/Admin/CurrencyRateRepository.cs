@@ -17,12 +17,12 @@ namespace FintrakBanking.Repositories.Admin
         private FinTrakBankingContext context;
         private IGeneralSetupRepository _genSetup;
         private IAuditTrailRepository auditTrail;
-        private IntegrationWithFinacle integration;
+        private IntegrationWithFlexcube integration;
 
         public CurrencyRateRepository(FinTrakBankingContext _context,
                                                     IGeneralSetupRepository genSetup,
                                                     IAuditTrailRepository _auditTrail,
-                                                    IntegrationWithFinacle _integration )
+                                                    IntegrationWithFlexcube _integration )
         {
             this.context = _context;
             this._genSetup = genSetup;
