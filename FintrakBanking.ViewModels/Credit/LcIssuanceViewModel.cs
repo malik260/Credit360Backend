@@ -51,9 +51,9 @@ namespace FintrakBanking.ViewModels.credit
 
         public DateTime invoiceDueDate { get; set; }
 
-        public int totalApprovedAmountCurrencyId { get; set; }
+        public int? totalApprovedAmountCurrencyId { get; set; }
 
-        public int availableAmountCurrencyId { get; set; }
+        public int? availableAmountCurrencyId { get; set; }
 
         public bool? cashBuildUpAvailable { get; set; }
 
@@ -199,9 +199,9 @@ namespace FintrakBanking.ViewModels.credit
         public int? operationId { get; set; }
 
 
-        public int totalApprovedAmountCurrencyId { get; set; }
+        public int? totalApprovedAmountCurrencyId { get; set; }
 
-        public int availableAmountCurrencyId { get; set; }
+        public int? availableAmountCurrencyId { get; set; }
 
         public bool? cashBuildUpAvailable { get; set; }
 
