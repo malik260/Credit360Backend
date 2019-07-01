@@ -1183,6 +1183,9 @@ namespace FintrakBanking.Repositories.Credit
                         groupRoleId = gl.mg.g.ROLEID,
                         canEscalate = gl.l.CANESCALATE,
                         levelTypeId = gl.l.LEVELTYPEID,
+                        staffId = staff.STAFFID,
+                        roleId = staff.STAFFROLEID,
+                        userBranchId = (short)staff.BRANCHID
                     });
 
             if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
@@ -1205,6 +1208,9 @@ namespace FintrakBanking.Repositories.Credit
                             groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
                             canEscalate = l.CANESCALATE,
                             levelTypeId = l.LEVELTYPEID,
+                            staffId = staff.STAFFID,
+                            roleId = staff.STAFFROLEID,
+                            userBranchId = (short)staff.BRANCHID
                         });
             }
 

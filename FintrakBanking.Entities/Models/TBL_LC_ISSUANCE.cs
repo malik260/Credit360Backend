@@ -96,9 +96,9 @@ namespace FintrakBanking.Entities.Models
         public DateTime? APPROVEDDATE { get; set; }
 
 
-        public int TOTALAPPROVEDAMOUNTCURRENCYID { get; set; }
+        public int? TOTALAPPROVEDAMOUNTCURRENCYID { get; set; }
 
-        public int AVAILABLEAMOUNTCURRENCYID { get; set; }
+        public int? AVAILABLEAMOUNTCURRENCYID { get; set; }
 
         public bool? CASHBUILDUPAVAILABLE { get; set; }
 
