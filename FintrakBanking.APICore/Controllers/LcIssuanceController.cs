@@ -54,6 +54,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lc-search")]
+        public HttpResponseMessage SearchLc(string searchString)
+        {
+            IEnumerable<LcIssuanceApprovalViewModel> response = repo.SearchLc(searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("lc-issuance/approval")]
         public HttpResponseMessage GetLcIssuancesForApproval()
         {
