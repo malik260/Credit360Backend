@@ -101,6 +101,25 @@ namespace FintrakBanking.Repositories.Media
         }
         public List<OriginalDocumentApprovalViewModel> GetOriginalDocumentByLoanApplicationId(int id)
         {
+            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.LOANAPPLICATIONID == id && x.DELETED == false)
+                .Select(x => new OriginalDocumentApprovalViewModel
+                {
+                    originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                    loanApplicationId = x.LOANAPPLICATIONID,
+                    description = x.DESCRIPTION,
+                    approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                    applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                    referenceNumber = x.REFERENCENUMBER,
+                    dateTimeCreated = x.DATETIMECREATED,
+                    approvalDate = x.APPROVALDATE,
+                    approvalStatusId = x.APPROVALSTATUSID
+                }).ToList();
+
+            return entity;
+        }
+
+        public List<OriginalDocumentApprovalViewModel> GetOriginalDocument(int id)
+        {
             var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
                 .Select(x => new OriginalDocumentApprovalViewModel
                 {
@@ -111,7 +130,8 @@ namespace FintrakBanking.Repositories.Media
                     applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                     referenceNumber = x.REFERENCENUMBER,
                     dateTimeCreated = x.DATETIMECREATED,
-                    approvalDate = x.APPROVALDATE
+                    approvalDate = x.APPROVALDATE,
+                    approvalStatusId = x.APPROVALSTATUSID
                 }).ToList();
 
             return entity;
