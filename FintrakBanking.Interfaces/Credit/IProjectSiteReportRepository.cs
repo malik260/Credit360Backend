@@ -64,6 +64,12 @@ namespace FintrakBanking.Interfaces.credit
 
         bool DeletePsrPerformanceEvaluation(int id, UserInfo user);
 
+        bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id);
+
+        IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReportApprovals(int staffId);
+
+        bool SubmitApproval(ProjectSiteReportViewModel model);
+
         #endregion
 
 

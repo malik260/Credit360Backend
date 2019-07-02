@@ -28,6 +28,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATETIMEUPDATED { get; set; }
         public int DELETEDBY { get; set; }
         public DateTime DATETIMEDELETED { get; set; }
+        public DateTime? APPROVALDATE { get; set; }
     }
 }
         /*

@@ -44,6 +44,35 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "No record found" }); }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("project-site-gofor-approval")]
+        public HttpResponseMessage SubmitApproval([FromBody] ProjectSiteReportViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.SubmitApproval(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("project-site-report-approval")]
+        public HttpResponseMessage GetProjectSiteReportApproval()
+        {
+            try
+            {
+                IEnumerable<ProjectSiteReportViewModel> response = repo.GetProjectSiteReportApprovals(token.GetStaffId);
+                if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "No record found" }); }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("psr-customer-account/{searchString}")]
@@ -69,6 +98,11 @@ namespace FintrakBanking.APICore.Controllers
                 var response = repo.AddProjectSiteReport(model);
                 if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch(SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = ex.Message });
+
             }
             catch (Exception ex)
             {
@@ -278,6 +312,22 @@ namespace FintrakBanking.APICore.Controllers
         {
             IEnumerable<PsrPerformanceEvaluationViewModel> response = repo.GetPsrPerformanceEvaluations(id);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("psr-performance-evaluation/{id}")]
+        public HttpResponseMessage GetPsrPerformanceEvaluations(int id, [FromBody] PsrPerformanceEvaluationViewModel model)
+        {
+            model.BranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+
+
+           var response = repo.UpdatePsrPerformanceEvaluation(model, id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpPost]

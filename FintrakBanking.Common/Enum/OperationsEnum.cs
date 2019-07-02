@@ -128,6 +128,6 @@ namespace FintrakBanking.Common.Enum
         AtcReleaseApproval = 137,
         AtcLodgementApproval = 136,
         lcReleaseOfShippingDocuments = 138,
-
+        ProjectSiteReportApproval = 139,
     }
 }

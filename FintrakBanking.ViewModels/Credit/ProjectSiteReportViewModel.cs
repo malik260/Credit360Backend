@@ -30,5 +30,10 @@ namespace FintrakBanking.ViewModels.credit
         public int loanApplicationId { get; set; }
         public int approvalStatusId { get; set; }
         public string projectLocation { get; set; }
+        public string comment { get; set; }
+        public string approvalStatusName { get; set; }
+        public string appplicationReferenceNumber { get; set; }
+        public string customerName { get; set; }
+        public int operationId { get; set; }
     }
 }
