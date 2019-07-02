@@ -40,6 +40,7 @@ namespace FintrakBanking.ViewModels.credit
         public string comment { get; set; }
         public int operationId { get; set; }
         public DateTime dateCreated { get; set; }
+        public string atcType { get; set; }
     }
 
 
