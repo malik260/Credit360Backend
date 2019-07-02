@@ -2520,7 +2520,7 @@ namespace FintrakBanking.Repositories.Credit
             && x.RESPONSESTAFFID == null && x.APPROVALSTATEID != 3)
                 .OrderByDescending(x => x.APPROVALTRAILID)
                 .FirstOrDefault()
-                .TOAPPROVALLEVELID
+                ?.TOAPPROVALLEVELID
                 ;
 
             if (model.operationId == (int)OperationsEnum.LoanAvailment)
@@ -2563,7 +2563,7 @@ namespace FintrakBanking.Repositories.Credit
             
             int? staffId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == model.targetId && x.OPERATIONID == model.operationId && x.TOAPPROVALLEVELID == nextId)
                 .FirstOrDefault()
-                .TOSTAFFID
+                ?.TOSTAFFID
                 ;
 
             var from = context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).FirstOrDefault();
