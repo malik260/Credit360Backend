@@ -6,6 +6,7 @@ using FintrakBanking.ReportObjects.ReportHelper;
 using FintrakBanking.Repositories.Setups.General;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Media;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.ViewModels.Reports;
 using System;
@@ -3591,6 +3592,49 @@ namespace FintrakBanking.ReportObjects
                 }
 
             }
+        }
+
+
+        public IEnumerable<OriginalDocumentApprovalViewModel> GetOriginalDocumentSubmissionReport(DateTime startDate, DateTime endDate, string referenceNumber)
+        {
+            var data = new List<OriginalDocumentApprovalViewModel>();
+
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            data = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                    join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                    join a in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    where x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                    && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) &&
+                                            DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+
+                    select new OriginalDocumentApprovalViewModel
+                    {
+                        originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                        loanApplicationId = x.LOANAPPLICATIONID,
+                        description = x.DESCRIPTION,
+                        approvalStatusId = x.APPROVALSTATUSID,
+                        applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                        referenceNumber = x.REFERENCENUMBER,
+                        dateTimeCreated = x.DATETIMECREATED,
+                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        customerCode = c.CUSTOMERCODE,
+                        customerId = c.CUSTOMERID,
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        applicationDate = l.APPLICATIONDATE,
+                        applicationAmount = l.APPLICATIONAMOUNT,
+                        interestRate = l.INTERESTRATE,
+                        approvalDate = x.APPROVALDATE,
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        createdByName = context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+
+                    })
+               .ToList();
+            return data;
         }
     }
 }

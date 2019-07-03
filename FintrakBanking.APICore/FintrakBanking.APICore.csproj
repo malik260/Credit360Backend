@@ -469,6 +469,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>OutputDocument.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\ReportDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\StaffInfoDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -980,6 +985,13 @@
     <Compile Include="Reports\ReportViews\StalledPerfection.aspx.designer.cs">
       <DependentUpon>StalledPerfection.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx.cs">
+      <DependentUpon>SubmissionOfOriginalDocument.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx.designer.cs">
+      <DependentUpon>SubmissionOfOriginalDocument.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\TurnOverConvenant.aspx.cs">
       <DependentUpon>TurnOverConvenant.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1133,6 +1145,7 @@
     <Content Include="Reports\ReportViews\StaffRoleProfileActivityReport.aspx" />
     <Content Include="Reports\ReportViews\StaffRoleProfileGroupReport.aspx" />
     <Content Include="Reports\ReportViews\StalledPerfection.aspx" />
+    <Content Include="Reports\ReportViews\SubmissionOfOriginalDocument.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
     <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
     <Content Include="Reports\ReportViews\UnutilizedFacilityReport.aspx" />
@@ -1242,6 +1255,17 @@
     </None>
     <Content Include="Reports\ReportDataset\OutputDocument.xss">
       <DependentUpon>OutputDocument.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\ReportDataSet.xsc">
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\ReportDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>ReportDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\ReportDataSet.xss">
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\StaffInfoDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1436,6 +1460,7 @@
     <EmbeddedResource Include="Reports\Report\LoggingStatus.rdlc" />
     <EmbeddedResource Include="Reports\Report\MiddleOfficeReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\OriginalDocumentSubmission.rdlc" />
     <EmbeddedResource Include="Reports\Report\OutputDocument.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
