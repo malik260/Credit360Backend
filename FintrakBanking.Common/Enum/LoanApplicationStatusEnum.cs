@@ -33,6 +33,8 @@ namespace FintrakBanking.Common.Enum
         LcIssuanceCompleted = 24,
         LcShippingReleaseInProgress = 25,
         LcShippingReleaseCompleted = 26,
+        lcUssanceInProgress = 27,
+        lcUssanceCompleted = 28,
         //AdhocApprovalInProgress =23,
     }
 }

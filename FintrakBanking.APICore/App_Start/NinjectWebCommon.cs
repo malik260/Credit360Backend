@@ -262,6 +262,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IAtcLodgmentRepository>().To<AtcLodgmentRepository>();
             kernel.Bind<IAtcLodgmentDetailRepository>().To<AtcLodgmentDetailRepository>();
             kernel.Bind<IProjectSiteReportRepository>().To<ProjectSiteReportRepository>();
+            kernel.Bind<ILcUssanceRepository>().To<LcUssanceRepository>();
 
         }
 

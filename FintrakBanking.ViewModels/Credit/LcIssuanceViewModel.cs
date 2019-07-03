@@ -63,6 +63,14 @@ namespace FintrakBanking.ViewModels.credit
 
         public int? percentageToCover { get; set; }
 
+        //ussance
+        public int lcUssanceId { get; set; }
+        public decimal ussanceAmount { get; set; }
+        public int ussanceRate { get; set; }
+        public int ussanceTenor { get; set; }
+        public DateTime lcEffectiveDate { get; set; }
+        public DateTime lcMaturityDate { get; set; }
+
         #endregion LCISSUANCE
     }
 
@@ -194,6 +202,8 @@ namespace FintrakBanking.ViewModels.credit
 
         public int? applicationStatusId { get; set; }
 
+        public short lcIssuanceStatusId { get; set; }
+
         public string applicationStatus { get; set; }
 
         public int? operationId { get; set; }
@@ -210,5 +220,25 @@ namespace FintrakBanking.ViewModels.credit
         public string cashBuildUpReferenceNumber { get; set; }
 
         public int? percentageToCover { get; set; }
+
+        //ussance
+        public int lcUssanceId { get; set; }
+        public decimal ussanceAmount { get; set; }
+        public int ussanceRate { get; set; }
+        public int ussanceTenor { get; set; }
+        public DateTime lcEffectiveDate { get; set; }
+        public DateTime lcMaturityDate { get; set; }
+    }
+
+    public class LcUssanceViewModel : GeneralEntity
+    {
+        //ussance
+        public int lcIssuanceId { get; set; }
+        public int lcUssanceId { get; set; }
+        public decimal ussanceAmount { get; set; }
+        public int? ussanceRate { get; set; }
+        public int? ussanceTenor { get; set; }
+        public DateTime? lcEffectiveDate { get; set; }
+        public DateTime? lcMaturityDate { get; set; }
     }
 }

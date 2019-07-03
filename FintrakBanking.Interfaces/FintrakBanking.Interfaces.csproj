@@ -85,6 +85,7 @@
     <Compile Include="Credit\ILcDocumentRepository.cs" />
     <Compile Include="Credit\ILcIssuanceRepository.cs" />
     <Compile Include="Credit\ILcShippingRepository.cs" />
+    <Compile Include="Credit\ILcUssanceRepository.cs" />
     <Compile Include="Credit\IProjectSiteReportRepository.cs" />
     <Compile Include="Media\IDocumentCategoryRepository.cs" />
     <Compile Include="Media\IDocumentCategoryTypeRepository.cs" />
