@@ -137,6 +137,7 @@ namespace FintrakBanking.Repositories.credit
                     invoiceDueDate = x.INVOICEDUEDATE,
                     lcReferenceNumber = x.LCREFERENCENUMBER,
                     dateTimeCreated = (DateTime)x.DATETIMECREATED,
+                    
                 })
                 .ToList();
             return lcs;
