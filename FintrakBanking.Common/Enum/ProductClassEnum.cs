@@ -21,7 +21,9 @@ namespace FintrakBanking.Common.Enum
         ImportFinanceFacilities = 41,
         EmergingBusiness = 33,
         ContingentFacilities = 40,
-        AutoLoans = 22
+        AutoLoans = 22,
+        Creditcards = 25
+
     }
     public enum ProductGroupEnum
     {
