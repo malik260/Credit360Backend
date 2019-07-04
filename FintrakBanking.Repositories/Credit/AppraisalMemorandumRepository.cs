@@ -923,8 +923,8 @@ namespace FintrakBanking.Repositories.Credit
                 lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
                 lc.APPROVEDDATE = DateTime.Now;
                 workflow.SetResponse = false;
-                workflow.NextProcess(model.companyId, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false, false);
-                workflow.NextProcess(model.companyId, model.createdBy, (int)OperationsEnum.lcUssance, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false, false);
+                //workflow.NextProcess(model.companyId, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false, false);
+                //workflow.NextProcess(model.companyId, model.createdBy, (int)OperationsEnum.lcUssance, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false, false);
             }
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
