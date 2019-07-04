@@ -812,7 +812,7 @@ namespace FintrakBanking.Repositories.Credit
                     appl.AVAILMENTDATE = DateTime.Now;
                     appl.APPROVEDDATE = DateTime.Now;
                     workflow.SetResponse = false;
-                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.LoanBookingRequest, model.applicationId, null, "New approved application", true, false);
+                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IndividualDrawdownRequest, model.applicationId, null, "New approved application", true, false);
                 }
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
@@ -1057,7 +1057,7 @@ namespace FintrakBanking.Repositories.Credit
             var test4 = model.receiverLevelId;
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
             var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
-            var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
+            var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = 0;
             workflow.ToStaffId = null;
@@ -1223,7 +1223,7 @@ namespace FintrakBanking.Repositories.Credit
            
              int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.InterestPastDueLoanRepayment,
                     (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
-                (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanTrancheBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
+                (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.BondsAndGuarantees,
                     (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
                 ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval};
             

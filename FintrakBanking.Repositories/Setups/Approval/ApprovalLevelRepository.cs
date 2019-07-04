@@ -192,7 +192,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public List<FintrakDropDownSelectList> GetTranchDisbursmentApprovalLevels()
         {
-            var operationId = (int)OperationsEnum.LoanTrancheBookingRequest;
+            var operationId = (int)OperationsEnum.CorporateDrawdownRequest;
             List<FintrakDropDownSelectList> tranchLevels = new List<FintrakDropDownSelectList>();
             int nextGroupId = 20; // ------------------------HARDCODING!!!!!!
             var operation = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == operationId);

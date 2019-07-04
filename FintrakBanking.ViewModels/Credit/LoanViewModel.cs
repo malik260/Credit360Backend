@@ -703,6 +703,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool isUnderApproval { get; set; }
         public bool isApprovalOwner { get; set; }
+        public string routedToStaff { get; set; }
         public bool canReRouteBooking { get; set; }
 
         public decimal approveRequestAmount { get; set; }
