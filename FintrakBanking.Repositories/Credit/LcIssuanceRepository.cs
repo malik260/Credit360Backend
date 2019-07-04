@@ -149,20 +149,20 @@ namespace FintrakBanking.Repositories.credit
             IQueryable<LcIssuanceApprovalViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
-            var querytest1 = (from a in context.TBL_LC_ISSUANCE where
-                                 a.DELETED == false && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                                 && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                                 && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
-                              select a).ToList();
+            //var querytest1 = (from a in context.TBL_LC_ISSUANCE where
+            //                     a.DELETED == false && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+            //                     && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+            //                     && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+            //                  select a).ToList();
 
-            var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
-                              where
-                                (b.OPERATIONID == operationId)
-                                && b.APPROVALSTATEID != (int)ApprovalState.Ended
-                                && b.RESPONSESTAFFID == null
-                                && levelIds.Contains((int)b.TOAPPROVALLEVELID)
-                                && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
-                                select b).ToList();
+            //var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
+            //                  where
+            //                    (b.OPERATIONID == operationId)
+            //                    && b.APPROVALSTATEID != (int)ApprovalState.Ended
+            //                    && b.RESPONSESTAFFID == null
+            //                    && levelIds.Contains((int)b.TOAPPROVALLEVELID)
+            //                    && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
+            //                    select b).ToList();
                                     // query
            var query = (from a in context.TBL_LC_ISSUANCE where
                         (a.DELETED == false 
