@@ -120,6 +120,7 @@ namespace FintrakBanking.Repositories.credit
                         unitValue = x.UNITVALUE,
                         unitNumber = x.UNITNUMBER,
                         operationId = atrail.OPERATIONID,
+                        unitToRelease = r.UNITTORELEASE,
                         certificateNumber = x.CERTIFICATENUMBER,
                         statusId = x.STATUSID,
                         approvalStatusId = x.APPROVALSTATUSID,
