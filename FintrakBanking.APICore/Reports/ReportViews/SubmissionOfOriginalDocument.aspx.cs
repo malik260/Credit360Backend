@@ -59,7 +59,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             this.ReportViewer.LocalReport.DataSources.Clear();
             ReportDataSource reportDataSource = new ReportDataSource();
             reportDataSource.Value = data;
-            reportDataSource.Name = "Audit";
+            reportDataSource.Name = "OriginalDocumentSubmission";
 
             this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
             this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/SubmissionOfOriginalDocument.rdlc");

@@ -2098,6 +2098,30 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("original-document-submission")]
+        public HttpResponseMessage SubmissionOfOriginalDocument([FromBody]DateRange param)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.SubmissionOfOriginalDocument(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
 

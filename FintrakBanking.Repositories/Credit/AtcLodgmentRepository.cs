@@ -62,9 +62,6 @@ namespace FintrakBanking.Repositories.credit
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                     })
              .ToList();
-
-
-
         }
 
         public IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForApproval(int staffId)
@@ -98,9 +95,6 @@ namespace FintrakBanking.Repositories.credit
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                     })
              .ToList();
-
-
-
         }
 
         public IEnumerable<AtcLodgmentViewModel> GetAtcReleaseForApproval(int staffId)
