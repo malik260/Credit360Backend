@@ -278,8 +278,11 @@ namespace FintrakBanking.Repositories.credit
             var rates = context.TBL_CURRENCY_EXCHANGERATE.ToList();
             Decimal lcAmount;
             Decimal availableAmount;
-            lcAmount = ((decimal)rates.Find(r => r.CURRENCYID == model.currencyId).EXCHANGERATE * model.letterOfCreditAmount);
-            availableAmount = ((decimal)rates.Find(r => r.CURRENCYID == model.availableAmountCurrencyId).EXCHANGERATE * model.availableAmount);
+            var lcAmountRecord = context.TBL_CURRENCY_EXCHANGERATE.Where(r => r.CURRENCYID == model.currencyId).FirstOrDefault();
+
+            lcAmount = lcAmountRecord == null ? 0 :(decimal)lcAmountRecord.EXCHANGERATE * model.letterOfCreditAmount;
+
+            availableAmount = lcAmountRecord == null ? 0 : (decimal)lcAmountRecord.EXCHANGERATE * model.availableAmount;
             if (lcAmount > availableAmount)
             {
                 throw new SecureException("LC amount canot be greater than available amount");
@@ -290,6 +293,7 @@ namespace FintrakBanking.Repositories.credit
         public LcIssuanceViewModel AddLcIssuance(LcIssuanceViewModel model)
         {
             validateAmounts(model);
+            
             
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             var entity = new TBL_LC_ISSUANCE
@@ -322,11 +326,11 @@ namespace FintrakBanking.Repositories.credit
                 INVOICEDUEDATE = model.invoiceDueDate,
                 //COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = general.GetApplicationDate(),
+                DATETIMECREATED =DateTime.Now
             };
 
             context.TBL_LC_ISSUANCE.Add(entity);
-
+            var systemDate = general.GetApplicationDate();
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             var aud = new TBL_AUDIT
@@ -337,16 +341,20 @@ namespace FintrakBanking.Repositories.credit
                 DETAIL = $"TBL_Lc Issuance '{entity.ToString()}' created by {auditStaff}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
+                APPLICATIONDATE = systemDate,
                 SYSTEMDATETIME = DateTime.Now
             };
             context.TBL_AUDIT.Add(aud);
             // Audit Section end ------------------------
 
             context.SaveChanges();
-            var createdlc = context.TBL_LC_ISSUANCE.FirstOrDefault(lc => lc.LCREFERENCENUMBER == referenceNumber);
-            model.lcIssuanceId = createdlc.LCISSUANCEID;
-            model.lcReferenceNumber = createdlc.LCREFERENCENUMBER;
+            var createdlcRecord = context.TBL_LC_ISSUANCE.FirstOrDefault(lc => lc.LCREFERENCENUMBER == referenceNumber);
+            if(createdlcRecord != null)
+            {
+                model.lcIssuanceId = createdlcRecord.LCISSUANCEID;
+                model.lcReferenceNumber = createdlcRecord.LCREFERENCENUMBER;
+            }
+           
             return model;
         }
 

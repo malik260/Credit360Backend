@@ -2106,7 +2106,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, data = data, message = "Booking successfully initiated!" });
+                    new { success = true, data = data, message = "Drawdown Request successfully initiated!" });
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
