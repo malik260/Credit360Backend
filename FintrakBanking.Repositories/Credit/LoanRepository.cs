@@ -2400,9 +2400,11 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CorporateDrawdownRequest).ToList();
             var ids2 = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IndividualDrawdownRequest).ToList();
+            var ids3 = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditCardDrawdownRequest).ToList();
             List<int> operationIds = new List<int>();
             operationIds.Add((int)OperationsEnum.CorporateDrawdownRequest);
             operationIds.Add((int)OperationsEnum.IndividualDrawdownRequest);
+            operationIds.Add((int)OperationsEnum.CreditCardDrawdownRequest);
 
             try
             {
@@ -2419,7 +2421,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                                  && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || ids2.Contains((int)atrail.TOAPPROVALLEVELID))
+                                  && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || ids2.Contains((int)atrail.TOAPPROVALLEVELID) || ids3.Contains((int)atrail.TOAPPROVALLEVELID))
                                   && (atrail.TOSTAFFID == null || atrail.TOSTAFFID == staffId)
                                   && atrail.RESPONSESTAFFID == null
                             orderby d.LOANAPPLICATIONDETAILID descending
@@ -6600,8 +6602,18 @@ namespace FintrakBanking.Repositories.Credit
                         amount = entity.amount_Requested,
                     };
 
-                    if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short) CustomerTypeEnum.Individual) LogApproval(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
-                    else LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
+                    {
+                        LogApproval(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    }
+                    else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
+                    {
+                        LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    }
+                    else if(loanApplicationDetails.TBL_PRODUCT.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards )
+                    {
+                        LogApproval(approvalModel, (short)OperationsEnum.CreditCardDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    }
                     
 
                     // Audit Section ---------------------------
