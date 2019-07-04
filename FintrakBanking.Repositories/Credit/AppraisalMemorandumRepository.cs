@@ -841,9 +841,9 @@ namespace FintrakBanking.Repositories.Credit
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
             var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-            workflow.NextLevelId = nextLevel;
-            //workflow.ToStaffId = nextStaff;
-            workflow.StatusId = model.forwardAction;
+            workflow.NextLevelId = 0;
+            workflow.ToStaffId = null;
+            workflow.StatusId = 1;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
 
@@ -923,7 +923,8 @@ namespace FintrakBanking.Repositories.Credit
                 lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
                 lc.APPROVEDDATE = DateTime.Now;
                 workflow.SetResponse = false;
-                //workflow.NextProcess(lc.COMPANYID, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false);
+                workflow.NextProcess(model.companyId, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false, false);
+                workflow.NextProcess(model.companyId, model.createdBy, (int)OperationsEnum.lcUssance, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false, false);
             }
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
@@ -949,9 +950,9 @@ namespace FintrakBanking.Repositories.Credit
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
             var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-            workflow.NextLevelId = nextLevel;
-            //workflow.ToStaffId = nextStaff;
-            workflow.StatusId = model.forwardAction;
+            workflow.NextLevelId = 0;
+            workflow.ToStaffId = null;
+            workflow.StatusId = 1;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
 
@@ -1056,10 +1057,11 @@ namespace FintrakBanking.Repositories.Credit
             var test4 = model.receiverLevelId;
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
             var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
+            var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-            workflow.NextLevelId = nextLevel;
-            //workflow.ToStaffId = nextStaff;
-            workflow.StatusId = model.forwardAction;
+            workflow.NextLevelId = 0;
+            workflow.ToStaffId = null;
+            workflow.StatusId = 1;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
 
