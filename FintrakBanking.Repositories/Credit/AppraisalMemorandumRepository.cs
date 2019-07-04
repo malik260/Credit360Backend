@@ -835,12 +835,12 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.LcIssuanceId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            var test4 = model.receiverLevelId;
-            var test5 = model.toStaffId;
-            var test6 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null);
-            var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
-            var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
-            var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
+            //var test4 = model.receiverLevelId;
+            //var test5 = model.toStaffId;
+            //var test6 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null);
+            //var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
+            //var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
+            //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = 0;
             workflow.ToStaffId = null;
             workflow.StatusId = 1;
@@ -946,13 +946,27 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.LcIssuanceId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            var test4 = model.receiverLevelId;
-            var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
-            var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
-            var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-            workflow.NextLevelId = 0;
-            workflow.ToStaffId = null;
-            workflow.StatusId = 1;
+            if (model.forwardAction == (int)ApprovalStatusEnum.Reroute)
+            {
+                var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
+                var nextLvlStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
+                var secondLvl = loanApp.GetFirstReceiverLevel((int)nextLvlStaff, operationId, null, null, true);
+                workflow.NextLevelId = secondLvl;
+                var testStaff = loanApp.GetFirstLevelStaffId((int)secondLvl, model.userBranchId);
+                workflow.ToStaffId = testStaff;
+                workflow.StatusId = model.forwardAction;
+            }
+            else
+            {
+                var test4 = model.receiverLevelId;
+                var test6 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null);
+                var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
+                var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
+                //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
+                workflow.NextLevelId = 0;
+                workflow.ToStaffId = null;
+                workflow.StatusId = 1;
+            }
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
 
@@ -1057,7 +1071,7 @@ namespace FintrakBanking.Repositories.Credit
             var test4 = model.receiverLevelId;
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
             var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
-            var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
+            var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = 0;
             workflow.ToStaffId = null;
