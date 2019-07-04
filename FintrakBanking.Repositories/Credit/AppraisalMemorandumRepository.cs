@@ -812,7 +812,7 @@ namespace FintrakBanking.Repositories.Credit
                     appl.AVAILMENTDATE = DateTime.Now;
                     appl.APPROVEDDATE = DateTime.Now;
                     workflow.SetResponse = false;
-                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.LoanBookingRequest, model.applicationId, null, "New approved application", true, false);
+                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IndividualDrawdownRequest, model.applicationId, null, "New approved application", true, false);
                 }
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
@@ -1237,7 +1237,8 @@ namespace FintrakBanking.Repositories.Credit
            
              int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CreditAppraisal, (int)OperationsEnum.InterestPastDueLoanRepayment,
                     (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
-                (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanTrancheBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
+                (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
+                (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.BondsAndGuarantees,
                     (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
                 ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval};
             

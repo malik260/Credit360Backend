@@ -1087,7 +1087,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl.LOANAPPROVEDLIMITID > 0)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.LoanBookingRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
                 context.SaveChanges();
                 return true;
             }
