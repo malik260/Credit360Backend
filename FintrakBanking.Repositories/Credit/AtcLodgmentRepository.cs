@@ -179,44 +179,47 @@ namespace FintrakBanking.Repositories.credit
         public bool SubmitLodgementApproval(AtcLodgmentViewModel model)
         {
             bool responce = false;
-
-            using (var transaction = context.Database.BeginTransaction())
+            try
             {
-                workflow.StaffId = model.createdBy;
-                workflow.CompanyId = model.companyId;
-                workflow.StatusId = (short)model.approvalStatusId;
-                workflow.TargetId = model.atcLodgmentId;
-                workflow.Comment = model.comment;
-                workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
-                workflow.DeferredExecution = true;
-                workflow.LogActivity();
-                try
+                using (var transaction = context.Database.BeginTransaction())
                 {
-                    if (workflow.NewState == (int)ApprovalState.Ended)
+                    workflow.StaffId = model.createdBy;
+                    workflow.CompanyId = model.companyId;
+                    workflow.StatusId = (short)model.approvalStatusId;
+                    workflow.TargetId = model.atcLodgmentId;
+                    workflow.Comment = model.comment;
+                    workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
+                    workflow.DeferredExecution = true;
+                    workflow.LogActivity();
+                    try
                     {
-                        var document = context.TBL_ATC_LODGMENT.Where(o => o.ATCLODGMENTID == model.atcLodgmentId).FirstOrDefault();
-                        if (document != null)
+                        if (workflow.NewState == (int)ApprovalState.Ended)
                         {
-                            document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            var document = context.TBL_ATC_LODGMENT.Where(o => o.ATCLODGMENTID == model.atcLodgmentId).FirstOrDefault();
+                            if (document != null)
+                            {
+                                document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            }
+
                         }
 
+                        responce = context.SaveChanges() > 0;
+                        transaction.Commit();
+
+                        return responce;
                     }
+                    catch (Exception ex)
+                    {
 
-                    responce = context.SaveChanges() > 0;
-                    transaction.Commit();
+                        transaction.Rollback();
 
-                    return responce;
+
+                        throw ex;
+                    }
+                    //return false;
                 }
-                catch (Exception ex)
-                {
-
-                    transaction.Rollback();
-
-
-                    throw ex;
-                }
-                //return false;
-            }
+            }catch(Exception ex) { return false; }
+            
         }
 
         public IEnumerable<AtcLodgmentViewModel> GetAtcType()
