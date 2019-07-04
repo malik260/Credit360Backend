@@ -115,14 +115,22 @@ namespace FintrakBanking.APICore.Controllers
         [Route("atc-release-approval")]
         public HttpResponseMessage SubmitApproval([FromBody] AtcReleaseViewModel model)
         {
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.SubmitApproval(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.SubmitApproval(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+            }
+            catch (SecureException ex)
+            {
+               return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]
@@ -130,6 +138,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("atc-lodgement-final-approval")]
         public HttpResponseMessage SubmitLodgementApproval([FromBody] AtcLodgmentViewModel model)
         {
+            try { 
             model.userBranchId = (short)token.GetBranchId;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
             model.applicationUrl = HttpContext.Current.Request.Path;
@@ -138,12 +147,18 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.SubmitLodgementApproval(model);
             if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
         [HttpPost]
         [ClaimsAuthorization]
         [Route("atc-release")]
         public HttpResponseMessage AddAtcRelease([FromBody] AtcReleaseViewModel model)
         {
+            try { 
             model.userBranchId = (short)token.GetBranchId;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
             model.applicationUrl = HttpContext.Current.Request.Path;
@@ -152,6 +167,11 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.AddAtcRelease(model);
             if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPut]
@@ -167,7 +187,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.UpdateAtcLodgment(model,id,user);
+            bool response = repo.UpdateAtcLodgment(model, id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
@@ -184,7 +204,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.DeleteAtcLodgment(id,user);
+            bool response = repo.DeleteAtcLodgment(id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
@@ -210,6 +230,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("atc-type")]
         public HttpResponseMessage AddAtcType([FromBody] AtcTypeViewModel model)
         {
+            try { 
             model.userBranchId = (short)token.GetBranchId;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
             model.applicationUrl = HttpContext.Current.Request.Path;
@@ -218,9 +239,14 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.AddAtcType(model);
             if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
-      
+
 
         [HttpDelete]
         [ClaimsAuthorization]
