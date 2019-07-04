@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100)]
         public string ACTTYPENAME { get; set; }
 
-        public virtual TBL_ATC_LODGMENT TBL_ATC_LODGMENT { get; set; }
+       // public virtual TBL_ATC_LODGMENT TBL_ATC_LODGMENT { get; set; }
 
     }
 }

@@ -147,7 +147,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             operationId = d.OPERATIONID //c.TBL_APPROVAL_GROUP_MAPPING.Select(x=> x.OPERATIONID).FirstOrDefault()
                         }).GroupBy(x => x.approvalLevelId).Select(g => g.FirstOrDefault()).ToList();
 
-            return data;
+            return data.OrderBy(o=>o.levelName);
         }
 
         public IEnumerable<ApprovalLevelViewModel> GetAllApprovalLevel(int companyId)

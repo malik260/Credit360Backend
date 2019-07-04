@@ -165,7 +165,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 WorkflowResponse response = repo.LcAppraisalMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The LC ISSUANCE request has been acted on successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.isFinal) ? "The LC ISSUANCE request has been APPROVED successfully" : "The LC ISSUANCE request has been acted on successfully" });
             }
             catch (SecureException ex)
             {
@@ -187,7 +187,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 WorkflowResponse response = repo.LcReleaseMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The LC SHIPPING DOCUMENTS RELEASE request has been acted on successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.isFinal) ? "The LC SHIPPING DOCUMENTS RELEASE request has been APPROVED successfully" : "The LC SHIPPING DOCUMENTS RELEASE request has been acted on successfully" });
             }
             catch (SecureException ex)
             {
@@ -195,6 +195,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("lc-ussance/forward")]
+        public HttpResponseMessage LcUssanceMemorandum([FromBody] LcForwardViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                WorkflowResponse response = repo.LcUssanceMemorandum(entity);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.isFinal) ? "The LC USSANCE request has been APPROVED successfully" : "The LC USSANCE request has been acted on successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+        
         [HttpGet]
         [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/all/{all}")]
         public HttpResponseMessage GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all)

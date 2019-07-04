@@ -509,6 +509,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LC_SHIPPING> TBL_LC_SHIPPING { get; set; }
         public virtual DbSet<TBL_LC_CONDITION> TBL_LC_CONDITION { get; set; }
 
+        public virtual DbSet<TBL_LC_USSANCE> TBL_LC_USSANCE { get; set; }
 
 
 
@@ -530,6 +531,11 @@ namespace FintrakBanking.Entities.Models
 
             modelBuilder.Entity<TBL_LC_ISSUANCE>()
                 .HasMany(e => e.TBL_LC_CONDITION)
+                .WithRequired(e => e.TBL_LC_ISSUANCE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LC_ISSUANCE>()
+                .HasMany(e => e.TBL_LC_USSANCE)
                 .WithRequired(e => e.TBL_LC_ISSUANCE)
                 .WillCascadeOnDelete(false);
             //modelBuilder.Entity<ELMAH_ERROR>()

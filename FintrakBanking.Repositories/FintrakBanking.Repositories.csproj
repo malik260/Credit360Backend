@@ -141,6 +141,7 @@
     <Compile Include="Credit\LcDocumentRepository.cs" />
     <Compile Include="Credit\LcIssuanceRepository.cs" />
     <Compile Include="Credit\LcShippingRepository.cs" />
+    <Compile Include="Credit\LcUssanceRepository.cs" />
     <Compile Include="Credit\ProjectSiteReportRepository.cs" />
     <Compile Include="Media\DocumentCategoryRepository.cs" />
     <Compile Include="Media\DocumentCategoryTypeRepository.cs" />
