@@ -357,7 +357,7 @@ namespace FintrakBanking.Repositories.credit
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = id.ATCLODGMENTID;
-                workflow.Comment = "Request for ATC Release approval";
+                workflow.Comment = "Request for ATC Lodgement approval";
                 workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
                 workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                 workflow.ExternalInitialization = true;
