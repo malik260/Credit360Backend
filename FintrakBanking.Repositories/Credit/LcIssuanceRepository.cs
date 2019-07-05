@@ -105,6 +105,10 @@ namespace FintrakBanking.Repositories.credit
             var lcs = context.TBL_LC_ISSUANCE.Where(x => x.DELETED == false
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcShippingReleaseCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceInProgress
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CAMInProgress)
                 .Select(x => new LcIssuanceViewModel
