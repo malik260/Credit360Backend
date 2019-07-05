@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                    })
+                    }).OrderBy(o=>o.atcLodgmentId)
              .ToList();
         }
 
@@ -73,6 +73,7 @@ namespace FintrakBanking.Repositories.credit
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ATCLODGMENTID equals atrail.TARGETID
                     where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
+                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval
                     select new AtcLodgmentViewModel
                     {
@@ -93,7 +94,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                    })
+                    }).OrderBy(o => o.atcLodgmentId)
              .ToList();
         }
 
@@ -107,6 +108,7 @@ namespace FintrakBanking.Repositories.credit
                     join atrail in context.TBL_APPROVAL_TRAIL on r.ATCRELEASEID equals atrail.TARGETID
                     where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
+                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
                     select new AtcLodgmentViewModel
                     {
@@ -129,7 +131,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                    })
+                    }).OrderBy(o => o.atcReleaseId)
              .ToList();
         }
 
@@ -141,7 +143,7 @@ namespace FintrakBanking.Repositories.credit
             {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = (short)model.approvalStatusId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = model.atcReleaseId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
@@ -184,9 +186,9 @@ namespace FintrakBanking.Repositories.credit
                 {
                     workflow.StaffId = model.createdBy;
                     workflow.CompanyId = model.companyId;
-                    workflow.StatusId = (short)model.approvalStatusId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                     workflow.TargetId = model.atcLodgmentId;
-                workflow.Comment =model.comment;
+                    workflow.Comment =model.comment;
                     workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
                     workflow.DeferredExecution = true;
                     workflow.LogActivity();
@@ -491,7 +493,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                    })
+                    }).OrderBy(o=>o.atcLodgmentId)
              .ToList();
         }
 
