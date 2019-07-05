@@ -84,7 +84,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == customerId && x.DELETED == false
                                                                                             && x.COMPANYDIRECTORID == null
-                                                                                            && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)
+                                                                                            && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 90)
                                                                                             );
 
             int creditBureauCount = data.Count();
@@ -156,7 +156,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var directorData = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
                                                                                     && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
-                                                                                    && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)
+                                                                                    && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 90)
                                                                                      );
                     var b = directorData.ToList();
                     int directorCount = directorData.Count();
@@ -375,7 +375,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                 && c.CUSTOMERID == model.customerId
                                                                 && c.COMPANYDIRECTORID == directorId
                                                                 && c.DELETED == false
-                                                                && (DbFunctions.DiffDays(c.DATETIMECREATED, DateTime.Now).Value <= 30)).FirstOrDefault();
+                                                                && (DbFunctions.DiffDays(c.DATETIMECREATED, DateTime.Now).Value <= 90)).FirstOrDefault();
 
             if (data != null)
                 data.ISREPORTOKAY = status;
@@ -433,7 +433,7 @@ namespace FintrakBanking.Repositories.Credit
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                 where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
-                                                 && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)
+                                                 && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 90)
                                                 select new LoanCreditBureauViewModel
                                                 {
                                                     customerCreditBureauId = a.CUSTOMERCREDITBUREAUID,

@@ -4166,7 +4166,8 @@ namespace FintrakBanking.Repositories.Customer
                     where
                         (c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
                          c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
-                        && a.APPROVALCOMPLETED == false
+                        && a.APPROVALCOMPLETED == false 
+                        && a.CREATEDBY == staffId
                         && c.RESPONSESTAFFID == null
                         && c.OPERATIONID == (int)OperationsEnum.CustomerInformationApproval
                         && ids.Contains((int)c.TOAPPROVALLEVELID)
