@@ -180,7 +180,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public string customerCode { get; set; }
 
-        public short approvalStatusId { get; set; }
+        public short? approvalStatusId { get; set; }
 
         public string approvalStatus { get; set; }
 
