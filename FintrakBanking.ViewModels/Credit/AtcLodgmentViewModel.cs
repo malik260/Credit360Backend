@@ -41,6 +41,7 @@ namespace FintrakBanking.ViewModels.credit
         public int operationId { get; set; }
         public DateTime dateCreated { get; set; }
         public string atcType { get; set; }
+        public int unitToRelease { get; set; }
     }
 
 

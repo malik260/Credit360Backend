@@ -75,14 +75,21 @@ namespace FintrakBanking.APICore.Controllers
         [Route("original-document-approval")]
         public HttpResponseMessage AddOriginalDocumentApproval([FromBody] OriginalDocumentApprovalViewModel model)
         {
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddOriginalDocumentApproval(model);
-            if (response !=null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.AddOriginalDocumentApproval(model);
+                if (response != null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPut]
@@ -98,7 +105,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.UpdateOriginalDocumentApproval(model,id,user);
+            bool response = repo.UpdateOriginalDocumentApproval(model, id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
@@ -115,7 +122,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.DeleteOriginalDocumentApproval(id,user);
+            bool response = repo.DeleteOriginalDocumentApproval(id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
         [HttpGet]
@@ -132,14 +139,21 @@ namespace FintrakBanking.APICore.Controllers
         [Route("original-document/approval")]
         public HttpResponseMessage GoForApproval([FromBody] OriginalDocumentApprovalViewModel model)
         {
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
-            var response = repo.GoForApproval(model);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+                var response = repo.GoForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]
@@ -147,14 +161,21 @@ namespace FintrakBanking.APICore.Controllers
         [Route("original-document/submit-approval")]
         public HttpResponseMessage SubmitApproval([FromBody] OriginalDocumentApprovalViewModel model)
         {
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
-            var response = repo.SubmitApproval(model);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+                var response = repo.SubmitApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
 

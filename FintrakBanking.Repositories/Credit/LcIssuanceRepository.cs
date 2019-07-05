@@ -149,10 +149,11 @@ namespace FintrakBanking.Repositories.credit
             IQueryable<LcIssuanceApprovalViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
-            var querytest1 = (from a in context.TBL_LC_ISSUANCE where
-                                 a.DELETED == false && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                                 && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                                 && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+            var querytest1 = (from a in context.TBL_LC_ISSUANCE
+                              where
+                a.DELETED == false && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
                               select a).ToList();
 
             var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
@@ -162,13 +163,14 @@ namespace FintrakBanking.Repositories.credit
                                 && b.RESPONSESTAFFID == null
                                 && levelIds.Contains((int)b.TOAPPROVALLEVELID)
                                 && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
-                                select b).ToList();
-                                    // query
-           var query = (from a in context.TBL_LC_ISSUANCE where
+                              select b).ToList();
+            // query
+            var query = (from a in context.TBL_LC_ISSUANCE where
                         (a.DELETED == false 
                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
-                        orderby a.LCISSUANCEID
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                         orderby a.LCISSUANCEID
                         join b in context.TBL_APPROVAL_TRAIL on a.LCISSUANCEID equals b.TARGETID where
                         (
                         (b.OPERATIONID == operationId)
@@ -209,14 +211,13 @@ namespace FintrakBanking.Repositories.credit
                                 lastComment = b.COMMENT,
                                 currentApprovalStateId = b.APPROVALSTATEID,
                                 currentApprovalLevelId = b.TOAPPROVALLEVELID,
-                                currentApprovalLevel = b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
-                                currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
+                                currentApprovalLevel = b.TBL_APPROVAL_LEVEL.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                                currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                                 approvalTrailId = b == null ? 0 : b.APPROVALTRAILID, // for inner sequence ordering
                                 toStaffId = b.TOSTAFFID,
                                 approvalStatusId = (short)a.APPROVALSTATUSID,
                                 applicationStatusId = a.APPLICATIONSTATUSID,
                                 createdBy = (int)a.CREATEDBY,
-                                //customerName = context.TBL_CUSTOMER.Find(a.CUSTOMERID).FIRSTNAME + context.TBL_CUSTOMER.Find(a.CUSTOMERID).LASTNAME,
                                 operationId = operationId,
                                 dateTimeCreated = (DateTime)a.DATETIMECREATED
                             }).ToList();
@@ -278,8 +279,11 @@ namespace FintrakBanking.Repositories.credit
             var rates = context.TBL_CURRENCY_EXCHANGERATE.ToList();
             Decimal lcAmount;
             Decimal availableAmount;
-            lcAmount = ((decimal)rates.Find(r => r.CURRENCYID == model.currencyId).EXCHANGERATE * model.letterOfCreditAmount);
-            availableAmount = ((decimal)rates.Find(r => r.CURRENCYID == model.availableAmountCurrencyId).EXCHANGERATE * model.availableAmount);
+            var lcAmountRecord = context.TBL_CURRENCY_EXCHANGERATE.Where(r => r.CURRENCYID == model.currencyId).FirstOrDefault();
+
+            lcAmount = lcAmountRecord == null ? 0 :(decimal)lcAmountRecord.EXCHANGERATE * model.letterOfCreditAmount;
+
+            availableAmount = lcAmountRecord == null ? 0 : (decimal)lcAmountRecord.EXCHANGERATE * model.availableAmount;
             if (lcAmount > availableAmount)
             {
                 throw new SecureException("LC amount canot be greater than available amount");
@@ -290,6 +294,7 @@ namespace FintrakBanking.Repositories.credit
         public LcIssuanceViewModel AddLcIssuance(LcIssuanceViewModel model)
         {
             validateAmounts(model);
+            
             
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             var entity = new TBL_LC_ISSUANCE
@@ -322,11 +327,11 @@ namespace FintrakBanking.Repositories.credit
                 INVOICEDUEDATE = model.invoiceDueDate,
                 //COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = general.GetApplicationDate(),
+                DATETIMECREATED =DateTime.Now
             };
 
             context.TBL_LC_ISSUANCE.Add(entity);
-
+            var systemDate = general.GetApplicationDate();
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             var aud = new TBL_AUDIT
@@ -337,16 +342,20 @@ namespace FintrakBanking.Repositories.credit
                 DETAIL = $"TBL_Lc Issuance '{entity.ToString()}' created by {auditStaff}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
+                APPLICATIONDATE = systemDate,
                 SYSTEMDATETIME = DateTime.Now
             };
             context.TBL_AUDIT.Add(aud);
             // Audit Section end ------------------------
 
             context.SaveChanges();
-            var createdlc = context.TBL_LC_ISSUANCE.FirstOrDefault(lc => lc.LCREFERENCENUMBER == referenceNumber);
-            model.lcIssuanceId = createdlc.LCISSUANCEID;
-            model.lcReferenceNumber = createdlc.LCREFERENCENUMBER;
+            var createdlcRecord = context.TBL_LC_ISSUANCE.FirstOrDefault(lc => lc.LCREFERENCENUMBER == referenceNumber);
+            if(createdlcRecord != null)
+            {
+                model.lcIssuanceId = createdlcRecord.LCISSUANCEID;
+                model.lcReferenceNumber = createdlcRecord.LCREFERENCENUMBER;
+            }
+           
             return model;
         }
 
@@ -475,20 +484,20 @@ namespace FintrakBanking.Repositories.credit
             IQueryable<LcIssuanceApprovalViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
-            var querytest1 = (from a in context.TBL_LC_ISSUANCE
-                              where
-                                a.DELETED == false
-                                && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
-                              select a).ToList();
+            //var querytest1 = (from a in context.TBL_LC_ISSUANCE
+            //                  where
+            //                    a.DELETED == false
+            //                    && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
+            //                  select a).ToList();
 
-            var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
-                              where
-                                (b.OPERATIONID == operationId)
-                                && b.APPROVALSTATEID != (int)ApprovalState.Ended
-                                && b.RESPONSESTAFFID == null
-                                && levelIds.Contains((int)b.TOAPPROVALLEVELID)
-                                && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
-                              select b).ToList();
+            //var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
+            //                  where
+            //                    (b.OPERATIONID == operationId)
+            //                    && b.APPROVALSTATEID != (int)ApprovalState.Ended
+            //                    && b.RESPONSESTAFFID == null
+            //                    && levelIds.Contains((int)b.TOAPPROVALLEVELID)
+            //                    && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
+            //                  select b).ToList();
             // query
             var query = (from a in context.TBL_LC_ISSUANCE
                          where
