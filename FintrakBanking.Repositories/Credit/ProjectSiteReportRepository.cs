@@ -42,10 +42,11 @@ namespace FintrakBanking.Repositories.credit
             return (from x in context.TBL_LOAN_APPLICATION
                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                     join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                    where x.APPLICATIONREFERENCENUMBER == searchString
+                    where x.ISPROJECTRELATED == true && (x.APPLICATIONREFERENCENUMBER == searchString
                  || c.FIRSTNAME.ToLower().Contains(searchString.Trim())
                  || c.LASTNAME.ToLower().Contains(searchString.Trim())
-                 || c.MIDDLENAME.ToLower().Contains(searchString.Trim())
+                 || c.MIDDLENAME.ToLower().Contains(searchString.Trim()))
+                 
 
                     select new LoanApplicationViewModel
                     {
@@ -63,7 +64,8 @@ namespace FintrakBanking.Repositories.credit
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                         relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        operationId = (int)OperationsEnum.OriginalDocumentApproval
+                        operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                        isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
                     }).ToList();
         }
 

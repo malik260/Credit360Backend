@@ -145,7 +145,7 @@ namespace FintrakBanking.Repositories.credit
                 workflow.TargetId = model.atcReleaseId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
-                workflow.DeferredExecution = true;
+                workflow.DeferredExecution = false;
                 workflow.LogActivity();
                 try
                 {
@@ -179,8 +179,7 @@ namespace FintrakBanking.Repositories.credit
         public bool SubmitLodgementApproval(AtcLodgmentViewModel model)
         {
             bool responce = false;
-            try
-            {
+
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     workflow.StaffId = model.createdBy;
@@ -218,7 +217,6 @@ namespace FintrakBanking.Repositories.credit
                     }
                     //return false;
                 }
-            }catch(Exception ex) { return false; }
             
         }
 

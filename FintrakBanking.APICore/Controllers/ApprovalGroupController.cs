@@ -40,8 +40,9 @@ namespace FintrakBanking.APICore.Controllers
                     model.applicationUrl = HttpContext.Current.Request.Path;
                     model.createdBy = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
+                model.staffId = token.GetStaffId;
 
-                    var data = repoMapping.AddApprovalGroupMapping(model);
+                var data = repoMapping.AddApprovalGroupMapping(model);
                     if (data != -1)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
@@ -112,8 +113,9 @@ namespace FintrakBanking.APICore.Controllers
                      model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                model.staffId = token.GetStaffId;
 
-                    var data = repoMapping.UpdateApprovalGroupMapping(operationMappingId, model);
+                var data = repoMapping.UpdateApprovalGroupMapping(operationMappingId, model);
 
                     if (data)
                     {
@@ -138,7 +140,8 @@ namespace FintrakBanking.APICore.Controllers
                         BranchId = token.GetBranchId,
                         companyId = token.GetCompanyId,
                         createdBy = token.GetStaffId,
-                        applicationUrl = HttpContext.Current.Request.Path,
+                        staffId = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
                     };
 
                     repoMapping.DeleteApprovalGroupMapping(operationMappingId, user);
@@ -166,6 +169,7 @@ namespace FintrakBanking.APICore.Controllers
                // model.applicationUrl = Request.Path.Value;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                model.staffId = token.GetStaffId;
 
                 var data = repoGroup.AddApprovalGroup(model);
                     if (data)
