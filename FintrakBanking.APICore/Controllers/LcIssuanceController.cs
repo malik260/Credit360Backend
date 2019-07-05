@@ -601,6 +601,23 @@ namespace FintrakBanking.APICore.Controllers
         #endregion RELEASEOFSHIPPINGDOCUMENTS
 
         #region LCUSSANCE
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-ussance/{lcIssuanceId}")]
+        public HttpResponseMessage GetLcUssanceByLCIssuanceId(int lcIssuanceId)
+        {
+            try
+            {
+                LcUssanceViewModel response = ussanceRepo.GetLcUssanceByLCIssuanceId(lcIssuanceId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("lc-ussance")]

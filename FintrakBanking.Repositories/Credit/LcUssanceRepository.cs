@@ -54,28 +54,33 @@ namespace FintrakBanking.Repositories.credit
                 .ToList();
         }
 
-        public LcUssanceViewModel GetLcUssance(int id)
+        public LcUssanceViewModel GetLcUssanceByLCIssuanceId(int lcIssuanceId)
         {
-            var entity = context.TBL_LC_USSANCE.FirstOrDefault(x => x.LCISSUANCEID == id && x.DELETED == false);
+            var entity = context.TBL_LC_USSANCE.FirstOrDefault(x => x.LCISSUANCEID == lcIssuanceId && x.DELETED == false);
 
-            return new LcUssanceViewModel
+            if (entity != null)
             {
-                lcIssuanceId = entity.LCISSUANCEID,
-                lcUssanceId = entity.LCUSSANCEID,
-                ussanceAmount = entity.USSANCEAMOUNT,
-                ussanceRate = entity.USSANCERATE,
-                ussanceTenor = entity.USSANCETENOR,
-                lcEffectiveDate = entity.LCUSSANCEEFFECTIVEDATE,
-                lcMaturityDate = entity.LCUSSANCEMATURITYDATE
-            };
+                return new LcUssanceViewModel
+                {
+                    lcIssuanceId = entity.LCISSUANCEID,
+                    lcUssanceId = entity.LCUSSANCEID,
+                    ussanceAmount = entity.USSANCEAMOUNT,
+                    ussanceRate = entity.USSANCERATE,
+                    ussanceTenor = entity.USSANCETENOR,
+                    lcEffectiveDate = entity.LCUSSANCEEFFECTIVEDATE,
+                    lcMaturityDate = entity.LCUSSANCEMATURITYDATE
+                };
+            }
+
+            return null;
         }
 
         public IEnumerable<LcIssuanceViewModel> GetLcUssanceForLcIssuance()
         {
             var lcs = (from x in context.TBL_LC_ISSUANCE where
                         (x.DELETED == false && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted)
-                        join y in context.TBL_LC_USSANCE.Where(y => y.DELETED == false)
-                        on x.LCISSUANCEID equals y.LCISSUANCEID
+                        //join y in context.TBL_LC_USSANCE.Where(y => y.DELETED == false)
+                        //on x.LCISSUANCEID equals y.LCISSUANCEID
                             select new LcIssuanceViewModel()
                             {
                                 lcIssuanceId = x.LCISSUANCEID,
@@ -106,12 +111,12 @@ namespace FintrakBanking.Repositories.credit
                                 invoiceDueDate = x.INVOICEDUEDATE,
                                 lcReferenceNumber = x.LCREFERENCENUMBER,
                                 dateTimeCreated = (DateTime)x.DATETIMECREATED,
-                                lcUssanceId = y.LCUSSANCEID,
-                                ussanceAmount = y.USSANCEAMOUNT,
-                                ussanceRate = (int)y.USSANCERATE,
-                                ussanceTenor = (int)y.USSANCETENOR,
-                                lcEffectiveDate = (DateTime)y.LCUSSANCEEFFECTIVEDATE,
-                                lcMaturityDate = (DateTime)y.LCUSSANCEMATURITYDATE
+                                //lcUssanceId = y.LCUSSANCEID,
+                                //ussanceAmount = y.USSANCEAMOUNT,
+                                //ussanceRate = (int)y.USSANCERATE,
+                                //ussanceTenor = (int)y.USSANCETENOR,
+                                //lcEffectiveDate = (DateTime)y.LCUSSANCEEFFECTIVEDATE,
+                                //lcMaturityDate = (DateTime)y.LCUSSANCEMATURITYDATE
                             })
                             .ToList();
                         return lcs;
@@ -234,11 +239,6 @@ namespace FintrakBanking.Repositories.credit
                                 && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
                               select b).ToList();
 
-            var querytest3 = (from a in context.TBL_LC_USSANCE
-                              where
-                                a.DELETED == false
-                              select a).ToList();
-            // query
             var query = (from a in context.TBL_LC_ISSUANCE
                          where
                             (a.DELETED == false
@@ -253,7 +253,6 @@ namespace FintrakBanking.Repositories.credit
                             && levelIds.Contains((int)b.TOAPPROVALLEVELID)
                             && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
                             )
-                         join c in context.TBL_LC_USSANCE on a.LCISSUANCEID equals c.LCISSUANCEID
                          select new LcIssuanceApprovalViewModel()
                          {
                              lcIssuanceId = a.LCISSUANCEID,
@@ -296,12 +295,12 @@ namespace FintrakBanking.Repositories.credit
                              //customerName = context.TBL_CUSTOMER.Find(a.CUSTOMERID).FIRSTNAME + context.TBL_CUSTOMER.Find(a.CUSTOMERID).LASTNAME,
                              operationId = operationId,
                              dateTimeCreated = (DateTime)a.DATETIMECREATED,
-                             lcUssanceId = c.LCUSSANCEID,
-                             ussanceAmount = c.USSANCEAMOUNT,
-                             ussanceRate = (int)c.USSANCERATE,
-                             ussanceTenor = (int)c.USSANCETENOR,
-                             lcEffectiveDate = (DateTime)c.LCUSSANCEEFFECTIVEDATE,
-                             lcMaturityDate = (DateTime)c.LCUSSANCEMATURITYDATE
+                             //lcUssanceId = c.LCUSSANCEID,
+                             //ussanceAmount = c.USSANCEAMOUNT,
+                             //ussanceRate = (int)c.USSANCERATE,
+                             //ussanceTenor = (int)c.USSANCETENOR,
+                             //lcEffectiveDate = (DateTime)c.LCUSSANCEEFFECTIVEDATE,
+                             //lcMaturityDate = (DateTime)c.LCUSSANCEMATURITYDATE
                          }).ToList();
 
             applications = query.AsQueryable()
