@@ -186,7 +186,7 @@ namespace FintrakBanking.Repositories.credit
                     workflow.CompanyId = model.companyId;
                     workflow.StatusId = (short)model.approvalStatusId;
                     workflow.TargetId = model.atcLodgmentId;
-                    workflow.Comment = model.comment;
+                workflow.Comment =model.comment;
                     workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
                     workflow.DeferredExecution = true;
                     workflow.LogActivity();
