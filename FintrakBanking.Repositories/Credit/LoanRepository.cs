@@ -6602,7 +6602,11 @@ namespace FintrakBanking.Repositories.Credit
                         amount = entity.amount_Requested,
                     };
 
-                    if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
+                    if (loanApplicationDetails.TBL_PRODUCT.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
+                    {
+                        LogApproval(approvalModel, (short)OperationsEnum.CreditCardDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                    }
+                    else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
                     {
                         LogApproval(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
                     }
@@ -6610,10 +6614,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
                     }
-                    else if(loanApplicationDetails.TBL_PRODUCT.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards )
-                    {
-                        LogApproval(approvalModel, (short)OperationsEnum.CreditCardDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
-                    }
+                    
                     
 
                     // Audit Section ---------------------------
