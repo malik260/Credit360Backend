@@ -9,11 +9,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationViewModel : GeneralEntity
     {
+
         public LoanApplicationViewModel()
         {
             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
         }
 
+        public bool jumpedDestination { get; set; }
         public bool isNewApplication { get; set; }
         public bool closeApplication { get; set; }        
         public int loanApplicationId { get; set; }

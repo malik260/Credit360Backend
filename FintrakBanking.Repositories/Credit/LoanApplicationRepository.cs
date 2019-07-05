@@ -1240,6 +1240,63 @@ namespace FintrakBanking.Repositories.Credit
             return refnumber.ToString();
         }
 
+        private void validateNonComformingProduct(LoanApplicationViewModel model, TBL_LOAN_APPLICATION parentData, List<TBL_LOAN_APPLICATION_DETAIL> lineRecords)
+        {
+            if (model.LoanApplicationDetail.Count() > 0)
+            {
+                var newlineRecord = model.LoanApplicationDetail.FirstOrDefault();
+                if (newlineRecord.proposedProductId == 12)
+                {
+                    foreach (var line in lineRecords)
+                    {
+                        if (line.PROPOSEDPRODUCTID != newlineRecord.proposedProductId) { throw new ConditionNotMetException("Application already has products with different behaviour."); }
+                    }
+                }
+
+                if (newlineRecord.proposedProductId != 12)
+                {
+                    List<short> productIds = new List<short>();
+                    productIds = lineRecords.Select(x => x.PROPOSEDPRODUCTID).ToList();
+
+                    if (productIds.Contains(12))
+                    {
+                        var productRecord = context.TBL_PRODUCT.Find(newlineRecord.proposedProductId);
+                        throw new ConditionNotMetException("Application already has product " + productRecord.PRODUCTNAME + " with unique behaviour");
+                    }
+                }
+            }
+        }
+
+        private bool PushApplicationToDrawdown(LoanApplicationViewModel model, string applicationReferenceNumber)
+        {
+            //var newLineRecord = model.LoanApplicationDetail.FirstOrDefault();
+            var headerRecords = context.TBL_LOAN_APPLICATION.Where(x=>x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
+            var headerrecord = headerRecords.FirstOrDefault();
+            var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
+
+
+            if (model.productClassId == (short)ProductClassEnum.Creditcards )
+            {
+                if(lineRecords.Where(x=>x.PROPOSEDPRODUCTID == 12).Any())
+                {
+                    foreach (var line in lineRecords)
+                    {
+                        line.APPROVEDAMOUNT = line.PROPOSEDAMOUNT;
+                        line.APPROVEDINTERESTRATE = line.PROPOSEDINTERESTRATE;
+                        line.APPROVEDPRODUCTID = line.PROPOSEDPRODUCTID;
+                        line.APPROVEDTENOR = line.PROPOSEDTENOR;
+                        line.STATUSID = (short)ApprovalStatusEnum.Approved;
+
+                        headerrecord.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                        headerrecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                    }
+                    context.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
@@ -1261,6 +1318,11 @@ namespace FintrakBanking.Repositories.Credit
             if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) return loan;
 
             loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
+
+            if(loan.productClassId == (short)ProductClassEnum.Creditcards)
+            {
+                validateNonComformingProduct(loan, loanData, savedDetails);
+            }
 
             if (savedDetails.Count() == 0 || loan.isNewApplication)
             {
@@ -1288,12 +1350,22 @@ namespace FintrakBanking.Repositories.Credit
                 UpdateLoanApplication(loan);
             }
 
+
             // if (response == 0)
             response = context.SaveChanges();
 
+
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
-            if (response > 0 && !loan.isNewApplication) returndate.closeApplication = true;
+
+            if (response > 0 && !loan.isNewApplication)
+            {
+                returndate.closeApplication = true;
+
+                returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
+            }
+
+            
 
             return returndate;
         }
@@ -1835,8 +1907,8 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
-&& o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
-&& o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY);
+                    && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
+                    && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY);
 
             if (loanExist==true) throw new SecureException("This loan application has already been saved!");
 
