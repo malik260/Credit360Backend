@@ -197,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost]
-        [Route("lc-ussance/forward")]
+        [Route("lc/ussance-forward")]
         public HttpResponseMessage LcUssanceMemorandum([FromBody] LcForwardViewModel entity)
         {
             try
