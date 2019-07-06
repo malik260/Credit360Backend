@@ -118,6 +118,9 @@ namespace FintrakBanking.Entities.Models
 
         public int? PERCENTAGETOCOVER { get; set; }
 
+
+        public int? OPERATIONID { get; set; }
+
         public virtual ICollection<TBL_LC_DOCUMENT> TBL_LC_DOCUMENT { get; set; }
 
         public virtual ICollection<TBL_LC_CONDITION> TBL_LC_CONDITION { get; set; }

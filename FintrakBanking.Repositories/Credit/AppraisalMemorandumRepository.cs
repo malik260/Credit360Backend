@@ -827,6 +827,8 @@ namespace FintrakBanking.Repositories.Credit
             int operationId = (int)OperationsEnum.lcIssuance; // CHANGE
             var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
+            lc.OPERATIONID = operationId;
+            if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
 
             // WORKFLOW
             //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
@@ -841,9 +843,9 @@ namespace FintrakBanking.Repositories.Credit
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
             //var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
-            workflow.NextLevelId = 0;
-            workflow.ToStaffId = null;
-            workflow.StatusId = 1;
+            workflow.NextLevelId = 0; //0
+            workflow.ToStaffId = null; //NULL
+            workflow.StatusId = model.forwardAction; //1
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
 
@@ -863,25 +865,28 @@ namespace FintrakBanking.Repositories.Credit
             // UPDATE APPLICATION
             lc.APPROVALSTATUSID = (short)workflow.StatusId;
             //            if (model.vote == 1) { appl.DISPUTED = true; }
-            lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
+            lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceInProgress;
             if (lc.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { lc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
 
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
-                lc.LCUSSANCESTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
-                lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
+                
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    lc.APPROVEDDATE = applicationDate;
+                    lc.LCUSSANCESTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
+                    lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
+                    lc.APPROVEDDATE = DateTime.Now;
+                    workflow.SetResponse = false;
                     lc.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
                     lc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                 }
-                else if (lc.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
                 {
+                    lc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
                     //SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
                 }
 
-                if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+                //if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
                 //if (lc.NEXTAPPLICATIONSTATUSID != null && lc.FINALAPPROVAL_LEVELID != null) { lc.APPLICATIONSTATUSID = (short)lc.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
                                                                                                                                                                     // MEMORANDUM update
                                                                                                                                                                     //          var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
@@ -917,13 +922,6 @@ namespace FintrakBanking.Repositories.Credit
               this.audit.AddAuditTrail(audit);
               // End of Audit Section ---------------------
   */
-
-            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
-            {
-                lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
-                lc.APPROVEDDATE = DateTime.Now;
-                workflow.SetResponse = false;
-            }
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
             //workflow.Response.success = true;
@@ -934,8 +932,10 @@ namespace FintrakBanking.Repositories.Credit
         public WorkflowResponse LcReleaseMemorandum(LcForwardViewModel model)
         {
             int operationId = (int)OperationsEnum.lcReleaseOfShippingDocuments; // CHANGE
-            var applicationDate = general.GetApplicationDate();
+            //var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
+            lc.OPERATIONID = operationId;
+            if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
 
             // WORKFLOW
             //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
@@ -952,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.NextLevelId = secondLvl;
                 var testStaff = loanApp.GetFirstLevelStaffId((int)secondLvl, model.userBranchId);
                 workflow.ToStaffId = testStaff;
-                workflow.StatusId = model.forwardAction;
+                workflow.StatusId = 1;
             }
             else
             {
@@ -963,7 +963,7 @@ namespace FintrakBanking.Repositories.Credit
                 //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
                 workflow.NextLevelId = 0;
                 workflow.ToStaffId = null;
-                workflow.StatusId = 1;
+                workflow.StatusId = model.forwardAction;
             }
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
@@ -989,21 +989,22 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
+
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
                     lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcShippingReleaseCompleted;
-                    lc.APPROVEDDATE = applicationDate;
-                    lc.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
                     lc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     lc.APPROVEDDATE = DateTime.Now;
                     workflow.SetResponse = false;
+                    lc.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
                 }
-                else if (lc.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
                 {
+                    lc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
                     //SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
                 }
 
-                if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+                //if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
                 //if (lc.NEXTAPPLICATIONSTATUSID != null && lc.FINALAPPROVAL_LEVELID != null) { lc.APPLICATIONSTATUSID = (short)lc.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
                 // MEMORANDUM update
                 //          var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
@@ -1058,7 +1059,8 @@ namespace FintrakBanking.Repositories.Credit
             int operationId = (int)OperationsEnum.lcUssance; // CHANGE
             var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
-
+            lc.OPERATIONID = operationId;
+            if (model.forwardAction != (int)ApprovalStatusEnum.Disapproved) { model.forwardAction = (int)ApprovalStatusEnum.Processing; }
             // WORKFLOW
             //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
             workflow.OperationId = operationId;
@@ -1073,7 +1075,7 @@ namespace FintrakBanking.Repositories.Credit
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = 0;
             workflow.ToStaffId = null;
-            workflow.StatusId = 1;
+            workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
             var c = context.TBL_CUSTOMER.Find(lc.CUSTOMERID);
 
@@ -1106,12 +1108,13 @@ namespace FintrakBanking.Repositories.Credit
                     lc.LCUSSANCEAPPROVEDDATE = DateTime.Now;
                     workflow.SetResponse = false;
                 }
-                else if (lc.LCUSSANCEAPPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
                 {
+                    lc.LCUSSANCESTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected;
                     //SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
                 }
 
-                if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.LCUSSANCESTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
+                //if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.LCUSSANCESTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
                 //if (lc.NEXTAPPLICATIONSTATUSID != null && lc.FINALAPPROVAL_LEVELID != null) { lc.APPLICATIONSTATUSID = (short)lc.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
                 // MEMORANDUM update
                 //          var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
