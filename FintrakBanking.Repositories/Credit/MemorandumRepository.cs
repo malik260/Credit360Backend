@@ -774,7 +774,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                     <tr>
-                        <td><b>Total Direct<b></td>
+                        <td><b>Total Direct (NGN)<b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.totalLLLImpact)}</b></td>
                         <td><b>{totalDirectsSummary.currency}</td>
                         <td><b>{String.Format("{0:0,0.00}", totalDirectsSummary.totalCurrentAmount)}</b></td>
@@ -859,7 +859,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                     <tr>
-                        <td><b>Total Contingents</b></td>
+                        <td><b>Total Contingents (NGN)</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalLLLImpact)}</b></td>
                         <td><b>{totalContingentSummary.currency}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalCurrentAmount)}</b></td>
@@ -885,7 +885,6 @@ namespace FintrakBanking.Repositories.Credit
                         <td><b>Total Facilities</td>
                         <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalLLLImpact))}</b></td>
                         <td><b>Naira</b></td>
-                        //<td><b>{totalSummary.FirstOrDefault()?.currency}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalCurrentAmount))}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalProposedAmount))}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalChange))}</b></td>
@@ -994,7 +993,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                      <tr>
-                        <td><b>Total Directs<b></td>
+                        <td><b>Total Directs (FCY)<b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalDirectSummary.totalLLLImpact)}</b></td>
                         <td><b>{totalDirectSummary.currency}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalDirectSummary.totalCurrentAmount)}</b></td>
@@ -1079,7 +1078,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result = result + $@"
                      <tr>
-                        <td><b>Total Contingents</b></td>
+                        <td><b>Total Contingents (FCY)</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalLLLImpact)}</b></td>
                         <td><b>{totalContingentSummary.currency}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalContingentSummary.totalCurrentAmount)}</b></td>
