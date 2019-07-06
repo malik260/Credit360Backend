@@ -89,7 +89,7 @@ namespace FintrakBanking.Repositories.credit
                     approvalStatusId = x.APPROVALSTATUSID,
                     approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
 
-                })
+                }).OrderBy(o=>o.projectSiteReportId)
                 .ToList();
         }
 
@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.credit
             {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = (short)model.approvalStatusId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = model.projectSiteReportId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.ProjectSiteReportApproval;
@@ -146,6 +146,7 @@ namespace FintrakBanking.Repositories.credit
                    join atrail in context.TBL_APPROVAL_TRAIL on x.PROJECTSITEREPORTID equals atrail.TARGETID
                    where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                     && atrail.RESPONSESTAFFID == null
+                    && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                     && atrail.OPERATIONID == (int)OperationsEnum.ProjectSiteReportApproval
                    select new ProjectSiteReportViewModel
                    {
@@ -168,7 +169,7 @@ namespace FintrakBanking.Repositories.credit
 
                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
 
-                   })
+                   }).OrderBy(o => o.projectSiteReportId)
                 .ToList();
         }
 
@@ -394,7 +395,7 @@ namespace FintrakBanking.Repositories.credit
                     psrReportTypeId = x.PSRREPORTTYPEID,
                     approvalStatusId = x.APPROVALSTATUSID,
                     psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o=>o.PSRREPORTTYPEID== x.PROJECTSITEREPORTID).Select(o=>o.REPORTTYPENAME).FirstOrDefault(),
-                })
+                }).OrderBy(o => o.psrPerformanceEvaluationId)
                 .ToList();
         }
         public bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id)

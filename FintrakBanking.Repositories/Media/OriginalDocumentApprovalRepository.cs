@@ -54,6 +54,7 @@ namespace FintrakBanking.Repositories.Media
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                     where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
+                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
 
                     select new OriginalDocumentApprovalViewModel
@@ -81,7 +82,7 @@ namespace FintrakBanking.Repositories.Media
                         atInitiator = staffId== context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID==x.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
                         createdBy = x.CREATEDBY
 
-                    })
+                    }).OrderBy(o=>o.originalDocumentApprovalId)
                .ToList();
             return data;
         }
@@ -135,7 +136,7 @@ namespace FintrakBanking.Repositories.Media
                     dateTimeCreated = x.DATETIMECREATED,
                     approvalDate = x.APPROVALDATE,
                     approvalStatusId = x.APPROVALSTATUSID
-                }).ToList();
+                }).OrderBy(o=>o.originalDocumentApprovalId).ToList();
 
             return entity;
         }
@@ -294,7 +295,7 @@ namespace FintrakBanking.Repositories.Media
             {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = (short)model.approvalStatusId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = model.originalDocumentApprovalId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.OriginalDocumentApproval;
