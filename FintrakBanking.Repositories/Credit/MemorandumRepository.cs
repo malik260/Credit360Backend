@@ -365,7 +365,7 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        private List<TotalFacilitiesSummaryViewModel> GetTotalFacilitiesLOS()
+        private List<TotalFacilitiesSummaryViewModel> GetTotalFacilitiesNGNLOS()
         {
             var totalSummary = new List<TotalFacilitiesSummaryViewModel>();
             var totalDirectFacilities = GetTotalDirectFacilitiesSummaryLOS((int)CurrencyEnum.NGN);
@@ -403,7 +403,9 @@ namespace FintrakBanking.Repositories.Credit
 
         private decimal getTotalLLLImpact()
         {
-            var totalSummary = GetTotalFacilitiesLOS();
+            var totalSummary = GetTotalFacilitiesNGNLOS();
+            var totalSummary2 = GetTotalForeignFacilitiesLOS();
+            totalSummary.AddRange(totalSummary2);
             return totalSummary.Sum(f => f.totalLLLImpact);
         }
 
@@ -591,12 +593,18 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Change</b></th>
                         <th><b>Tenor (Months)</b></th>
                     </tr>
-                    <tr><td>Direct Facilities:</td></tr>
+                    <tr><td>Direct Facilities (NGN):</td></tr>
                         {GetDirectFacilitiesMarkupLOS()}
                         {GetTotalDirectFacilitiesMarkupLOS()}
-                    <tr><td>Contingent Facilities:</td></tr>
+                    <tr><td>Direct Facilities (FCY):</td></tr>
+                        {GetForeignDirectFacilitiesMarkupLOS()}
+                        {GetTotalForeignDirectFacilitiesMarkupLOS()}
+                    <tr><td>Contingent Facilities (NGN):</td></tr>
                         {GetContingentFacilitiesMarkupLOS()}
                         {GetTotalContingentFacilitiesMarkupLOS()}
+                    <tr><td>Contingent Facilities (FCY):</td></tr>
+                        {GetForeignContingentFacilitiesMarkupLOS()}
+                        {GetTotalForeignContingentFacilitiesMarkupLOS()}
                         {GetTotalFacilitiesMarkupLOS()}
                     <tr>
                         <td>Legal Lending Limit:</td>
@@ -867,14 +875,17 @@ namespace FintrakBanking.Repositories.Credit
         private string GetTotalFacilitiesMarkupLOS()
         {
             var result = String.Empty;
-            var totalSummary = GetTotalFacilitiesLOS();
+            var totalSummary = GetTotalFacilitiesNGNLOS();
+            var totalSumaryFCY = GetTotalForeignFacilitiesLOS();
+            totalSummary.AddRange(totalSumaryFCY);
             if (totalSummary.Count() > 0)
             {
                 result = result + $@"
                      <tr>
                         <td><b>Total Facilities</td>
                         <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalLLLImpact))}</b></td>
-                        <td><b>{totalSummary.FirstOrDefault()?.currency}</b></td>
+                        <td><b>Naira</b></td>
+                        //<td><b>{totalSummary.FirstOrDefault()?.currency}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalCurrentAmount))}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalProposedAmount))}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalSummary.Sum(f => f.totalChange))}</b></td>
@@ -1137,7 +1148,7 @@ namespace FintrakBanking.Repositories.Credit
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
                                           :
                                           (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
                 var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
                                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0
@@ -1167,7 +1178,7 @@ namespace FintrakBanking.Repositories.Credit
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
                                           :
                                           (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
                 var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
                                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0
@@ -1197,7 +1208,7 @@ namespace FintrakBanking.Repositories.Credit
                     var facility = d.TBL_PRODUCT.PRODUCTNAME;
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
-                    var proposedAmount = d.PROPOSEDAMOUNT;
+                    var proposedAmount = d.PROPOSEDAMOUNT * (decimal)d.EXCHANGERATE;
                     var LLLImpact = (100 / 100) * proposedAmount;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
@@ -1244,7 +1255,7 @@ namespace FintrakBanking.Repositories.Credit
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0
                                           :
                                           (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
                 var tenorTest = (currencyId == (int)CurrencyEnum.NGN) ?
                                          (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
                                           f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0
@@ -1273,7 +1284,7 @@ namespace FintrakBanking.Repositories.Credit
                     var facility = d.TBL_PRODUCT.PRODUCTNAME;
                     var currency = d.TBL_CURRENCY.CURRENCYNAME;
                     var currentAmount = 0;
-                    var proposedAmount = d.PROPOSEDAMOUNT;
+                    var proposedAmount = d.PROPOSEDAMOUNT * (decimal)d.EXCHANGERATE;
                     var LLLImpact = proposedAmount / 3;
                     var change = proposedAmount - currentAmount;
                     var tenor = d.APPROVEDTENOR;
@@ -1967,7 +1978,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             return result;
         }
-
+       
         private string GetESGRating(int ratingId)
         {
             if (ratingId == 7) return "Low";
