@@ -110,7 +110,8 @@ namespace FintrakBanking.Repositories.credit
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceCompleted
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceInProgress
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
-                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceInProgress)
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceInProgress
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CAMInProgress)
                 .Select(x => new LcIssuanceViewModel
                 {
                     lcIssuanceId = x.LCISSUANCEID,

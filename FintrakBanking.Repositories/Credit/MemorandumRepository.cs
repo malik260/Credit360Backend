@@ -793,21 +793,23 @@ namespace FintrakBanking.Repositories.Credit
             var contingents = context.TBL_LOAN_CONTINGENT.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
                                                                 && l.ISDISBURSED == true).ToList();
             var contingentsGroup = contingents.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
-            foreach (var group in contingentsGroup)
+            if (contingentsGroup.Count() > 0)
             {
-                var facility = group.Key;
-                var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
-                var currentAmount = group.Sum(p => p.CONTINGENTAMOUNT);
-                var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
-                                         group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
-                var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
-                                         group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
-                var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
-                var LLLImpact = proposedAmount / 3;
-                var change = proposedAmount - currentAmount;
-                var tenor = tenorTest;
+                foreach (var group in contingentsGroup)
+                {
+                    var facility = group.Key;
+                    var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
+                    var currentAmount = group.Sum(p => p.CONTINGENTAMOUNT);
+                    var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
+                                             group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                    var tenorTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
+                                             group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN)?.Sum(p => p.APPROVEDTENOR)) ?? 0;
+                    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                    var LLLImpact = proposedAmount / 3;
+                    var change = proposedAmount - currentAmount;
+                    var tenor = tenorTest;
 
-                result = result + $@"
+                    result = result + $@"
                      <tr>
                         <td>{facility}</td>
                         <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
@@ -818,6 +820,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{(tenor / 30)}</td>
                     </tr>
                     ";
+                }
             }
 
             foreach (var d in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID ==
@@ -903,19 +906,21 @@ namespace FintrakBanking.Repositories.Credit
                                                                  && l.ISDISBURSED == true).ToList();
 
             var loanGroups = loans.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
-            foreach (var group in loanGroups)
+            if (loanGroups.Count() > 0)
             {
-                var facility = group.Key;
-                var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
-                var currentAmount = group.Sum(p => p.OUTSTANDINGPRINCIPAL) + group.Sum(p => p.OUTSTANDINGINTEREST);
-                var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
-                                          f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
-                var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : 0;
-                var lLLImpact = (100 / 100) * proposedAmount;
-                var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
-                var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+                foreach (var group in loanGroups)
+                {
+                    var facility = group.Key;
+                    var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
+                    var currentAmount = group.Sum(p => p.OUTSTANDINGPRINCIPAL) + group.Sum(p => p.OUTSTANDINGINTEREST);
+                    var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => group.FirstOrDefault().TBL_PRODUCT.PRODUCTID ==
+                                              f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : 0;
+                    var lLLImpact = (100 / 100) * proposedAmount;
+                    var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
+                    var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
-                result = result + $@"
+                    result = result + $@"
                      <tr>
                         <td>{facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
@@ -926,22 +931,25 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{(tenor / 30)}</td>
                     </tr>
                     ";
+                }
             }
 
             var overdraftGroups = overdrafts.GroupBy(f => f.TBL_PRODUCT.PRODUCTNAME);
-            foreach (var group in overdraftGroups)
+            if (loanGroups.Count() > 0)
             {
-                var facility = group.Key;
-                var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
-                var currentAmount = group.Sum(p => p.OVERDRAFTLIMIT);
-                var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
-                                      group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
-                var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : 0;
-                var lLLImpact = (100 / 100) * proposedAmount;
-                var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
-                var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+                foreach (var group in overdraftGroups)
+                {
+                    var facility = group.Key;
+                    var currency = group.First().TBL_CURRENCY.CURRENCYNAME;
+                    var currentAmount = group.Sum(p => p.OVERDRAFTLIMIT);
+                    var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.TBL_PRODUCT.PRODUCTID ==
+                                          group.FirstOrDefault().TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                    var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : 0;
+                    var lLLImpact = (100 / 100) * proposedAmount;
+                    var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
+                    var tenor = group.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
-                result = result + $@"
+                    result = result + $@"
                      <tr>
                         <td>{facility}</td>
                         <td>{String.Format("{0:0,0.00}", lLLImpact)}</td>
@@ -952,6 +960,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{(tenor / 30)}</td>
                     </tr>
                     ";
+                }
             }
 
             foreach (var d in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.TBL_CURRENCY.CURRENCYID != (int)CurrencyEnum.NGN))
