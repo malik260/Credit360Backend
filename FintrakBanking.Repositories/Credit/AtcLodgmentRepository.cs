@@ -215,7 +215,7 @@ namespace FintrakBanking.Repositories.credit
                         transaction.Rollback();
 
 
-                        throw ex;
+                        throw new SecureException(ex.Message);
                     }
                     //return false;
                 }
@@ -508,19 +508,18 @@ namespace FintrakBanking.Repositories.credit
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.AtcTypeAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"ATC Type '{entity.ACTTYPENAME}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            });
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.AtcTypeAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"ATC Type '{entity.ACTTYPENAME}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
             // Audit Section end ------------------------
-
             return context.SaveChanges() != 0;
         }
 
