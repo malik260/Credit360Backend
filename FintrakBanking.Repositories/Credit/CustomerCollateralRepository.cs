@@ -1206,13 +1206,15 @@ namespace FintrakBanking.Repositories.Credit
                     mainPol.CREATEDBY = entity.createdBy;
                     mainPol.DATETIMECREATED = entity.dateTimeCreated;
                     mainPol.ENDDATE = (DateTime)entity.endDate;
-                    mainPol.INSURANCECOMPANYNAME = entity.insuranceCompanyName;
-                    mainPol.INSURANCETYPE = entity.insuranceType;
+                    mainPol.INSURANCECOMPANYID = entity.insuranceCompanyId;
+                    mainPol.INSURANCETYPEID = entity.insuranceTypeId;
                     mainPol.LASTUPDATEDBY = entity.lastUpdatedBy;
                     mainPol.POLICYREFERENCENUMBER = entity.referenceNumber;
                     mainPol.STARTDATE = (DateTime)entity.startDate;
                     mainPol.SUMINSURED = entity.sumInsured;
                     mainPol.PREMIUMAMOUNT = entity.premiumAmount;
+                    mainPol.DESCRIPTION = entity.description;
+                    mainPol.PREMIUMPERCENT = entity.premiumPercent;
                 }
                 else
                 {
@@ -1222,13 +1224,15 @@ namespace FintrakBanking.Repositories.Credit
                             CREATEDBY = entity.createdBy,
                             DATETIMECREATED = entity.dateTimeCreated,
                             ENDDATE = (DateTime)entity.endDate,
-                            INSURANCECOMPANYNAME = entity.insuranceCompanyName,
-                            INSURANCETYPE = entity.insuranceType,
+                            INSURANCECOMPANYID = entity.insuranceCompanyId,
+                            INSURANCETYPEID = entity.insuranceTypeId,
                             LASTUPDATEDBY = entity.lastUpdatedBy,
                             POLICYREFERENCENUMBER = entity.referenceNumber,
                             STARTDATE = (DateTime)entity.startDate,
                             SUMINSURED = entity.sumInsured,
-                            PREMIUMAMOUNT = entity.premiumAmount
+                            PREMIUMAMOUNT = entity.premiumAmount,
+                            DESCRIPTION =entity.description,
+                            PREMIUMPERCENT = entity.premiumPercent
                         });
                     
                 }
@@ -1239,15 +1243,17 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     COLLATERALCUSTOMERID = collateralId,
                     POLICYREFERENCENUMBER = entity.referenceNumber,
-                    INSURANCECOMPANYNAME = entity.insuranceCompany,
+                    INSURANCECOMPANYID = entity.insuranceCompanyId,
                     SUMINSURED = entity.sumInsured,
                     STARTDATE = (DateTime)entity.startDate,
                     ENDDATE = (DateTime)entity.expiryDate,
-                    INSURANCETYPE = entity.insuranceType,
+                    INSURANCETYPEID = entity.insuranceTypeId,
                     CREATEDBY = entity.createdBy,
                     DATETIMECREATED = DateTime.Now,
                     DELETED = false,
-                    PREMIUMAMOUNT = entity.inSurPremiumAmount
+                    PREMIUMAMOUNT = entity.inSurPremiumAmount,
+                    DESCRIPTION = entity.description,
+                    PREMIUMPERCENT = entity.premiumPercent
 
                 });
             }
@@ -1261,11 +1267,11 @@ namespace FintrakBanking.Repositories.Credit
             {
                 COLLATERALCUSTOMERID = entity.collateraalId,
                 POLICYREFERENCENUMBER = entity.referenceNumber,
-                INSURANCECOMPANYNAME = entity.insuranceCompany,
+                INSURANCECOMPANYID = entity.insuranceCompanyId,
                 SUMINSURED = entity.sumInsured,
                 STARTDATE = (DateTime)entity.startDate,
                 ENDDATE = (DateTime)entity.expiryDate,
-                INSURANCETYPE = entity.insuranceType,
+                INSURANCETYPEID = entity.insuranceTypeId,
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 ISPOLICYAPPROVAL = true,
@@ -1346,12 +1352,14 @@ namespace FintrakBanking.Repositories.Credit
             if (collateral != null)
             {
                 collateral.POLICYREFERENCENUMBER = entity.referenceNumber;
-                collateral.INSURANCECOMPANYNAME = entity.insuranceCompany;
+                collateral.INSURANCECOMPANYID = entity.insuranceCompanyId;
                 collateral.SUMINSURED = entity.sumInsured;
                 collateral.STARTDATE = (DateTime)entity.startDate;
                 collateral.ENDDATE = (DateTime)entity.expiryDate;
-                collateral.INSURANCETYPE = entity.insuranceType;
+                collateral.INSURANCETYPEID = entity.insuranceTypeId;
                 collateral.PREMIUMAMOUNT = entity.inSurPremiumAmount;
+                collateral.DESCRIPTION = entity.description;
+                collateral.PREMIUMPERCENT = entity.premiumPercent;
             }
 
         }
@@ -1835,13 +1843,15 @@ namespace FintrakBanking.Repositories.Credit
             if (insurance != null)
             {
                 details.referenceNumber = insurance.POLICYREFERENCENUMBER;
-                details.insuranceCompany = insurance.INSURANCECOMPANYNAME;
+                details.insuranceCompanyId = insurance.INSURANCECOMPANYID;
                 details.sumInsured = insurance.SUMINSURED;
                 details.startDate = insurance.STARTDATE;
                 details.expiryDate = insurance.ENDDATE;
-                details.insuranceType = insurance.INSURANCETYPE;
+                details.insuranceTypeId = insurance.INSURANCETYPEID;
                 details.policyId = insurance.POLICYID;
                 details.inSurPremiumAmount = insurance.PREMIUMAMOUNT;
+                details.description = insurance.DESCRIPTION;
+                details.premiumPercent = insurance.PREMIUMPERCENT;
 
 
             }
@@ -1855,12 +1865,13 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(i => new InsurancePolicies
                 {
                     referenceNumber = i.POLICYREFERENCENUMBER,
-                    insuranceCompany = i.INSURANCECOMPANYNAME,
+                    insuranceCompanyId = i.INSURANCECOMPANYID,
                     sumInsured = i.SUMINSURED,
                     startDate = i.STARTDATE,
                     expiryDate = i.ENDDATE,
-                    insuranceType = i.INSURANCETYPE,
-                    hasExpired = i.HASEXPIRED
+                    insuranceTypeId = i.INSURANCETYPEID,
+                    hasExpired = i.HASEXPIRED,
+                    
                 }).ToList();
             return insurance;
         }
@@ -1882,11 +1893,11 @@ namespace FintrakBanking.Repositories.Credit
                              select new InsurancePolicies
                              {
                                  referenceNumber = x.POLICYREFERENCENUMBER,
-                                 insuranceCompany = x.INSURANCECOMPANYNAME,
+                                 insuranceCompanyId = x.INSURANCECOMPANYID,
                                  sumInsured = x.SUMINSURED,
                                  startDate = x.STARTDATE,
                                  expiryDate = x.ENDDATE,
-                                 insuranceType = x.INSURANCETYPE,
+                                 insuranceTypeId = x.INSURANCETYPEID,
                                  collateralCode = s.COLLATERALCODE,
                                  collateralType = a.COLLATERALTYPENAME,
                                  collateralSubType = b.COLLATERALSUBTYPENAME,
@@ -5050,7 +5061,7 @@ namespace FintrakBanking.Repositories.Credit
                 //PolicyId = entity.policyId,
                 // CollateralCustomerId = entity.collateralCustomerId,
                 POLICYREFERENCENUMBER = entity.policyReferenceNumber,
-                INSURANCECOMPANYNAME = entity.insuranceCompanyName,
+                INSURANCECOMPANYID = entity.insuranceCompanyId,
                 STARTDATE = entity.startDate,
                 ENDDATE = entity.endDate,
                 PREMIUMAMOUNT = entity.inSurPremiumAmount
@@ -5069,10 +5080,11 @@ namespace FintrakBanking.Repositories.Credit
                         policyId = m.POLICYID,
                         collateralCustomerId = m.COLLATERALCUSTOMERID,
                         policyReferenceNumber = m.POLICYREFERENCENUMBER,
-                        insuranceCompanyName = m.INSURANCECOMPANYNAME,
+                        insuranceCompanyId = m.INSURANCECOMPANYID,
                         startDate = m.STARTDATE,
                         endDate = m.ENDDATE,
-                        inSurPremiumAmount = m.PREMIUMAMOUNT
+                        inSurPremiumAmount = m.PREMIUMAMOUNT,
+                        
                     }).FirstOrDefault();
         }
         #endregion End of Collateral Customer Policy
@@ -5377,7 +5389,7 @@ namespace FintrakBanking.Repositories.Credit
                                         {
                                             policyId = p.POLICYID,
                                             policyReferenceNumber = p.POLICYREFERENCENUMBER,
-                                            insuranceCompanyName = p.INSURANCECOMPANYNAME,
+                                            insuranceCompanyId = p.INSURANCECOMPANYID,
                                             startDate = p.STARTDATE,
                                             endDate = p.ENDDATE,
 
@@ -6673,13 +6685,15 @@ namespace FintrakBanking.Repositories.Credit
                     mainPol.CREATEDBY = tempPol.CREATEDBY;
                     mainPol.DATETIMECREATED = tempPol.DATETIMECREATED;
                     mainPol.ENDDATE = tempPol.ENDDATE;
-                    mainPol.INSURANCECOMPANYNAME = tempPol.INSURANCECOMPANYNAME;
-                    mainPol.INSURANCETYPE = tempPol.INSURANCETYPE;
+                    mainPol.INSURANCECOMPANYID = tempPol.INSURANCECOMPANYID;
+                    mainPol.INSURANCETYPEID = tempPol.INSURANCETYPEID;
                     mainPol.LASTUPDATEDBY = tempPol.LASTUPDATEDBY;
                     mainPol.POLICYREFERENCENUMBER = tempPol.POLICYREFERENCENUMBER;
                     mainPol.STARTDATE = tempPol.STARTDATE;
                     mainPol.SUMINSURED = tempPol.SUMINSURED;
                     mainPol.PREMIUMAMOUNT = tempPol.PREMIUMAMOUNT;
+                    mainPol.DESCRIPTION = tempPol.DESCRIPTION;
+                    mainPol.PREMIUMPERCENT = tempPol.PREMIUMPERCENT;
                 }
                 else
                 {
@@ -6689,13 +6703,15 @@ namespace FintrakBanking.Repositories.Credit
                         CREATEDBY = tempPol.CREATEDBY,
                         DATETIMECREATED = tempPol.DATETIMECREATED,
                         ENDDATE = tempPol.ENDDATE,
-                        INSURANCECOMPANYNAME = tempPol.INSURANCECOMPANYNAME,
-                        INSURANCETYPE = tempPol.INSURANCETYPE,
+                        INSURANCECOMPANYID = tempPol.INSURANCECOMPANYID,
+                        INSURANCETYPEID = tempPol.INSURANCETYPEID,
                         LASTUPDATEDBY = tempPol.LASTUPDATEDBY,
                         POLICYREFERENCENUMBER = tempPol.POLICYREFERENCENUMBER,
                         STARTDATE = tempPol.STARTDATE,
                         SUMINSURED = tempPol.SUMINSURED,
-                        PREMIUMAMOUNT = tempPol.PREMIUMAMOUNT
+                        PREMIUMAMOUNT = tempPol.PREMIUMAMOUNT,
+                        DESCRIPTION = tempPol.DESCRIPTION,
+                        PREMIUMPERCENT = tempPol.PREMIUMPERCENT
                     });
                 }
             }
@@ -7423,13 +7439,15 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = data.CREATEDBY,
                     DATETIMECREATED = data.DATETIMECREATED,
                     ENDDATE = data.ENDDATE,
-                    INSURANCECOMPANYNAME = data.INSURANCECOMPANYNAME,
-                    INSURANCETYPE = data.INSURANCETYPE,
+                    INSURANCECOMPANYID = data.INSURANCECOMPANYID,
+                    INSURANCETYPEID = data.INSURANCETYPEID,
                     LASTUPDATEDBY = data.LASTUPDATEDBY,
                     POLICYREFERENCENUMBER = data.POLICYREFERENCENUMBER,
                     STARTDATE = data.STARTDATE,
                     SUMINSURED = data.SUMINSURED,
-                    PREMIUMAMOUNT = data.PREMIUMAMOUNT
+                    PREMIUMAMOUNT = data.PREMIUMAMOUNT,
+                    DESCRIPTION = data.DESCRIPTION,
+                    PREMIUMPERCENT = data.PREMIUMPERCENT
                 });
                 data.ISPOLICYAPPROVAL = false;
             }
@@ -7885,11 +7903,14 @@ namespace FintrakBanking.Repositories.Credit
                 {
 
                     referenceNumber = x.POLICYREFERENCENUMBER,
-                    insuranceCompany = x.INSURANCECOMPANYNAME,
+                    insuranceCompanyId = x.INSURANCECOMPANYID,
                     sumInsured = x.SUMINSURED,
                     startDate = x.STARTDATE,
                     expiryDate = x.ENDDATE,
-                    insuranceType = x.INSURANCETYPE,
+                    insuranceTypeId = x.INSURANCETYPEID,
+                    description = x.DESCRIPTION,
+                    premiumPercent = x.PREMIUMPERCENT
+
                 })).ToList();
 
             return insurance;
@@ -7902,11 +7923,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
 
                     referenceNumber = x.POLICYREFERENCENUMBER,
-                    insuranceCompany = x.INSURANCECOMPANYNAME,
+                    insuranceCompanyId = x.INSURANCECOMPANYID,
                     sumInsured = x.SUMINSURED,
                     startDate = x.STARTDATE,
                     expiryDate = x.ENDDATE,
-                    insuranceType = x.INSURANCETYPE,
+                    insuranceTypeId = x.INSURANCETYPEID,
                     inSurPremiumAmount = x.PREMIUMAMOUNT
                     
                 })).ToList();
@@ -8275,9 +8296,26 @@ namespace FintrakBanking.Repositories.Credit
             //}).ToList();
         }
 
+       public IEnumerable<InsurancePolicies> GetInsuranceType()
+        {
+            return context.TBL_INSURANCE_TYPE.Select(x => new InsurancePolicies { insuranceTypeId=x.INSURANCETYPEID, insuranceType=x.INSURANCETYPE});
+        }
+
+
+        public IEnumerable<InsurancePolicies> GetInsuranceCompany()
+        {
+            return context.TBL_INSURANCE_COMPANY.Select(x => new InsurancePolicies {
+                insuranceCompanyId = x.INSURANCECOMPANYID,
+                companyName = x.COMPANYNAME,
+                address = x.ADDRESS,
+                phoneNumber =x.PHONENUMBER,
+                email = x.CONTACTEMAIL,
+            });
+        }
+
     }
 
-   
+
 
 }
 

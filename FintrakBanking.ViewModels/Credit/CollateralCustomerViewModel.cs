@@ -373,6 +373,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanApplicationId { get; set; }
         public int? collateralUsageStatus { get; set; }
         public int? status { get; set; }
+        public int premiumPercent { get; set; }
+        public int insuranceTypeId { get; set; }
+        public int insuranceCompanyId { get; set; }
     }
 
     public class crossGarantee
@@ -457,6 +460,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerName { get; set; }
         public decimal? premiumAmount { get; set; }
         public decimal? inSurPremiumAmount { get; set; }
+        public string description { get; set; }
+        public int premiumPercent { get; set; }
+        public int insuranceTypeId { get; set; }
+        public int insuranceCompanyId { get; set; }
+        public string address { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -807,6 +817,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime endDate { get; set; }
         public decimal? premiumAmount { get; set; }
         public decimal? inSurPremiumAmount { get; set; }
+        public int insuranceCompanyId { get; set; }
     }
 
     public class CollateralSubTypeViewModel : GeneralEntity

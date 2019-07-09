@@ -2988,9 +2988,9 @@ namespace FintrakBanking.ReportObjects
 
                                          collateralType = ct.COLLATERALTYPENAME,
                                          perfectionStatus = pe.PERFECTIONSTATUSNAME,
-                                         insuranceType = ccp.INSURANCETYPE,
+                                       //  insuranceType = ccp.INSURANCETYPE,
                                          insurancePolicyNumber = ccp.POLICYREFERENCENUMBER,
-                                         insuranceCompanyName = ccp.INSURANCECOMPANYNAME,
+                                       //  insuranceCompanyName = ccp.INSURANCECOMPANYNAME,
                                          insuredValue = ccp.SUMINSURED,
                                          //account = l.LOANREFERENCENUMBER,
                                          //accountName = cu.FIRSTNAME + " " + " " + cu.MIDDLENAME + " " + " " + cu.LASTNAME,
