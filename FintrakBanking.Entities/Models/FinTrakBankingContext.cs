@@ -510,6 +510,10 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LC_CONDITION> TBL_LC_CONDITION { get; set; }
 
 
+        public virtual DbSet<TBL_COLLATERAL_VALUATION> TBL_COLLATERAL_VALUATION { get; set; }
+        public virtual DbSet<TBL_VALUATION_REPORT> TBL_VALUATION_REPORT { get; set; }
+        public virtual DbSet<TBL_VALUATION_REQUEST_TYPE> TBL_VALUATION_REQUEST_TYPE { get; set; }
+
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
