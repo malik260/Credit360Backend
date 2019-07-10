@@ -9,11 +9,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationViewModel : GeneralEntity
     {
+
         public LoanApplicationViewModel()
         {
             LoanApplicationDetail = new List<LoanApplicationDetailViewModel>();
         }
 
+        public bool jumpedDestination { get; set; }
         public bool isNewApplication { get; set; }
         public bool closeApplication { get; set; }        
         public int loanApplicationId { get; set; }
@@ -185,6 +187,7 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string customerType { get; set; }
+        public string isProjectRelated { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {

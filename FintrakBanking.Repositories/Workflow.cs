@@ -863,14 +863,36 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (productId == 0) productId = null;
 
-            var mappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+            var mappingsOnProducts = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
                                && x.OPERATIONID == operationId
-                               && x.PRODUCTCLASSID == productClassId
-                               && x.PRODUCTID == productId
+                               && (x.PRODUCTCLASSID == productClassId && x.PRODUCTCLASSID != null)
+                               && (x.PRODUCTID == productId && x.PRODUCTID != null)
                            )
                            .ToList();
 
-            if (mappings.Any() == false)
+            var mappingsOnProductClass = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == operationId
+                               && (x.PRODUCTCLASSID == productClassId && x.PRODUCTCLASSID != null)
+                               && x.PRODUCTID == null
+                           )
+                           .ToList();
+
+            var mappingsOnOperations = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == operationId
+                               && x.PRODUCTCLASSID == null
+                               && x.PRODUCTID == null
+                           )
+                           .ToList();
+
+            List<TBL_APPROVAL_GROUP_MAPPING> mappings = new List<TBL_APPROVAL_GROUP_MAPPING>();
+
+            if (mappingsOnOperations.Any()) mappings = mappingsOnOperations;
+
+            if (mappingsOnProductClass.Any()) mappings = mappingsOnProductClass;
+
+            if (mappingsOnProducts.Any()) mappings = mappingsOnProducts;
+
+            if (mappingsOnProducts.Any() == false && mappingsOnProductClass.Any() == false && mappingsOnOperations.Any() == false)
             {
                 var operation = context.TBL_OPERATIONS.Find(operationId);
                 if (operation == null) throw new SecureException("");

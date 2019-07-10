@@ -125,7 +125,7 @@ namespace FintrakBanking.ViewModels.Reports
         public string searchParameter { get; set; }
         public string status { get; set; }
         public string loanAcct { get; set; }
-
+        public string referenceNumber { get; set; }
     }
 
     public class ReportSearchEntity

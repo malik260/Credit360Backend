@@ -45,6 +45,8 @@ namespace FintrakBanking.Repositories.Media
             var data = new List<OriginalDocumentApprovalViewModel>();
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OriginalDocumentApproval).ToList();
 
+            var initiator = context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+
             data = (from x in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                     join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                     join a in context.TBL_LOAN_APPLICATION_DETAIL on l.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
@@ -52,6 +54,7 @@ namespace FintrakBanking.Repositories.Media
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                     where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
+                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
 
                     select new OriginalDocumentApprovalViewModel
@@ -71,13 +74,15 @@ namespace FintrakBanking.Repositories.Media
                         applicationDate = l.APPLICATIONDATE,
                         applicationAmount = l.APPLICATIONAMOUNT,
                         interestRate = l.INTERESTRATE,
+                        operationId = atrail.OPERATIONID,
+                        approvalDate = x.APPROVALDATE,
                         productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                         relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        operationId = (int)OperationsEnum.OriginalDocumentApproval
+                        atInitiator = staffId== context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID==x.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
+                        createdBy = x.CREATEDBY
 
-
-                    })
+                    }).OrderBy(o=>o.originalDocumentApprovalId)
                .ToList();
             return data;
         }
@@ -94,10 +99,30 @@ namespace FintrakBanking.Repositories.Media
                 approvalStatusId = entity.APPROVALSTATUSID,
                 applicationReferenceNumber = entity.APPLICATIONREFERNECENUMBER,
                 referenceNumber = entity.REFERENCENUMBER,
-                dateTimeCreated = entity.DATETIMECREATED
+                dateTimeCreated = entity.DATETIMECREATED,
+                approvalDate = entity.APPROVALDATE
             };
         }
         public List<OriginalDocumentApprovalViewModel> GetOriginalDocumentByLoanApplicationId(int id)
+        {
+            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.LOANAPPLICATIONID == id && x.DELETED == false)
+                .Select(x => new OriginalDocumentApprovalViewModel
+                {
+                    originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                    loanApplicationId = x.LOANAPPLICATIONID,
+                    description = x.DESCRIPTION,
+                    approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                    applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                    referenceNumber = x.REFERENCENUMBER,
+                    dateTimeCreated = x.DATETIMECREATED,
+                    approvalDate = x.APPROVALDATE,
+                    approvalStatusId = x.APPROVALSTATUSID
+                }).ToList();
+
+            return entity;
+        }
+
+        public List<OriginalDocumentApprovalViewModel> GetOriginalDocument(int id)
         {
             var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
                 .Select(x => new OriginalDocumentApprovalViewModel
@@ -108,8 +133,10 @@ namespace FintrakBanking.Repositories.Media
                     approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                     applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                     referenceNumber = x.REFERENCENUMBER,
-                    dateTimeCreated = x.DATETIMECREATED
-                }).ToList();
+                    dateTimeCreated = x.DATETIMECREATED,
+                    approvalDate = x.APPROVALDATE,
+                    approvalStatusId = x.APPROVALSTATUSID
+                }).OrderBy(o=>o.originalDocumentApprovalId).ToList();
 
             return entity;
         }
@@ -268,7 +295,7 @@ namespace FintrakBanking.Repositories.Media
             {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = (short)model.approvalStatusId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = model.originalDocumentApprovalId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.OriginalDocumentApproval;
@@ -281,6 +308,7 @@ namespace FintrakBanking.Repositories.Media
                     if (document != null)
                     {
                         document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        document.APPROVALDATE = general.GetApplicationDate();
                     }
 
                 }

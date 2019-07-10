@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Common;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -23,13 +24,15 @@ namespace FintrakBanking.Repositories.credit
         private IAuditTrailRepository audit;
         private IAdminRepository admin;
         private IWorkflow workflow;
+        private ILoanRepository loanRepository;
 
         public LcIssuanceRepository(
                 FinTrakBankingContext _context,
                 IGeneralSetupRepository _general,
                 IAuditTrailRepository _audit,
                 IAdminRepository _admin,
-                IWorkflow _workflow
+                IWorkflow _workflow,
+                ILoanRepository _loanRepository
             )
         {
             this.context = _context;
@@ -37,21 +40,89 @@ namespace FintrakBanking.Repositories.credit
             this.audit = _audit;
             this.admin = _admin;
             this.workflow = _workflow;
+            this.loanRepository = _loanRepository;
         }
         
         #region LCISSUANCE
+
+        public IEnumerable<LcIssuanceApprovalViewModel> SearchLc(string searchString)
+        {
+                int[] operations = { (int)OperationsEnum.lcIssuance, (int)OperationsEnum.lcReleaseOfShippingDocuments, (int)OperationsEnum.lcUssance};
+
+                searchString = searchString.Trim().ToLower();
+
+                var applications = (from x in context.TBL_LC_ISSUANCE
+                                    join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                                    join y in context.TBL_APPROVAL_TRAIL on x.LCISSUANCEID equals y.TARGETID
+                                    where y.RESPONSESTAFFID == null
+                                    && operations.Contains(y.OPERATIONID)
+                               //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
+                               && (x.LCREFERENCENUMBER == searchString
+                            || c.FIRSTNAME.ToLower().Contains(searchString)
+                            || c.LASTNAME.ToLower().Contains(searchString)
+                            || c.MIDDLENAME.ToLower().Contains(searchString)
+                            || c.CUSTOMERCODE.Contains(searchString)
+                            || x.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                                    select new LcIssuanceApprovalViewModel
+                                    {
+                                        customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                        customerCode = c.CUSTOMERCODE,
+                                        lcReferenceNumber = x.LCREFERENCENUMBER,
+                                        lcIssuanceId = x.LCISSUANCEID,
+                                        customerId = c.CUSTOMERID,
+                                        //branchId = c.BRANCHID,
+                                        //relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                        //relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                        arrivalDate = y.ARRIVALDATE,
+                                        letterOfCreditAmount = x.LETTEROFCREDITAMOUNT,
+                                        //approvedAmount = x.APPROVEDAMOUNT,
+                                        approvalStatusId = (short)x.APPROVALSTATUSID,
+                                        approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
+
+                                        currentApprovalLevel = y.TOAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL.LEVELNAME : "n/a",
+                                        approvalTrailId = y.APPROVALTRAILID,
+                                        responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
+
+                                        applicationStatusId = x.APPLICATIONSTATUSID,
+                                        applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o => o.APPLICATIONSTATUSID == x.APPLICATIONSTATUSID).Select(o => o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
+                                        //relationshipOfficerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
+                                        //relationshipManagerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
+                                        //misCode = x.MISCODE,
+                                        //customerGroupName = x.CUSTOMERGROUPID.HasValue ? x.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                                        //loanTypeName = x.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                        createdBy = (int)x.CREATEDBY,
+                                        //operationId = x.OPERATIONID,
+                                        // accountNumber = ca.PRODUCTACCOUNTNUMBER,
+                                        //isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.APPLICATIONREFERENCENUMBER).Any()
+                                    }).ToList();
+
+                return applications;
+        }
+
+
         public IEnumerable<LcIssuanceViewModel> GetLcIssuances()
         {
             var lcs = context.TBL_LC_ISSUANCE.Where(x => x.DELETED == false
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcShippingReleaseCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceInProgress
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceInProgress
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CAMInProgress)
                 .Select(x => new LcIssuanceViewModel
                 {
                     lcIssuanceId = x.LCISSUANCEID,
                     beneficiaryName = x.BENEFICIARYNAME,
                     totalApprovedAmount = x.TOTALAPPROVEDAMOUNT,
+                    totalApprovedAmountCurrencyId = x.TOTALAPPROVEDAMOUNTCURRENCYID,
+                    availableAmountCurrencyId = x.AVAILABLEAMOUNTCURRENCYID,
+                    cashBuildUpAvailable = x.CASHBUILDUPAVAILABLE,
+                    cashBuildUpReferenceNumber = (string)x.CASHBUILDUPREFERENCETYPE,
+                    cashBuildUpReferenceType = (string)x.CASHBUILDUPREFERENCENUMBER,
+                    percentageToCover = x.PERCENTAGETOCOVER,
                     letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                     isDraftRequired = x.ISDRAFTREQUIRED,
                     beneficiaryAddress = x.BENEFICIARYADDRESS,
@@ -71,6 +142,7 @@ namespace FintrakBanking.Repositories.credit
                     invoiceDueDate = x.INVOICEDUEDATE,
                     lcReferenceNumber = x.LCREFERENCENUMBER,
                     dateTimeCreated = (DateTime)x.DATETIMECREATED,
+                    
                 })
                 .ToList();
             return lcs;
@@ -82,10 +154,10 @@ namespace FintrakBanking.Repositories.credit
             IQueryable<LcIssuanceApprovalViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
-            var querytest1 = (from a in context.TBL_LC_ISSUANCE where
-                                 a.DELETED == false && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                                 && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                                 && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+            var querytest1 = (from a in context.TBL_LC_ISSUANCE
+                              where
+                                a.DELETED == false && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress
+                                && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                               select a).ToList();
 
             var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
@@ -95,13 +167,13 @@ namespace FintrakBanking.Repositories.credit
                                 && b.RESPONSESTAFFID == null
                                 && levelIds.Contains((int)b.TOAPPROVALLEVELID)
                                 && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
-                                select b).ToList();
-                                    // query
-           var query = (from a in context.TBL_LC_ISSUANCE where
+                              select b).ToList();
+            // query
+            var query = (from a in context.TBL_LC_ISSUANCE where
                         (a.DELETED == false 
-                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
-                        orderby a.LCISSUANCEID
+                        && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress
+                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                         orderby a.LCISSUANCEID
                         join b in context.TBL_APPROVAL_TRAIL on a.LCISSUANCEID equals b.TARGETID where
                         (
                         (b.OPERATIONID == operationId)
@@ -118,6 +190,12 @@ namespace FintrakBanking.Repositories.credit
                                 letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
                                 beneficiaryName = a.BENEFICIARYNAME,
                                 totalApprovedAmount = a.TOTALAPPROVEDAMOUNT,
+                                totalApprovedAmountCurrencyId = a.TOTALAPPROVEDAMOUNTCURRENCYID,
+                                availableAmountCurrencyId = a.AVAILABLEAMOUNTCURRENCYID,
+                                cashBuildUpAvailable = a.CASHBUILDUPAVAILABLE,
+                                cashBuildUpReferenceNumber = (string)a.CASHBUILDUPREFERENCETYPE,
+                                cashBuildUpReferenceType = (string)a.CASHBUILDUPREFERENCENUMBER,
+                                percentageToCover = a.PERCENTAGETOCOVER,
                                 beneficiaryAddress = a.BENEFICIARYADDRESS,
                                 beneficiaryEmail = a.BENEFICIARYEMAIL,
                                 customerId = a.CUSTOMERID,
@@ -136,14 +214,13 @@ namespace FintrakBanking.Repositories.credit
                                 lastComment = b.COMMENT,
                                 currentApprovalStateId = b.APPROVALSTATEID,
                                 currentApprovalLevelId = b.TOAPPROVALLEVELID,
-                                currentApprovalLevel = b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
-                                currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
+                                currentApprovalLevel = b.TBL_APPROVAL_LEVEL.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                                currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                                 approvalTrailId = b == null ? 0 : b.APPROVALTRAILID, // for inner sequence ordering
                                 toStaffId = b.TOSTAFFID,
                                 approvalStatusId = (short)a.APPROVALSTATUSID,
                                 applicationStatusId = a.APPLICATIONSTATUSID,
                                 createdBy = (int)a.CREATEDBY,
-                                //customerName = context.TBL_CUSTOMER.Find(a.CUSTOMERID).FIRSTNAME + context.TBL_CUSTOMER.Find(a.CUSTOMERID).LASTNAME,
                                 operationId = operationId,
                                 dateTimeCreated = (DateTime)a.DATETIMECREATED
                             }).ToList();
@@ -156,28 +233,10 @@ namespace FintrakBanking.Repositories.credit
             return applications.ToList();
         }
 
-        public IEnumerable<LoanApplicationViewModel> GetIFFLinesForLCByCustomerId(int customerId)
+        public IEnumerable<CamProcessedLoanViewModel> GetIFFLinesForLCByCustomerId(int customerId, int companyId, int staffId, int branchId)
         {
-            var lines = context.TBL_LOAN_APPLICATION.Where(l => l.DELETED == false
-                                                           && l.CUSTOMERID == customerId
-                                                           && l.PRODUCTCLASSID == (int)ProductClassEnum.ImportFinanceFacilities
-                                                           ).Select(a => new LoanApplicationViewModel
-                                                           {
-                                                               loanApplicationId = a.LOANAPPLICATIONID,
-                                                               //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
-                                                               applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                                               relatedReferenceNumber = a.RELATEDREFERENCENUMBER,
-                                                               branchId = a.BRANCHID,
-                                                               productClassId = a.PRODUCTCLASSID,
-                                                               productClassName = a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-                                                               //currencyCode = c.TBL_CURRENCY.CURRENCYCODE,
-                                                               loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
-                                                               relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                                                               relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                               applicationDate = a.APPLICATIONDATE,
-                                                               newApplicationDate = a.DATEACTEDON,
-                                                           }
-                                                           ).ToList();
+            var lines = loanRepository.GetAvailedLoanApplicationsDueForInitiateBooking(companyId, staffId, branchId).Where
+                (l => l.customerId == customerId && l.productClassId == (int)ProductClassEnum.ImportFinanceFacilities && l.customerAvailableAmount > 0).ToList();
 
             return lines;
         }
@@ -191,6 +250,12 @@ namespace FintrakBanking.Repositories.credit
                 lcIssuanceId = entity.LCISSUANCEID,
                 beneficiaryName = entity.BENEFICIARYNAME,
                 totalApprovedAmount = entity.TOTALAPPROVEDAMOUNT,
+                totalApprovedAmountCurrencyId = entity.TOTALAPPROVEDAMOUNTCURRENCYID,
+                availableAmountCurrencyId = entity.AVAILABLEAMOUNTCURRENCYID,
+                cashBuildUpAvailable = entity.CASHBUILDUPAVAILABLE,
+                cashBuildUpReferenceNumber = (string)entity.CASHBUILDUPREFERENCETYPE,
+                cashBuildUpReferenceType = (string)entity.CASHBUILDUPREFERENCENUMBER,
+                percentageToCover = entity.PERCENTAGETOCOVER,
                 letterOfCreditTypeId = entity.LETTEROFCREDITTYPEID,
                 isDraftRequired = entity.ISDRAFTREQUIRED,
                 beneficiaryAddress = entity.BENEFICIARYADDRESS,
@@ -212,14 +277,40 @@ namespace FintrakBanking.Repositories.credit
             };
         }
 
+        public void validateAmounts(LcIssuanceViewModel model)
+        {
+            var rates = context.TBL_CURRENCY_EXCHANGERATE.ToList();
+            Decimal lcAmount;
+            Decimal availableAmount;
+            var lcAmountRecord = context.TBL_CURRENCY_EXCHANGERATE.Where(r => r.CURRENCYID == model.currencyId).FirstOrDefault();
+
+            lcAmount = lcAmountRecord == null ? 0 :(decimal)lcAmountRecord.EXCHANGERATE * model.letterOfCreditAmount;
+
+            availableAmount = lcAmountRecord == null ? 0 : (decimal)lcAmountRecord.EXCHANGERATE * model.availableAmount;
+            if (lcAmount > availableAmount)
+            {
+                throw new SecureException("LC amount canot be greater than available amount");
+            }
+            
+        }
+
         public LcIssuanceViewModel AddLcIssuance(LcIssuanceViewModel model)
         {
+            validateAmounts(model);
+            
+            
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             var entity = new TBL_LC_ISSUANCE
             {
                 LCREFERENCENUMBER = referenceNumber,
                 BENEFICIARYNAME = model.beneficiaryName,
                 TOTALAPPROVEDAMOUNT = model.totalApprovedAmount,
+                TOTALAPPROVEDAMOUNTCURRENCYID = model.totalApprovedAmountCurrencyId,
+                AVAILABLEAMOUNTCURRENCYID = model.availableAmountCurrencyId,
+                CASHBUILDUPAVAILABLE = model.cashBuildUpAvailable,
+                CASHBUILDUPREFERENCETYPE = model.cashBuildUpReferenceType,
+                CASHBUILDUPREFERENCENUMBER = model.cashBuildUpReferenceNumber,
+                PERCENTAGETOCOVER = model.percentageToCover,
                 LETTEROFCREDITTYPEID = model.letterOfCreditTypeId,
                 ISDRAFTREQUIRED = model.isDraftRequired,
                 BENEFICIARYADDRESS = model.beneficiaryAddress,
@@ -239,11 +330,11 @@ namespace FintrakBanking.Repositories.credit
                 INVOICEDUEDATE = model.invoiceDueDate,
                 //COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = general.GetApplicationDate(),
+                DATETIMECREATED =DateTime.Now
             };
 
             context.TBL_LC_ISSUANCE.Add(entity);
-
+            var systemDate = general.GetApplicationDate();
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             var aud = new TBL_AUDIT
@@ -254,16 +345,20 @@ namespace FintrakBanking.Repositories.credit
                 DETAIL = $"TBL_Lc Issuance '{entity.ToString()}' created by {auditStaff}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
+                APPLICATIONDATE = systemDate,
                 SYSTEMDATETIME = DateTime.Now
             };
             context.TBL_AUDIT.Add(aud);
             // Audit Section end ------------------------
 
             context.SaveChanges();
-            var createdlc = context.TBL_LC_ISSUANCE.FirstOrDefault(lc => lc.LCREFERENCENUMBER == referenceNumber);
-            model.lcIssuanceId = createdlc.LCISSUANCEID;
-            model.lcReferenceNumber = createdlc.LCREFERENCENUMBER;
+            var createdlcRecord = context.TBL_LC_ISSUANCE.FirstOrDefault(lc => lc.LCREFERENCENUMBER == referenceNumber);
+            if(createdlcRecord != null)
+            {
+                model.lcIssuanceId = createdlcRecord.LCISSUANCEID;
+                model.lcReferenceNumber = createdlcRecord.LCREFERENCENUMBER;
+            }
+           
             return model;
         }
 
@@ -272,6 +367,12 @@ namespace FintrakBanking.Repositories.credit
             var entity = this.context.TBL_LC_ISSUANCE.Find(id);
             entity.BENEFICIARYNAME = model.beneficiaryName;
             entity.TOTALAPPROVEDAMOUNT = model.totalApprovedAmount;
+            entity.TOTALAPPROVEDAMOUNTCURRENCYID = model.totalApprovedAmountCurrencyId;
+            entity.AVAILABLEAMOUNTCURRENCYID = model.availableAmountCurrencyId;
+            entity.CASHBUILDUPAVAILABLE = model.cashBuildUpAvailable;
+            entity.CASHBUILDUPREFERENCETYPE = model.cashBuildUpReferenceType;
+            entity.CASHBUILDUPREFERENCENUMBER = model.cashBuildUpReferenceNumber;
+            entity.PERCENTAGETOCOVER = model.percentageToCover;
             entity.LETTEROFCREDITTYPEID = model.letterOfCreditTypeId;
             entity.ISDRAFTREQUIRED = model.isDraftRequired;
             entity.BENEFICIARYADDRESS = model.beneficiaryAddress;
@@ -350,6 +451,12 @@ namespace FintrakBanking.Repositories.credit
                     lcIssuanceId = x.LCISSUANCEID,
                     beneficiaryName = x.BENEFICIARYNAME,
                     totalApprovedAmount = x.TOTALAPPROVEDAMOUNT,
+                    totalApprovedAmountCurrencyId = x.TOTALAPPROVEDAMOUNTCURRENCYID,
+                    availableAmountCurrencyId = x.AVAILABLEAMOUNTCURRENCYID,
+                    cashBuildUpAvailable = x.CASHBUILDUPAVAILABLE,
+                    cashBuildUpReferenceNumber = (string)x.CASHBUILDUPREFERENCETYPE,
+                    cashBuildUpReferenceType = (string)x.CASHBUILDUPREFERENCENUMBER,
+                    percentageToCover = x.PERCENTAGETOCOVER,
                     letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                     isDraftRequired = x.ISDRAFTREQUIRED,
                     beneficiaryAddress = x.BENEFICIARYADDRESS,
@@ -380,25 +487,26 @@ namespace FintrakBanking.Repositories.credit
             IQueryable<LcIssuanceApprovalViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
-            var querytest1 = (from a in context.TBL_LC_ISSUANCE
-                              where
-                                a.DELETED == false
-                                && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
-                              select a).ToList();
+            //var querytest1 = (from a in context.TBL_LC_ISSUANCE
+            //                  where
+            //                    a.DELETED == false
+            //                    && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
+            //                  select a).ToList();
 
-            var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
-                              where
-                                (b.OPERATIONID == operationId)
-                                && b.APPROVALSTATEID != (int)ApprovalState.Ended
-                                && b.RESPONSESTAFFID == null
-                                && levelIds.Contains((int)b.TOAPPROVALLEVELID)
-                                && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
-                              select b).ToList();
+            //var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
+            //                  where
+            //                    (b.OPERATIONID == operationId)
+            //                    && b.APPROVALSTATEID != (int)ApprovalState.Ended
+            //                    && b.RESPONSESTAFFID == null
+            //                    && levelIds.Contains((int)b.TOAPPROVALLEVELID)
+            //                    && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
+            //                  select b).ToList();
             // query
             var query = (from a in context.TBL_LC_ISSUANCE
                          where
                             (a.DELETED == false
-                            && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress)
+                            && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
+                            && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                          orderby a.LCISSUANCEID
                          join b in context.TBL_APPROVAL_TRAIL on a.LCISSUANCEID equals b.TARGETID
                          where
@@ -417,6 +525,12 @@ namespace FintrakBanking.Repositories.credit
                              letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
                              beneficiaryName = a.BENEFICIARYNAME,
                              totalApprovedAmount = a.TOTALAPPROVEDAMOUNT,
+                             totalApprovedAmountCurrencyId = a.TOTALAPPROVEDAMOUNTCURRENCYID,
+                             availableAmountCurrencyId = a.AVAILABLEAMOUNTCURRENCYID,
+                             cashBuildUpAvailable = a.CASHBUILDUPAVAILABLE,
+                             cashBuildUpReferenceNumber = (string)a.CASHBUILDUPREFERENCETYPE,
+                             cashBuildUpReferenceType = (string)a.CASHBUILDUPREFERENCENUMBER,
+                             percentageToCover = a.PERCENTAGETOCOVER,
                              beneficiaryAddress = a.BENEFICIARYADDRESS,
                              beneficiaryEmail = a.BENEFICIARYEMAIL,
                              customerId = a.CUSTOMERID,

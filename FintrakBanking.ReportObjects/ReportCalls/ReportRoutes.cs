@@ -953,6 +953,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/OutPutTemplate.aspx?loanApplicationId=" + loanApplicationId;
             return path;
         }
+
+       public string SubmissionOfOriginalDocument(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/SubmissionOfOriginalDocument.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&referenceNumber=" + dateRange.referenceNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
     }
 
 }

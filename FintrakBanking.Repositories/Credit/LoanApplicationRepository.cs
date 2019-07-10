@@ -1087,7 +1087,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl.LOANAPPROVEDLIMITID > 0)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.LoanBookingRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
                 context.SaveChanges();
                 return true;
             }
@@ -1114,7 +1114,8 @@ namespace FintrakBanking.Repositories.Credit
                 //workflow.ToStaffId = test2;
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
-            } else
+            }
+            else
             {
                 operationId = (int)OperationsEnum.CreditAppraisal;
                 workflow.OperationId = operationId;
@@ -1123,7 +1124,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.NextLevelId = receiverLevelId; // BREAKING!
             }
 
-            
+
             workflow.StaffId = staffId;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
@@ -1239,11 +1240,66 @@ namespace FintrakBanking.Repositories.Credit
             return refnumber.ToString();
         }
 
+        private void validateNonComformingProduct(LoanApplicationViewModel model, TBL_LOAN_APPLICATION parentData, List<TBL_LOAN_APPLICATION_DETAIL> lineRecords)
+        {
+            if (model.LoanApplicationDetail.Count() > 0)
+            {
+                var newlineRecord = model.LoanApplicationDetail.FirstOrDefault();
+                if (newlineRecord.proposedProductId == 12)
+                {
+                    foreach (var line in lineRecords)
+                    {
+                        if (line.PROPOSEDPRODUCTID != newlineRecord.proposedProductId) { throw new ConditionNotMetException("Application already has products with different behaviour."); }
+                    }
+                }
+
+                if (newlineRecord.proposedProductId != 12)
+                {
+                    List<short> productIds = new List<short>();
+                    productIds = lineRecords.Select(x => x.PROPOSEDPRODUCTID).ToList();
+
+                    if (productIds.Contains(12))
+                    {
+                        var productRecord = context.TBL_PRODUCT.Find(newlineRecord.proposedProductId);
+                        throw new ConditionNotMetException("Application already has product " + productRecord.PRODUCTNAME + " with unique behaviour");
+                    }
+                }
+            }
+        }
+
+        private bool PushApplicationToDrawdown(LoanApplicationViewModel model, string applicationReferenceNumber)
+        {
+            //var newLineRecord = model.LoanApplicationDetail.FirstOrDefault();
+            var headerRecords = context.TBL_LOAN_APPLICATION.Where(x=>x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
+            var headerrecord = headerRecords.FirstOrDefault();
+            var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
+
+
+            if (model.productClassId == (short)ProductClassEnum.Creditcards )
+            {
+                if(lineRecords.Where(x=>x.PROPOSEDPRODUCTID == 12).Any())
+                {
+                    foreach (var line in lineRecords)
+                    {
+                        line.APPROVEDAMOUNT = line.PROPOSEDAMOUNT;
+                        line.APPROVEDINTERESTRATE = line.PROPOSEDINTERESTRATE;
+                        line.APPROVEDPRODUCTID = line.PROPOSEDPRODUCTID;
+                        line.APPROVEDTENOR = line.PROPOSEDTENOR;
+                        line.STATUSID = (short)ApprovalStatusEnum.Approved;
+
+                        headerrecord.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                        headerrecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                    }
+                    context.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-
-            
             ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
@@ -1262,6 +1318,11 @@ namespace FintrakBanking.Repositories.Credit
             if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) return loan;
 
             loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
+
+            if(loan.productClassId == (short)ProductClassEnum.Creditcards)
+            {
+                validateNonComformingProduct(loan, loanData, savedDetails);
+            }
 
             if (savedDetails.Count() == 0 || loan.isNewApplication)
             {
@@ -1289,12 +1350,22 @@ namespace FintrakBanking.Repositories.Credit
                 UpdateLoanApplication(loan);
             }
 
+
             // if (response == 0)
-                response = context.SaveChanges();
+            response = context.SaveChanges();
+
 
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
-            if (response > 0 && !loan.isNewApplication) returndate.closeApplication = true;
+
+            if (response > 0 && !loan.isNewApplication)
+            {
+                returndate.closeApplication = true;
+
+                returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
+            }
+
+            
 
             return returndate;
         }
@@ -1318,7 +1389,7 @@ namespace FintrakBanking.Repositories.Credit
 
             List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
 
-            foreach(var definition in definitions)
+            foreach (var definition in definitions)
             {
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 if (submission == null) continue;
@@ -1445,6 +1516,17 @@ namespace FintrakBanking.Repositories.Credit
             throw new NotImplementedException();
         }
 
+        private bool isProductBasedWorkflowApplicable = false;
+        private bool isProductClassBasedWorkflowApplicable = false;
+        private void determineWorkFlowAdjustment(int productId, int productClassId)
+        {
+            if (context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.PRODUCTID == productId
+                                                            && x.OPERATIONID == (short)OperationsEnum.CreditAppraisal
+                                                            && x.DELETED == false).Any()) isProductBasedWorkflowApplicable = true;
+            if (context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.PRODUCTCLASSID == productClassId
+                                                            && x.OPERATIONID == (short)OperationsEnum.CreditAppraisal
+                                                            && x.DELETED == false).Any()) isProductClassBasedWorkflowApplicable = true;
+        }
         private void AddloanApplicationSub(LoanApplicationViewModel loan)
         {
             short productClassProcessId = 0;
@@ -1471,16 +1553,22 @@ namespace FintrakBanking.Repositories.Credit
             var dat = context.TBL_PRODUCT_CLASS.Where(c => c.PRODUCTCLASSID == loan.productClassId).FirstOrDefault();
             if (dat != null)
             {
-                if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
-                {
-                    productClassId = null;
-                    productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
-                }
-                if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
-                {
-                    productClassId = loan.productClassId;
-                    productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
-                }
+                productClassId = loan.productClassId;
+                productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+                //if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                //{
+                //    //productClassId = null;
+                //    //if(loan.productId == (short))
+                //    productClassId = loan.productClassId;
+                //    productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+                //    //if(dat.TBL_PRODUCT.p)
+                //}
+                //if (dat.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.ProductBased)
+                //{
+                //    productClassId = loan.productClassId;
+                //    productClassProcessId = dat.PRODUCT_CLASS_PROCESSID;
+                //}
+
             }
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
             var loanStatusId = (short)LoanStatusEnum.Inactive;
@@ -1669,7 +1757,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var item in application)
             {
                 var exchangeValue = ((decimal)item.PROPOSEDAMOUNT * (decimal)item.EXCHANGERATE);
-                    totalApplicationAmount = totalApplicationAmount + exchangeValue;
+                totalApplicationAmount = totalApplicationAmount + exchangeValue;
             }
 
             this.loanData.REQUIRECOLLATERAL = loan.requireCollateral;
@@ -1748,7 +1836,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //foreach (var item in data) // invoice reuse check
             //{
-              
+
             //        if (context.TBL_LOAN_APPLICATION_DETL_INV.Where(x =>
             //            x.INVOICENO == item.INVOICENO &&
             //            x.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID == customerId &&
@@ -1757,7 +1845,7 @@ namespace FintrakBanking.Repositories.Credit
             //        {
             //            throw new SecureException("This invoice number have been used in another application!");
             //        }
-                
+
             //}
 
             context.TBL_LOAN_APPLICATION_DETL_INV.AddRange(data);
@@ -1769,91 +1857,99 @@ namespace FintrakBanking.Repositories.Credit
             //foreach (var a in entity)
             //{
             var a = loan.LoanApplicationDetail.FirstOrDefault();
-                if (a.proposedTenor == 0)
-                {
-                    throw new SecureException("Tenor can not be ZERO (0)");
-                }
-                int applicationId = this.loanData == null ? 0 : this.loanData.LOANAPPLICATIONID; // ?
-                int tenor = ConvertTenorToDays(a.proposedTenor, a.tenorModeId);
+            if (a.proposedTenor == 0)
+            {
+                throw new SecureException("Tenor can not be ZERO (0)");
+            }
+            int applicationId = this.loanData == null ? 0 : this.loanData.LOANAPPLICATIONID; // ?
+            int tenor = ConvertTenorToDays(a.proposedTenor, a.tenorModeId);
 
-                var data = new TBL_LOAN_APPLICATION_DETAIL
-                {
-                    APPROVEDAMOUNT = a.proposedAmount,
-                    APPROVEDINTERESTRATE = (double)a.proposedInterestRate,
-                    APPROVEDPRODUCTID = a.proposedProductId,
-                    APPROVEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
-                    EXCHANGERATE = a.exchangeRate,
-                    CURRENCYID = a.currencyId,
-                    CUSTOMERID = a.customerId,
-                    LOANAPPLICATIONID = applicationId,
-                    STATUSID = (short)LoanApplicationDetailsStatusEnum.Pending,
+            var data = new TBL_LOAN_APPLICATION_DETAIL
+            {
+                APPROVEDAMOUNT = a.proposedAmount,
+                APPROVEDINTERESTRATE = (double)a.proposedInterestRate,
+                APPROVEDPRODUCTID = a.proposedProductId,
+                APPROVEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
-                    EQUITYCASAACCOUNTID = a.equityCasaAccountId,
-                    EQUITYAMOUNT = a.equityAmount,
+                EXCHANGERATE = a.exchangeRate,
+                CURRENCYID = a.currencyId,
+                CUSTOMERID = a.customerId,
+                LOANAPPLICATIONID = applicationId,
+                STATUSID = (short)LoanApplicationDetailsStatusEnum.Pending,
 
-                    PROPOSEDAMOUNT = a.proposedAmount,
-                    PROPOSEDINTERESTRATE = (int)a.proposedInterestRate,
-                    PROPOSEDPRODUCTID = a.proposedProductId,
-                    PROPOSEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
-                    DELETED = false,
-                    SUBSECTORID = a.subSectorId,
-                    CREATEDBY = createdBy,
-                    DATETIMECREATED = DateTime.Now,
-                    LOANPURPOSE = a.loanPurpose,
-                    CASAACCOUNTID = a.casaAccountId,
-                    OPERATINGCASAACCOUNTID = a.operatingCasaAccountId,
-                    REPAYMENTTERMS = a.repaymentTerm,
-                    CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
-                    CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
-                    CRMSFUNDINGSOURCECATEGORY = a.crmsFundingSourceCategory,
-                    CRMS_ECCI_NUMBER = a.crms_ECCI_Number,
-                    FIELD1 = a.fieldOne,
-                    FIELD2 = a.fieldTwo,
-                    FIELD3 = a.fieldThree,
-                    PRODUCTPRICEINDEXID = a.productPriceIndexId,
-                    PRODUCTPRICEINDEXRATE = a.productPriceIndexRate,
-                    TENORFREQUENCYTYPEID = a.tenorModeId,
-                    CRMSVALIDATED = false,
-                };
+                EQUITYCASAACCOUNTID = a.equityCasaAccountId,
+                EQUITYAMOUNT = a.equityAmount,
 
-                context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
+                PROPOSEDAMOUNT = a.proposedAmount,
+                PROPOSEDINTERESTRATE = (int)a.proposedInterestRate,
+                PROPOSEDPRODUCTID = a.proposedProductId,
+                PROPOSEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                DELETED = false,
+                SUBSECTORID = a.subSectorId,
+                CREATEDBY = createdBy,
+                DATETIMECREATED = DateTime.Now,
+                LOANPURPOSE = a.loanPurpose,
+                CASAACCOUNTID = a.casaAccountId,
+                OPERATINGCASAACCOUNTID = a.operatingCasaAccountId,
+                REPAYMENTTERMS = a.repaymentTerm,
+                CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
+                CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
+                CRMSFUNDINGSOURCECATEGORY = a.crmsFundingSourceCategory,
+                CRMS_ECCI_NUMBER = a.crms_ECCI_Number,
+                FIELD1 = a.fieldOne,
+                FIELD2 = a.fieldTwo,
+                FIELD3 = a.fieldThree,
+                PRODUCTPRICEINDEXID = a.productPriceIndexId,
+                PRODUCTPRICEINDEXRATE = a.productPriceIndexRate,
+                TENORFREQUENCYTYPEID = a.tenorModeId,
+                CRMSVALIDATED = false,
+            };
 
-                if (a.invoiceDetails.Any() && a.productClassId == (short)ProductClassEnum.InvoiceDiscountingFacility)
-                {
-                    InvoiceDetails(a.invoiceDetails, createdBy, applicationId, a.customerId);
-                }
-                if (a.educationLoan != null && a.productClassId == (short)ProductClassEnum.FirstEdu)
-                {
-                    EducationLoan(a.educationLoan, a.loanApplicationDetailId, createdBy);
-                }
+            var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
+                    && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
+                    && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY);
 
-                if (a.traderLoan != null && a.productClassId == (short)ProductClassEnum.FirstTrader)
+            if (loanExist==true) throw new SecureException("This loan application has already been saved!");
+
+            context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
+
+            if (a.invoiceDetails.Any() && a.productClassId == (short)ProductClassEnum.InvoiceDiscountingFacility)
+            {
+                InvoiceDetails(a.invoiceDetails, createdBy, applicationId, a.customerId);
+            }
+            if (a.educationLoan != null && a.productClassId == (short)ProductClassEnum.FirstEdu)
+            {
+                EducationLoan(a.educationLoan, a.loanApplicationDetailId, createdBy);
+            }
+
+            if (a.traderLoan != null && a.productClassId == (short)ProductClassEnum.FirstTrader)
+            {
+                TradderLoan(a.traderLoan, a.loanApplicationDetailId, createdBy);
+            }
+            if (a.bondDetails != null && a.productClassId == (short)ProductClassEnum.BondAndGuarantees)
+            {
+                BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
+            }
+            if (a.syndicatedLoan != null && a.syndicatedLoan.Count > 0)
+            {
+                SyndicatedDetails(a.syndicatedLoan, a.loanApplicationDetailId, createdBy);
+            }
+            if (a.productFees != null)
+            {
+                if (a.productFees.Count > 0)
                 {
-                    TradderLoan(a.traderLoan, a.loanApplicationDetailId, createdBy);
+                    ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
                 }
-                if (a.bondDetails != null && a.productClassId == (short)ProductClassEnum.BondAndGuarantees)
-                {
-                    BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
-                }
-                if (a.syndicatedLoan != null && a.syndicatedLoan.Count > 0)
-                {
-                    SyndicatedDetails(a.syndicatedLoan, a.loanApplicationDetailId, createdBy);
-                }
-                if (a.productFees != null)
-                {
-                    if (a.productFees.Count > 0)
-                    {
-                        ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
-                    }
-                }
-                else
-                {
-                    throw new SecureException("No fee is defined for this product(s)");
-                }
+            }
+            else
+            {
+                throw new SecureException("No fee is defined for this product(s)");
+            }
             // }
 
             response = context.SaveChanges();
+
             if (response > 0) SaveRac(loan.rac, (int)loan.rac.operationId, data.LOANAPPLICATIONDETAILID, loan.createdBy); // todo 99999
         }
 

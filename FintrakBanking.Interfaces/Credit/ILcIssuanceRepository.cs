@@ -13,11 +13,13 @@ namespace FintrakBanking.Interfaces.credit
     public interface ILcIssuanceRepository
     {
         #region LCISSUANCE
+        IEnumerable<LcIssuanceApprovalViewModel> SearchLc(string searchString);
+
         LcIssuanceViewModel GetLcIssuance(int id);
 
         IEnumerable<LcIssuanceViewModel> GetLcIssuances();
 
-        IEnumerable<LoanApplicationViewModel> GetIFFLinesForLCByCustomerId(int CustomerId);
+        IEnumerable<CamProcessedLoanViewModel> GetIFFLinesForLCByCustomerId(int CustomerId, int companyId, int staffId, int branchId);
 
         IEnumerable<LcIssuanceViewModel> GetLcIssuancesForRelease();
 

@@ -9,6 +9,8 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
+    [Authorize]
+    [RoutePrefix("api/test")]
     public class TestCollateralController : ApiController
     {
         private ITestCollateralRepository _testCollateralRepo;

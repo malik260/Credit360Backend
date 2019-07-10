@@ -52,7 +52,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if (recordExist)
                 throw new ConditionNotMetException("This operation has already been initiated and is approval pending");
 
-            if (admin.IsSuperAdmin(model.createdBy) == true)
+            if (admin.IsSuperAdmin(model.staffId) == true)
             {
                 var entity = new TBL_APPROVAL_GROUP_MAPPING
                 {
@@ -167,7 +167,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             if (data == null)
                 return false;
-            if (admin.IsSuperAdmin(model.createdBy) == true)
+            if (admin.IsSuperAdmin(model.staffId) == true)
             {
                 //data.DELETEDBY = model.createdBy;
                 //data.DATETIMEDELETED = generalSetup.GetApplicationDate();
@@ -394,8 +394,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 //end of Audit section -------------------------------
             }
 
-
-            return this.context.SaveChanges() > 0;
+            try
+            {
+                return this.context.SaveChanges() > 0;
+            }catch(Exception ex)
+            {
+                return false;
+            }
         }
 
         public int GoForApproval(ApprovalGroupMappingViewModel model)

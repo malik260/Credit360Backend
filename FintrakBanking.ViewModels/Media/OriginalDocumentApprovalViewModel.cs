@@ -30,5 +30,8 @@ namespace FintrakBanking.ViewModels.Media
         public object relationshipManagerName { get; set; }
         public int operationId { get; set; }
         public string comment { get; set; }
+        public DateTime? approvalDate { get; set; }
+        public bool atInitiator { get; set; }
+        public string createdByName { get; set; }
     }
 }

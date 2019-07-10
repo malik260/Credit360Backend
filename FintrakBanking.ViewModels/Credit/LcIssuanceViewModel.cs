@@ -39,7 +39,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public int currencyId { get; set; }
 
-        public int proformaInvoiceId { get; set; }
+        public string proformaInvoiceId { get; set; }
 
         public decimal availableAmount { get; set; }
 
@@ -50,6 +50,26 @@ namespace FintrakBanking.ViewModels.credit
         public DateTime invoiceDate { get; set; }
 
         public DateTime invoiceDueDate { get; set; }
+
+        public int? totalApprovedAmountCurrencyId { get; set; }
+
+        public int? availableAmountCurrencyId { get; set; }
+
+        public bool? cashBuildUpAvailable { get; set; }
+
+        public string cashBuildUpReferenceType { get; set; }
+
+        public string cashBuildUpReferenceNumber { get; set; }
+
+        public int? percentageToCover { get; set; }
+
+        //ussance
+        public int lcUssanceId { get; set; }
+        public decimal ussanceAmount { get; set; }
+        public int ussanceRate { get; set; }
+        public int ussanceTenor { get; set; }
+        public DateTime lcEffectiveDate { get; set; }
+        public DateTime lcMaturityDate { get; set; }
 
         #endregion LCISSUANCE
     }
@@ -142,7 +162,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public int currencyId { get; set; }
 
-        public int proformaInvoiceId { get; set; }
+        public string proformaInvoiceId { get; set; }
 
         public decimal availableAmount { get; set; }
 
@@ -154,9 +174,15 @@ namespace FintrakBanking.ViewModels.credit
 
         public DateTime invoiceDueDate { get; set; }
 
+        public DateTime arrivalDate { get; set; }
+
         public string customerName { get; set; }
 
-        public short approvalStatusId { get; set; }
+        public string customerCode { get; set; }
+
+        public short? approvalStatusId { get; set; }
+
+        public string approvalStatus { get; set; }
 
         public int? currentApprovalStateId { get; set; }
 
@@ -170,10 +196,49 @@ namespace FintrakBanking.ViewModels.credit
 
         public int? toStaffId { get; set; }
 
+        public string responsiblePerson { get; set; }
+
         public int? currentApprovalLevelTypeId { get; set; }
 
         public int? applicationStatusId { get; set; }
 
+        public short lcIssuanceStatusId { get; set; }
+
+        public string applicationStatus { get; set; }
+
         public int? operationId { get; set; }
+
+
+        public int? totalApprovedAmountCurrencyId { get; set; }
+
+        public int? availableAmountCurrencyId { get; set; }
+
+        public bool? cashBuildUpAvailable { get; set; }
+
+        public string cashBuildUpReferenceType { get; set; }
+
+        public string cashBuildUpReferenceNumber { get; set; }
+
+        public int? percentageToCover { get; set; }
+
+        //ussance
+        public int lcUssanceId { get; set; }
+        public decimal ussanceAmount { get; set; }
+        public int ussanceRate { get; set; }
+        public int ussanceTenor { get; set; }
+        public DateTime lcEffectiveDate { get; set; }
+        public DateTime lcMaturityDate { get; set; }
+    }
+
+    public class LcUssanceViewModel : GeneralEntity
+    {
+        //ussance
+        public int lcIssuanceId { get; set; }
+        public int lcUssanceId { get; set; }
+        public decimal ussanceAmount { get; set; }
+        public int? ussanceRate { get; set; }
+        public int? ussanceTenor { get; set; }
+        public DateTime? lcEffectiveDate { get; set; }
+        public DateTime? lcMaturityDate { get; set; }
     }
 }

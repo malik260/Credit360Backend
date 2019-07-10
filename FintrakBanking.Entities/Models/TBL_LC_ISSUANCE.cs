@@ -14,6 +14,8 @@ namespace FintrakBanking.Entities.Models
             TBL_LC_DOCUMENT = new HashSet<TBL_LC_DOCUMENT>();
             TBL_LC_CONDITION = new HashSet<TBL_LC_CONDITION>();
             TBL_LC_SHIPPING = new HashSet<TBL_LC_SHIPPING>();
+            TBL_LC_USSANCE = new HashSet<TBL_LC_USSANCE>();
+
         }
 
         [Key]
@@ -53,7 +55,7 @@ namespace FintrakBanking.Entities.Models
 
         public int CURRENCYID { get; set; }
 
-        public int PROFORMAINVOICEID { get; set; }
+        public string PROFORMAINVOICEID { get; set; }
 
         public decimal AVAILABLEAMOUNT { get; set; }
 
@@ -83,11 +85,19 @@ namespace FintrakBanking.Entities.Models
 
         public bool? APPROVED { get; set; }
 
-        public int APPROVALSTATUSID { get; set; }
+        public int? APPROVALSTATUSID { get; set; }
 
-        public short APPLICATIONSTATUSID { get; set; }
+        public short? LCUSSANCESTATUSID { get; set; }
+
+        public short? LCUSSANCEAPPROVALSTATUSID { get; set; }
+
+        public short? APPLICATIONSTATUSID { get; set; }
 
         public int? FINALAPPROVAL_LEVELID { get; set; }
+
+        public int? LCUSSANCEFINALAPPROVAL_LEVELID { get; set; }
+
+        public DateTime? LCUSSANCEAPPROVEDDATE { get; set; }
 
         public DateTime? DATEACTEDON { get; set; }
 
@@ -95,11 +105,30 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? APPROVEDDATE { get; set; }
 
+
+        public int? TOTALAPPROVEDAMOUNTCURRENCYID { get; set; }
+
+        public int? AVAILABLEAMOUNTCURRENCYID { get; set; }
+
+        public bool? CASHBUILDUPAVAILABLE { get; set; }
+
+        public string CASHBUILDUPREFERENCETYPE { get; set; }
+
+        public string CASHBUILDUPREFERENCENUMBER { get; set; }
+
+        public int? PERCENTAGETOCOVER { get; set; }
+
+
+        public int? OPERATIONID { get; set; }
+
         public virtual ICollection<TBL_LC_DOCUMENT> TBL_LC_DOCUMENT { get; set; }
 
         public virtual ICollection<TBL_LC_CONDITION> TBL_LC_CONDITION { get; set; }
 
         public virtual ICollection<TBL_LC_SHIPPING> TBL_LC_SHIPPING { get; set; }
+
+        public virtual ICollection<TBL_LC_USSANCE> TBL_LC_USSANCE { get; set; }
+
 
     }
 }

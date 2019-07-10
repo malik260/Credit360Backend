@@ -30,5 +30,7 @@ namespace FintrakBanking.Interfaces.Media
        bool SubmitApproval(OriginalDocumentApprovalViewModel entity);
 
         IEnumerable<OriginalDocumentApprovalViewModel> SearchForApprovedOriginalDocument(string searchString);
+
+        List<OriginalDocumentApprovalViewModel> GetOriginalDocument(int id);
     }
 }

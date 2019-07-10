@@ -146,6 +146,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool REQUIRECOLLATERAL { get; set; }
 
+        [StringLength(2000)]
         public string COLLATERALDETAIL { get; set; }
 
         public int? CAPREGIONID { get; set; }

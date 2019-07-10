@@ -105,5 +105,7 @@ namespace FintrakBanking.Interfaces.Reports
         string Form3800BApprovedFacility(DateRange dateRange);
 
         string GetOutPutDocument(int loanApplicationId);
+
+        string SubmissionOfOriginalDocument(DateRange dateRange);
     }
 }

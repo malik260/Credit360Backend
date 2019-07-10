@@ -47,7 +47,7 @@ namespace FintrakBanking.Common.Enum
         LoanBookingFeeDeferral = 36,
         OfferLetterApproval = 37, // MIGHT NOT BE USED
         LoanAvailment = 38,
-        LoanTrancheBookingRequest = 39,
+        CorporateDrawdownRequest = 39,
         LoanBookingFeeOveride = 40,
         BondsAndGuarantees = OfferLetterApproval,
         ChecklistApproval = 42,
@@ -105,7 +105,7 @@ namespace FintrakBanking.Common.Enum
         MaturityInstruction = 95,
         ContingentLiabilityTenorExtension = 96,
         ContingentLiabilityAmountReduction = 97,
-        LoanBookingRequest = 98,
+        IndividualDrawdownRequest = 98,
         ManualFeeCharge = 99,
         GlobalInterestRateChange=100,
         CustomerGroupMapping = 101,
@@ -128,6 +128,8 @@ namespace FintrakBanking.Common.Enum
         AtcReleaseApproval = 137,
         AtcLodgementApproval = 136,
         lcReleaseOfShippingDocuments = 138,
-
+        ProjectSiteReportApproval = 139,
+        lcUssance = 140,
+        CreditCardDrawdownRequest = 141,
     }
 }

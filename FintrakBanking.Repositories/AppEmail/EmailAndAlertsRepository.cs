@@ -714,7 +714,7 @@ namespace FintrakBanking.Repositories.AppEmail
                             lastValuationDate = f.LASTVALUATIONDATE,
                             collateralValue = a.COLLATERALVALUE,
                             valuationCycle = a.VALUATIONCYCLE,
-                            insuranceCompany = p.INSURANCECOMPANYNAME,
+                          //  insuranceCompany = p.INSURANCECOMPANYNAME,
                             startDate = p.STARTDATE,
                             endDate = p.ENDDATE
 

@@ -222,7 +222,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IContingentLoanUsageRepository>().To<ContingentLoanUsageRepository>();
             kernel.Bind<IOverRideRepository>().To<OverRideRepository>();
             kernel.Bind<IStaffAccountHistoryRepository>().To<StaffAccountHistoryRepository>();
-            kernel.Bind<IIntegrationWithFinacle>().To<IntegrationWithFinacle>();
+            kernel.Bind<IIntegrationWithFinacle>().To<IntegrationWithFlexcube>();
             kernel.Bind<ILoanPerformanceRepository>().To<LoanPerformanceRepository>();
             kernel.Bind<IOverDraftValidation>().To<OverDraftValidation>();
             kernel.Bind<ICustomChartOfAccountRepository>().To<CustomChartOfAccountRepository>();
@@ -262,6 +262,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IAtcLodgmentRepository>().To<AtcLodgmentRepository>();
             kernel.Bind<IAtcLodgmentDetailRepository>().To<AtcLodgmentDetailRepository>();
             kernel.Bind<IProjectSiteReportRepository>().To<ProjectSiteReportRepository>();
+            kernel.Bind<ILcUssanceRepository>().To<LcUssanceRepository>();
 
         }
 

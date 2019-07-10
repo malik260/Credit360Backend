@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.Risk;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Risk;
+using FintrakBanking.ViewModels.Setups.Approval;
 
 namespace FintrakBanking.Repositories.Risk
 {
@@ -174,7 +175,7 @@ namespace FintrakBanking.Repositories.Risk
                 {
                     racCategoryId = x.RACCATEGORYID,
                     categoryName = x.CATEGORYNAME,
-                })
+                }).OrderBy(o=>o.categoryName)
                 .ToList();
         }
 
@@ -305,7 +306,7 @@ namespace FintrakBanking.Repositories.Risk
                     controlAmount = x.CONTROLAMOUNT,
                     controlOptionId = x.CONTROLOPTIONID,
                     controlOption = context.TBL_RAC_OPTION_ITEM.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.LABEL).FirstOrDefault()
-                })
+                }).OrderBy(o => o.racItemName)
                 .ToList();
         }
 
@@ -697,7 +698,7 @@ namespace FintrakBanking.Repositories.Risk
                     racItemId = x.RACITEMID,
                     criteria = x.CRITERIA,
                     description = x.DESCRIPTION,
-                })
+                }).OrderBy(o=>o.criteria)
                 .ToList();
         }
 
@@ -711,6 +712,23 @@ namespace FintrakBanking.Repositories.Risk
                 criteria = entity.CRITERIA,
                 description = entity.DESCRIPTION,
             };
+        }
+
+        public IEnumerable<RacItemViewModel> GetRacItem(string searchQuery)
+        {
+            if (searchQuery!=null)
+                searchQuery = searchQuery.ToUpper();
+
+            var entity = (from x in context.TBL_RAC_ITEM
+                          where x.DELETED==false && x.CRITERIA.Contains(searchQuery)
+                          select new RacItemViewModel
+                          {
+                              racItemId = x.RACITEMID,
+                              criteria = x.CRITERIA,
+                              description = x.DESCRIPTION,
+                          });
+
+            return entity.ToList();
         }
 
         public bool AddRacItem(RacItemViewModel model)
@@ -1044,8 +1062,21 @@ namespace FintrakBanking.Repositories.Risk
                 })
                 .ToList();
         }
+        public IEnumerable<ApprovalLevelViewModel> GetApprovalLevel(int companyId)
+        {
+            var data = (from a in context.TBL_APPROVAL_LEVEL
+                        where a.DELETED == false && a.TBL_APPROVAL_GROUP.COMPANYID == companyId
+                        select new ApprovalLevelViewModel
+                        {
+                            approvalLevelId = a.APPROVALLEVELID,
+                            levelName = a.LEVELNAME,
+                        });
 
+            return data.Distinct().OrderBy(o => o.levelName);
+        }
     }
+
+    
 
 
 }

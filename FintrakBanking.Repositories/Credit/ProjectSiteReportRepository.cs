@@ -42,10 +42,11 @@ namespace FintrakBanking.Repositories.credit
             return (from x in context.TBL_LOAN_APPLICATION
                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                     join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                    where x.APPLICATIONREFERENCENUMBER == searchString
+                    where x.ISPROJECTRELATED == true && (x.APPLICATIONREFERENCENUMBER == searchString
                  || c.FIRSTNAME.ToLower().Contains(searchString.Trim())
                  || c.LASTNAME.ToLower().Contains(searchString.Trim())
-                 || c.MIDDLENAME.ToLower().Contains(searchString.Trim())
+                 || c.MIDDLENAME.ToLower().Contains(searchString.Trim()))
+                 
 
                     select new LoanApplicationViewModel
                     {
@@ -63,7 +64,8 @@ namespace FintrakBanking.Repositories.credit
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                         relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        operationId = (int)OperationsEnum.OriginalDocumentApproval
+                        operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                        isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
                     }).ToList();
         }
 
@@ -84,12 +86,92 @@ namespace FintrakBanking.Repositories.credit
                     nextVisitationDate = x.NEXTVISITATIONDATE,
                     loanApplicationId = x.LOANAPPLICATIONID,
                     projectLocation = x.PROJECTLOCATION,
-                    approvalStatusId = x.APPROVALSTATUSID
-                })
+                    approvalStatusId = x.APPROVALSTATUSID,
+                    approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+
+                }).OrderBy(o=>o.projectSiteReportId)
                 .ToList();
         }
 
-       
+        public bool SubmitApproval(ProjectSiteReportViewModel model)
+        {
+            bool responce = false;
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = model.projectSiteReportId;
+                workflow.Comment = model.comment;
+                workflow.OperationId = (int)OperationsEnum.ProjectSiteReportApproval;
+                workflow.DeferredExecution = true;
+                workflow.LogActivity();
+                try
+                {
+                    if (workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var document = context.TBL_PSR_PROJECT_SITE_REPORT.Where(o => o.PROJECTSITEREPORTID == model.projectSiteReportId).FirstOrDefault();
+                        if (document != null)
+                        {
+                            document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        }
+
+                    }
+
+                    responce = context.SaveChanges() > 0;
+                    transaction.Commit();
+
+                    return responce;
+                }
+                catch (Exception ex)
+                {
+
+                    transaction.Rollback();
+
+
+                    throw ex;
+                }
+                //return false;
+            }
+        }
+
+        public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReportApprovals(int staffId)
+        {
+            var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ProjectSiteReportApproval).ToList();
+
+            return (from x in context.TBL_PSR_PROJECT_SITE_REPORT
+                    join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                    join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                   join atrail in context.TBL_APPROVAL_TRAIL on x.PROJECTSITEREPORTID equals atrail.TARGETID
+                   where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                    && atrail.RESPONSESTAFFID == null
+                    && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                    && atrail.OPERATIONID == (int)OperationsEnum.ProjectSiteReportApproval
+                   select new ProjectSiteReportViewModel
+                   {
+                        appplicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
+                        customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                       projectSiteReportId = x.PROJECTSITEREPORTID,
+                       psrReportTypeId = x.PSRREPORTTYPEID,
+                       clientName = x.CLIENTNAME,
+                       contractorName = x.CONTRACTORNAME,
+                       consultantName = x.CONSULTANTNAME,
+                       projectAmount = x.PROJECTAMOUNT,
+                       projectDescription = x.PROJECTDESCRIPTION,
+                       commencementDate = x.COMMENCEMENTDATE,
+                       completionDate = x.COMPLETIONDATE,
+                       nextVisitationDate = x.NEXTVISITATIONDATE,
+                       loanApplicationId = x.LOANAPPLICATIONID,
+                       projectLocation = x.PROJECTLOCATION,
+                       approvalStatusId = x.APPROVALSTATUSID,
+                       operationId = atrail.OPERATIONID,
+
+                       approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+
+                   }).OrderBy(o => o.projectSiteReportId)
+                .ToList();
+        }
 
         public bool AddProjectSiteReport(ProjectSiteReportViewModel model)
         {
@@ -112,7 +194,20 @@ namespace FintrakBanking.Repositories.credit
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing
             };
 
-            context.TBL_PSR_PROJECT_SITE_REPORT.Add(entity);
+          var id =  context.TBL_PSR_PROJECT_SITE_REPORT.Add(entity);
+
+            if (context.SaveChanges() > 0)
+            {
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = id.PROJECTSITEREPORTID;
+                workflow.Comment = "Request for Project Site Report approval";
+                workflow.OperationId = (int)OperationsEnum.ProjectSiteReportApproval;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+            }
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -216,7 +311,7 @@ namespace FintrakBanking.Repositories.credit
                 .ToList();
         }
 
-        
+
         public bool AddPsrRecommendation(PsrRecommendationViewModel model)
         {
             var entity = new TBL_PSR_RECOMMENDATION
@@ -282,35 +377,91 @@ namespace FintrakBanking.Repositories.credit
                 .Select(x => new PsrPerformanceEvaluationViewModel
                 {
                     psrPerformanceEvaluationId = x.PSRPERFORMANCEEVALUATIONID,
-                    grossAmount = x.GROSSAMOUNT,
-                    amountReceived = x.AMOUNTRECEIVED,
+                    apgIssued = x.APGISSUED,
+                    disbursedTodate = x.DISBURSEDTODATE,
+                    initialProjectSum = x.INITIALPROJECTSUM,
+                    paymentToDate = x.PAYMENTTODATE,
+                    pmuAssessed = x.PMUASSESSED,
+                    projectSum = x.PROJECTSUM,
                     progressPayment = x.PROGRESSPAYMENT,
-                    certifiedValueWorkDone = x.CERTIFIEDVALUEWORKDONE,
-                    managementUnitValueWorkDone = x.MANAGEMENTUNITVALUEWORKDONE,
-                    consultantValueWorkDone = x.CONSULTANTVALUEWORKDONE,
+                    vowdToDate = x.VOWDTODATE,
+                    amortisedApg = x.AMORTISEDAPG,
                     costVariation = x.COSTVARIATION,
+                    certifiedVowd = x.CERTIFIEDVOWD,
                     timeVariation = x.TIMEVARIATION,
-                    projectSiteReportId = x.PROJECTSITEREPORTID
-                })
+                    consoltantVowd = x.CONSULTANTVOWD,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    amountReceived = x.AMOUNTRECEIVED,
+                    psrReportTypeId = x.PSRREPORTTYPEID,
+                    approvalStatusId = x.APPROVALSTATUSID,
+                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o=>o.PSRREPORTTYPEID== x.PROJECTSITEREPORTID).Select(o=>o.REPORTTYPENAME).FirstOrDefault(),
+                }).OrderBy(o => o.psrPerformanceEvaluationId)
                 .ToList();
+        }
+        public bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id)
+        {
+            var entity = this.context.TBL_PSR_PERFORMANCE_EVALUATION.Find(id);
+            entity.APGISSUED = model.apgIssued;
+            entity.DISBURSEDTODATE = model.disbursedTodate;
+            entity.INITIALPROJECTSUM = model.initialProjectSum;
+            entity.PAYMENTTODATE = model.paymentToDate;
+            entity.PMUASSESSED = model.pmuAssessed;
+            entity.PROJECTSUM = model.projectSum;
+            entity.VOWDTODATE = model.vowdToDate;
+            entity.COSTVARIATION = model.costVariation;
+            entity.TIMEVARIATION = model.timeVariation;
+            entity.CONSULTANTVOWD = model.consoltantVowd;
+            entity.PROGRESSPAYMENT = model.progressPayment;
+            entity.CREATEDBY = model.createdBy;
+            entity.AMORTISEDAPG = model.amortisedApg;
+            entity.AMOUNTRECEIVED = model.amountReceived;
+            entity.CERTIFIEDVOWD = model.certifiedVowd;
+
+            entity.LASTUPDATEDBY = model.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrPerformanceEvaluationUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.BranchId,
+                DETAIL = $"TBL_Psr Performance Evaluation '{entity.PSRPERFORMANCEEVALUATIONID}' was updated by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRPERFORMANCEEVALUATIONID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
         }
 
         public bool AddPsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model)
         {
             var entity = new TBL_PSR_PERFORMANCE_EVALUATION
             {
-                GROSSAMOUNT = model.grossAmount,
-                AMOUNTRECEIVED = model.amountReceived,
-                PROGRESSPAYMENT = model.progressPayment,
-                CERTIFIEDVALUEWORKDONE = model.certifiedValueWorkDone,
-                MANAGEMENTUNITVALUEWORKDONE = model.managementUnitValueWorkDone,
-                CONSULTANTVALUEWORKDONE = model.consultantValueWorkDone,
+                APGISSUED = model.apgIssued,
+                DISBURSEDTODATE = model.disbursedTodate,
+                INITIALPROJECTSUM = model.initialProjectSum,
+                PAYMENTTODATE = model.paymentToDate,
+                PMUASSESSED = model.pmuAssessed,
+                PROJECTSUM = model.projectSum,
+                VOWDTODATE = model.vowdToDate,
                 COSTVARIATION = model.costVariation,
                 TIMEVARIATION = model.timeVariation,
-                // COMPANYID = model.companyId,
+                CONSULTANTVOWD = model.consoltantVowd,
+                PROGRESSPAYMENT = model.progressPayment,
                 CREATEDBY = model.createdBy,
+                AMORTISEDAPG = model.amortisedApg,
+                AMOUNTRECEIVED = model.amountReceived,
+                CERTIFIEDVOWD = model.certifiedVowd,
                 DATETIMECREATED = general.GetApplicationDate(),
-                PROJECTSITEREPORTID = model.projectSiteReportId
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                PROJECTSITEREPORTID = model.projectSiteReportId,
+                PSRREPORTTYPEID = model.psrReportTypeId
             };
 
             context.TBL_PSR_PERFORMANCE_EVALUATION.Add(entity);
@@ -435,7 +586,7 @@ namespace FintrakBanking.Repositories.credit
 
         #region
 
-        public IEnumerable<PsrNextInspectionTaskViewModel> GetPsrNextInspectionTasks( int id)
+        public IEnumerable<PsrNextInspectionTaskViewModel> GetPsrNextInspectionTasks(int id)
         {
             return context.TBL_PSR_NEXT_INSPECTION_TASK.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
                 .Select(x => new PsrNextInspectionTaskViewModel
@@ -443,12 +594,12 @@ namespace FintrakBanking.Repositories.credit
                     psrNextInspectionTaskId = x.PSRNEXTINSPECTIONTASKID,
                     comment = x.COMMENTS,
                     isDone = x.ISDONE,
-                    nextInspectionDate =  x.NEXTINSPECTIONDATE,
+                    nextInspectionDate = x.NEXTINSPECTIONDATE,
                     projectSiteReportId = x.PROJECTSITEREPORTID,
                 })
                 .ToList();
         }
-        
+
         public bool AddPsrNextInspectionTask(PsrNextInspectionTaskViewModel model)
         {
             var entity = new TBL_PSR_NEXT_INSPECTION_TASK
@@ -582,5 +733,5 @@ namespace FintrakBanking.Repositories.credit
     }
 }
 
-           // kernel.Bind<IProjectSiteReportRepository>().To<ProjectSiteReportRepository>();
-           // ProjectSiteReportAdded = ???, ProjectSiteReportUpdated = ???, ProjectSiteReportDeleted = ???,
+// kernel.Bind<IProjectSiteReportRepository>().To<ProjectSiteReportRepository>();
+// ProjectSiteReportAdded = ???, ProjectSiteReportUpdated = ???, ProjectSiteReportDeleted = ???,

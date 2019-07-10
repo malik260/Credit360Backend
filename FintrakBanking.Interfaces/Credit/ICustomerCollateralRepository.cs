@@ -132,5 +132,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CollateralUsageStatus> GetCollateralUsageStatus();
 
+        IEnumerable<InsurancePolicies> GetInsuranceCompany();
+
+        IEnumerable<InsurancePolicies> GetInsuranceType();
+
     }
 }

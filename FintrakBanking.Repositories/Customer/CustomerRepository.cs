@@ -2093,7 +2093,8 @@ namespace FintrakBanking.Repositories.Customer
                            taxNumber = a.TAXNUMBER,
                            riskRatingId = a.RISKRATINGID,
                            //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                           customerBVN = a.CUSTOMERBVN
+                           customerBVN = a.CUSTOMERBVN,
+                           isProspect = a.ISPROSPECT
                        };
 
             var cust = data.FirstOrDefault();
@@ -4165,7 +4166,8 @@ namespace FintrakBanking.Repositories.Customer
                     where
                         (c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
                          c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
-                        && a.APPROVALCOMPLETED == false
+                        && a.APPROVALCOMPLETED == false 
+                        && a.CREATEDBY == staffId
                         && c.RESPONSESTAFFID == null
                         && c.OPERATIONID == (int)OperationsEnum.CustomerInformationApproval
                         && ids.Contains((int)c.TOAPPROVALLEVELID)

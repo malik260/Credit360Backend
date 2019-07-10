@@ -63,6 +63,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? productClassId { get; set; }
         public int? productId { get; set; }
         public int receiverLevelId { get; set; }
+        public int toStaffId { get; set; }
         public int? receiverStaffId { get; set; }
         public int? trailId { get; set; }
         public decimal amount { get; set; }
