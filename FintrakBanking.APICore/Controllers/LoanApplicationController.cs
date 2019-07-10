@@ -456,8 +456,10 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var responseMessage = string.Empty;
-                var response = repo.SubmitLoanApplicationForCam(loan.applicationId, token.GetStaffId, loan.checkListIndex);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+                var feed = repo.SubmitLoanApplicationForCam(loan.applicationId, token.GetStaffId, loan.checkListIndex);
+                var response = (feed == 1 || feed == 2) ? true : false;
+                var jumptoDrawdown = feed == 2;
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, jumptoDrawdown= jumptoDrawdown, count = 1 });
             }
             catch (SecureException ex)
             {

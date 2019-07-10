@@ -337,6 +337,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_OTHER_OPERATION_ACCOUNT> TBL_OTHER_OPERATION_ACCOUNT { get; set; }
         public virtual DbSet<TBL_PRODUCT> TBL_PRODUCT { get; set; }
         public virtual DbSet<TBL_PRODUCT_BEHAVIOUR> TBL_PRODUCT_BEHAVIOUR { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATN_FLOW_CHANGE> TBL_LOAN_APPLICATN_FLOW_CHANGE { get; set; }
+        
         public virtual DbSet<TBL_PRODUCT_CATEGORY> TBL_PRODUCT_CATEGORY { get; set; }
         public virtual DbSet<TBL_PRODUCT_CHARGE_FEE> TBL_PRODUCT_CHARGE_FEE { get; set; }
         public virtual DbSet<TBL_PRODUCT_CLASS> TBL_PRODUCT_CLASS { get; set; }
