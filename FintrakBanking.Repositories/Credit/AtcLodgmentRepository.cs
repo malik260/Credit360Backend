@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                    })
+                    }).OrderBy(o=>o.atcLodgmentId)
              .ToList();
         }
 
@@ -73,6 +73,7 @@ namespace FintrakBanking.Repositories.credit
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ATCLODGMENTID equals atrail.TARGETID
                     where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
+                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval
                     select new AtcLodgmentViewModel
                     {
@@ -93,7 +94,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                    })
+                    }).OrderBy(o => o.atcLodgmentId)
              .ToList();
         }
 
@@ -107,6 +108,7 @@ namespace FintrakBanking.Repositories.credit
                     join atrail in context.TBL_APPROVAL_TRAIL on r.ATCRELEASEID equals atrail.TARGETID
                     where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
+                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
                     select new AtcLodgmentViewModel
                     {
@@ -129,7 +131,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                    })
+                    }).OrderBy(o => o.atcReleaseId)
              .ToList();
         }
 
@@ -141,11 +143,11 @@ namespace FintrakBanking.Repositories.credit
             {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = (short)model.approvalStatusId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = model.atcReleaseId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
-                workflow.DeferredExecution = true;
+                workflow.DeferredExecution = false;
                 workflow.LogActivity();
                 try
                 {
@@ -179,15 +181,14 @@ namespace FintrakBanking.Repositories.credit
         public bool SubmitLodgementApproval(AtcLodgmentViewModel model)
         {
             bool responce = false;
-            try
-            {
+
                 using (var transaction = context.Database.BeginTransaction())
                 {
                     workflow.StaffId = model.createdBy;
                     workflow.CompanyId = model.companyId;
-                    workflow.StatusId = (short)model.approvalStatusId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                     workflow.TargetId = model.atcLodgmentId;
-                    workflow.Comment = model.comment;
+                    workflow.Comment =model.comment;
                     workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
                     workflow.DeferredExecution = true;
                     workflow.LogActivity();
@@ -214,11 +215,10 @@ namespace FintrakBanking.Repositories.credit
                         transaction.Rollback();
 
 
-                        throw ex;
+                        throw new SecureException(ex.Message);
                     }
                     //return false;
                 }
-            }catch(Exception ex) { return false; }
             
         }
 
@@ -359,7 +359,7 @@ namespace FintrakBanking.Repositories.credit
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = id.ATCLODGMENTID;
-                workflow.Comment = "Request for ATC Release approval";
+                workflow.Comment = "Request for ATC Lodgement approval";
                 workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
                 workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                 workflow.ExternalInitialization = true;
@@ -493,7 +493,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                    })
+                    }).OrderBy(o=>o.atcLodgmentId)
              .ToList();
         }
 
@@ -508,19 +508,18 @@ namespace FintrakBanking.Repositories.credit
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.AtcTypeAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"ATC Type '{entity.ACTTYPENAME}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            });
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.AtcTypeAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"ATC Type '{entity.ACTTYPENAME}' created by {auditStaff}",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //});
             // Audit Section end ------------------------
-
             return context.SaveChanges() != 0;
         }
 

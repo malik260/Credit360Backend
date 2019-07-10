@@ -75,7 +75,7 @@ namespace FintrakBanking.Repositories.credit
             return null;
         }
 
-        public IEnumerable<LcIssuanceViewModel> GetLcUssanceForLcIssuance()
+        public IEnumerable<LcIssuanceViewModel> GetLcIssuancesForUssance()
         {
             var lcs = (from x in context.TBL_LC_ISSUANCE where
                         (x.DELETED == false && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted)
@@ -228,6 +228,7 @@ namespace FintrakBanking.Repositories.credit
                               where
                                 a.DELETED == false
                                 && a.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
+                                && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                               select a).ToList();
 
             var querytest2 = (from b in context.TBL_APPROVAL_TRAIL

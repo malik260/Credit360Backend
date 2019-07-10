@@ -80,6 +80,7 @@
     <Compile Include="CASA\IOverRideRepository.cs" />
     <Compile Include="Credit\IAtcLodgmentDetailRepository.cs" />
     <Compile Include="Credit\IAtcLodgmentRepository.cs" />
+    <Compile Include="Credit\ICollateralValuationRepository.cs" />
     <Compile Include="Credit\IDeferredFeeRepository.cs" />
     <Compile Include="Credit\ILcConditionRepository.cs" />
     <Compile Include="Credit\ILcDocumentRepository.cs" />
@@ -87,6 +88,9 @@
     <Compile Include="Credit\ILcShippingRepository.cs" />
     <Compile Include="Credit\ILcUssanceRepository.cs" />
     <Compile Include="Credit\IProjectSiteReportRepository.cs" />
+    <Compile Include="Credit\ITestCollateralRepository.cs" />
+    <Compile Include="Credit\IValuationReportRepository.cs" />
+    <Compile Include="Credit\IValuationRequestTypeRepository.cs" />
     <Compile Include="Media\IDocumentCategoryRepository.cs" />
     <Compile Include="Media\IDocumentCategoryTypeRepository.cs" />
     <Compile Include="Media\IDocumentTypeRepository.cs" />

@@ -148,6 +148,8 @@
     <Compile Include="Credit\TotalFacilitiesSummaryViewModel.cs" />
     <Compile Include="Credit\UnearnedLoanInterestReport.cs" />
     <Compile Include="Credit\UserCurrencyViewFilter.cs" />
+    <Compile Include="Credit\ValuationReportViewModel.cs" />
+    <Compile Include="Credit\ValuationRequestTypeViewModel.cs" />
     <Compile Include="Credit\WeeklyRecoveryReportFINCON.cs" />
     <Compile Include="CRMS\CRMSCodeBookViewModel.cs" />
     <Compile Include="CustomerKYCITemViewModel.cs" />

@@ -352,6 +352,26 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("item-search")]
+        public HttpResponseMessage GetRacItemSearch(string searchQuery)
+        {
+           IEnumerable< RacItemViewModel> response = repo.GetRacItem(searchQuery);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approval-level")]
+        public HttpResponseMessage GetApprovalLevel()
+        {
+            IEnumerable<ApprovalLevelViewModel> response = repo.GetApprovalLevel(token.GetCompanyId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("item")]

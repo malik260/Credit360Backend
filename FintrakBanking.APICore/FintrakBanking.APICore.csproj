@@ -337,6 +337,7 @@
     <Compile Include="Controllers\AtcLodgmentController.cs" />
     <Compile Include="Controllers\AtcLodgmentDetailController.cs" />
     <Compile Include="Controllers\BusinessRuleController.cs" />
+    <Compile Include="Controllers\CollateralValuationController.cs" />
     <Compile Include="Controllers\DeferredFeeController.cs" />
     <Compile Include="Controllers\DocumentCategoryController.cs" />
     <Compile Include="Controllers\DocumentCategoryTypeController.cs" />
@@ -423,6 +424,7 @@
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TermSheetController.cs" />
+    <Compile Include="Controllers\TestCollateralController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Filters\AdministratorLockoutFilter.cs" />
     <Compile Include="Filters\AuthorizeActivity.cs" />

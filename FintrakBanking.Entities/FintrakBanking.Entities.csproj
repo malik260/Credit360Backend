@@ -98,6 +98,7 @@
     <Compile Include="DocumentModels\TBL_DOCUMENT_TYPE.cs" />
     <Compile Include="DocumentModels\TBL_DOCUMENT_USAGE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_USAGE_STATUS.cs" />
+    <Compile Include="Models\TBL_COLLATERAL_VALUATION.cs" />
     <Compile Include="Models\TBL_CONDITIONAL_OPERATOR.cs" />
     <Compile Include="Models\TBL_CORR_ASSESSMENT_PARAMETER.cs" />
     <Compile Include="Models\TBL_CORR_KEY_INDICATOR.cs" />
@@ -106,6 +107,8 @@
     <Compile Include="Models\TBL_CORR_OFFICER_RATING_DETAIL.cs" />
     <Compile Include="Models\TBL_CORR_RATING_PERIOD.cs" />
     <Compile Include="Models\TBL_DEFINED_FUNCTION.cs" />
+    <Compile Include="Models\TBL_INSURANCE_COMPANY.cs" />
+    <Compile Include="Models\TBL_INSURANCE_TYPE.cs" />
     <Compile Include="Models\TBL_JOB_SOURCE.cs" />
     <Compile Include="Models\TBL_APPROVAL_BUSINESS_RULE.cs" />
     <Compile Include="Models\TBL_LC_CONDITION.cs" />
@@ -579,6 +582,8 @@
     <Compile Include="Models\TBL_TENOR_MODE.cs" />
     <Compile Include="Models\TBL_TERM_SHEET.cs" />
     <Compile Include="Models\TBL_TRANSACTION_DYNAMICS.cs" />
+    <Compile Include="Models\TBL_VALUATION_REPORT.cs" />
+    <Compile Include="Models\TBL_VALUATION_REQUEST_TYPE.cs" />
     <Compile Include="OracleDatabaseConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLServerModel\DEV_CHECKLIST.cs" />

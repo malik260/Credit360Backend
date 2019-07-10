@@ -134,6 +134,7 @@
     <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="Credit\AtcLodgmentDetailRepository.cs" />
     <Compile Include="Credit\AtcLodgmentRepository.cs" />
+    <Compile Include="Credit\CollateralValuationRepository.cs" />
     <Compile Include="Credit\CreditCommonRepository.cs" />
     <Compile Include="Credit\DashboardRepository.cs" />
     <Compile Include="Credit\DeferredFeeRepository.cs" />
@@ -143,6 +144,9 @@
     <Compile Include="Credit\LcShippingRepository.cs" />
     <Compile Include="Credit\LcUssanceRepository.cs" />
     <Compile Include="Credit\ProjectSiteReportRepository.cs" />
+    <Compile Include="Credit\TestCollateralRepository.cs" />
+    <Compile Include="Credit\ValuationReportRepository.cs" />
+    <Compile Include="Credit\ValuationRequestTypeRepository.cs" />
     <Compile Include="Media\DocumentCategoryRepository.cs" />
     <Compile Include="Media\DocumentCategoryTypeRepository.cs" />
     <Compile Include="Media\DocumentTypeRepository.cs" />

@@ -79,7 +79,7 @@ namespace FintrakBanking.Repositories.credit
                                         approvalStatusId = (short)x.APPROVALSTATUSID,
                                         approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
 
-                                        currentApprovalLevel = y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL.LEVELNAME : "n/a",
+                                        currentApprovalLevel = y.TOAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL.LEVELNAME : "n/a",
                                         approvalTrailId = y.APPROVALTRAILID,
                                         responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
 
@@ -110,6 +110,7 @@ namespace FintrakBanking.Repositories.credit
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceCompleted
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceInProgress
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceInProgress
                                     && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CAMInProgress)
                 .Select(x => new LcIssuanceViewModel
                 {
@@ -155,9 +156,8 @@ namespace FintrakBanking.Repositories.credit
 
             var querytest1 = (from a in context.TBL_LC_ISSUANCE
                               where
-                a.DELETED == false && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                                a.DELETED == false && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress
+                                && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                               select a).ToList();
 
             var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
@@ -171,9 +171,8 @@ namespace FintrakBanking.Repositories.credit
             // query
             var query = (from a in context.TBL_LC_ISSUANCE where
                         (a.DELETED == false 
-                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
-                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                        && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress
+                        && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                          orderby a.LCISSUANCEID
                         join b in context.TBL_APPROVAL_TRAIL on a.LCISSUANCEID equals b.TARGETID where
                         (
@@ -506,7 +505,8 @@ namespace FintrakBanking.Repositories.credit
             var query = (from a in context.TBL_LC_ISSUANCE
                          where
                             (a.DELETED == false
-                            && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress)
+                            && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
+                            && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                          orderby a.LCISSUANCEID
                          join b in context.TBL_APPROVAL_TRAIL on a.LCISSUANCEID equals b.TARGETID
                          where

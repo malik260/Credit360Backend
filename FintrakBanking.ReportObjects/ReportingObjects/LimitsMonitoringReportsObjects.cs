@@ -646,7 +646,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                          lastValuationDate = f.LASTVALUATIONDATE,
                                                          collateralValue = (decimal?)a.COLLATERALVALUE,
                                                          valuationCycle = a.VALUATIONCYCLE,
-                                                         insuranceCompany = p.INSURANCECOMPANYNAME,
+                                                      //   insuranceCompany = p.INSURANCECOMPANYNAME,
                                                          startDate = (DateTime?)p.STARTDATE,
                                                          endDate = (DateTime?)p.ENDDATE,
                                                      }).ToList();

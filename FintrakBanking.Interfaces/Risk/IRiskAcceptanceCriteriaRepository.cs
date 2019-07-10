@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Risk;
+using FintrakBanking.ViewModels.Setups.Approval;
 
 namespace FintrakBanking.Interfaces.Risk
 {
@@ -63,6 +64,8 @@ namespace FintrakBanking.Interfaces.Risk
         bool UpdateRacInputType(RacInputTypeViewModel model, int id, UserInfo user);
 
         bool DeleteRacInputType(int id, UserInfo user);
+
+        IEnumerable<RacItemViewModel> GetRacItem(string searchQuery);
         #endregion
 
         #region RacItemRepository
@@ -106,5 +109,6 @@ namespace FintrakBanking.Interfaces.Risk
 
         IEnumerable<ConditionalOperatorViewModel> GetConditionalOperators();
         IEnumerable<DefinedFunctionViewModel> GetDefinedFunctions();
+        IEnumerable<ApprovalLevelViewModel> GetApprovalLevel(int companyId);
     }
 }

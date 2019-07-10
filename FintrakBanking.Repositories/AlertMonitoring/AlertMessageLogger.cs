@@ -2366,7 +2366,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                          lastValuationDate = f.LASTVALUATIONDATE,
                                                          collateralValue = (decimal?)a.COLLATERALVALUE,
                                                          valuationCycle = a.VALUATIONCYCLE,
-                                                         insuranceCompany = p.INSURANCECOMPANYNAME,
+                                                        // insuranceCompany = p.INSURANCECOMPANYNAME,
                                                          startDate = (DateTime?)p.STARTDATE,
                                                          endDate = (DateTime?)p.ENDDATE,
                                                          notificationDuration = (int)DbFunctions.DiffDays((DateTime?)p.ENDDATE, (DateTime?)currentDate)
@@ -2538,7 +2538,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                          lastValuationDate = f.LASTVALUATIONDATE,
                                                          collateralValue = (decimal?)a.COLLATERALVALUE,
                                                          valuationCycle = a.VALUATIONCYCLE,
-                                                         insuranceCompany = p.INSURANCECOMPANYNAME,
+                                                        // insuranceCompany = p.INSURANCECOMPANYNAME,
                                                          startDate = (DateTime?)p.STARTDATE,
                                                          endDate = (DateTime?)p.ENDDATE,
                                                          notificationDuration = (int)DbFunctions.DiffDays((DateTime?)p.ENDDATE, (DateTime?)currentDate)

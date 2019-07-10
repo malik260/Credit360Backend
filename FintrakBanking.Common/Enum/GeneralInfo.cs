@@ -377,6 +377,8 @@ namespace FintrakBanking.Common.Enum
         PsrCommentDeleted = 443,
         AtcTypeAdded = 444,
         AtcTypeDeleted = 445,
+        CallateralValuationReportAdded = 444,
+        CallateralValuationAdded = 445,
     };
     public enum RegulatoryTypeEnum
     {

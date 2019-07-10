@@ -42,10 +42,11 @@ namespace FintrakBanking.Repositories.credit
             return (from x in context.TBL_LOAN_APPLICATION
                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                     join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                    where x.APPLICATIONREFERENCENUMBER == searchString
+                    where x.ISPROJECTRELATED == true && (x.APPLICATIONREFERENCENUMBER == searchString
                  || c.FIRSTNAME.ToLower().Contains(searchString.Trim())
                  || c.LASTNAME.ToLower().Contains(searchString.Trim())
-                 || c.MIDDLENAME.ToLower().Contains(searchString.Trim())
+                 || c.MIDDLENAME.ToLower().Contains(searchString.Trim()))
+                 
 
                     select new LoanApplicationViewModel
                     {
@@ -63,7 +64,8 @@ namespace FintrakBanking.Repositories.credit
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
                         relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        operationId = (int)OperationsEnum.OriginalDocumentApproval
+                        operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                        isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
                     }).ToList();
         }
 
@@ -87,7 +89,7 @@ namespace FintrakBanking.Repositories.credit
                     approvalStatusId = x.APPROVALSTATUSID,
                     approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
 
-                })
+                }).OrderBy(o=>o.projectSiteReportId)
                 .ToList();
         }
 
@@ -99,7 +101,7 @@ namespace FintrakBanking.Repositories.credit
             {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = (short)model.approvalStatusId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = model.projectSiteReportId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.ProjectSiteReportApproval;
@@ -144,6 +146,7 @@ namespace FintrakBanking.Repositories.credit
                    join atrail in context.TBL_APPROVAL_TRAIL on x.PROJECTSITEREPORTID equals atrail.TARGETID
                    where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                     && atrail.RESPONSESTAFFID == null
+                    && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                     && atrail.OPERATIONID == (int)OperationsEnum.ProjectSiteReportApproval
                    select new ProjectSiteReportViewModel
                    {
@@ -166,7 +169,7 @@ namespace FintrakBanking.Repositories.credit
 
                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
 
-                   })
+                   }).OrderBy(o => o.projectSiteReportId)
                 .ToList();
         }
 
@@ -392,7 +395,7 @@ namespace FintrakBanking.Repositories.credit
                     psrReportTypeId = x.PSRREPORTTYPEID,
                     approvalStatusId = x.APPROVALSTATUSID,
                     psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o=>o.PSRREPORTTYPEID== x.PROJECTSITEREPORTID).Select(o=>o.REPORTTYPENAME).FirstOrDefault(),
-                })
+                }).OrderBy(o => o.psrPerformanceEvaluationId)
                 .ToList();
         }
         public bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id)

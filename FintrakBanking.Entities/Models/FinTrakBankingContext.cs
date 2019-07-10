@@ -40,6 +40,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PSR_OBSERVATION> TBL_PSR_OBSERVATION { get; set; }
         public virtual DbSet<TBL_PSR_PERFORMANCE_EVALUATION> TBL_PSR_PERFORMANCE_EVALUATION { get; set; }
         public virtual DbSet<TBL_PSR_RECOMMENDATION> TBL_PSR_RECOMMENDATION { get; set; }
+        public virtual DbSet<TBL_INSURANCE_TYPE> TBL_INSURANCE_TYPE { get; set; }
+        public virtual DbSet<TBL_INSURANCE_COMPANY> TBL_INSURANCE_COMPANY { get; set; }
 
 
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL_STAFF> TBL_TEMP_APPROVAL_LEVEL_STAFF { get; set; }
@@ -512,6 +514,10 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LC_CONDITION> TBL_LC_CONDITION { get; set; }
 
         public virtual DbSet<TBL_LC_USSANCE> TBL_LC_USSANCE { get; set; }
+
+        public virtual DbSet<TBL_COLLATERAL_VALUATION> TBL_COLLATERAL_VALUATION { get; set; }
+        public virtual DbSet<TBL_VALUATION_REPORT> TBL_VALUATION_REPORT { get; set; }
+        public virtual DbSet<TBL_VALUATION_REQUEST_TYPE> TBL_VALUATION_REQUEST_TYPE { get; set; }
 
 
 
@@ -1934,13 +1940,13 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.POLICYREFERENCENUMBER)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_COLLATERAL_ITEM_POLICY>()
-                .Property(e => e.INSURANCECOMPANYNAME)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_COLLATERAL_ITEM_POLICY>()
+            //    .Property(e => e.INSURANCECOMPANYNAME)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_COLLATERAL_ITEM_POLICY>()
-                .Property(e => e.INSURANCETYPE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_COLLATERAL_ITEM_POLICY>()
+            //    .Property(e => e.INSURANCETYPE)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<TBL_COLLATERAL_ITEM_POLICY>()
                 .Property(e => e.SUMINSURED)
@@ -7966,13 +7972,13 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.POLICYREFERENCENUMBER)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_TEMP_COLLATERAL_ITEM_POLI>()
-                .Property(e => e.INSURANCECOMPANYNAME)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_TEMP_COLLATERAL_ITEM_POLI>()
+            //    .Property(e => e.INSURANCECOMPANYNAME)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_TEMP_COLLATERAL_ITEM_POLI>()
-                .Property(e => e.INSURANCETYPE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_TEMP_COLLATERAL_ITEM_POLI>()
+            //    .Property(e => e.INSURANCETYPE)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<TBL_TEMP_COLLATERAL_ITEM_POLI>()
                 .Property(e => e.SUMINSURED)

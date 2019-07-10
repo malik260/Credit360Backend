@@ -672,7 +672,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                IEnumerable<LcIssuanceViewModel> response = ussanceRepo.GetLcUssanceForLcIssuance();
+                IEnumerable<LcIssuanceViewModel> response = ussanceRepo.GetLcIssuancesForUssance();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (SecureException ex)
