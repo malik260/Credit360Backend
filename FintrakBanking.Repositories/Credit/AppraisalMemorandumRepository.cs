@@ -550,7 +550,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var querytest2 = (from b in context.TBL_APPROVAL_TRAIL where
                      
-                                 (b.OPERATIONID == (int)OperationsEnum.AdhocApproval || b.OPERATIONID == (int)OperationsEnum.InitiationLevelAppraisal)
+                                 b.OPERATIONID == (int)OperationsEnum.AdhocApproval 
                                  && b.APPROVALSTATEID != (int)ApprovalState.Ended
                                  && b.RESPONSESTAFFID == null
                                  && levelIds.Contains((int)b.TOAPPROVALLEVELID)
@@ -569,7 +569,7 @@ namespace FintrakBanking.Repositories.Credit
                          orderby a.LOANAPPLICATIONID
                          join b in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals b.TARGETID where
                      (
-                         (b.OPERATIONID == (int)OperationsEnum.AdhocApproval || b.OPERATIONID == (int)OperationsEnum.InitiationLevelAppraisal)
+                         b.OPERATIONID == (int)OperationsEnum.AdhocApproval 
                          && b.APPROVALSTATEID != (int)ApprovalState.Ended
                          && b.RESPONSESTAFFID == null
                          && levelIds.Contains((int)b.TOAPPROVALLEVELID)
