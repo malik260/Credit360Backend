@@ -376,6 +376,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int premiumPercent { get; set; }
         public int insuranceTypeId { get; set; }
         public int insuranceCompanyId { get; set; }
+        public string prevoiusInsurance { get; set; }
     }
 
     public class crossGarantee

@@ -69,7 +69,7 @@ namespace FintrakBanking.Common.Enum
         LoanSales = 58,
         LoanRecapitilization = 59,
         CollateralApproval = 60,
-        ItemPolicyApproval = 61,
+        IsurancePolicyApproval = 61,
         LoanPerformance = 62,
         CommercialLoanBooking = 63,
         LoanRecovery = 64,

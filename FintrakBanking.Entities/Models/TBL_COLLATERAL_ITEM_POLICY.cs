@@ -54,6 +54,9 @@ namespace FintrakBanking.Entities.Models
 
         public int PREMIUMPERCENT { get; set; }
 
+        public int APPROVALSTATUSID { get; set; }
+
+
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
     }
 }
