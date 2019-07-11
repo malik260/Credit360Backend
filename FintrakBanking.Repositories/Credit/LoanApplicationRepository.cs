@@ -892,6 +892,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             int targetId = 0;
             string str = string.Empty;
+            bool jumpToDrawdown = false;
             bool isCheckListDone = true;
             int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
@@ -1050,7 +1051,9 @@ namespace FintrakBanking.Repositories.Credit
                 //if (requests.Count() > 0) isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
             }
 
-            if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
+            if (PushApplicationToDrawdown(application.APPLICATIONREFERENCENUMBER)) { jumpToDrawdown = true; }
+            
+            if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex) == 1)
             {
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
@@ -1067,6 +1070,7 @@ namespace FintrakBanking.Repositories.Credit
                     isdone = isCheckListDone, // true
                     messageStr = str,
                     checkListIndex = (int)ChecklistErrorEnum.GoodChecklist, // okay
+                    jumpToDrawdown = jumpToDrawdown
                 };
             }
 
@@ -1075,21 +1079,27 @@ namespace FintrakBanking.Repositories.Credit
                 isdone = isCheckListDone,
                 messageStr = str,
                 checkListIndex = checkListIndex,
+                jumpToDrawdown = jumpToDrawdown
             };
 
         }
 
-        public bool SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
+        public short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
         {
+             
+             /* 0 = failed 
+             * 1 = successfully move to appraisal
+             * 2 = successfuly moved to drawdown **/
 
             var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == applicationId).FirstOrDefault();
 
             if (appl.LOANAPPROVEDLIMITID > 0)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
                 workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
                 context.SaveChanges();
-                return true;
+                return 1;
             }
 
             if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
@@ -1101,6 +1111,8 @@ namespace FintrakBanking.Repositories.Credit
 
             int? receiverLevelId = null;
             int operationId;
+            var product = context.TBL_PRODUCT.Find(detail.PROPOSEDPRODUCTID);
+            var productBahaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == detail.PROPOSEDPRODUCTID).FirstOrDefault();
 
             if (appl.ISADHOCAPPLICATION == true)
             {
@@ -1108,12 +1120,20 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.OperationId = operationId;
                 appl.OPERATIONID = (int)OperationsEnum.AdhocApproval;
                 receiverLevelId = GetFirstAdhocReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, false);
-                var test = GetFirstAdhocReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, true);
-                var test2 = GetFirstLevelStaffId((int)receiverLevelId, appl.BRANCHID);
                 workflow.NextLevelId = receiverLevelId;
-                //workflow.ToStaffId = test2;
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
+            }
+            else if (productBahaviour.SKIPFLOWPROCESS)
+            {
+                if (PushApplicationToDrawdown(appl.APPLICATIONREFERENCENUMBER)) { return 2; }
+                else return 0;
+                //workflow.OperationId = (int)OperationsEnum.InitiationLevelAppraisal;
+                //appl.OPERATIONID = (int)OperationsEnum.InitiationLevelAppraisal;
+                //receiverLevelId = GetFirstAdhocReceiverLevel(staffId, (int)OperationsEnum.InitiationLevelAppraisal, appl.PRODUCTCLASSID, false);
+                //workflow.NextLevelId = receiverLevelId;
+                //appl.DATEACTEDON = DateTime.Now;
+                //context.SaveChanges();
             }
             else
             {
@@ -1123,6 +1143,16 @@ namespace FintrakBanking.Repositories.Credit
                 receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
                 workflow.NextLevelId = receiverLevelId; // BREAKING!
             }
+            //{
+            //    if(!skipFlowProcess( product, appl))
+            //    {
+            //        operationId = (int)OperationsEnum.CreditAppraisal;
+            //        workflow.OperationId = operationId;
+            //        appl.OPERATIONID = operationId;
+            //        receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
+            //        workflow.NextLevelId = receiverLevelId; // BREAKING!
+            //    }
+            //}
 
 
             workflow.StaffId = staffId;
@@ -1133,7 +1163,20 @@ namespace FintrakBanking.Repositories.Credit
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
 
-            return workflow.LogActivity();
+            if (workflow.LogActivity()) return 1;
+            else return 0;
+        }
+
+        private bool skipFlowProcess(TBL_PRODUCT product, TBL_LOAN_APPLICATION appl)
+        {
+            var productBahaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == product.PRODUCTID).FirstOrDefault();
+            if (productBahaviour == null) { return false; }
+            var routePlaceholders = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(x => x.SOURCEPLACEHOLDER == "APPRAISAL" && x.ROUTEOPERATIONID > 0).FirstOrDefault();
+
+            if (routePlaceholders == null) { return false; }
+
+            workflow.OperationId = routePlaceholders.ROUTEOPERATIONID;
+            return true;
         }
 
         private bool ValidateCollateralSearchJobRequests(int loanApplicationDetailId, int? requireCollateralTypeId = null, bool throwErrorMessage = false)
@@ -1267,33 +1310,30 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private bool PushApplicationToDrawdown(LoanApplicationViewModel model, string applicationReferenceNumber)
+        private bool PushApplicationToDrawdown(string applicationReferenceNumber)
         {
             //var newLineRecord = model.LoanApplicationDetail.FirstOrDefault();
             var headerRecords = context.TBL_LOAN_APPLICATION.Where(x=>x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
             var headerrecord = headerRecords.FirstOrDefault();
             var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
+            var lineRecord = lineRecords.FirstOrDefault();
+            var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == lineRecords.FirstOrDefault().PROPOSEDPRODUCTID).FirstOrDefault();
 
-
-            if (model.productClassId == (short)ProductClassEnum.Creditcards )
+            if (productBehaviour != null && productBehaviour.SKIPFLOWPROCESS==true)
             {
-                if(lineRecords.Where(x=>x.PROPOSEDPRODUCTID == 12).Any())
+                foreach (var line in lineRecords)
                 {
-                    foreach (var line in lineRecords)
-                    {
-                        line.APPROVEDAMOUNT = line.PROPOSEDAMOUNT;
-                        line.APPROVEDINTERESTRATE = line.PROPOSEDINTERESTRATE;
-                        line.APPROVEDPRODUCTID = line.PROPOSEDPRODUCTID;
-                        line.APPROVEDTENOR = line.PROPOSEDTENOR;
-                        line.STATUSID = (short)ApprovalStatusEnum.Approved;
+                    line.APPROVEDAMOUNT = line.PROPOSEDAMOUNT;
+                    line.APPROVEDINTERESTRATE = line.PROPOSEDINTERESTRATE;
+                    line.APPROVEDPRODUCTID = line.PROPOSEDPRODUCTID;
+                    line.APPROVEDTENOR = line.PROPOSEDTENOR;
+                    line.STATUSID = (short)ApprovalStatusEnum.Approved;
 
-                        headerrecord.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
-                        headerrecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                    }
-                    context.SaveChanges();
-                    return true;
+                    headerrecord.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+                    headerrecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                 }
-                return false;
+                context.SaveChanges();
+                return true;
             }
             return false;
         }
@@ -1362,7 +1402,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 returndate.closeApplication = true;
 
-                returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
+                //returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
             }
 
             

@@ -105,6 +105,7 @@
     <Compile Include="Credit\DashboardViewModel.cs" />
     <Compile Include="Credit\DisbursalCreditTurnoverViewModel.cs" />
     <Compile Include="Credit\LcIssuanceViewModel.cs" />
+    <Compile Include="Credit\LetterGenerationViewModel.cs" />
     <Compile Include="Credit\LoanCAMSOLViewModel.cs" />
     <Compile Include="Credit\ChecklistApprovalViewModel.cs" />
     <Compile Include="Credit\CollateralCustomerViewModel.cs" />
@@ -148,6 +149,8 @@
     <Compile Include="Credit\TotalFacilitiesSummaryViewModel.cs" />
     <Compile Include="Credit\UnearnedLoanInterestReport.cs" />
     <Compile Include="Credit\UserCurrencyViewFilter.cs" />
+    <Compile Include="Credit\ValuationReportViewModel.cs" />
+    <Compile Include="Credit\ValuationRequestTypeViewModel.cs" />
     <Compile Include="Credit\WeeklyRecoveryReportFINCON.cs" />
     <Compile Include="CRMS\CRMSCodeBookViewModel.cs" />
     <Compile Include="CustomerKYCITemViewModel.cs" />

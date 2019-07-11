@@ -489,7 +489,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
 
                 if (entity.effectiveDate > entity.maturityDate)
-                    throw new ConditionNotMetException("The effective cannot be greater than maturity date");
+                    throw new ConditionNotMetException("The effective date cannot be greater than maturity date");
 
                 if (entity.effectiveDate > systemDate)
                    throw new ConditionNotMetException("The effective date cannot be post-dated.");
@@ -1422,6 +1422,7 @@ namespace FintrakBanking.Repositories.Credit
                                     context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Add(irregularRecordData);
                                 }
                             }
+
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);

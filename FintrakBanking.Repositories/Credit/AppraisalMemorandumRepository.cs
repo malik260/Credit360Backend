@@ -550,7 +550,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var querytest2 = (from b in context.TBL_APPROVAL_TRAIL where
                      
-                                 (b.OPERATIONID == (int)OperationsEnum.AdhocApproval)
+                                 b.OPERATIONID == (int)OperationsEnum.AdhocApproval 
                                  && b.APPROVALSTATEID != (int)ApprovalState.Ended
                                  && b.RESPONSESTAFFID == null
                                  && levelIds.Contains((int)b.TOAPPROVALLEVELID)
@@ -569,7 +569,7 @@ namespace FintrakBanking.Repositories.Credit
                          orderby a.LOANAPPLICATIONID
                          join b in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals b.TARGETID where
                      (
-                         (b.OPERATIONID == (int)OperationsEnum.AdhocApproval)
+                         b.OPERATIONID == (int)OperationsEnum.AdhocApproval 
                          && b.APPROVALSTATEID != (int)ApprovalState.Ended
                          && b.RESPONSESTAFFID == null
                          && levelIds.Contains((int)b.TOAPPROVALLEVELID)
@@ -1793,7 +1793,7 @@ namespace FintrakBanking.Repositories.Credit
             // var declarations
             IQueryable<LoanApplicationViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
-
+            
             // query
             var query = context.TBL_LOAN_APPLICATION.Where(x =>
                     x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
@@ -1803,7 +1803,7 @@ namespace FintrakBanking.Repositories.Credit
                 )
             .OrderByDescending(x => x.LOANAPPLICATIONID)
             .Join(
-                context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                context.TBL_APPROVAL_TRAIL.Where(x => (x.OPERATIONID == operationId)
                     && x.APPROVALSTATEID != (int)ApprovalState.Ended
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
@@ -1860,6 +1860,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationId = x.a.OPERATIONID,
                 productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
                 tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
+                //jumpedDestination = x.b.OPERATIONID == (short)OperationsEnum.InitiationLevelAppraisal,
                 globalsla = context.TBL_LOAN_APPLICATION_DETAIL
                                             .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID)
                                             .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA)

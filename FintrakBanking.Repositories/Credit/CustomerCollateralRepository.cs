@@ -1771,13 +1771,52 @@ namespace FintrakBanking.Repositories.Credit
             return collateral;
         }
 
+        private CollateralViewModel GetCustomerCollateralByCollateralId(int collateralId)
+        {
+            var collateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false
+                && x.COLLATERALCUSTOMERID == collateralId
+            )
+            .Select(x => new CollateralViewModel
+            {
+                collateralId = x.COLLATERALCUSTOMERID,
+                collateralTypeId = x.COLLATERALTYPEID,
+                collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                collateralSubTypeId = x.COLLATERALSUBTYPEID,
+                customerId = x.CUSTOMERID,
+                currencyId = x.CURRENCYID,
+                currency = x.TBL_CURRENCY.CURRENCYNAME,
+                currencyCode = x.TBL_CURRENCY.CURRENCYCODE,
+                collateralCode = x.COLLATERALCODE,
+                collateralValue = x.COLLATERALVALUE,
+                camRefNumber = x.CAMREFNUMBER,
+                allowSharing = x.ALLOWSHARING,
+                isLocationBased = (bool)x.ISLOCATIONBASED,
+                valuationCycle = x.VALUATIONCYCLE,
+                haircut = x.HAIRCUT,
+                approvalStatus = x.APPROVALSTATUS,
+                //collateralValue = x.CollateralValue
+                exchangeRate = x.EXCHANGERATE
+
+            })
+            .FirstOrDefault();
+
+           
+
+
+
+            return collateral;
+        }
 
 
         // GET TYPE SPICIFIC & INSURANCE DETAILS
 
         public CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId)
         {
+
             var data = new CollateralViewModel();
+
+        //     data =   GetCustomerCollateralByCollateralId(collateralId);
+
             switch (typeId)
             {
                 case (int)CollateralTypeEnum.TermDeposit: data = GetCollateralDeposit(collateralId); break;

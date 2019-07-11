@@ -1299,7 +1299,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string groupHead { get; set; }
         public int relationshipManagerId { get; set; }
 
-
+        public int collateralValuationId { get; set; }
+        public int collateralCustomerId { get; set; }
+        public int valuationRequestTypeId { get; set; }
+        public string valuationComment { get; set; }
+        
     }
 
     public class AgeAnalysisViewModel
