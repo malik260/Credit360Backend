@@ -45,7 +45,7 @@ namespace FintrakBanking.Repositories.credit
         
         #region LCISSUANCE
 
-        public IEnumerable<LcIssuanceApprovalViewModel> SearchLc(string searchString)
+        public List<LcIssuanceApprovalViewModel> SearchLc(string searchString)
         {
                 int[] operations = { (int)OperationsEnum.lcIssuance, (int)OperationsEnum.lcReleaseOfShippingDocuments, (int)OperationsEnum.lcUssance};
 
@@ -54,7 +54,8 @@ namespace FintrakBanking.Repositories.credit
                 var applications = (from x in context.TBL_LC_ISSUANCE
                                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                                     join y in context.TBL_APPROVAL_TRAIL on x.LCISSUANCEID equals y.TARGETID
-                                    where y.RESPONSESTAFFID == null
+                                    where 
+                                    y.RESPONSESTAFFID == null
                                     && operations.Contains(y.OPERATIONID)
                                //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
                                && (x.LCREFERENCENUMBER == searchString
@@ -78,8 +79,8 @@ namespace FintrakBanking.Repositories.credit
                                         //approvedAmount = x.APPROVEDAMOUNT,
                                         approvalStatusId = (short)x.APPROVALSTATUSID,
                                         approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
-
-                                        currentApprovalLevel = y.TOAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL.LEVELNAME : "n/a",
+                                        currentApprovalLevelId = y.TOAPPROVALLEVELID,
+                                        currentApprovalLevel = y.TOAPPROVALLEVELID != null ? context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == y.TOAPPROVALLEVELID).LEVELNAME : "n/a",
                                         approvalTrailId = y.APPROVALTRAILID,
                                         responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
 
@@ -94,9 +95,11 @@ namespace FintrakBanking.Repositories.credit
                                         //operationId = x.OPERATIONID,
                                         // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                         //isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.APPLICATIONREFERENCENUMBER).Any()
-                                    }).ToList();
+                                    }).OrderByDescending(l => l.approvalTrailId).FirstOrDefault();
 
-                return applications;
+                List<LcIssuanceApprovalViewModel> apps = new List<LcIssuanceApprovalViewModel>();
+                apps.Add(applications);
+                return apps;
         }
 
 
