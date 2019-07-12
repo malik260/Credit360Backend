@@ -129,6 +129,7 @@ namespace FintrakBanking.Entities.Models
 
         public virtual ICollection<TBL_LC_USSANCE> TBL_LC_USSANCE { get; set; }
 
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
     }
 }

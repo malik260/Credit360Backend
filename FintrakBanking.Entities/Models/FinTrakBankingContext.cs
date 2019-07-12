@@ -518,6 +518,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_VALUATION> TBL_COLLATERAL_VALUATION { get; set; }
         public virtual DbSet<TBL_VALUATION_REPORT> TBL_VALUATION_REPORT { get; set; }
         public virtual DbSet<TBL_VALUATION_REQUEST_TYPE> TBL_VALUATION_REQUEST_TYPE { get; set; }
+        public virtual DbSet<TBL_LETTER_GENERATION_REQUEST> TBL_LETTER_GENERATION_REQUEST { get; set; }
 
 
 
@@ -545,6 +546,16 @@ namespace FintrakBanking.Entities.Models
             modelBuilder.Entity<TBL_LC_ISSUANCE>()
                 .HasMany(e => e.TBL_LC_USSANCE)
                 .WithRequired(e => e.TBL_LC_ISSUANCE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER>()
+                .HasMany(e => e.TBL_LETTER_GENERATION_REQUEST)
+                .WithRequired(e => e.TBL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER>()
+                .HasMany(e => e.TBL_LC_ISSUANCE)
+                .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
             //modelBuilder.Entity<ELMAH_ERROR>()
             //    .Property(e => e.ERRORID)
