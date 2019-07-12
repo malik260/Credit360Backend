@@ -1113,7 +1113,7 @@ namespace FintrakBanking.Repositories.Credit
             int operationId;
             var product = context.TBL_PRODUCT.Find(detail.PROPOSEDPRODUCTID);
             var productBahaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == detail.PROPOSEDPRODUCTID).FirstOrDefault();
-
+            
             if (appl.ISADHOCAPPLICATION == true)
             {
                 operationId = (int)OperationsEnum.AdhocApproval;
@@ -1124,7 +1124,7 @@ namespace FintrakBanking.Repositories.Credit
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
             }
-            else if (productBahaviour.SKIPFLOWPROCESS)
+            else if (productBahaviour != null && productBahaviour.SKIPPROCESSFLOW)
             {
                 if (PushApplicationToDrawdown(appl.APPLICATIONREFERENCENUMBER)) { return 2; }
                 else return 0;
@@ -1319,7 +1319,7 @@ namespace FintrakBanking.Repositories.Credit
             var lineRecord = lineRecords.FirstOrDefault();
             var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == lineRecords.FirstOrDefault().PROPOSEDPRODUCTID).FirstOrDefault();
 
-            if (productBehaviour != null && productBehaviour.SKIPFLOWPROCESS==true)
+            if (productBehaviour != null && productBehaviour.SKIPPROCESSFLOW==true)
             {
                 foreach (var line in lineRecords)
                 {

@@ -31,7 +31,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISTEMPORARYOVERDRAFT { get; set; }
 
-        public bool SKIPFLOWPROCESS { get; set; }
+        public bool SKIPPROCESSFLOW { get; set; }
 
         public int? CRMSREGULATORYID { get; set; }
 
