@@ -285,11 +285,11 @@ namespace FintrakBanking.Repositories.credit
             var rates = context.TBL_CURRENCY_EXCHANGERATE.ToList();
             Decimal lcAmount;
             Decimal availableAmount;
-            var lcAmountRecord = context.TBL_CURRENCY_EXCHANGERATE.Where(r => r.CURRENCYID == model.currencyId).FirstOrDefault();
+            var lcAmountCurrencyRecord = context.TBL_CURRENCY_EXCHANGERATE.Where(r => r.CURRENCYID == model.currencyId).FirstOrDefault();
+            var availAmtCurrencyRecord = context.TBL_CURRENCY_EXCHANGERATE.Where(r => r.CURRENCYID == model.availableAmountCurrencyId).FirstOrDefault();
+            lcAmount = lcAmountCurrencyRecord == null ? 0 :(decimal)lcAmountCurrencyRecord.EXCHANGERATE * model.letterOfCreditAmount;
 
-            lcAmount = lcAmountRecord == null ? 0 :(decimal)lcAmountRecord.EXCHANGERATE * model.letterOfCreditAmount;
-
-            availableAmount = lcAmountRecord == null ? 0 : (decimal)lcAmountRecord.EXCHANGERATE * model.availableAmount;
+            availableAmount = availAmtCurrencyRecord == null ? 0 : (decimal)availAmtCurrencyRecord.EXCHANGERATE * model.availableAmount;
             if (lcAmount > availableAmount)
             {
                 throw new SecureException("LC amount canot be greater than available amount");
