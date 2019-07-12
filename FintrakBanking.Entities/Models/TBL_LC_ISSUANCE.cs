@@ -116,7 +116,7 @@ namespace FintrakBanking.Entities.Models
 
         public string CASHBUILDUPREFERENCENUMBER { get; set; }
 
-        public int? PERCENTAGETOCOVER { get; set; }
+        public decimal? PERCENTAGETOCOVER { get; set; }
 
 
         public int? OPERATIONID { get; set; }
