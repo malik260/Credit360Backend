@@ -61,12 +61,12 @@ namespace FintrakBanking.ViewModels.credit
 
         public string cashBuildUpReferenceNumber { get; set; }
 
-        public int? percentageToCover { get; set; }
+        public decimal? percentageToCover { get; set; }
 
         //ussance
         public int lcUssanceId { get; set; }
         public decimal ussanceAmount { get; set; }
-        public int ussanceRate { get; set; }
+        public decimal ussanceRate { get; set; }
         public int ussanceTenor { get; set; }
         public DateTime lcEffectiveDate { get; set; }
         public DateTime lcMaturityDate { get; set; }
@@ -219,7 +219,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public string cashBuildUpReferenceNumber { get; set; }
 
-        public int? percentageToCover { get; set; }
+        public decimal? percentageToCover { get; set; }
 
         //ussance
         public int lcUssanceId { get; set; }
@@ -236,7 +236,7 @@ namespace FintrakBanking.ViewModels.credit
         public int lcIssuanceId { get; set; }
         public int lcUssanceId { get; set; }
         public decimal ussanceAmount { get; set; }
-        public int? ussanceRate { get; set; }
+        public decimal? ussanceRate { get; set; }
         public int? ussanceTenor { get; set; }
         public DateTime? lcEffectiveDate { get; set; }
         public DateTime? lcMaturityDate { get; set; }
