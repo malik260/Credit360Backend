@@ -1253,7 +1253,7 @@ namespace FintrakBanking.Repositories.Credit
                     DELETED = false,
                     PREMIUMAMOUNT = entity.inSurPremiumAmount,
                     DESCRIPTION = entity.description,
-                    PREMIUMPERCENT = entity.premiumPercent
+                  //  PREMIUMPERCENT = entity.premiumPercent
 
                 });
             }
@@ -1815,29 +1815,31 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = new CollateralViewModel();
 
-        //     data =   GetCustomerCollateralByCollateralId(collateralId);
-
-            switch (typeId)
+            //     data =   GetCustomerCollateralByCollateralId(collateralId);
+            try
             {
-                case (int)CollateralTypeEnum.TermDeposit: data = GetCollateralDeposit(collateralId); break;
-                case (int)CollateralTypeEnum.PlantAndMachinery: data = GetCollateralMachinery(collateralId); break;
-                case (int)CollateralTypeEnum.Miscellaneous: data = GetCollateralMiscellaneous(collateralId); break;
-                case (int)CollateralTypeEnum.Gaurantee: data = GetCollateralGuarantee(collateralId); break;
-                case (int)CollateralTypeEnum.CASA: data = GetCollateralCasa(collateralId); break;
-                case (int)CollateralTypeEnum.Property: data = GetCollateralImmovableProperty(collateralId); break;
-                case (int)CollateralTypeEnum.MarketableSecurities: data = GetCollateralMarketableSecurities(collateralId); break;
-                case (int)CollateralTypeEnum.InsurancePolicy: data = GetCollateralPolicy(collateralId); break;
-                case (int)CollateralTypeEnum.PreciousMetal: data = GetCollateralPreciousMetal(collateralId); break;
-                case (int)CollateralTypeEnum.Stock: data = GetCollateralStock(collateralId); break;
-                case (int)CollateralTypeEnum.Vehicle: data = GetCollateralVehicle(collateralId); break;
-                case (int)CollateralTypeEnum.Promissory: data = GetCollateralPromissory(collateralId); break;
-                case (int)CollateralTypeEnum.ISPO: data = GetISPOCollateral(collateralId); break;
-                case (int)CollateralTypeEnum.DomiciliationContract: data = GetContractDomiciliationCollateral(collateralId); break;
-                case (int)CollateralTypeEnum.DomiciliationSalary: data = GetContractDomiciliationSalary(collateralId); break;
-                case (int)CollateralTypeEnum.Indemity: data = GetIndemityCollateral(collateralId); break;
-                default:
-                    break;
-            }
+                switch (typeId)
+                {
+                    case (int)CollateralTypeEnum.TermDeposit: data = GetCollateralDeposit(collateralId); break;
+                    case (int)CollateralTypeEnum.PlantAndMachinery: data = GetCollateralMachinery(collateralId); break;
+                    case (int)CollateralTypeEnum.Miscellaneous: data = GetCollateralMiscellaneous(collateralId); break;
+                    case (int)CollateralTypeEnum.Gaurantee: data = GetCollateralGuarantee(collateralId); break;
+                    case (int)CollateralTypeEnum.CASA: data = GetCollateralCasa(collateralId); break;
+                    case (int)CollateralTypeEnum.Property: data = GetCollateralImmovableProperty(collateralId); break;
+                    case (int)CollateralTypeEnum.MarketableSecurities: data = GetCollateralMarketableSecurities(collateralId); break;
+                    case (int)CollateralTypeEnum.InsurancePolicy: data = GetCollateralPolicy(collateralId); break;
+                    case (int)CollateralTypeEnum.PreciousMetal: data = GetCollateralPreciousMetal(collateralId); break;
+                    case (int)CollateralTypeEnum.Stock: data = GetCollateralStock(collateralId); break;
+                    case (int)CollateralTypeEnum.Vehicle: data = GetCollateralVehicle(collateralId); break;
+                    case (int)CollateralTypeEnum.Promissory: data = GetCollateralPromissory(collateralId); break;
+                    case (int)CollateralTypeEnum.ISPO: data = GetISPOCollateral(collateralId); break;
+                    case (int)CollateralTypeEnum.DomiciliationContract: data = GetContractDomiciliationCollateral(collateralId); break;
+                    case (int)CollateralTypeEnum.DomiciliationSalary: data = GetContractDomiciliationSalary(collateralId); break;
+                    case (int)CollateralTypeEnum.Indemity: data = GetIndemityCollateral(collateralId); break;
+                    default:
+                        break;
+                }
+            }catch(Exception ex) { }
 
             return data;
         }
@@ -1931,6 +1933,7 @@ namespace FintrakBanking.Repositories.Credit
                 details.inSurPremiumAmount = insurance.PREMIUMAMOUNT;
                 details.description = insurance.DESCRIPTION;
                 details.premiumPercent = insurance.PREMIUMPERCENT;
+                details.approvalStatusId = insurance.APPROVALSTATUSID;
 
 
             }
@@ -6856,7 +6859,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainPol.SUMINSURED = tempPol.SUMINSURED;
                     mainPol.PREMIUMAMOUNT = tempPol.PREMIUMAMOUNT;
                     mainPol.DESCRIPTION = tempPol.DESCRIPTION;
-                    mainPol.PREMIUMPERCENT = tempPol.PREMIUMPERCENT;
+                   // mainPol.PREMIUMPERCENT = tempPol.PREMIUMPERCENT;
                 }
                 else
                 {
@@ -6874,7 +6877,7 @@ namespace FintrakBanking.Repositories.Credit
                         SUMINSURED = tempPol.SUMINSURED,
                         PREMIUMAMOUNT = tempPol.PREMIUMAMOUNT,
                         DESCRIPTION = tempPol.DESCRIPTION,
-                        PREMIUMPERCENT = tempPol.PREMIUMPERCENT
+                      //  PREMIUMPERCENT = tempPol.PREMIUMPERCENT
                     });
                 }
             }
@@ -7610,7 +7613,7 @@ namespace FintrakBanking.Repositories.Credit
                     SUMINSURED = data.SUMINSURED,
                     PREMIUMAMOUNT = data.PREMIUMAMOUNT,
                     DESCRIPTION = data.DESCRIPTION,
-                    PREMIUMPERCENT = data.PREMIUMPERCENT
+                  //  PREMIUMPERCENT = data.PREMIUMPERCENT
                 });
                 data.ISPOLICYAPPROVAL = false;
             }
@@ -8072,7 +8075,7 @@ namespace FintrakBanking.Repositories.Credit
                     expiryDate = x.ENDDATE,
                     insuranceTypeId = x.INSURANCETYPEID,
                     description = x.DESCRIPTION,
-                    premiumPercent = x.PREMIUMPERCENT
+                   // premiumPercent = x.PREMIUMPERCENT
 
                 })).ToList();
 
