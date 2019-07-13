@@ -54,6 +54,8 @@ namespace FintrakBanking.Entities.Models
             TBL_TEMP_CUSTOMER_COMPANYINFO = new HashSet<TBL_TEMP_CUSTOMER_COMPANYINFO>();
             TBL_TEMP_CUSTOMER_PHONCONTACT = new HashSet<TBL_TEMP_CUSTOMER_PHONCONTACT>();
             TBL_TEMP_CUSTOMER = new HashSet<TBL_TEMP_CUSTOMER>();
+            TBL_LC_ISSUANCE = new HashSet<TBL_LC_ISSUANCE>();
+            TBL_LETTER_GENERATION_REQUEST = new HashSet<TBL_LETTER_GENERATION_REQUEST>();
         }
 
         [Key]
@@ -339,5 +341,7 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_CUSTOMER> TBL_TEMP_CUSTOMER { get; set; }
+        public virtual ICollection<TBL_LC_ISSUANCE> TBL_LC_ISSUANCE { get; set; }
+        public virtual ICollection<TBL_LETTER_GENERATION_REQUEST> TBL_LETTER_GENERATION_REQUEST { get; set; }
     }
 }

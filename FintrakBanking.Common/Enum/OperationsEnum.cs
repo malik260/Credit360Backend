@@ -132,5 +132,6 @@ namespace FintrakBanking.Common.Enum
         lcUssance = 140,
         CreditCardDrawdownRequest = 141,
         InitiationLevelAppraisal = 142,
+        LetterGenerationRequest = 143
     }
 }
