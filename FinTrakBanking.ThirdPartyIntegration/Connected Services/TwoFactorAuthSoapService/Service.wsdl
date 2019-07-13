@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <generatedXSD location="Service_InlineSchema1.xsd" />
+        <binding hasEncoding="false" imported="false" name="ServiceHttpPost" originalBindingStyle="document" />
+        <binding hasEncoding="false" imported="true" name="ServiceSoap12" originalBindingStyle="document" />
+        <binding hasEncoding="false" imported="false" name="ServiceHttpGet" originalBindingStyle="document" />
+        <binding hasEncoding="false" imported="true" name="ServiceSoap" originalBindingStyle="document" />
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsdl:types>
+    <xsd:schema xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:include schemaLocation="https://10.111.13.47:7080/Service?xsd=xsd0" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ResponseOnlySoapIn">
+    <wsdl:part name="parameters" element="tns:ResponseOnly" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlySoapOut">
+    <wsdl:part name="parameters" element="tns:ResponseOnlyResponse" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlyForGroupSoapIn">
+    <wsdl:part name="parameters" element="tns:ResponseOnlyForGroup" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlyForGroupSoapOut">
+    <wsdl:part name="parameters" element="tns:ResponseOnlyForGroupResponse" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlyHttpGetIn">
+    <wsdl:part name="UserName" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlyHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlyForGroupHttpGetIn">
+    <wsdl:part name="UserName" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+    <wsdl:part name="GroupName" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlyForGroupHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlyHttpPostIn">
+    <wsdl:part name="UserName" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlyHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlyForGroupHttpPostIn">
+    <wsdl:part name="UserName" type="s:string" />
+    <wsdl:part name="Password" type="s:string" />
+    <wsdl:part name="GroupName" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ResponseOnlyForGroupHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:portType name="ServiceSoap">
+    <wsdl:operation name="ResponseOnly">
+      <wsdl:input message="tns:ResponseOnlySoapIn" />
+      <wsdl:output message="tns:ResponseOnlySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ResponseOnlyForGroup">
+      <wsdl:input message="tns:ResponseOnlyForGroupSoapIn" />
+      <wsdl:output message="tns:ResponseOnlyForGroupSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ServiceHttpGet">
+    <wsdl:operation name="ResponseOnly">
+      <wsdl:input message="tns:ResponseOnlyHttpGetIn" />
+      <wsdl:output message="tns:ResponseOnlyHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ResponseOnlyForGroup">
+      <wsdl:input message="tns:ResponseOnlyForGroupHttpGetIn" />
+      <wsdl:output message="tns:ResponseOnlyForGroupHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ServiceHttpPost">
+    <wsdl:operation name="ResponseOnly">
+      <wsdl:input message="tns:ResponseOnlyHttpPostIn" />
+      <wsdl:output message="tns:ResponseOnlyHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ResponseOnlyForGroup">
+      <wsdl:input message="tns:ResponseOnlyForGroupHttpPostIn" />
+      <wsdl:output message="tns:ResponseOnlyForGroupHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ServiceSoap" type="tns:ServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ResponseOnly">
+      <soap:operation soapAction="http://tempuri.org/ResponseOnly" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResponseOnlyForGroup">
+      <soap:operation soapAction="http://tempuri.org/ResponseOnlyForGroup" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceSoap12" type="tns:ServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ResponseOnly">
+      <soap12:operation soapAction="http://tempuri.org/ResponseOnly" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResponseOnlyForGroup">
+      <soap12:operation soapAction="http://tempuri.org/ResponseOnlyForGroup" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceHttpGet" type="tns:ServiceHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="ResponseOnly">
+      <http:operation location="/ResponseOnly" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResponseOnlyForGroup">
+      <http:operation location="/ResponseOnlyForGroup" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceHttpPost" type="tns:ServiceHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="ResponseOnly">
+      <http:operation location="/ResponseOnly" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ResponseOnlyForGroup">
+      <http:operation location="/ResponseOnlyForGroup" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Service">
+    <wsdl:port name="ServiceSoap" binding="tns:ServiceSoap">
+      <soap:address location="https://10.111.13.47:7080/Service" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

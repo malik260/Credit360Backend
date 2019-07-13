@@ -340,6 +340,7 @@
                 }
 
             }
+
             public async Task<ResponseMessage> ApiTransactionPosting(List<TransactionPostingViewModel> model, bool isCrossCurrency = false)
             {
                 HttpClientHandler handler = new HttpClientHandler();

@@ -46,7 +46,9 @@ namespace FintrakBanking.Repositories.Customer
                 middleName = x.MIDDLENAME,
                 lastName = x.LASTNAME,
                 customerTypeId = (short)x.CUSTOMERTYPEID,
-                dateOfBirth = (DateTime)x.DATEOFBIRTH
+                dateOfBirth = (DateTime)x.DATEOFBIRTH,
+                customerBVN  = x.CUSTOMERBVN,
+                
             });
         }
         public List<CustomerViewModels> GetIntegratedCustomerInformation(string searchTerm)
