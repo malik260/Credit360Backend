@@ -1169,13 +1169,13 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool skipFlowProcess(TBL_PRODUCT product, TBL_LOAN_APPLICATION appl)
         {
-            var productBahaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == product.PRODUCTID).FirstOrDefault();
-            if (productBahaviour == null) { return false; }
-            var routePlaceholders = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(x => x.SOURCEPLACEHOLDER == "APPRAISAL" && x.ROUTEOPERATIONID > 0).FirstOrDefault();
+            //var productBahaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == product.PRODUCTID).FirstOrDefault();
+            //if (productBahaviour == null) { return false; }
+            //var routePlaceholders = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(x => x.SOURCEPLACEHOLDER == "APPRAISAL" && x.ROUTEOPERATIONID > 0).FirstOrDefault();
 
-            if (routePlaceholders == null) { return false; }
+            //if (routePlaceholders == null) { return false; }
 
-            workflow.OperationId = routePlaceholders.ROUTEOPERATIONID;
+            //workflow.OperationId = routePlaceholders.ROUTEOPERATIONID;
             return true;
         }
 
@@ -4399,6 +4399,29 @@ namespace FintrakBanking.Repositories.Credit
                 withoutInstruction = entity.WITHOUTINSTRUCTION,
                 domiciliationNotInPlace = entity.DOMICILIATIONNOTINPLACE,
             };
+        }
+
+        public IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlow()
+        {
+            var revisedProcessFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
+                                      select new RevisedProcessFlowModel
+                                      {
+                                          flowchangeId = c.FLOWCHANGEID,
+                                          placeHolder = c.PLACEHOLDER,
+                                          productClassId = c.PRODUCTCLASSID,
+                                          productId = c.PRODUCTID,
+                                          destinationUrl = c.DESTINATIONURL,
+                                          skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
+                                          operationId = c.OPERATIONID,
+                                          dateTimeCreated = c.DATETIMECREATED,
+                                          createdBy = c.CREATEDBY
+                                      });
+            return revisedProcessFlow;
+        }
+
+        public IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlowByProductClassId(int productClassId)
+        {
+            return getFacilityApplicationRevisedProcessFlow().Where(x=>x.productClassId == productClassId);
         }
 
     }

@@ -3984,7 +3984,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 /*UPDATING STAFF MIS */
-                this.updateLoanRevolvingStaffMIS(revolvingLoanRecord);
+                //this.updateLoanRevolvingStaffMIS(revolvingLoanRecord);
 
                 /* BUILD FEE MODEL & HANDLE FEE POSTING */
                 var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.OverdraftFacility);
@@ -4083,7 +4083,7 @@ namespace FintrakBanking.Repositories.Credit
                 twoFactorAuthDetails.skipAuthentication = true;
 
                 /*UPDATING STAFF MIS */
-                this.updateLoanContingentStaffMIS(contingentLoanRecord);
+                //this.updateLoanContingentStaffMIS(contingentLoanRecord);
 
                 contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                 contingentLoanRecord.ISDISBURSED = true;
