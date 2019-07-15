@@ -3,6 +3,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
@@ -17,16 +18,20 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingContext _context;
         private IGeneralSetupRepository _general;
         private IAuditTrailRepository _audit;
+        private IWorkflow _workflow;
 
-        public CollateralValuationRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+
+        public CollateralValuationRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
         {
             _context = context;
             _general = general;
             _audit = audit;
+            _workflow = workflow;
         }
 
         public CollateralValuationViewModel AddCollateralValuation(CollateralValuationViewModel model)
         {
+
             var entity = new TBL_COLLATERAL_VALUATION()
             {
                 COLLATERALCUSTOMERID = model.collateralCustomerId,
@@ -35,6 +40,7 @@ namespace FintrakBanking.Repositories.Credit
                 COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = _general.GetApplicationDate(),
+                OPERATIONID = (int)OperationsEnum.CollateralValuationRequest
             };
 
             var newEntity = _context.TBL_COLLATERAL_VALUATION.Add(entity);
@@ -70,6 +76,43 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex) {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public List<CollateralValuationViewModel> GetAllCollateralValuations(int collateralId)
+        {
+            var data = from O in _context.TBL_COLLATERAL_VALUATION
+                       where O.COLLATERALCUSTOMERID == collateralId
+                       select new CollateralValuationViewModel
+                       {
+                           collateralValuationId = O.COLLATERALVALUATIONID,
+                           collateralCustomerId = O.COLLATERALCUSTOMERID,
+                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(x=>x.VALUATIONREQUESTTYPEID== O.VALUATIONREQUESTTYPEID).Select(x=>x.VALUATIONREQUESTTYPE).FirstOrDefault(),
+                           valuationComment = O.VALUATIONCOMMENT,
+                           operationId = O.OPERATIONID,
+                           customerId = _context.TBL_COLLATERAL_CUSTOMER.Where(x=>x.COLLATERALCUSTOMERID==collateralId).Select(x=>x.CUSTOMERID).FirstOrDefault(),
+                       };
+            return data.ToList();
+        }
+
+        public bool GoForApproval(CollateralValuationViewModel entity)
+        {
+            var document = _context.TBL_COLLATERAL_VISITATION.Where(o => o.COLLATERALCUSTOMERID == entity.collateralCustomerId).Select(o => o).FirstOrDefault();
+            if (document != null)
+            {
+                document.APPROVALSTATUSID = (int) ApprovalStatusEnum.Processing;
+
+                _workflow.StaffId = entity.createdBy;
+                _workflow.CompanyId = entity.companyId;
+                _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                _workflow.TargetId = entity.collateralCustomerId;
+                _workflow.Comment = "Request for collateral visitation approval";
+                _workflow.OperationId = (int)OperationsEnum.CollateralValuationRequest;
+                _workflow.DeferredExecution = true; 
+                _workflow.ExternalInitialization = true;
+                _workflow.LogActivity();
+            }
+
+            return _context.SaveChanges() != 0;
         }
     }
 }

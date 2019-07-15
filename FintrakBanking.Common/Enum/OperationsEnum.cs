@@ -133,6 +133,8 @@ namespace FintrakBanking.Common.Enum
         CreditCardDrawdownRequest = 141,
         InitiationLevelAppraisal = 142,
         LetterGenerationRequest = 143,
-        SecurityRelease = 145
+        CollateralValuationRequest = 144,
+        CollateralValuationApproval = 145,
+        SecurityRelease = 146
     }
 }
