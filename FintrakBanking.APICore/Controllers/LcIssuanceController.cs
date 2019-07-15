@@ -70,8 +70,8 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                IEnumerable<LcIssuanceApprovalViewModel> response = repo.SearchLc(searchString);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+                List<LcIssuanceApprovalViewModel> response = repo.SearchLc(searchString);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
             }
             catch (SecureException ex)
             {

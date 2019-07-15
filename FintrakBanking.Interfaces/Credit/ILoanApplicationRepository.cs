@@ -80,7 +80,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
 
-        bool SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
+        short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
 
         List<ProductFeeViewModel> GetLoanApplicationProductFees(int loanApplicationDeatilId);
 
@@ -140,5 +140,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         LoanApplicationTagsViewModel GetLoanApplicationTags(int id);
         bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user);
+
+        IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlow();
+        IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlowByProductClassId(int productClassId);
     }
 }

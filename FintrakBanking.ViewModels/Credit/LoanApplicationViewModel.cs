@@ -206,6 +206,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isdone { get; set; } 
         public string messageStr { get; set; }
         public int checkListIndex { get; set; }
+        public bool jumpToDrawdown { get; set; }
     }
 
 
@@ -896,5 +897,20 @@ namespace FintrakBanking.ViewModels.Credit
         public int? levelPosition { get; set; }
 
     }
+
+    public class RevisedProcessFlowModel : GeneralEntity
+    {
+        public short flowchangeId { get; set; }
+        public string placeHolder { get; set; }
+        public short productClassId { get; set; }
+        public int? productId { get; set; }
+        public int operationId { get; set; }
+        public string destinationUrl { get; set; }
+        public bool skipProcessFlowEnabled { get; set; }
+
+
+    }
+
+
 }
 
