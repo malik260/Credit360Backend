@@ -25,14 +25,6 @@ namespace FintrakBanking.Repositories.Credit
                        {
                            valuationRequestTypeId = O.VALUATIONREQUESTTYPEID,
                            valuationRequestType = O.VALUATIONREQUESTTYPE,
-                            companyId = O.COMPANYID,
-                            createdBy = O.CREATEDBY,
-                            dateTimeCreated = O.DATETIMECREATED,
-                            lastUpdatedBy = O.LASTUPDATEDBY,
-                            dateTimeUpdated = O.DATETIMEUPDATED,
-                            //deleted = O.DELETED,
-                            //deletedBy = O.DELETEDBY,
-                            dateTimeDeleted = O.DATETIMEDELETED
                        };
             return data.ToList();
         }

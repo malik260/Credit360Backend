@@ -131,5 +131,7 @@ namespace FintrakBanking.Common.Enum
         ProjectSiteReportApproval = 139,
         lcUssance = 140,
         CreditCardDrawdownRequest = 141,
+        CollateralValuationRequest =143,
+        CollateralValuationApproval = 144,
     }
 }

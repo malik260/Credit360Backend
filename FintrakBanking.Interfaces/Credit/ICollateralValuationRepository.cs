@@ -10,5 +10,7 @@ namespace FintrakBanking.Interfaces.Credit
     public interface ICollateralValuationRepository
     {
         CollateralValuationViewModel AddCollateralValuation(CollateralValuationViewModel model);
+        List<CollateralValuationViewModel> GetAllCollateralValuations(int collateralId);
+        bool GoForApproval(CollateralValuationViewModel entity);
     }
 }
