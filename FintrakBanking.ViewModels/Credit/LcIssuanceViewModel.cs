@@ -70,6 +70,7 @@ namespace FintrakBanking.ViewModels.credit
         public int ussanceTenor { get; set; }
         public DateTime lcEffectiveDate { get; set; }
         public DateTime lcMaturityDate { get; set; }
+        public int? usanceAmountCurrencyId { get; set; }
 
         #endregion LCISSUANCE
     }
@@ -228,6 +229,7 @@ namespace FintrakBanking.ViewModels.credit
         public int ussanceTenor { get; set; }
         public DateTime lcEffectiveDate { get; set; }
         public DateTime lcMaturityDate { get; set; }
+        public int? usanceAmountCurrencyId { get; set; }
     }
 
     public class LcUssanceViewModel : GeneralEntity
@@ -240,5 +242,6 @@ namespace FintrakBanking.ViewModels.credit
         public int? ussanceTenor { get; set; }
         public DateTime? lcEffectiveDate { get; set; }
         public DateTime? lcMaturityDate { get; set; }
+        public int? usanceAmountCurrencyId { get; set; }
     }
 }

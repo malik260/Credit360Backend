@@ -367,6 +367,9 @@ namespace FintrakBanking.Repositories.credit
 
         public bool UpdateLcIssuance(LcIssuanceViewModel model, int id, UserInfo user)
         {
+
+            validateAmounts(model);
+
             var entity = this.context.TBL_LC_ISSUANCE.Find(id);
             entity.BENEFICIARYNAME = model.beneficiaryName;
             entity.TOTALAPPROVEDAMOUNT = model.totalApprovedAmount;
