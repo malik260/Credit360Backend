@@ -20,13 +20,19 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<ValuationRequestTypeViewModel> GetAllValuationRequestTypes()
         {
-            var data = from O in _context.TBL_VALUATION_REQUEST_TYPE
-                       select new ValuationRequestTypeViewModel
-                       {
-                           valuationRequestTypeId = O.VALUATIONREQUESTTYPEID,
-                           valuationRequestType = O.VALUATIONREQUESTTYPE,
-                       };
-            return data.ToList();
+            return (from O in _context.TBL_COMPANY_CLASS
+                        select new ValuationRequestTypeViewModel
+                        {
+                            valuationRequestTypeId = O.COMPANYCLASSID,
+                            valuationRequestType = O.DESCRIPTION,
+                        }).ToList();
+
+            //var test = from O in _context.TBL_COLLATERAL_DOCUMENT_TYPE
+            //           select new CollateralDocumentTypeViewModel
+            //           {
+            //               collateralTypeId = O.COLLATERALTYPEID
+            //           };
+            //return test.ToList();
         }
     }
 }

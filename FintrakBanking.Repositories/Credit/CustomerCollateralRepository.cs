@@ -3305,7 +3305,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private CollateralViewModel GetCollateralImmovableProperty(int collateralId)
         {
-            var specifics = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == collateralId).Select(x=> new CollateralViewModel
+            var details = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == collateralId).Select(x=> new CollateralViewModel
             {
                 collateralId = x.COLLATERALCUSTOMERID,
                 collateralPropertyId = x.COLLATERALPROPERTYID,
