@@ -18,7 +18,7 @@
 
         public decimal USSANCEAMOUNT { get; set; }
 
-        public decimal? USSANCERATE { get; set; }
+        public double? USSANCERATE { get; set; }
 
         public int? USANCEAMOUNTCURRENCYID { get; set; }
 

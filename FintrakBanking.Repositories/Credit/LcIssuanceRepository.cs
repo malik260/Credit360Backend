@@ -292,7 +292,7 @@ namespace FintrakBanking.Repositories.credit
             availableAmount = availAmtCurrencyRecord == null ? 0 : (decimal)availAmtCurrencyRecord.EXCHANGERATE * model.availableAmount;
             if (lcAmount > availableAmount)
             {
-                throw new SecureException("LC amount canot be greater than available amount");
+                throw new SecureException("LC amount cannot be greater than available amount!");
             }
             
         }
