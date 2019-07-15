@@ -16,24 +16,27 @@ namespace FintrakBanking.Entities.Models
         public short FLOWCHANGEID { get; set; }
 
         [Required]
-        [StringLength(20)]
-        public string SOURCEPLACEHOLDER { get; set; }
+        [StringLength(50)]
+        public string PLACEHOLDER { get; set; }
 
-        [Required]
-        [StringLength(20)]
-        public string TARGETPLACEHOLDER { get; set; }
+        public short PRODUCTCLASSID { get; set; }
 
-        [Required]
-        [StringLength(20)]
-        public string SOURCEURL { get; set; }
+        public short? PRODUCTID { get; set; }
 
-        public int ROUTEOPERATIONID { get; set; }
-        
+        public bool ISSKIPPROCESSENABLED { get; set; }
+
+        public int OPERATIONID { get; set; }
+
+        [StringLength(500)]
+        public string DESTINATIONURL { get; set; }
+
         public bool DELETED { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
+
+        public int CREATEDBY { get; set; }
 
     }
 }

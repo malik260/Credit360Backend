@@ -9,6 +9,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string branchCode { get; set; }
         public string rcNumber;
         public string customerAccountNo;
+        public string sectorCode;
+        public string subSectorCode;
 
         public int? crmsLegalStatusId { get; set; }
         public int? crmsCompanySizeId { get; set; }

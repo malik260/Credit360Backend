@@ -140,5 +140,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         LoanApplicationTagsViewModel GetLoanApplicationTags(int id);
         bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user);
+
+        IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlow();
+        IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlowByProductClassId(int productClassId);
     }
 }
