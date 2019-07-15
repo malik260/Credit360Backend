@@ -14,10 +14,11 @@ namespace FintrakBanking.Repositories.Credit
     public class OriginalDocumentReleaseRepository : IOriginalDocumentReleaseRepository
     {
         private FinTrakBankingContext _context;
-        private IWorkflow workflow;
+        private IWorkflow _workflow;
         public OriginalDocumentReleaseRepository(FinTrakBankingContext context, IWorkflow workflow)
         {
             _context = context;
+            _workflow = workflow;
         }
 
         public bool AddOriginalDocumentRelease(IEnumerable<OriginalDocumentReleaseViewModel> model)
@@ -32,7 +33,7 @@ namespace FintrakBanking.Repositories.Credit
                     ORIGINALDOCUMENTRELEASEID = o.originalDocumentReleaseId,
                     ORIGINALDOCUMENTAPPROVALID = o.originalDocumentApprovalId,
                     DOCUMENTUPLOADID = o.documentUploadId,
-                    APPROVALSTATUSID = o.approvalStatusId,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                     COMPANYID = o.companyId,
                     CREATEDBY = o.createdBy,
                     DATETIMECREATED = DateTime.Now
@@ -99,29 +100,34 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        
+
         public bool saveChanges()
         {
             return _context.SaveChanges() > 0;
         }
 
-        public bool GoForApproval(OriginalDocumentReleaseViewModel entity)
+        public bool GoForApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity)
         {
-            var document = _context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(entity.originalDocumentApprovalId);
-            if (document != null)
+            foreach (var x in entity)
             {
-                document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                var data = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.DOCUMENTUPLOADID == x.documentUploadId && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).Select(t => t).FirstOrDefault();
 
-                workflow.StaffId = entity.createdBy;
-                workflow.CompanyId = entity.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = entity.originalDocumentApprovalId;
-                workflow.Comment = "Request for Original document submission approval";
-                workflow.OperationId = (int)OperationsEnum.SecurityRelease;
-                workflow.DeferredExecution = true;
-                workflow.ExternalInitialization = true;
-                workflow.LogActivity();
+                if (data != null)
+                {
+                    data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+
+                    _workflow.StaffId = x.createdBy;
+                    _workflow.CompanyId = x.companyId;
+                    _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    _workflow.TargetId = x.originalDocumentApprovalId;
+                    _workflow.Comment = "Request for security release approval";
+                    _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
+                    _workflow.DeferredExecution = true;
+                    _workflow.ExternalInitialization = true;
+                    _workflow.LogActivity();
+                }
             }
-
             return _context.SaveChanges() != 0;
 
 

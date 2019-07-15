@@ -16,5 +16,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool saveChanges();
 
         IEnumerable<OriginalDocumentReleaseViewModel> GetLeaseDocumentForApproval(int staffId);
+
+        bool GoForApproval(IEnumerable<OriginalDocumentReleaseViewModel> model);
     }
 }

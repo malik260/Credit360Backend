@@ -86,5 +86,26 @@ namespace FintrakBanking.APICore.Controllers
 
             return Request.CreateResponse(HttpStatusCode.BadRequest);
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("security-release-go-for-approval")]
+        public HttpResponseMessage GoForApproval([FromBody] IEnumerable< OriginalDocumentReleaseViewModel> model)
+        {
+            try
+            {  foreach(var x in model)
+                {
+                    x.createdBy = token.GetStaffId;
+                    x.companyId = token.GetCompanyId;
+                }
+                var response = _repo.GoForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
