@@ -1203,14 +1203,14 @@ namespace FintrakBanking.Repositories.Credit
             // UPDATE APPLICATION
             lgr.APPROVALSTATUSID = (short)workflow.StatusId;
             //            if (model.vote == 1) { appl.DISPUTED = true; }
-            lgr.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.lcUssanceInProgress;
+            lgr.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LetterGenerationRequestInProgress;
             if (lgr.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) { lgr.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing; }
 
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    lgr.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.lcUssanceCompleted;
+                    lgr.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LetterGenerationRequestCompleted;
                     lgr.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
                     lgr.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                     lgr.APPROVEDDATE = DateTime.Now;
