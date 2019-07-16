@@ -18,7 +18,9 @@
 
         public decimal USSANCEAMOUNT { get; set; }
 
-        public int? USSANCERATE { get; set; }
+        public double? USSANCERATE { get; set; }
+
+        public int? USANCEAMOUNTCURRENCYID { get; set; }
 
         public virtual TBL_LC_ISSUANCE TBL_LC_ISSUANCE { get; set; }
 

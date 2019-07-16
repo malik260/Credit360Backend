@@ -141,6 +141,33 @@ namespace FintrakBanking.Repositories.Media
             };
         }
 
+        public IEnumerable<DocumentUploadViewModel> GetDocumentUpload(IEnumerable<DocumentUploadViewModel> model)
+        {
+            var documents = new List<DocumentUploadViewModel>();
+            foreach (var o in model)
+            {
+                var entity = docContext.TBL_DOCUMENT_UPLOAD.FirstOrDefault(x => x.DOCUMENTUPLOADID == o.documentUploadId && x.DELETED == false);
+
+                var document = new DocumentUploadViewModel
+                {
+                    documentUploadId = entity.DOCUMENTUPLOADID,
+                    fileName = entity.FILENAME,
+                    fileExtension = entity.FILEEXTENSION,
+                    fileSize = entity.FILESIZE,
+                    fileSizeUnit = entity.FILESIZEUNIT,
+                    fileData = entity.FILEDATA,
+                    companyId = entity.COMPANYID,
+                    issueDate = entity.ISSUEDATE,
+                    expiryDate = entity.EXPIRYDATE,
+                    physicalFilenumber = entity.PHYSICALFILENUMBER,
+                    physicalLocation = entity.PHYSICALLOCATION,
+                };
+
+                documents.Add(document);
+            }
+            return documents;
+        }
+
         public int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer)
         {
             string customerCode = GetCustomerCode(model.customerId);

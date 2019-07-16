@@ -489,7 +489,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
 
                 if (entity.effectiveDate > entity.maturityDate)
-                    throw new ConditionNotMetException("The effective cannot be greater than maturity date");
+                    throw new ConditionNotMetException("The effective date cannot be greater than maturity date");
 
                 if (entity.effectiveDate > systemDate)
                    throw new ConditionNotMetException("The effective date cannot be post-dated.");
@@ -1422,6 +1422,7 @@ namespace FintrakBanking.Repositories.Credit
                                     context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Add(irregularRecordData);
                                 }
                             }
+
                             AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
@@ -3983,7 +3984,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 /*UPDATING STAFF MIS */
-                this.updateLoanRevolvingStaffMIS(revolvingLoanRecord);
+                //this.updateLoanRevolvingStaffMIS(revolvingLoanRecord);
 
                 /* BUILD FEE MODEL & HANDLE FEE POSTING */
                 var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.OverdraftFacility);
@@ -4082,7 +4083,7 @@ namespace FintrakBanking.Repositories.Credit
                 twoFactorAuthDetails.skipAuthentication = true;
 
                 /*UPDATING STAFF MIS */
-                this.updateLoanContingentStaffMIS(contingentLoanRecord);
+                //this.updateLoanContingentStaffMIS(contingentLoanRecord);
 
                 contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                 contingentLoanRecord.ISDISBURSED = true;
@@ -6421,20 +6422,18 @@ namespace FintrakBanking.Repositories.Credit
                     var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
 
                     if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
-                        item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED);
+                    { item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED); }
 
                     if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
-                        item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
+                    { item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
 
                     if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
-                        item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
+                    { item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount; }
 
                     item.disapprovedCount = (int)requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Count();
 
                     if (item.disapprovedCount > 0)
-                        item.disApprovedAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Sum(s => s.AMOUNT_REQUESTED);
-
-                    item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
+                    { item.disApprovedAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Sum(s => s.AMOUNT_REQUESTED); }
 
                     var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
                     if (disbursedLoan.Any())
@@ -6442,6 +6441,7 @@ namespace FintrakBanking.Repositories.Credit
                         item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
                     }
 
+                    item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
                 }
 
                 return data;

@@ -49,7 +49,8 @@ namespace FintrakBanking.Repositories.credit
                     ussanceRate = x.USSANCERATE,
                     ussanceTenor = x.USSANCETENOR,
                     lcEffectiveDate = x.LCUSSANCEEFFECTIVEDATE,
-                    lcMaturityDate = x.LCUSSANCEMATURITYDATE
+                    lcMaturityDate = x.LCUSSANCEMATURITYDATE,
+                    usanceAmountCurrencyId = x.USANCEAMOUNTCURRENCYID
                 })
                 .ToList();
         }
@@ -68,7 +69,8 @@ namespace FintrakBanking.Repositories.credit
                     ussanceRate = entity.USSANCERATE,
                     ussanceTenor = entity.USSANCETENOR,
                     lcEffectiveDate = entity.LCUSSANCEEFFECTIVEDATE,
-                    lcMaturityDate = entity.LCUSSANCEMATURITYDATE
+                    lcMaturityDate = entity.LCUSSANCEMATURITYDATE,
+                    usanceAmountCurrencyId = entity.USANCEAMOUNTCURRENCYID
                 };
             }
 
@@ -135,6 +137,7 @@ namespace FintrakBanking.Repositories.credit
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = DateTime.Now,
+                USANCEAMOUNTCURRENCYID = model.usanceAmountCurrencyId,
             };
 
             context.TBL_LC_USSANCE.Add(entity);
@@ -172,6 +175,7 @@ namespace FintrakBanking.Repositories.credit
             // COMPANYID = model.companyId,
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
+            entity.USANCEAMOUNTCURRENCYID = model.usanceAmountCurrencyId;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------

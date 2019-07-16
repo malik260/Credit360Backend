@@ -2110,7 +2110,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
             return Request.CreateResponse(HttpStatusCode.OK,
 
-                new { success = false, message = "Initiating Booking was unsuccessful!" });
+                new { success = false, message = "Initiating Drawdown Request was unsuccessful!" });
            
         }
 

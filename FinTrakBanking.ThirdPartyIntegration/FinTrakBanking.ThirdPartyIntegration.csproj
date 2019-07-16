@@ -43,6 +43,10 @@
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -65,6 +69,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connected Services\TwoFactorAuthService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Connected Services\TwoFactorAuthSoapService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -167,6 +176,10 @@
     <None Include="Connected Services\TwoFactorAuthService\FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService.UserCheckResponseModel.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Connected Services\TwoFactorAuthSoapService\Service.wsdl" />
+    <None Include="Connected Services\TwoFactorAuthSoapService\Service.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\XDSWebService\FinTrakBanking.ThirdPartyIntegration.XDSWebService.ConnectCommercialMatchResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -226,6 +239,7 @@
     <WCFMetadataStorage Include="Connected Services\CRCWebService\" />
     <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthService\" />
+    <WCFMetadataStorage Include="Connected Services\TwoFactorAuthSoapService\" />
     <WCFMetadataStorage Include="Connected Services\XDSWebService\" />
   </ItemGroup>
   <ItemGroup>
@@ -284,6 +298,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\XDSWebService\FirstCentralNigeriaWebService.disco" />
+    <None Include="Connected Services\TwoFactorAuthSoapService\configuration91.svcinfo" />
+    <None Include="Connected Services\TwoFactorAuthSoapService\configuration.svcinfo" />
+    <None Include="Connected Services\TwoFactorAuthSoapService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <Content Include="Connected Services\XDSWebService\XDSNigeriaWebService.asmx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

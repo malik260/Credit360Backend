@@ -26,12 +26,14 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                     CustID = staffCode,
                     PassCode = passCode
                 });
+                //var client = new ServiceSoapClient();
+                //var res = client.ResponseOnly(staffCode, passCode);
                 var responseDateTime = DateTime.Now;
 
                 var output = new TwoFactorAutheticationOutputViewModel()
                 {
                     authenticated = authResponse.Authenticated,
-                    message = authResponse.Message
+                    message =  authResponse.Message
                 };
 
                 client.Close();

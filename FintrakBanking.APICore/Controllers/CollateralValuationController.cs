@@ -12,6 +12,7 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
+    [RoutePrefix("api/v1/valuation")]
     public class CollateralValuationController : ApiController
     {
         private ICollateralValuationRepository _colValuationRepo;
@@ -29,15 +30,14 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-all-valuation-reports")]
-        public HttpResponseMessage GetAllValuationReports([FromUri] int page, [FromUri] int itemsPerPage)
+        public HttpResponseMessage GetAllValuationReports()
         {
             try {
                 var reports = _valuationRepo.GetAllValuationReports();
                 int totalItems = reports.Count();
 
-                reports = reports.OrderBy(x => x.dateTimeCreated).Skip(page).Take(itemsPerPage).ToList();
+                reports = reports.OrderBy(x => x.dateTimeCreated).ToList();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = reports, count = totalItems });
-
             }
             catch (SecureException ex) {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
@@ -84,18 +84,55 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-all-collateral-valuations/{collateralId}/collateralId")]
+        public HttpResponseMessage GetAllCollateralValuations(int collateralId)
+        {
+            try
+            {
+                var valuations = _colValuationRepo.GetAllCollateralValuations(collateralId);
+                int totalItems = valuations.Count();
+
+                valuations = valuations.OrderBy(x => x.dateTimeCreated).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = valuations, count = totalItems });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-valuation-request-types")]
-        public HttpResponseMessage GetAllValuationRequestTypes([FromUri] int page, [FromUri] int itemsPerPage)
+        public HttpResponseMessage GetAllValuationRequestTypes()
         {
             try {
                 var requestTypes = _valuationRequestRepo.GetAllValuationRequestTypes();
                 int totalItems = requestTypes.Count();
 
-                requestTypes = requestTypes.OrderBy(x => x.dateTimeCreated).Skip(page).Take(itemsPerPage).ToList();
+                requestTypes = requestTypes.OrderBy(x => x.dateTimeCreated).ToList();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = requestTypes, count = totalItems });
             }
             catch (SecureException ex) {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("go-for-approval")]
+        public HttpResponseMessage GoForApproval([FromBody] CollateralValuationViewModel model)
+        {
+            try
+            {
+                var res = _colValuationRepo.GoForApproval(model);
+                //int totalItems = requestTypes.Count();
+                //requestTypes = requestTypes.OrderBy(x => x.dateTimeCreated).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error pushing the request for approval. Error - {ex.Message}" });
             }
         }
     }

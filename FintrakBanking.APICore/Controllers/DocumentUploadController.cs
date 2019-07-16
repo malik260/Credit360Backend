@@ -55,6 +55,16 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("document-uploads")]
+        public HttpResponseMessage GetDocumentUpload([FromBody] IEnumerable<DocumentUploadViewModel> model)
+        {
+            var response = repo.GetDocumentUpload(model);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("document-upload")]
         public async System.Threading.Tasks.Task<HttpResponseMessage> AddDocumentUploadAsync()
         {
