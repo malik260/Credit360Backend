@@ -12,6 +12,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int originalDocumentApprovalId { get; set; }
         public int documentUploadId { get; set; }
         public int approvalStatusId { get; set; }
+        public string approvalStatus { get; set; }
         public string customerName { get; set; }
         public string applicationReferenceNumber { get; set; }
         public string documentReferenceNumber { get; set; }
@@ -20,5 +21,6 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? docDateTimeCreated { get; set; }
         public string documentDescription { get; set; }
         public int operationId { get; set; }
+        public string comment { get; set; }
     }
 }
