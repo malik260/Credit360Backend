@@ -232,7 +232,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 WorkflowResponse response = repo.LetterGenerationRequestMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The LC USSANCE request has been APPROVED successfully" : "The LC USSANCE request has been acted on successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The Letter Generation request has been APPROVED successfully" : "The Letter Generation request has been acted on successfully" });
             }
             catch (SecureException ex)
             {
