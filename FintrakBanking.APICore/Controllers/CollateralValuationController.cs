@@ -145,13 +145,30 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-valuation-waiting-for-approval")]
-        public HttpResponseMessage GetAllValuationRequestWaitingForApproval()
+        public HttpResponseMessage GetCollateralValuationRequestWaitingForApproval()
         {
             try
             {
-                var response = _colValuationRepo.GetAllValuationRequestWaitingForApproval(token.GetStaffId);
+                var response = _colValuationRepo.GetCollateralValuationRequestWaitingForApproval(token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response});
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-valuation-waiting-for-approval/{collateralId}/collateralId")]
+        public HttpResponseMessage GetAllValuationRequestWaitingForApproval(int collateralId)
+        {
+            try
+            {
+                var response = _colValuationRepo.GetAllValuationRequest(collateralId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {

@@ -122,19 +122,12 @@ namespace FintrakBanking.Repositories.Credit
             return _context.SaveChanges() != 0;
         }
 
-        public IEnumerable<CollateralValuationViewModel> GetAllValuationRequestWaitingForApproval(int staffId)
+        public IEnumerable<CollateralValuationViewModel> GetAllValuationRequest(int collteralId)
         {
-            var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CollateralValuationRequest).ToList();
-
-
             var res = from C in _context.TBL_COLLATERAL_CUSTOMER
                       join V in _context.TBL_COLLATERAL_VALUATION
                       on C.COLLATERALCUSTOMERID equals V.COLLATERALCUSTOMERID
-                      join atrail in _context.TBL_APPROVAL_TRAIL on V.COLLATERALCUSTOMERID equals atrail.TARGETID
-                      where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                       && atrail.RESPONSESTAFFID == null
-                       && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                       && atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest
+                      where V.COLLATERALCUSTOMERID == collteralId
                       select new CollateralValuationViewModel {
                           valuationComment = V.VALUATIONCOMMENT,
                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == V.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
@@ -142,7 +135,31 @@ namespace FintrakBanking.Repositories.Credit
                           collateralType = _context.TBL_COLLATERAL_TYPE.Where(O => O.COLLATERALTYPEID == C.COLLATERALTYPEID).Select(O => O.COLLATERALTYPENAME).FirstOrDefault(),
                           approvalStatusId = V.APPROVALSTATUSID,
                           approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o=>o.APPROVALSTATUSID==V.APPROVALSTATUSID).Select(o=>o.APPROVALSTATUSNAME).FirstOrDefault(),
+                          collateralCustomerId = C.COLLATERALCUSTOMERID
+                      };
 
+            return res;
+        }
+
+        public IEnumerable<CollateralValuationViewModel> GetCollateralValuationRequestWaitingForApproval(int staffId)
+        {
+            var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CollateralValuationRequest).ToList();
+
+
+            var res = from C in _context.TBL_COLLATERAL_CUSTOMER
+                      join atrail in _context.TBL_APPROVAL_TRAIL on C.COLLATERALCUSTOMERID equals atrail.TARGETID
+                      join cus in _context.TBL_CUSTOMER on C.CUSTOMERID equals cus.CUSTOMERID
+                      where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                       && atrail.RESPONSESTAFFID == null
+                       && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                       && atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest
+                      select new CollateralValuationViewModel
+                      {
+                          customerName = cus.FIRSTNAME + " " + cus.LASTNAME + " " + cus.MAIDENNAME,
+                          collateralCode = C.COLLATERALCODE,
+                          collateralType = _context.TBL_COLLATERAL_TYPE.Where(O => O.COLLATERALTYPEID == C.COLLATERALTYPEID).Select(O => O.COLLATERALTYPENAME).FirstOrDefault(),
+                          collateralValue = C.COLLATERALVALUE,
+                          collateralCustomerId = C.COLLATERALCUSTOMERID
                       };
 
             return res;
