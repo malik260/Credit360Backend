@@ -53,5 +53,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationStatus { get; set; }
 
         public int? operationId { get; set; }
+
+        public int? forwardAction { get; set; }
+
+        public short? vote { get; set; }
     }
 }

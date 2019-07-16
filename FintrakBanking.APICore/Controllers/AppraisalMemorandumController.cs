@@ -217,7 +217,30 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
-        
+
+        [HttpPost]
+        [Route("letter-gen-request/forward")]
+        public HttpResponseMessage LetterGenerationRequestMemorandum([FromBody] LetterGenerationRequestViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                WorkflowResponse response = repo.LetterGenerationRequestMemorandum(entity);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The LC USSANCE request has been APPROVED successfully" : "The LC USSANCE request has been acted on successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+
         [HttpGet]
         [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/all/{all}")]
         public HttpResponseMessage GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all)
