@@ -125,7 +125,13 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var res = _colValuationRepo.GoForApproval(model);
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var res = _colValuationRepo.GoForCollateralValuationApproval(model);
                 //int totalItems = requestTypes.Count();
                 //requestTypes = requestTypes.OrderBy(x => x.dateTimeCreated).ToList();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
@@ -133,6 +139,23 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error pushing the request for approval. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-valuation-waiting-for-approval")]
+        public HttpResponseMessage GetAllValuationRequestWaitingForApproval()
+        {
+            try
+            {
+                var response = _colValuationRepo.GetAllValuationRequestWaitingForApproval(token.GetStaffId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response});
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
             }
         }
     }

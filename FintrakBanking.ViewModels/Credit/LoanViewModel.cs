@@ -1306,6 +1306,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string valuationRequestType { get; set; }
         public int? operationId { get; set; }
         public int customerId { get; set; }
+        public string collateralCode { get; set; }
+        public string collateralType { get; set; }
+        public int? approvalStatusId { get; set; }
+        public string approvalStatus { get; set; }
     }
 
     public class AgeAnalysisViewModel

@@ -21,6 +21,7 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow _workflow;
 
 
+
         public CollateralValuationRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
         {
             _context = context;
@@ -48,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short) AuditTypeEnum.CallateralValuationAdded,
+                AUDITTYPEID = (short)AuditTypeEnum.CallateralValuationAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Collateral Valuation for  '{ model.collateralValuationId }' is added by {model.staffId} ",
@@ -61,7 +62,8 @@ namespace FintrakBanking.Repositories.Credit
             _audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
-            try {
+            try
+            {
                 _context.SaveChanges();
                 return new CollateralValuationViewModel()
                 {
@@ -73,7 +75,8 @@ namespace FintrakBanking.Repositories.Credit
                     dateTimeCreated = newEntity.DATETIMECREATED,
                 };
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new Exception(ex.Message);
             }
         }
@@ -86,33 +89,63 @@ namespace FintrakBanking.Repositories.Credit
                        {
                            collateralValuationId = O.COLLATERALVALUATIONID,
                            collateralCustomerId = O.COLLATERALCUSTOMERID,
-                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(x=>x.VALUATIONREQUESTTYPEID== O.VALUATIONREQUESTTYPEID).Select(x=>x.VALUATIONREQUESTTYPE).FirstOrDefault(),
+                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(x => x.VALUATIONREQUESTTYPEID == O.VALUATIONREQUESTTYPEID).Select(x => x.VALUATIONREQUESTTYPE).FirstOrDefault(),
                            valuationComment = O.VALUATIONCOMMENT,
                            operationId = O.OPERATIONID,
-                           customerId = _context.TBL_COLLATERAL_CUSTOMER.Where(x=>x.COLLATERALCUSTOMERID==collateralId).Select(x=>x.CUSTOMERID).FirstOrDefault(),
+                           customerId = _context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId).Select(x => x.CUSTOMERID).FirstOrDefault(),
                        };
             return data.ToList();
         }
 
-        public bool GoForApproval(CollateralValuationViewModel entity)
+        public bool GoForCollateralValuationApproval(CollateralValuationViewModel entity)
         {
-            var document = _context.TBL_COLLATERAL_VISITATION.Where(o => o.COLLATERALCUSTOMERID == entity.collateralCustomerId).Select(o => o).FirstOrDefault();
-            if (document != null)
+            try
             {
-                document.APPROVALSTATUSID = (int) ApprovalStatusEnum.Processing;
 
-                _workflow.StaffId = entity.createdBy;
-                _workflow.CompanyId = entity.companyId;
-                _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                _workflow.TargetId = entity.collateralCustomerId;
-                _workflow.Comment = "Request for collateral visitation approval";
-                _workflow.OperationId = (int)OperationsEnum.CollateralValuationRequest;
-                _workflow.DeferredExecution = true; 
-                _workflow.ExternalInitialization = true;
-                _workflow.LogActivity();
+                var document = _context.TBL_COLLATERAL_VALUATION.Where(o => o.COLLATERALCUSTOMERID == entity.collateralCustomerId).Select(o => o).FirstOrDefault();
+
+                if (document != null)
+                {
+
+                    _workflow.StaffId = entity.createdBy;
+                    _workflow.CompanyId = entity.companyId;
+                    _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    _workflow.TargetId = entity.collateralCustomerId;
+                    _workflow.Comment = "Request for collateral visitation approval";
+                    _workflow.OperationId = (int)OperationsEnum.CollateralValuationRequest;
+                    _workflow.DeferredExecution = true;
+                    _workflow.ExternalInitialization = true;
+                    _workflow.LogActivity();
+                }
             }
-
+            catch (Exception ex) { }
             return _context.SaveChanges() != 0;
+        }
+
+        public IEnumerable<CollateralValuationViewModel> GetAllValuationRequestWaitingForApproval(int staffId)
+        {
+            var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CollateralValuationRequest).ToList();
+
+
+            var res = from C in _context.TBL_COLLATERAL_CUSTOMER
+                      join V in _context.TBL_COLLATERAL_VALUATION
+                      on C.COLLATERALCUSTOMERID equals V.COLLATERALCUSTOMERID
+                      join atrail in _context.TBL_APPROVAL_TRAIL on V.COLLATERALCUSTOMERID equals atrail.TARGETID
+                      where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                       && atrail.RESPONSESTAFFID == null
+                       && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                       && atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest
+                      select new CollateralValuationViewModel {
+                          valuationComment = V.VALUATIONCOMMENT,
+                          valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == V.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
+                          collateralCode = C.COLLATERALCODE,
+                          collateralType = _context.TBL_COLLATERAL_TYPE.Where(O => O.COLLATERALTYPEID == C.COLLATERALTYPEID).Select(O => O.COLLATERALTYPENAME).FirstOrDefault(),
+                          approvalStatusId = V.APPROVALSTATUSID,
+                          approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o=>o.APPROVALSTATUSID==V.APPROVALSTATUSID).Select(o=>o.APPROVALSTATUSNAME).FirstOrDefault(),
+
+                      };
+
+            return res;
         }
     }
 }
