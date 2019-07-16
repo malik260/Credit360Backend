@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using System;
@@ -15,10 +16,12 @@ namespace FintrakBanking.Repositories.Credit
     {
         private FinTrakBankingContext _context;
         private IWorkflow _workflow;
-        public OriginalDocumentReleaseRepository(FinTrakBankingContext context, IWorkflow workflow)
+        private IGeneralSetupRepository _general;
+        public OriginalDocumentReleaseRepository(FinTrakBankingContext context, IWorkflow workflow, IGeneralSetupRepository general)
         {
             _context = context;
             _workflow = workflow;
+            _general = general;
         }
 
         public bool AddOriginalDocumentRelease(IEnumerable<OriginalDocumentReleaseViewModel> model)
@@ -54,12 +57,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<OriginalDocumentReleaseViewModel> GetLeaseDocumentForApproval(int staffId)
         {
+            var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.SecurityRelease).ToList();
+
             var record = from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
                          join oda in _context.TBL_ORIGINAL_DOCUMENT_APPROVAL on dr.ORIGINALDOCUMENTAPPROVALID equals oda.ORIGINALDOCUMENTAPPROVALID
                          join l in _context.TBL_LOAN_APPLICATION on oda.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                         join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                          join c in _context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                         where dr.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                         && atrail.RESPONSESTAFFID == null
+                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                         && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
                          select new OriginalDocumentReleaseViewModel
                          {
+                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == dr.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                              customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                              applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
                              documentReferenceNumber = oda.REFERENCENUMBER,
@@ -67,7 +78,8 @@ namespace FintrakBanking.Repositories.Credit
                              createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                              documentDescription = oda.DESCRIPTION,
                              originalDocumentApprovalId = dr.APPROVALSTATUSID,
-                             operationId = (int)OperationsEnum.OriginalDocumentApproval
+                            originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
+                             operationId = (int)OperationsEnum.SecurityRelease
                          };
             return record.ToList();
         }
@@ -94,7 +106,7 @@ namespace FintrakBanking.Repositories.Credit
                     originalDocumentReleaseId = t.ORIGINALDOCUMENTRELEASEID,
                     originalDocumentApprovalId = t.ORIGINALDOCUMENTAPPROVALID,
                     documentUploadId = t.DOCUMENTUPLOADID,
-                    approvalStatusId = t.APPROVALSTATUSID,
+                    approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o=>o.APPROVALSTATUSID== t.APPROVALSTATUSID).Select(o=>o.APPROVALSTATUSNAME).FirstOrDefault(),
                     companyId = t.COMPANYID
                 }));
 
@@ -109,9 +121,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool GoForApproval(IEnumerable<OriginalDocumentReleaseViewModel> entity)
         {
-            foreach (var x in entity)
+            var record = entity.GroupBy(x => x.originalDocumentApprovalId).Select(x => x.First());
+
+            foreach (var x in record)
             {
-                var data = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.DOCUMENTUPLOADID == x.documentUploadId && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).Select(t => t).FirstOrDefault();
+                var data = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.ORIGINALDOCUMENTAPPROVALID == x.originalDocumentApprovalId && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).Select(t => t).FirstOrDefault();
 
                 if (data != null)
                 {
@@ -131,6 +145,52 @@ namespace FintrakBanking.Repositories.Credit
             return _context.SaveChanges() != 0;
 
 
+        }
+
+        public bool SubmitApproval(OriginalDocumentReleaseViewModel model)
+        {
+            bool responce = false;
+
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+               _workflow.StaffId = model.createdBy;
+               _workflow.CompanyId = model.companyId;
+               _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+               _workflow.TargetId = model.originalDocumentApprovalId;
+               _workflow.Comment = model.comment;
+               _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
+               _workflow.DeferredExecution = true;
+               _workflow.LogActivity();
+                try
+                {
+                    if (_workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var documents = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == model.originalDocumentApprovalId).ToList();
+                        if (documents != null)
+                        {
+                            foreach (var x in documents)
+                            {
+                                x.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            }
+                        }
+
+                    }
+
+                    responce = _context.SaveChanges() > 0;
+                    transaction.Commit();
+
+                    return responce;
+                }
+                catch (Exception ex)
+                {
+
+                    transaction.Rollback();
+
+
+                    throw ex;
+                }
+                //return false;
+            }
         }
     }
 }
