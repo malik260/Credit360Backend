@@ -895,7 +895,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (mappingsOnProducts.Any() == false && mappingsOnProductClass.Any() == false && mappingsOnOperations.Any() == false)
             {
                 var operation = context.TBL_OPERATIONS.Find(operationId);
-                if (operation == null) throw new SecureException("");
+                if (operation == null) throw new SecureException("Operation ID didn't match");
                 if (productClassId != null)
                 {
                     var productClass = context.TBL_PRODUCT_CLASS.Find(productClassId);

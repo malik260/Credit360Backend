@@ -134,6 +134,7 @@ namespace FintrakBanking.Common.Enum
         InitiationLevelAppraisal = 142,
         LetterGenerationRequest = 143,
         CollateralValuationRequest = 144,
-        CollateralValuationApproval = 145,
+        CollateralValuationApproval = 146,
+        SecurityRelease = 145
     }
 }
