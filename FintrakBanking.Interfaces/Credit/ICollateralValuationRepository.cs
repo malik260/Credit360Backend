@@ -16,5 +16,12 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CollateralValuationViewModel> GetAllValuationRequest(int staffId);
 
         IEnumerable<CollateralValuationViewModel> GetCollateralValuationRequestWaitingForApproval(int staffId);
+
+        bool SubmitApproval(CollateralValuationViewModel model);
+
+        bool AddCollateralValurerInfo(CollateralValuationViewModel model);
+        List<CollateralValuationViewModel> GetAllCollateralValuerIformation();
+
+        List<CollateralValuationViewModel> GetAllCollateralValuerIformation(int id);
     }
 }

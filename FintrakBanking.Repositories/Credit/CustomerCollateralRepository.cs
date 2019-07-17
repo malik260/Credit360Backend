@@ -5398,7 +5398,7 @@ namespace FintrakBanking.Repositories.Credit
                         phoneNumber = m.PHONENUMBER,
                         address = m.ADDRESS,
 
-                    });
+                    }).ToList();
         }
 
         public IEnumerable<CollateralPerfectionStatusViewModel> GetCollateralPerfectionStatus()

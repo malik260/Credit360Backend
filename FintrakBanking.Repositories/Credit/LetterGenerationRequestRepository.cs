@@ -40,7 +40,12 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequests()
         {
-            return context.TBL_LETTER_GENERATION_REQUEST.Where(x => x.DELETED == false)
+            return context.TBL_LETTER_GENERATION_REQUEST.Where(x => x.DELETED == false
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LetterGenerationRequestInProgress
+                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LetterGenerationRequestCompleted)
                 .Select(x => new LetterGenerationRequestViewModel
                 {
                     requestId = x.LETTERGENERATIONREQUESTID,

@@ -138,10 +138,68 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error pushing the request for approval. Error - {ex.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. Error - {ex.Message}" });
             }
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-valuer")]
+        public HttpResponseMessage AddCollateralValuerInfo([FromBody] CollateralValuationViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var res = _colValuationRepo.AddCollateralValurerInfo(model);
+                //int totalItems = requestTypes.Count();
+                //requestTypes = requestTypes.OrderBy(x => x.dateTimeCreated).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-valuer-info")]
+        public HttpResponseMessage GetAllCollateralValuerIformation()
+        {
+            try
+            {
+                var response = _colValuationRepo.GetAllCollateralValuerIformation();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-valuer-info/{id}")]
+        public HttpResponseMessage GetAllCollateralValuerIformation(int id)
+        {
+            try
+            {
+                var response = _colValuationRepo.GetAllCollateralValuerIformation(id);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-valuation-waiting-for-approval")]
@@ -173,6 +231,30 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("submit-approval")]
+        public HttpResponseMessage SubmitApproval([FromBody] CollateralValuationViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var res = _colValuationRepo.SubmitApproval(model);
+                //int totalItems = requestTypes.Count();
+                //requestTypes = requestTypes.OrderBy(x => x.dateTimeCreated).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = res });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. Error - {ex.Message}" });
             }
         }
     }
