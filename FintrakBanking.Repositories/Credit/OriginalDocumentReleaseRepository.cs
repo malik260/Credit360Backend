@@ -86,9 +86,9 @@ namespace FintrakBanking.Repositories.Credit
                              docDateTimeCreated = dr.DATETIMECREATED,
                              createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                              documentDescription = oda.DESCRIPTION,
-                             originalDocumentApprovalId = dr.APPROVALSTATUSID,
+                             originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
                             originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
-                             operationId = (int)OperationsEnum.SecurityRelease
+                             operationId = (int)OperationsEnum.SecurityRelease,
                          };
             return record.ToList();
         }
