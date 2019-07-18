@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
@@ -17,7 +18,13 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingContext _context;
         private IWorkflow _workflow;
         private IGeneralSetupRepository _general;
-        public OriginalDocumentReleaseRepository(FinTrakBankingContext context, IWorkflow workflow, IGeneralSetupRepository general)
+        private FinTrakBankingDocumentsContext _docContext;
+        public OriginalDocumentReleaseRepository(
+                                                    FinTrakBankingContext context, 
+                                                   IWorkflow workflow, 
+                                                   IGeneralSetupRepository general,
+                                                   FinTrakBankingDocumentsContext docContext
+                                                 )
         {
             _context = context;
             _workflow = workflow;
@@ -30,12 +37,15 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId).Any();
 
+ 
+
                 if (result == true) continue;
                 var entity = new TBL_ORIGINAL_DOCUMENT_RELEASE
                 {
                     ORIGINALDOCUMENTRELEASEID = o.originalDocumentReleaseId,
                     ORIGINALDOCUMENTAPPROVALID = o.originalDocumentApprovalId,
                     DOCUMENTUPLOADID = o.documentUploadId,
+                    DOCSUBMISSIONOPERATIONID = o.docSubmissionOperationId,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                     COMPANYID = o.companyId,
                     CREATEDBY = o.createdBy,
@@ -77,9 +87,9 @@ namespace FintrakBanking.Repositories.Credit
                              docDateTimeCreated = dr.DATETIMECREATED,
                              createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                              documentDescription = oda.DESCRIPTION,
-                             originalDocumentApprovalId = dr.APPROVALSTATUSID,
+                             originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
                             originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
-                             operationId = (int)OperationsEnum.SecurityRelease
+                             operationId = (int)OperationsEnum.SecurityRelease,
                          };
             return record.ToList();
         }
@@ -100,14 +110,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<OriginalDocumentReleaseViewModel> GetOriginalAllDocmentRelease(int id)
         {
+            
             return (_context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.ORIGINALDOCUMENTAPPROVALID == id)
                 .Select(t => new OriginalDocumentReleaseViewModel
                 {
                     originalDocumentReleaseId = t.ORIGINALDOCUMENTRELEASEID,
                     originalDocumentApprovalId = t.ORIGINALDOCUMENTAPPROVALID,
                     documentUploadId = t.DOCUMENTUPLOADID,
-                    approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o=>o.APPROVALSTATUSID== t.APPROVALSTATUSID).Select(o=>o.APPROVALSTATUSNAME).FirstOrDefault(),
+                    approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == t.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                     companyId = t.COMPANYID
+
                 }));
 
         }
@@ -129,7 +141,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (data != null)
                 {
-                    data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    var release = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == data.ORIGINALDOCUMENTAPPROVALID).Select(o => o).ToList();
+
+                    foreach (var d in release)
+                        d.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
                     _workflow.StaffId = x.createdBy;
                     _workflow.CompanyId = x.companyId;
