@@ -134,9 +134,9 @@ namespace FintrakBanking.Common.Enum
         LetterGenerationRequest = 142,
         CollateralValuationRequest = 143,
         CollateralValuationApproval = 144,
-        CreditCardsSalaryBacked = 145,
+        //CreditCardsSalaryBacked = 145,
         CreditCardsCleanCards = 146,
-        SecurityRelease = 147,
+        SecurityRelease = 145,
         InitiationLevelAppraisal = 148,
 
 

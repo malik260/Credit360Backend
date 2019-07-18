@@ -22,5 +22,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string documentDescription { get; set; }
         public int operationId { get; set; }
         public string comment { get; set; }
+        public string documentCategoryName { get; set; }
+        public string documentTypeName { get; set; }
+
     }
 }

@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -173,6 +174,8 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = general.GetApplicationDate(),
             };
 
+            var refNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            entity.TERMSHEETCODE = refNumber;
             context.TBL_TERM_SHEET.Add(entity);
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
@@ -182,7 +185,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.TermSheetAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"TBL_Term Sheet '{entity.DESCRIPTION}' created by {auditStaff}",
+                DETAIL = $"TBL_Term Sheet '{entity.ToString()}' created by {auditStaff}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
@@ -239,7 +242,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.TermSheetUpdated,
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_Term Sheet '{entity.DESCRIPTION}' was updated by {auditStaff}",
+                DETAIL = $"TBL_Term Sheet '{entity.ToString()}' was updated by {auditStaff}",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
@@ -265,7 +268,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.TermSheetDeleted, //still missing its value
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_Term Sheet '{entity.DESCRIPTION}' was deleted by {auditStaff}",
+                DETAIL = $"TBL_Term Sheet '{entity.ToString()}' was deleted by {auditStaff}",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
