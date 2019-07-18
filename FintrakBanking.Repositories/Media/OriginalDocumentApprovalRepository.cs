@@ -135,7 +135,8 @@ namespace FintrakBanking.Repositories.Media
                     referenceNumber = x.REFERENCENUMBER,
                     dateTimeCreated = x.DATETIMECREATED,
                     approvalDate = x.APPROVALDATE,
-                    approvalStatusId = x.APPROVALSTATUSID
+                    approvalStatusId = x.APPROVALSTATUSID,
+                    operationId = (int)OperationsEnum.OriginalDocumentApproval
                 }).OrderBy(o=>o.originalDocumentApprovalId).ToList();
 
             return entity;
