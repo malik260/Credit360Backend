@@ -17,6 +17,7 @@ namespace FintrakBanking.Entities.Models
         public int ORIGINALDOCUMENTAPPROVALID { get; set; }
         [Required]
         public int DOCUMENTUPLOADID { get; set; }
+        public int? DOCSUBMISSIONOPERATIONID { get; set; }
         public int APPROVALSTATUSID { get; set; }
         public int COMPANYID { get; set; }
         public int CREATEDBY { get; set; }
