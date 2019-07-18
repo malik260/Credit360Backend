@@ -9,7 +9,7 @@ namespace FintrakBanking.APICore.JWTAuth
     public class TokenDecryptionHelper
     {
         public int GetStaffId { get { return int.Parse(this.GetInfoFromToken(1).ToString()); } }
-        public int GetCompanyId { get { return int.Parse(this.GetInfoFromToken(2)?.ToString()); } }
+        public int GetCompanyId { get { return int.Parse(this.GetInfoFromToken(2).ToString()); } }
         public int GetCountryId { get { return int.Parse(this.GetInfoFromToken(5).ToString()); } }
         public int GetBranchId { get { return int.Parse(this.GetInfoFromToken(3).ToString()); } }
         public string GetUsername { get { return this.GetInfoFromToken(4).ToString(); } }
