@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.Risk
                 {
                     racCategoryId = x.RACCATEGORYID,
                     categoryName = x.CATEGORYNAME,
-                }).OrderBy(o=>o.categoryName)
+                }).OrderBy(o=>o.racCategoryId)
                 .ToList();
         }
 
@@ -306,7 +306,7 @@ namespace FintrakBanking.Repositories.Risk
                     controlAmount = x.CONTROLAMOUNT,
                     controlOptionId = x.CONTROLOPTIONID,
                     controlOption = context.TBL_RAC_OPTION_ITEM.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.LABEL).FirstOrDefault()
-                }).OrderBy(o => o.racItemName)
+                }).OrderBy(o => o.racItemId)
                 .ToList();
         }
 
@@ -720,7 +720,7 @@ namespace FintrakBanking.Repositories.Risk
                 searchQuery = searchQuery.ToUpper();
 
             var entity = (from x in context.TBL_RAC_ITEM
-                          where x.DELETED==false && x.CRITERIA.Contains(searchQuery)
+                          where x.DELETED==false && x.CRITERIA.Trim().Contains(searchQuery)
                           select new RacItemViewModel
                           {
                               racItemId = x.RACITEMID,

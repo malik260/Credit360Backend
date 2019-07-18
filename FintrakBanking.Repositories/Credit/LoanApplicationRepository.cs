@@ -4306,68 +4306,70 @@ namespace FintrakBanking.Repositories.Credit
 
         public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
         {
-            var details = application.LoanApplicationDetail;
-            int branchId = (int)application.branchId;
-            int customerId = (int)application.customerId;
-            int productId = application.productId;
+                var details = application.LoanApplicationDetail;
+                int branchId = (int)application.branchId;
+                int customerId = (int)application.customerId;
+                int productId = application.productId;
 
-            var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
-                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                .FirstOrDefault();
+                var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
+                        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                    .FirstOrDefault();
 
-            var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
-                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                .FirstOrDefault();
+                var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
+                        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                    .FirstOrDefault();
 
-            // if productoverride is to be used
-            //var productOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-            //    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.productLimitOverride && x.ISUSED == false),
-            //        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-            //    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-            //    .FirstOrDefault();
+                // if productoverride is to be used
+                //var productOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                //    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.productLimitOverride && x.ISUSED == false),
+                //        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                //    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                //    .FirstOrDefault();
 
-            if (branchOverrideRequest != null)
-            {
-                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
-                //request.ISUSED = true;
-            }
-            else
-            {
-                // branch limits
-                var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
-                decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
-                decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
-                var branch = context.TBL_BRANCH.Find(branchId);
-                if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
-            }
-
-            if (sectorOverrideRequest != null)
-            {
-                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
-                //request.ISUSED = true;
-            }
-            else
-            {
-                // sector limits
-                // sectorId here is actually the subsectorId
-                List<short> sectorIds = details.Select(x => x.subSectorId).ToList();
-                foreach (var sectorId in sectorIds)
+                if (branchOverrideRequest != null)
                 {
-                    var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
-                    decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
-                    //var sector = context.TBL_SECTOR.Find(sectorId);
-                    if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                    //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                    //request.ISUSED = true;
                 }
-            }
+                else
+                {
+                    // branch limits
+                    var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
+                    decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
+                    decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
+                    var branch = context.TBL_BRANCH.Find(branchId);
+                    if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+                }
 
-            if (limitValidation.ProductLimitExceeded(productId, application.proposedAmount))
-            {
-                throw new SecureException("Product Limit exceeded!");
-            }
+                if (sectorOverrideRequest != null)
+                {
+                    //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                    //request.ISUSED = true;
+                }
+                else
+                {
+                    // sector limits
+                    // sectorId here is actually the subsectorId
+                    List<short> sectorIds = details.Select(x => x.subSectorId).ToList();
+                    foreach (var sectorId in sectorIds)
+                    {
+                        var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
+                        decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
+                        //var sector = context.TBL_SECTOR.Find(sectorId);
+                        if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                    }
+                }
+            try {
+                if (limitValidation.ProductLimitExceeded(productId, application.proposedAmount))
+                {
+                    throw new SecureException("Product Limit exceeded!");
+                }
+            } catch (Exception ex) { }
+                
         }
 
         public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
