@@ -1068,11 +1068,11 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.LcIssuanceId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            var test4 = model.receiverLevelId;
-            var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
-            var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
-            var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
-            var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
+            //var test4 = model.receiverLevelId;
+            //var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
+            //var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
+            //var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
+            //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = 0;
             workflow.ToStaffId = null;
             workflow.StatusId = model.forwardAction;
@@ -1114,16 +1114,8 @@ namespace FintrakBanking.Repositories.Credit
                     //SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
                 }
 
-                //if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { lc.LCUSSANCESTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
-                //if (lc.NEXTAPPLICATIONSTATUSID != null && lc.FINALAPPROVAL_LEVELID != null) { lc.APPLICATIONSTATUSID = (short)lc.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
-                // MEMORANDUM update
-                //          var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
-                //        if (memo != null) { memo.ISCOMPLETED = true; }
                 if (contextControl != null) contextControl.SaveChanges();
             }
-
-            // UPDATE APPROVED AMOUNT
-            //if (updateApprovedAmount == true && items != null) appl.APPROVEDAMOUNT = totalApprovedAmount;
 
             // Audit Section ---------------------------
             /*  var audit = new TBL_AUDIT
@@ -1150,14 +1142,11 @@ namespace FintrakBanking.Repositories.Credit
               this.audit.AddAuditTrail(audit);
               // End of Audit Section ---------------------
   */
+            var trail = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == model.LcIssuanceId && t.OPERATIONID == operationId && t.FROMAPPROVALLEVELID == null).ToList();
+            if (trail != null && (trail.Count() == 1))
+            {
 
-            //if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
-            //{
-            //    lc.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcIssuanceCompleted;
-            //    lc.APPROVEDDATE = DateTime.Now;
-            //    workflow.SetResponse = false;
-            //    //workflow.NextProcess(lc.COMPANYID, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false);
-            //}
+            }
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
             //workflow.Response.success = true;
