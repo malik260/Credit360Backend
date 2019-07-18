@@ -45,6 +45,7 @@ namespace FintrakBanking.Repositories.Credit
                     ORIGINALDOCUMENTRELEASEID = o.originalDocumentReleaseId,
                     ORIGINALDOCUMENTAPPROVALID = o.originalDocumentApprovalId,
                     DOCUMENTUPLOADID = o.documentUploadId,
+                    DOCSUBMISSIONOPERATIONID = o.docSubmissionOperationId,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                     COMPANYID = o.companyId,
                     CREATEDBY = o.createdBy,
@@ -140,7 +141,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (data != null)
                 {
-                    data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    var release = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == data.ORIGINALDOCUMENTAPPROVALID).Select(o => o).ToList();
+
+                    foreach (var d in release)
+                        d.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
                     _workflow.StaffId = x.createdBy;
                     _workflow.CompanyId = x.companyId;

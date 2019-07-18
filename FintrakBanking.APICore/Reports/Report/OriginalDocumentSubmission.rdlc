@@ -223,7 +223,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Reference Number</Value>
+                              <Value>Document Reference Number</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -289,7 +289,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Description</Value>
+                              <Value>Document Description</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -823,7 +823,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!dateTimeCreated.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>D</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />

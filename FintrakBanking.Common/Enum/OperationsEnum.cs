@@ -69,7 +69,7 @@ namespace FintrakBanking.Common.Enum
         LoanSales = 58,
         LoanRecapitilization = 59,
         CollateralApproval = 60,
-        ItemPolicyApproval = 61,
+        IsurancePolicyApproval = 61,
         LoanPerformance = 62,
         CommercialLoanBooking = 63,
         LoanRecovery = 64,
@@ -132,11 +132,11 @@ namespace FintrakBanking.Common.Enum
         lcUssance = 140,
         CreditCardDrawdownRequest = 141,
         LetterGenerationRequest = 142,
-        CollateralValuationRequest = 143,
-        CollateralValuationApproval = 144,
         //CreditCardsSalaryBacked = 145,
+        CollateralValuationRequest = 144,
+        CreditCardsSalaryBacked = 145,
         CreditCardsCleanCards = 146,
-        SecurityRelease = 145,
+        SecurityRelease = 147,
         InitiationLevelAppraisal = 148,
 
 
