@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
                     else
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Error!!! One or More Documnets has already been forwarded for Approval" });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Could not save record!" });
                     }
                 }
 
