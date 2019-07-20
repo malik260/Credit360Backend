@@ -484,6 +484,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RAC_DEFINITION> TBL_RAC_DEFINITION { get; set; }
         public virtual DbSet<TBL_RAC_DETAIL> TBL_RAC_DETAIL { get; set; }
         public virtual DbSet<TBL_RAC_INPUT_TYPE> TBL_RAC_INPUT_TYPE { get; set; }
+        
+             public virtual DbSet<TBL_RAC_CATEGORY_TYPE> TBL_RAC_CATEGORY_TYPE { get; set; }
+        
 
 
 

@@ -41,6 +41,8 @@ namespace FintrakBanking.Repositories.Risk
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
 
+          var data =  GetRacCategoryTypes(productId);
+
             var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
@@ -106,7 +108,22 @@ namespace FintrakBanking.Repositories.Risk
             return rac;
         }
 
+        private List<RacCategoryViewModel> GetRacCategoryTypes(int productId)
+        {
+            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+               .Select(x => x.RACCATEGORYID)
+               .ToList();
 
+          var list =  context.TBL_RAC_CATEGORY_TYPE.Where(x => categoryIds.Contains(x.RACCATEGORYID)).Select(x=> new RacCategoryViewModel
+          {
+             racCategoryType = x.RACCATEGORYTYPE,
+             racCategoryTypeId = x.RACCATEGORYTYPEID,
+             racCategoryId = x.RACCATEGORYID
+
+            } ).ToList();
+
+            return list;
+        }
         public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProductAndTarget(int productId, int targetId)
         {
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
@@ -188,6 +205,14 @@ namespace FintrakBanking.Repositories.Risk
                 racCategoryId = entity.RACCATEGORYID,
                 categoryName = entity.CATEGORYNAME,
             };
+        }
+        public IEnumerable<RacCategoryViewModel> GetRacCategoryType(int id)
+        {
+            return context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYID == id ).Select(x=> new RacCategoryViewModel
+            {
+                racCategoryTypeId = x.RACCATEGORYTYPEID,
+                racCategoryType = x.RACCATEGORYTYPE,
+            });
         }
 
         public bool AddRacCategory(RacCategoryViewModel model)
@@ -294,6 +319,7 @@ namespace FintrakBanking.Repositories.Risk
                     operationId = x.OPERATIONID,
                     approvalLevelId = x.APPROVALLEVELID,
                     roleId = x.ROLEID,
+                    racCategoryType = context.TBL_RAC_CATEGORY_TYPE.Where(o=>o.RACCATEGORYTYPEID==x.RACCATEGORYTYPEID).Select(o=>o.RACCATEGORYTYPE).FirstOrDefault(),
                     productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == x.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                     CategoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
                     racItemName = context.TBL_RAC_ITEM.Where(o => o.RACITEMID == x.RACITEMID).Select(o => o.CRITERIA).FirstOrDefault(),
@@ -305,7 +331,8 @@ namespace FintrakBanking.Repositories.Risk
                     approvalLevelName = context.TBL_APPROVAL_LEVEL.Where(o => o.APPROVALLEVELID == x.APPROVALLEVELID).Select(o => o.LEVELNAME).FirstOrDefault(),
                     controlAmount = x.CONTROLAMOUNT,
                     controlOptionId = x.CONTROLOPTIONID,
-                    controlOption = context.TBL_RAC_OPTION_ITEM.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.LABEL).FirstOrDefault()
+                    controlOption = context.TBL_RAC_OPTION_ITEM.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.LABEL).FirstOrDefault(),
+                    showAtDrawDown = x.SHOWATDRAWDOWN
                 }).OrderBy(o => o.racItemId)
                 .ToList();
         }
@@ -331,7 +358,9 @@ namespace FintrakBanking.Repositories.Risk
                 approvalLevelId = entity.APPROVALLEVELID,
                 roleId = entity.ROLEID,
                 controlAmount = entity.CONTROLAMOUNT,
-                controlOptionId = entity.CONTROLOPTIONID
+                controlOptionId = entity.CONTROLOPTIONID,
+                racCategoryTypeId = entity.RACCATEGORYTYPEID,
+                showAtDrawDown = entity.SHOWATDRAWDOWN
             };
         }
 
@@ -356,7 +385,9 @@ namespace FintrakBanking.Repositories.Risk
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
                 CONTROLOPTIONID = model.controlOptionId,
-                CONTROLAMOUNT = model.controlAmount
+                CONTROLAMOUNT = model.controlAmount,
+                RACCATEGORYTYPEID = model.racCategoryTypeId,
+                SHOWATDRAWDOWN = model.showAtDrawDown
             };
 
             context.TBL_RAC_DEFINITION.Add(entity);
@@ -397,6 +428,8 @@ namespace FintrakBanking.Repositories.Risk
             entity.ROLEID = model.roleId;
             entity.CONTROLAMOUNT = model.controlAmount;
             entity.CONTROLOPTIONID = model.controlOptionId;
+            entity.RACCATEGORYTYPEID = model.racCategoryTypeId;
+            entity.SHOWATDRAWDOWN = model.showAtDrawDown;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;

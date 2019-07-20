@@ -110,5 +110,7 @@ namespace FintrakBanking.Interfaces.Risk
         IEnumerable<ConditionalOperatorViewModel> GetConditionalOperators();
         IEnumerable<DefinedFunctionViewModel> GetDefinedFunctions();
         IEnumerable<ApprovalLevelViewModel> GetApprovalLevel(int companyId);
+
+        IEnumerable< RacCategoryViewModel> GetRacCategoryType(int id);
     }
 }

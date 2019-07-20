@@ -57,7 +57,8 @@ namespace FintrakBanking.ViewModels.Risk
         public int racCategoryId { get; set; }
 
         public string categoryName { get; set; }
-
+        public int racCategoryTypeId { get; set; }
+        public string racCategoryType { get; set; }
     }
 
     public class RacDefinitionViewModel : GeneralEntity
@@ -101,6 +102,9 @@ namespace FintrakBanking.ViewModels.Risk
         public decimal? controlAmount { get; set; }
         public int? controlOptionId { get; set; }
         public string controlOption { get; set; }
+        public string racCategoryType { get; set; }
+        public int? racCategoryTypeId { get; set; }
+        public bool? showAtDrawDown { get; set; }
     }
 
     public class RacDetailViewModel : GeneralEntity
