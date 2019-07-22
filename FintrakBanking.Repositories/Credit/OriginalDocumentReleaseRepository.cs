@@ -83,7 +83,7 @@ namespace FintrakBanking.Repositories.Credit
                              applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
                              documentReferenceNumber = oda.REFERENCENUMBER,
                              docDateTimeCreated = dr.DATETIMECREATED,
-                             createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                             createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                              documentDescription = oda.DESCRIPTION,
                              originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
                             originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
@@ -147,6 +147,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (data != null)
                 {
                     var release = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == data.ORIGINALDOCUMENTAPPROVALID).Select(o => o).ToList();
+                    data.CREATEDBY = x.createdBy;
 
                     foreach (var d in release)
                         d.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;

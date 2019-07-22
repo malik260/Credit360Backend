@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
                     else
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Could not save record!" });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "ERROR! One or More Document has already been sent for Approval" });
                     }
                 }
 
@@ -111,15 +111,15 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("security-release-approval")]
-        public HttpResponseMessage SecurityReleaseGoForApproval(OriginalDocumentReleaseViewModel entity)
+        public HttpResponseMessage SecurityReleaseGoForApproval([FromBody] OriginalDocumentReleaseViewModel model)
         {
             try
             {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.createdBy = token.GetStaffId;
-                entity.companyId = token.GetCompanyId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
-                var response = _repo.SubmitApproval(entity);
+                var response = _repo.SubmitApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
