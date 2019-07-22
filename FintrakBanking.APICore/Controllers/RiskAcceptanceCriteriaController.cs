@@ -580,5 +580,60 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
+        #region racCategoryType
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("category-type")]
+        public HttpResponseMessage GetRacCategoryType()
+        {
+            var response = repo.GetAllRacCategoryType();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("category-type/{id}")]
+        public HttpResponseMessage GetRacCategoryTypeById(int id)
+        {
+            var response = repo.GetRacCategoryTypeById(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("category-type")]
+        public HttpResponseMessage AddRacCategoryType([FromBody] RacCategoryTypeViewModel model)
+        {
+            bool response = repo.AddRacCategoryType(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("category-type/{id}")]
+        public HttpResponseMessage UpdateRacCategoryType([FromBody] RacCategoryTypeViewModel model, int id)
+        {
+            bool response = repo.UpdateRacCategoryTypeById(model, id);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("category-type/{id}")]
+        public HttpResponseMessage DeleteRacCategoryType(int id)
+        {
+            bool response = repo.DeleteRacCategoryTypeById(id);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+
+        #endregion
+
+
+
     }
 }

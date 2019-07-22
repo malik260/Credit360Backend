@@ -37,23 +37,21 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId).Any();
 
- 
-
-                if (result == true) continue;
-                var entity = new TBL_ORIGINAL_DOCUMENT_RELEASE
-                {
-                    ORIGINALDOCUMENTRELEASEID = o.originalDocumentReleaseId,
-                    ORIGINALDOCUMENTAPPROVALID = o.originalDocumentApprovalId,
-                    DOCUMENTUPLOADID = o.documentUploadId,
-                    DOCSUBMISSIONOPERATIONID = o.docSubmissionOperationId,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                    COMPANYID = o.companyId,
-                    CREATEDBY = o.createdBy,
-                    DATETIMECREATED = DateTime.Now
-                };
-                _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Add(entity);
-
-
+                if(result == true) return false;
+             
+                    var entity = new TBL_ORIGINAL_DOCUMENT_RELEASE
+                    {
+                        ORIGINALDOCUMENTRELEASEID = o.originalDocumentReleaseId,
+                        ORIGINALDOCUMENTAPPROVALID = o.originalDocumentApprovalId,
+                        DOCUMENTUPLOADID = o.documentUploadId,
+                        DOCSUBMISSIONOPERATIONID = (int)OperationsEnum.OriginalDocumentApproval,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                        COMPANYID = o.companyId,
+                        CREATEDBY = o.createdBy,
+                        DATETIMECREATED = DateTime.Now
+                    };
+                    _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Add(entity);
+             
             }
             try
             {
@@ -89,9 +87,16 @@ namespace FintrakBanking.Repositories.Credit
                              documentDescription = oda.DESCRIPTION,
                              originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
                             originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
-                             operationId = (int)OperationsEnum.SecurityRelease,
+                            docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
+                             operationId = (int)OperationsEnum.SecurityRelease
                          };
-            return record.ToList();
+
+            var result = record.GroupBy(r => r.originalDocumentApprovalId)
+                               .Select( r =>r.FirstOrDefault()).ToList();
+
+            return result;
+            //return record.ToList();
+            
         }
 
         //public OriginalDocumentReleaseViewModel GetOriginalDocmentReleaseById(int id)
