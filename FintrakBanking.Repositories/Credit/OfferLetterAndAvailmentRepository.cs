@@ -2216,8 +2216,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                bool cleared = OfferLetterChecklistValidation(appl.LOANAPPLICATIONID, 1);
-                if (cleared == false) throw new SecureException("Checklist not cleared to go further!");
+                //bool cleared = OfferLetterChecklistValidation(appl.LOANAPPLICATIONID, 1);
+                //if (cleared == false) throw new SecureException("Checklist not cleared to go further!");
                 appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress; // TODO booking
 
                 if (appl.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees) // Bonds and Guarantees adapter
@@ -2285,24 +2285,24 @@ namespace FintrakBanking.Repositories.Credit
             return requests.Count() > 0;
         }
 
-        private bool OfferLetterChecklistValidation(int id, int type)
-        {
-            int count = 0;
-            if (type == 1)
-            {
-                var detailids = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == id)
-                    .Select(x => x.LOANAPPLICATIONDETAILID)
-                    .ToList();
+        //private bool OfferLetterChecklistValidation(int id, int type)
+        //{
+        //    int count = 0;
+        //    if (type == 1)
+        //    {
+        //        var detailids = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == id)
+        //            .Select(x => x.LOANAPPLICATIONDETAILID)
+        //            .ToList();
 
-                count = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => detailids.Contains(x.LOANAPPLICATIONDETAILID)
-                        && x.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred
-                        && x.ISSUBSEQUENT == false
-                    )
-                    .Count();
-            }
+        //        count = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => detailids.Contains(x.LOANAPPLICATIONDETAILID)
+        //                && x.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred
+        //                && x.ISSUBSEQUENT == false
+        //            )
+        //            .Count();
+        //    }
 
-            return count == 0;
-        }
+        //    return count == 0;
+        //}
 
         private int? GetFirstReceiverLevel(int staffId, int operationId, int? productClassId, bool next = false)
         {

@@ -1321,7 +1321,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.staffId = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
-                entity.operationId = (int)OperationsEnum.ChecklistApproval;
+                //entity.operationId = (int)OperationsEnum.DefferedChecklistApproval;
                 var data = repo.GoForApproval(entity);
 
                 if (data == 1)

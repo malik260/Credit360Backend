@@ -8,6 +8,8 @@ namespace FintrakBanking.ViewModels.Credit
 {
    public class ChecklistApprovalViewModel
     {
+        public int operationId { get; set; }
+
         public string applicationReferenceNumber { get; set; }
         public int loanApplicationId { get; set; }
         public string productName { get; set; }
