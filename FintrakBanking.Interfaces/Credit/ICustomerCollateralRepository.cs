@@ -136,5 +136,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<InsurancePolicies> GetInsuranceType();
 
+        bool AddInsurancePolicy(InsurancePolicies entity);
+
+        List<InsurancePolicies> GetCollateralInsurancePoliciesWaitingForApproval(int staffId);
+
+       int GoForInsurancePolicyApproval(ApprovalViewModel model);
     }
 }

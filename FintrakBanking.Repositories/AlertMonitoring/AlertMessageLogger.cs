@@ -3328,7 +3328,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                    
                 }
 
-                if (slaAlert.operationId == (int)OperationsEnum.ItemPolicyApproval || slaAlert.operationId == (int)OperationsEnum.CollateralMaintenance || slaAlert.operationId == (int)OperationsEnum.CollateralApproval)
+                if (slaAlert.operationId == (int)OperationsEnum.IsurancePolicyApproval || slaAlert.operationId == (int)OperationsEnum.CollateralMaintenance || slaAlert.operationId == (int)OperationsEnum.CollateralApproval)
                 {
                     var collateralCode = context.TBL_TEMP_COLLATERAL_CUSTOMER.Where(x => x.TEMPCOLLATERALCUSTOMERID == slaAlert.targetId).Select(x=>x.COLLATERALCODE).FirstOrDefault();
 

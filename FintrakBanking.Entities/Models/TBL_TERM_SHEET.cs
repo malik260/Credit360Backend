@@ -130,7 +130,7 @@
 
         public bool DELETED { get; set; }
 
-        public string DESCRIPTION { get; set; }
+        //public string DESCRIPTION { get; set; }
 
         public int CREATEDBY { get; set; }
 

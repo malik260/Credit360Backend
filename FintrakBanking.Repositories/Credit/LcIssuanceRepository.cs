@@ -292,7 +292,7 @@ namespace FintrakBanking.Repositories.credit
             availableAmount = availAmtCurrencyRecord == null ? 0 : (decimal)availAmtCurrencyRecord.EXCHANGERATE * model.availableAmount;
             if (lcAmount > availableAmount)
             {
-                throw new SecureException("LC amount canot be greater than available amount");
+                throw new SecureException("LC amount cannot be greater than available amount!");
             }
             
         }
@@ -367,6 +367,9 @@ namespace FintrakBanking.Repositories.credit
 
         public bool UpdateLcIssuance(LcIssuanceViewModel model, int id, UserInfo user)
         {
+
+            validateAmounts(model);
+
             var entity = this.context.TBL_LC_ISSUANCE.Find(id);
             entity.BENEFICIARYNAME = model.beneficiaryName;
             entity.TOTALAPPROVEDAMOUNT = model.totalApprovedAmount;

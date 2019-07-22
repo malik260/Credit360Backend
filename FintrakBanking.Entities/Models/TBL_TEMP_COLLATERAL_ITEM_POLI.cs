@@ -44,7 +44,7 @@ namespace FintrakBanking.Entities.Models
 
         public string DESCRIPTION { get; set; }
 
-        public int PREMIUMPERCENT { get; set; }
+        public int? PREMIUMPERCENT { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
 
@@ -57,5 +57,6 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+        public string PREVIOUSINSURANCE { get; set; }
     }
 }

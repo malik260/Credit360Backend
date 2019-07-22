@@ -17,7 +17,7 @@ namespace FintrakBanking.Repositories.Media
 {
     public class DocumentUploadRepository : IDocumentUploadRepository
     {
-        private FinTrakBankingDocumentsContext docContext; 
+        private FinTrakBankingDocumentsContext docContext;
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
@@ -141,6 +141,36 @@ namespace FintrakBanking.Repositories.Media
             };
         }
 
+        public IEnumerable<DocumentUploadViewModel> GetDocumentUpload(IEnumerable<DocumentUploadViewModel> model)
+        {
+            var documents = new List<DocumentUploadViewModel>();
+            foreach (var o in model)
+            {
+                var entity = (from x in docContext.TBL_DOCUMENT_UPLOAD
+                              join d in docContext.TBL_DOCUMENT_TYPE on x.DOCUMENTTYPEID equals d.DOCUMENTTYPEID
+                              where x.DOCUMENTUPLOADID == o.documentUploadId && x.DELETED == false
+                              select new DocumentUploadViewModel
+                              {
+                                  documentUploadId = x.DOCUMENTUPLOADID,
+                                  fileName = x.FILENAME,
+                                  fileExtension = x.FILEEXTENSION,
+                                  fileSize = x.FILESIZE,
+                                  fileSizeUnit = x.FILESIZEUNIT,
+                                  fileData = x.FILEDATA,
+                                  companyId = x.COMPANYID,
+                                  issueDate = x.ISSUEDATE,
+                                  expiryDate = x.EXPIRYDATE,
+                                  physicalFilenumber = x.PHYSICALFILENUMBER,
+                                  physicalLocation = x.PHYSICALLOCATION,
+                                  documentCategoryName = docContext.TBL_DOCUMENT_CATEGORY.Where(a=>a.DOCUMENTCATEGORYID==d.DOCUMENTCATEGORYID).Select(a=>a.DOCUMENTCATEGORYNAME).FirstOrDefault(),
+                                  documentTypeName = d.DOCUMENTTYPENAME
+                              }).FirstOrDefault();
+
+                documents.Add(entity);
+            }
+            return documents;
+        }
+
         public int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer)
         {
             string customerCode = GetCustomerCode(model.customerId);
@@ -168,7 +198,7 @@ namespace FintrakBanking.Repositories.Media
                 .FirstOrDefault();
 
             if (existing != null && model.overwrite == false) return 3;
-            
+
 
             var entity = new TBL_DOCUMENT_UPLOAD
             {
@@ -209,7 +239,7 @@ namespace FintrakBanking.Repositories.Media
                 };
 
                 if (model.overwrite == true)
-                { 
+                {
                     usage.DATETIMEUPDATED = DateTime.Now;
                     usage.LASTUPDATEDBY = model.createdBy;
                 }
@@ -245,11 +275,12 @@ namespace FintrakBanking.Repositories.Media
                 }
 
             }
-            
+
             if (docContext.SaveChanges() < 1)
             {
-              var file =  docContext.TBL_DOCUMENT_UPLOAD.Where(o => o.DOCUMENTUPLOADID == entity.DOCUMENTUPLOADID).Select(o => o).FirstOrDefault();
-                if (file != null) {
+                var file = docContext.TBL_DOCUMENT_UPLOAD.Where(o => o.DOCUMENTUPLOADID == entity.DOCUMENTUPLOADID).Select(o => o).FirstOrDefault();
+                if (file != null)
+                {
                     docContext.TBL_DOCUMENT_UPLOAD.Remove(file);
                     docContext.SaveChanges();
                 }
@@ -310,13 +341,13 @@ namespace FintrakBanking.Repositories.Media
             if (usage != null)
             {// throw new SecureException("An error occured! Cannot find target item to delete.");
 
-                 usageCount = docContext.TBL_DOCUMENT_USAGE
-                    .Where(u => u.DOCUMENTUPLOADID == usage.DOCUMENTUPLOADID)
-                    .Count();
-           
-            usage.DELETED = true;
-            usage.DELETEDBY = user.createdBy;
-            usage.DATETIMEDELETED = DateTime.Now;
+                usageCount = docContext.TBL_DOCUMENT_USAGE
+                   .Where(u => u.DOCUMENTUPLOADID == usage.DOCUMENTUPLOADID)
+                   .Count();
+
+                usage.DELETED = true;
+                usage.DELETEDBY = user.createdBy;
+                usage.DATETIMEDELETED = DateTime.Now;
             }
             if (usageCount < 2)
             {
@@ -329,7 +360,7 @@ namespace FintrakBanking.Repositories.Media
             }
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            
+
             // Audit Section ---------------------------
             //this.audit.AddAuditTrail(new TBL_AUDIT
             //{
@@ -458,5 +489,5 @@ namespace FintrakBanking.Repositories.Media
     }
 }
 
-           // kernel.Bind<IDocumentUploadRepository>().To<DocumentUploadRepository>();
-           // DocumentUploadAdded = ???, DocumentUploadUpdated = ???, DocumentUploadDeleted = ???,
+// kernel.Bind<IDocumentUploadRepository>().To<DocumentUploadRepository>();
+// DocumentUploadAdded = ???, DocumentUploadUpdated = ???, DocumentUploadDeleted = ???,

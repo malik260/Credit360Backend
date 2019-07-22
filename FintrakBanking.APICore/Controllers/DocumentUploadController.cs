@@ -55,6 +55,16 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("document-uploads")]
+        public HttpResponseMessage GetDocumentUpload([FromBody] IEnumerable<DocumentUploadViewModel> model)
+        {
+            var response = repo.GetDocumentUpload(model);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("document-upload")]
         public async System.Threading.Tasks.Task<HttpResponseMessage> AddDocumentUploadAsync()
         {
@@ -71,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
             }
-
+            try { 
             var entity = new DocumentUploadViewModel
             {
                 fileName = provider.FormData["fileName"],
@@ -83,7 +93,7 @@ namespace FintrakBanking.APICore.Controllers
                 targetReferenceNumber = provider.FormData["targetReferenceNumber"],
                 operationId = Convert.ToInt32(provider.FormData["operationId"]),
                 customerId = Convert.ToInt32(provider.FormData["customerId"]),
-                targetId = Convert.ToInt32(provider.FormData["targetId"]),
+               // targetId = Convert.ToInt32(provider.FormData["targetId"]),
                 overwrite = provider.FormData["overwrite"] == "true",
             };
 
@@ -101,7 +111,10 @@ namespace FintrakBanking.APICore.Controllers
 
             if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
             if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
+            }
+            catch (Exception ex) { }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
+
         }
 
         private DateTime? GetCulture(string dt)

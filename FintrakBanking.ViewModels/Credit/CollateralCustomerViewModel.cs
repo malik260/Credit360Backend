@@ -298,7 +298,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralPrimaryDocumentTitle { get; set; }
         public string comment { get; set; }
         public int? releaseType { get; set; }
-        public int approvalStatusId { get; set; }
+        public int? approvalStatusId { get; set; }
 
         public DateTime nextVisitationDate { get { return lastVisitationDate.AddDays((double)(visitationCycle)); } set { } }
         public DateTime lastVisitationDate { get; set; }
@@ -373,9 +373,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanApplicationId { get; set; }
         public int? collateralUsageStatus { get; set; }
         public int? status { get; set; }
-        public int premiumPercent { get; set; }
+        public int? premiumPercent { get; set; }
         public int insuranceTypeId { get; set; }
         public int insuranceCompanyId { get; set; }
+        public string prevoiusInsurance { get; set; }
     }
 
     public class crossGarantee
@@ -461,7 +462,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? premiumAmount { get; set; }
         public decimal? inSurPremiumAmount { get; set; }
         public string description { get; set; }
-        public int premiumPercent { get; set; }
+        public int? premiumPercent { get; set; }
         public int insuranceTypeId { get; set; }
         public int insuranceCompanyId { get; set; }
         public string address { get; set; }
