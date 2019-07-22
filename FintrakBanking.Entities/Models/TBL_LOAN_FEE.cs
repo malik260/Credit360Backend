@@ -24,6 +24,8 @@ namespace FintrakBanking.Entities.Models
         public short LOANSYSTEMTYPEID { get; set; }
 
         public int CHARGEFEEID { get; set; }
+
+        [StringLength(3000)]
         public string DESCRIPTION { get; set; }
         public bool ISMANUAL { get; set; }
 

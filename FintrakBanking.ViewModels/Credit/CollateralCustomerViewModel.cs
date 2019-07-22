@@ -282,7 +282,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool canMappedToApplication { get; set; }
         public bool allowApplicationMapping { get; set; }
         public string bank { get; set; }
-        public int stateId { get; set; }
+        public int? stateId { get; set; }
 
         //File Upload
         public int documentId { get; set; }

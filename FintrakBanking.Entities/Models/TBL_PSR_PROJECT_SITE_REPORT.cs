@@ -60,6 +60,7 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
         public int APPROVALSTATUSID { get; set; }
+        public int? CURRENCYID { get; set; }
 
         //public virtual ICollection<TBL_PSR_PSR_PERFORMANCE_EVALUATION> TBL_PSR_PSR_PERFORMANCE_EVALUATION { get; set; }
 
