@@ -516,6 +516,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LC_USSANCE> TBL_LC_USSANCE { get; set; }
 
         public virtual DbSet<TBL_COLLATERAL_VALUATION> TBL_COLLATERAL_VALUATION { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_VALUATION_PRE> TBL_COLLATERAL_VALUATION_PRE { get; set; }
         public virtual DbSet<TBL_VALUATION_REPORT> TBL_VALUATION_REPORT { get; set; }
         public virtual DbSet<TBL_VALUATION_REQUEST_TYPE> TBL_VALUATION_REQUEST_TYPE { get; set; }
         public virtual DbSet<TBL_LETTER_GENERATION_REQUEST> TBL_LETTER_GENERATION_REQUEST { get; set; }

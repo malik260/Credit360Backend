@@ -91,11 +91,8 @@ namespace FintrakBanking.Repositories.Credit
 
             ////if (tenorModeId == TenorModeEnum.Days)
             //totalTenor = tenor / daysInAYear; //365 days in a year
-
             //var frequencyValue = context.tbl_Frequency_Type.FirstOrDefault(x => x.FrequencyTypeId == (short) frequencyType).Value;
-
             //var installments = totalTenor * frequencyValue;
-
             return Convert.ToInt32(numberOfpayments + 1);
         }
 
