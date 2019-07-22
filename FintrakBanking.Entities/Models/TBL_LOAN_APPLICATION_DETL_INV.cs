@@ -50,8 +50,10 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? APPROVEDDATETIME { get; set; }
 
+        [StringLength(50)]
         public string CERTIFICATENO { get; set; }
 
+        [StringLength(50)]
         public string ENTRYSHEETNUMBER { get; set; }
 
         public bool REVALIDATED { get; set; }

@@ -133,6 +133,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime DATETIMECREATED { get; set; }
 
+        [StringLength(50)]
         public string ARCHIVEBATCHCODE { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
