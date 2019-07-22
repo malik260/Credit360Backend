@@ -35,5 +35,7 @@ namespace FintrakBanking.ViewModels.credit
         public string appplicationReferenceNumber { get; set; }
         public string customerName { get; set; }
         public int operationId { get; set; }
+        public int? currencyId { get; set; }
+        public string currency { get; set; }
     }
 }
