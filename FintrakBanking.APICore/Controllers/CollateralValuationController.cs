@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
@@ -291,5 +292,40 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error saving this record. Error - {ex.Message}" });
             }
         }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-valuation-prerequisite/{valuationPrerequisiteId}/valuationPrerequisiteId")]
+        public HttpResponseMessage DeleteValuationPrerequisite(int valuationPrerequisiteId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
+
+                var data = _colValuationRepo.DeleteValuationPrerequisite(valuationPrerequisiteId, user);
+
+                if (data) {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                          new { success = true, message = "The valuation prerequisite has been deleted successfully" });
+                }
+                else {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error deleting this valuation prerequisite" });
+                }
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this valuation prerequisite {e.Message}" });
+            }
+        }
+
     }
 }

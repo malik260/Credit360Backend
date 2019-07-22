@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Credit;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,5 +26,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<ValuationPrerequisiteViewModel> GetAllCollateralValuerIformation();
 
         List<ValuationPrerequisiteViewModel> GetAllCollateralValuerIformation(int id);
+
+        bool DeleteValuationPrerequisite(int valuationPrerequisiteId, UserInfo user);
     }
 }

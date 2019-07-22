@@ -382,6 +382,8 @@ namespace FintrakBanking.Common.Enum
         LetterGenerationRequestDeleted = 448,
         CallateralValuationReportAdded = 449,
         CallateralValuationAdded = 450,
+        ValuationPrerequisiteAdded = 451,
+        ValuationPrerequisiteDeleted = 452
     };
     public enum RegulatoryTypeEnum
     {

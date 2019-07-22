@@ -5,6 +5,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
@@ -105,7 +106,7 @@ namespace FintrakBanking.Repositories.Credit
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.CallateralValuationAdded,
+                AUDITTYPEID = (short)AuditTypeEnum.ValuationPrerequisiteAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Collateral Valuation for  '{ model.collateralValuationId }' is added by {model.staffId} ",
@@ -381,6 +382,38 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 //return false;
             }
+        }
+
+        public bool DeleteValuationPrerequisite(int valuationPrerequisiteId, UserInfo user)
+        {
+            var prerequisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.APPROVALSTATUSID == (int) ApprovalStatusEnum.Pending 
+                                        && O.VALUATIONPREREQUISITEID ==  valuationPrerequisiteId).FirstOrDefault();
+
+            if (prerequisite != null)
+            {
+                _context.TBL_COLLATERAL_VALUATION_PRE.Remove(prerequisite);
+
+                // Audit Section ---------------------------
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short) AuditTypeEnum.ValuationPrerequisiteDeleted,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = "Deleted Valuation Prerequisite with code: " + prerequisite.VALUATIONPREREQUISITEID,
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = _general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                _audit.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+
+                return _context.SaveChanges() > 0;
+            }
+
+            return false;
         }
     }
 }
