@@ -26,6 +26,10 @@ namespace FintrakBanking.ViewModels.credit
 
         public int statusId { get; set; }
 
+        public int? numberOfBags { get; set; }
+
+        public int branchId { get; set; }
+
         public int approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
         public string customerName { get; set; }

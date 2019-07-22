@@ -181,6 +181,14 @@ namespace FintrakBanking.ViewModels.Risk
         public bool isSystemDefined { get; set; }
 
     }
+
+    public class RacCategoryTypeViewModel : GeneralEntity
+    {
+        public int racCategoryId { get; set; }
+        public string racCategoryType { get; set; }
+        public string racCategoryName { get; set; }
+        public int racCategoryTypeId { get; set; }
+    }
 }
 
 /* rac = {
