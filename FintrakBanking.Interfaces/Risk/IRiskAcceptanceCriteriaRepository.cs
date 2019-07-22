@@ -107,6 +107,14 @@ namespace FintrakBanking.Interfaces.Risk
 
         #endregion
 
+        #region RacCategoryType
+        IEnumerable<RacCategoryTypeViewModel> GetAllRacCategoryType();
+        RacCategoryTypeViewModel GetRacCategoryTypeById(int id);
+        bool DeleteRacCategoryTypeById(int id);
+        bool UpdateRacCategoryTypeById(RacCategoryTypeViewModel model, int id);
+        bool AddRacCategoryType(RacCategoryTypeViewModel model);
+        #endregion
+
         IEnumerable<ConditionalOperatorViewModel> GetConditionalOperators();
         IEnumerable<DefinedFunctionViewModel> GetDefinedFunctions();
         IEnumerable<ApprovalLevelViewModel> GetApprovalLevel(int companyId);
