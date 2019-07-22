@@ -57,7 +57,6 @@ namespace FintrakBanking.Repositories.Credit
         private IFinanceTransactionRepository transRepo;
         //private CreditCommonRepository creditCommon;
 
-
         private IIntegrationWithFinacle finacle;
         bool USE_THIRD_PARTY_INTEGRATION = false;
         private DateTime? applicationDate = null;
@@ -754,93 +753,65 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-                try
+                // ............. Checking customer balance, and fee override ......
+                confirmCustomerAccountFunded(model.loanChargeFee, model.casaAccountId, model.companyId, model.customerId, loanReferenceNumber);
+                model.feeOverride = true;
+
+                //...................Adding Revolving Loan Record.........................
+                var loan = context.TBL_LOAN_REVOLVING.Add(data);
+
+                //if (model.monitoringTriggers.Count > 0)
+                AddLoanMonitoringTrigger(model.loanApplicationDetailId, model.createdBy, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+                //AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+
+                //...................Update the Loan Request table.......................
+                request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                request.ISUSED = true;
+
+                application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
+
+                //...................Adding Audit...............................
+                context.TBL_AUDIT.Add(audit);
+
+                //........Save Changes...............
+                var dataCount = context.SaveChanges();
+
+                var approvalModel = new ForwardViewModel
                 {
-                    // ............. Checking customer balance, and fee override ......
-                    confirmCustomerAccountFunded(model.loanChargeFee, model.casaAccountId, model.companyId, model.customerId, loanReferenceNumber);
-                    model.feeOverride = true;
+                    createdBy = model.createdBy,
+                    companyId = model.companyId,
+                    applicationId = model.loanBookingRequestId,
+                    comment = "Please approve this Loan",
+                    amount = revolvingLoanInput.approvedAmount,
+                    operationId = (int)OperationsEnum.RevolvingLoanBooking
+                };
 
-                    //...................Adding Revolving Loan Record.........................
-                    var loan = context.TBL_LOAN_REVOLVING.Add(data);
-
-                    //if (model.monitoringTriggers.Count > 0)
-                    AddLoanMonitoringTrigger(model.loanApplicationDetailId, model.createdBy, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-                    //AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-
-                    //...................Update the Loan Request table.......................
-                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                    request.ISUSED = true;
-
-                    application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
-
-                    //...................Adding Audit...............................
-                    context.TBL_AUDIT.Add(audit);
-
-                    //........Save Changes...............
-                    var dataCount = context.SaveChanges();
-
-                    var approvalModel = new ForwardViewModel
-                    {
-                        createdBy = model.createdBy,
-                        companyId = model.companyId,
-                        applicationId = model.loanBookingRequestId,
-                        comment = "Please approve this Loan",
-                        amount = revolvingLoanInput.approvedAmount,
-                        operationId = (int)OperationsEnum.RevolvingLoanBooking
-                    };
-
-                    //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                    if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, false, (int)ApprovalStatusEnum.Processing))
-                    {
-                        //............save Loan Covenant..........
-                        AddLoanCovenant(model, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-                        //............save Loan Fees..........
-                        AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail);
-                        //AddDeferredFees(model.loanChargeFee, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail);
-
-                        model.loanReferenceNumber = loanReferenceNumber;
-
-                        //...................Saving Loan Collaterals Mapping.......................
-                        AddLoanCollateralMapping(model.loanApplicationId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-
-                        if (!model.feeOverride) PostLoanFees(model);
-                        context.SaveChanges();
-
-                        //.....Commit transaction ............
-                        trans.Commit();
-                    }
-                    //.......................END OF APPROVAL LOG......................................................
-
-                    if (dataCount > 0)
-                        return loanReferenceNumber;
-                    else
-                        return "";
-                }
-                catch (BadLogicException be)
+                //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
+                if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                 {
-                    trans.Rollback();
-                    throw new BadLogicException(be.Message);
+                    //............save Loan Covenant..........
+                    AddLoanCovenant(model, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+                    //............save Loan Fees..........
+                    AddLoanFees(model.loanChargeFee, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail);
+                    //AddDeferredFees(model.loanChargeFee, (short)LoanSystemTypeEnum.OverdraftFacility, model, applicationdetail);
+
+                    model.loanReferenceNumber = loanReferenceNumber;
+
+                    //...................Saving Loan Collaterals Mapping.......................
+                    AddLoanCollateralMapping(model.loanApplicationId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+
+                    if (!model.feeOverride) PostLoanFees(model);
+                    context.SaveChanges();
+
+                    //.....Commit transaction ............
+                    trans.Commit();
                 }
-                catch (ConditionNotMetException ce)
-                {
-                    trans.Rollback();
-                    throw new ConditionNotMetException(ce.Message);
-                }
-                catch (TwoFactorAuthenticationException et)
-                {
-                    trans.Rollback();
-                    throw new TwoFactorAuthenticationException(et.Message);
-                }
-                catch (APIErrorException ae)
-                {
-                    trans.Rollback();
-                    throw new APIErrorException(ae.Message);
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new SecureException(ex.Message);
-                }
+                //.......................END OF APPROVAL LOG......................................................
+
+                if (dataCount > 0)
+                    return loanReferenceNumber;
+                else
+                    return "";
             }
         }
 
@@ -1380,101 +1351,68 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-                try
+                confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
+                entity.feeOverride = true;
+
+                var loan = context.TBL_LOAN.Add(data);
+
+                request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                request.ISUSED = true;
+                application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
+
+                var dataCount = context.SaveChanges();
+                if (dataCount > 0)
                 {
-                    confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
-                    entity.feeOverride = true;
-
-                    var loan = context.TBL_LOAN.Add(data);
-
-                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                    request.ISUSED = true;
-                    application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
-
-                    var dataCount = context.SaveChanges();
-                    if (dataCount > 0)
+                    var approvalModel = new ForwardViewModel
                     {
-                        var approvalModel = new ForwardViewModel
-                        {
-                            createdBy = entity.createdBy,
-                            companyId = entity.companyId,
-                            applicationId = entity.loanBookingRequestId,
-                            comment = "Please approve this Loan",
-                            amount = entity.principalAmount,
-                            operationId = (short)OperationsEnum.TermLoanBooking,
-                        };
+                        createdBy = entity.createdBy,
+                        companyId = entity.companyId,
+                        applicationId = entity.loanBookingRequestId,
+                        comment = "Please approve this Loan",
+                        amount = entity.principalAmount,
+                        operationId = (short)OperationsEnum.TermLoanBooking,
+                    };
 
-                        //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                        if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, false, (int)ApprovalStatusEnum.Processing))
+                    //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
+                    if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, false, (int)ApprovalStatusEnum.Processing))
+                    {
+                        if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.IrregularSchedule)
                         {
-                            if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.IrregularSchedule)
+                            foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
                             {
-                                foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
+                                var irregularRecordData = new TBL_LOAN_SCHEDULE_IREGUL_INPUT
                                 {
-                                    var irregularRecordData = new TBL_LOAN_SCHEDULE_IREGUL_INPUT
-                                    {
-                                        LOANID = loan.TERMLOANID,
-                                        PAYMENTAMOUNT = (decimal)irregular.paymentAmount,
-                                        PAYMENTDATE = irregular.paymentDate,
-                                        CREATEDBY = entity.createdBy,
-                                        DATETIMECREATED = DateTime.Now,
-                                    };
-                                    context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Add(irregularRecordData);
-                                }
+                                    LOANID = loan.TERMLOANID,
+                                    PAYMENTAMOUNT = (decimal)irregular.paymentAmount,
+                                    PAYMENTDATE = irregular.paymentDate,
+                                    CREATEDBY = entity.createdBy,
+                                    DATETIMECREATED = DateTime.Now,
+                                };
+                                context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Add(irregularRecordData);
                             }
-
-                            AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
-                            //AddDeferredFees(entity.loanChargeFee, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
-                            AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                            AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                            entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
-                            //if (!entity.feeOverride) PostLoanFees(entity);
-                            context.SaveChanges();
-
-                            trans.Commit();
                         }
-                        //.......................END OF APPROVAL LOG......................................................
 
-                        return loanReferenceNumber;
+                        AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                        AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
+                        //AddDeferredFees(entity.loanChargeFee, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
+                        AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                        AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                        entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
+                        //if (!entity.feeOverride) PostLoanFees(entity);
+                        context.SaveChanges();
+
+                        trans.Commit();
                     }
-                    else
-                    {
-                        return "";
-                    }
+                    //.......................END OF APPROVAL LOG......................................................
+
+                    return loanReferenceNumber;
                 }
-                catch (BadLogicException be)
+                else
                 {
-                    trans.Rollback();
-                    throw new BadLogicException(be.Message);
-                }
-                catch (ConditionNotMetException ce)
-                {
-                    trans.Rollback();
-                    throw new ConditionNotMetException(ce.Message);
-                }
-                catch (APIErrorException ae)
-                {
-                    trans.Rollback();
-                    throw new APIErrorException(ae.Message);
-                }
-                catch (TwoFactorAuthenticationException fa)
-                {
-                    trans.Rollback();
-                    throw new TwoFactorAuthenticationException(fa.Message);
-                }
-                catch (SecureException fa)
-                {
-                    trans.Rollback();
-                    throw new SecureException(fa.Message);
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new Exception(ex.Message);
+                    return "";
                 }
             }
         }
@@ -1688,95 +1626,61 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-                try
+                // ............. Checking customer balance, and fee override ......
+                confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
+                entity.feeOverride = true;
+
+                //...................Adding Commercial Loan Record.........................
+                var loan = context.TBL_LOAN.Add(data);
+                request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                request.ISUSED = true;
+
+                //request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
+
+                //...................Adding Audit...............................
+                var dataCount = context.SaveChanges();
+                if (dataCount > 0)
                 {
-                    // ............. Checking customer balance, and fee override ......
-                    confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
-                    entity.feeOverride = true;
-
-                    //...................Adding Commercial Loan Record.........................
-                    var loan = context.TBL_LOAN.Add(data);
-                    request.APPROVALSTATUSID = (short) ApprovalStatusEnum.Approved;
-                    request.ISUSED = true;
-
-                    //request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                    application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
-
-                    //...................Adding Audit...............................
-                    var dataCount = context.SaveChanges();
-                    if (dataCount > 0)
+                    var approvalModel = new ForwardViewModel
                     {
-                        var approvalModel = new ForwardViewModel
-                        {
-                            createdBy = entity.createdBy,
-                            companyId = entity.companyId,
-                            applicationId = entity.loanBookingRequestId,
-                            comment = entity.comment, //"Please approve this Loan",
-                            amount = entity.principalAmount,
-                            operationId = (int)OperationsEnum.CommercialLoanBooking
-                        };
+                        createdBy = entity.createdBy,
+                        companyId = entity.companyId,
+                        applicationId = entity.loanBookingRequestId,
+                        comment = entity.comment, //"Please approve this Loan",
+                        amount = entity.principalAmount,
+                        operationId = (int)OperationsEnum.CommercialLoanBooking
+                    };
 
-                        //.....................LOG COMMERCIAL LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                        if (LogApproval(approvalModel, (int)OperationsEnum.CommercialLoanBooking, false, (int)ApprovalStatusEnum.Processing))
-                        {
-                            AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
-
-                            //...................Saving Commercial Loan Collaterals Mapping.......................
-                            AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                            //...................Mapping Commercial Loan Monitoring Trigger.......................
-                            AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            //if (entity.monitoringTriggers.Count > 0)
-                            //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                            entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
-                            if (!entity.feeOverride) PostLoanFees(entity);
-                            context.SaveChanges();
-
-                            //.....Commit transaction ............
-                            trans.Commit();
-                        }
-
-                        //.......................END OF APPROVAL LOG......................................................
-
-                        return loanReferenceNumber;
-                    }
-                    else
+                    //.....................LOG COMMERCIAL LOAN BOOKING TRANSACTION FOR APPROVAL......................................
+                    if (LogApproval(approvalModel, (int)OperationsEnum.CommercialLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                     {
-                        return "";
+                        AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                        AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
+
+                        //...................Saving Commercial Loan Collaterals Mapping.......................
+                        AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                        //...................Mapping Commercial Loan Monitoring Trigger.......................
+                        AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                        //if (entity.monitoringTriggers.Count > 0)
+                        //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                        entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
+                        if (!entity.feeOverride) PostLoanFees(entity);
+                        context.SaveChanges();
+
+                        //.....Commit transaction ............
+                        trans.Commit();
                     }
 
+                    //.......................END OF APPROVAL LOG......................................................
+
+                    return loanReferenceNumber;
                 }
-                catch (BadLogicException be)
+                else
                 {
-                    trans.Rollback();
-                    throw new BadLogicException(be.Message);
-                }
-                catch (ConditionNotMetException ce)
-                {
-                    trans.Rollback();
-                    throw new ConditionNotMetException(ce.Message);
-                }
-                catch (APIErrorException ae)
-                {
-                    trans.Rollback();
-                    throw new APIErrorException(ae.Message);
-                }
-                catch (TwoFactorAuthenticationException fa)
-                {
-                    trans.Rollback();
-                    throw new TwoFactorAuthenticationException(fa.Message);
-                }
-                catch (SecureException fa)
-                {
-                    trans.Rollback();
-                    throw new SecureException(fa.Message);
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new SecureException(ex.Message);
+                    return "";
                 }
             }
         }
@@ -2021,103 +1925,69 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-                try
+                //...Checking customer balance, and fee override...
+                confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
+                entity.feeOverride = true;
+
+                //...Adding Commercial Loan Record...
+                var loan = context.TBL_LOAN.Add(data);
+
+                //...Update the Loan Request and loan application table...
+                request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                request.ISUSED = true;
+                application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
+
+                //...Adding Audit...
+                var dataCount = context.SaveChanges();
+                if (dataCount > 0)
                 {
-                    //...Checking customer balance, and fee override...
-                    confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
-                    entity.feeOverride = true;
-
-                    //...Adding Commercial Loan Record...
-                    var loan = context.TBL_LOAN.Add(data);
-
-                    //...Update the Loan Request and loan application table...
-                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-                    request.ISUSED = true;
-                    application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
-
-                    //...Adding Audit...
-                    var dataCount = context.SaveChanges();
-                    if (dataCount > 0)
+                    var approvalModel = new ForwardViewModel
                     {
-                        var approvalModel = new ForwardViewModel
+                        createdBy = entity.createdBy,
+                        companyId = entity.companyId,
+                        applicationId = entity.loanBookingRequestId,
+                        comment = "Please approve this Loan",
+                        amount = entity.principalAmount,
+                        operationId = (int)OperationsEnum.ForeignExchangeLoanBooking
+                    };
+
+                    //.....................LOG FX LOAN BOOKING TRANSACTION FOR APPROVAL......................................
+                    if (LogApproval(approvalModel, (int)OperationsEnum.ForeignExchangeLoanBooking, false, (int)ApprovalStatusEnum.Processing))
+                    {
+                        AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                        AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
+                        //AddDeferredFees(entity.loanChargeFee, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
+
+                        //...................Saving FX Loan Collaterals Mapping.......................
+                        AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                        //...................Mapping FX Loan Monitoring Trigger.......................
+                        AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                        if (entity.loanBeneficiary.Count > 0)
                         {
-                            createdBy = entity.createdBy,
-                            companyId = entity.companyId,
-                            applicationId = entity.loanBookingRequestId,
-                            comment = "Please approve this Loan",
-                            amount = entity.principalAmount,
-                            operationId = (int)OperationsEnum.ForeignExchangeLoanBooking
-                        };
-
-                        //.....................LOG FX LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                        if (LogApproval(approvalModel, (int)OperationsEnum.ForeignExchangeLoanBooking, false, (int)ApprovalStatusEnum.Processing))
-                        {
-                            AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                            AddLoanFees(entity.loanChargeFee, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
-                            //AddDeferredFees(entity.loanChargeFee, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity, applicationDetail);
-
-                            //...................Saving FX Loan Collaterals Mapping.......................
-                            AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                            //...................Mapping FX Loan Monitoring Trigger.......................
-                            AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                            if (entity.loanBeneficiary.Count > 0)
+                            foreach (var item in entity.loanBeneficiary)
                             {
-                                foreach (var item in entity.loanBeneficiary)
-                                {
-                                    item.loanId = loan.TERMLOANID;
-                                };
-                                addLoanBeneficiary(entity.loanBeneficiary);
-                            }
-
-                            entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
-                            if (!entity.feeOverride) PostLoanFees(entity);
-                            context.SaveChanges();
-
-                            //.....Commit transaction ............
-                            trans.Commit();
+                                item.loanId = loan.TERMLOANID;
+                            };
+                            addLoanBeneficiary(entity.loanBeneficiary);
                         }
 
-                        //.......................END OF APPROVAL LOG......................................................
+                        entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
+                        if (!entity.feeOverride) PostLoanFees(entity);
+                        context.SaveChanges();
 
-                        return loanReferenceNumber;
-                    }
-                    else
-                    {
-                        return "";
+                        //.....Commit transaction ............
+                        trans.Commit();
                     }
 
+                    //.......................END OF APPROVAL LOG......................................................
+
+                    return loanReferenceNumber;
                 }
-                catch (BadLogicException xe)
+                else
                 {
-                    trans.Rollback();
-                    throw new BadLogicException(xe.Message);
-                }
-                catch (ConditionNotMetException ce)
-                {
-                    trans.Rollback();
-                    throw new ConditionNotMetException(ce.Message);
-                }
-                catch (APIErrorException ae)
-                {
-                    trans.Rollback();
-                    throw new APIErrorException(ae.Message);
-                }
-                catch (TwoFactorAuthenticationException fa)
-                {
-                    trans.Rollback();
-                    throw new TwoFactorAuthenticationException(fa.Message);
-                }
-                catch (SecureException xe)
-                {
-                    trans.Rollback();
-                    throw new ConditionNotMetException(xe.Message);
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new SecureException(ex.Message);
+                    return "";
                 }
             }
         }
@@ -3575,80 +3445,43 @@ namespace FintrakBanking.Repositories.Credit
             using (var trans = context.Database.BeginTransaction())
             {
 
-                try
+
+                workflow.StaffId = entity.createdBy;
+                workflow.CompanyId = entity.companyId;
+                workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
+                workflow.TargetId = loanBookingRequestId;
+                workflow.Comment = entity.comment;
+                workflow.OperationId = entity.operationId;
+                workflow.DeferredExecution = true;
+                workflow.ExternalInitialization = false;
+
+                workflow.LogActivity();
+
+                context.SaveChanges();
+
+                if (ApproveLoanBooking(entity.targetId, loanBookingRequestId, (short)workflow.StatusId, entity))
                 {
-                    //var loan = context.TBL_LOAN.Where(x => x.TERMLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
-                    //if (loan == null)
-                    //{
-                    //    var revolving = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
-                    //    if (revolving == null)
-                    //    {
-                    //        var od = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
-                    //        if (od == null)
-                    //        {
-                    //            throw new ConditionNotMetException("CRMS Reference Number is missing");
-                    //        }
-                    //    }
-                    //}
-
-
-                    workflow.StaffId = entity.createdBy;
-                    workflow.CompanyId = entity.companyId;
-                    workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
-                    workflow.TargetId = loanBookingRequestId;
-                    workflow.Comment = entity.comment;
-                    workflow.OperationId = entity.operationId;
-                    workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = false;
-
-                    workflow.LogActivity();
-
-                    context.SaveChanges();
-
-                    if (ApproveLoanBooking(entity.targetId, loanBookingRequestId, (short)workflow.StatusId, entity))
+                    trans.Commit();
+                    if (workflow.NewState != (int)ApprovalState.Ended)
                     {
-                        trans.Commit();
-                        if (workflow.NewState != (int)ApprovalState.Ended)
-                        {
 
-                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 1;
-                            else return 3;
-                        }
-                        else
-                        {
-                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 2;
-                            else return 3;
-                        }
+                        if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 1;
+                        else return 3;
                     }
                     else
                     {
-                        trans.Rollback();
-                        return 0;
+                        if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 2;
+                        else return 3;
                     }
                 }
-                catch (ConditionNotMetException ce)
+                else
                 {
-                    throw new ConditionNotMetException(ce.Message);
-                }
-                catch (BadLogicException be)
-                {
-                    throw new BadLogicException(be.Message);
-                }
-                catch (APIErrorException e)
-                {
-                    throw new APIErrorException(e.Message);
-                }
-                catch (TwoFactorAuthenticationException e)
-                {
-                    throw new TwoFactorAuthenticationException(e.Message);
-                }
-                catch (Exception e)
-                {
-                    //trans.Rollback();
-                    throw new ConditionNotMetException("Approval failed. Operation unsuccessful. " + e.Message);
+                    trans.Rollback();
+                    return 0;
                 }
             }
         }
+    
 
         private bool ApproveLoanBooking(int loanId, int loanBookingRequestId, short approvalStatusId, ApprovalViewModel user)
         {
@@ -6540,6 +6373,25 @@ namespace FintrakBanking.Repositories.Credit
             return disbursableAmount ?? 0;
         }
 
+        private bool OfferLetterChecklistValidation(int id, int type)
+        {
+            int count = 0;
+            if (type == 1)
+            {
+                var detailids = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == id)
+                    .Select(x => x.LOANAPPLICATIONDETAILID)
+                    .ToList();
+
+                count = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => detailids.Contains(x.LOANAPPLICATIONDETAILID)
+                        && x.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred
+                        && x.ISSUBSEQUENT == false
+                    )
+                    .Count();
+            }
+
+            return count == 0;
+        }
+
         public bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity)
         {
             using (var trans = context.Database.BeginTransaction())
@@ -6572,6 +6424,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new ConditionNotMetException("Requested Amount cannot be greater than the disbursable amount");
                 }
+
+                bool cleared = OfferLetterChecklistValidation(loanApplicationDetails.LOANAPPLICATIONID, 1);
+                if (cleared == false) throw new SecureException("Checklist not cleared to go further!");
 
 
                 try

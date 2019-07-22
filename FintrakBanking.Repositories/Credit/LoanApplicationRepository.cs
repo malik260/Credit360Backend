@@ -4415,7 +4415,8 @@ namespace FintrakBanking.Repositories.Credit
                                           operationId = c.OPERATIONID,
                                           dateTimeCreated = c.DATETIMECREATED,
                                           createdBy = c.CREATEDBY
-                                      });
+                                      }).ToList();
+
             return revisedProcessFlow;
         }
 

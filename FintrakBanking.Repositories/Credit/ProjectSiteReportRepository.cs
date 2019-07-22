@@ -87,7 +87,9 @@ namespace FintrakBanking.Repositories.credit
                     loanApplicationId = x.LOANAPPLICATIONID,
                     projectLocation = x.PROJECTLOCATION,
                     approvalStatusId = x.APPROVALSTATUSID,
+                    currencyId = x.CURRENCYID,
                     approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                    currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
 
                 }).OrderByDescending(o=>o.projectSiteReportId)
                 .ToList();
@@ -166,6 +168,7 @@ namespace FintrakBanking.Repositories.credit
                        projectLocation = x.PROJECTLOCATION,
                        approvalStatusId = x.APPROVALSTATUSID,
                        operationId = atrail.OPERATIONID,
+                       currency = context.TBL_CURRENCY.Where(o=>o.CURRENCYID==x.CURRENCYID).Select(o=>o.CURRENCYNAME).FirstOrDefault(),
 
                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
 
@@ -191,6 +194,7 @@ namespace FintrakBanking.Repositories.credit
                 DATETIMECREATED = general.GetApplicationDate(),
                 LOANAPPLICATIONID = model.loanApplicationId,
                 PROJECTLOCATION = model.projectLocation,
+                CURRENCYID = model.currencyId,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing
             };
 
@@ -242,6 +246,7 @@ namespace FintrakBanking.Repositories.credit
             entity.PROJECTLOCATION = model.projectLocation;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
+            entity.CURRENCYID = model.currencyId;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
