@@ -51,6 +51,7 @@ namespace FintrakBanking.Repositories.credit
                         depot = x.DEPOT,
                         unitValue = x.UNITVALUE,
                         unitNumber = x.UNITNUMBER,
+                        numberOfBags = x.NUMBEROFBAGS,
                         atcType = context.TBL_ATC_TYPE.Where(o => o.ATCTYPEID == x.ATCTYPEID).Select(o => o.ACTTYPENAME).FirstOrDefault(),
                         certificateNumber = x.CERTIFICATENUMBER,
                         statusId = x.STATUSID,
@@ -59,8 +60,10 @@ namespace FintrakBanking.Repositories.credit
                         approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
-                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                    }).OrderBy(o=>o.atcLodgmentId)
+                        branchId = x.BRANCHID,
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                       
+                    }).OrderByDescending(o=>o.atcLodgmentId)
              .ToList();
         }
 
@@ -94,7 +97,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                    }).OrderBy(o => o.atcLodgmentId)
+                    }).OrderByDescending(o => o.atcLodgmentId)
              .ToList();
         }
 
@@ -349,6 +352,7 @@ namespace FintrakBanking.Repositories.credit
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
+                BRANCHID = model.branchId
             };
 
             var id = context.TBL_ATC_LODGMENT.Add(entity);
@@ -484,7 +488,7 @@ namespace FintrakBanking.Repositories.credit
                         depot = x.DEPOT,
                         unitValue = x.UNITVALUE,
                         unitNumber = x.UNITNUMBER,
-
+                        numberOfBags = x.NUMBEROFBAGS,
                         certificateNumber = x.CERTIFICATENUMBER,
                         statusId = x.STATUSID,
                         approvalStatusId = x.APPROVALSTATUSID,
