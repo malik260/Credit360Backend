@@ -1725,7 +1725,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-
                     var output = context.SaveChanges() != 0;
 
                     if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
@@ -1736,7 +1735,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.StatusId = (int)ApprovalStatusEnum.Pending;
                         workflow.TargetId = loanConditionId;
                         workflow.Comment = "LMS Checklist Approval";
-                        workflow.OperationId = (int)OperationsEnum.ChecklistApproval;
+                        workflow.OperationId = model.checkListStatusId == (int)CheckListStatusEnum.Deferred ? (int)OperationsEnum.DefferedChecklistApproval : (int)OperationsEnum.WaivedChecklistApproval;
                         workflow.ExternalInitialization = true;
                         workflow.LogActivity();
                     }
@@ -1762,7 +1761,7 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
                         where c.ISLMS == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                        && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
+                        && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                             && atrail.RESPONSESTAFFID == null
                         orderby a.DATETIMECREATED descending
@@ -1770,7 +1769,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                                customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             proposedAmount = a.APPROVEDAMOUNT,
-                           approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                            approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                             deferredDate = b.DEFEREDDATE,
                             deferralDuration = 1,
                             cummulativeDays = 1,
@@ -1780,6 +1779,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                             checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                             dateCreated = b.DATETIMECREATED,
+                            operationId = atrail.OPERATIONID,
                             //Loan Information
                             relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
                             relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
@@ -1801,7 +1801,7 @@ namespace FintrakBanking.Repositories.Credit
                            join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
                         where c.ISLMS == true && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                        && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
+                         && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                             && atrail.RESPONSESTAFFID == null
                         orderby a.DATETIMECREATED descending
@@ -1850,7 +1850,7 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
                         where c.ISLMS == true && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                        && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
+                         && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
                         && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null
                         orderby a.DATETIMECREATED descending
@@ -1864,6 +1864,7 @@ namespace FintrakBanking.Repositories.Credit
                             cummulativeDays = 1,
                             condition = b.CONDITION,
                             conditionId = b.LOANCONDITIONID,
+                            operationId = atrail.OPERATIONID,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             applicationReferenceNumber = ln.APPLICATIONREFERENCENUMBER,
                             // checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
@@ -1901,7 +1902,7 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
                     workflow.TargetId = entity.targetId;
                     workflow.Comment = entity.comment;
-                    workflow.OperationId = (int)OperationsEnum.ChecklistApproval;
+                    workflow.OperationId = entity.operationId; // (int)OperationsEnum.DefferedChecklistApproval;
                     if (appl != null) workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
                     workflow.LogActivity();
