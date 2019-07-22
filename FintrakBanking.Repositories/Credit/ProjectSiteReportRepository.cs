@@ -89,7 +89,7 @@ namespace FintrakBanking.Repositories.credit
                     approvalStatusId = x.APPROVALSTATUSID,
                     approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
 
-                }).OrderBy(o=>o.projectSiteReportId)
+                }).OrderByDescending(o=>o.projectSiteReportId)
                 .ToList();
         }
 
