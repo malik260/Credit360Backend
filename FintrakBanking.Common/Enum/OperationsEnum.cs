@@ -132,7 +132,6 @@ namespace FintrakBanking.Common.Enum
         lcUssance = 140,
         CreditCardDrawdownRequest = 141,
         LetterGenerationRequest = 142,
-        //CreditCardsSalaryBacked = 145,
         CollateralValuationRequest = 144,
         CreditCardsSalaryBacked = 145,
         CreditCardsCleanCards = 146,
