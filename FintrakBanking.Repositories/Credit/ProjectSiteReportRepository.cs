@@ -91,7 +91,7 @@ namespace FintrakBanking.Repositories.credit
                     approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                     currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
 
-                }).OrderBy(o=>o.projectSiteReportId)
+                }).OrderByDescending(o=>o.projectSiteReportId)
                 .ToList();
         }
 
@@ -103,7 +103,7 @@ namespace FintrakBanking.Repositories.credit
             {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.StatusId = model.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = model.projectSiteReportId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.ProjectSiteReportApproval;

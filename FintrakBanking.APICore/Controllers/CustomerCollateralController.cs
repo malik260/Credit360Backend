@@ -556,6 +556,21 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+        [HttpGet, Route("insurance-policy-approval")]
+        public HttpResponseMessage GetCollateralInsurancePoliciesWaitingForApproval()
+        {
+            try
+            {
+                var response = repo.GetCollateralInsurancePoliciesWaitingForApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
         [HttpGet, Route("temp-item-policy/{collateralId}")]
         public HttpResponseMessage GetItemPolicyCollateralList(int collateralId)
         {
@@ -640,6 +655,32 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost, Route("insurance-policy-approval")]
+        public HttpResponseMessage GoForInsurancePolicyApproval([FromBody]ApprovalViewModel model)
+        {
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.BranchId = token.GetBranchId;
+
+                var response = repo.GoForInsurancePolicyApproval(model);
+                if (response == (int)ApprovalStatusEnum.Disapproved)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Disapproved Successfully" });
+                }
+                else if (response == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Approval has failed" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Approved Successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
         [HttpGet, Route("customer-collateral/customer/{customerId}/collateral-type/{collateralTypeId}/thirdparty/{thirdpartyCustomerId}")]
         public HttpResponseMessage GetCollateralByCollateralTypeIdByCustomerId(int customerId, short collateralTypeId, short thirdpartyCustomerId = 0)
         {
@@ -662,6 +703,21 @@ namespace FintrakBanking.APICore.Controllers
                 var response = repo.GetCollateralTypeByCollateralId(collateralId, typeId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
+        [HttpGet, Route("customer-collateral/{collateralId}/collateral/{typeId}/type")]
+        public HttpResponseMessage GetCollateralTypeByCollateral(int collateralId, int typeId)
+        {
+            try
+            {
+                var response = repo.GetCollateralTypeByCollateralId(collateralId, typeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, data = response });
             }
             catch (SecureException ex)
             {
@@ -1867,6 +1923,30 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost, Route("insurance-policy")]
+        public HttpResponseMessage AddInsurancePolicy([FromBody] InsurancePolicies entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var response = repo.AddInsurancePolicy(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
 

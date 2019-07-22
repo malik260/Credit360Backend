@@ -134,6 +134,7 @@
     <Compile Include="Models\TBL_PSR_RECOMMENDATION.cs" />
     <Compile Include="Models\TBL_PSR_REPORT_TYPE.cs" />
     <Compile Include="Models\TBL_RAC_CATEGORY.cs" />
+    <Compile Include="Models\TBL_RAC_CATEGORY_TYPE.cs" />
     <Compile Include="Models\TBL_RAC_DEFINITION.cs" />
     <Compile Include="Models\TBL_RAC_DETAIL.cs" />
     <Compile Include="Models\TBL_RAC_INPUT_TYPE.cs" />

@@ -35,5 +35,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
         public int? OPERATIONID { get; set; }
+
+        public int? APPROVALSTATUSID { get; set; }
     }
 }

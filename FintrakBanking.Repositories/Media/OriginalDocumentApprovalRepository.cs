@@ -296,7 +296,7 @@ namespace FintrakBanking.Repositories.Media
             {
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.StatusId = model.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = model.originalDocumentApprovalId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.OriginalDocumentApproval;

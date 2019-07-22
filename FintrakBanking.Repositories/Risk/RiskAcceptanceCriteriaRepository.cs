@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.Risk
                 {
                     racCategoryId = x.RACCATEGORYID,
                     categoryName = x.CATEGORYNAME,
-                }).OrderBy(o=>o.categoryName)
+                }).OrderBy(o=>o.racCategoryId)
                 .ToList();
         }
 
@@ -306,7 +306,7 @@ namespace FintrakBanking.Repositories.Risk
                     controlAmount = x.CONTROLAMOUNT,
                     controlOptionId = x.CONTROLOPTIONID,
                     controlOption = context.TBL_RAC_OPTION_ITEM.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.LABEL).FirstOrDefault()
-                }).OrderBy(o => o.racItemName)
+                }).OrderBy(o => o.racItemId)
                 .ToList();
         }
 
@@ -720,7 +720,7 @@ namespace FintrakBanking.Repositories.Risk
                 searchQuery = searchQuery.ToUpper();
 
             var entity = (from x in context.TBL_RAC_ITEM
-                          where x.DELETED==false && x.CRITERIA.Contains(searchQuery)
+                          where x.DELETED==false && x.CRITERIA.Trim().Contains(searchQuery)
                           select new RacItemViewModel
                           {
                               racItemId = x.RACITEMID,
@@ -1073,6 +1073,64 @@ namespace FintrakBanking.Repositories.Risk
                         });
 
             return data.Distinct().OrderBy(o => o.levelName);
+        }
+
+        public bool AddRacCategoryType(RacCategoryTypeViewModel model)
+        {
+            var entity = new TBL_RAC_CATEGORY_TYPE
+            {
+                RACCATEGORYID = model.racCategoryTypeId,
+                RACCATEGORYTYPE = model.racCategoryType
+            };
+            context.TBL_RAC_CATEGORY_TYPE.Add(entity);
+
+            return context.SaveChanges() > 0;
+        }
+
+        public IEnumerable<RacCategoryTypeViewModel> GetAllRacCategoryType()
+        {
+            var record = from rct in context.TBL_RAC_CATEGORY_TYPE
+                         join rc in context.TBL_RAC_CATEGORY on rct.RACCATEGORYID equals rc.RACCATEGORYID
+                         select new RacCategoryTypeViewModel
+                         {
+                             racCategoryTypeId = rct.RACCATEGORYTYPEID,
+                             racCategoryId = rct.RACCATEGORYID,
+                             racCategoryType = rct.RACCATEGORYTYPE,
+                             racCategoryName = rc.CATEGORYNAME
+                         };
+
+            return record.ToList();
+
+            
+        }
+
+        public RacCategoryTypeViewModel GetRacCategoryTypeById(int id)
+        {
+            return context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYTYPEID == id)
+                .Select(x => new RacCategoryTypeViewModel
+                {
+                    racCategoryId = x.RACCATEGORYID,
+                    racCategoryType = x.RACCATEGORYTYPE
+                })
+                .FirstOrDefault();
+        }
+
+        public bool DeleteRacCategoryTypeById(int id)
+        {
+            var result = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYTYPEID == id).FirstOrDefault();
+            if(result != null) context.TBL_RAC_CATEGORY_TYPE.Remove(result);
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateRacCategoryTypeById(RacCategoryTypeViewModel model, int id)
+        {
+            var result = context.TBL_RAC_CATEGORY_TYPE.Find(id);
+
+            result.RACCATEGORYTYPE = model.racCategoryType;
+            result.RACCATEGORYID = model.racCategoryTypeId;
+
+            return context.SaveChanges() != 0;
         }
     }
 
