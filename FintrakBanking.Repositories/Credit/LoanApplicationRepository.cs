@@ -1316,13 +1316,13 @@ namespace FintrakBanking.Repositories.Credit
         private bool PushApplicationToDrawdown(string applicationReferenceNumber)
         {
             //var newLineRecord = model.LoanApplicationDetail.FirstOrDefault();
-            var headerRecords = context.TBL_LOAN_APPLICATION.Where(x=>x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
+            var headerRecords = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
             var headerrecord = headerRecords.FirstOrDefault();
             var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
             var lineRecord = lineRecords.FirstOrDefault();
-            var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == lineRecords.FirstOrDefault().PROPOSEDPRODUCTID).FirstOrDefault();
+            var productBehaviour = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(x => x.OPERATIONID == headerrecord.OPERATIONID && x.PRODUCTCLASSID == headerrecord.PRODUCTCLASSID && x.ISSKIPPROCESSENABLED == true).FirstOrDefault();
 
-            if (productBehaviour != null && productBehaviour.SKIPPROCESSFLOW == true)
+            if (productBehaviour != null && productBehaviour.ISSKIPPROCESSENABLED == true)
             {
                 foreach (var line in lineRecords)
                 {
@@ -1340,6 +1340,34 @@ namespace FintrakBanking.Repositories.Credit
             }
             return false;
         }
+
+        //private bool PushApplicationToDrawdown(string applicationReferenceNumber)
+        //{
+        //    //var newLineRecord = model.LoanApplicationDetail.FirstOrDefault();
+        //    var headerRecords = context.TBL_LOAN_APPLICATION.Where(x=>x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
+        //    var headerrecord = headerRecords.FirstOrDefault();
+        //    var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
+        //    var lineRecord = lineRecords.FirstOrDefault();
+        //    var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == lineRecords.FirstOrDefault().PROPOSEDPRODUCTID).FirstOrDefault();
+
+        //    if (productBehaviour != null && productBehaviour.SKIPPROCESSFLOW == true)
+        //    {
+        //        foreach (var line in lineRecords)
+        //        {
+        //            line.APPROVEDAMOUNT = line.PROPOSEDAMOUNT;
+        //            line.APPROVEDINTERESTRATE = line.PROPOSEDINTERESTRATE;
+        //            line.APPROVEDPRODUCTID = line.PROPOSEDPRODUCTID;
+        //            line.APPROVEDTENOR = line.PROPOSEDTENOR;
+        //            line.STATUSID = (short)ApprovalStatusEnum.Approved;
+
+        //            headerrecord.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+        //            headerrecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+        //        }
+        //        context.SaveChanges();
+        //        return true;
+        //    }
+        //    return false;
+        //}
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
