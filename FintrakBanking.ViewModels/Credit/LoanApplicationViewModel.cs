@@ -125,6 +125,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int globalsla { get; set; }
         public int currentApprovalLevelSlaInterval { get; set; }
         public bool? isadhocapplication { get; set; }
+        public int? exclusiveOperationId { get; set; }
         public int? loanApprovedLimitId { get; set; }
         public int approvedTenor { get; set; }
         public List<LoanApplicationDetailViewModel> applicationDetails { get; set; }
@@ -372,6 +373,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int?  crmsFundingSourceId { get; set; }
 
         public int? crmsPaymentSourceId { get; set; }
+
+        public int? exclusiveOperationId { get; set; }
 
         public string crmsFundingSourceCategory { get; set; }
 

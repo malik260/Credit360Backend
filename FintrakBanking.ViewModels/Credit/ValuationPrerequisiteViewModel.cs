@@ -10,7 +10,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int valuationPrerequisiteId { get; set; }
         public int collateralValuationId { get; set; }//
-        //public int collateralCustomerId { get; set; }
+        public int collateralCustomerId { get; set; }
         public int valuationRequestTypeId { get; set; }
         public string valuationComment { get; set; }
         public string valuationRequestType { get; set; }
@@ -26,7 +26,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int valuationReportId { get; set; }
         public string valuer { get; set; } //
         public string accountNumber { get; set; }
-        public string wht { get; set; }
+        public decimal wht { get; set; }
 
         public string customerName { get; set; }
         public decimal collateralValue { get; set; }
