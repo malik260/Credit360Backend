@@ -104,6 +104,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-collateral-valuation/{collteralValuationId}/collteralValuationId")]
+        public HttpResponseMessage GetCollateralValuation(int collteralValuationId)
+        {
+            try
+            {
+                var valuation = _colValuationRepo.GetCollateralValuation(collteralValuationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = valuation });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the record. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-all-collateral-valuations/{collateralId}/collateralId")]
         public HttpResponseMessage GetAllCollateralValuations(int collateralId)
         {

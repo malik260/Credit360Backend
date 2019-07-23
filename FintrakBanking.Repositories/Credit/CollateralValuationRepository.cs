@@ -139,6 +139,23 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public CollateralValuationViewModel GetCollateralValuation(int collteralValuationId)
+        {
+            var res = from C in _context.TBL_COLLATERAL_VALUATION
+                      where C.COLLATERALVALUATIONID == collteralValuationId
+                      select new CollateralValuationViewModel
+                      {
+                          collateralValuationId = C.COLLATERALVALUATIONID,
+                          collateralCustomerId = C.COLLATERALCUSTOMERID,
+                          valuationName = C.VALUATIONNAME,
+                          valuationReason = C.VALUATIONREASON,
+                          dateTimeCreated = C.DATETIMECREATED,
+                          createdBy = C.CREATEDBY,
+                      };
+
+            return res.FirstOrDefault();
+        }
+
         public List<ValuationPrerequisiteViewModel> GetAllCollateralValuerIformation()
         {
             var data = from x in _context.TBL_VALUATION_REPORT
@@ -321,10 +338,13 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<ValuationPrerequisiteViewModel> GetCollateralValuationRequestWaitingForApproval(int staffId)
         {
             var ids = _general.GetStaffApprovalLevelIds(staffId, (int) OperationsEnum.CollateralValuationRequest).ToList();
+            //_context.Configuration.ProxyCreationEnabled = false;
 
             var res = from C in _context.TBL_COLLATERAL_CUSTOMER
                       join atrail in _context.TBL_APPROVAL_TRAIL on C.COLLATERALCUSTOMERID equals atrail.TARGETID
                       join cus in _context.TBL_CUSTOMER on C.CUSTOMERID equals cus.CUSTOMERID
+                      join collVal in _context.TBL_COLLATERAL_VALUATION on C.COLLATERALCUSTOMERID equals collVal.COLLATERALCUSTOMERID
+                      join valPre in _context.TBL_COLLATERAL_VALUATION_PRE on collVal.COLLATERALVALUATIONID equals valPre.COLLATERALVALUATIONID
                       where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing
                        && atrail.RESPONSESTAFFID == null
                        && ids.Contains((int) atrail.TOAPPROVALLEVELID)
@@ -335,11 +355,13 @@ namespace FintrakBanking.Repositories.Credit
                           collateralCode = C.COLLATERALCODE,
                           collateralType = _context.TBL_COLLATERAL_TYPE.Where(O => O.COLLATERALTYPEID == C.COLLATERALTYPEID).Select(O => O.COLLATERALTYPENAME).FirstOrDefault(),
                           collateralValue = C.COLLATERALVALUE,
-                          //collateralValuationId = C.,
-                          //collateralCustomerId = C.COLLATERALCUSTOMERID
+                          collateralValuationId = collVal.COLLATERALVALUATIONID,
+                          collateralCustomerId = C.COLLATERALCUSTOMERID,
+                          valuationComment = valPre.VALUATIONCOMMENT,
+                          valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == valPre.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
                       };
 
-            return res;
+            return res.ToList();
         }
 
         public bool SubmitApproval(CollateralValuationViewModel model)

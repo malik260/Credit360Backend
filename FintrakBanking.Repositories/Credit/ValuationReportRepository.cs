@@ -28,7 +28,7 @@ namespace FintrakBanking.Repositories.Credit
             var entity = new TBL_VALUATION_REPORT()
             {
                 ACCOUNTNUMBER = model.accountNumber,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                APPROVALSTATUSID = (int) ApprovalStatusEnum.Pending,
                 COLLATERALVALUATIONID = model.collateralValuationId,
                 COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
