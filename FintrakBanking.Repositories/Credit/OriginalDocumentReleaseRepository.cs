@@ -33,7 +33,31 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddOriginalDocumentRelease(IEnumerable<OriginalDocumentReleaseViewModel> model)
         {
+            var releaseList = model.ToList();
+            int index;
+
             foreach (var o in model)
+            {
+                index = releaseList.FindIndex(x => x.documentUploadId == o.documentUploadId);
+                var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId)
+                                                                    .Select(x => new OriginalDocumentReleaseViewModel
+                                                                    {
+                                                                        originalDocumentApprovalId = o.originalDocumentApprovalId,
+                                                                        originalDocumentReleaseId = o.originalDocumentReleaseId,
+                                                                        documentUploadId = o.documentUploadId,
+                                                                        approvalStatusId = o.approvalStatusId,
+                                                                        companyId = o.companyId,
+                                                                        documentCategoryName = o.documentCategoryName,
+                                                                        documentTypeName = o.documentTypeName
+                                                                    }).FirstOrDefault();
+                
+                if (result != null)
+                {
+                    releaseList.RemoveAt(index);
+                }
+            }
+
+            foreach (var o in releaseList)
             {
                 var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId).Any();
 
@@ -83,7 +107,7 @@ namespace FintrakBanking.Repositories.Credit
                              applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
                              documentReferenceNumber = oda.REFERENCENUMBER,
                              docDateTimeCreated = dr.DATETIMECREATED,
-                             createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                             createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                              documentDescription = oda.DESCRIPTION,
                              originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
                             originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
@@ -147,6 +171,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (data != null)
                 {
                     var release = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == data.ORIGINALDOCUMENTAPPROVALID).Select(o => o).ToList();
+                    data.CREATEDBY = x.createdBy;
 
                     foreach (var d in release)
                         d.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
