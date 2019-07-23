@@ -1270,7 +1270,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string groupDescription { get; set; }
         public string customerName { get; set; }
         public string accountNumber { get; set; }
-        public string wht { get; set; }
+        public decimal wht { get; set; }
         public string valuerComment { get; set; }
         public string bvn { get; set; }
         public string tin { get; set; }
