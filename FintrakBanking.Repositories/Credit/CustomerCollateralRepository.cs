@@ -2042,6 +2042,9 @@ namespace FintrakBanking.Repositories.Credit
                                  collateralSubTypeId = s.COLLATERALSUBTYPEID,
                                  policyId = x.POLICYID,
                                  customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                                 description = x.DESCRIPTION,
+                                 premiumAmount = x.PREMIUMAMOUNT,
+                              
 
 
 
