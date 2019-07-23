@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
 
         public int VALUERID { get; set; }
 
-        [Required]
+        //[Required]
         [StringLength(500)]
         public string VALUERCOMMENT { get; set; }
 
@@ -29,8 +29,8 @@ namespace FintrakBanking.Entities.Models
         public decimal? VALUATIONFEE { get; set; }
 
         [Required]
-        [StringLength(20)]
-        public string WHT { get; set; }
+        //[StringLength(20)]
+        public decimal WHT { get; set; }
 
         public int COMPANYID { get; set; }
 
