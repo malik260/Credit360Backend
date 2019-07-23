@@ -6471,7 +6471,6 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     
                     
-
                     // Audit Section ---------------------------
                     var audit = new TBL_AUDIT
                     {

@@ -1288,6 +1288,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.LoanApplicationDetail.Count() > 0)
             {
                 var newlineRecord = model.LoanApplicationDetail.FirstOrDefault();
+                
                 if (newlineRecord.proposedProductId == 12)
                 {
                     foreach (var line in lineRecords)
@@ -1295,6 +1296,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (line.PROPOSEDPRODUCTID != newlineRecord.proposedProductId) { throw new ConditionNotMetException("Application already has products with different behaviour."); }
                     }
                 }
+
 
                 if (newlineRecord.proposedProductId != 12)
                 {
@@ -1306,6 +1308,7 @@ namespace FintrakBanking.Repositories.Credit
                         var productRecord = context.TBL_PRODUCT.Find(newlineRecord.proposedProductId);
                         throw new ConditionNotMetException("Application already has product " + productRecord.PRODUCTNAME + " with unique behaviour");
                     }
+
                 }
             }
         }
@@ -1319,7 +1322,7 @@ namespace FintrakBanking.Repositories.Credit
             var lineRecord = lineRecords.FirstOrDefault();
             var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == lineRecords.FirstOrDefault().PROPOSEDPRODUCTID).FirstOrDefault();
 
-            if (productBehaviour != null && productBehaviour.SKIPPROCESSFLOW==true)
+            if (productBehaviour != null && productBehaviour.SKIPPROCESSFLOW == true)
             {
                 foreach (var line in lineRecords)
                 {
@@ -1373,6 +1376,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
                     loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
                     loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
+                      
                 }
 
                 if (loanData == null) // first time
@@ -1647,7 +1651,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANTERMSHEETID = loan.loanTermSheetId,
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
-                OPERATIONID = (int)OperationsEnum.CreditAppraisal,
+                OPERATIONID = (loan.exclusiveOperationId == null || loan.exclusiveOperationId == 0) ? (int)OperationsEnum.CreditAppraisal : (int)loan.exclusiveOperationId,
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
                 COLLATERALDETAIL = loan.collateralDetail,
                 ISADHOCAPPLICATION = loan.isadhocapplication,
