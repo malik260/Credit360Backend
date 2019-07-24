@@ -1288,6 +1288,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.LoanApplicationDetail.Count() > 0)
             {
                 var newlineRecord = model.LoanApplicationDetail.FirstOrDefault();
+                
                 if (newlineRecord.proposedProductId == 12)
                 {
                     foreach (var line in lineRecords)
@@ -1295,6 +1296,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (line.PROPOSEDPRODUCTID != newlineRecord.proposedProductId) { throw new ConditionNotMetException("Application already has products with different behaviour."); }
                     }
                 }
+
 
                 if (newlineRecord.proposedProductId != 12)
                 {
@@ -1306,6 +1308,7 @@ namespace FintrakBanking.Repositories.Credit
                         var productRecord = context.TBL_PRODUCT.Find(newlineRecord.proposedProductId);
                         throw new ConditionNotMetException("Application already has product " + productRecord.PRODUCTNAME + " with unique behaviour");
                     }
+
                 }
             }
         }
@@ -1313,13 +1316,13 @@ namespace FintrakBanking.Repositories.Credit
         private bool PushApplicationToDrawdown(string applicationReferenceNumber)
         {
             //var newLineRecord = model.LoanApplicationDetail.FirstOrDefault();
-            var headerRecords = context.TBL_LOAN_APPLICATION.Where(x=>x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
+            var headerRecords = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
             var headerrecord = headerRecords.FirstOrDefault();
             var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
             var lineRecord = lineRecords.FirstOrDefault();
-            var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == lineRecords.FirstOrDefault().PROPOSEDPRODUCTID).FirstOrDefault();
+            var productBehaviour = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(x => x.OPERATIONID == headerrecord.OPERATIONID && x.PRODUCTCLASSID == headerrecord.PRODUCTCLASSID && x.ISSKIPPROCESSENABLED == true).FirstOrDefault();
 
-            if (productBehaviour != null && productBehaviour.SKIPPROCESSFLOW==true)
+            if (productBehaviour != null && productBehaviour.ISSKIPPROCESSENABLED == true)
             {
                 foreach (var line in lineRecords)
                 {
@@ -1337,6 +1340,34 @@ namespace FintrakBanking.Repositories.Credit
             }
             return false;
         }
+
+        //private bool PushApplicationToDrawdown(string applicationReferenceNumber)
+        //{
+        //    //var newLineRecord = model.LoanApplicationDetail.FirstOrDefault();
+        //    var headerRecords = context.TBL_LOAN_APPLICATION.Where(x=>x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
+        //    var headerrecord = headerRecords.FirstOrDefault();
+        //    var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
+        //    var lineRecord = lineRecords.FirstOrDefault();
+        //    var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == lineRecords.FirstOrDefault().PROPOSEDPRODUCTID).FirstOrDefault();
+
+        //    if (productBehaviour != null && productBehaviour.SKIPPROCESSFLOW == true)
+        //    {
+        //        foreach (var line in lineRecords)
+        //        {
+        //            line.APPROVEDAMOUNT = line.PROPOSEDAMOUNT;
+        //            line.APPROVEDINTERESTRATE = line.PROPOSEDINTERESTRATE;
+        //            line.APPROVEDPRODUCTID = line.PROPOSEDPRODUCTID;
+        //            line.APPROVEDTENOR = line.PROPOSEDTENOR;
+        //            line.STATUSID = (short)ApprovalStatusEnum.Approved;
+
+        //            headerrecord.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
+        //            headerrecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+        //        }
+        //        context.SaveChanges();
+        //        return true;
+        //    }
+        //    return false;
+        //}
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
@@ -1373,6 +1404,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
                     loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
                     loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
+                      
                 }
 
                 if (loanData == null) // first time
@@ -1647,7 +1679,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANTERMSHEETID = loan.loanTermSheetId,
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
-                OPERATIONID = (int)OperationsEnum.CreditAppraisal,
+                OPERATIONID = (loan.exclusiveOperationId == null || loan.exclusiveOperationId == 0) ? (int)OperationsEnum.CreditAppraisal : (int)loan.exclusiveOperationId,
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
                 COLLATERALDETAIL = loan.collateralDetail,
                 ISADHOCAPPLICATION = loan.isadhocapplication,
@@ -4415,7 +4447,8 @@ namespace FintrakBanking.Repositories.Credit
                                           operationId = c.OPERATIONID,
                                           dateTimeCreated = c.DATETIMECREATED,
                                           createdBy = c.CREATEDBY
-                                      });
+                                      }).ToList();
+
             return revisedProcessFlow;
         }
 

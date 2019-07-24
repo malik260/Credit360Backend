@@ -93,21 +93,24 @@
                     //responseData = await response.Content.ReadAsStringAsync();
                     //customerViewModels = JsonConvert.DeserializeObject<CustomerTransactionViewModels>(responseData);
                     var jsonString = await response.Content.ReadAsStringAsync();
-                    var objData = JsonConvert.DeserializeObject<List<CustomerViewModels>>(jsonString);
+                    //CustomerTransactionViewModels objData;
+                    //objData = JsonConvert.DeserializeObject<List<CustomerViewModels>>(jsonString);
+                    var objData = JsonConvert.DeserializeObject<CustomerTransactionViewModels>(jsonString);
 
-                    foreach (var item in objData)
+                    customers.Add(new CustomerViewModels
                     {
-                        customers.Add(new CustomerViewModels
-                        {
-                            customerCode = item.customerCode,
-                            firstName = item.lastName,
-                            lastName = item.firstName,
-                            middleName = item.middleName,
-                            customerTypeName = item.customerTypeName,
-                            customerTypeId = (short)(item.customerTypeName == "C" ? 2 : 1),
-                           // isPoliticallyExposed = item.politicallyExposedPerson == "N" ? false : true,
-                        });
-                    }
+                        customerCode = objData.customerCode,
+                        firstName = objData.lastName,
+                        lastName = objData.firstName,
+                        middleName = objData.middleName,
+                        customerTypeName = objData.customerTypeName,
+                        customerTypeId = (short)(objData.customerTypeName == "C" ? 2 : 1),
+                        // isPoliticallyExposed = item.politicallyExposedPerson == "N" ? false : true,
+                    });
+                    //foreach (var item in objData)
+                    //{
+
+                    //}
 
                 }
                 responseMessage = await response.Content.ReadAsStringAsync();

@@ -2,9 +2,11 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Finance;
 using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService;
+using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
@@ -19,21 +21,27 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
             try
             {
                 var requestDatetime = DateTime.Now;
-                AuthWrapperClient client = new AuthWrapperClient();
+                //AuthWrapperClient client = new AuthWrapperClient();
 
-                AuthResponse authResponse = client.AuthMethod(new AuthRequest
-                {
-                    CustID = staffCode,
-                    PassCode = passCode
-                });
-                //var client = new ServiceSoapClient();
-                //var res = client.ResponseOnly(staffCode, passCode);
+                //AuthResponse authResponse = client.AuthMethod(new AuthRequest
+                //{https://10.111.13.47:7080/Service?xsd=xsd0
+                //    CustID = staffCode,
+                //    PassCode = passCode
+                //});
+
+                var binding = new BasicHttpBinding();
+                //var endPointAddress = new EndpointAddress("http://10.111.13.47:7080/Service?wsdl");
+                var endPointAddress = new EndpointAddress("https://10.111.13.47:7080/Service?xsd=xsd0");
+
+                var client = new ServiceSoapClient(binding, endPointAddress);
+                
+                var res = client.ResponseOnly(staffCode, passCode);
                 var responseDateTime = DateTime.Now;
 
                 var output = new TwoFactorAutheticationOutputViewModel()
                 {
-                    authenticated = authResponse.Authenticated,
-                    message =  authResponse.Message
+                    authenticated = false, //authResponse.Authenticated,
+                    message = res //authResponse.Message
                 };
 
                 client.Close();
@@ -47,10 +55,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = $"CustId : {staffCode} , PassCode : {passCode}",
                         RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = authResponse.Message,
+                        RESPONSEMESSAGE = res //authResponse.Message,
                     };
-                    FinTrakBankingContext logContext = new FinTrakBankingContext();
 
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
                     logContext.SaveChanges();
                 }

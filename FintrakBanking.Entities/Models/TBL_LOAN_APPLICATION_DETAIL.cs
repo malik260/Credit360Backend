@@ -123,11 +123,11 @@ namespace FintrakBanking.Entities.Models
         public int? CRMSFUNDINGSOURCEID { get; set; }
 
         public int? CRMSREPAYMENTSOURCEID { get; set; }
-
+        [StringLength(50)]
         public string CRMSFUNDINGSOURCECATEGORY { get; set; }
-
+        [StringLength(50)]
         public string CRMS_ECCI_NUMBER { get; set; }
-
+        [StringLength(50)]
         public string CRMSCODE { get; set; }
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
         public bool? CRMSVALIDATED { get; set; }
@@ -139,19 +139,19 @@ namespace FintrakBanking.Entities.Models
         public string CONDITIONPRECIDENT { get; set; }
 
         public string CONDITIONSUBSEQUENT { get; set; }
-
+        [StringLength(2000)]
         public string FIELD1 { get; set; }
 
         public double? PRODUCTPRICEINDEXRATE { get; set; }
 
         public short? PRODUCTPRICEINDEXID { get; set; }
-
+        [StringLength(1000)]
         public string FIELD2 { get; set; }
         public decimal? FIELD3 { get; set; }
         public bool ISSPECIALISED { get; set; }
         //public int? TENORFREQUENCYTYPEID { get; set; }
         public int? TENORFREQUENCYTYPEID { get; set; }
-       // public int? OPERATINGCASAACCOUNTID { get; set; }
+        // public int? OPERATINGCASAACCOUNTID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

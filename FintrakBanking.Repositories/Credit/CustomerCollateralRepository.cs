@@ -1232,7 +1232,11 @@ namespace FintrakBanking.Repositories.Credit
                             SUMINSURED = entity.sumInsured,
                             PREMIUMAMOUNT = entity.premiumAmount,
                             DESCRIPTION =entity.description,
-                            PREMIUMPERCENT = entity.premiumPercent
+                            PREMIUMPERCENT = entity.premiumPercent,
+                            DELETED = false,
+                            HASEXPIRED = false,
+                           // APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing
+
                         });
                     
                 }
@@ -3439,6 +3443,7 @@ namespace FintrakBanking.Repositories.Credit
                 isAssetManagedByTrustee = x.ISASSETMANAGEDBYTRUSTEE,
                 trusteeName = x.TRUSTEENAME,
                 stateName = x.TBL_STATE.STATENAME,
+                stateId = x.STATEID,
                 localGovtName = x.TBL_LOCALGOVERNMENT.NAME,
                 bankShareOfCollateral = x.BANKSHAREOFCOLLATERAL,
             }).FirstOrDefault();
