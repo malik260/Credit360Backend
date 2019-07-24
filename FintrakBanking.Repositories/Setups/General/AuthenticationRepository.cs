@@ -1009,7 +1009,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (_user != null)
             {
                 _user.LOGINCODE = null;
-                result = context.SaveChanges() > 0;
+                result = context.SaveChanges() > 0; 
             }
             return result;
         }

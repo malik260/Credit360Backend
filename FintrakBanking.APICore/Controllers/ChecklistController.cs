@@ -1613,6 +1613,30 @@ namespace FintrakBanking.APICore.Controllers
               new { success = false, message = $"There was an error fetching this record {ex.Message}" });
             }
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("esg-checklist-calculate")]
+        public HttpResponseMessage CalculateESGChecklistSummary([FromBody] List<ESGChecklistDetailViewModel> model)
+        {
+            try
+            {
+                var data = repo.CalculateESGChecklistSummary(model);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error calculating the summary {ex.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("esg-checklist-detail")]
