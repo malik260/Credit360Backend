@@ -521,7 +521,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LETTER_GENERATION_REQUEST> TBL_LETTER_GENERATION_REQUEST { get; set; }
         public virtual DbSet<TBL_ORIGINAL_DOCUMENT_RELEASE> TBL_ORIGINAL_DOCUMENT_RELEASE { get; set; }
         public virtual DbSet<TBL_RAC_CATEGORY_TYPE> TBL_RAC_CATEGORY_TYPE { get; set; }
-        
+        public virtual DbSet<TBL_ESG_CHECKLIST_SCORES> TBL_ESG_CHECKLIST_SCORES { get; set; }
+
 
 
 

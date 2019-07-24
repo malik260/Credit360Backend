@@ -11,11 +11,13 @@
     {
         [Key]
         public int ESGCHECKLISTDEFINITIONID { get; set; }
+
         public int CHECKLISTITEMID { get; set; }
         public int ESGCATEGORYID { get; set; }
         public int ESGSUBCATEGORYID { get; set; }
         public bool ISCOMPULSORY { get; set; }
         public string ITEMDESCRIPTION { get; set; }
+        public int SCORE { get; set; }
         public int COMPANYID { get; set; }
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
