@@ -112,6 +112,7 @@
     <Compile Include="Models\TBL_CORR_OFFICER_RATING_DETAIL.cs" />
     <Compile Include="Models\TBL_CORR_RATING_PERIOD.cs" />
     <Compile Include="Models\TBL_DEFINED_FUNCTION.cs" />
+    <Compile Include="Models\TBL_ESG_CHECKLIST_SCORES.cs" />
     <Compile Include="Models\TBL_INSURANCE_COMPANY.cs" />
     <Compile Include="Models\TBL_INSURANCE_TYPE.cs" />
     <Compile Include="Models\TBL_JOB_SOURCE.cs" />
