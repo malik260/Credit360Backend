@@ -6,6 +6,7 @@ using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
@@ -23,12 +24,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                 //AuthWrapperClient client = new AuthWrapperClient();
 
                 //AuthResponse authResponse = client.AuthMethod(new AuthRequest
-                //{
+                //{https://10.111.13.47:7080/Service?xsd=xsd0
                 //    CustID = staffCode,
                 //    PassCode = passCode
                 //});
 
-                var client = new ServiceSoapClient();
+                var binding = new BasicHttpBinding();
+                //var endPointAddress = new EndpointAddress("http://10.111.13.47:7080/Service?wsdl");
+                var endPointAddress = new EndpointAddress("https://10.111.13.47:7080/Service?xsd=xsd0");
+
+                var client = new ServiceSoapClient(binding, endPointAddress);
+                
                 var res = client.ResponseOnly(staffCode, passCode);
                 var responseDateTime = DateTime.Now;
 
