@@ -24,17 +24,21 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                 //AuthWrapperClient client = new AuthWrapperClient();
 
                 //AuthResponse authResponse = client.AuthMethod(new AuthRequest
-                //{https://10.111.13.47:7080/Service?xsd=xsd0
+                //{
                 //    CustID = staffCode,
                 //    PassCode = passCode
                 //});
 
                 var binding = new BasicHttpBinding();
                 //var endPointAddress = new EndpointAddress("http://10.111.13.47:7080/Service?wsdl");
-                var endPointAddress = new EndpointAddress("https://10.111.13.47:7080/Service?xsd=xsd0");
+                //var endPointAddress = new EndpointAddress("https://10.111.13.47:7080/Service");
 
-                var client = new ServiceSoapClient(binding, endPointAddress);
-                
+                //var client = new ServiceSoapClient(binding, endPointAddress);
+                //var client = new TestService.WeatherSoapClient();
+                //var res = client.GetCityWeatherByZIP("99501");
+
+                var client = new ServiceSoapClient();
+                //client.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
                 var res = client.ResponseOnly(staffCode, passCode);
                 var responseDateTime = DateTime.Now;
 
