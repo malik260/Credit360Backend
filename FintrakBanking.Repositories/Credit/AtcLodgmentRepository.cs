@@ -277,6 +277,7 @@ namespace FintrakBanking.Repositories.credit
                               atcLodgmentId = x.ATCLODGMENTID,
                               atcReleaseId = x.ATCRELEASEID,
                               approvalStatusId = x.APPROVALSTATUSID,
+                              numberOfBags = r.NUMBEROFBAGS,
                               approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                               // unitBalance = x.UNITBALANCE
                           });
@@ -357,7 +358,8 @@ namespace FintrakBanking.Repositories.credit
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
-                BRANCHID = model.branchId
+                BRANCHID = model.branchId,
+                NUMBEROFBAGS = model.numberOfBags
             };
 
             var id = context.TBL_ATC_LODGMENT.Add(entity);
