@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.credit
                 workflow.TargetId = model.atcLodgmentId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
-                workflow.DeferredExecution = false;
+                workflow.DeferredExecution = true;
                 workflow.LogActivity();
                 try
                 {
