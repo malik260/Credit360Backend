@@ -24,6 +24,8 @@ namespace FintrakBanking.Interfaces.credit
 
         IEnumerable<PsrReportTypeViewModel> GetPsrReportTypes();
 
+        PsrReportViewModel GeneratePSRReport(int id);
+
 
         #region
 
