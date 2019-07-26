@@ -26,7 +26,7 @@ namespace FintrakBanking.Interfaces.credit
 
         IEnumerable<AtcReleaseViewModel> GetAtcRelease(int id);
 
-        bool AddAtcRelease(AtcReleaseViewModel model);
+        bool AddAtcRelease(IEnumerable <AtcReleaseViewModel> model);
 
         bool DeleteAtcRelease(int id, UserInfo user);
 

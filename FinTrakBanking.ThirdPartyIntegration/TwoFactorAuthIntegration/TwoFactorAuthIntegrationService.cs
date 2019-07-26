@@ -6,6 +6,7 @@ using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
@@ -28,7 +29,16 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                 //    PassCode = passCode
                 //});
 
+                var binding = new BasicHttpBinding();
+                //var endPointAddress = new EndpointAddress("http://10.111.13.47:7080/Service?wsdl");
+                //var endPointAddress = new EndpointAddress("https://10.111.13.47:7080/Service");
+
+                //var client = new ServiceSoapClient(binding, endPointAddress);
+                //var client = new TestService.WeatherSoapClient();
+                //var res = client.GetCityWeatherByZIP("99501");
+
                 var client = new ServiceSoapClient();
+                //client.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
                 var res = client.ResponseOnly(staffCode, passCode);
                 var responseDateTime = DateTime.Now;
 

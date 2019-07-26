@@ -132,7 +132,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddUpdateStaffRole(StaffRoleViewModel entity)
         {
-            if (entity == null) throw new SecureException("Session seem to have expired. Please logout and login again.");
+            if (entity == null) throw new SecureException("Session seems to have expired. Please logout and login again.");
 
             List<TBL_TEMP_PROFILE_STAFF_ROL_GRP> tempGroups = new List<TBL_TEMP_PROFILE_STAFF_ROL_GRP>();
             List<TBL_TEMP_PROFILE_STAFF_ROLE_AA> tempActivities = new List<TBL_TEMP_PROFILE_STAFF_ROLE_AA>();

@@ -157,6 +157,7 @@ namespace FintrakBanking.ViewModels.Risk
         public List<ParameterScoreViewModel> parameters { get; set; }
         public int keyIndicatorWeight { get; set; }
         public int score { get; set; }
+        public decimal percentageWeight { get; set; }
     }
 
     public class CreditOfficerRiskRatingDetail

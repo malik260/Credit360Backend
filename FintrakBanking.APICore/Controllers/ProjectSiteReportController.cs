@@ -201,6 +201,24 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.DeletePsrNextInspectionTask(id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("psr-next-inspection-task/{id}")]
+        public HttpResponseMessage UpdatePsrNextInspectionTask([FromBody] PsrNextInspectionTaskViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdatePsrNextInspectionTask(model,id,user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
         #endregion
 
         #region
@@ -235,6 +253,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("psr-comment/{id}")]
+        public HttpResponseMessage UpdatePsrComment([FromBody] PsrCommentViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdatePsrComment(model, id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
 
         [HttpDelete]
         [ClaimsAuthorization]
@@ -285,7 +319,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "There was an error creating this record" });
             }
         }
-
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("psr-observation/{id}")]
+        public HttpResponseMessage UpdatePsrObservation([FromBody] PsrObservationViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdatePsrObservation(model, id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("psr-observation/{id}")]
@@ -380,7 +429,22 @@ namespace FintrakBanking.APICore.Controllers
             IEnumerable<PsrRecommendationViewModel> response = repo.GetPsrRecommendations(id);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
-
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("psr-recommendation/{id}")]
+        public HttpResponseMessage UpdatePsrRecommendation([FromBody] PsrRecommendationViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdatePsrRecommendation(model, id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
         [HttpPost]
         [ClaimsAuthorization]
         [Route("psr-recommendation")]

@@ -17,6 +17,7 @@ using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common;
 using System.ServiceModel;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -478,12 +479,12 @@ namespace FintrakBanking.Repositories.Credit
                                      }).ToList();
             return checkListTypeList;
         }
+
         public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId, int productClassProcessId)
         {
-            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
             var checkType = (from a in context.TBL_CHECKLIST_TYPE
                              join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
-                             where ids.Contains((int)b.APPROVALLEVELID)
+                             where (a.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
                              select new CheckListTargetTypeViewModel
                              {
                                  targetTypeId = a.CHECKLIST_TYPEID,
@@ -500,6 +501,30 @@ namespace FintrakBanking.Repositories.Credit
 
             return checkType.GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
         }
+
+        //public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId, int productClassProcessId)
+        //{
+        //    var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
+        //    var checkType = (from a in context.TBL_CHECKLIST_TYPE
+        //                     join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
+        //                     where ids.Contains((int)b.APPROVALLEVELID)
+        //                     select new CheckListTargetTypeViewModel
+        //                     {
+        //                         targetTypeId = a.CHECKLIST_TYPEID,
+        //                         targetTypeName = a.CHECKLIST_TYPE_NAME,
+        //                         isproductbased = a.ISPRODUCT_BASED,
+        //                         canValidateChecklist = b.CANVALIDATE
+        //                     });
+        //    var debug = checkType.ToList();
+
+        //    //if (productClassProcessId != 0 && productClassProcessId == (int)ProductClassProcessEnum.CAMBased)
+        //    //{
+        //    //    return checkType.Where(x => x.isproductbased != true).GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
+        //    //}
+
+        //    return checkType.GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
+        //}
+
         public IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByProductId(int productId)
         {
             var data = (from a in context.TBL_CHECKLIST_DEFINITION
@@ -2393,7 +2418,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from a in context.TBL_ESG_SUB_CATEGORY
                         where a.ESGCATEGORYID == categoryId
-                        orderby a.ESGSUBCATEGORYNAME
+                        //orderby a.ESGSUBCATEGORYNAME
                         select new ESGSubCategoryViewModel()
                         {
                             esgSubCategoryId = a.ESGSUBCATEGORYID,
@@ -2401,6 +2426,12 @@ namespace FintrakBanking.Repositories.Credit
                             esgSubCategoryName = a.ESGSUBCATEGORYNAME
                         }).ToList();
             return data;
+        }
+
+        private char GetScoreGrade(int score)
+        {
+            char[] grades = new char[] { '0', 'A', 'B', 'C' };
+            return grades[score];
         }
 
         public IEnumerable<ESGChecklistDefinitionViewModel> GetESGChecklistDefinition()
@@ -2411,6 +2442,7 @@ namespace FintrakBanking.Repositories.Credit
                         into cg
                         from d in cg.DefaultIfEmpty()
                         join c in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals c.CHECKLISTITEMID
+                        join e in context.TBL_ESG_CHECKLIST_SCORES on a.SCORE equals e.SCORE
                         where a.DELETED == false
                         select new ESGChecklistDefinitionViewModel()
                         {
@@ -2422,7 +2454,9 @@ namespace FintrakBanking.Repositories.Credit
                             esgCategoryId = a.ESGCATEGORYID,
                             esgCategoryName = b.ESGCATEGORYNAME,
                             isCompulsory = a.ISCOMPULSORY,
-                            itemDescription = a.ITEMDESCRIPTION
+                            itemDescription = a.ITEMDESCRIPTION,
+                            gradeScore = (int)a.SCORE,
+                            grade = (a.SCORE.ToString() == null) ? "N/A": e.GRADE
                         }).ToList();
             return data;
         }
@@ -2473,6 +2507,188 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
+
+        public bool AddESGCategory(ESGChecklistDefinitionViewModel model)
+        {
+            if (model == null)
+            {
+                throw new SecureException("No Category Selected");
+            }
+            bool output = false;
+                var data =  new TBL_ESG_CATEGORY()
+                            {
+                               ESGCATEGORYNAME = model.esgCategoryName
+                            };
+
+                //Audit Section ---------------------------
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ESGCategoryAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added ESGCategory {model.ToString()}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                context.TBL_ESG_CATEGORY.Add(data);
+                this.auditTrail.AddAuditTrail(audit);
+                //end of Audit section -------------------------------
+
+                output = context.SaveChanges() != 0;
+            return output;
+        }
+
+        public bool AddESGSubCategory(ESGChecklistDefinitionViewModel model)
+        {
+            if (model == null)
+                throw new SecureException("No sub-Category Selected");
+            bool output = false;
+                var data = new TBL_ESG_SUB_CATEGORY
+                {
+                    ESGCATEGORYID = (short)model.esgCategoryId,
+                    ESGSUBCATEGORYNAME = model.esgSubCategoryName,
+                };
+
+                //Audit Section ---------------------------
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ESGSUBCategoryAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added ESGSUBCATEGORY with detail of {model.ToString()}' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                context.TBL_ESG_SUB_CATEGORY.Add(data);
+                this.auditTrail.AddAuditTrail(audit);
+                //end of Audit section -------------------------------
+
+                output = context.SaveChanges() != 0;
+            return output;
+        }
+
+        public bool UpdateESGCategory(ESGChecklistDefinitionViewModel model)
+        {
+            if (model == null)
+            {
+                throw new SecureException("No Category Selected");
+            }
+            bool output = false;
+            var data = context.TBL_ESG_CATEGORY.Where(o => o.ESGCATEGORYID == model.esgCategoryId).FirstOrDefault();
+            {
+                data.ESGCATEGORYNAME = model.esgCategoryName;
+            };
+
+            //Audit Section ---------------------------
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ESGCategoryUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated ESGCategory {model.ToString()}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            context.Entry(data).State = EntityState.Modified;
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            output = context.SaveChanges() != 0;
+            return output;
+        }
+
+        public bool UpdateESGSubCategory(ESGChecklistDefinitionViewModel model)
+        {
+            if (model == null)
+            {
+                throw new SecureException("No sub-Category Selected");
+            }
+            bool output = false;
+            var data = context.TBL_ESG_SUB_CATEGORY.Where(o => o.ESGCATEGORYID == model.esgCategoryId && o.ESGSUBCATEGORYID == model.esgSubCategoryId).FirstOrDefault();
+            {
+                data.ESGCATEGORYID = (short)model.esgCategoryId;
+                data.ESGSUBCATEGORYNAME = model.esgSubCategoryName;
+            };
+
+            //Audit Section ---------------------------
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ESGCategoryUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated ESGSubCategory {model.ToString()}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            context.Entry(data).State = EntityState.Modified;
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            output = context.SaveChanges() != 0;
+            return output;
+        }
+
+        public bool DeleteESGCategory(int esgCategoryId, UserInfo user)
+        {
+            var data = context.TBL_ESG_CATEGORY.Where(o => o.ESGCATEGORYID == esgCategoryId).FirstOrDefault();
+            context.TBL_ESG_CATEGORY.Remove(data);
+            var subs = context.TBL_ESG_SUB_CATEGORY.Where(o => o.ESGCATEGORYID == esgCategoryId).ToList();
+            context.TBL_ESG_SUB_CATEGORY.RemoveRange(subs);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ESGCategoryDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted ESGCategory {data.ToString()}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            if (context.SaveChanges() > 0)
+                return true;
+
+            return false;
+
+        }
+
+        public bool DeleteESGSubcategory(int esgSubCategoryId, UserInfo user)
+        {
+            var data = context.TBL_ESG_SUB_CATEGORY.Where(o => o.ESGSUBCATEGORYID == esgSubCategoryId).FirstOrDefault();
+            context.TBL_ESG_SUB_CATEGORY.Remove(data);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ESGSUBCategoryDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted ESGSubCategory {data.ToString()}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            if (context.SaveChanges() > 0)
+                return true;
+
+            return false;
+        }
+
         public bool AddESGChecklistDefinition(List<ESGChecklistDefinitionViewModel> models)
         {
             if (models.Count <= 0)
@@ -2487,6 +2703,7 @@ namespace FintrakBanking.Repositories.Credit
                     ESGSUBCATEGORYID = model.esgSubCategoryId,
                     ISCOMPULSORY = model.isCompulsory,
                     ITEMDESCRIPTION = model.itemDescription,
+                    SCORE = model.gradeScore,
                     COMPANYID = model.companyId,
                     DELETED = false,
                     DATETIMECREATED = _genSetup.GetApplicationDate(),
@@ -2506,7 +2723,6 @@ namespace FintrakBanking.Repositories.Credit
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };
-
                 context.TBL_ESG_CHECKLIST_DEFINITION.Add(data);
                 this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -------------------------------
@@ -2656,11 +2872,12 @@ namespace FintrakBanking.Repositories.Credit
                                   checkListItemName = i.CHECKLISTITEMNAME,
                                   comment = s.COMMENT_,
                                   checklistStatusId = s.CHECKLISTSTATUSID,
-                                  responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == i.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
+                                  responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.SCORE == k.SCORE || x.SCORE == 6).OrderBy(a => a.SCORE).
                             Select(x => new CheckListStatusViewModel()
                             {
-                                checklistStatusId = x.CHECKLISTSTATUSID,
-                                checklistStatusName = x.CHECKLISTSTATUSNAME,
+                                checklistStatusId = (short)x.SCORE,
+                                checklistStatusName = x.STATUSNAME,
+                                grade = x.GRADE
                             }).ToList()
                               });
 
@@ -2682,13 +2899,13 @@ namespace FintrakBanking.Repositories.Credit
                             checkListItemName = i.CHECKLISTITEMNAME,
                             comment = "",
                             checklistStatusId = 0,
-                            responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == i.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
+                            responseTypes = context.TBL_ESG_CHECKLIST_SCORES.Where(x => x.SCORE == k.SCORE || x.SCORE == 6).OrderBy(a => a.SCORE).
                             Select(x => new CheckListStatusViewModel()
                             {
-                                checklistStatusId = x.CHECKLISTSTATUSID,
-                                checklistStatusName = x.CHECKLISTSTATUSNAME,
+                                checklistStatusId = (short)x.SCORE,
+                                checklistStatusName = x.STATUSNAME,
+                                grade = x.GRADE
                             }).ToList()
-
                         });
             var definitionList = data.ToList();
             var detailList = detailItem.ToList();
@@ -2717,6 +2934,33 @@ namespace FintrakBanking.Repositories.Credit
                             proposedAmount = b.PROPOSEDAMOUNT,
                         }).ToList();
             return data;
+        }
+        public ESGChecklistSummaryViewModel CalculateESGChecklistSummary(List<ESGChecklistDetailViewModel> models)
+        {
+            ESGChecklistSummaryViewModel summary = new ESGChecklistSummaryViewModel();
+            if (models.Count <= 0)
+                throw new SecureException("Nothing was selected");
+            if(models.Exists(m => m.checkStatusId == 1))
+            {
+                summary.ratingId = 1;
+                summary.comment = "HIGH RISK";
+                return summary;
+            }
+
+            if (models.Exists(m => m.checkStatusId == 5))
+            {
+                summary.ratingId = 5;
+                summary.comment = "MEDIUM RISK";
+                return summary;
+            }
+
+            if (models.Exists(m => m.checkStatusId == 6))
+            {
+                summary.ratingId = 6;
+                summary.comment = "LOW RISK";
+                return summary;
+            }
+            return null;
         }
         #endregion
 
