@@ -68,6 +68,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connected Services\TestService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\TwoFactorAuthService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -148,6 +153,19 @@
     <None Include="Connected Services\FbnAlertWS\Service2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\TestService\FinTrakBanking.ThirdPartyIntegration.TestService.ForecastReturn.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestService\FinTrakBanking.ThirdPartyIntegration.TestService.GetWeatherInformationResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestService\FinTrakBanking.ThirdPartyIntegration.TestService.WeatherDescription.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestService\FinTrakBanking.ThirdPartyIntegration.TestService.WeatherReturn.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestService\Weather.wsdl" />
     <None Include="Connected Services\TwoFactorAuthService\AuthWrapper.wsdl" />
     <None Include="Connected Services\TwoFactorAuthService\AuthWrapper.xsd">
       <SubType>Designer</SubType>
@@ -238,6 +256,7 @@
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\CRCWebService\" />
     <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
+    <WCFMetadataStorage Include="Connected Services\TestService\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthService\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthSoapService\" />
     <WCFMetadataStorage Include="Connected Services\XDSWebService\" />
@@ -301,6 +320,12 @@
     <None Include="Connected Services\TwoFactorAuthSoapService\configuration91.svcinfo" />
     <None Include="Connected Services\TwoFactorAuthSoapService\configuration.svcinfo" />
     <None Include="Connected Services\TwoFactorAuthSoapService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\TestService\configuration91.svcinfo" />
+    <None Include="Connected Services\TestService\configuration.svcinfo" />
+    <None Include="Connected Services\TestService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

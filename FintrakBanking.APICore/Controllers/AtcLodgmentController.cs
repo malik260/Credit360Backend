@@ -162,18 +162,33 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("atc-release")]
-        public HttpResponseMessage AddAtcRelease([FromBody] AtcReleaseViewModel model)
+        public HttpResponseMessage AddAtcRelease([FromBody] IEnumerable <AtcReleaseViewModel> model)
         {
-            try { 
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddAtcRelease(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                foreach (var atc in model)
+                {
+                    atc.applicationUrl = HttpContext.Current.Request.Path;
+                    atc.userBranchId = (short)token.GetBranchId;
+                    atc.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                    atc.createdBy = token.GetStaffId;
+                    atc.companyId = token.GetCompanyId;
+                }
+                var response = repo.AddAtcRelease(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
+
+            //try { 
+            //model.userBranchId = (short)token.GetBranchId;
+            //model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            //model.applicationUrl = HttpContext.Current.Request.Path;
+            //model.createdBy = token.GetStaffId;
+            //model.companyId = token.GetCompanyId;
+            //var response = repo.AddAtcRelease(model);
+            //if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            //}
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
