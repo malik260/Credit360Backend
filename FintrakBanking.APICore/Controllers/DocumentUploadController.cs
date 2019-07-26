@@ -93,12 +93,15 @@ namespace FintrakBanking.APICore.Controllers
                 targetReferenceNumber = provider.FormData["targetReferenceNumber"],
                 operationId = Convert.ToInt32(provider.FormData["operationId"]),
                 customerId = Convert.ToInt32(provider.FormData["customerId"]),
-               // targetId = Convert.ToInt32(provider.FormData["targetId"]),
                 overwrite = provider.FormData["overwrite"] == "true",
+               
             };
+                if (provider.FormData["targetId"] != null)
+                {
+                    entity.targetId = Convert.ToInt32(provider.FormData["targetId"]);
+                }
 
-
-            entity.userBranchId = (short)token.GetBranchId;
+                    entity.userBranchId = (short)token.GetBranchId;
             entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
             entity.applicationUrl = HttpContext.Current.Request.Path;
             entity.createdBy = token.GetStaffId;
