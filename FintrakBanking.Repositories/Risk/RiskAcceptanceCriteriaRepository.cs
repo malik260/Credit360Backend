@@ -36,19 +36,33 @@ namespace FintrakBanking.Repositories.Risk
 
         #region
 
-        public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId)
+        public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId,int? racCategoryTypeId)
         {
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
-
-          var data =  GetRacCategoryTypes(productId);
+            List<RacCategoryViewModel> productRacCategories = new List<RacCategoryViewModel>();
 
             var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
 
-            var productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID));
+            if (racCategoryTypeId != 0 && racCategoryTypeId != null)
+            {
+                productRacCategories = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYTYPEID == racCategoryTypeId && categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
+                {
+                    racCategoryId = x.RACCATEGORYID,
+                    categoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
 
+                }).ToList();
+            }
+            else
+            {
+                productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
+                {
+                    racCategoryId = x.RACCATEGORYID,
+                    categoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
+                }).ToList();
+            }
             /*
             value: '',
             status: 2,
@@ -71,15 +85,7 @@ namespace FintrakBanking.Repositories.Risk
                         optionId = x.RACOPTIONID,
                         fileUpload = x.REQUIREUPLOAD,
                         hasException = x.ISREQUIRED == false,
-                        //options = x.RACOPTIONID == null ? null 
-                        //                                : context.TBL_RAC_OPTION_ITEM
-                        //                                            .Where(o => o.RACOPTIONID == x.RACOPTIONID)
-                        //                                            .Select(o => new ProductRacOption
-                        //                                            {
-                        //                                                key = o.KEY,
-                        //                                                label = o.LABEL
-                        //                                            })
-                        //                                            //.ToList()
+                       
                     })
                     .ToList();
 
@@ -97,8 +103,8 @@ namespace FintrakBanking.Repositories.Risk
                                                                     .ToList();
                 }
 
-                racCategory.rows = items.Where(x => x.categoryId == productRacCategory.RACCATEGORYID).ToList();
-                racCategory.name = productRacCategory.CATEGORYNAME;
+                racCategory.rows = items.Where(x => x.categoryId == productRacCategory.racCategoryId).ToList();
+                racCategory.name = productRacCategory.categoryName;
                 productCategories.Add(racCategory);
             }
 
@@ -108,21 +114,28 @@ namespace FintrakBanking.Repositories.Risk
             return rac;
         }
 
-        private List<RacCategoryViewModel> GetRacCategoryTypes(int productId)
+        public List<RacCategoryViewModel> GetRacCategoryTypes(int productId)
         {
-            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
-               .Select(x => x.RACCATEGORYID)
-               .ToList();
+            var subCategories = new List<RacCategoryViewModel>();
+            var teir = new List<RacCategoryViewModel>();
 
-          var list =  context.TBL_RAC_CATEGORY_TYPE.Where(x => categoryIds.Contains(x.RACCATEGORYID)).Select(x=> new RacCategoryViewModel
-          {
-             racCategoryType = x.RACCATEGORYTYPE,
-             racCategoryTypeId = x.RACCATEGORYTYPEID,
-             racCategoryId = x.RACCATEGORYID
+            var categoryId = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+               .Select(x => x.RACCATEGORYID).Distinct()
+               .FirstOrDefault();
+            
+                teir = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYID== categoryId).Select(x => new RacCategoryViewModel
+                {
+                    racCategoryType = x.RACCATEGORYTYPE,
+                    racCategoryTypeId = x.RACCATEGORYTYPEID,
+                    racCategoryId = x.RACCATEGORYID,
+                    categoryTypeName = x.RACCATEGORYTYPE,
+                    categoryName = context.TBL_RAC_CATEGORY.Where(o=>o.RACCATEGORYID==categoryId).Select(o=>o.CATEGORYNAME).FirstOrDefault()
 
-            } ).ToList();
+                }).ToList();
 
-            return list;
+                subCategories.AddRange(teir);
+           
+            return subCategories;
         }
         public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProductAndTarget(int productId, int targetId)
         {
@@ -1107,7 +1120,9 @@ namespace FintrakBanking.Repositories.Risk
 
             return data.Distinct().OrderBy(o => o.levelName);
         }
-    }
+
+        
+}
 
     
 
