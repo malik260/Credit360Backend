@@ -383,7 +383,13 @@ namespace FintrakBanking.Common.Enum
         CallateralValuationReportAdded = 449,
         CallateralValuationAdded = 450,
         ValuationPrerequisiteAdded = 451,
-        ValuationPrerequisiteDeleted = 452
+        ValuationPrerequisiteDeleted = 452,
+        ESGCategoryAdded = 453,
+        ESGCategoryUpdated = 454,
+        ESGCategoryDeleted = 455,
+        ESGSUBCategoryAdded = 456,
+        ESGSUBCategoryUpdated = 457,
+        ESGSUBCategoryDeleted = 458
     };
     public enum RegulatoryTypeEnum
     {
