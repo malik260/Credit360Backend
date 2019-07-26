@@ -1952,14 +1952,20 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     referenceNumber = i.POLICYREFERENCENUMBER,
                     insuranceCompanyId = i.INSURANCECOMPANYID,
+                    insuranceCompany = context.TBL_INSURANCE_COMPANY.Where(o => o.INSURANCECOMPANYID == i.INSURANCECOMPANYID).Select(o => o.COMPANYNAME).FirstOrDefault(),
                     sumInsured = i.SUMINSURED,
                     startDate = i.STARTDATE,
                     expiryDate = i.ENDDATE,
                     insuranceTypeId = i.INSURANCETYPEID,
                     hasExpired = i.HASEXPIRED,
-                    
-                }).ToList();
-            return insurance;
+                    policyId = i.POLICYID,
+                    inSurPremiumAmount = i.PREMIUMAMOUNT,
+                    description = i.DESCRIPTION,
+                    premiumPercent = i.PREMIUMPERCENT,
+                    insuranceType = context.TBL_INSURANCE_TYPE.Where(ins => ins.INSURANCETYPEID == i.INSURANCETYPEID).Select(ins => ins.INSURANCETYPE).FirstOrDefault()
+
+        }).ToList();
+            return insurance.GroupBy(o=>o.insuranceCompanyId).Select(o=>o.Last()).ToList();
         }
         public List<InsurancePolicies> GetTempCollateralInsurancePoliciesWaitingForApproval(int staffId)
         {
@@ -2036,6 +2042,9 @@ namespace FintrakBanking.Repositories.Credit
                                  collateralSubTypeId = s.COLLATERALSUBTYPEID,
                                  policyId = x.POLICYID,
                                  customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
+                                 description = x.DESCRIPTION,
+                                 premiumAmount = x.PREMIUMAMOUNT,
+                              
 
 
 
@@ -8483,9 +8492,8 @@ namespace FintrakBanking.Repositories.Credit
             });
         }
 
+       
     }
-
-
 
 }
 
@@ -8494,3 +8502,6 @@ public class API_Error
     public string error { get; set; }
     public string errorDescription { get; set; }
 }
+
+
+         

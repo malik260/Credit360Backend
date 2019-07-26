@@ -17,6 +17,7 @@
     using FintrakBanking.Common.CustomException;
     using System.Web.Script.Serialization;
     using Newtonsoft.Json.Linq;
+    using FintrakBanking.Interfaces.Setups.General;
 
     namespace CustomerInfo
     {
@@ -24,6 +25,7 @@
         {
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
+            //private IStaffRepository staffRepo;
 
             //private static HttpClient httpClientInstance;
             //private HttpClientHandler handler = new HttpClientHandler();
@@ -34,6 +36,7 @@
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
+                //staffRepo = _staffRepo;
             } 
 
             public void Run()
@@ -87,27 +90,32 @@
              
                 if (response.IsSuccessStatusCode)
                 {
-                    customerViewModels = await response.Content.ReadAsAsync<CustomerTransactionViewModels>();
+                    //customerViewModels = await response.Content.ReadAsAsync<CustomerTransactionViewModels>();
 
-                    //TODO: Try the commented method below. Uncomment it and see if it will return array of values for our payload
-                    //responseData = await response.Content.ReadAsStringAsync();
-                    //customerViewModels = JsonConvert.DeserializeObject<CustomerTransactionViewModels>(responseData);
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var objData = JsonConvert.DeserializeObject<List<CustomerViewModels>>(jsonString);
+                    responseData = await response.Content.ReadAsStringAsync();
+                    JObject jsonString = JObject.Parse(responseData);
+                    var data = jsonString["data"].ToString();
+                    
+                    var objData = JsonConvert.DeserializeObject<CustomerViewModels>(data);
 
-                    foreach (var item in objData)
-                    {
-                        customers.Add(new CustomerViewModels
-                        {
-                            customerCode = item.customerCode,
-                            firstName = item.lastName,
-                            lastName = item.firstName,
-                            middleName = item.middleName,
-                            customerTypeName = item.customerTypeName,
-                            customerTypeId = (short)(item.customerTypeName == "C" ? 2 : 1),
-                           // isPoliticallyExposed = item.politicallyExposedPerson == "N" ? false : true,
-                        });
-                    }
+                    
+                    objData = GetCustomerModelFromResponseData(objData);
+
+
+                    customers.Add(objData);
+
+                    //customers.Add(new CustomerViewModels
+                    //    {
+                    //    customerCode = objData.customerCode,
+                    //    firstName = objData.lastName,
+                    //    lastName = objData.firstName,
+                    //    middleName = objData.middleName,
+                    //    customerTypeName = objData.customerTypeName,
+                    //    customerTypeId = (short)(objData.customerType == "C" ? 2 : 1),
+                        
+                    //    //isPoliticallyExposed = objData.politicallyExposedPerson == "N" ? false : true,
+                    //});
+                    //}
 
                 }
                 responseMessage = await response.Content.ReadAsStringAsync();
@@ -135,36 +143,23 @@
 
             }
 
-            //private List<CustomerViewModels> GetCustomerModelFromResponseData(string responseData)
-            //{
-            //    JObject responseDataJson = JObject.Parse(responseData);
-            //    var data = responseDataJson["data"];
-            //    List<CustomerViewModels> customers = new List<CustomerViewModels>();
-            //    customers.Add(new CustomerViewModels
-            //    {
-            //        customerCode = data["customerCode"].ToString(),
-            //        firstName = data["lastName"].ToString(), 
-            //        lastName = data["firstName"].ToString(), 
-            //        middleName = data["middleName"].ToString(), 
-            //        customerTypeName = data["customerType"].ToString(), 
-            //        customerTypeId = data["customerType"].ToString() == "C" ? (short)2 : (short)1, 
-            //        isPoliticallyExposed = data["politicallyExposedPerson"].ToString() != string.Empty ? (bool)data["politicallyExposedPerson"].Any() : false, 
-            //        branchCode = data["branchCode"].ToString(),
-            //        emailAddress = data["emailAddress"].ToString(),
-            //        misCode = data["misCode"].ToString(),
-            //        taxNumber = data["taxIdNumber"].ToString(),
-            //        customerBVN = data["bankVerificationNumber"].ToString(),
-            //        rcNumber = data["rcNumber"].ToString(),
-            //        occupation = data["occupation"].ToString(),
-            //        nationality = data["nationality"].ToString(),
-            //        gender = data["gender"].ToString(),
-            //        sectorCode = data["sectorCode"].ToString(),
-            //        subSectorCode = data["subSectorCode"].ToString(),
-                    
-            //        //CustomerAddresses = data["customerType"].ToString(), 
-            //    });
-            //    return customers;
-            //}
+            private CustomerViewModels GetCustomerModelFromResponseData(CustomerViewModels objData)
+            {
+                if (objData.customerType == "C") { objData.customerTypeId = 2; }
+                else { objData.customerTypeId = 1; }
+
+                if (objData.gender == "M") { objData.gender = "Male"; }
+                if (objData.gender == "F"){ objData.gender = "Female"; }
+
+                //var relationshipOfficerRecord = staffRepo.GetAllStaff().Where(x => x.StaffCode == objData.relationshipOfficerCode).FirstOrDefault(); 
+
+                //if(relationshipOfficerRecord != null)
+                //{
+                //    objData.relationshipOfficerId = relationshipOfficerRecord.staffId;
+                //}
+
+                return objData;
+            }
 
             public async Task<CasaBalanceViewModel> GetCustomerAccountBalance(string customerAccount)
             {
@@ -197,59 +192,43 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
                     //response = await client.GetAsync($"api/Customer/GetCustomerAccountBalance?accountNumber={customerAccount}");
-                    response = await client.GetAsync($"api/Customer/getcustomeraccountbalance/{customerAccount}");
-                    
+                    response = await client.GetAsync($"api/Customer/getcustomeraccountbalance/{customerAccount}"); 
+
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
                         accountAPI = await response.Content.ReadAsAsync<CasaIntegrationViewModel>();
-                        //TODO: Try the commented method below. Uncomment it and see if it will return array of values for our payload
-                        //string jsonString = await response.Content.ReadAsStringAsync();
-                        //var objData = JsonConvert.DeserializeObject<List<CasaIntegrationViewModel>>(jsonString);
-                        //foreach(var item in objData)
-                        //{
-                        //    var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currencyType).CURRENCYID;
-                        //    var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
-                        //    var accountStatusId = account != null ? account.ACCOUNTSTATUSID : 0;
+                        string responseData = await response.Content.ReadAsStringAsync();
+                        //customerViewModels = JsonConvert.DeserializeObject<CustomerTransactionViewModels>(responseData);
+                        
+                        JObject responseDataJsonString = JObject.Parse(responseData);
+                        var data = responseDataJsonString["data"].ToString(); 
+                        accountAPI = JsonConvert.DeserializeObject<CasaIntegrationViewModel>(data);
+                  
+                        if(accountAPI != null)
+                        {
+                            var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountAPI.currencyType).CURRENCYID;
+                            var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
+                            var accountStatusId = account != null ? account.ACCOUNTSTATUSID : 0;
 
-                        //    accountOutput.accountName = accountAPI.accountName;
-                        //    accountOutput.accountNo = accountAPI.accountNumber;
-                        //    accountOutput.availableBalance = accountAPI.balance;
-                        //    accountOutput.productName = accountAPI.productName;
-                        //    accountOutput.currencyId = currencyId;
-                        //    accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
-                        //    accountOutput.customerCode = accountAPI.customerCode;
-                        //    accountOutput.product = accountAPI.product;
-                        //    accountOutput.productType = accountAPI.productType;
-                        //    accountOutput.currencyType = accountAPI.currencyType;
-                        //    accountOutput.accountStatus = accountAPI.accountStatus;
-                        //    accountOutput.freezeStatus = accountAPI.freezeStatus;
-                        //    accountOutput.freezeReason = accountAPI.freezeReason;
-                        //    accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
-                        //    accountOutput.hasBalance = true;
-                        //    accountOutput.isCasaAccountDetailAvailable = true;
+                            accountOutput.accountName = accountAPI.accountName;
+                            accountOutput.accountNo = accountAPI.accountNumber;
+                            accountOutput.availableBalance = accountAPI.balance;
+                            accountOutput.productName = accountAPI.productName;
+                            accountOutput.currencyId = currencyId;
+                            accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
+                            accountOutput.customerCode = accountAPI.customerCode;
+                            accountOutput.product = accountAPI.product;
+                            accountOutput.productType = accountAPI.productType;
+                            accountOutput.currencyType = accountAPI.currencyType;
+                            accountOutput.accountStatus = accountAPI.accountStatus;
+                            accountOutput.freezeStatus = accountAPI.freezeStatus;
+                            accountOutput.freezeReason = accountAPI.freezeReason;
+                            accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
+                            accountOutput.hasBalance = true;
+                            accountOutput.isCasaAccountDetailAvailable = true;
 
-                        //}
-                        var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountAPI.currencyType).CURRENCYID;
-                        var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
-                        var accountStatusId = account != null ? account.ACCOUNTSTATUSID : 0;
-
-                        accountOutput.accountName = accountAPI.accountName;
-                        accountOutput.accountNo = accountAPI.accountNumber;
-                        accountOutput.availableBalance = accountAPI.balance;
-                        accountOutput.productName = accountAPI.productName;
-                        accountOutput.currencyId = currencyId;
-                        accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
-                        accountOutput.customerCode = accountAPI.customerCode;
-                        accountOutput.product = accountAPI.product;
-                        accountOutput.productType = accountAPI.productType;
-                        accountOutput.currencyType = accountAPI.currencyType;
-                        accountOutput.accountStatus = accountAPI.accountStatus;
-                        accountOutput.freezeStatus = accountAPI.freezeStatus;
-                        accountOutput.freezeReason = accountAPI.freezeReason;
-                        accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
-                        accountOutput.hasBalance = true;
-                        accountOutput.isCasaAccountDetailAvailable = true;
+                        }
                     }
 
                     //responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
@@ -328,14 +307,18 @@
                     CasaViewModel casaViewModels = new CasaViewModel();
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}");
+                    response = await client.GetAsync($"api/Customer/getcustomeraccountbalances/{customerCode}");
+                    //response = await client.GetAsync($"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}");
 
                     List<CasaViewModel> casa = new List<CasaViewModel>();
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
                         var jsonString = await response.Content.ReadAsStringAsync();
-                        var objData = JsonConvert.DeserializeObject<List<CasaIntegrationViewModel>>(jsonString);
+                        JObject responseDataJsonString = JObject.Parse(jsonString);
+                        var jsonDataString = responseDataJsonString["data"].ToString();
+
+                        var objData = JsonConvert.DeserializeObject<List<CasaIntegrationViewModel>>(jsonDataString);
 
                         foreach (var d in objData)
                         {
@@ -417,12 +400,15 @@
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"api/ExposePerson/Get?customerCode={customerCode}");
+                    response = await client.GetAsync($"api/ExposedPerson/Get/{customerCode}");
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
-                        var jsonString = await response.Content.ReadAsStringAsync();
-                        result = JsonConvert.DeserializeObject<string>(jsonString);
+                        var responseData = await response.Content.ReadAsStringAsync();
+                        JObject responseDataJsonString = JObject.Parse(responseData);
+                        
+                        result = responseDataJsonString["responseMessage"].ToString();
+                        //result = JsonConvert.DeserializeObject<string>(responseMessageString);
                     }
                     responseMessage = await response.Content.ReadAsStringAsync();
                     handler.Dispose();
@@ -566,10 +552,18 @@
                     //response = await client.GetAsync($"api/InterestRateInquiry/GetInterestRateInquiry?model.accountNumber={accountNumber}&model.accountType={accountType}",
                     response = await client.GetAsync($"api/InterestRate/GetInterestRateInquiry/{accountNumber}");
 
+                   
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
-                        accountAPI = await response.Content.ReadAsAsync<InterestRateInquiryIntegrationViewModel>();
+                        //accountAPI = await response.Content.ReadAsAsync<InterestRateInquiryIntegrationViewModel>();
+
+                        var responseData = await response.Content.ReadAsStringAsync();
+                        JObject jsonString = JObject.Parse(responseData);
+                        var data = jsonString["data"].ToString();
+
+                        accountAPI = JsonConvert.DeserializeObject<InterestRateInquiryIntegrationViewModel>(data);
+
                         accountOutput.accountNumber = accountAPI.interestRateDetails.accountNumber;
                         accountOutput.accountType = accountAPI.interestRateDetails.accountType;
                         accountOutput.interestTableCode = accountAPI.interestRateDetails.interestTableCode;

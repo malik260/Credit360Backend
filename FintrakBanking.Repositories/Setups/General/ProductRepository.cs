@@ -1461,7 +1461,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 var productToUpdate = context.TBL_PRODUCT.Where(x => x.PRODUCTID == productModel.PRODUCTID).FirstOrDefault();
                 var productBehaviourToUpdate = context.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault(x => x.PRODUCTID == productModel.PRODUCTID);
 
-                var currModel = context.TBL_TEMP_PRODUCT_CURRENCY.Where(c => c.TEMP_PRODUCTID == productModel.TEMP_PRODUCTID && c.DELETED == false);
+                var currModel = context.TBL_TEMP_PRODUCT_CURRENCY.Where(c => c.TEMP_PRODUCTID == productModel.TEMP_PRODUCTID && c.DELETED == false).ToList();
                 var currListToUpdate = new List<TBL_PRODUCT_CURRENCY>();
 
                 var feeModel = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(c => c.TEMP_PRODUCTID == productModel.TEMP_PRODUCTID && c.DELETED == false);

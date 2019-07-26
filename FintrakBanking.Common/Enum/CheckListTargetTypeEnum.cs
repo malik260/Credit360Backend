@@ -23,4 +23,11 @@ namespace FintrakBanking.Common.Enum
         CAPChecklist = 5,
         AvailmentCheckList = 6
     }
+
+    public enum ESGScoreGradeEnum
+    {
+        A = 1,
+        B = 2,
+        C = 3
+    }
 }

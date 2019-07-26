@@ -29,10 +29,12 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string checklistItemName { get; set; }
         public int esgCategoryId { get; set; }
         public string esgCategoryName { get; set; }
-        public int esgSubCategoryId { get; set; }
+        public int? esgSubCategoryId { get; set; }
         public string esgSubCategoryName { get; set; }
         public bool isCompulsory { get; set; }
         public string itemDescription { get; set; }
+        public int gradeScore { get; set; }
+        public string grade { get; set; }
 
     }
     public class ESGChecklistSummaryViewModel : GeneralEntity

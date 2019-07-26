@@ -316,7 +316,32 @@ namespace FintrakBanking.Repositories.credit
                 .ToList();
         }
 
+        public bool UpdatePsrRecommendation(PsrRecommendationViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_RECOMMENDATION.Find(id);
+            entity.COMMENTS = model.comment;
 
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrRecommendationUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Recommendation '{entity.PSRRECOMMENDATIONID}' was updated by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRRECOMMENDATIONID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
         public bool AddPsrRecommendation(PsrRecommendationViewModel model)
         {
             var entity = new TBL_PSR_RECOMMENDATION
@@ -530,6 +555,33 @@ namespace FintrakBanking.Repositories.credit
                 .ToList();
         }
 
+        public bool UpdatePsrObservation(PsrObservationViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_OBSERVATION.Find(id);
+            entity.COMMENTS = model.comment;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrObservationUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Observation '{entity.PSROBSERVATIONID}' was updated by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSROBSERVATIONID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
         public bool AddPsrObservation(PsrObservationViewModel model)
         {
             var entity = new TBL_PSR_OBSERVATION
@@ -604,7 +656,33 @@ namespace FintrakBanking.Repositories.credit
                 })
                 .ToList();
         }
+        public bool UpdatePsrNextInspectionTask(PsrNextInspectionTaskViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_NEXT_INSPECTION_TASK.Find(id);
+            entity.COMMENTS = model.comment;
+            entity.ISDONE = model.isDone;
 
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrNextInspectionTaskUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Next Inspection Task '{entity.PSRNEXTINSPECTIONTASKID}' was updated by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRNEXTINSPECTIONTASKID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
         public bool AddPsrNextInspectionTask(PsrNextInspectionTaskViewModel model)
         {
             var entity = new TBL_PSR_NEXT_INSPECTION_TASK
@@ -678,6 +756,32 @@ namespace FintrakBanking.Repositories.credit
                 .ToList();
         }
 
+        public bool UpdatePsrComment(PsrCommentViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_COMMENT.Find(id);
+            entity.COMMENTS = model.comment;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrCommentUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Comment '{entity.PSRCOMMENTID}' was updated by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRCOMMENTID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
         public bool AddPsrComment(PsrCommentViewModel model)
         {
             var entity = new TBL_PSR_COMMENT
