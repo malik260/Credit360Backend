@@ -1058,73 +1058,49 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [Route("loan-booking/approval/{loanBookingRequestId}")]
         public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
         {
-            try
-            {
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            model.BranchId = (short)token.GetBranchId;
+            model.staffId = token.GetStaffId;
 
-                model.applicationUrl = HttpContext.Current.Request.Path;
-                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                model.createdBy = token.GetStaffId;
-                model.companyId = token.GetCompanyId;
-                model.BranchId = (short)token.GetBranchId;
-                model.staffId = token.GetStaffId;
-               
-                var responseId = repo.GoForApproval(model, loanBookingRequestId);
-                var dynamicMessage = string.Empty;
-                if (responseId == 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-                }
-                else if (responseId == 2)
-                {
+            var responseId = repo.GoForApproval(model, loanBookingRequestId);
+            var dynamicMessage = string.Empty;
+            if (responseId == 1)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            else if (responseId == 2)
+            {
+                dynamicMessage = "Loan has been successfully disbursed";
+                if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
+                    dynamicMessage = "Overdraft facility grant successfully committed";
+                if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
+                    dynamicMessage = "Contingent Liability has been committed successfully";
+                if (model.operationId == (short)OperationsEnum.TermLoanBooking)
                     dynamicMessage = "Loan has been successfully disbursed";
-                    if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
-                        dynamicMessage = "Overdraft facility grant successfully committed";
-                    if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
-                        dynamicMessage = "Contingent Liability has been committed successfully";
-                    if (model.operationId == (short)OperationsEnum.TermLoanBooking)
-                        dynamicMessage = "Loan has been successfully disbursed";
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = dynamicMessage });
-                }
-                else if (responseId == 3)
-                {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = true, message = dynamicMessage });
+            }
+            else if (responseId == 3)
+            {
+                dynamicMessage = "Loan disapproval was successful";
+                if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
+                    dynamicMessage = "Overdraft facility grant disapproved";
+                if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
+                    dynamicMessage = "Contingent Liability disapproved";
+                if (model.operationId == (short)OperationsEnum.TermLoanBooking)
                     dynamicMessage = "Loan disapproval was successful";
-                    if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
-                        dynamicMessage = "Overdraft facility grant disapproved";
-                    if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
-                        dynamicMessage = "Contingent Liability disapproved";
-                    if (model.operationId == (short)OperationsEnum.TermLoanBooking)
-                        dynamicMessage = "Loan disapproval was successful";
 
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = dynamicMessage  });
-                }
-                else
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = true, message = dynamicMessage });
             }
-            catch (ConditionNotMetException ce)
+            else
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (APIErrorException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (TwoFactorAuthenticationException fa)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
             }
         }
 
