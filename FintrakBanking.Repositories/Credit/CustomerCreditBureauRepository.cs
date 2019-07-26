@@ -114,7 +114,7 @@ namespace FintrakBanking.Repositories.Credit
                                gender = a.GENDER,
                                lastName = a.LASTNAME,
                                maidenName = a.MAIDENNAME,
-                               maritalStatus = a.MARITALSTATUS.Value,
+                               maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
                                title = a.TITLE,
                                middleName = a.MIDDLENAME,
                                customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
