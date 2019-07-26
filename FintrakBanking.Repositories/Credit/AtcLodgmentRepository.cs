@@ -264,6 +264,29 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<AtcReleaseViewModel> GetAtcRelease(int id)
         {
+            //var entity = (from x in context.TBL_ATC_RELEASE
+            //              join r in context.TBL_ATC_LODGMENT on x.ATCLODGMENTID equals r.ATCLODGMENTID
+            //              where x.ATCLODGMENTID == id && x.DELETED == false
+            //              select new AtcReleaseViewModel
+            //              {
+            //                  unitNumber = r.UNITNUMBER,
+            //                  unitToRelease = x.UNITTORELEASE,
+            //                  dateCreated = x.DATETIMECREATED,
+            //                  releaseBalance = x.UNITBALANCE,
+            //                  createdBy = x.CREATEDBY,
+            //                  atcLodgmentId = x.ATCLODGMENTID,
+            //                  atcReleaseId = x.ATCRELEASEID,
+            //                  approvalStatusId = x.APPROVALSTATUSID,
+            //                  approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+            //                  // unitBalance = x.UNITBALANCE
+            //              });
+
+            //foreach (var item in entity)
+            //{
+            //    item.unitRelease = item.unitRelease + item.unitToRelease;
+            //    item.unitBalance = item.unitNumber - item.unitRelease;
+            //}
+            //return entity.ToList();
             var entity = (from x in context.TBL_ATC_RELEASE
                           join r in context.TBL_ATC_LODGMENT on x.ATCLODGMENTID equals r.ATCLODGMENTID
                           where x.ATCLODGMENTID == id && x.DELETED == false
