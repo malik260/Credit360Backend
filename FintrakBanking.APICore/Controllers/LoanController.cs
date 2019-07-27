@@ -2071,14 +2071,18 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application/request-booking/{applicationId}")]
-        public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] LoanBookingRequestViewModel entity)
+        public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] LoanBookingRequestViewModel models)
         {
-            entity.userBranchId = (short)token.GetBranchId;
-            entity.applicationUrl = HttpContext.Current.Request.Path;
-            entity.createdBy = token.GetStaffId;
-            entity.companyId = token.GetCompanyId;
+           // foreach(var model in models)
+            //{
+                models.userBranchId = (short)token.GetBranchId;
+                models.applicationUrl = HttpContext.Current.Request.Path;
+                models.createdBy = token.GetStaffId;
+                models.companyId = token.GetCompanyId;
+            //}
+            
 
-            var data = repo.AddLoanBookingRequest(applicationId, entity);
+            var data = repo.AddLoanBookingRequest(applicationId, models);
             if (data)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -2089,6 +2093,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 new { success = false, message = "Initiating Drawdown Request was unsuccessful!" });
            
         }
+
 
         [HttpGet]
         [Route("loan-application/collateral/customer/{customerId}")]

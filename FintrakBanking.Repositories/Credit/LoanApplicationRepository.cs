@@ -1645,6 +1645,15 @@ namespace FintrakBanking.Repositories.Credit
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
             var loanStatusId = (short)LoanStatusEnum.Inactive;
 
+            if(loan.flowchangeId != null && loan.flowchangeId > 0)
+            {
+                var newWorkflowBaseRecord = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(loan.flowchangeId);
+                if(newWorkflowBaseRecord != null)
+                {
+                    loan.exclusiveOperationId = newWorkflowBaseRecord.OPERATIONID;
+                }
+            }
+
             loanData = new TBL_LOAN_APPLICATION
             {
                 REQUIRECOLLATERAL = loan.requireCollateral,
@@ -4452,9 +4461,41 @@ namespace FintrakBanking.Repositories.Credit
             return revisedProcessFlow;
         }
 
-        public IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlowByProductClassId(int productClassId)
+        public IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlowByProductClassId(short productClassId, short productId)
         {
-            return getFacilityApplicationRevisedProcessFlow().Where(x=>x.productClassId == productClassId);
+            var productClassFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
+                                      where c.PRODUCTCLASSID == productClassId && c.PRODUCTID == null
+                                      select new RevisedProcessFlowModel
+                                      {
+                                          flowchangeId = c.FLOWCHANGEID,
+                                          placeHolder = c.PLACEHOLDER,
+                                          productClassId = c.PRODUCTCLASSID,
+                                          productId = c.PRODUCTID,
+                                          destinationUrl = c.DESTINATIONURL,
+                                          skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
+                                          operationId = c.OPERATIONID,
+                                          label = c.LABEL,
+                                          dateTimeCreated = c.DATETIMECREATED,
+                                          createdBy = c.CREATEDBY
+                                      }).ToList();
+
+            var productFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
+                                    where c.PRODUCTCLASSID == null && c.PRODUCTID == productId
+                                    select new RevisedProcessFlowModel
+                                    {
+                                        flowchangeId = c.FLOWCHANGEID,
+                                        placeHolder = c.PLACEHOLDER,
+                                        productClassId = c.PRODUCTCLASSID,
+                                        productId = c.PRODUCTID,
+                                        destinationUrl = c.DESTINATIONURL,
+                                        skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
+                                        operationId = c.OPERATIONID,
+                                        label = c.LABEL,
+                                        dateTimeCreated = c.DATETIMECREATED,
+                                        createdBy = c.CREATEDBY
+                                    }).ToList();
+
+            return productClassFlow.Union(productFlow);
         }
 
     }
