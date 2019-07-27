@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.Risk
                 {
                     racCategoryId = x.RACCATEGORYID,
                     categoryName = x.CATEGORYNAME,
-                }).OrderBy(o=>o.racCategoryId)
+                }).OrderBy(o=>o.categoryName)
                 .ToList();
         }
 
@@ -306,7 +306,7 @@ namespace FintrakBanking.Repositories.Risk
                     controlAmount = x.CONTROLAMOUNT,
                     controlOptionId = x.CONTROLOPTIONID,
                     controlOption = context.TBL_RAC_OPTION_ITEM.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.LABEL).FirstOrDefault()
-                }).OrderBy(o => o.racItemId)
+                }).OrderByDescending(o => o.racItemId)
                 .ToList();
         }
 

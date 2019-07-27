@@ -19,6 +19,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerName { get; set; }
         public decimal principalAmount { get; set; }
         public string loanReferenceNo { get; set; }
+        public int operationId { get; set; }
     }
     public class CallMemoViewModel : GeneralEntity
     {
@@ -49,6 +50,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string Action { get; set; }
 
         public string Recommendation { get; set; }
+        public int operationId { get; set; }
+        public int? CustomerId { get; set; }
     }
     public class CallLimitViewModel : GeneralEntity
     {

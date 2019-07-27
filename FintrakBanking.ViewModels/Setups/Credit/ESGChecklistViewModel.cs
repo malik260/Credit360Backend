@@ -29,7 +29,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string checklistItemName { get; set; }
         public int esgCategoryId { get; set; }
         public string esgCategoryName { get; set; }
-        public int esgSubCategoryId { get; set; }
+        public int? esgSubCategoryId { get; set; }
         public string esgSubCategoryName { get; set; }
         public bool isCompulsory { get; set; }
         public string itemDescription { get; set; }
@@ -87,6 +87,9 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int checklistStatusId { get; set; }
         public string categoryName { get; set; }
         public string subCategoryName { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public short? esgClassId { get; set; }
+        public short? esgTypeId { get; set; }
 
         public List<CheckListStatusViewModel> responseTypes { get; set; }
     }

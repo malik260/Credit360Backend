@@ -1681,6 +1681,199 @@ namespace FintrakBanking.APICore.Controllers
               new { success = false, message = $"There was an error fetching this record {ex.Message}" });
             }
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("esg-category")]
+        public HttpResponseMessage AddESGCategory([FromBody] ESGChecklistDefinitionViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                model.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.AddESGCategory(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error creating record" });
+            }
+
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("esg-subcategory")]
+        public HttpResponseMessage AddESGSubCategory([FromBody] ESGChecklistDefinitionViewModel model)
+        {
+            try
+            {
+                    model.userBranchId = (short)token.GetBranchId;
+                    model.userIPAddress = CommonHelpers.GetUserIP();
+                    model.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                    model.createdBy = token.GetStaffId;
+                    model.companyId = token.GetCompanyId;
+
+                var data = repo.AddESGSubCategory(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error creating record" });
+            }
+
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error creating these records {e.Message}" });
+            }
+
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("esg-category")]
+        public HttpResponseMessage UpdateESGCategory([FromBody] ESGChecklistDefinitionViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                model.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.UpdateESGCategory(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error updating record" });
+            }
+
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating these records {e.Message}" });
+            }
+
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("esg-subcategory")]
+        public HttpResponseMessage UpdateESGSubCategory([FromBody] ESGChecklistDefinitionViewModel model)
+        {
+            try
+            {
+                    model.userBranchId = (short)token.GetBranchId;
+                    model.userIPAddress = CommonHelpers.GetUserIP();
+                    model.applicationUrl = HttpContext.Current.Request.UserHostAddress;
+                    model.createdBy = token.GetStaffId;
+                    model.companyId = token.GetCompanyId;
+
+                var data = repo.UpdateESGSubCategory(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been updating successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error updating record" });
+            }
+
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating these records {e.Message}" });
+            }
+
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("esg-category/{esgCategoryId}")]
+        public HttpResponseMessage DeleteESGCategory(int esgCategoryId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = CommonHelpers.GetUserIP()
+                };
+
+                var data = repo.DeleteESGCategory(esgCategoryId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error deleting record" });
+            }
+
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error deleting these records {e.Message}" });
+            }
+
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("esg-subcategory/{esgSubcategoryId}")]
+        public HttpResponseMessage DeleteESGSubcategory(int esgSubcategoryId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = CommonHelpers.GetUserIP()
+                };
+
+                var data = repo.DeleteESGSubcategory(esgSubcategoryId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Error deleting record" });
+            }
+
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error deleting these records {e.Message}" });
+            }
+
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("esg-checklist-definition")]
@@ -1734,7 +1927,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Record has been created successfully" });
+                        new { success = true, message = "Record has been saved successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "Error creating record" });
@@ -1765,7 +1958,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Record has been created successfully" });
+                        new { success = true, message = "Record has been added successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "Error creating record" });

@@ -49,6 +49,8 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class GroupCustomerMembersViewModel
     {
+        public bool isProspect { get; set; }
+
         public int customerId { get; set; }
         public string lastName { get; set; }
         public string firstName { get; set; }

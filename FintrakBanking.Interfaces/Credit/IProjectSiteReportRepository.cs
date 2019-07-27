@@ -80,7 +80,15 @@ namespace FintrakBanking.Interfaces.credit
 
         bool DeletePsrRecommendation(int id, UserInfo user);
 
+        bool UpdatePsrRecommendation(PsrRecommendationViewModel model, int id, UserInfo user);
+
         #endregion
+
+        bool UpdatePsrComment(PsrCommentViewModel model, int id, UserInfo user);
+
+        bool UpdatePsrNextInspectionTask(PsrNextInspectionTaskViewModel model, int id, UserInfo user);
+
+        bool UpdatePsrObservation(PsrObservationViewModel model, int id, UserInfo user);
 
     }
 }
