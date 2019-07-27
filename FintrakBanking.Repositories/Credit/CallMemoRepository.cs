@@ -49,14 +49,15 @@ namespace FintrakBanking.Repositories.Credit
                         allFilteredLoan = (from a in _context.TBL_LOAN_APPLICATION
                                            join b in _context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                            where a.APPLICATIONAMOUNT <= memoLimit.MAXIMUMAMOUNT && a.APPLICATIONAMOUNT >= memoLimit.MINIMUMAMOUNT && (a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
-                                           b.CUSTOMERCODE.ToLower().Contains(searchQuery))
+                                           b.CUSTOMERCODE.ToLower().Contains(searchQuery) || b.FIRSTNAME.ToLower().StartsWith(searchQuery) || b.LASTNAME.StartsWith(searchQuery))
                                            select new CallMemoLoanSearchViewModel
                                            {
                                                loanApplicationId = a.LOANAPPLICATIONID,
                                                customerId = a.CUSTOMERID,
                                                customerName = b.CUSTOMERCODE + " - " + b.FIRSTNAME + " " + b.LASTNAME,
                                                loanReferenceNo = a.APPLICATIONREFERENCENUMBER,
-                                               principalAmount = a.APPLICATIONAMOUNT
+                                               principalAmount = a.APPLICATIONAMOUNT,
+                                               operationId = (int)OperationsEnum.CallMemo
                                            }).Take(10).AsQueryable();
                     }
                     else
@@ -239,6 +240,7 @@ namespace FintrakBanking.Repositories.Credit
                             CallMemoTypeId = a.CALLLIMITTYPEID,
                             CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
                             CustomerName = _context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == b.CUSTOMERID).FIRSTNAME,
+                            CustomerId = b.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
@@ -247,7 +249,8 @@ namespace FintrakBanking.Repositories.Credit
                             Action = a.ACTION,
                             Recommendation = a.RECOMMENDATION,
                             createdBy = a.CREATEDBY,
-                            dateTimeCreated = a.DATECREATED
+                            dateTimeCreated = a.DATECREATED,
+                            operationId = (int)OperationsEnum.CallMemo
                         }).ToList();
             return data;
         }

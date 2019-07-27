@@ -109,7 +109,7 @@ namespace FintrakBanking.Repositories.Customer
                 GENDER = entity.gender,
                 LASTNAME = entity.lastName,
                 MAIDENNAME = entity.maidenName,
-                MARITALSTATUS = entity.maritalStatus,
+                MARITALSTATUS = Convert.ToInt16(entity.maritalStatus),
                 TITLE = entity.title,
                 MIDDLENAME = entity.middleName,
                 MISCODE = entity.misCode,
@@ -2074,7 +2074,7 @@ namespace FintrakBanking.Repositories.Customer
                            gender = a.GENDER,
                            lastName = a.LASTNAME,
                            maidenName = a.MAIDENNAME,
-                           maritalStatus = a.MARITALSTATUS.Value,
+                           maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
                            title = a.TITLE,
                            middleName = a.MIDDLENAME,
                            misCode = a.MISCODE,
@@ -2154,7 +2154,7 @@ namespace FintrakBanking.Repositories.Customer
                            gender = a.GENDER,
                            lastName = a.LASTNAME,
                            maidenName = a.MAIDENNAME,
-                           maritalStatus = a.MARITALSTATUS.Value,
+                           maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
                            title = a.TITLE,
                            middleName = a.MIDDLENAME,
                            //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
@@ -2384,7 +2384,7 @@ namespace FintrakBanking.Repositories.Customer
                            gender = a.GENDER,
                            lastName = a.LASTNAME,
                            maidenName = a.MAIDENNAME,
-                           maritalStatus = a.MARITALSTATUS.Value,
+                           maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
                            title = a.TITLE,
                            middleName = a.MIDDLENAME,
                            //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
@@ -2494,7 +2494,7 @@ namespace FintrakBanking.Repositories.Customer
                 gender = a.GENDER,
                 lastName = a.LASTNAME,
                 maidenName = a.MAIDENNAME,
-                maritalStatus = a.MARITALSTATUS.Value,
+                maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
                 title = a.TITLE,
                 middleName = a.MIDDLENAME,
                 //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
@@ -2683,7 +2683,7 @@ namespace FintrakBanking.Repositories.Customer
                 customerMain.GENDER = entity.gender;
                 customerMain.LASTNAME = entity.lastName;
                 customerMain.MAIDENNAME = entity.maidenName;
-                customerMain.MARITALSTATUS = entity.maritalStatus;
+                customerMain.MARITALSTATUS = entity.maritalStatus == "M" ? 1 : entity.maritalStatus == "F" ?  2 : Convert.ToInt32(entity.maritalStatus);
                 customerMain.TITLE = entity.title;
                 customerMain.MIDDLENAME = entity.middleName;
                 customerMain.MISCODE = entity.misCode;
@@ -2735,7 +2735,7 @@ namespace FintrakBanking.Repositories.Customer
                     customer.GENDER = entity.gender;
                     customer.LASTNAME = entity.lastName;
                     customer.MAIDENNAME = entity.maidenName;
-                    customer.MARITALSTATUS = entity.maritalStatus;
+                    customer.MARITALSTATUS = Convert.ToInt16(entity.maritalStatus);
                     customer.TITLE = entity.title;
                     customer.MIDDLENAME = entity.middleName;
                     customer.MISCODE = entity.misCode;
@@ -2784,7 +2784,7 @@ namespace FintrakBanking.Repositories.Customer
                     customer.GENDER = entity.gender;
                     customer.LASTNAME = entity.lastName;
                     customer.MAIDENNAME = entity.maidenName;
-                    customer.MARITALSTATUS = entity.maritalStatus;
+                    customer.MARITALSTATUS = Convert.ToInt16(entity.maritalStatus);
                     customer.TITLE = entity.title;
                     customer.MIDDLENAME = entity.middleName;
                     customer.MISCODE = entity.misCode;
@@ -3183,7 +3183,7 @@ namespace FintrakBanking.Repositories.Customer
                             gender = a.GENDER,
                             lastName = a.LASTNAME,
                             maidenName = a.MAIDENNAME,
-                            maritalStatus = a.MARITALSTATUS.Value,
+                            maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
                             title = a.TITLE,
                             middleName = a.MIDDLENAME,
                             customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
@@ -3236,7 +3236,7 @@ namespace FintrakBanking.Repositories.Customer
                             gender = a.GENDER,
                             lastName = a.LASTNAME,
                             maidenName = a.MAIDENNAME,
-                            maritalStatus = a.MARITALSTATUS.Value,
+                            maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
                             title = a.TITLE,
                             middleName = a.MIDDLENAME,
                             customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
@@ -3286,7 +3286,7 @@ namespace FintrakBanking.Repositories.Customer
                             gender = a.GENDER,
                             lastName = a.LASTNAME,
                             maidenName = a.MAIDENNAME,
-                            maritalStatus = a.MARITALSTATUS.Value,
+                            maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
                             title = a.TITLE,
                             middleName = a.MIDDLENAME,
                             customerTypeName = context.TBL_CUSTOMER_TYPE
@@ -3923,7 +3923,8 @@ namespace FintrakBanking.Repositories.Customer
                     firstName = c.FIRSTNAME + " " + c.MIDDLENAME,
                     lastName = c.LASTNAME,
                     customerTypeId = c.CUSTOMERTYPEID,
-                    customerType = c.TBL_CUSTOMER_TYPE.NAME
+                    customerType = c.TBL_CUSTOMER_TYPE.NAME,
+                    isProspect = c.ISPROSPECT
                 }).ToList();
 
             return data;
