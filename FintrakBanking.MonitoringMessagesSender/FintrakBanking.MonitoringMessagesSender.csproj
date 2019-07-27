@@ -89,6 +89,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EmailSender.cs" />
     <Compile Include="LogError.cs" />
     <Compile Include="NinjectBinding.cs" />
     <Compile Include="Program.cs" />

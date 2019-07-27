@@ -185,7 +185,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                               select maximumLimit;
 
             var branchRatio = (((double)(sumLoanOutstandingBalance + sumODOutstandingBalance) / (double)(sumLoanTotalExposure + sumODTotalExposure)) * 100);
-
+            if (!doubleHasRealValue(branchRatio)) { branchRatio = 0; }
             model.totalExposure = (double)(sumLoanTotalExposure + sumODTotalExposure);
             model.outstandingBalance = (double)(sumLoanOutstandingBalance + sumODOutstandingBalance);
             model.limit = (double)limitAmount.FirstOrDefault();
@@ -193,6 +193,11 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             model.ratio = branchRatio;
 
             return model;
+        }
+
+        public bool doubleHasRealValue(double value)
+        {
+            return (!Double.IsNaN(value) && !Double.IsInfinity(value));
         }
 
         public CreditLimitValidationsModel ValidateAmountBySegment(short segmentId)

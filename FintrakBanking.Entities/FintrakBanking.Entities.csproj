@@ -88,6 +88,7 @@
     <Compile Include="Models\TBL_ATC_LODGMENT.cs" />
     <Compile Include="Models\TBL_ATC_LODGMENT_DETAIL.cs" />
     <Compile Include="Models\TBL_ATC_RELEASE.cs" />
+    <Compile Include="Models\TBL_ATC_RELEASE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_ATC_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOMICILIATION.cs" />
