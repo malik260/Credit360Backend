@@ -50,6 +50,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("atc-lodgment-for-releaseList")]
+        public HttpResponseMessage GetAtcLodgmentForRelaselist()
+        {
+            IEnumerable<AtcReleaseViewModel> response = repo.GetAtcLodgmentForReleaseList();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("atc-lodgment-approval")]
         public HttpResponseMessage GetAtcLodgmentApproval()
         {
@@ -90,7 +99,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("atc-release/{id}")]
         public HttpResponseMessage GetAtcRelease(int id)
         {
-            IEnumerable<AtcReleaseViewModel> response = repo.GetAtcRelease(id);
+            //IEnumerable<AtcReleaseViewModel> response = repo.GetAtcRelease(id);
+             var response = repo.GetAtcRelease(id);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
@@ -176,7 +186,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 var response = repo.AddAtcRelease(model);
                 if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record, One or more records may curently be processing" });
             }
 
             //try { 
