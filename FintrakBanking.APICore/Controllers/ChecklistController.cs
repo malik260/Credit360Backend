@@ -1927,7 +1927,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Record has been created successfully" });
+                        new { success = true, message = "Record has been saved successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "Error creating record" });
@@ -1958,7 +1958,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Record has been created successfully" });
+                        new { success = true, message = "Record has been added successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "Error creating record" });

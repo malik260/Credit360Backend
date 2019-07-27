@@ -63,6 +63,7 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId, int operationId, int targetId)
         {
+            var staffs = context.TBL_STAFF.ToList();
             return docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
                 , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) => new { us, up }
@@ -84,7 +85,9 @@ namespace FintrakBanking.Repositories.Media
                     documentTypeName = x.up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
                     documentCategoryId = x.up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
                     documentCategoryName = x.up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                    owner = x.us.CREATEDBY == staffId
+                    owner = x.us.CREATEDBY == staffId,
+                    uploadedBy = staffs.Where(s => s.STAFFID == x.us.CREATEDBY && s.DELETED != true).Select(s => s.FIRSTNAME + s.LASTNAME).FirstOrDefault(),
+                    dateTimeCreated = x.us.DATETIMECREATED
                 })
                 .OrderBy(x => x.documentCategoryId)
                 .ThenBy(x => x.documentTypeId)
@@ -93,6 +96,7 @@ namespace FintrakBanking.Repositories.Media
 
         public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId)
         {
+            var staffs = context.TBL_STAFF.ToList();
             return docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false)
                 .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
                 , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) => new { us, up }
@@ -114,15 +118,19 @@ namespace FintrakBanking.Repositories.Media
                     physicalLocation = x.up.PHYSICALLOCATION,
                     documentTypeName = x.up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
                     documentCategoryName = x.up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                    owner = x.us.CREATEDBY == staffId
+                    owner = x.us.CREATEDBY == staffId,
+                    uploadedBy = staffs.Where(s => s.STAFFID == x.up.CREATEDBY && s.DELETED != true).Select(s => s.FIRSTNAME + s.LASTNAME).FirstOrDefault(),
+                    dateTimeCreated = (DateTime)x.up.DATETIMECREATED
+
                 })
-                .OrderBy(x => x.documentCategoryId)
+                .OrderBy(x => x.dateTimeCreated)
                 .ThenBy(x => x.documentTypeId)
                 .ToList();
         }
 
         public DocumentUploadViewModel GetDocumentUpload(int id)
         {
+            var staffs = context.TBL_STAFF.ToList();
             var entity = docContext.TBL_DOCUMENT_UPLOAD.FirstOrDefault(x => x.DOCUMENTUPLOADID == id && x.DELETED == false);
 
             return new DocumentUploadViewModel
@@ -138,11 +146,15 @@ namespace FintrakBanking.Repositories.Media
                 expiryDate = entity.EXPIRYDATE,
                 physicalFilenumber = entity.PHYSICALFILENUMBER,
                 physicalLocation = entity.PHYSICALLOCATION,
+                uploadedBy = staffs.Where(s => s.STAFFID == entity.CREATEDBY && s.DELETED != true).Select(s => s.FIRSTNAME + s.LASTNAME).FirstOrDefault(),
+                dateTimeCreated = (DateTime)entity.DATETIMECREATED
+
             };
         }
 
         public IEnumerable<DocumentUploadViewModel> GetDocumentUpload(IEnumerable<DocumentUploadViewModel> model)
         {
+            var staffs = context.TBL_STAFF.ToList();
             var documents = new List<DocumentUploadViewModel>();
             foreach (var o in model)
             {
@@ -163,7 +175,10 @@ namespace FintrakBanking.Repositories.Media
                                   physicalFilenumber = x.PHYSICALFILENUMBER,
                                   physicalLocation = x.PHYSICALLOCATION,
                                   documentCategoryName = docContext.TBL_DOCUMENT_CATEGORY.Where(a=>a.DOCUMENTCATEGORYID==d.DOCUMENTCATEGORYID).Select(a=>a.DOCUMENTCATEGORYNAME).FirstOrDefault(),
-                                  documentTypeName = d.DOCUMENTTYPENAME
+                                  documentTypeName = d.DOCUMENTTYPENAME,
+                                  uploadedBy = staffs.Where(s => s.STAFFID == x.CREATEDBY && s.DELETED != true).Select(s => s.FIRSTNAME + s.LASTNAME).FirstOrDefault(),
+                                  dateTimeCreated = (DateTime)x.DATETIMECREATED
+
                               }).FirstOrDefault();
 
                 documents.Add(entity);
