@@ -707,10 +707,8 @@ namespace FintrakBanking.Repositories.CASA
 
         public CasaCustomerSearchViewModel GetCustomerAccountDetailsById(int customerId)
         {
-            //var data = GetAllAccountLight().FirstOrDefault(x => x.customerId == customerId);
             var data = (from casa in context.TBL_CASA
                         join cust in context.TBL_CUSTOMER on casa.CUSTOMERID equals cust.CUSTOMERID
-                        //join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
                         join sector in context.TBL_SUB_SECTOR on cust.SUBSECTORID equals sector.SUBSECTORID
                         join custGroup in context.TBL_CUSTOMER_GROUP_MAPPING on cust.CUSTOMERID equals custGroup.CUSTOMERID into cGroup
                         from custGroup in cGroup.DefaultIfEmpty()
@@ -742,11 +740,12 @@ namespace FintrakBanking.Repositories.CASA
                             customerGroupId = custGroup.CUSTOMERGROUPID,
                             customerGroupName = custGroup.TBL_CUSTOMER_GROUP.GROUPNAME ?? "None",
                             taxIdentificationNumber = cust.TAXNUMBER
-                        });
+                        }).ToList();
 
-            var data2 = (from casa in context.TBL_CASA
+            if(data.Count() <= 0)
+            {
+                data = (from casa in context.TBL_CASA
                          join cust in context.TBL_CUSTOMER on casa.CUSTOMERID equals cust.CUSTOMERID
-                         //join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
                          join sector in context.TBL_SUB_SECTOR on cust.SUBSECTORID equals sector.SUBSECTORID
                          join custGroup in context.TBL_CUSTOMER on cust.CUSTOMERID equals custGroup.CUSTOMERID into cGroup
                          from custGroup in cGroup.DefaultIfEmpty()
@@ -776,15 +775,12 @@ namespace FintrakBanking.Repositories.CASA
                              customerSectorId = sector.TBL_SECTOR.SECTORID,
                              customerSectorName = sector.TBL_SECTOR.NAME,
                              customerGroupId = custGroup.CUSTOMERID,
-                             customerGroupName = custGroup.FIRSTNAME + " " + custGroup.LASTNAME,
+                             customerGroupName = custGroup.FIRSTNAME + " " + custGroup.LASTNAME ?? "None",
                              taxIdentificationNumber = cust.TAXNUMBER
-                         });
+                         }).ToList();
+            }
 
-
-            data = data.Union(data2);
-            var dt = data.ToList();
-
-            if (dt.Count() <= 0)
+            if (data.Count() <= 0)
             {
                 data = (from cust in context.TBL_CUSTOMER
                             //join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
@@ -809,20 +805,19 @@ namespace FintrakBanking.Repositories.CASA
                             customerSectorId = sector.TBL_SECTOR.SECTORID,
                             customerSectorName = sector.TBL_SECTOR.NAME,
                             customerGroupId = custGroup.CUSTOMERID,
-                            customerGroupName = custGroup.FIRSTNAME + " " + custGroup.LASTNAME,
+                            customerGroupName = custGroup.FIRSTNAME + " " + custGroup.LASTNAME ?? "None",
                             taxIdentificationNumber = cust.TAXNUMBER
-                        });
+                        }).ToList();
             }
 
-            
-
-            if (data != null)
+            if (data.Count() > 0)
             {
                 return data.FirstOrDefault();
             }
 
             return new CasaCustomerSearchViewModel { };
         }
+
         public IEnumerable<CasaBalanceViewModel> GetAllCustomerAccountByCustomerIdAndCurrency(int customerId, int companyId, int currencyId)
         {
             var data = (from a in context.TBL_CASA
