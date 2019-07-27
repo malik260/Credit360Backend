@@ -33,5 +33,12 @@ namespace FintrakBanking.ViewModels.Media
         public DateTime? approvalDate { get; set; }
         public bool atInitiator { get; set; }
         public string createdByName { get; set; }
+        public int collateralCustomerId { get; set; }
+        public decimal collateralValue { get; set; }
+        public string collateralType { get; set; }
+
+        public decimal exposureValue { get; set; }
+        public string collateralCode { get; set; }
+        public int collateralTypeId { get; set; }
     }
 }
