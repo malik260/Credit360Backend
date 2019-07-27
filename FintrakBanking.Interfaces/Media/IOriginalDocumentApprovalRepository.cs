@@ -23,7 +23,7 @@ namespace FintrakBanking.Interfaces.Media
 
         IEnumerable<LoanApplicationViewModel> Search(string parameter);
 
-        List<OriginalDocumentApprovalViewModel> GetOriginalDocumentByLoanApplicationId(int id);
+        List<OriginalDocumentApprovalViewModel> GetOriginalDocumentByCollateralCustomerId(int id);
 
         bool GoForApproval(OriginalDocumentApprovalViewModel model);
 

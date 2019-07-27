@@ -29,10 +29,11 @@ namespace FintrakBanking.Entities.Models
         public int DELETEDBY { get; set; }
         public DateTime DATETIMEDELETED { get; set; }
         public DateTime? APPROVALDATE { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
     }
 }
-        /*
+/*
 
-        public virtual DbSet<TBL_ORIGINAL_DOCUMENT_APPROVAL> TBL_ORIGINAL_DOCUMENT_APPROVAL { get; set; }
+public virtual DbSet<TBL_ORIGINAL_DOCUMENT_APPROVAL> TBL_ORIGINAL_DOCUMENT_APPROVAL { get; set; }
 
-        */
+*/

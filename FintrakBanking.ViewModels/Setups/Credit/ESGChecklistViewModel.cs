@@ -87,6 +87,9 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int checklistStatusId { get; set; }
         public string categoryName { get; set; }
         public string subCategoryName { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public short? esgClassId { get; set; }
+        public short? esgTypeId { get; set; }
 
         public List<CheckListStatusViewModel> responseTypes { get; set; }
     }
