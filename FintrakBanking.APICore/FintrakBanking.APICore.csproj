@@ -462,40 +462,17 @@
     <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx.designer.cs">
       <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportDataset\FORM3800B.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>FORM3800B.xsd</DependentUpon>
+    <Compile Include="Reports\ReportDataset\FORM3800B.Designer.cs" />
+    <Compile Include="Reports\ReportDataset\LoanDataSet.cs">
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportDataset\MiddleOffice1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MiddleOffice.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportDataset\OutputDocument.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>OutputDocument.xsd</DependentUpon>
+    <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
+      <DependentUpon>LoanDataSet.cs</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\PSR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>PSR.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportDataset\ReportDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ReportDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportDataset\StaffInfoDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportDataset\TransactionDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TransactionDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.cs">
       <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>
@@ -777,6 +754,13 @@
     <Compile Include="Reports\ReportViews\ProfileActivityReport.aspx.designer.cs">
       <DependentUpon>ProfileActivityReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\PSR.aspx.cs">
+      <DependentUpon>PSR.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\PSR.aspx.designer.cs">
+      <DependentUpon>PSR.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ReceivableInterest.aspx.cs">
       <DependentUpon>ReceivableInterest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -852,11 +836,6 @@
     </Compile>
     <Compile Include="Reports\Credit\TestReport.aspx.designer.cs">
       <DependentUpon>TestReport.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\AuditTrailView.aspx.cs">
       <DependentUpon>AuditTrailView.aspx</DependentUpon>
@@ -1135,6 +1114,7 @@
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\ProfileActivityReport.aspx" />
+    <Content Include="Reports\ReportViews\PSR.aspx" />
     <Content Include="Reports\ReportViews\ReceivableInterest.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
@@ -1169,9 +1149,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Reports\ReportDataset\LoanDataSet.xsc">
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-reboot.min.css.map" />
@@ -1204,25 +1181,6 @@
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Reports\ReportDataset\FORM3800B.xsc">
-      <DependentUpon>FORM3800B.xsd</DependentUpon>
-    </Content>
-    <None Include="Reports\ReportDataset\FORM3800B.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>FORM3800B.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Reports\ReportDataset\FORM3800B.xss">
-      <DependentUpon>FORM3800B.xsd</DependentUpon>
-    </Content>
-    <None Include="Reports\ReportDataset\LoanDataSet.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>LoanDataSet.Designer.cs</LastGenOutput>
-    </None>
-    <Content Include="Reports\ReportDataset\LoanDataSet.xss">
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Content>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -1241,18 +1199,35 @@
     <Content Include="Scripts\bootstrap.js.map" />
     <Content Include="Scripts\bootstrap.bundle.min.js.map" />
     <Content Include="Scripts\bootstrap.bundle.js.map" />
-    <Content Include="Reports\ReportDataset\TransactionDataSet.xsc">
-      <DependentUpon>TransactionDataSet.xsd</DependentUpon>
+    <Content Include="Reports\Report\Lein.rdlc" />
+    <Content Include="Reports\ReportDataset\FORM3800B.xsc">
+      <DependentUpon>FORM3800B.xsd</DependentUpon>
     </Content>
-    <Content Include="Reports\ReportDataset\StaffInfoDataSet.xsc">
-      <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
+    <None Include="Reports\ReportDataset\FORM3800B.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>FORM3800B1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\FORM3800B.xss">
+      <DependentUpon>FORM3800B.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\LoanDataSet.xsc">
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\LoanDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>LoanDataSet1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\LoanDataSet.xss">
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Content>
     <Content Include="Reports\ReportDataset\MiddleOffice.xsc">
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\MiddleOffice.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>MiddleOffice1.Designer.cs</LastGenOutput>
+      <LastGenOutput>MiddleOffice.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\MiddleOffice.xss">
@@ -1263,7 +1238,7 @@
     </Content>
     <None Include="Reports\ReportDataset\OutputDocument.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>OutputDocument.Designer.cs</LastGenOutput>
+      <LastGenOutput>OutputDocument1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\OutputDocument.xss">
@@ -1276,38 +1251,43 @@
       <DependentUpon>PSR.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\PSR.xsd">
-      <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>PSR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\PSR.xss">
       <DependentUpon>PSR.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\ReportDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>ReportDataSet.Designer.cs</LastGenOutput>
+      <LastGenOutput>ReportDataSet1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\ReportDataSet.xss">
       <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\ReportDataset\StaffInfoDataSet.xsc">
+      <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
+    </Content>
     <None Include="Reports\ReportDataset\StaffInfoDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>StaffInfoDataSet.Designer.cs</LastGenOutput>
+      <LastGenOutput>StaffInfoDataSet1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\StaffInfoDataSet.xss">
       <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\ReportDataset\TransactionDataSet.xsc">
+      <DependentUpon>TransactionDataSet.xsd</DependentUpon>
+    </Content>
     <None Include="Reports\ReportDataset\TransactionDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>TransactionDataSet.Designer.cs</LastGenOutput>
+      <LastGenOutput>TransactionDataSet1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\TransactionDataSet.xss">
       <DependentUpon>TransactionDataSet.xsd</DependentUpon>
     </Content>
-    <Content Include="Reports\Report\Lein.rdlc" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />

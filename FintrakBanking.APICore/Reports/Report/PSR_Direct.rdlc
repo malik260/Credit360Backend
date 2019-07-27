@@ -1293,7 +1293,7 @@
         <DataSetName>detail</DataSetName>
         <Top>6.77194in</Top>
         <Left>0.26333in</Left>
-        <Height>2.84in</Height>
+        <Height>2.84004in</Height>
         <Width>6.695in</Width>
         <ZIndex>4</ZIndex>
         <Style>
@@ -2150,14 +2150,6 @@
           <DataField>reportTypeName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="isDone">
-          <DataField>isDone</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="nextInspectionDate">
-          <DataField>nextInspectionDate</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="projectSum">
           <DataField>projectSum</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -2256,10 +2248,6 @@
         </Field>
         <Field Name="completionDate">
           <DataField>completionDate</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="nextVisitationDate ">
-          <DataField>nextVisitationDate </DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="appplicationReferenceNumber">
