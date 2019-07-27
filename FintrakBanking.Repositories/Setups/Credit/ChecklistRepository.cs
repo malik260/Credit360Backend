@@ -600,8 +600,13 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByApprovalLevelAndProduct(int approvalLevelId, int productId)
-        {
+         {
             var data = GetAllChecklistDefinition().Where(x => x.approvalLevelId == approvalLevelId && x.productId == productId).ToList();
+
+            if (productId == 0)
+            {
+              data = GetAllChecklistDefinition().Where(x => x.approvalLevelId == approvalLevelId && x.productId == null).ToList();
+            }
 
             return data;
         }
@@ -652,7 +657,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISREQUIRED = model.isRequired,
                 COMPANYID = model.companyId,
                 ISACTIVE = model.isActive,
-                PRODUCTID = (short)model.productId,
+                PRODUCTID = model.productId,
                 DATETIMECREATED = _genSetup.GetApplicationDate(),
                 CREATEDBY = (int)model.createdBy
             };
@@ -744,6 +749,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool UpdateChecklistDefinition(int CheckListDefinitionId, ChecklistDefinitionViewModel model)
         {
+            if (model.productId == null)
+            {
+                model.productId = 0;
+            }
             var data = this.context.TBL_CHECKLIST_DEFINITION.Find(CheckListDefinitionId);
             if (data == null) return false;
             data.APPROVALLEVELID = (int)model.approvalLevelId;
@@ -753,14 +762,17 @@ namespace FintrakBanking.Repositories.Credit
             data.CHECKLIST_TYPEID = (short)model.checkListTypeId;
             data.ISACTIVE = model.isActive;
             data.ISREQUIRED = model.isRequired;
-            data.PRODUCTID = (short)model.productId;
+            data.PRODUCTID = model.productId;
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.LASTUPDATEDBY = (int)model.createdBy;
             data.OPERATIONID = model.operationId;
             //Audit Section ---------------------------
-            var audit_product = (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == data.PRODUCTID)).PRODUCTNAME;
+            var audit_product = (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == data.PRODUCTID))?.PRODUCTNAME;
             var audit_checklist = (context.TBL_CHECKLIST_ITEM.FirstOrDefault(x => x.CHECKLISTITEMID == data.CHECKLISTITEMID)).CHECKLISTITEMNAME;
-
+            if (audit_product == null)
+            {
+                audit_product = "";
+            }
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistUpdated,
@@ -2838,7 +2850,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
                 STAFFID = models.createdBy,
                 BRANCHID = (short)models.userBranchId,
-                DETAIL = $"Added/updated ESG Checklist Summary  with ESGChecklistDefinitionId of {models.loanApplicationDetailId}",
+                DETAIL = $"Added/updated ESG Checklist Summary  with Loan   ApplicationDetailId of {models.loanApplicationDetailId}",
                 IPADDRESS = models.userIPAddress,
                 URL = models.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -2864,6 +2876,9 @@ namespace FintrakBanking.Repositories.Credit
                               {
                                   checkListDetailId = s.ESGCHECKLISTDETAILID,
                                   checkListDefinitionId = s.ESGCHECKLISTDEFINITIONID,
+                                  loanApplicationDetailId = s.LOANAPPLICATIONDETAILID,
+                                  esgClassId = s.ESGCLASSID,
+                                  esgTypeId = s.ESGTYPEID,
                                   categoryName = c.ESGCATEGORYNAME,
                                   subCategoryName = q.ESGSUBCATEGORYNAME,
                                   responseTypeId = i.RESPONSE_TYPEID,
@@ -2891,6 +2906,9 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             checkListDetailId = 0,
                             checkListDefinitionId = k.ESGCHECKLISTDEFINITIONID,
+                            //loanApplicationDetailId = s.LOANAPPLICATIONDETAILID,
+                            //esgClassId = s.ESGCLASSID,
+                            //esgTypeId = s.ESGTYPEID,
                             categoryName = c.ESGCATEGORYNAME,
                             subCategoryName = q.ESGSUBCATEGORYNAME,
                             responseTypeId = i.RESPONSE_TYPEID,

@@ -61,6 +61,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string firstName { get; set; }
         public string middleName { get; set; }
         public string customerTypeName { get; set; }
+        public string customerType { get; set; }
         public string customerName { get { return this.firstName + " " + this.middleName + " " + this.lastName; } }
         public string fullName { get; set; }
         public string searchItem { get { return this.firstName + " " + this.middleName + " " + this.lastName + " " + this.customerCode; } }
@@ -69,7 +70,7 @@ namespace FintrakBanking.ViewModels.Customer
         public DateTime? dateOfBirth { get; set; }
         public string placeOfBirth { get; set; }
         public string nationality { get; set; }
-        public int maritalStatus { get; set; }
+        public string maritalStatus { get; set; }
         public string emailAddress { get; set; }
         public string maidenName { get; set; }
         public string spouse { get; set; }
@@ -78,6 +79,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string occupation { get; set; }
         public short customerTypeId { get; set; }
         public int relationshipOfficerId { get; set; }
+        public string relationshipOfficerCode { get; set; }
         public string relationshipOfficerName { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public string misCode { get; set; }
@@ -96,6 +98,7 @@ namespace FintrakBanking.ViewModels.Customer
         public bool isInvestmentGrade { get; set; }
         public bool isRealatedParty { get; set; }
         public string customerBVN { get; set; }
+        public string bankVerificationNumber { get; set; }
         public short? riskRatingId { get; set; }
         public string riskRatingName { get; set; }
         public string prospectCustomerCode { get; set; }
