@@ -8449,33 +8449,71 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
 
         }
-      public  string ProposeCollateralForUsage(int collateralCustomerId, int loanApplicationId, int status)
+      public  string ProposeCollateralForUsage(CollateralViewModel model)
         {
             var collateral = (from x in context.TBL_COLLATERAL_CUSTOMER
                              join c in context.TBL_COLLATERAL_PROPOSE on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
-                             where c.COLLATERALCUSTOMERID == collateralCustomerId && c.LOANAPPLICATIONID ==  loanApplicationId
-
+                             where c.COLLATERALCUSTOMERID == model.collateralCustomerId && c.LOANAPPLICATIONID ==  model.loanApplicationId
                               select x).FirstOrDefault();
 
 
             if (collateral != null)
             {
                 if (collateral.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.Propose)
-                    return "Already proposed"; //response code for propose
+                    return "Already proposed"; 
 
 
                 if (collateral.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.Rejected)
-                    return "Already Rejected"; //response code for rejected
+                    return "Already Rejected"; 
 
                 if (collateral.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.Used)
-                    return "Already Used"; //response code for rejected
+                    return "Already Used"; 
 
                 if (collateral.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.InUse)
-                    return "Already Rejected"; //response code for rejected
+                    return "Already Rejected"; 
 
-             //   var loanApplication = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x => x).FirstOrDefault();
-              //  var proposeCollateral = context.TBL_COLLATERAL_PROPOSE.Where(x=>x.COLLATERALUSESAGESTATUSID==status)
+                
+                var existingCollateral = context.TBL_COLLATERAL_PROPOSE.Where(x => x.COLLATERALCUSTOMERID == model.collateralCustomerId).LastOrDefault();
+                var loan = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).Select(x => x).FirstOrDefault();
+
+                if ((existingCollateral.BALANCEAVAILABLE - loan.APPROVEDAMOUNT) < 0)
+                    return "Available Collateral value cannot cover this facility!"; 
+
+
+                var newData = new TBL_COLLATERAL_PROPOSE
+                {
+                    COLLATERALCUSTOMERID = model.collateralCustomerId,
+                    LOANAPPLICATIONID = (int)model.loanApplicationId,
+                    COLLATERALCOVERAGE = loan.APPROVEDAMOUNT,
+                    PROPOSELOANVALUE = loan.APPROVEDAMOUNT,
+                    BALANCEAVAILABLE = existingCollateral.BALANCEAVAILABLE - loan.APPROVEDAMOUNT,
+                    COLLATERALVALUE = existingCollateral.COLLATERALVALUE,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                    DELETED = false,
+
+                };
+
+                context.TBL_COLLATERAL_PROPOSE.Add(newData);
             }
+            var loanApplication = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).Select(x => x).FirstOrDefault();
+            var collateralDetail = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == model.collateralCustomerId).Select(x => x).FirstOrDefault();
+
+            var data = new TBL_COLLATERAL_PROPOSE
+            {
+                COLLATERALCUSTOMERID = model.collateralCustomerId,
+                LOANAPPLICATIONID = (int)model.loanApplicationId,
+                COLLATERALCOVERAGE  = loanApplication.APPROVEDAMOUNT,
+                PROPOSELOANVALUE = loanApplication.APPROVEDAMOUNT,
+                BALANCEAVAILABLE = collateralDetail.COLLATERALVALUE - loanApplication.APPROVEDAMOUNT,
+                COLLATERALVALUE = collateralDetail.COLLATERALVALUE,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                DELETED = false,
+                
+            };
+
+            context.TBL_COLLATERAL_PROPOSE.Add(data);
 
             context.SaveChanges();
 

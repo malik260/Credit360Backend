@@ -1861,12 +1861,16 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("propose-collateral/{collateralCustomerId}/collateralCustomerId")]
-        public HttpResponseMessage ProposeCollateral(int collateralCustomerId)
+        [Route("propose-collateral")]
+        public HttpResponseMessage ProposeCollateral(CollateralViewModel model)
         {
             try
             {
-                var response = repo.ProposeCollateralForUsage(collateralCustomerId,1,1);
+                model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = token.GetCompanyId;
+                var response = repo.ProposeCollateralForUsage(model);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
