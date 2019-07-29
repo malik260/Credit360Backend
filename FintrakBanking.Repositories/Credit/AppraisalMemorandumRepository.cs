@@ -1047,6 +1047,8 @@ namespace FintrakBanking.Repositories.Credit
             //    //workflow.NextProcess(lc.COMPANYID, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false);
             //}
             lc.DATEACTEDON = DateTime.Now;
+            validateAllFromReceiverLevels(model.createdBy, operationId);
+
             context.SaveChanges();
             //workflow.Response.success = true;
             return workflow.Response;
