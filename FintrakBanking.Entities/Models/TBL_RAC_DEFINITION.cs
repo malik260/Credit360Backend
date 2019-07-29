@@ -41,6 +41,10 @@ namespace FintrakBanking.Entities.Models
 
         public int? APPROVALLEVELID { get; set; }
 
+        public int? RACCATEGORYTYPEID { get; set; }
+
+        public bool? SHOWATDRAWDOWN { get; set; }
+
         public int? ROLEID { get; set; }
 
         public decimal? CONTROLAMOUNT { get; set; }
