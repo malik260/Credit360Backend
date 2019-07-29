@@ -41,12 +41,12 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.categories.Count() });
         }
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
-        [Route("risk-acceptance-criteria/product/{productId}")]
-        public HttpResponseMessage GetRiskAcceptanceCriteriaByProduct(int productId)
+        [Route("risk-acceptance-criteria-input")]
+        public HttpResponseMessage GetRiskAcceptanceCriteriaByProduct(RiskAcceptanceCriteriaViewModel model)
         {
-            RiskAcceptanceCriteriaViewModel response = repo.GetRiskAcceptanceCriteriaByProduct(productId);
+            RiskAcceptanceCriteriaViewModel response = repo.GetRiskAcceptanceCriteriaByProduct(model.productId, model.racCategoryTypeId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.categories.Count() });
         }
 
@@ -68,6 +68,16 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetRacCategory(int id)
         {
             RacCategoryViewModel response = repo.GetRacCategory(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("category-type/{id}")]
+        public HttpResponseMessage GetRacCategoryType(int id)
+        {
+            IEnumerable<RacCategoryViewModel> response = repo.GetRacCategoryType(id);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
@@ -634,6 +644,17 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
 
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("defined-category-type/{productId}/productId")]
+        public HttpResponseMessage GetRacCategoryTypes(int productId)
+        {
+            IEnumerable<RacCategoryViewModel> response = repo.GetRacCategoryTypes(productId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+       
 
     }
 }

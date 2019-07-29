@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.Risk
     public interface IRiskAcceptanceCriteriaRepository
     {
         #region
-        RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId);
+        RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId ,int? racCategoryTypeId);
 
         RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProductAndTarget(int productId, int targetId);
 
@@ -118,5 +118,10 @@ namespace FintrakBanking.Interfaces.Risk
         IEnumerable<ConditionalOperatorViewModel> GetConditionalOperators();
         IEnumerable<DefinedFunctionViewModel> GetDefinedFunctions();
         IEnumerable<ApprovalLevelViewModel> GetApprovalLevel(int companyId);
+
+        IEnumerable< RacCategoryViewModel> GetRacCategoryType(int id);
+
+        List<RacCategoryViewModel> GetRacCategoryTypes(int productId);
+
     }
 }
