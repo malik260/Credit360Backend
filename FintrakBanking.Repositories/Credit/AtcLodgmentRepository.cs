@@ -109,7 +109,7 @@ namespace FintrakBanking.Repositories.credit
                     join r in context.TBL_ATC_RELEASE on x.ATCLODGMENTID equals r.ATCLODGMENTID
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                     join atrail in context.TBL_APPROVAL_TRAIL on r.ATCLODGMENTID equals atrail.TARGETID
-                    where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                    where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing && (r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                      && atrail.RESPONSESTAFFID == null
                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
@@ -343,7 +343,7 @@ namespace FintrakBanking.Repositories.credit
                             select ar).ToList();
                 var dataDistinct = data.Where(d => d.ATCLODGMENTID == atc.atcLodgmentId).FirstOrDefault();
 
-                if (dataDistinct == null || (dataDistinct != null && dataDistinct.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved))
+                if (dataDistinct == null || (dataDistinct != null && (dataDistinct.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved) || dataDistinct.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved))
                 {
                     var entity = new TBL_ATC_RELEASE
                     {
