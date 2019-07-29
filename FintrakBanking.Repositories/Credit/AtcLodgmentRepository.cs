@@ -341,7 +341,7 @@ namespace FintrakBanking.Repositories.credit
                             select ar).ToList();
                 var dataDistinct = data.Where(d => d.ATCLODGMENTID == atc.atcLodgmentId).FirstOrDefault();
 
-                if (dataDistinct == null || (dataDistinct != null && dataDistinct.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved))
+                if (dataDistinct == null || (dataDistinct != null && (dataDistinct.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved) || dataDistinct.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved))
                 {
                     var entity = new TBL_ATC_RELEASE
                     {
