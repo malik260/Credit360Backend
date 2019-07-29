@@ -480,11 +480,13 @@ namespace FintrakBanking.Repositories.Credit
             return checkListTypeList;
         }
 
-        public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId, int productClassProcessId)
+        public IEnumerable<CheckListTargetTypeViewModel> GetChecklistTypeByApprovalLevel(int staffId, int companyId, int operationId, int productClassProcessId = 0)
         {
+            var roleId = context.TBL_STAFF.Where(s => s.STAFFID == staffId).FirstOrDefault().STAFFROLEID;
+            var ids = context.TBL_APPROVAL_LEVEL.Where(l => l.STAFFROLEID == roleId).Select(l => l.APPROVALLEVELID).ToList();
             var checkType = (from a in context.TBL_CHECKLIST_TYPE
                              join b in context.TBL_CHECKLIST_TYPE_APROV_LEVL on a.CHECKLIST_TYPEID equals b.CHECKLIST_TYPEID
-                             where (a.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
+                             where ids.Contains(b.APPROVALLEVELID)
                              select new CheckListTargetTypeViewModel
                              {
                                  targetTypeId = a.CHECKLIST_TYPEID,
