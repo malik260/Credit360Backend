@@ -92,6 +92,11 @@ namespace FintrakBanking.Repositories.Customer
                     entity.isPoliticallyExposed = finacle.GetExposePersonStatus(entity.customerCode);
             }
 
+            int? maritalStatus = null;
+            if (entity.customerTypeId == (short) CustomerTypeEnum.Individual)
+            {
+                maritalStatus = Convert.ToInt32(entity.maritalStatus) ;
+            }
             var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = entity.accountCreationComplete,
@@ -109,7 +114,7 @@ namespace FintrakBanking.Repositories.Customer
                 GENDER = entity.gender,
                 LASTNAME = entity.lastName,
                 MAIDENNAME = entity.maidenName,
-                MARITALSTATUS = Convert.ToInt16(entity.maritalStatus),
+                MARITALSTATUS = maritalStatus,
                 TITLE = entity.title,
                 MIDDLENAME = entity.middleName,
                 MISCODE = entity.misCode,
@@ -134,13 +139,13 @@ namespace FintrakBanking.Repositories.Customer
                 COUNTRYOFRESIDENTID = entity.countryOfResidentId,
                 NUMBEROFDEPENDENTS = entity.numberOfDependents,
                 NUMBEROFLOANSTAKEN = entity.numberOfLoansTaken,
-                MONTHLYLOANREPAYMENT =entity.loanMonthlyRepaymentFromOtherBanks,
+                MONTHLYLOANREPAYMENT = entity.loanMonthlyRepaymentFromOtherBanks,
                 DATEOFRELATIONSHIPWITHBANK = entity.dateOfRelationshipWithBank,
-                RELATIONSHIPTYPEID =entity.relationshipTypeId,
+                RELATIONSHIPTYPEID = entity.relationshipTypeId,
                 TEAMLDR = entity.teamLDP,
                 TEAMNPL = entity.teamNPL,
                 CORR = entity.corr,
-                PASTDUEOBLIGATIONS =entity.pastDueObligations,
+                PASTDUEOBLIGATIONS = entity.pastDueObligations,
                 BUSINESSUNTID = entity.businessUnitId
             };
             context.TBL_CUSTOMER.Add(customer);
@@ -3160,6 +3165,8 @@ namespace FintrakBanking.Repositories.Customer
 
         public CustomerViewModels GetSingleCustomerGeneralInfo(string customerCode)
         {
+            //int? maritalStatus = null;
+            
             var data = (from a in context.TBL_CUSTOMER
                         where a.DELETED == false && a.CUSTOMERCODE == customerCode
                         select new CustomerViewModels
@@ -3183,7 +3190,7 @@ namespace FintrakBanking.Repositories.Customer
                             gender = a.GENDER,
                             lastName = a.LASTNAME,
                             maidenName = a.MAIDENNAME,
-                            maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
+                            //maritalStatus = a.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual ? a.MARITALSTATUS.Value == 1 ? "M" : "F" : String.Empty,
                             title = a.TITLE,
                             middleName = a.MIDDLENAME,
                             customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
