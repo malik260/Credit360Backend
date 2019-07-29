@@ -30,6 +30,7 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
+        #region atcLodgment
         [HttpGet]
         [ClaimsAuthorization]
         [Route("atc-lodgment")]
@@ -38,6 +39,174 @@ namespace FintrakBanking.APICore.Controllers
             IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcLodgments();
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("atc-lodgment-approval")]
+        public HttpResponseMessage GetAtcLodgmentApproval()
+        {
+            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcLodgmentForApproval(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("atc-type")]
+        public HttpResponseMessage GetAtcType()
+        {
+            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcType();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("atc-lodgment/{id}")]
+        public HttpResponseMessage GetAtcLodgment(int id)
+        {
+            AtcLodgmentViewModel response = repo.GetAtcLodgment(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("atc-lodgment")]
+        public HttpResponseMessage AddAtcLodgment([FromBody] AtcLodgmentViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.AddAtcLodgment(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("atc-lodgement-final-approval")]
+        public HttpResponseMessage SubmitLodgementApproval([FromBody] AtcLodgmentViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.SubmitLodgementApproval(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("atc-lodgment/{id}")]
+        public HttpResponseMessage UpdateAtcLodgment([FromBody] AtcLodgmentViewModel model, int id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    createdBy = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+                bool response = repo.UpdateAtcLodgment(model, id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("atc-lodgment/{id}")]
+        public HttpResponseMessage DeleteAtcLodgment(int id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    createdBy = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+                bool response = repo.DeleteAtcLodgment(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("atc-type")]
+        public HttpResponseMessage AddAtcType([FromBody] AtcTypeViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.AddAtcType(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("atc-type/{id}")]
+        public HttpResponseMessage DeleteAtcType(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteAtcType(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        #endregion
+
+        #region atcRelease
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -59,120 +228,19 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("atc-lodgment-approval")]
-        public HttpResponseMessage GetAtcLodgmentApproval()
-        {
-            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcLodgmentForApproval(token.GetStaffId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        }
-
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("atc-lodgment-release-approval")]
-        public HttpResponseMessage GetAtcLodgmentsForApproval()
-        {
-            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcReleaseForApproval(token.GetStaffId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        }
-
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("atc-type")]
-        public HttpResponseMessage GetAtcType()
-        {
-            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcType();
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        }
-
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("atc-lodgment/{id}")]
-        public HttpResponseMessage GetAtcLodgment(int id)
-        {
-            AtcLodgmentViewModel response = repo.GetAtcLodgment(id);
-            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-        }
-
-        [HttpGet]
-        [ClaimsAuthorization]
         [Route("atc-release/{id}")]
         public HttpResponseMessage GetAtcRelease(int id)
         {
             //IEnumerable<AtcReleaseViewModel> response = repo.GetAtcRelease(id);
-             var response = repo.GetAtcRelease(id);
+            var response = repo.GetAtcRelease(id);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("atc-lodgment")]
-        public HttpResponseMessage AddAtcLodgment([FromBody] AtcLodgmentViewModel model)
-        {
-            try { 
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddAtcLodgment(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("atc-release-approval")]
-        public HttpResponseMessage SubmitApproval([FromBody] AtcReleaseViewModel model)
-        {
-            try
-            {
-                model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                model.applicationUrl = HttpContext.Current.Request.Path;
-                model.createdBy = token.GetStaffId;
-                model.companyId = token.GetCompanyId;
-                var response = repo.SubmitApproval(model);
-                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-
-            }
-            catch (SecureException ex)
-            {
-               return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("atc-lodgement-final-approval")]
-        public HttpResponseMessage SubmitLodgementApproval([FromBody] AtcLodgmentViewModel model)
-        {
-            try { 
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.SubmitLodgementApproval(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-        [HttpPost]
-        [ClaimsAuthorization]
         [Route("atc-release")]
-        public HttpResponseMessage AddAtcRelease([FromBody] IEnumerable <AtcReleaseViewModel> model)
+        public HttpResponseMessage AddAtcRelease([FromBody] IEnumerable<AtcReleaseViewModel> model)
         {
             try
             {
@@ -205,50 +273,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpGet]
         [ClaimsAuthorization]
-        [Route("atc-lodgment/{id}")]
-        public HttpResponseMessage UpdateAtcLodgment([FromBody] AtcLodgmentViewModel model, int id)
+        [Route("atc-lodgment-release-approval")]
+        public HttpResponseMessage GetAtcLodgmentsForApproval()
         {
-            try { 
-            UserInfo user = new UserInfo()
-            {
-                BranchId = token.GetBranchId,
-                companyId = token.GetCompanyId,
-                createdBy = token.GetStaffId,
-                applicationUrl = HttpContext.Current.Request.Path,
-                userIPAddress = HttpContext.Current.Request.UserHostAddress
-            };
-            bool response = repo.UpdateAtcLodgment(model, id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpDelete]
-        [ClaimsAuthorization]
-        [Route("atc-lodgment/{id}")]
-        public HttpResponseMessage DeleteAtcLodgment(int id)
-        {
-            try { 
-            UserInfo user = new UserInfo()
-            {
-                BranchId = token.GetBranchId,
-                companyId = token.GetCompanyId,
-                createdBy = token.GetStaffId,
-                applicationUrl = HttpContext.Current.Request.Path,
-                userIPAddress = HttpContext.Current.Request.UserHostAddress
-            };
-            bool response = repo.DeleteAtcLodgment(id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcReleaseForApproval(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
         [HttpDelete]
@@ -256,17 +287,18 @@ namespace FintrakBanking.APICore.Controllers
         [Route("atc-release/{id}")]
         public HttpResponseMessage DeleteAtcRelease(int id)
         {
-            try { 
-            UserInfo user = new UserInfo()
+            try
             {
-                BranchId = token.GetBranchId,
-                companyId = token.GetCompanyId,
-                createdBy = token.GetStaffId,
-                applicationUrl = HttpContext.Current.Request.Path,
-                userIPAddress = HttpContext.Current.Request.UserHostAddress
-            };
-            bool response = repo.DeleteAtcRelease(id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    createdBy = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+                bool response = repo.DeleteAtcRelease(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
             }
             catch (SecureException ex)
             {
@@ -276,18 +308,20 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("atc-type")]
-        public HttpResponseMessage AddAtcType([FromBody] AtcTypeViewModel model)
+        [Route("atc-release-approval")]
+        public HttpResponseMessage SubmitApproval([FromBody] AtcReleaseViewModel model)
         {
-            try { 
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddAtcType(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.SubmitApproval(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
             }
             catch (SecureException ex)
             {
@@ -295,23 +329,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        #endregion
 
-
-        [HttpDelete]
-        [ClaimsAuthorization]
-        [Route("atc-type/{id}")]
-        public HttpResponseMessage DeleteAtcType(int id)
-        {
-            UserInfo user = new UserInfo()
-            {
-                BranchId = token.GetBranchId,
-                companyId = token.GetCompanyId,
-                createdBy = token.GetStaffId,
-                applicationUrl = HttpContext.Current.Request.Path,
-                userIPAddress = HttpContext.Current.Request.UserHostAddress
-            };
-            bool response = repo.DeleteAtcType(id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
-        }
     }
 }
