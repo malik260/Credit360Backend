@@ -1866,7 +1866,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.ProposeCollateralForUsage(collateralCustomerId);
+                var response = repo.ProposeCollateralForUsage(collateralCustomerId,1,1);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }

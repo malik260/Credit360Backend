@@ -127,7 +127,7 @@ namespace FintrakBanking.Interfaces.Credit
         TDAccountRecordViewModel GetFixedDepositAccountDetail(string AccpuntNumber);
         IEnumerable<CollateralViewModel> GetCustomerCollateralReport(string searchParam, int companyId);
 
-        bool ProposeCollateralForUsage(int collateralCustomerId);
+        string ProposeCollateralForUsage(int collateralCustomerId, int loanApplicationId, int status);
         bool RejectProposedCollateralForUsage(int collateralCustomerId);
 
         IEnumerable<CollateralUsageStatus> GetCollateralUsageStatus();

@@ -8449,18 +8449,37 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
 
         }
-      public  bool ProposeCollateralForUsage(int collateralCustomerId)
+      public  string ProposeCollateralForUsage(int collateralCustomerId, int loanApplicationId, int status)
         {
-            var collateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralCustomerId).Select(x => x).FirstOrDefault();
+            var collateral = (from x in context.TBL_COLLATERAL_CUSTOMER
+                             join c in context.TBL_COLLATERAL_PROPOSE on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                             where c.COLLATERALCUSTOMERID == collateralCustomerId && c.LOANAPPLICATIONID ==  loanApplicationId
+
+                              select x).FirstOrDefault();
+
 
             if (collateral != null)
             {
-                if (collateral.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.Rejected)
-                    return false;
+                if (collateral.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.Propose)
+                    return "Already proposed"; //response code for propose
 
-                collateral.COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose;
+
+                if (collateral.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.Rejected)
+                    return "Already Rejected"; //response code for rejected
+
+                if (collateral.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.Used)
+                    return "Already Used"; //response code for rejected
+
+                if (collateral.COLLATERALUSAGESTATUSID == (int)CollateralUsageStatusEnum.InUse)
+                    return "Already Rejected"; //response code for rejected
+
+             //   var loanApplication = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x => x).FirstOrDefault();
+              //  var proposeCollateral = context.TBL_COLLATERAL_PROPOSE.Where(x=>x.COLLATERALUSESAGESTATUSID==status)
             }
-            return context.SaveChanges() > 0;
+
+            context.SaveChanges();
+
+            return "";
         }
 
         public IEnumerable<CollateralUsageStatus> GetCollateralUsageStatus()
