@@ -467,6 +467,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-report")]
+        public HttpResponseMessage GeneratePSRReport(int id)
+        {
+            try
+            {
+             
+                var response = repo.GeneratePSRReport(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response});
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "There was an error creating this record" });
+            }
+        }
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("psr-recommendation/{id}")]

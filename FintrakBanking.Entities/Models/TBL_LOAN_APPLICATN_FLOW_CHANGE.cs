@@ -20,6 +20,7 @@ namespace FintrakBanking.Entities.Models
         public string PLACEHOLDER { get; set; }
 
         public short? PRODUCTCLASSID { get; set; }
+        public short? PRODUCTTYPEID { get; set; }
 
         public short? PRODUCTID { get; set; }
 
@@ -32,6 +33,7 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(50)]
         public string LABEL { get; set; }
+
 
         public bool DELETED { get; set; }
 

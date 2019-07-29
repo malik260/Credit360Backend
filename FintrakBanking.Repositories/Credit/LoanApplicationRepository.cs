@@ -4461,10 +4461,10 @@ namespace FintrakBanking.Repositories.Credit
             return revisedProcessFlow;
         }
 
-        public IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlowByProductClassId(short productClassId, short productId)
+        public IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlowByProductClassId(short productClassId, short productId, short productTypeId)
         {
             var productClassFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
-                                      where c.PRODUCTCLASSID == productClassId && c.PRODUCTID == null
+                                      where c.PRODUCTCLASSID == productClassId && c.PRODUCTID == null && c.PRODUCTTYPEID == null
                                       select new RevisedProcessFlowModel
                                       {
                                           flowchangeId = c.FLOWCHANGEID,
@@ -4479,8 +4479,25 @@ namespace FintrakBanking.Repositories.Credit
                                           createdBy = c.CREATEDBY
                                       }).ToList();
 
+            var productTypeFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
+                                    where c.PRODUCTTYPEID == productTypeId && c.PRODUCTID == null && c.PRODUCTCLASSID == null
+                                    select new RevisedProcessFlowModel
+                                    {
+                                        flowchangeId = c.FLOWCHANGEID,
+                                        placeHolder = c.PLACEHOLDER,
+                                        productClassId = c.PRODUCTCLASSID,
+                                        productId = c.PRODUCTID,
+                                        //productTypeId = c
+                                        destinationUrl = c.DESTINATIONURL,
+                                        skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
+                                        operationId = c.OPERATIONID,
+                                        label = c.LABEL,
+                                        dateTimeCreated = c.DATETIMECREATED,
+                                        createdBy = c.CREATEDBY
+                                    }).ToList();
+
             var productFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
-                                    where c.PRODUCTCLASSID == null && c.PRODUCTID == productId
+                                    where c.PRODUCTCLASSID == null && c.PRODUCTTYPEID == null && c.PRODUCTID == productId
                                     select new RevisedProcessFlowModel
                                     {
                                         flowchangeId = c.FLOWCHANGEID,
@@ -4495,8 +4512,10 @@ namespace FintrakBanking.Repositories.Credit
                                         createdBy = c.CREATEDBY
                                     }).ToList();
 
-            return productClassFlow.Union(productFlow);
-        }
+
+
+            return productClassFlow.Union(productFlow).Union(productTypeFlow);
+        } 
 
     }
 }
