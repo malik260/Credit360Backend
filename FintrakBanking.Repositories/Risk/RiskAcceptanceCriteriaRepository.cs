@@ -356,7 +356,8 @@ namespace FintrakBanking.Repositories.Risk
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
                 CONTROLOPTIONID = model.controlOptionId,
-                CONTROLAMOUNT = model.controlAmount
+                CONTROLAMOUNT = model.controlAmount,
+                REQUIRECOMMENT = model.requireComment
             };
 
             context.TBL_RAC_DEFINITION.Add(entity);
@@ -397,6 +398,7 @@ namespace FintrakBanking.Repositories.Risk
             entity.ROLEID = model.roleId;
             entity.CONTROLAMOUNT = model.controlAmount;
             entity.CONTROLOPTIONID = model.controlOptionId;
+            entity.REQUIRECOMMENT = model.requireComment;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;

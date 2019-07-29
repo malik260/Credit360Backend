@@ -562,24 +562,6 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
-
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("conditional-operator")]
-        public HttpResponseMessage GetConditionalOperators()
-        {
-            IEnumerable<ConditionalOperatorViewModel> response = repo.GetConditionalOperators();
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        }
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("defined-function")]
-        public HttpResponseMessage GetDefinedFunctions()
-        {
-            IEnumerable<DefinedFunctionViewModel> response = repo.GetDefinedFunctions();
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        }
-
         #region racCategoryType
         [HttpGet]
         [ClaimsAuthorization]
@@ -632,6 +614,24 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #endregion
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("conditional-operator")]
+        public HttpResponseMessage GetConditionalOperators()
+        {
+            IEnumerable<ConditionalOperatorViewModel> response = repo.GetConditionalOperators();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("defined-function")]
+        public HttpResponseMessage GetDefinedFunctions()
+        {
+            IEnumerable<DefinedFunctionViewModel> response = repo.GetDefinedFunctions();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+        
 
 
 

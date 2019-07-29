@@ -53,6 +53,7 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
+        public bool REQUIRECOMMENT { get; set; }
 
         public virtual ICollection<TBL_RAC_DETAIL> TBL_RAC_DETAIL { get; set; }
 

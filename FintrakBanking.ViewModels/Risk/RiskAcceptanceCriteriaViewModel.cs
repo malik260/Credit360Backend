@@ -101,6 +101,7 @@ namespace FintrakBanking.ViewModels.Risk
         public decimal? controlAmount { get; set; }
         public int? controlOptionId { get; set; }
         public string controlOption { get; set; }
+        public bool requireComment { get; set; }
     }
 
     public class RacDetailViewModel : GeneralEntity
