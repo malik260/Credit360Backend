@@ -3212,8 +3212,8 @@ namespace FintrakBanking.Repositories.Customer
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                             customerBVN = a.CUSTOMERBVN,
                         }).FirstOrDefault();
-            // if (USE_THIRD_PARTY_INTEGRATION)
-            //    data.isPoliticallyExposed = finacle.GetExposePersonStatus(data.customerCode);
+            if (USE_THIRD_PARTY_INTEGRATION)
+                data.isPoliticallyExposed = finacle.GetExposePersonStatus(data.customerCode);
 
             return data;
         }
