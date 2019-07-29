@@ -112,6 +112,7 @@ namespace FintrakBanking.Repositories.Credit
                              originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
                             originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
                             docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
+                             approvalDate = dr.APPROVALDATE,
                              operationId = (int)OperationsEnum.SecurityRelease
                          };
 
@@ -216,6 +217,7 @@ namespace FintrakBanking.Repositories.Credit
                             foreach (var x in documents)
                             {
                                 x.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                x.APPROVALDATE = _general.GetApplicationDate();
                             }
                         }
 

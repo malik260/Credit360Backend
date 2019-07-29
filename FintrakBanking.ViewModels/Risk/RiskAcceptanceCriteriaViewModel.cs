@@ -108,6 +108,7 @@ namespace FintrakBanking.ViewModels.Risk
         public string racCategoryType { get; set; }
         public int? racCategoryTypeId { get; set; }
         public bool? showAtDrawDown { get; set; }
+        public bool requireComment { get; set; }
     }
 
     public class RacDetailViewModel : GeneralEntity
