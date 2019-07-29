@@ -2537,21 +2537,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
-            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.PRODUCTCLASSID == productClassId)
-                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
-                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
-                     {
-                         groupPosition = mg.m.POSITION,
-                         levelPosition = l.POSITION,
-                         levelId = l.APPROVALLEVELID,
-                         levelName = l.LEVELNAME,
-                         staffRoleId = l.STAFFROLEID,
-                     })
-                     .OrderBy(x => x.groupPosition)
-                     .ThenBy(x => x.levelPosition)
-                     .ToList()
-                     ;
+            var levels = getLevels(model, (int)productClassId);
 
             int? nextId = null;
             foreach (var level in levels)
@@ -2586,6 +2572,64 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
 
             return context.SaveChanges() > 0;
+        }
+
+        private IEnumerable<ApprovalLevelGroup> getLevels(LoanAvailmentApprovalViewModel model, int productClassId)
+        {
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.PRODUCTCLASSID == productClassId)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new ApprovalLevelGroup
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         staffRoleId = (int)l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList()
+                     ;
+            //if(levels == null)
+            //{
+            //    levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.PRODUCTCLASSID == productClassId)
+            //   .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+            //   .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+            //       mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new ApprovalLevelGroup
+            //       {
+            //           groupPosition = mg.m.POSITION,
+            //           levelPosition = l.POSITION,
+            //           levelId = l.APPROVALLEVELID,
+            //           levelName = l.LEVELNAME,
+            //           staffRoleId = (int)l.STAFFROLEID,
+            //       })
+            //       .OrderBy(x => x.groupPosition)
+            //       .ThenBy(x => x.levelPosition)
+            //       .ToList()
+            //       ;
+            //}
+
+
+            if (levels.Count == 0)
+            {
+                 levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new ApprovalLevelGroup
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList();
+            }
+
+            return levels;
         }
 
         private int? GetCurrentApprovalLevelId(int companyId, int operationId, int targetId)
@@ -3008,4 +3052,15 @@ namespace FintrakBanking.Repositories.Credit
 
 
     } 
+}
+
+public class ApprovalLevelGroup
+{
+    public int groupPosition { get; set; }
+    public int levelPosition { get; set; }
+    public int levelId { get; set; }
+    public string levelName { get; set; }
+    public int? staffRoleId { get; set; }
+
+                         
 }

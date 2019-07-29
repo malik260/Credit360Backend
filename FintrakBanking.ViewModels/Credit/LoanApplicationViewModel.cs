@@ -126,6 +126,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int currentApprovalLevelSlaInterval { get; set; }
         public bool? isadhocapplication { get; set; }
         public int? exclusiveOperationId { get; set; }
+        public int? flowchangeId { get; set; }
         public int? loanApprovedLimitId { get; set; }
         public int approvedTenor { get; set; }
         public List<LoanApplicationDetailViewModel> applicationDetails { get; set; }
@@ -903,9 +904,11 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevisedProcessFlowModel : GeneralEntity
     {
+        public string label;
+
         public short flowchangeId { get; set; }
         public string placeHolder { get; set; }
-        public short productClassId { get; set; }
+        public short? productClassId { get; set; }
         public int? productId { get; set; }
         public int operationId { get; set; }
         public string destinationUrl { get; set; }

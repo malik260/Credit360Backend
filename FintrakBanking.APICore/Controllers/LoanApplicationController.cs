@@ -1637,10 +1637,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("revised-process-flow-by-product-class/{productClassId}")]
-        public HttpResponseMessage getFacilityApplicationRevisedProcessFlowByProductClassId(int productClassId)
+        [Route("revised-process-flow-by-product-class/{productClassId}/{productId}/{productTypeId}")]
+        public HttpResponseMessage getFacilityApplicationRevisedProcessFlowByProductClassId(short productClassId, short productId, short productTypeId)
         {
-            var response = repo.getFacilityApplicationRevisedProcessFlowByProductClassId(productClassId);
+            var response = repo.getFacilityApplicationRevisedProcessFlowByProductClassId(productClassId, productId, productTypeId);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }

@@ -375,7 +375,7 @@ namespace FintrakBanking.Repositories.Credit
                 _workflow.StaffId = model.createdBy;
                 _workflow.CompanyId = model.companyId;
                 _workflow.StatusId = (int) ApprovalStatusEnum.Processing;
-                _workflow.TargetId = model.collateralCustomerId;
+                _workflow.TargetId = model.collateralValuationId;
                 _workflow.Comment = model.valuerComment;
                 _workflow.OperationId = (int) OperationsEnum.CollateralValuationRequest;
                 _workflow.DeferredExecution = true;
