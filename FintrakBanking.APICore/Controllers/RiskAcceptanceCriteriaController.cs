@@ -74,7 +74,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("category-type/{id}")]
+        [Route("category-type-id/{id}")]
         public HttpResponseMessage GetRacCategoryType(int id)
         {
             IEnumerable<RacCategoryViewModel> response = repo.GetRacCategoryType(id);
