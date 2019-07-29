@@ -34,7 +34,6 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string LABEL { get; set; }
 
-        public int? PRODUCTTYPEID { get; set; }
 
         public bool DELETED { get; set; }
 
