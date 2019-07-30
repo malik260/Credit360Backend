@@ -138,7 +138,7 @@ namespace FintrakBanking.Common.Enum
         CreditCardsCleanCards = 146,
         SecurityRelease = 147,
         InitiationLevelAppraisal = 148,
-        CallMemo=149,
+        CallMemo = 149,
 
     }
 }
