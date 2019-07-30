@@ -22,9 +22,16 @@ namespace FintrakBanking.Interfaces.Credit
 
         #region "Call Memo"
         IQueryable<CallMemoLoanSearchViewModel> SearchForCallMemoLoan(int staffId, string searchQuery);
+        IEnumerable<CallMemoViewModel> GetCustomerCallMemo(int staffId, int customerId);
         IEnumerable<CallMemoViewModel> GetAllCallMemo(int staffId);
-        bool AddCallMemo(CallMemoViewModel model);
+        bool GoForCallMemoApproval(CallMemoViewModel entity);
+        bool SubmitApproval(CallMemoViewModel model);
+        int AddCallMemo(CallMemoViewModel model);
         bool UpdateCallMemo(int limitId, CallMemoViewModel model);
+        CallMemoViewModel GetCallMemoById(int callMemoID);
+
+        IEnumerable<CallMemoViewModel> GetCallMemoWaitingForApproval(int staffId);
+        IEnumerable<CallMemoViewModel> SearchCallMemo(int staffId, CallMemoViewModel model);
         #endregion
     }
 }

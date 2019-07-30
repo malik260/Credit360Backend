@@ -920,7 +920,7 @@ namespace FintrakBanking.Repositories.Credit
               // End of Audit Section ---------------------
   */
             lc.DATEACTEDON = DateTime.Now;
-            validateAllFromReceiverLevels(model.createdBy, operationId);
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             context.SaveChanges();
             //workflow.Response.success = true;
             return workflow.Response;
@@ -1047,6 +1047,8 @@ namespace FintrakBanking.Repositories.Credit
             //    //workflow.NextProcess(lc.COMPANYID, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false);
             //}
             lc.DATEACTEDON = DateTime.Now;
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
+
             context.SaveChanges();
             //workflow.Response.success = true;
             return workflow.Response;
@@ -1137,11 +1139,8 @@ namespace FintrakBanking.Repositories.Credit
               this.audit.AddAuditTrail(audit);
               // End of Audit Section ---------------------
   */
-            var trail = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == model.LcIssuanceId && t.OPERATIONID == operationId && t.FROMAPPROVALLEVELID == null).ToList();
-            if (trail != null && (trail.Count() == 1))
-            {
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
 
-            }
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
             //workflow.Response.success = true;
@@ -1218,7 +1217,7 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
-        public bool validateAllFromReceiverLevels(int staffId, int operationId)
+        public bool ValidateAllFromReceiverLevels(int staffId, int operationId)
         {
             var trail = context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == operationId && t.FROMAPPROVALLEVELID == null).ToList();
             if (trail.Count() > 0)
@@ -1227,9 +1226,10 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var staffRoleId = context.TBL_STAFF.Where(s => s.DELETED != true && s.STAFFID == t.REQUESTSTAFFID).FirstOrDefault().STAFFROLEID;
                     var level = context.TBL_APPROVAL_LEVEL.Where(l => l.DELETED != true && l.STAFFROLEID == staffRoleId).FirstOrDefault();
-                    if (level == null && t.REQUESTSTAFFID == staffId) { throw new SecureException("Please make sure you are assigned an approval Level"); }
-                    t.FROMAPPROVALLEVELID = staffRoleId;
+                    if (level == null && t.REQUESTSTAFFID == staffId) { throw new SecureException("Please make sure you are assigned an approval Level for the current operation"); }
+                    t.FROMAPPROVALLEVELID = level.APPROVALLEVELID;
                 }
+                    context.SaveChanges();
                 return true;
             }
             return false;
