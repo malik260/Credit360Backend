@@ -159,6 +159,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOANAPPROVEDLIMITID { get; set; }
 
+        public int? FLOWCHANGEID { get; set; }
+
         public bool? ISMULTIPLEPRODUCTDRAWDOWN { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }

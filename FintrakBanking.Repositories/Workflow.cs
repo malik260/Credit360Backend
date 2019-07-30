@@ -28,9 +28,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int targetId;
         private int companyId;
         private int operationId;
+        //private int? exclusiveFlowChangeId = null;
 
         private int? productClassId = null;
-        private int? productId = null;
+        public int? productId = null;
+        
         private string comment = string.Empty;
         private int statusId = (int)ApprovalStatusEnum.Processing;
         private int groupStatusId = (int)ApprovalStatusEnum.Processing;
@@ -94,6 +96,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
         public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
+        //public int? exclusiveFlowChangeId { set { exclusiveFlowChangeId = value; } }
         public int? ProductClassId { set { productClassId = value; } }
         public bool EmailNotification { set { emailNotification = value; } }
         public bool SmsNotification { set { smsNotification = value; } }
@@ -336,6 +339,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             int operationId,
             int targetId,
             int? productClassId,
+            //int? exclusiveFlowChangeId,
             string comment,
             bool external,
             bool deferred,
@@ -347,6 +351,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.companyId = companyId;
             this.operationId = operationId;
             this.targetId = targetId;
+            //this.exclusiveFlowChangeId = exclusiveFlowChangeId;
             this.productClassId = productClassId;
             this.comment = comment;
             this.statusId = (int)ApprovalStatusEnum.Pending;
@@ -884,6 +889,23 @@ namespace FintrakBanking.Repositories.WorkFlow
                            )
                            .ToList();
 
+            List<TBL_APPROVAL_GROUP_MAPPING> mappingsOnExclusiveOperations = new List<TBL_APPROVAL_GROUP_MAPPING>();
+
+            //if (exclusiveFlowChangeId != null && exclusiveFlowChangeId > 0)
+            //{
+            //    var flowChangePartern = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(this.exclusiveFlowChangeId);
+
+            //    if(flowChangePartern != null)
+            //    {
+            //        mappingsOnExclusiveOperations = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+            //                   && x.OPERATIONID == flowChangePartern.OPERATIONID
+            //                   && x.PRODUCTCLASSID == null
+            //                   && x.PRODUCTID == null
+            //               )
+            //               .ToList();
+            //    }
+            //}
+
             List<TBL_APPROVAL_GROUP_MAPPING> mappings = new List<TBL_APPROVAL_GROUP_MAPPING>();
 
             if (mappingsOnOperations.Any()) mappings = mappingsOnOperations;
@@ -892,7 +914,9 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (mappingsOnProducts.Any()) mappings = mappingsOnProducts;
 
-            if (mappingsOnProducts.Any() == false && mappingsOnProductClass.Any() == false && mappingsOnOperations.Any() == false)
+            if (mappingsOnExclusiveOperations.Any()) mappings = mappingsOnExclusiveOperations;
+
+            if (mappingsOnProducts.Any() == false && mappingsOnProductClass.Any() == false && mappingsOnOperations.Any() == false && mappingsOnExclusiveOperations.Any() == false)
             {
                 var operation = context.TBL_OPERATIONS.Find(operationId);
                 if (operation == null) throw new SecureException("Operation ID didn't match");
