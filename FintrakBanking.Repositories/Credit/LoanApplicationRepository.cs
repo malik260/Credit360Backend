@@ -1143,16 +1143,6 @@ namespace FintrakBanking.Repositories.Credit
                 receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
                 workflow.NextLevelId = receiverLevelId; // BREAKING!
             }
-            //{
-            //    if(!skipFlowProcess( product, appl))
-            //    {
-            //        operationId = (int)OperationsEnum.CreditAppraisal;
-            //        workflow.OperationId = operationId;
-            //        appl.OPERATIONID = operationId;
-            //        receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
-            //        workflow.NextLevelId = receiverLevelId; // BREAKING!
-            //    }
-            //}
 
 
             workflow.StaffId = staffId;
@@ -1162,6 +1152,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductId = appl.PRODUCTID;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
+           // workflow.exclusiveFlowChangeId = appl.FLOWCHANGEID; 
 
             if (workflow.LogActivity()) return 1;
             else return 0;
@@ -1688,6 +1679,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANTERMSHEETID = loan.loanTermSheetId,
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
+                FLOWCHANGEID = loan.flowchangeId,
                 OPERATIONID = (loan.exclusiveOperationId == null || loan.exclusiveOperationId == 0) ? (int)OperationsEnum.CreditAppraisal : (int)loan.exclusiveOperationId,
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
                 COLLATERALDETAIL = loan.collateralDetail,
