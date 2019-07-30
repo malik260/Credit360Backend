@@ -195,6 +195,11 @@ namespace FintrakBanking.Repositories.Risk
             return rac;
         }
 
+        
+        //public IEnumerable<RiskAcceptanceCriteriaViewModel> GetRacForLoanApplication(int loanApplicationId)
+        //{
+
+        //}
         #endregion
 
         #region RacCategoryRepository
@@ -399,6 +404,7 @@ namespace FintrakBanking.Repositories.Risk
                 DATETIMECREATED = general.GetApplicationDate(),
                 CONTROLOPTIONID = model.controlOptionId,
                 CONTROLAMOUNT = model.controlAmount,
+                REQUIRECOMMENT = model.requireComment,
                 RACCATEGORYTYPEID = model.racCategoryTypeId,
                 SHOWATDRAWDOWN = model.showAtDrawDown
             };
@@ -441,8 +447,6 @@ namespace FintrakBanking.Repositories.Risk
             entity.ROLEID = model.roleId;
             entity.CONTROLAMOUNT = model.controlAmount;
             entity.CONTROLOPTIONID = model.controlOptionId;
-            entity.RACCATEGORYTYPEID = model.racCategoryTypeId;
-            entity.SHOWATDRAWDOWN = model.showAtDrawDown;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;

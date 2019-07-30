@@ -8474,9 +8474,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 
                 var existingCollateral = context.TBL_COLLATERAL_PROPOSE.Where(x => x.COLLATERALCUSTOMERID == model.collateralCustomerId).LastOrDefault();
-                var loan = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).Select(x => x).FirstOrDefault();
+                var loan = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).Select(x => x).ToList();
+                var loanAmount = loan.Sum(x => x.APPROVEDAMOUNT);
 
-                if ((existingCollateral.BALANCEAVAILABLE - loan.APPLICATIONAMOUNT) < 0)
+                if ((existingCollateral.BALANCEAVAILABLE - loanAmount) < 0)
                     throw new Exception("Available Collateral value cannot cover this facility!"); 
 
 
@@ -8484,9 +8485,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     COLLATERALCUSTOMERID = model.collateralCustomerId,
                     LOANAPPLICATIONID = (int)model.loanApplicationId,
-                    COLLATERALCOVERAGE = loan.APPLICATIONAMOUNT,
-                    PROPOSELOANVALUE = loan.APPLICATIONAMOUNT,
-                    BALANCEAVAILABLE = existingCollateral.BALANCEAVAILABLE - loan.APPLICATIONAMOUNT,
+                    COLLATERALCOVERAGE = loanAmount,
+                    PROPOSELOANVALUE = loanAmount,
+                    BALANCEAVAILABLE = existingCollateral.BALANCEAVAILABLE - loanAmount,
                     COLLATERALVALUE = existingCollateral.COLLATERALVALUE,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
