@@ -564,13 +564,14 @@ namespace FintrakBanking.Repositories.CASA
                             relationshipManagerId = cust.TBL_STAFF.SUPERVISOR_STAFFID ?? 0,
                             subSectorId = sector.SUBSECTORID,
                             subSectorName = sector.NAME,
-                            customerTypeId =cust.CUSTOMERTYPEID,
+                            customerTypeId = cust.CUSTOMERTYPEID,
                             customerSectorId = sector.TBL_SECTOR.SECTORID,
                             customerSectorName = sector.TBL_SECTOR.NAME,
                             customerGroupId = custGroup.CUSTOMERGROUPID,
                             customerGroupName = custGroup.TBL_CUSTOMER_GROUP.GROUPNAME ?? "None",
                             taxIdentificationNumber = cust.TAXNUMBER
                         });
+
             return data;
         }
 
@@ -706,16 +707,118 @@ namespace FintrakBanking.Repositories.CASA
 
         public CasaCustomerSearchViewModel GetCustomerAccountDetailsById(int customerId)
         {
-            var data = GetAllAccountLight().FirstOrDefault(x => x.customerId == customerId);
+            var data = (from casa in context.TBL_CASA
+                        join cust in context.TBL_CUSTOMER on casa.CUSTOMERID equals cust.CUSTOMERID
+                        join sector in context.TBL_SUB_SECTOR on cust.SUBSECTORID equals sector.SUBSECTORID
+                        join custGroup in context.TBL_CUSTOMER_GROUP_MAPPING on cust.CUSTOMERID equals custGroup.CUSTOMERID into cGroup
+                        from custGroup in cGroup.DefaultIfEmpty()
+                        where cust.CUSTOMERID == customerId
+                        select new CasaCustomerSearchViewModel()
+                        {
+                            casaAccountId = casa.CASAACCOUNTID,
+                            productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+                            productAccountName = casa.PRODUCTACCOUNTNAME,
+                            customerId = casa.CUSTOMERID,
+                            customerCode = cust.CUSTOMERCODE,
+                            accountHolder = cust.FIRSTNAME + " " + cust.LASTNAME,
+                            productId = casa.TBL_PRODUCT.PRODUCTID,
+                            productCode = casa.TBL_PRODUCT.PRODUCTCODE,
+                            productName = casa.TBL_PRODUCT.PRODUCTNAME,
+                            productClassId = casa.TBL_PRODUCT.PRODUCTCLASSID,
+                            productClassName = casa.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                            companyId = casa.COMPANYID,
+                            branchId = casa.BRANCHID,
+                            branchCode = casa.TBL_BRANCH.BRANCHCODE,
+                            branchName = casa.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerId = cust.RELATIONSHIPOFFICERID ?? 0,
+                            relationshipManagerId = cust.TBL_STAFF.SUPERVISOR_STAFFID ?? 0,
+                            subSectorId = sector.SUBSECTORID,
+                            subSectorName = sector.NAME,
+                            customerTypeId = cust.CUSTOMERTYPEID,
+                            customerSectorId = sector.TBL_SECTOR.SECTORID,
+                            customerSectorName = sector.TBL_SECTOR.NAME,
+                            customerGroupId = custGroup.CUSTOMERGROUPID,
+                            customerGroupName = custGroup.TBL_CUSTOMER_GROUP.GROUPNAME ?? "None",
+                            taxIdentificationNumber = cust.TAXNUMBER
+                        }).ToList();
 
-            if (data != null)
+            if(data.Count() <= 0)
             {
-                return data;
+                data = (from casa in context.TBL_CASA
+                         join cust in context.TBL_CUSTOMER on casa.CUSTOMERID equals cust.CUSTOMERID
+                         join sector in context.TBL_SUB_SECTOR on cust.SUBSECTORID equals sector.SUBSECTORID
+                         join custGroup in context.TBL_CUSTOMER on cust.CUSTOMERID equals custGroup.CUSTOMERID into cGroup
+                         from custGroup in cGroup.DefaultIfEmpty()
+                         where cust.CUSTOMERID == customerId
+                         select new CasaCustomerSearchViewModel()
+                         {
+                             casaAccountId = casa.CASAACCOUNTID,
+                             productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+                             productAccountName = casa.PRODUCTACCOUNTNAME,
+                             customerId = casa.CUSTOMERID,
+                             customerCode = cust.CUSTOMERCODE,
+                             accountHolder = cust.FIRSTNAME + " " + cust.LASTNAME,
+                             productId = casa.TBL_PRODUCT.PRODUCTID,
+                             productCode = casa.TBL_PRODUCT.PRODUCTCODE,
+                             productName = casa.TBL_PRODUCT.PRODUCTNAME,
+                             productClassId = casa.TBL_PRODUCT.PRODUCTCLASSID,
+                             productClassName = casa.TBL_PRODUCT.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
+                             companyId = casa.COMPANYID,
+                             branchId = casa.BRANCHID,
+                             branchCode = casa.TBL_BRANCH.BRANCHCODE,
+                             branchName = casa.TBL_BRANCH.BRANCHNAME,
+                             relationshipOfficerId = cust.RELATIONSHIPOFFICERID ?? 0,
+                             relationshipManagerId = cust.TBL_STAFF.SUPERVISOR_STAFFID ?? 0,
+                             subSectorId = sector.SUBSECTORID,
+                             subSectorName = sector.NAME,
+                             customerTypeId = cust.CUSTOMERTYPEID,
+                             customerSectorId = sector.TBL_SECTOR.SECTORID,
+                             customerSectorName = sector.TBL_SECTOR.NAME,
+                             customerGroupId = custGroup.CUSTOMERID,
+                             customerGroupName = custGroup.FIRSTNAME + " " + custGroup.LASTNAME ?? "None",
+                             taxIdentificationNumber = cust.TAXNUMBER
+                         }).ToList();
+            }
+
+            if (data.Count() <= 0)
+            {
+                data = (from cust in context.TBL_CUSTOMER
+                            //join prod in context.tbl_Product on casa.ProductId equals prod.ProductId
+                        join sector in context.TBL_SUB_SECTOR on cust.SUBSECTORID equals sector.SUBSECTORID
+                        join custGroup in context.TBL_CUSTOMER on cust.CUSTOMERID equals custGroup.CUSTOMERID into cGroup
+                        from custGroup in cGroup.DefaultIfEmpty()
+                        where cust.CUSTOMERID == customerId
+                        select new CasaCustomerSearchViewModel()
+                        {
+                            customerId = cust.CUSTOMERID,
+                            customerCode = cust.CUSTOMERCODE,
+                            accountHolder = cust.FIRSTNAME + " " + cust.LASTNAME,
+                            companyId = cust.COMPANYID,
+                            branchId = cust.BRANCHID,
+                            branchCode = cust.TBL_BRANCH.BRANCHCODE,
+                            branchName = cust.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerId = cust.RELATIONSHIPOFFICERID ?? 0,
+                            relationshipManagerId = cust.TBL_STAFF.SUPERVISOR_STAFFID ?? 0,
+                            subSectorId = sector.SUBSECTORID,
+                            subSectorName = sector.NAME,
+                            customerTypeId = cust.CUSTOMERTYPEID,
+                            customerSectorId = sector.TBL_SECTOR.SECTORID,
+                            customerSectorName = sector.TBL_SECTOR.NAME,
+                            customerGroupId = custGroup.CUSTOMERID,
+                            customerGroupName = custGroup.FIRSTNAME + " " + custGroup.LASTNAME ?? "None",
+                            taxIdentificationNumber = cust.TAXNUMBER
+                        }).ToList();
+            }
+
+            if (data.Count() > 0)
+            {
+                return data.FirstOrDefault();
             }
 
             return new CasaCustomerSearchViewModel { };
         }
-                public IEnumerable<CasaBalanceViewModel> GetAllCustomerAccountByCustomerIdAndCurrency(int customerId, int companyId, int currencyId)
+
+        public IEnumerable<CasaBalanceViewModel> GetAllCustomerAccountByCustomerIdAndCurrency(int customerId, int companyId, int currencyId)
         {
             var data = (from a in context.TBL_CASA
                         where a.CUSTOMERID == customerId && a.COMPANYID == companyId && a.CURRENCYID == currencyId //orderby account.AccountCode ascending, account.AccountName ascending

@@ -484,6 +484,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_RAC_DEFINITION> TBL_RAC_DEFINITION { get; set; }
         public virtual DbSet<TBL_RAC_DETAIL> TBL_RAC_DETAIL { get; set; }
         public virtual DbSet<TBL_RAC_INPUT_TYPE> TBL_RAC_INPUT_TYPE { get; set; }
+        
+             public virtual DbSet<TBL_RAC_CATEGORY_TYPE> TBL_RAC_CATEGORY_TYPE { get; set; }
+        
 
 
 
@@ -521,8 +524,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_VALUATION_REQUEST_TYPE> TBL_VALUATION_REQUEST_TYPE { get; set; }
         public virtual DbSet<TBL_LETTER_GENERATION_REQUEST> TBL_LETTER_GENERATION_REQUEST { get; set; }
         public virtual DbSet<TBL_ORIGINAL_DOCUMENT_RELEASE> TBL_ORIGINAL_DOCUMENT_RELEASE { get; set; }
-        public virtual DbSet<TBL_RAC_CATEGORY_TYPE> TBL_RAC_CATEGORY_TYPE { get; set; }
         public virtual DbSet<TBL_ESG_CHECKLIST_SCORES> TBL_ESG_CHECKLIST_SCORES { get; set; }
+        public virtual DbSet<TBL_ATC_RELEASE_ARCHIVE> TBL_ATC_RELEASE_ARCHIVE { get; set; }
 
 
 
