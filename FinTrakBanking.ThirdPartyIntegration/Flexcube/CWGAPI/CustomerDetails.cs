@@ -98,25 +98,21 @@
                     
                     var objData = JsonConvert.DeserializeObject<CustomerViewModels>(data);
 
-                    
-                    objData = GetCustomerModelFromResponseData(objData);
 
+
+                    if (objData.customerType == "C") { objData.customerTypeId = 2; }
+                    else { objData.customerTypeId = 1; }
+
+                    if (objData.gender == "M") { objData.gender = "Male"; }
+                    if (objData.gender == "F") { objData.gender = "Female"; }
+
+                    if (objData.customerTypeId == (short)CustomerTypeEnum.Corporate)
+                    {
+                        objData.firstName = objData.companyName == null ? objData.company_name  : objData.companyName;
+                        //objData.companyName = objData.company_name;
+                    }
 
                     customers.Add(objData);
-
-                    //customers.Add(new CustomerViewModels
-                    //    {
-                    //    customerCode = objData.customerCode,
-                    //    firstName = objData.lastName,
-                    //    lastName = objData.firstName,
-                    //    middleName = objData.middleName,
-                    //    customerTypeName = objData.customerTypeName,
-                    //    customerTypeId = (short)(objData.customerType == "C" ? 2 : 1),
-                        
-                    //    //isPoliticallyExposed = objData.politicallyExposedPerson == "N" ? false : true,
-                    //});
-                    //}
-
                 }
                 responseMessage = await response.Content.ReadAsStringAsync();
                 handler.Dispose();
@@ -139,27 +135,8 @@
                 logContext.SaveChanges();
 
                 return customers;
-
-
             }
 
-            private CustomerViewModels GetCustomerModelFromResponseData(CustomerViewModels objData)
-            {
-                if (objData.customerType == "C") { objData.customerTypeId = 2; }
-                else { objData.customerTypeId = 1; }
-
-                if (objData.gender == "M") { objData.gender = "Male"; }
-                if (objData.gender == "F"){ objData.gender = "Female"; }
-
-                //var relationshipOfficerRecord = staffRepo.GetAllStaff().Where(x => x.StaffCode == objData.relationshipOfficerCode).FirstOrDefault(); 
-
-                //if(relationshipOfficerRecord != null)
-                //{
-                //    objData.relationshipOfficerId = relationshipOfficerRecord.staffId;
-                //}
-
-                return objData;
-            }
 
             public async Task<CasaBalanceViewModel> GetCustomerAccountBalance(string customerAccount)
             {
