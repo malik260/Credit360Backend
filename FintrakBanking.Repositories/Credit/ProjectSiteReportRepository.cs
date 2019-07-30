@@ -839,6 +839,22 @@ namespace FintrakBanking.Repositories.credit
         }
 
         #endregion
+
+
+      public PsrReportViewModel GeneratePSRReport(int id)
+        {
+            var report = new PsrReportViewModel
+            {
+                apgExposure = "",
+                comment = context.TBL_PSR_COMMENT.Where(o=>o.PROJECTSITEREPORTID == id).Select(o=>o.COMMENTS).FirstOrDefault(),
+                facilityDetail = "",
+                observation = context.TBL_PSR_OBSERVATION.Where(o => o.PROJECTSITEREPORTID == id).Select(o => o.COMMENTS).FirstOrDefault(),
+               recomendation = context.TBL_PSR_RECOMMENDATION.Where(o=>o.PROJECTSITEREPORTID==id).Select(o=>o.COMMENTS).FirstOrDefault(),
+               taskForNextInspection = context.TBL_PSR_NEXT_INSPECTION_TASK.Where(o=>o.PROJECTSITEREPORTID==id).Select(o=>o.COMMENTS).FirstOrDefault(),
+            };
+
+            return report;
+        }
     }
 }
 

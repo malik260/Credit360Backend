@@ -334,8 +334,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ToStaffId = model.receiverStaffId;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
-            workflow.Amount = totalApplicationAmount; 
-            // workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
+            //workflow.Amount = totalApplicationAmount; 
+            workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
             workflow.InvestmentGrade = model.investmentGrade;
             workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
@@ -837,9 +837,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.LcIssuanceId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            //var test4 = model.receiverLevelId;
-            //var test5 = model.toStaffId;
-            //var test6 = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null);
             var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
             //var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
@@ -923,6 +920,7 @@ namespace FintrakBanking.Repositories.Credit
               // End of Audit Section ---------------------
   */
             lc.DATEACTEDON = DateTime.Now;
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             context.SaveChanges();
             //workflow.Response.success = true;
             return workflow.Response;
@@ -1049,6 +1047,8 @@ namespace FintrakBanking.Repositories.Credit
             //    //workflow.NextProcess(lc.COMPANYID, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false);
             //}
             lc.DATEACTEDON = DateTime.Now;
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
+
             context.SaveChanges();
             //workflow.Response.success = true;
             return workflow.Response;
@@ -1068,9 +1068,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.LcIssuanceId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            //var test4 = model.receiverLevelId;
-            //var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
-            //var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             //var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
             //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = 0;
@@ -1142,11 +1139,8 @@ namespace FintrakBanking.Repositories.Credit
               this.audit.AddAuditTrail(audit);
               // End of Audit Section ---------------------
   */
-            var trail = context.TBL_APPROVAL_TRAIL.Where(t => t.TARGETID == model.LcIssuanceId && t.OPERATIONID == operationId && t.FROMAPPROVALLEVELID == null).ToList();
-            if (trail != null && (trail.Count() == 1))
-            {
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
 
-            }
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
             //workflow.Response.success = true;
@@ -1166,8 +1160,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.requestId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            //var nextLevel = loanApp.GetFirstReceiverLevel(model.createdBy, operationId, null, null, true);
-            //var test = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, false);
             //var test1 = loanApp.GetFirstAdhocReceiverLevel(model.createdBy, operationId, null, true);
             //var nextStaff = loanApp.GetFirstLevelStaffId((int)nextLevel, model.userBranchId);
             workflow.NextLevelId = 0;
@@ -1223,6 +1215,23 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
             //workflow.Response.success = true;
             return workflow.Response;
+        }
+
+        public bool ValidateAllFromReceiverLevels(int staffId, int operationId)
+        {
+            var trail = context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == operationId && t.FROMAPPROVALLEVELID == null).ToList();
+            if (trail.Count() > 0)
+            {
+                foreach(var t in trail)
+                {
+                    var staffRoleId = context.TBL_STAFF.Where(s => s.DELETED != true && s.STAFFID == t.REQUESTSTAFFID).FirstOrDefault().STAFFROLEID;
+                    var level = context.TBL_APPROVAL_LEVEL.Where(l => l.DELETED != true && l.STAFFROLEID == staffRoleId).FirstOrDefault();
+                    if (level == null && t.REQUESTSTAFFID == staffId) { throw new SecureException("Please make sure you are assigned an approval Level for the current operation"); }
+                    t.FROMAPPROVALLEVELID = level.APPROVALLEVELID;
+                }
+                return true;
+            }
+            return false;
         }
 
         private Dictionary<string, int> GetRepresentStepdownItems(int applicationId, int action, int operationId)
@@ -1334,7 +1343,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                     toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                     fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-                }).OrderByDescending(x => x.approvalTrailId);
+                }).OrderByDescending(x => x.approvalTrailId).ToList();
 
             return data;
         }

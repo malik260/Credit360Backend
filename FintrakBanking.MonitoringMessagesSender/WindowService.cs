@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Interfaces.AlertMonitoring;
+using FintrakBanking.Repositories.AlertMonitoring;
 using System;
 using System.Configuration;
 using System.Data.Entity.Validation;
@@ -15,18 +16,15 @@ namespace FintrakBanking.MonitoringMessagesSender
     {
         private Timer _syncTimer;
         private static object s_lock = new object();
-        private IEmailSender emailSender;
+         EmailSender emailSender = new EmailSender();
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
         private string slaEscalationIntervalInHours = ConfigurationManager.AppSettings["SLAEscalationIntervalInHours"];
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
-        private IAlertMessageLogger logger;
-        private ICurrencyAndRateUpdate currencyAndRateUpdate;
-        public WindowService(IEmailSender _emailSender, IAlertMessageLogger _logger, ICurrencyAndRateUpdate _currencyAndRateUpdate)
+        AlertMessageLogger logger = new AlertMessageLogger();
+       // CurrencyAndRateUpdate currencyAndRateUpdate = new CurrencyAndRateUpdate();
+        public WindowService()
         {
-            emailSender = _emailSender;
-            logger = _logger;
-            currencyAndRateUpdate = _currencyAndRateUpdate;
         }
         public bool Start(HostControl hostControl)
         {
@@ -179,7 +177,7 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
-                    emailSender.SendEmailCompleted();
+                   // emailSender.SendEmailCompleted();
                 }
                 finally
                 {
