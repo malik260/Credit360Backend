@@ -197,7 +197,7 @@
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
-                        accountAPI = await response.Content.ReadAsAsync<CasaIntegrationViewModel>();
+                        // = await response.Content.ReadAsAsync<CasaBalanceViewModel>();
                         string responseData = await response.Content.ReadAsStringAsync();
                         //customerViewModels = JsonConvert.DeserializeObject<CustomerTransactionViewModels>(responseData);
                         
@@ -211,15 +211,15 @@
                             var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
                             var accountStatusId = account != null ? account.ACCOUNTSTATUSID : 0;
 
+                            var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == accountAPI.product).FirstOrDefault();
+
                             accountOutput.accountName = accountAPI.accountName;
                             accountOutput.accountNo = accountAPI.accountNumber;
                             accountOutput.availableBalance = accountAPI.balance;
-                            accountOutput.productName = accountAPI.productName;
                             accountOutput.currencyId = currencyId;
                             accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
                             accountOutput.customerCode = accountAPI.customerCode;
                             accountOutput.product = accountAPI.product;
-                            accountOutput.productType = accountAPI.productType;
                             accountOutput.currencyType = accountAPI.currencyType;
                             accountOutput.accountStatus = accountAPI.accountStatus;
                             accountOutput.freezeStatus = accountAPI.freezeStatus;
@@ -227,6 +227,12 @@
                             accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
                             accountOutput.hasBalance = true;
                             accountOutput.isCasaAccountDetailAvailable = true;
+                            if(product != null)
+                            {
+                                accountOutput.productType = accountAPI.productType;
+                                accountOutput.productName = accountAPI.productName;
+                            }
+
 
                         }
                     }
