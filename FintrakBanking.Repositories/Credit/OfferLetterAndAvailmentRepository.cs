@@ -2360,7 +2360,7 @@ namespace FintrakBanking.Repositories.Credit
                 int nextOperationId = (int)OperationsEnum.LoanAvailment;
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.AvailmentInProgress;
                 workflow.NextLevelId = GetFirstReceiverLevel(model.createdBy, nextOperationId, null, true);
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, nextOperationId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, nextOperationId,appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 // PassApplicationToOperation(model.companyId, model.createdBy, (int)OperationsEnum.LoanAvailment, model.applicationId, "B&G application for availment...");
             }
 

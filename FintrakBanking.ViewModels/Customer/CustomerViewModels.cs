@@ -7,10 +7,10 @@ namespace FintrakBanking.ViewModels.Customer
     public class CustomerViewModels : GeneralEntity
     {
         public string branchCode { get; set; }
-        public string rcNumber;
-        public string customerAccountNo;
-        public string sectorCode;
-        public string subSectorCode;
+        public string rcNumber { get; set; }
+        public string customerAccountNo { get; set; }
+        public string sectorCode { get; set; }
+        public string subSectorCode { get; set; }
 
         public int? crmsLegalStatusId { get; set; }
         public int? crmsCompanySizeId { get; set; }
@@ -22,6 +22,7 @@ namespace FintrakBanking.ViewModels.Customer
         public int creditBureauCount { get; set; }
         public bool isCreditBureauUploadCompleted { get; set; }
         public double numberOfShares { get; set; }
+        public string company_name { get; set; }
         public short companyDirectorTypeId { get; set; }
         public int? companyDirectorId { get; set; }
         public string companyDirectorTypeName { get; set; }
@@ -95,6 +96,7 @@ namespace FintrakBanking.ViewModels.Customer
         public short sectorId { get; set; }
         public string sectorName { get; set; }
         public string taxNumber { get; set; }
+        public string businessTaxIdNumber { get; set; }
         public bool isInvestmentGrade { get; set; }
         public bool isRealatedParty { get; set; }
         public string customerBVN { get; set; }
