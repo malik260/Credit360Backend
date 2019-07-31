@@ -238,7 +238,7 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetIFFLinesForLCByCustomerId(int customerId, int companyId, int staffId, int branchId)
         {
-            var lines = loanRepository.GetAvailedLoanApplicationsDueForInitiateBooking(companyId, staffId, branchId).Where
+            var lines = loanRepository.ApprovedLoansForIFF(companyId, staffId, branchId).Where
                 (l => l.customerId == customerId && l.productClassId == (int)ProductClassEnum.ImportFinanceFacilities && l.customerAvailableAmount > 0).ToList();
 
             return lines;
