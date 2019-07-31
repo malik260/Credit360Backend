@@ -390,7 +390,7 @@ namespace FintrakBanking.Repositories.Risk
             {
                 PRODUCTID = model.productId,
                 RACCATEGORYID = model.racCategoryId,
-                ISACTIVE = model.isActive,
+                ISACTIVE = true,
                 ISREQUIRED = model.isRequired,
                 RACITEMID = model.racItemId,
                 RACINPUTTYPEID = model.racInputTypeId,
