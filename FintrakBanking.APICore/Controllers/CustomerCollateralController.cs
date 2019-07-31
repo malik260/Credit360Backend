@@ -1859,20 +1859,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
-        [Route("propose-collateral/{collateralCustomerId}/collateralCustomerId")]
-        public HttpResponseMessage ProposeCollateral(int collateralCustomerId)
+        [Route("propose-collateral")]
+        public HttpResponseMessage ProposeCollateral(CollateralViewModel model)
         {
             try
             {
-                var response = repo.ProposeCollateralForUsage(collateralCustomerId);
+                model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = token.GetCompanyId;
+                var response = repo.ProposeCollateralForUsage(model);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex });
+            }
+            catch (Exception ex)
+            {   
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex });
             }
         }
 
