@@ -920,8 +920,8 @@ namespace FintrakBanking.Repositories.Credit
               // End of Audit Section ---------------------
   */
             lc.DATEACTEDON = DateTime.Now;
-            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             context.SaveChanges();
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
 
@@ -1046,10 +1046,10 @@ namespace FintrakBanking.Repositories.Credit
             //    workflow.SetResponse = false;
             //    //workflow.NextProcess(lc.COMPANYID, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false);
             //}
-            lc.DATEACTEDON = DateTime.Now;
-            ValidateAllFromReceiverLevels(model.createdBy, operationId);
 
+            lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
@@ -1139,10 +1139,10 @@ namespace FintrakBanking.Repositories.Credit
               this.audit.AddAuditTrail(audit);
               // End of Audit Section ---------------------
   */
-            ValidateAllFromReceiverLevels(model.createdBy, operationId);
 
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
@@ -1213,6 +1213,7 @@ namespace FintrakBanking.Repositories.Credit
 
             lgr.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
