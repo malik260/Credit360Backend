@@ -607,6 +607,7 @@
                 HttpClient httpClientInstance;
 
                 var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
+                //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;

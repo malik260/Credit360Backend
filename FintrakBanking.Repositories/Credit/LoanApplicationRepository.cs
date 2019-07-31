@@ -1097,7 +1097,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appl.LOANAPPROVEDLIMITID > 0)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest,appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
                 context.SaveChanges();
                 return 1;
             }
@@ -1152,7 +1152,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductId = appl.PRODUCTID;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
-           // workflow.exclusiveFlowChangeId = appl.FLOWCHANGEID; 
+            workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID; 
 
             if (workflow.LogActivity()) return 1;
             else return 0;

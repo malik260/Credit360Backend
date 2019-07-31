@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (t.dynamics != null)
                     {
-                        result.Add(new DropDownSelect { id = (int)t.position, typeId = t.loanApplicationDetailId, name = t.dynamics });
+                        result.Add(new DropDownSelect { id = (int)t.position, typeId = (int)t.loanApplicationDetailId, name = t.dynamics });
                     }
                 }
             }

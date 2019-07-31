@@ -28,7 +28,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int targetId;
         private int companyId;
         private int operationId;
-        //private int? exclusiveFlowChangeId = null;
+        private int? exclusiveFlowChangeId = null;
 
         private int? productClassId = null;
         public int? productId = null;
@@ -96,7 +96,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int? NextLevelId { get { return nextLevelId; } set { nextLevelId = value; } }
         public int? FinalLevel { set { finalLevel = value; } }
         public int? ProductId { set { productId = value; } }
-        //public int? exclusiveFlowChangeId { set { exclusiveFlowChangeId = value; } }
+        public int? ExclusiveFlowChangeId { get { return exclusiveFlowChangeId; } set { exclusiveFlowChangeId = value; } }
         public int? ProductClassId { set { productClassId = value; } }
         public bool EmailNotification { set { emailNotification = value; } }
         public bool SmsNotification { set { smsNotification = value; } }
@@ -337,9 +337,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             int companyId,
             int staffId,
             int operationId,
+            int? exclusiveFlowChangeId,
             int targetId,
             int? productClassId,
-            //int? exclusiveFlowChangeId,
             string comment,
             bool external,
             bool deferred,
@@ -350,8 +350,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.staffId = staffId;
             this.companyId = companyId;
             this.operationId = operationId;
+            this.exclusiveFlowChangeId = exclusiveFlowChangeId;
             this.targetId = targetId;
-            //this.exclusiveFlowChangeId = exclusiveFlowChangeId;
+
             this.productClassId = productClassId;
             this.comment = comment;
             this.statusId = (int)ApprovalStatusEnum.Pending;
@@ -891,20 +892,20 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             List<TBL_APPROVAL_GROUP_MAPPING> mappingsOnExclusiveOperations = new List<TBL_APPROVAL_GROUP_MAPPING>();
 
-            //if (exclusiveFlowChangeId != null && exclusiveFlowChangeId > 0)
-            //{
-            //    var flowChangePartern = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(this.exclusiveFlowChangeId);
+            if (exclusiveFlowChangeId != null && exclusiveFlowChangeId > 0)
+            {
+                var flowChangePartern = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(this.exclusiveFlowChangeId);
 
-            //    if(flowChangePartern != null)
-            //    {
-            //        mappingsOnExclusiveOperations = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
-            //                   && x.OPERATIONID == flowChangePartern.OPERATIONID
-            //                   && x.PRODUCTCLASSID == null
-            //                   && x.PRODUCTID == null
-            //               )
-            //               .ToList();
-            //    }
-            //}
+                if (flowChangePartern != null)
+                {
+                    mappingsOnExclusiveOperations = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false
+                               && x.OPERATIONID == flowChangePartern.OPERATIONID
+                               && x.PRODUCTCLASSID == null
+                               && x.PRODUCTID == null
+                           )
+                           .ToList();
+                }
+            }
 
             List<TBL_APPROVAL_GROUP_MAPPING> mappings = new List<TBL_APPROVAL_GROUP_MAPPING>();
 
@@ -1202,6 +1203,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             Comment = model.comment;
             ExternalInitialization = model.externalInitialization;
             StatusId = model.approvalStatusId;
+            exclusiveFlowChangeId = model.exclusiveFlowChangeId;
             keepPending = model.keepPending;
             deferredExecution = model.deferredExecution;
 
