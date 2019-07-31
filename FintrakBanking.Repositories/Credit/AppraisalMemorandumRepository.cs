@@ -1315,11 +1315,11 @@ namespace FintrakBanking.Repositories.Credit
             
             var allstaff = this.GetAllStaffNames();
 
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == operationId && x.TARGETID == applicationId);
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId);
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId).ToList();
             }
 
             var data =  trail.Select(x => new ApprovalTrailViewModel
