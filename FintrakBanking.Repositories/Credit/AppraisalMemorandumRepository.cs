@@ -526,7 +526,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.SetResponse = false;
                 //workflow.ProductClassId = null;
                 //workflow.ProductId = null;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID,model.applicationId, null, "New approved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null,model.applicationId, null, "New approved application", true, false);
             }
 
             //workflow.Response.success = true;
