@@ -525,7 +525,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.SetResponse = false;
                 //workflow.ProductClassId = null;
                 //workflow.ProductId = null;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, null, "New approved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID,model.applicationId, null, "New approved application", true, false);
             }
 
             //workflow.Response.success = true;
@@ -812,7 +812,7 @@ namespace FintrakBanking.Repositories.Credit
                     appl.AVAILMENTDATE = DateTime.Now;
                     appl.APPROVEDDATE = DateTime.Now;
                     workflow.SetResponse = false;
-                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IndividualDrawdownRequest, model.applicationId, null, "New approved application", true, false);
+                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IndividualDrawdownRequest,null, model.applicationId, null, "New approved application", true, false);
                 }
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
@@ -2125,7 +2125,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, null, "New pproved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID, model.applicationId, null, "New pproved application", true, false);
             }
 
             return response;
