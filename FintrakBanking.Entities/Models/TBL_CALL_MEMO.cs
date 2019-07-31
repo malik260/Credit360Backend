@@ -43,6 +43,12 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "date")]
         public DateTime DATECREATED { get; set; }
 
+        public int CUSTOMERID { get; set; }
+
+        public int OPERATIONID { get; set; }
+
+        public int APPROVALSTATUSID { get; set; }
+
         public virtual TBL_STAFF TBL_STAFF { get; set; }
 
         public virtual TBL_CALL_MEMO_TYPE TBL_CALL_MEMO_TYPE { get; set; }

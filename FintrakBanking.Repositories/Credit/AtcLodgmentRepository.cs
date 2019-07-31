@@ -157,11 +157,15 @@ namespace FintrakBanking.Repositories.credit
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
 
-                        var document = context.TBL_ATC_RELEASE.Where(o => o.ATCLODGMENTID == model.atcLodgmentId).FirstOrDefault();
-                        var doc = (from ar in context.TBL_ATC_RELEASE
-                                   join al in context.TBL_ATC_LODGMENT on ar.ATCLODGMENTID equals al.ATCLODGMENTID
-                                   where ar.ATCLODGMENTID == model.atcLodgmentId
-                                   select al).FirstOrDefault();
+                        var document = context.TBL_ATC_RELEASE.Where(o => o.ATCLODGMENTID == model.atcLodgmentId && 
+                                                                    (o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred))
+                                                                    .FirstOrDefault();
+                        //var doc = (from ar in context.TBL_ATC_RELEASE
+                        //           join al in context.TBL_ATC_LODGMENT on ar.ATCLODGMENTID equals al.ATCLODGMENTID
+                        //           where ar.ATCLODGMENTID == model.atcLodgmentId && 
+                        //           (ar.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || ar.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                        //           select al).FirstOrDefault();
+                        var doc =  context.TBL_ATC_LODGMENT.Where( o => o.ATCLODGMENTID == model.atcLodgmentId).FirstOrDefault();
                         if (document != null && doc != null)
                         {
                             document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
@@ -175,7 +179,9 @@ namespace FintrakBanking.Repositories.credit
                                 UNITBALANCE = document.UNITBALANCE,
                                 DATETIMECREATED = document.DATETIMECREATED,
                                 APPROVALSTATUSID = document.APPROVALSTATUSID,
-                                CREATEDBY = document.CREATEDBY
+                                CREATEDBY = document.CREATEDBY,
+                                ATCLODGMENTID = model.atcLodgmentId
+
                             };
 
                             context.TBL_ATC_RELEASE_ARCHIVE.Add(entity);

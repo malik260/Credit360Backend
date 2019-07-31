@@ -654,7 +654,17 @@ namespace FintrakBanking.APICore.Controllers
             IEnumerable<RacCategoryViewModel> response = repo.GetRacCategoryTypes(productId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
-       
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("saved-rac-for-a-loan")]
+        public HttpResponseMessage GetRacForLoanApplication(int loanApplicationId)
+        {
+            IEnumerable<RacDefinitionViewModel> response = repo.GetRacForLoanApplication(loanApplicationId);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
 
     }
 }

@@ -350,7 +350,8 @@ namespace FintrakBanking.Repositories.Risk
                     controlAmount = x.CONTROLAMOUNT,
                     controlOptionId = x.CONTROLOPTIONID,
                     controlOption = context.TBL_RAC_OPTION_ITEM.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.LABEL).FirstOrDefault(),
-                    showAtDrawDown = x.SHOWATDRAWDOWN
+                    showAtDrawDown = x.SHOWATDRAWDOWN,
+                    requireComment = x.REQUIRECOMMENT
                 }).OrderBy(o => o.racItemId)
                 .ToList();
         }
@@ -378,7 +379,8 @@ namespace FintrakBanking.Repositories.Risk
                 controlAmount = entity.CONTROLAMOUNT,
                 controlOptionId = entity.CONTROLOPTIONID,
                 racCategoryTypeId = entity.RACCATEGORYTYPEID,
-                showAtDrawDown = entity.SHOWATDRAWDOWN
+                showAtDrawDown = entity.SHOWATDRAWDOWN,
+                requireComment = entity.REQUIRECOMMENT
             };
         }
 
@@ -447,6 +449,7 @@ namespace FintrakBanking.Repositories.Risk
             entity.ROLEID = model.roleId;
             entity.CONTROLAMOUNT = model.controlAmount;
             entity.CONTROLOPTIONID = model.controlOptionId;
+            entity.REQUIRECOMMENT = model.requireComment;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;

@@ -1230,6 +1230,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (level == null && t.REQUESTSTAFFID == staffId) { throw new SecureException("Please make sure you are assigned an approval Level for the current operation"); }
                     t.FROMAPPROVALLEVELID = level.APPROVALLEVELID;
                 }
+                    context.SaveChanges();
                 return true;
             }
             return false;

@@ -98,25 +98,21 @@
                     
                     var objData = JsonConvert.DeserializeObject<CustomerViewModels>(data);
 
-                    
-                    objData = GetCustomerModelFromResponseData(objData);
 
+
+                    if (objData.customerType == "C") { objData.customerTypeId = 2; }
+                    else { objData.customerTypeId = 1; }
+
+                    if (objData.gender == "M") { objData.gender = "Male"; }
+                    if (objData.gender == "F") { objData.gender = "Female"; }
+
+                    if (objData.customerTypeId == (short)CustomerTypeEnum.Corporate)
+                    {
+                        objData.firstName = objData.companyName == null ? objData.company_name  : objData.companyName;
+                        //objData.companyName = objData.company_name;
+                    }
 
                     customers.Add(objData);
-
-                    //customers.Add(new CustomerViewModels
-                    //    {
-                    //    customerCode = objData.customerCode,
-                    //    firstName = objData.lastName,
-                    //    lastName = objData.firstName,
-                    //    middleName = objData.middleName,
-                    //    customerTypeName = objData.customerTypeName,
-                    //    customerTypeId = (short)(objData.customerType == "C" ? 2 : 1),
-                        
-                    //    //isPoliticallyExposed = objData.politicallyExposedPerson == "N" ? false : true,
-                    //});
-                    //}
-
                 }
                 responseMessage = await response.Content.ReadAsStringAsync();
                 handler.Dispose();
@@ -139,27 +135,8 @@
                 logContext.SaveChanges();
 
                 return customers;
-
-
             }
 
-            private CustomerViewModels GetCustomerModelFromResponseData(CustomerViewModels objData)
-            {
-                if (objData.customerType == "C") { objData.customerTypeId = 2; }
-                else { objData.customerTypeId = 1; }
-
-                if (objData.gender == "M") { objData.gender = "Male"; }
-                if (objData.gender == "F"){ objData.gender = "Female"; }
-
-                //var relationshipOfficerRecord = staffRepo.GetAllStaff().Where(x => x.StaffCode == objData.relationshipOfficerCode).FirstOrDefault(); 
-
-                //if(relationshipOfficerRecord != null)
-                //{
-                //    objData.relationshipOfficerId = relationshipOfficerRecord.staffId;
-                //}
-
-                return objData;
-            }
 
             public async Task<CasaBalanceViewModel> GetCustomerAccountBalance(string customerAccount)
             {
@@ -197,7 +174,7 @@
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
-                        accountAPI = await response.Content.ReadAsAsync<CasaIntegrationViewModel>();
+                        // = await response.Content.ReadAsAsync<CasaBalanceViewModel>();
                         string responseData = await response.Content.ReadAsStringAsync();
                         //customerViewModels = JsonConvert.DeserializeObject<CustomerTransactionViewModels>(responseData);
                         
@@ -211,15 +188,15 @@
                             var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
                             var accountStatusId = account != null ? account.ACCOUNTSTATUSID : 0;
 
+                            var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == accountAPI.product).FirstOrDefault();
+
                             accountOutput.accountName = accountAPI.accountName;
                             accountOutput.accountNo = accountAPI.accountNumber;
                             accountOutput.availableBalance = accountAPI.balance;
-                            accountOutput.productName = accountAPI.productName;
                             accountOutput.currencyId = currencyId;
                             accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
                             accountOutput.customerCode = accountAPI.customerCode;
                             accountOutput.product = accountAPI.product;
-                            accountOutput.productType = accountAPI.productType;
                             accountOutput.currencyType = accountAPI.currencyType;
                             accountOutput.accountStatus = accountAPI.accountStatus;
                             accountOutput.freezeStatus = accountAPI.freezeStatus;
@@ -227,6 +204,12 @@
                             accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
                             accountOutput.hasBalance = true;
                             accountOutput.isCasaAccountDetailAvailable = true;
+                            if(product != null)
+                            {
+                                accountOutput.productType = accountAPI.productType;
+                                accountOutput.productName = accountAPI.productName;
+                            }
+
 
                         }
                     }

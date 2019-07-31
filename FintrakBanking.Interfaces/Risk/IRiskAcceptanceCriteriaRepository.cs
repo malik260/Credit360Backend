@@ -123,5 +123,7 @@ namespace FintrakBanking.Interfaces.Risk
 
         List<RacCategoryViewModel> GetRacCategoryTypes(int productId);
 
+        IEnumerable<RacDefinitionViewModel> GetRacForLoanApplication(int loanApplicationId);
+
     }
 }
