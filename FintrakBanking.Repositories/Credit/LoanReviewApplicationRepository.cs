@@ -416,13 +416,13 @@ namespace FintrakBanking.Repositories.Credit
 
             if (assetManagement)
             {
-                workflow.NextProcess(model.companyId, staffId, 79, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
+                workflow.NextProcess(model.companyId, staffId, 79,null, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
                 application.OPERATIONID = 79;
                 context.Entry(application).State = System.Data.Entity.EntityState.Modified;
             }
             else
             {
-                workflow.NextProcess(model.companyId, staffId, camOperationId, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
+                workflow.NextProcess(model.companyId, staffId, camOperationId,null, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
             }
 
             if (context.SaveChanges() > 0)
@@ -652,7 +652,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (apsOperationIds.Contains(operationId)) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
                     if (operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter) workflow.NextLevelId = GetFirstAvailmentLevelId((int)OperationsEnum.LoanReviewApprovalAvailment);
                     workflow.SetResponse = false;
-                    workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
+                    workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId,null, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
 
                 if (operationId == lastOperationId/* || model.operationId == 71*/) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?

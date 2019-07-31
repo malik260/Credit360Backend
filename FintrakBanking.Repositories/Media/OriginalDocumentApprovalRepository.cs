@@ -78,7 +78,11 @@ namespace FintrakBanking.Repositories.Media
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == c.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                         atInitiator = staffId== context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID==x.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
                         createdBy = x.CREATEDBY,
-                        collateralCustomerId = x.COLLATERALCUSTOMERID
+                        collateralCustomerId = x.COLLATERALCUSTOMERID,
+
+                        //applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                        //customerId = x.COLLATERALCUSTOMERID,
+                        //operationId = (int)OperationsEnum.OriginalDocumentApproval,
 
                     }).OrderBy(o=>o.originalDocumentApprovalId)
                .ToList();
@@ -103,8 +107,12 @@ namespace FintrakBanking.Repositories.Media
                     referenceNumber = entity.REFERENCENUMBER,
                     dateTimeCreated = entity.DATETIMECREATED,
                     approvalDate = entity.APPROVALDATE,
-                    collateralCustomerId = entity.COLLATERALCUSTOMERID
-                }).FirstOrDefault();
+                    collateralCustomerId = entity.COLLATERALCUSTOMERID,
+
+                    //applicationReferenceNumber = entity.APPLICATIONREFERNECENUMBER,
+                    customerId = entity.COLLATERALCUSTOMERID,
+                    operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                  }).FirstOrDefault();
         }
 
         public List<OriginalDocumentApprovalViewModel> GetOriginalDocumentByCollateralCustomerId(int id)
@@ -121,7 +129,11 @@ namespace FintrakBanking.Repositories.Media
                     dateTimeCreated = x.DATETIMECREATED,
                     approvalDate = x.APPROVALDATE,
                     approvalStatusId = x.APPROVALSTATUSID,
-                    collateralCustomerId = x.COLLATERALCUSTOMERID
+                    collateralCustomerId = x.COLLATERALCUSTOMERID,
+
+                    //applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                    customerId = x.COLLATERALCUSTOMERID,
+                    operationId = (int)OperationsEnum.OriginalDocumentApproval,
                 }).ToList();
 
             return entity;
@@ -133,14 +145,17 @@ namespace FintrakBanking.Repositories.Media
                 .Select(x => new OriginalDocumentApprovalViewModel
                 {
                     originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                    
                     loanApplicationId = x.LOANAPPLICATIONID,
                     description = x.DESCRIPTION,
                     approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
-                    applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                     referenceNumber = x.REFERENCENUMBER,
                     dateTimeCreated = x.DATETIMECREATED,
                     approvalDate = x.APPROVALDATE,
                     approvalStatusId = x.APPROVALSTATUSID,
+
+                    applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                    customerId = x.COLLATERALCUSTOMERID,
                     operationId = (int)OperationsEnum.OriginalDocumentApproval,
                     collateralCustomerId = x.COLLATERALCUSTOMERID
                 }).OrderBy(o=>o.originalDocumentApprovalId).ToList();
