@@ -32,6 +32,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CallMemoViewModel> GetCallMemoWaitingForApproval(int staffId);
         IEnumerable<CallMemoViewModel> SearchCallMemo(int staffId, CallMemoViewModel model);
+        IEnumerable<CallMemoViewModel> GetCustomerApprovedCallMemo(int staffId, int customerId);
         #endregion
     }
 }
