@@ -1673,5 +1673,14 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("facility-by-loanApplicationId/{loanApplicationId}")]
+        public HttpResponseMessage GetFacilityByApplicationId(int loanApplicationId)
+        {
+            var response = repo.GetFacilityByApplicationId(loanApplicationId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
     }
 }

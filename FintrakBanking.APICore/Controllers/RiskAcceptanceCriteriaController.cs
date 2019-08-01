@@ -74,7 +74,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("category-type/{id}")]
+        [Route("category-type-id/{id}")]
         public HttpResponseMessage GetRacCategoryType(int id)
         {
             IEnumerable<RacCategoryViewModel> response = repo.GetRacCategoryType(id);
@@ -654,7 +654,24 @@ namespace FintrakBanking.APICore.Controllers
             IEnumerable<RacCategoryViewModel> response = repo.GetRacCategoryTypes(productId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
-       
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("saved-rac-for-a-loan")]
+        public HttpResponseMessage GetSavedRiskAcceptanceCriteria(RiskAcceptanceCriteriaViewModel model)
+        {
+            RiskAcceptanceCriteriaViewModel response = repo.GetSavedRiskAcceptanceCriteria(model.productId, model.loanApplicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.categories.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("exit-rac-category-type/{productId}/productId/{racCategoryTypeId}/racCategoryTypeId")]
+        public HttpResponseMessage RacCategoryTypeExist(int productId, int racCategoryTypeId)
+        {
+            bool response = repo.RacCategoryTypeExist(productId, racCategoryTypeId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response});
+        }
 
     }
 }

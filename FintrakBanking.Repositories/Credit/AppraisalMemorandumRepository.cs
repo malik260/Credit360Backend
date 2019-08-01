@@ -1213,6 +1213,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             lgr.DATEACTEDON = DateTime.Now;
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             context.SaveChanges();
             ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
