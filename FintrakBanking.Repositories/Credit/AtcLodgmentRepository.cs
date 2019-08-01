@@ -74,7 +74,8 @@ namespace FintrakBanking.Repositories.credit
             return (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ATCLODGMENTID equals atrail.TARGETID
-                    where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                    where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                     && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval
@@ -109,7 +110,7 @@ namespace FintrakBanking.Repositories.credit
                     join r in context.TBL_ATC_RELEASE on x.ATCLODGMENTID equals r.ATCLODGMENTID
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                     join atrail in context.TBL_APPROVAL_TRAIL on r.ATCLODGMENTID equals atrail.TARGETID
-                    where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing && r.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                    where (x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                      && atrail.RESPONSESTAFFID == null
                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
@@ -217,8 +218,8 @@ namespace FintrakBanking.Repositories.credit
                     workflow.StaffId = model.createdBy;
                     workflow.CompanyId = model.companyId;
                     workflow.StatusId = model.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = model.atcLodgmentId;
-                    workflow.Comment =model.comment;
+                    workflow.TargetId = model.atcLodgmentId;
+                    workflow.Comment = model.comment;
                     workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
                     workflow.DeferredExecution = true;
                     workflow.LogActivity();

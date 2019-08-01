@@ -93,10 +93,11 @@ namespace FintrakBanking.Repositories.Credit
 
             var record = from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
                          join oda in _context.TBL_ORIGINAL_DOCUMENT_APPROVAL on dr.ORIGINALDOCUMENTAPPROVALID equals oda.ORIGINALDOCUMENTAPPROVALID
-                         join l in _context.TBL_LOAN_APPLICATION on oda.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                         //join l in _context.TBL_LOAN_APPLICATION on oda.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                         join cc in _context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
-                         join c in _context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                         where dr.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                         join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
+                         where dr.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                          && atrail.RESPONSESTAFFID == null
                          && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                          && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
@@ -104,7 +105,7 @@ namespace FintrakBanking.Repositories.Credit
                          {
                              approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == dr.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                              customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
-                             applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
+                             //applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
                              documentReferenceNumber = oda.REFERENCENUMBER,
                              docDateTimeCreated = dr.DATETIMECREATED,
                              createdByName = _context.TBL_STAFF.Where(o => o.STAFFID == dr.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
@@ -113,6 +114,7 @@ namespace FintrakBanking.Repositories.Credit
                             originalDocumentReleaseId = dr.ORIGINALDOCUMENTRELEASEID,
                             docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
                              approvalDate = dr.APPROVALDATE,
+                             collateralCode = cc.COLLATERALCODE,
                              operationId = (int)OperationsEnum.SecurityRelease
                          };
 
