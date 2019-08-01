@@ -20,5 +20,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATETIMECREATED { get; set; }
         public int APPROVALSTATUSID { get; set; }
         public int CREATEDBY { get; set; }
-     }
+        public int ATCLODGMENTID { get; set; }
+    }
 }

@@ -343,6 +343,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+            workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
             //if (appl.PRODUCTID == 2)
             //{
             //    workflow.ProductId = null;
@@ -525,7 +526,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.SetResponse = false;
                 //workflow.ProductClassId = null;
                 //workflow.ProductId = null;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, null, "New approved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, null,model.applicationId, null, "New approved application", true, false);
             }
 
             //workflow.Response.success = true;
@@ -812,7 +813,7 @@ namespace FintrakBanking.Repositories.Credit
                     appl.AVAILMENTDATE = DateTime.Now;
                     appl.APPROVEDDATE = DateTime.Now;
                     workflow.SetResponse = false;
-                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IndividualDrawdownRequest, model.applicationId, null, "New approved application", true, false);
+                    workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.IndividualDrawdownRequest,null, model.applicationId, null, "New approved application", true, false);
                 }
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
@@ -920,8 +921,8 @@ namespace FintrakBanking.Repositories.Credit
               // End of Audit Section ---------------------
   */
             lc.DATEACTEDON = DateTime.Now;
-            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             context.SaveChanges();
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
 
@@ -1046,10 +1047,10 @@ namespace FintrakBanking.Repositories.Credit
             //    workflow.SetResponse = false;
             //    //workflow.NextProcess(lc.COMPANYID, model.createdBy, (int)OperationsEnum.lcReleaseOfShippingDocuments, model.LcIssuanceId, null, "New approved LCISSUANCE", true, false);
             //}
-            lc.DATEACTEDON = DateTime.Now;
-            ValidateAllFromReceiverLevels(model.createdBy, operationId);
 
+            lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
@@ -1139,10 +1140,10 @@ namespace FintrakBanking.Repositories.Credit
               this.audit.AddAuditTrail(audit);
               // End of Audit Section ---------------------
   */
-            ValidateAllFromReceiverLevels(model.createdBy, operationId);
 
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
@@ -1213,6 +1214,7 @@ namespace FintrakBanking.Repositories.Credit
 
             lgr.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
@@ -1229,6 +1231,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (level == null && t.REQUESTSTAFFID == staffId) { throw new SecureException("Please make sure you are assigned an approval Level for the current operation"); }
                     t.FROMAPPROVALLEVELID = level.APPROVALLEVELID;
                 }
+                    context.SaveChanges();
                 return true;
             }
             return false;
@@ -2124,7 +2127,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, null, "New pproved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, appl.FLOWCHANGEID, model.applicationId, null, "New pproved application", true, false);
             }
 
             return response;

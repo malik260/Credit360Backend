@@ -6,6 +6,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
     public interface IWorkflow
     {
         int OperationId { set; }
+        int? ExclusiveFlowChangeId { get; set; }
         int? ProductClassId { set; }
         int? ProductId { set; }
         int StaffId { set; }
@@ -44,6 +45,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
                 int companyId, 
                 int staffId, 
                 int operationId, 
+                int? exclusiveFlowChangeId,
                 int targetId, 
                 int? productClassId, 
                 string comment, 
