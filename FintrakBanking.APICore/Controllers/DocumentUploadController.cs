@@ -96,7 +96,9 @@ namespace FintrakBanking.APICore.Controllers
                 overwrite = provider.FormData["overwrite"] == "true",
                
             };
-                if (provider.FormData["targetId"] != null)
+                var a = provider.FormData["targetId"];
+
+                if (provider.FormData["targetId"] != null && provider.FormData["targetId"]!= "undefined")
                 {
                     entity.targetId = Convert.ToInt32(provider.FormData["targetId"]);
                 }

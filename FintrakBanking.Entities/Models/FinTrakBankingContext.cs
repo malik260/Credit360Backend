@@ -526,6 +526,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ORIGINAL_DOCUMENT_RELEASE> TBL_ORIGINAL_DOCUMENT_RELEASE { get; set; }
         public virtual DbSet<TBL_ESG_CHECKLIST_SCORES> TBL_ESG_CHECKLIST_SCORES { get; set; }
         public virtual DbSet<TBL_ATC_RELEASE_ARCHIVE> TBL_ATC_RELEASE_ARCHIVE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_PROPOSE> TBL_COLLATERAL_PROPOSE { get; set; }
 
 
 
