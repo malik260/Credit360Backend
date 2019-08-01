@@ -368,7 +368,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SubmitApproval(CollateralValuationViewModel model)
         {
-            bool responce = false;
+            bool response = false;
 
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -395,9 +395,9 @@ namespace FintrakBanking.Repositories.Credit
                         }
                     }
 
-                    responce = _context.SaveChanges() > 0;
+                    response = _context.SaveChanges() > 0;
                     transaction.Commit();
-                    return responce;
+                    return response;
                 }
                 catch (Exception ex)
                 {
