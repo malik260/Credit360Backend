@@ -984,7 +984,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int loanApplicationCollateralId { get; set; }
         public int collateralCustomerId { get; set; }
-        public int loanApplicationId { get; set; }
+        public int? loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
         public bool? legalFeeTaken { get; set; }
         public decimal legalFeeAmount { get; set; }
@@ -998,6 +998,15 @@ namespace FintrakBanking.ViewModels.Credit
         public string currency { get; set; }
     }
 
+    public class CollateralCoverageViewModel : GeneralEntity
+    {
+
+        public int currencyId { get; set; }
+        public int coverage { get; set; }
+        public int collateralSubTypeId { get; set; }
+        public string currencyName { get; set; }
+        public int collateralCoverageId { get; set; }
+    }
     public class CollateralUsageStatus
     {
         public int collateralStatusId { get; set; }
