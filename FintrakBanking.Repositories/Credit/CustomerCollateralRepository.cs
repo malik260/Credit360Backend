@@ -8575,7 +8575,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable< CollateralCoverageViewModel> GetCollateralCoverage(int collateralSubTypeId)
         {
-          return  (context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateralSubTypeId && o.DELETED !=false).Select(o => new CollateralCoverageViewModel
+          return  (context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateralSubTypeId && o.DELETED ==false).Select(o => new CollateralCoverageViewModel
             {
                 collateralSubTypeId = o.COLLATERALSUBTYPEID,
                 currencyId = o.CURRENCYID,
@@ -8598,6 +8598,18 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() > 0;
 
+        }
+
+
+        public IEnumerable<CollateralCoverageViewModel> CalculateCoverateOfCollateral(CollateralCoverageViewModel model)
+        {
+            var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == model.collateralSubTypeId && o.CURRENCYID==model.companyId).Select(o => o).FirstOrDefault();
+            if(data == null)
+                throw new Exception("Collateral Coverage has not been set!");
+
+            var coveragePercentage = data.COVERAGE;
+
+            return new List<CollateralCoverageViewModel>();
         }
     }
 

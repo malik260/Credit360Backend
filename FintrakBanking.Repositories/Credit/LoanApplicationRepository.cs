@@ -4515,6 +4515,7 @@ namespace FintrakBanking.Repositories.Credit
                 productId = x.PROPOSEDPRODUCTID,
                 loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                 productName = context.TBL_PRODUCT.Where(o=>o.PRODUCTID==x.PROPOSEDPRODUCTID).Select(o=>o.PRODUCTNAME).FirstOrDefault(),
+                facilityAmount = x.APPROVEDAMOUNT
             })).ToList();
         }
 
