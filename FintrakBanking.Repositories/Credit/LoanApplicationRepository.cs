@@ -1129,16 +1129,9 @@ namespace FintrakBanking.Repositories.Credit
                 appl.DATEACTEDON = DateTime.Now;
                 context.SaveChanges();
             }
-            else if (productBahaviour != null && productBahaviour.SKIPPROCESSFLOW)
+            else if (PushApplicationToDrawdown(appl.APPLICATIONREFERENCENUMBER))
             {
-                if (PushApplicationToDrawdown(appl.APPLICATIONREFERENCENUMBER)) { return 2; }
-                else return 0;
-                //workflow.OperationId = (int)OperationsEnum.InitiationLevelAppraisal;
-                //appl.OPERATIONID = (int)OperationsEnum.InitiationLevelAppraisal;
-                //receiverLevelId = GetFirstAdhocReceiverLevel(staffId, (int)OperationsEnum.InitiationLevelAppraisal, appl.PRODUCTCLASSID, false);
-                //workflow.NextLevelId = receiverLevelId;
-                //appl.DATEACTEDON = DateTime.Now;
-                //context.SaveChanges();
+                return 2;
             }
             else
             {
@@ -1318,7 +1311,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
             var lineRecord = lineRecords.FirstOrDefault();
-            var productBehaviour = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(x => x.OPERATIONID == headerrecord.OPERATIONID && x.PRODUCTCLASSID == headerrecord.PRODUCTCLASSID && x.ISSKIPPROCESSENABLED == true).FirstOrDefault();
+            var productBehaviour = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(headerrecord.FLOWCHANGEID );
 
             if (productBehaviour != null && productBehaviour.ISSKIPPROCESSENABLED == true)
             {
