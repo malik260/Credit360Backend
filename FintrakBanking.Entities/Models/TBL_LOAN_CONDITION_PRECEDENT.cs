@@ -40,7 +40,7 @@ namespace FintrakBanking.Entities.Models
 
         //[Column(TypeName = "date")]
         public DateTime? DEFEREDDATE { get; set; }
-
+        public int? DEFEREDDAYS { get; set; }
         public short APPROVALSTATUSID { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

@@ -1142,7 +1142,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                operationId = (int)OperationsEnum.CreditAppraisal;
+                operationId = appl.OPERATIONID; // (int)OperationsEnum.CreditAppraisal;
                 workflow.OperationId = operationId;
                 appl.OPERATIONID = operationId;
                 receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
@@ -1314,6 +1314,8 @@ namespace FintrakBanking.Repositories.Credit
             //var newLineRecord = model.LoanApplicationDetail.FirstOrDefault();
             var headerRecords = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
             var headerrecord = headerRecords.FirstOrDefault();
+            if (headerrecord == null) return false;
+
             var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
             var lineRecord = lineRecords.FirstOrDefault();
             var productBehaviour = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(x => x.OPERATIONID == headerrecord.OPERATIONID && x.PRODUCTCLASSID == headerrecord.PRODUCTCLASSID && x.ISSKIPPROCESSENABLED == true).FirstOrDefault();
@@ -1685,7 +1687,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
                 FLOWCHANGEID = loan.flowchangeId,
-                OPERATIONID = (loan.exclusiveOperationId == null || loan.exclusiveOperationId == 0) ? (int)OperationsEnum.CreditAppraisal : (int)loan.exclusiveOperationId,
+                OPERATIONID = ((loan.exclusiveOperationId == null) || (loan.exclusiveOperationId == 0)) ? (int)OperationsEnum.CreditAppraisal : (int)loan.exclusiveOperationId,
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
                 COLLATERALDETAIL = loan.collateralDetail,
                 ISADHOCAPPLICATION = loan.isadhocapplication,
