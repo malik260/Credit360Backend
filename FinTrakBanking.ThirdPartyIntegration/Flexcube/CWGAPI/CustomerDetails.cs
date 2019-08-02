@@ -245,7 +245,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"api/Customer/GetCustomerAccountBalance?accountNumber={customerAccount}",
+                        APIURL = $"api/Customer/GetCustomerAccountBalance/{customerAccount}",
                         LOGTYPEID = 1,
                         REFERENCENUMBER = customerAccount,
                         REQUESTDATETIME = requestDatetime,
@@ -606,8 +606,9 @@
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
-                var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
+                //var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
+                var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/07-2019";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -632,7 +633,7 @@
                 response = await client.GetAsync(endpointUrl);
                 responseTime = DateTime.Now;
 
-                //List<CustomerTurnoverViewModelAPI> result = null;
+                List<CustomerTurnoverViewModelAPI> result = null;
 
                 List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
@@ -642,8 +643,16 @@
                 {
                     //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
 
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverViewModelAPI>>(jsonString);
+                    var responseData = await response.Content.ReadAsStringAsync();
+                    JObject responseDataJsonString = JObject.Parse(responseData);
+
+                    var data = responseDataJsonString["data"].ToString();
+                    var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverViewModelAPI>>(data);
+
+
+                    //var jsonString = await response.Content.ReadAsStringAsync();
+
+                    //var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverViewModelAPI>>(jsonString);
 
                     foreach (var item in apiData)
                     {
@@ -719,7 +728,7 @@
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
-                var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails?Cif_Id={customerCode}&Month={durationInMonths}";
+                var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails/{customerCode}/{durationInMonths}";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -754,8 +763,11 @@
                 {
                     //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
 
-                    var jsonString = await response.Content.ReadAsStringAsync();
-                    var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverViewModelAPI>>(jsonString);
+                    var responseData = await response.Content.ReadAsStringAsync();
+                    JObject responseDataJsonString = JObject.Parse(responseData);
+
+                    var data = responseDataJsonString["data"].ToString();
+                    var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverViewModelAPI>>(data);
 
                     foreach (var item in apiData)
                     {
