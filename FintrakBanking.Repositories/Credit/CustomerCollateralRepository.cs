@@ -8607,7 +8607,13 @@ namespace FintrakBanking.Repositories.Credit
             if(data == null)
                 throw new Exception("Collateral Coverage has not been set!");
 
+            var existingMapping = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONID == model.loanApplicationId).FirstOrDefault();
+
+           // var 
+
             var coveragePercentage = data.COVERAGE;
+            var collateralValue = model.collateralValue;
+            var facilityAmount = model.facilityAmount;
 
             return new List<CollateralCoverageViewModel>();
         }
