@@ -1356,10 +1356,12 @@ namespace FintrakBanking.Repositories.Credit
 
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
         {
-            List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
+            var appl = context.TBL_LOAN_APPLICATION.Find(entity.targetId);
+            List<int> ExclusiveOperations = new List<int>(); // (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
             List<int> levelIds = new List<int>();
 
             ExclusiveOperations.Add(entity.operationId);
+            ExclusiveOperations.Add(appl.OPERATIONID);
 
             //var operationId = entity.operationId;
             var staffId = entity.createdBy;
