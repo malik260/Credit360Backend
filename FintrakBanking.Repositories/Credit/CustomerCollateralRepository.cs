@@ -8554,8 +8554,69 @@ namespace FintrakBanking.Repositories.Credit
                 email = x.CONTACTEMAIL,
             });
         }
+        public bool AddCollateralCoverage(CollateralCoverageViewModel model)
+        {
+            var data = new TBL_COLLATERAL_COVERAGE
+            {
+                COLLATERALSUBTYPEID = model.collateralSubTypeId,
+                COVERAGE = model.coverage,
+                CURRENCYID = model.currencyId,
+                DELETED = false,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
 
-       
+            };
+
+            context.TBL_COLLATERAL_COVERAGE.Add(data);
+
+            return context.SaveChanges() > 0;
+            
+        }
+
+        public IEnumerable< CollateralCoverageViewModel> GetCollateralCoverage(int collateralSubTypeId)
+        {
+          return  (context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateralSubTypeId && o.DELETED ==false).Select(o => new CollateralCoverageViewModel
+            {
+                collateralSubTypeId = o.COLLATERALSUBTYPEID,
+                currencyId = o.CURRENCYID,
+                currencyName = context.TBL_CURRENCY.Where(x=>x.CURRENCYID==o.CURRENCYID).Select(x=>x.CURRENCYNAME).FirstOrDefault(),
+                coverage = o.COVERAGE,
+              collateralCoverageId = o.COLLATERALCOVERAGEID
+          })).ToList();
+            
+        }
+
+        public bool DeleteCollateralCoverage(int collateralCoverageId, int createdById)
+        {
+         var data =   context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALCOVERAGEID == collateralCoverageId).Select(o => o).FirstOrDefault();
+
+            if (data == null) return false;
+
+            data.DELETED = true;
+            data.DELETEDBY = createdById;
+            data.DATETIMEDELETED = genSetup.GetApplicationDate();
+
+            return context.SaveChanges() > 0;
+
+        }
+
+
+        public IEnumerable<CollateralCoverageViewModel> CalculateCoverateOfCollateral(CollateralCoverageViewModel model)
+        {
+            var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == model.collateralSubTypeId && o.CURRENCYID==model.companyId).Select(o => o).FirstOrDefault();
+            if(data == null)
+                throw new Exception("Collateral Coverage has not been set!");
+
+            var existingMapping = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONID == model.loanApplicationId).FirstOrDefault();
+
+           // var 
+
+            var coveragePercentage = data.COVERAGE;
+            var collateralValue = model.collateralValue;
+            var facilityAmount = model.facilityAmount;
+
+            return new List<CollateralCoverageViewModel>();
+        }
     }
 
 }

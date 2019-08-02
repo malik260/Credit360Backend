@@ -1055,14 +1055,19 @@ namespace FintrakBanking.Repositories.Credit
             
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex) == 1)
             {
+                var casa = context.TBL_CASA.Find(application.CASAACCOUNTID);
+
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
                 {
-                    creditCommon.LoadCustomerTurnover(
-                       applicationId,
-                       loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                       staffId
-                    );
+                    if(casa != null)
+                    {
+                        creditCommon.LoadCustomerTurnover(
+                            applicationId,
+                            loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                            staffId
+                        );
+                    }
                 }
 
                 return new LoanApplicationUpdateMessage
@@ -4510,6 +4515,18 @@ namespace FintrakBanking.Repositories.Credit
 
             return productClassFlow.Union(productFlow).Union(productTypeFlow);
         } 
+         
+        public IEnumerable<LoanApplicationViewModel> GetFacilityByApplicationId(int loanApplicationId)
+        {
+            return (context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x=> new LoanApplicationViewModel {
+                productId = x.PROPOSEDPRODUCTID,
+                loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                productName = context.TBL_PRODUCT.Where(o=>o.PRODUCTID==x.PROPOSEDPRODUCTID).Select(o=>o.PRODUCTNAME).FirstOrDefault(),
+                facilityAmount = x.APPROVEDAMOUNT,
+                loanApplicationId = x.LOANAPPLICATIONID,
+            })).ToList();
+        }
+
 
     }
 }

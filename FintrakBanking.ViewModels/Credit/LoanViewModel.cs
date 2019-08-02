@@ -892,7 +892,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanCollateralMappingId { get; set; }
         public int loanId { get; set; }
         public short loanSystemTypeId { get; set; }
-        public int loanApplicationId { get; set; }
+        public int? loanApplicationId { get; set; }
 
         
     }
