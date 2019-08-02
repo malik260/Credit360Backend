@@ -63,7 +63,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var customer in customers)
             {
-
+                var casa = context.TBL_CASA.Where(x => x.CUSTOMERID == customer.CUSTOMERID);
                 //Task.Run(async () => { apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
                 //Task.Run(async () => apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration)).GetAwaiter().GetResult();
                 apiTransactions = integration.GetCustomerAccountTurnover(customer.CUSTOMERCODE, turnoverDuration);

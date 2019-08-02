@@ -89,7 +89,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int staffId, int companyId, int applicationDetailId, int loanBookingRequestId);
 
-        bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel entity);
+        bool AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> entity);
 
         IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId);
 

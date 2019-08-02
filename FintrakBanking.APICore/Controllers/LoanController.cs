@@ -2071,15 +2071,15 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application/request-booking/{applicationId}")]
-        public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] LoanBookingRequestViewModel models)
+        public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] List<LoanBookingRequestViewModel> models)
         {
-           // foreach(var model in models)
-            //{
-                models.userBranchId = (short)token.GetBranchId;
-                models.applicationUrl = HttpContext.Current.Request.Path;
-                models.createdBy = token.GetStaffId;
-                models.companyId = token.GetCompanyId;
-            //}
+            foreach (var model in models)
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+            }
             
 
             var data = repo.AddLoanBookingRequest(applicationId, models);
