@@ -1708,6 +1708,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
                 {
                     data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+                    //data.DEFEREDDAYS = model.deferedDays;
                     data.DEFEREDDATE = model.deferedDate;
                 }
 
@@ -1724,7 +1725,8 @@ namespace FintrakBanking.Repositories.Credit
                 if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
                 {
                     data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
-                    data.DEFEREDDATE = model.deferedDate;
+                    data.DEFEREDDAYS = model.deferedDays;
+                    //data.DEFEREDDATE = model.deferedDate;
                 }
 
                 data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
@@ -1736,7 +1738,8 @@ namespace FintrakBanking.Repositories.Credit
                 var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
                 deferral.LOANCONDITIONID = loanConditionId;
                 deferral.DEFERRALREASON = model.reason;
-                deferral.DEFERREDDATE = model.deferedDate == null ? DateTime.Now : (DateTime)model.deferedDate;
+                deferral.DEFEREDDAYS = model.deferedDays;
+                //deferral.DEFERREDDATE = model.deferedDate == null ? DateTime.Now : (DateTime)model.deferedDate;
                 deferral.ISLMS = model.isLMSChecklist;
                 deferral.DATETIMECREATED = DateTime.Now;
                 deferral.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
@@ -2039,9 +2042,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                 deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                checklistRecord.DEFEREDDATE = DateTime.Now.AddDays(checklistRecord.DEFEREDDAYS ?? 0);
 
                 var deferredCondition = context.TBL_LOAN_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
                 deferredCondition.ISSUBSEQUENT = true;
+
+                deferredCondition.DEFEREDDATE = DateTime.Now.AddDays(deferredCondition.DEFEREDDAYS ?? 0);
                 context.Entry(deferredCondition).State = System.Data.Entity.EntityState.Modified;
             }
 
