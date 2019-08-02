@@ -35,7 +35,7 @@ namespace FintrakBanking.Interfaces.Credit
         CollateralViewModel GetCustomerCollateralInformation(int collateralCustomerId, int companyId);
         List<CollateralViewModel> GetCustomerPropertyCollaterals(int? customerId, int companyId);
 
-        IEnumerable<CollateralViewModel> GetTempCustomerCollateralForApproval(int companyId,int staffId);
+        IEnumerable<CollateralViewModel> GetTempCustomerCollateralForApproval(int companyId, int staffId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId);
         CollateralViewModel GetCollateralTypeByCollateralId(int collateralId, int typeId);
         CollateralViewModel GetTempCollateralTypeByCollateralId(int collateralId, int typeId);
@@ -58,7 +58,7 @@ namespace FintrakBanking.Interfaces.Credit
         decimal GetAccountLeinAmountForCASA(string accountNumber);
 
         CollateralHistory getCollateralHistory(int collateralId);
-        
+
 
         #endregion Collateral
 
@@ -140,9 +140,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<InsurancePolicies> GetCollateralInsurancePoliciesWaitingForApproval(int staffId);
 
-       int GoForInsurancePolicyApproval(ApprovalViewModel model);
-        IEnumerable< CollateralCoverageViewModel> GetCollateralCoverage(int collateralSubTypeId);
-bool AddCollateralCoverage(CollateralCoverageViewModel model);
-bool DeleteCollateralCoverage(int collateralCoverageId, int createdById);
+        int GoForInsurancePolicyApproval(ApprovalViewModel model);
+        IEnumerable<CollateralCoverageViewModel> GetCollateralCoverage(int collateralSubTypeId);
+        bool AddCollateralCoverage(CollateralCoverageViewModel model);
+        bool DeleteCollateralCoverage(int collateralCoverageId, int createdById);
+        IEnumerable<CollateralCoverageViewModel> CalculateCoverateOfCollateral(CollateralCoverageViewModel model);
     }
 }

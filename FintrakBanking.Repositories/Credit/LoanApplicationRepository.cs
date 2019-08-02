@@ -1314,6 +1314,8 @@ namespace FintrakBanking.Repositories.Credit
             //var newLineRecord = model.LoanApplicationDetail.FirstOrDefault();
             var headerRecords = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationReferenceNumber);
             var headerrecord = headerRecords.FirstOrDefault();
+            if (headerrecord == null) return false;
+
             var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
             var lineRecord = lineRecords.FirstOrDefault();
             var productBehaviour = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(x => x.OPERATIONID == headerrecord.OPERATIONID && x.PRODUCTCLASSID == headerrecord.PRODUCTCLASSID && x.ISSKIPPROCESSENABLED == true).FirstOrDefault();
@@ -4513,13 +4515,15 @@ namespace FintrakBanking.Repositories.Credit
 
             return productClassFlow.Union(productFlow).Union(productTypeFlow);
         } 
-
+         
         public IEnumerable<LoanApplicationViewModel> GetFacilityByApplicationId(int loanApplicationId)
         {
             return (context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x=> new LoanApplicationViewModel {
                 productId = x.PROPOSEDPRODUCTID,
                 loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                 productName = context.TBL_PRODUCT.Where(o=>o.PRODUCTID==x.PROPOSEDPRODUCTID).Select(o=>o.PRODUCTNAME).FirstOrDefault(),
+                facilityAmount = x.APPROVEDAMOUNT,
+                loanApplicationId = x.LOANAPPLICATIONID,
             })).ToList();
         }
 

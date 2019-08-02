@@ -190,6 +190,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string customerType { get; set; }
         public string isProjectRelated { get; set; }
+        public decimal facilityAmount { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {

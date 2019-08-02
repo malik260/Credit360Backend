@@ -115,6 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                             docSubmissionOperationId = dr.DOCSUBMISSIONOPERATIONID,
                              approvalDate = dr.APPROVALDATE,
                              collateralCode = cc.COLLATERALCODE,
+                             collateralCustomerId = cc.COLLATERALCUSTOMERID,
                              operationId = (int)OperationsEnum.SecurityRelease
                          };
 
