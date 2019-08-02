@@ -108,7 +108,7 @@ namespace FintrakBanking.Repositories.Risk
                 {
                    
 
-                   items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+                   items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.RACCATEGORYID==productRacCategory.racCategoryId && x.ISACTIVE == true && x.DELETED == false)
                         .Select(x => new ProductRacItem
                         {
                             id = x.RACDEFINITIONID,
