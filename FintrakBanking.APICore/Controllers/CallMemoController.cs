@@ -209,6 +209,27 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-customer-approved-call-memo/{customerId}/customerId")]
+        public HttpResponseMessage GetCustomerApprovedCallMemo(int customerId)
+        {
+            try
+            {
+                var response = repo.GetCustomerApprovedCallMemo(token.GetStaffId, customerId);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-call-memo-waiting-for-approval")]
         public HttpResponseMessage GetCallMemoWaitingForApproval()
         {

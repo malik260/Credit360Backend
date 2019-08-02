@@ -15,7 +15,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public decimal collateralValue { get; set; }
 
-        public int loanApplicationId { get;set;}
+        public int? loanApplicationId { get;set;}
 
         public int collateralCustomerId { get; set; }
 

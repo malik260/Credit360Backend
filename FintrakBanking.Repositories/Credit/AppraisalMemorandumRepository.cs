@@ -1213,6 +1213,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             lgr.DATEACTEDON = DateTime.Now;
+            ValidateAllFromReceiverLevels(model.createdBy, operationId);
             context.SaveChanges();
             ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
@@ -1315,7 +1316,8 @@ namespace FintrakBanking.Repositories.Credit
                 (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.CorporateDrawdownRequest,(int)OperationsEnum.IndividualDrawdownRequest,
                 (int)OperationsEnum.CreditCardDrawdownRequest,(int)OperationsEnum.BondsAndGuarantees,
                     (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
-                ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval};
+                ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval, (int)OperationsEnum.SecurityRelease,
+                (int)OperationsEnum.AtcReleaseApproval, (int)OperationsEnum.AtcLodgementApproval, (int)OperationsEnum.OriginalDocumentApproval};
             
             var allstaff = this.GetAllStaffNames();
 

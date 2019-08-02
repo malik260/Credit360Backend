@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (t.dynamics != null)
                     {
-                        result.Add(new DropDownSelect { id = (int)t.position, typeId = (int)t.loanApplicationDetailId, name = t.dynamics });
+                        result.Add(new DropDownSelect { typeId = (int)t.loanApplicationDetailId, name = t.dynamics });
                     }
                 }
             }
@@ -542,7 +542,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetTransactionsDynamicsMarkup()
         {
-            var transactions = GetTransactionsDynamics(); // new
+            var transactions = GetTransactionsDynamics().GroupBy(t => t.typeId); // new
 
             var result = String.Empty;
             var n = 0;
@@ -553,15 +553,21 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>TRANSACTIONS DYNAMICS</b></th>
                     </tr>
                  ";
-            foreach (var e in transactions)
+            foreach (var group in transactions)
             {
                 n++;
-                result = result + $@"
+                var o = 0;
+                foreach (var t in group)
+                {
+                    o++;
+                    result = result + $@"
                         <tr>
-                            <td>{n}</td>
-                            <td>{e.name}</td>
+                            <td>{o}</td>
+                            <td>{t.name}</td>
                         </tr>
                 ";
+                }
+                
             }
             result = result + $"</table>";
             return result;
