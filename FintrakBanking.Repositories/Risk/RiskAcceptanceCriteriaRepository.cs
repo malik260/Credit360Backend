@@ -40,110 +40,64 @@ namespace FintrakBanking.Repositories.Risk
         {
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
-            List<RacCategoryViewModel> productRacCategories = new List<RacCategoryViewModel>();
-            ProductRacCategory racCategory = new ProductRacCategory();
-            List<ProductRacItem> items = new List<ProductRacItem>();
 
             var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
 
-            if (racCategoryTypeId != 0 && racCategoryTypeId != null)
+            var productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID));
+
+            /*
+            value: '',
+            status: 2,
+            */
+
+            foreach (var productRacCategory in productRacCategories)
             {
-                productRacCategories = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYTYPEID == racCategoryTypeId && categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
-                {
-                    racCategoryId = x.RACCATEGORYID,
-                    categoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
+                ProductRacCategory racCategory = new ProductRacCategory();
 
-                }).ToList();
-
-                foreach (var productRacCategory in productRacCategories)
-                {
-
-                     items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.RACCATEGORYTYPEID== racCategoryTypeId && x.ISACTIVE == true && x.DELETED == false)
-                        .Select(x => new ProductRacItem
-                        {
-                            id = x.RACDEFINITIONID,
-                            categoryId = x.RACCATEGORYID,
+                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+                    .Select(x => new ProductRacItem
+                    {
+                        id = x.RACDEFINITIONID,
+                        categoryId = x.RACCATEGORYID,
                         //id = x.TBL_RAC_ITEM.RACITEMID,
                         criteria = x.TBL_RAC_ITEM.CRITERIA,
-                            required = x.TBL_RAC_ITEM.DESCRIPTION,
-                            typeId = x.RACINPUTTYPEID,
-                            type = context.TBL_RAC_INPUT_TYPE.FirstOrDefault(t => t.RACINPUTTYPEID == x.RACINPUTTYPEID).INPUTTAG,
-                            optionId = x.RACOPTIONID,
-                            fileUpload = x.REQUIREUPLOAD,
-                            hasException = x.ISREQUIRED == false,
+                        required = x.TBL_RAC_ITEM.DESCRIPTION,
+                        typeId = x.RACINPUTTYPEID,
+                        type = context.TBL_RAC_INPUT_TYPE.FirstOrDefault(t => t.RACINPUTTYPEID == x.RACINPUTTYPEID).INPUTTAG,
+                        optionId = x.RACOPTIONID,
+                        fileUpload = x.REQUIREUPLOAD,
+                        hasException = x.ISREQUIRED == false,
+                        //options = x.RACOPTIONID == null ? null 
+                        //                                : context.TBL_RAC_OPTION_ITEM
+                        //                                            .Where(o => o.RACOPTIONID == x.RACOPTIONID)
+                        //                                            .Select(o => new ProductRacOption
+                        //                                            {
+                        //                                                key = o.KEY,
+                        //                                                label = o.LABEL
+                        //                                            })
+                        //                                            //.ToList()
+                    })
+                    .ToList();
 
-                        })
-                        .ToList();
 
-
-                    foreach (var item in items)
-                    {
-                        item.options = item.optionId == null ? null
-                                                            : context.TBL_RAC_OPTION_ITEM
-                                                                        .Where(o => o.RACOPTIONID == item.optionId)
-                                                                        .Select(o => new ProductRacOption
-                                                                        {
-                                                                            key = o.KEY,
-                                                                            label = o.LABEL
-                                                                        })
-                                                                        .ToList();
-                    }
-
-                    racCategory.rows = items.Where(x => x.categoryId == productRacCategory.racCategoryId).ToList();
-                    racCategory.name = productRacCategory.categoryName;
-                    productCategories.Add(racCategory);
-                }
-            }
-            else
-            {
-                productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
+                foreach (var item in items)
                 {
-                    racCategoryId = x.RACCATEGORYID,
-                    categoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
-                }).ToList();
-
-                foreach (var productRacCategory in productRacCategories)
-                {
-                   
-
-                   items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.RACCATEGORYID==productRacCategory.racCategoryId && x.ISACTIVE == true && x.DELETED == false)
-                        .Select(x => new ProductRacItem
-                        {
-                            id = x.RACDEFINITIONID,
-                            categoryId = x.RACCATEGORYID,
-                        //id = x.TBL_RAC_ITEM.RACITEMID,
-                        criteria = x.TBL_RAC_ITEM.CRITERIA,
-                            required = x.TBL_RAC_ITEM.DESCRIPTION,
-                            typeId = x.RACINPUTTYPEID,
-                            type = context.TBL_RAC_INPUT_TYPE.FirstOrDefault(t => t.RACINPUTTYPEID == x.RACINPUTTYPEID).INPUTTAG,
-                            optionId = x.RACOPTIONID,
-                            fileUpload = x.REQUIREUPLOAD,
-                            hasException = x.ISREQUIRED == false,
-
-                        })
-                        .ToList();
-
-
-                    foreach (var item in items)
-                    {
-                        item.options = item.optionId == null ? null
-                                                            : context.TBL_RAC_OPTION_ITEM
-                                                                        .Where(o => o.RACOPTIONID == item.optionId)
-                                                                        .Select(o => new ProductRacOption
-                                                                        {
-                                                                            key = o.KEY,
-                                                                            label = o.LABEL
-                                                                        })
-                                                                        .ToList();
-                    }
-
-                    racCategory.rows = items.Where(x => x.categoryId == productRacCategory.racCategoryId).ToList();
-                    racCategory.name = productRacCategory.categoryName;
-                    productCategories.Add(racCategory);
+                    item.options = item.optionId == null ? null
+                                                        : context.TBL_RAC_OPTION_ITEM
+                                                                    .Where(o => o.RACOPTIONID == item.optionId)
+                                                                    .Select(o => new ProductRacOption
+                                                                    {
+                                                                        key = o.KEY,
+                                                                        label = o.LABEL
+                                                                    })
+                                                                    .ToList();
                 }
-           
+
+                racCategory.rows = items.Where(x => x.categoryId == productRacCategory.RACCATEGORYID).ToList();
+                racCategory.name = productRacCategory.CATEGORYNAME;
+                productCategories.Add(racCategory);
             }
 
             rac.count = productCategories.Count();
@@ -151,6 +105,122 @@ namespace FintrakBanking.Repositories.Risk
 
             return rac;
         }
+
+        //public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId, int? racCategoryTypeId)
+        //{
+        //    RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
+        //    List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
+        //    List<RacCategoryViewModel> productRacCategories = new List<RacCategoryViewModel>();
+        //    ProductRacCategory racCategory = new ProductRacCategory();
+        //    List<ProductRacItem> items = new List<ProductRacItem>();
+
+        //    var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+        //        .Select(x => x.RACCATEGORYID)
+        //        .ToList();
+
+        //    if (racCategoryTypeId != 0 && racCategoryTypeId != null)
+        //    {
+        //        productRacCategories = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYTYPEID == racCategoryTypeId && categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
+        //        {
+        //            racCategoryId = x.RACCATEGORYID,
+        //            categoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
+
+        //        }).ToList();
+
+        //        foreach (var productRacCategory in productRacCategories)
+        //        {
+
+        //             items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.RACCATEGORYTYPEID== racCategoryTypeId && x.ISACTIVE == true && x.DELETED == false)
+        //                .Select(x => new ProductRacItem
+        //                {
+        //                    id = x.RACDEFINITIONID,
+        //                    categoryId = x.RACCATEGORYID,
+        //                //id = x.TBL_RAC_ITEM.RACITEMID,
+        //                criteria = x.TBL_RAC_ITEM.CRITERIA,
+        //                    required = x.TBL_RAC_ITEM.DESCRIPTION,
+        //                    typeId = x.RACINPUTTYPEID,
+        //                    type = context.TBL_RAC_INPUT_TYPE.FirstOrDefault(t => t.RACINPUTTYPEID == x.RACINPUTTYPEID).INPUTTAG,
+        //                    optionId = x.RACOPTIONID,
+        //                    fileUpload = x.REQUIREUPLOAD,
+        //                    hasException = x.ISREQUIRED == false,
+
+        //                })
+        //                .ToList();
+
+
+        //            foreach (var item in items)
+        //            {
+        //                item.options = item.optionId == null ? null
+        //                                                    : context.TBL_RAC_OPTION_ITEM
+        //                                                                .Where(o => o.RACOPTIONID == item.optionId)
+        //                                                                .Select(o => new ProductRacOption
+        //                                                                {
+        //                                                                    key = o.KEY,
+        //                                                                    label = o.LABEL
+        //                                                                })
+        //                                                                .ToList();
+        //            }
+
+        //            racCategory.rows = items.Where(x => x.categoryId == productRacCategory.racCategoryId).ToList();
+        //            racCategory.name = productRacCategory.categoryName;
+        //            productCategories.Add(racCategory);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
+        //        {
+        //            racCategoryId = x.RACCATEGORYID,
+        //            categoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
+        //        }).ToList();
+
+        //        foreach (var productRacCategory in productRacCategories)
+        //        {
+                   
+
+        //           items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.RACCATEGORYID== productRacCategory.racCategoryId && x.ISACTIVE == true && x.DELETED == false)
+        //                .Select(x => new ProductRacItem
+        //                {
+        //                    id = x.RACDEFINITIONID,
+        //                    categoryId = x.RACCATEGORYID,
+        //                //id = x.TBL_RAC_ITEM.RACITEMID,
+        //                criteria = x.TBL_RAC_ITEM.CRITERIA,
+        //                    required = x.TBL_RAC_ITEM.DESCRIPTION,
+        //                    typeId = x.RACINPUTTYPEID,
+        //                    type = context.TBL_RAC_INPUT_TYPE.FirstOrDefault(t => t.RACINPUTTYPEID == x.RACINPUTTYPEID).INPUTTAG,
+        //                    optionId = x.RACOPTIONID,
+        //                    fileUpload = x.REQUIREUPLOAD,
+        //                    hasException = x.ISREQUIRED == false,
+
+        //                })
+        //                .ToList();
+
+
+        //            foreach (var item in items)
+        //            {
+        //                item.options = item.optionId == null ? null
+        //                                                    : context.TBL_RAC_OPTION_ITEM
+        //                                                                .Where(o => o.RACOPTIONID == item.optionId)
+        //                                                                .Select(o => new ProductRacOption
+        //                                                                {
+        //                                                                    key = o.KEY,
+        //                                                                    label = o.LABEL
+        //                                                                })
+        //                                                                .ToList();
+        //            }
+
+        //            racCategory.rows = items.Where(x => x.categoryId == productRacCategory.racCategoryId).ToList();
+        //            racCategory.name = productRacCategory.categoryName;
+        //            productCategories.Add(racCategory);
+        //        }
+           
+        //    }
+
+        //    rac.count = productCategories.Count();
+        //    rac.categories = productCategories;
+
+        //    return rac;
+        //}
 
 
 
