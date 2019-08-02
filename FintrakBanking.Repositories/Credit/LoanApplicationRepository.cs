@@ -1142,7 +1142,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                operationId = (int)OperationsEnum.CreditAppraisal;
+                operationId = appl.OPERATIONID; // (int)OperationsEnum.CreditAppraisal;
                 workflow.OperationId = operationId;
                 appl.OPERATIONID = operationId;
                 receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
@@ -1687,7 +1687,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
                 FLOWCHANGEID = loan.flowchangeId,
-                OPERATIONID = (loan.exclusiveOperationId == null || loan.exclusiveOperationId == 0) ? (int)OperationsEnum.CreditAppraisal : (int)loan.exclusiveOperationId,
+                OPERATIONID = ((loan.exclusiveOperationId == null) || (loan.exclusiveOperationId == 0)) ? (int)OperationsEnum.CreditAppraisal : (int)loan.exclusiveOperationId,
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
                 COLLATERALDETAIL = loan.collateralDetail,
                 ISADHOCAPPLICATION = loan.isadhocapplication,
