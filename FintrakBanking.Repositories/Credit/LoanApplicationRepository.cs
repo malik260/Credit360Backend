@@ -4514,5 +4514,15 @@ namespace FintrakBanking.Repositories.Credit
             return productClassFlow.Union(productFlow).Union(productTypeFlow);
         } 
 
+        public IEnumerable<LoanApplicationViewModel> GetFacilityByApplicationId(int loanApplicationId)
+        {
+            return (context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x=> new LoanApplicationViewModel {
+                productId = x.PROPOSEDPRODUCTID,
+                loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                productName = context.TBL_PRODUCT.Where(o=>o.PRODUCTID==x.PROPOSEDPRODUCTID).Select(o=>o.PRODUCTNAME).FirstOrDefault(),
+            })).ToList();
+        }
+
+
     }
 }

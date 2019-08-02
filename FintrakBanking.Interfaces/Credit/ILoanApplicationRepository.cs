@@ -143,5 +143,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlow();
         IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlowByProductClassId(short productClassId, short productId, short productTypeId);
+
+        IEnumerable<LoanApplicationViewModel> GetFacilityByApplicationId(int loanApplicationId);
     }
 }

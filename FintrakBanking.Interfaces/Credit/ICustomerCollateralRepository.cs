@@ -127,7 +127,7 @@ namespace FintrakBanking.Interfaces.Credit
         TDAccountRecordViewModel GetFixedDepositAccountDetail(string AccpuntNumber);
         IEnumerable<CollateralViewModel> GetCustomerCollateralReport(string searchParam, int companyId);
 
-        bool ProposeCollateralForUsage(int collateralCustomerId);
+        string ProposeCollateralForUsage(CollateralViewModel model);
         bool RejectProposedCollateralForUsage(int collateralCustomerId);
 
         IEnumerable<CollateralUsageStatus> GetCollateralUsageStatus();
@@ -141,5 +141,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<InsurancePolicies> GetCollateralInsurancePoliciesWaitingForApproval(int staffId);
 
        int GoForInsurancePolicyApproval(ApprovalViewModel model);
+        IEnumerable< CollateralCoverageViewModel> GetCollateralCoverage(int collateralSubTypeId);
+bool AddCollateralCoverage(CollateralCoverageViewModel model);
+bool DeleteCollateralCoverage(int collateralCoverageId, int createdById);
     }
 }

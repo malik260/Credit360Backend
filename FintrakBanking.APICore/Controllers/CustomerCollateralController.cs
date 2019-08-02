@@ -1859,20 +1859,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
-        [Route("propose-collateral/{collateralCustomerId}/collateralCustomerId")]
-        public HttpResponseMessage ProposeCollateral(int collateralCustomerId)
+        [Route("propose-collateral")]
+        public HttpResponseMessage ProposeCollateral(CollateralViewModel model)
         {
             try
             {
-                var response = repo.ProposeCollateralForUsage(collateralCustomerId);
+                model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.companyId = token.GetCompanyId;
+                var response = repo.ProposeCollateralForUsage(model);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex });
+            }
+            catch (Exception ex)
+            {   
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex });
             }
         }
 
@@ -1954,6 +1962,52 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
 
             }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-coverage/{collateralSubTypeId}/collateralSubTypeId")]
+        public HttpResponseMessage GetCollateralCoverage(int collateralSubTypeId)
+        {
+            try
+            {
+                var response = repo.GetCollateralCoverage(collateralSubTypeId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost, Route("collateral-coverage")]
+        public HttpResponseMessage AddCollateralCoverage([FromBody] CollateralCoverageViewModel entity)
+        {
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var response = repo.AddCollateralCoverage(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpDelete, Route("delete-collateral-coverage/{collateralCoverageId}/collateralCoverageId")]
+        public HttpResponseMessage DeleteCollateralCoverage(int collateralCoverageId)
+        {
+                var response = repo.DeleteCollateralCoverage(collateralCoverageId, token.GetStaffId);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
     }
