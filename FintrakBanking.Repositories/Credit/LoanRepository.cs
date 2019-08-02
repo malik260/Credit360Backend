@@ -6550,18 +6550,18 @@ namespace FintrakBanking.Repositories.Credit
             return count == 0;
         }
 
-        public bool AddLoanBookingRequest(int applicationStatusId, LoanBookingRequestViewModel model)
+        public bool AddLoanBookingRequest(int applicationStatusId, List<LoanBookingRequestViewModel> models)
         {
             using (var trans = context.Database.BeginTransaction())
             {
-                //foreach (var model in models)
-              //  {
+                foreach (var model in models)
+                {
                     if (!AddLoanBookingRequests(applicationStatusId, model))
                     {
                         trans.Rollback();
                         return false;
                     }
-               // }
+                }
                 trans.Commit();
                 return true;
             }
