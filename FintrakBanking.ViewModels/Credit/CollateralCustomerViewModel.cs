@@ -1000,6 +1000,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralCoverageViewModel : GeneralEntity
     {
+        public bool coverAll { get; set; }
         public int currencyId { get; set; }
         public int coverage { get; set; }
         public int collateralSubTypeId { get; set; }
@@ -1011,6 +1012,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public decimal facilityAmount { get; set; }
         public int? loanApplicationId { get; set; }
+        public int? loanApplicationDetailId { get; set; }
     }
     public class CollateralUsageStatus
     {
