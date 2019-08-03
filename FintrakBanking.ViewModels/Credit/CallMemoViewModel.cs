@@ -20,6 +20,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal principalAmount { get; set; }
         public string loanReferenceNo { get; set; }
         public int operationId { get; set; }
+        public string email { get; set; } //
+        public string customerCode { get; set; }
+
     }
     public class CallMemoViewModel : GeneralEntity
     {
@@ -52,10 +55,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string Recommendation { get; set; }
         public int OperationId { get; set; }
         public int ApprovalStatusId { get; set; }
+        public string ApprovalStatus { get; set; }
         public int? CustomerId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string SearchName { get; set; }
+        public DateTime CallTime { get; set; }
+        public DateTime NextCallTime { get; set; }
     }
     public class CallLimitViewModel : GeneralEntity
     {

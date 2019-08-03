@@ -1181,53 +1181,34 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [Route("loan-request/approval/{loanBookingRequestId}")]
         public HttpResponseMessage ApproveInitiatedLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
         {
-            try
-            {
-                model.applicationUrl = HttpContext.Current.Request.Path;
-                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                model.createdBy = token.GetStaffId;
-                model.companyId = token.GetCompanyId;
-                model.BranchId = (short)token.GetBranchId;
-                model.staffId = token.GetStaffId;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            model.BranchId = (short)token.GetBranchId;
+            model.staffId = token.GetStaffId;
 
-                var responseId = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
+            var responseId = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
 
-                if (responseId == 1)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-                }
-                else if (responseId == 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = "Loan request has been successfully approved" });
-                }
-                else if (responseId == 2)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = "Loan request was successfully disapproved" });
-                }
-                else
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
-                }
-            }
-            catch (ConditionNotMetException ce)
+            if (responseId == 1)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
             }
-            catch (BadLogicException be)
+            else if (responseId == 0)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = true, message = "Loan request has been successfully approved" });
             }
-            catch (APIErrorException be)
+            else if (responseId == 2)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                        new { success = true, message = "Loan request was successfully disapproved" });
             }
-            catch (Exception)
+            else
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
             }
         }
 
@@ -2071,15 +2052,15 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application/request-booking/{applicationId}")]
-        public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] LoanBookingRequestViewModel models)
+        public HttpResponseMessage AddLoanBookingRequest(int applicationId, [FromBody] List<LoanBookingRequestViewModel> models)
         {
-           // foreach(var model in models)
-            //{
-                models.userBranchId = (short)token.GetBranchId;
-                models.applicationUrl = HttpContext.Current.Request.Path;
-                models.createdBy = token.GetStaffId;
-                models.companyId = token.GetCompanyId;
-            //}
+            foreach (var model in models)
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+            }
             
 
             var data = repo.AddLoanBookingRequest(applicationId, models);

@@ -49,19 +49,24 @@ namespace FintrakBanking.Repositories.Credit
                     var memoLimit = (from b in _context.TBL_CALL_MEMO_LIMIT where b.JOBTITLEID == JobRole && b.CALLLIMITTYPEID == 1 select b).FirstOrDefault();
                     if (memoLimit != null)
                     {
-                        allFilteredLoan = (from a in _context.TBL_LOAN_APPLICATION
-                                           join b in _context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
-                                           where a.APPLICATIONAMOUNT <= memoLimit.MAXIMUMAMOUNT && a.APPLICATIONAMOUNT >= memoLimit.MINIMUMAMOUNT && (a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
-                                           b.CUSTOMERCODE.ToLower().Contains(searchQuery) || b.FIRSTNAME.ToLower().StartsWith(searchQuery) || b.LASTNAME.StartsWith(searchQuery))
+                        allFilteredLoan = (from a in _context.TBL_CUSTOMER
+                                           //join b in _context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                           //where a.APPLICATIONAMOUNT <= memoLimit.MAXIMUMAMOUNT && a.APPLICATIONAMOUNT >= memoLimit.MINIMUMAMOUNT && (a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
+                                           where a.CUSTOMERCODE.ToLower().Contains(searchQuery) || a.FIRSTNAME.ToLower().StartsWith(searchQuery) || a.LASTNAME.StartsWith(searchQuery)
                                            select new CallMemoLoanSearchViewModel
                                            {
-                                               loanApplicationId = a.LOANAPPLICATIONID,
+                                               //loanApplicationId = a.LOANAPPLICATIONID,
                                                customerId = a.CUSTOMERID,
-                                               customerName = b.CUSTOMERCODE + " - " + b.FIRSTNAME + " " + b.LASTNAME,
-                                               loanReferenceNo = a.APPLICATIONREFERENCENUMBER,
-                                               principalAmount = a.APPLICATIONAMOUNT,
+                                               customerName = a.CUSTOMERCODE + " - " + a.FIRSTNAME + " " + a.LASTNAME,
+                                               //loanReferenceNo = a.APPLICATIONREFERENCENUMBER,
+                                               //principalAmount = a.APPLICATIONAMOUNT,
+                                               customerCode = a.CUSTOMERCODE,
+                                               email = a.EMAILADDRESS,
+                                               //callDate = b.da
+                                               //nextCallDate = b.ne
                                                operationId = (int)OperationsEnum.CallMemo
                                            }).Take(10).AsQueryable();
+
                     }
                     else
                     {
@@ -231,7 +236,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CallMemoViewModel> GetCustomerCallMemo(int staffId, int customerId)
         {
             var data = (from a in _context.TBL_CALL_MEMO
-                        join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where a.STAFFID == staffId && a.CUSTOMERID == customerId && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                         orderby a.CALLMEMOID
@@ -239,12 +244,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             CallMemoId = a.CALLMEMOID,
                             LoanApplicationId = a.LOANAPPLICATIONID,
-                            LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
+                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             StaffId = a.STAFFID,
                             CallMemoTypeId = a.CALLLIMITTYPEID,
                             CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = b.CUSTOMERID,
+                            CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
@@ -254,7 +259,40 @@ namespace FintrakBanking.Repositories.Credit
                             Recommendation = a.RECOMMENDATION,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATECREATED,
+                            ApprovalStatus = _context.TBL_APPROVAL_STATUS.Where(O => O.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(O => O.APPROVALSTATUSNAME).FirstOrDefault(),
                             OperationId = (int) OperationsEnum.CallMemo
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<CallMemoViewModel> GetCustomerApprovedCallMemo(int staffId, int customerId)
+        {
+            var data = (from a in _context.TBL_CALL_MEMO
+                            //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                        where a.STAFFID == staffId && a.CUSTOMERID == customerId && a.APPROVALSTATUSID == (int) ApprovalStatusEnum.Approved
+                        orderby a.CALLMEMOID
+                        select new CallMemoViewModel
+                        {
+                            CallMemoId = a.CALLMEMOID,
+                            LoanApplicationId = a.LOANAPPLICATIONID,
+                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
+                            StaffId = a.STAFFID,
+                            CallMemoTypeId = a.CALLLIMITTYPEID,
+                            CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
+                            CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
+                            CustomerId = c.CUSTOMERID,
+                            MemoDate = a.MEMODATE,
+                            NextCallDate = a.NEXTCALLDATE,
+                            Purpose = a.PURPOSE,
+                            Discusion = a.DISCUSION,
+                            Summary = a.SUMMARY,
+                            Action = a.ACTION,
+                            Recommendation = a.RECOMMENDATION,
+                            createdBy = a.CREATEDBY,
+                            dateTimeCreated = a.DATECREATED,
+                            //ApprovalStatus = ,
+                            OperationId = (int)OperationsEnum.CallMemo
                         }).ToList();
             return data;
         }
@@ -262,7 +300,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CallMemoViewModel> SearchCallMemo(int staffId, CallMemoViewModel model)
         {
             var data = (from a in _context.TBL_CALL_MEMO
-                        join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where (c.FIRSTNAME + " " + c.LASTNAME).ToLower().Contains(model.CustomerName.ToLower())
                         && a.NEXTCALLDATE >= model.StartDate && a.NEXTCALLDATE <= model.EndDate
@@ -271,12 +309,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             CallMemoId = a.CALLMEMOID,
                             LoanApplicationId = a.LOANAPPLICATIONID,
-                            LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
+                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             StaffId = a.STAFFID,
                             CallMemoTypeId = a.CALLLIMITTYPEID,
                             CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = b.CUSTOMERID,
+                            CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
@@ -294,7 +332,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CallMemoViewModel> GetAllCallMemo(int staffId)
         {
             var data = (from a in _context.TBL_CALL_MEMO
-                        join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where a.STAFFID == staffId
                         orderby a.CALLMEMOID
@@ -302,12 +340,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             CallMemoId = a.CALLMEMOID,
                             LoanApplicationId = a.LOANAPPLICATIONID,
-                            LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
+                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             StaffId = a.STAFFID,
                             CallMemoTypeId = a.CALLLIMITTYPEID,
                             CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = b.CUSTOMERID,
+                            CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
@@ -333,7 +371,10 @@ namespace FintrakBanking.Repositories.Credit
                 PURPOSE = model.Purpose,
                 CALLLIMITTYPEID = model.CallMemoTypeId,
                 DISCUSION = model.Discusion,
-                SUMMARY = model.Summary,
+                SUMMARY = "",
+                //SUMMARY = model.Summary,
+                CALLTIME = model.CallTime,
+                NEXTCALLTIME = model.NextCallTime,
                 ACTION = model.Action,
                 RECOMMENDATION = model.Recommendation,
                 CREATEDBY = model.createdBy,
@@ -369,7 +410,7 @@ namespace FintrakBanking.Repositories.Credit
         public CallMemoViewModel GetCallMemoById(int callMemoID)
         {
             var data = (from a in _context.TBL_CALL_MEMO
-                        join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where a.CALLMEMOID == callMemoID && a.APPROVALSTATUSID == (int) ApprovalStatusEnum.Pending
                         orderby a.CALLMEMOID
@@ -377,12 +418,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             CallMemoId = a.CALLMEMOID,
                             LoanApplicationId = a.LOANAPPLICATIONID,
-                            LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
+                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             StaffId = a.STAFFID,
                             CallMemoTypeId = a.CALLLIMITTYPEID,
                             CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = b.CUSTOMERID,
+                            CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,
@@ -465,13 +506,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SubmitApproval(CallMemoViewModel model)
         {
-            bool responce = false;
+            bool response = false;
 
             using (var transaction = _context.Database.BeginTransaction())
             {
                 _workflow.StaffId = model.createdBy;
                 _workflow.CompanyId = model.companyId;
-                _workflow.StatusId = model.ApprovalStatusId!=1 ? (int) ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
+                _workflow.StatusId = model.ApprovalStatusId != 1 ? (int) ApprovalStatusEnum.Disapproved : (int) ApprovalStatusEnum.Processing;
                 _workflow.TargetId = model.CallMemoId;
                 //_workflow.Comment = model.comment;
                 _workflow.OperationId = (int) OperationsEnum.CallMemo;
@@ -491,9 +532,9 @@ namespace FintrakBanking.Repositories.Credit
                         }
                     }
 
-                    responce = _context.SaveChanges() > 0;
+                    response = _context.SaveChanges() > 0;
                     transaction.Commit();
-                    return responce;
+                    return response;
                 }
                 catch (Exception ex)
                 {
@@ -508,7 +549,7 @@ namespace FintrakBanking.Repositories.Credit
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int) OperationsEnum.CallMemo).ToList();
 
             var data = (from a in _context.TBL_CALL_MEMO
-                        join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         join atrail in _context.TBL_APPROVAL_TRAIL on a.CALLMEMOID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing && atrail.RESPONSESTAFFID == null
@@ -518,12 +559,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             CallMemoId = a.CALLMEMOID,
                             LoanApplicationId = a.LOANAPPLICATIONID,
-                            LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
+                            //LoanReferenceNo = b.APPLICATIONREFERENCENUMBER,
                             StaffId = a.STAFFID,
                             CallMemoTypeId = a.CALLLIMITTYPEID,
                             CallMemoType = a.TBL_CALL_MEMO_TYPE.NAME,
                             CustomerName = c.FIRSTNAME + " " + c.LASTNAME,
-                            CustomerId = b.CUSTOMERID,
+                            CustomerId = c.CUSTOMERID,
                             MemoDate = a.MEMODATE,
                             NextCallDate = a.NEXTCALLDATE,
                             Purpose = a.PURPOSE,

@@ -190,6 +190,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string customerType { get; set; }
         public string isProjectRelated { get; set; }
+        public decimal facilityAmount { get; set; }
 
         private string SlaStatus(float sla, int? elapse)
         {
@@ -904,7 +905,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevisedProcessFlowModel : GeneralEntity
     {
-        public string label;
+        public string label { get; set; }
+        public short? productTypeId { get; set; }
 
         public short flowchangeId { get; set; }
         public string placeHolder { get; set; }

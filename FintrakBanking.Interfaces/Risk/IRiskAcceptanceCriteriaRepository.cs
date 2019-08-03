@@ -124,6 +124,9 @@ namespace FintrakBanking.Interfaces.Risk
         List<RacCategoryViewModel> GetRacCategoryTypes(int productId);
 
         //IEnumerable<RacDefinitionViewModel> GetRacForLoanApplication(int loanApplicationId);
+        RiskAcceptanceCriteriaViewModel GetSavedRiskAcceptanceCriteria(int productId, int? targetId);
+
+        bool RacCategoryTypeExist(int productid, int racCategoryTypeId);
 
     }
 }
