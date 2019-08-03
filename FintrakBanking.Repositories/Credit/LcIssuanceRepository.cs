@@ -302,10 +302,10 @@ namespace FintrakBanking.Repositories.credit
             validateAmounts(model);
             
             
-            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            //var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             var entity = new TBL_LC_ISSUANCE
             {
-                LCREFERENCENUMBER = referenceNumber,
+                LCREFERENCENUMBER = model.lcReferenceNumber,
                 BENEFICIARYNAME = model.beneficiaryName,
                 TOTALAPPROVEDAMOUNT = model.totalApprovedAmount,
                 TOTALAPPROVEDAMOUNTCURRENCYID = model.totalApprovedAmountCurrencyId,
@@ -355,11 +355,11 @@ namespace FintrakBanking.Repositories.credit
             // Audit Section end ------------------------
 
             context.SaveChanges();
-            var createdlcRecord = context.TBL_LC_ISSUANCE.FirstOrDefault(lc => lc.LCREFERENCENUMBER == referenceNumber);
+            var createdlcRecord = context.TBL_LC_ISSUANCE.FirstOrDefault(lc => lc.LCREFERENCENUMBER == model.lcReferenceNumber);
             if(createdlcRecord != null)
             {
                 model.lcIssuanceId = createdlcRecord.LCISSUANCEID;
-                model.lcReferenceNumber = createdlcRecord.LCREFERENCENUMBER;
+                //model.lcReferenceNumber = createdlcRecord.LCREFERENCENUMBER;
             }
            
             return model;
