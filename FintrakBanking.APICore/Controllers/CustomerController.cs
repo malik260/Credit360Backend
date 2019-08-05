@@ -2365,7 +2365,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.customerSensitivityLevelId = 1;
               
-                var data = repo.UpdatePropectToCustomer(customerId, entity);
+                var data =  repo.UpdatePropectToCustomer(customerId, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

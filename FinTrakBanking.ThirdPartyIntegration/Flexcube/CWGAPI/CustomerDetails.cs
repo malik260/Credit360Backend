@@ -111,7 +111,7 @@
                         objData.firstName = objData.companyName == null ? objData.company_name  : objData.companyName;
                         //objData.companyName = objData.company_name;
                     }
-
+                   
                     customers.Add(objData);
                 }
                 responseMessage = await response.Content.ReadAsStringAsync();
@@ -309,8 +309,8 @@
                             {
                                 productAccountNumber = d.accountNumber,
                                 productAccountName = d.accountName,
-                                productCode = d.productType,
-                                productName = d.productName,
+                                productCode = d.product,
+                                productName = d.productType == string.Empty ? "N/A" : d.productType,
                                 currency = d.currencyType,
                                 branchCode = d.branch,
                                 accountStatusName = d.accountStatus,
@@ -339,7 +339,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}",
+                        APIURL = $"api/Customer/GetCustomerAccountsBalance/{customerCode}",
                         LOGTYPEID = 5,
                         REFERENCENUMBER = customerCode,
                         REQUESTDATETIME = requestDatetime,
