@@ -61,6 +61,8 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchId = x.BRANCHID,
+                        currencyId = x.CURRENCYID,
+                        currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                        
                     }).OrderByDescending(o=>o.atcLodgmentId)
@@ -418,6 +420,7 @@ namespace FintrakBanking.Repositories.credit
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
                 BRANCHID = model.branchId,
+                CURRENCYID = model.currencyId,
                 NUMBEROFBAGS = model.numberOfBags
             };
 
@@ -467,6 +470,8 @@ namespace FintrakBanking.Repositories.credit
             //entity.CERTIFICATENUMBER = model.certificateNumber;
             entity.STATUSID = model.statusId;
             entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            entity.BRANCHID = model.branchId;
+            entity.CURRENCYID = model.currencyId;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
