@@ -471,12 +471,12 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
-        [HttpGet, Route("collateral/customer/{id}/application/{applicationId}")]
-        public HttpResponseMessage GetProposedCustomerCollateral(int id, int? applicationId)
+        [HttpGet, Route("collateral/application/{applicationId}/currencyId/{currencyId}")]
+        public HttpResponseMessage GetProposedCustomerCollateral(int? applicationId,int currencyId)
         {
             try
             {
-                var response = repo.GetProposedCustomerCollateral(id, applicationId, token.GetCompanyId);
+                var response = repo.GetProposedCustomerCollateral( applicationId, currencyId, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -1862,7 +1862,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("propose-collateral")]
-        public HttpResponseMessage ProposeCollateral(CollateralViewModel model)
+        public HttpResponseMessage ProposeCollateral(CollateralCoverageViewModel model)
         {
             try
             {
@@ -2020,6 +2020,8 @@ namespace FintrakBanking.APICore.Controllers
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
+
+       
     }
 }
 
