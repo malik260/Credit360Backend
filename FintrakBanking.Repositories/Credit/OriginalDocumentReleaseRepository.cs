@@ -103,7 +103,7 @@ namespace FintrakBanking.Repositories.Credit
                          && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
                          select new OriginalDocumentReleaseViewModel
                          {
-                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == dr.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                             approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                              customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                              //applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
                              documentReferenceNumber = oda.REFERENCENUMBER,

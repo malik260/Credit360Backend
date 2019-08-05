@@ -905,7 +905,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevisedProcessFlowModel : GeneralEntity
     {
-        public string label;
+        public string label { get; set; }
+        public short? productTypeId { get; set; }
 
         public short flowchangeId { get; set; }
         public string placeHolder { get; set; }

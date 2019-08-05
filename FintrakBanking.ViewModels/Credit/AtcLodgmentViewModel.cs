@@ -28,7 +28,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public int? numberOfBags { get; set; }
 
-        public int branchId { get; set; }
+        public int? branchId { get; set; }
 
         public int approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
@@ -43,9 +43,10 @@ namespace FintrakBanking.ViewModels.credit
         public int atcReleaseId { get; set; }
         public string comment { get; set; }
         public int operationId { get; set; }
-        public DateTime dateCreated { get; set; }
+        public DateTime? dateCreated { get; set; }
         public string atcType { get; set; }
         public int unitToRelease { get; set; }
+        public DateTime? dateApproved { get; set; }
     }
 
 
@@ -74,5 +75,6 @@ namespace FintrakBanking.ViewModels.credit
         public string customerName { get; set; }
         public int? numberOfBags { get; set; }
         public string atcType { get; set; }
+        public DateTime? dateApproved { get; set; }
     }
 }
