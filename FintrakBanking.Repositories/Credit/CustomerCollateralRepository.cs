@@ -1608,7 +1608,12 @@ namespace FintrakBanking.Repositories.Credit
 
                                }).FirstOrDefault();
 
+
+            if (collaterals == null) return new List<CollateralCoverageViewModel>();
+
+
             var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collaterals.collateralSubTypeId && o.CURRENCYID== currencyId).Select(o => o).FirstOrDefault();
+            if (data == null) throw new SecureException("Collateral Coverage has not been set");
 
             coveragePercentage = data.COVERAGE;
             decimal coverage = decimal.Divide(data.COVERAGE, 100);

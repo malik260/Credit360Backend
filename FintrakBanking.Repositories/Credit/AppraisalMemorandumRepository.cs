@@ -1360,7 +1360,7 @@ namespace FintrakBanking.Repositories.Credit
             List<int> ExclusiveOperations = new List<int>(); // (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
             List<int> levelIds = new List<int>();
 
-            ExclusiveOperations.Add(entity.operationId);
+            //ExclusiveOperations.Add(entity.operationId);
             if (appl != null)
             {
                 ExclusiveOperations.Add(appl.OPERATIONID);
