@@ -126,6 +126,9 @@ namespace FintrakBanking.Repositories.credit
                     cashBuildUpReferenceNumber = (string)x.CASHBUILDUPREFERENCETYPE,
                     cashBuildUpReferenceType = (string)x.CASHBUILDUPREFERENCENUMBER,
                     percentageToCover = x.PERCENTAGETOCOVER,
+                    lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
+                    lcToleranceValue = x.LCTOLERANCEVALUE,
+                    releaseAmount = x.RELEASEAMOUNT,
                     letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                     isDraftRequired = x.ISDRAFTREQUIRED,
                     beneficiaryAddress = x.BENEFICIARYADDRESS,
@@ -256,9 +259,12 @@ namespace FintrakBanking.Repositories.credit
                 totalApprovedAmountCurrencyId = entity.TOTALAPPROVEDAMOUNTCURRENCYID,
                 availableAmountCurrencyId = entity.AVAILABLEAMOUNTCURRENCYID,
                 cashBuildUpAvailable = entity.CASHBUILDUPAVAILABLE,
-                cashBuildUpReferenceNumber = (string)entity.CASHBUILDUPREFERENCETYPE,
-                cashBuildUpReferenceType = (string)entity.CASHBUILDUPREFERENCENUMBER,
+                cashBuildUpReferenceNumber = entity.CASHBUILDUPREFERENCETYPE,
+                cashBuildUpReferenceType = entity.CASHBUILDUPREFERENCENUMBER,
                 percentageToCover = entity.PERCENTAGETOCOVER,
+                lcTolerancePercentage = entity.LCTOLERANCEPERCENTAGE,
+                lcToleranceValue = entity.LCTOLERANCEVALUE,
+                releaseAmount = entity.RELEASEAMOUNT,
                 letterOfCreditTypeId = entity.LETTEROFCREDITTYPEID,
                 isDraftRequired = entity.ISDRAFTREQUIRED,
                 beneficiaryAddress = entity.BENEFICIARYADDRESS,
@@ -314,6 +320,9 @@ namespace FintrakBanking.Repositories.credit
                 CASHBUILDUPREFERENCETYPE = model.cashBuildUpReferenceType,
                 CASHBUILDUPREFERENCENUMBER = model.cashBuildUpReferenceNumber,
                 PERCENTAGETOCOVER = model.percentageToCover,
+                LCTOLERANCEPERCENTAGE = model.lcTolerancePercentage,
+                LCTOLERANCEVALUE = model.lcToleranceValue,
+                RELEASEAMOUNT = model.releaseAmount,
                 LETTEROFCREDITTYPEID = model.letterOfCreditTypeId,
                 ISDRAFTREQUIRED = model.isDraftRequired,
                 BENEFICIARYADDRESS = model.beneficiaryAddress,
@@ -379,6 +388,9 @@ namespace FintrakBanking.Repositories.credit
             entity.CASHBUILDUPREFERENCETYPE = model.cashBuildUpReferenceType;
             entity.CASHBUILDUPREFERENCENUMBER = model.cashBuildUpReferenceNumber;
             entity.PERCENTAGETOCOVER = model.percentageToCover;
+            entity.LCTOLERANCEPERCENTAGE = model.lcTolerancePercentage;
+            entity.LCTOLERANCEVALUE = model.lcToleranceValue;
+            entity.RELEASEAMOUNT = model.releaseAmount;
             entity.LETTEROFCREDITTYPEID = model.letterOfCreditTypeId;
             entity.ISDRAFTREQUIRED = model.isDraftRequired;
             entity.BENEFICIARYADDRESS = model.beneficiaryAddress;
@@ -463,6 +475,9 @@ namespace FintrakBanking.Repositories.credit
                     cashBuildUpReferenceNumber = (string)x.CASHBUILDUPREFERENCETYPE,
                     cashBuildUpReferenceType = (string)x.CASHBUILDUPREFERENCENUMBER,
                     percentageToCover = x.PERCENTAGETOCOVER,
+                    lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
+                    lcToleranceValue = x.LCTOLERANCEVALUE,
+                    releaseAmount = x.RELEASEAMOUNT,    
                     letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                     isDraftRequired = x.ISDRAFTREQUIRED,
                     beneficiaryAddress = x.BENEFICIARYADDRESS,

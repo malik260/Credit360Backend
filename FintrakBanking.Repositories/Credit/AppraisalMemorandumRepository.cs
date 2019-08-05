@@ -1361,7 +1361,10 @@ namespace FintrakBanking.Repositories.Credit
             List<int> levelIds = new List<int>();
 
             ExclusiveOperations.Add(entity.operationId);
-            ExclusiveOperations.Add(appl.OPERATIONID);
+            if (appl != null)
+            {
+                ExclusiveOperations.Add(appl.OPERATIONID);
+            }
 
             //var operationId = entity.operationId;
             var staffId = entity.createdBy;
