@@ -1765,32 +1765,22 @@ namespace FintrakBanking.Repositories.Credit
             //end of Audit section -------------------------------
             using (var trans = context.Database.BeginTransaction())
             {
-                try
+                var output = context.SaveChanges() != 0;
+
+                if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
                 {
-                    var output = context.SaveChanges() != 0;
 
-                    if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
-                    {
-
-                        workflow.StaffId = model.createdBy;
-                        workflow.CompanyId = model.companyId;
-                        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                        workflow.TargetId = loanConditionId;
-                        workflow.Comment = "LMS Checklist Approval";
-                        workflow.OperationId = model.checkListStatusId == (int)CheckListStatusEnum.Deferred ? (int)OperationsEnum.DefferedChecklistApproval : (int)OperationsEnum.WaivedChecklistApproval;
-                        workflow.ExternalInitialization = true;
-                        workflow.LogActivity();
-                    }
-                    trans.Commit();
-                    return output;
+                    workflow.StaffId = model.createdBy;
+                    workflow.CompanyId = model.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    workflow.TargetId = loanConditionId;
+                    workflow.Comment = "LMS Checklist Approval";
+                    workflow.OperationId = model.checkListStatusId == (int)CheckListStatusEnum.Deferred ? (int)OperationsEnum.DefferedChecklistApproval : (int)OperationsEnum.WaivedChecklistApproval;
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
                 }
-
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    return false;
-                    throw new SecureException(ex.Message);
-                }
+                trans.Commit();
+                return output;
             }
         }
 
