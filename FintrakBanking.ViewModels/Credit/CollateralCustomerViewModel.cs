@@ -1009,11 +1009,17 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralCoverageId { get; set; }
         public int collateralId { get; set; }
         public int collateralTypeId { get; set; }
-        public int collateralValue { get; set; }
+        public decimal collateralValue { get; set; }
         public int customerId { get; set; }
         public decimal facilityAmount { get; set; }
         public int? loanApplicationId { get; set; }
         public int? loanApplicationDetailId { get; set; }
+        public decimal availableCollateralValue { get; set; }
+        public decimal expectedCollateralCoverage { get; set; }
+        public decimal actualCollateralCoverage { get; set; }
+        public string ReferenceNumber { get; set; }
+        public string productName { get; set; }
+        public string collateralCode { get; set; }
     }
     public class CollateralUsageStatus
     {

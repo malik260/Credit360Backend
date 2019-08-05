@@ -30,6 +30,9 @@ namespace FintrakBanking.ViewModels.credit
 
         public int? branchId { get; set; }
 
+        public int? currencyId { get; set; }
+        public string currency { get; set; }
+
         public int approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
         public string customerName { get; set; }
