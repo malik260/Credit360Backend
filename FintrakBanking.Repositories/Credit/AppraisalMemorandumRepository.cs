@@ -1914,6 +1914,10 @@ namespace FintrakBanking.Repositories.Credit
                 relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
                 customerId = x.a.CUSTOMERID,
                 branchId = x.a.BRANCHID,
+                currencyId = context.TBL_LOAN_APPLICATION_DETAIL
+                                            .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID)
+                                            .Select(s => s.CURRENCYID)
+                                            .FirstOrDefault(),
                 productClassId = x.a.PRODUCTCLASSID,
                 productClassName = x.a.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                 customerGroupId = x.a.CUSTOMERGROUPID,
