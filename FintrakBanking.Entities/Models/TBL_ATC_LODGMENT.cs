@@ -49,8 +49,10 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
-        public int BRANCHID { get; set; }
+        public int? BRANCHID { get; set; }
         public int? NUMBEROFBAGS { get; set; }
+        public DateTime? DATETIMEAPPROVED { get; set; }
+        public int? CURRENCYID { get; set; }
 
 
         public virtual ICollection<TBL_ATC_LODGMENT_DETAIL> TBL_ATC_LODGMENT_DETAIL { get; set; }
