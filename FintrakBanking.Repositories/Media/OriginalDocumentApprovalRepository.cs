@@ -68,7 +68,7 @@ namespace FintrakBanking.Repositories.Media
                         applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                         referenceNumber = x.REFERENCENUMBER,
                         dateTimeCreated = x.DATETIMECREATED,
-                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         customerId = c.CUSTOMERID,
