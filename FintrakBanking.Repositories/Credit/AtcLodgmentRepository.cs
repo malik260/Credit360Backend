@@ -472,6 +472,8 @@ namespace FintrakBanking.Repositories.credit
             //entity.CERTIFICATENUMBER = model.certificateNumber;
             entity.STATUSID = model.statusId;
             entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            entity.BRANCHID = model.branchId;
+            entity.NUMBEROFBAGS = model.numberOfBags;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;

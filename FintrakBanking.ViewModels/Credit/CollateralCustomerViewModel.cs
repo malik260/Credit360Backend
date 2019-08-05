@@ -468,6 +468,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string address { get; set; }
         public string phoneNumber { get; set; }
         public string email { get; set; }
+        public int operationId { get; set; }
     }
 
     public class NewCollateralViewModel
