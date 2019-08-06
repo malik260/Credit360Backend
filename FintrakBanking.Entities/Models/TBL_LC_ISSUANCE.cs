@@ -122,7 +122,7 @@ namespace FintrakBanking.Entities.Models
 
         public decimal? LCTOLERANCEVALUE { get; set; }
 
-        public decimal? RELEASEAMOUNT { get; set; }
+        public decimal RELEASEDAMOUNT { get; set; }
 
 
         public int? OPERATIONID { get; set; }
