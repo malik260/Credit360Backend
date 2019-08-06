@@ -3065,6 +3065,14 @@ namespace FintrakBanking.Repositories.Customer
             return null;
         }
 
+        public IEnumerable<CustomerViewModels> SearchRandomCustomersBySearchQuery(string searchQuery)
+        {
+            var singleCustomers = SearchRandomSingleCustomersBySearchQuery(searchQuery);
+            var corporateCustomers = SearchRandomSingleCorporateCustomersBySearchQuery(searchQuery);
+
+            var customers = singleCustomers.Union(corporateCustomers);
+            return customers;
+        }
         public IEnumerable<CustomerViewModels> SearchRandomSingleCustomersBySearchQuery(string searchQuery)
         {
             var customerGroup = (from m in context.TBL_CUSTOMER_GROUP_MAPPING
@@ -5366,7 +5374,7 @@ namespace FintrakBanking.Repositories.Customer
                 DATETIMECREATED = DateTime.Now
             };
 
-
+            context.TBL_CUSTOMER_MODIFICATION.Add(modified);
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
             {
