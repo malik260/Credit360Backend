@@ -6405,8 +6405,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId);
             data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
-            //var referredItem = GetBookingRequestAwaitingApproval(staffId, companyId);
-            //data.Union(referredItem.Where(x=>x.approvalStatusId == (short)ApprovalStatusEnum.Referred));
+            var referredItem = GetBookingRequestAwaitingApproval(staffId, companyId);
+            data.Union(referredItem.Where(x=>x.approvalStatusId == (short)ApprovalStatusEnum.Referred));
 
             foreach (var item in data)
             {
