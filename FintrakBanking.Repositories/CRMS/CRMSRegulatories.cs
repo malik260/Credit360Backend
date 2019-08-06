@@ -454,8 +454,10 @@ namespace FintrakBanking.Repositories.CRMS
                     ws.Cells[1, 41].Value = "AMOUNT_GUARANTEED";
                     ws.Cells[1, 42].Value = "LOAN_REFERENCE_NUMBER";
 
+                    var rowCount = 1;
                     foreach(var param in paramx)
                     {
+                        rowCount++;
                         for (int i = 2; i <= loanInput.Count + 1; i++)
                         {
                             var record = loanInput[i - 2];
@@ -547,63 +549,69 @@ namespace FintrakBanking.Repositories.CRMS
                          && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)).ToList();
                         }
 
-
-                        if (output != null)
+                        if(rowCount <= 1)
                         {
-                            output = output.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
-
-                            ExcelWorksheet ws2 = pck.Workbook.Worksheets.Add("FEE");
-                            ws2.Cells[1, 1].Value = "ACCOUNT";
-                            ws2.Cells[1, 2].Value = "FEE_TYPE";
-                            ws2.Cells[1, 3].Value = "FEE_AMOUNT";
-
-                            for (int i = 2; i <= output.Count + 1; i++)
+                            if (output != null)
                             {
-                                var feeRecord = output[i - 2];
+                                output = output.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
 
-                                ws2.Cells[i, 1].Value = feeRecord.ACCOUNT == null ? "n/a" : feeRecord.ACCOUNT;
-                                ws2.Cells[i, 2].Value = feeRecord.FEE_TYPE;
-                                ws2.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
+                                ExcelWorksheet ws2 = pck.Workbook.Worksheets.Add("FEE");
+                                ws2.Cells[1, 1].Value = "ACCOUNT";
+                                ws2.Cells[1, 2].Value = "FEE_TYPE";
+                                ws2.Cells[1, 3].Value = "FEE_AMOUNT";
+
+                                for (int i = 2; i <= output.Count + 1; i++)
+                                {
+                                    var feeRecord = output[i - 2];
+
+                                    ws2.Cells[i, 1].Value = feeRecord.ACCOUNT == null ? "n/a" : feeRecord.ACCOUNT;
+                                    ws2.Cells[i, 2].Value = feeRecord.FEE_TYPE;
+                                    ws2.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
+                                }
+
+
                             }
 
 
-                        }
-
-                        //var directors = GetDirectors(param);
-                        if (forSingle == 1)
-                        {
-                            directors = GetDirectors(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
-                        }
-                        else
-                        {
-                            directors = GetDirectors(param).Where(x => DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)).ToList();
-                        }
-
-                        if (directors != null)
-                        {
-                            directors = directors.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
-
-                            ExcelWorksheet ws3 = pck.Workbook.Worksheets.Add("DIRECTORS");
-                            ws3.Cells[1, 1].Value = "ACCOUNT";
-                            ws3.Cells[1, 2].Value = "ID_TTPE";
-                            ws3.Cells[1, 3].Value = "ID_DETAIL";
-                            ws3.Cells[1, 4].Value = "EMAIL";
-
-                            for (int i = 2; i <= directors.Count + 1; i++)
+                            //var directors = GetDirectors(param);
+                            if (forSingle == 1 )
                             {
-                                var record = directors[i - 2];
-
-                                ws3.Cells[i, 1].Value = record.ACCOUNT == null ? "n/a" : record.ACCOUNT;
-                                ws3.Cells[i, 2].Value = record.ID_TTPE;
-                                ws3.Cells[i, 3].Value = record.ID_DETAIL;
-                                ws3.Cells[i, 4].Value = record.EMAIL;
+                                directors = GetDirectors(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
                             }
-                        }
+                            else
+                            {
+                                directors = GetDirectors(param).Where(x => DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                             && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)).ToList();
+                            }
 
-                        fileBytes = pck.GetAsByteArray();
-                        excel.reportData = fileBytes;
-                        excel.templateTypeName = "CRMS_T300";
+
+                            if (directors != null )
+                            {
+                                directors = directors.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
+
+                                ExcelWorksheet ws3 = pck.Workbook.Worksheets.Add("DIRECTORS");
+                                ws3.Cells[1, 1].Value = "ACCOUNT";
+                                ws3.Cells[1, 2].Value = "ID_TTPE";
+                                ws3.Cells[1, 3].Value = "ID_DETAIL";
+                                ws3.Cells[1, 4].Value = "EMAIL";
+
+                                for (int i = 2; i <= directors.Count + 1; i++)
+                                {
+                                    var record = directors[i - 2];
+
+                                    ws3.Cells[i, 1].Value = record.ACCOUNT == null ? "n/a" : record.ACCOUNT;
+                                    ws3.Cells[i, 2].Value = record.ID_TTPE;
+                                    ws3.Cells[i, 3].Value = record.ID_DETAIL;
+                                    ws3.Cells[i, 4].Value = record.EMAIL;
+                                }
+                            }
+
+
+                            fileBytes = pck.GetAsByteArray();
+                            excel.reportData = fileBytes;
+                            excel.templateTypeName = "CRMS_T300";
+                        }
+                        
                     }
                 }
 
