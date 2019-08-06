@@ -2104,7 +2104,7 @@ namespace FintrakBanking.Repositories.Credit
                                  customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                                  description = x.DESCRIPTION,
                                  premiumAmount = x.PREMIUMAMOUNT,
-
+                                 operationId = (int)OperationsEnum.IsurancePolicyApproval
 
 
 
