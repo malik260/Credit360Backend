@@ -2499,10 +2499,10 @@ namespace FintrakBanking.Repositories.Customer
                 gender = a.GENDER,
                 lastName = a.LASTNAME,
                 maidenName = a.MAIDENNAME,
-                maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : "F",
+                maritalStatus = a.MARITALSTATUS.Value == 1 ? "M" : a.MARITALSTATUS.Value == 2 ? "F" : null,
                 title = a.TITLE,
                 middleName = a.MIDDLENAME,
-                //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
                 customerTypeName =
                 a.TBL_CUSTOMER_TYPE
                         .NAME, // context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
@@ -2512,7 +2512,7 @@ namespace FintrakBanking.Repositories.Customer
                 occupation = a.OCCUPATION,
                 placeOfBirth = a.PLACEOFBIRTH,
                 isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
-                relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
+                relationshipOfficerId = a.RELATIONSHIPOFFICERID,
                 //relationshipOfficerName = context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).FIRSTNAME + " "
                 //         + context.TBL_STAFF.FirstOrDefault(f => f.STAFFID == a.RELATIONSHIPOFFICERID).LASTNAME,
                 spouse = a.SPOUSE,
@@ -2536,11 +2536,11 @@ namespace FintrakBanking.Repositories.Customer
                 dateOfRelationshipWithBank = a.DATEOFRELATIONSHIPWITHBANK,
                 relationshipTypeId = a.RELATIONSHIPTYPEID,
                 teamLDP = a.TEAMLDR,
-                teamNPL =a.TEAMNPL,
+                teamNPL = a.TEAMNPL,
                 businessUnitId = a.BUSINESSUNTID,
                 corr = a.CORR,
- 
-        });
+
+            });
         }
 
         public IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId)
@@ -2975,7 +2975,7 @@ namespace FintrakBanking.Repositories.Customer
                         customerSectorName = c.sectorName,
                         subSectorId = c.subSectorId,
                         subSectorName = c.subSectorName,
-                        relationshipOfficerId = c.relationshipOfficerId
+                        relationshipOfficerId = c.relationshipOfficerId.Value
 
                     });
             }
@@ -3065,6 +3065,14 @@ namespace FintrakBanking.Repositories.Customer
             return null;
         }
 
+        public IEnumerable<CustomerViewModels> SearchRandomCustomersBySearchQuery(string searchQuery)
+        {
+            var singleCustomers = SearchRandomSingleCustomersBySearchQuery(searchQuery);
+            var corporateCustomers = SearchRandomSingleCorporateCustomersBySearchQuery(searchQuery);
+
+            var customers = singleCustomers.Union(corporateCustomers);
+            return customers;
+        }
         public IEnumerable<CustomerViewModels> SearchRandomSingleCustomersBySearchQuery(string searchQuery)
         {
             var customerGroup = (from m in context.TBL_CUSTOMER_GROUP_MAPPING
@@ -5281,11 +5289,12 @@ namespace FintrakBanking.Repositories.Customer
         #region Prospective Customer
         public IEnumerable<CustomerViewModels> GetAllProspectiveCustomer()
         {
-            var customers = (from x in GetCustomersLite()
-                             where x.isProspect == true
-                             select x);
-            var customerInfo = customers.ToList();
+            //var customers = (from x in GetCustomersLite()
+            //                 where x.isProspect == true
+            //                 select x)?.ToList();
 
+            var customerInfo = GetCustomersLite().Where(x => x.isProspect == true).ToList();
+                            
             if (customerInfo.Count > 0)
             {
                 return customerInfo;
@@ -5365,7 +5374,7 @@ namespace FintrakBanking.Repositories.Customer
                 DATETIMECREATED = DateTime.Now
             };
 
-
+            context.TBL_CUSTOMER_MODIFICATION.Add(modified);
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
             {
@@ -5381,50 +5390,40 @@ namespace FintrakBanking.Repositories.Customer
             };
             using (var trans = context.Database.BeginTransaction())
             {
-                try
+                if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    
-
-                    if (USE_THIRD_PARTY_INTEGRATION)
+                    if (customerMain.ISPROSPECT == true)
                     {
-                        if (customerMain.ISPROSPECT == true)
-                        {
-                            finacle.AddCustomerAccounts(customerId,entity.customerCode);
-                        }
+                        finacle.AddCustomerAccounts(customerId, entity.customerCode);
                     }
-                    customerMain.ISPROSPECT = false;
-                    context.TBL_CUSTOMER_MODIFICATION.Add(modified);
-                    this.auditTrail.AddAuditTrail(audit);
-                    //end of Audit section -------------------------------
-
-                    var output = context.SaveChanges() > 0;
-
-                    var targetId = modified.CUSTOMERMODIFICATIONID;
-
-
-                    workflow.StaffId = entity.createdBy;
-                    workflow.CompanyId = entity.companyId;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                    workflow.TargetId = targetId;
-                    workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
-                    workflow.ExternalInitialization = true;
-
-                    var response = workflow.LogActivity();
-
-                    if (response)
-                    {
-                        trans.Commit();
-
-                        return output;
-                    }
-
-                    return false;
                 }
-                catch (Exception ex)
+                customerMain.ISPROSPECT = false;
+                //context.TBL_CUSTOMER_MODIFICATION.Add(modified);
+                this.auditTrail.AddAuditTrail(audit);
+                //end of Audit section -------------------------------
+
+                var output = context.SaveChanges() > 0;
+
+                var targetId = modified.CUSTOMERMODIFICATIONID;
+
+
+                workflow.StaffId = entity.createdBy;
+                workflow.CompanyId = entity.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                workflow.TargetId = targetId;
+                workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                workflow.ExternalInitialization = true;
+
+                var response = workflow.LogActivity();
+
+                if (response)
                 {
-                    trans.Rollback();
-                    throw new SecureException(ex.Message);
+                    trans.Commit();
+
+                    return output;
                 }
+                trans.Rollback();
+                return false;
             }
         }
         #endregion

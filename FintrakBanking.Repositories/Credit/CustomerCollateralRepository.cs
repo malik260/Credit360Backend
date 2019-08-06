@@ -1615,6 +1615,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collaterals.collateralSubTypeId && o.CURRENCYID== currencyId).Select(o => o).FirstOrDefault();
             if (data == null) throw new SecureException("Collateral Coverage has not been set");
 
+            if (data == null) return new List<CollateralCoverageViewModel>();
+
             coveragePercentage = data.COVERAGE;
             decimal coverage = decimal.Divide(data.COVERAGE, 100);
             collateralValue = collaterals.collateralValue;
@@ -2109,7 +2111,7 @@ namespace FintrakBanking.Repositories.Credit
                                  customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                                  description = x.DESCRIPTION,
                                  premiumAmount = x.PREMIUMAMOUNT,
-
+                                 operationId = (int)OperationsEnum.IsurancePolicyApproval
 
 
 

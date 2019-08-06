@@ -555,9 +555,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
             foreach (var item in data)
             {
                 var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currency).CURRENCYID;
-                var accountStatusId = context.TBL_CASA_ACCOUNTSTATUS
-                    .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower())
-                    .ACCOUNTSTATUSID;
+                var accountRecord = context.TBL_CASA_ACCOUNTSTATUS
+                    .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower());
+                    
                 TBL_CASA addCustomerAcct = new TBL_CASA();
                 addCustomerAcct.CUSTOMERID = customerId;
                 addCustomerAcct.AVAILABLEBALANCE = item.availableBalance;
@@ -566,10 +566,10 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.PRODUCTACCOUNTNUMBER = item.productAccountNumber;
                 addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA; //(short)(item.productCode != "" ? 8 : 8);
                 addCustomerAcct.COMPANYID = 1;
-                addCustomerAcct.BRANCHID = (short)(item.branchCode != "" ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode).BRANCHID : 94);
+                addCustomerAcct.BRANCHID = (short)(item.branchCode != null && item.branchCode != string.Empty ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode).BRANCHID : 94);
                 addCustomerAcct.CURRENCYID = currencyId;//(short)(item.currency == "NGN" ? 1 : 0);
                 addCustomerAcct.ISCURRENTACCOUNT = true;
-                addCustomerAcct.ACCOUNTSTATUSID = (short)accountStatusId;//(short)(item.accountStatusName == "Active" ? 1 : 3);
+                addCustomerAcct.ACCOUNTSTATUSID = accountRecord != null ? (short)accountRecord.ACCOUNTSTATUSID : (short) 1;//(short)(item.accountStatusName == "Active" ? 1 : 3);
                 addCustomerAcct.LIENAMOUNT = 0;
                 addCustomerAcct.HASLIEN = false;
                 addCustomerAcct.POSTNOSTATUSID = 1;

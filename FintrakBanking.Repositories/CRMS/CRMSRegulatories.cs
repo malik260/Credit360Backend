@@ -399,7 +399,7 @@ namespace FintrakBanking.Repositories.CRMS
 
         }
 
-        private CRMSRecord GenerateCRMS300Template(List<CRMSTemplateViewModel> loanInput, CRMSViewModel param, int forSingle = 0)
+        private CRMSRecord GenerateCRMS300Template(List<CRMSTemplateViewModel> loanInput, List<CRMSViewModel> paramx, int forSingle = 0)
         {
             Byte[] fileBytes = null;
             CRMSRecord excel = new CRMSRecord();
@@ -454,155 +454,165 @@ namespace FintrakBanking.Repositories.CRMS
                     ws.Cells[1, 41].Value = "AMOUNT_GUARANTEED";
                     ws.Cells[1, 42].Value = "LOAN_REFERENCE_NUMBER";
 
-                    for (int i = 2; i <= loanInput.Count + 1; i++)
+                    var rowCount = 1;
+                    foreach(var param in paramx)
                     {
-                        var record = loanInput[i - 2];
-
-                        // var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
-
-                        //ws.Cells[i, 1].Value = i - 1;
-                        ws.Cells[i, 1].Value = record.UNIQUE_IDENTIFICATION_TYPE;
-                        ws.Cells[i, 2].Value = record.UNIQUE_IDENTIFICATION_NO;
-                        ws.Cells[i, 3].Value = record.CREDIT_TYPE;
-                        ws.Cells[i, 4].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES;
-                        ws.Cells[i, 5].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR;
-                        ws.Cells[i, 6].Value = record.CREDIT_LIMIT;
-                        ws.Cells[i, 7].Value = record.OUTSTANDING_AMOUNT;
-                        ws.Cells[i, 8].Value = record.FEES;
-                        ws.Cells[i, 9].Value = record.EFFECTIVE_DATE.ToString("dd/MM/yyyy");
-                        if (record.EXPIRY_DATE != null)
+                        rowCount++;
+                        for (int i = 2; i <= loanInput.Count + 1; i++)
                         {
-                            var proposedTenor = ((DateTime)record.EXPIRY_DATE - record.EFFECTIVE_DATE).TotalDays;
-                            var result = "";
-                            var units = proposedTenor == 1 ? " day" : " days";
-                            if (proposedTenor < 15)
+                            var record = loanInput[i - 2];
+
+                            // var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
+
+                            //ws.Cells[i, 1].Value = i - 1;
+                            ws.Cells[i, 1].Value = record.UNIQUE_IDENTIFICATION_TYPE;
+                            ws.Cells[i, 2].Value = record.UNIQUE_IDENTIFICATION_NO;
+                            ws.Cells[i, 3].Value = record.CREDIT_TYPE;
+                            ws.Cells[i, 4].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES;
+                            ws.Cells[i, 5].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR;
+                            ws.Cells[i, 6].Value = record.CREDIT_LIMIT;
+                            ws.Cells[i, 7].Value = record.OUTSTANDING_AMOUNT;
+                            ws.Cells[i, 8].Value = record.FEES;
+                            ws.Cells[i, 9].Value = record.EFFECTIVE_DATE.ToString("dd/MM/yyyy");
+                            if (record.EXPIRY_DATE != null)
                             {
-                                result = "1";//proposedTenor.ToString() + units;
+                                var proposedTenor = ((DateTime)record.EXPIRY_DATE - record.EFFECTIVE_DATE).TotalDays;
+                                var result = "";
+                                var units = proposedTenor == 1 ? " day" : " days";
+                                if (proposedTenor < 15)
+                                {
+                                    result = "1";//proposedTenor.ToString() + units;
+                                }
+                                else
+                                {
+                                    var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                                    units = months == 1 ? " month" : " months";
+                                    result = months.ToString(); //+ " " + units;
+                                }
+
+
+                                ws.Cells[i, 10].Value = result;
+
                             }
                             else
                             {
-                                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
-                                units = months == 1 ? " month" : " months";
-                                result = months.ToString(); //+ " " + units;
+                                ws.Cells[i, 10].Value = 0;
                             }
+                            //ws.Cells[i, 10].Value = (record.EXPIRY_DATE - record.EFFECTIVE_DATE).TotalDays; //temor
+                            ws.Cells[i, 11].Value = record.EXPIRY_DATE.ToString("dd/MM/yyyy");
+                            ws.Cells[i, 12].Value = record.REPAYMENT_AGREEMENT_MODE;
+                            ws.Cells[i, 13].Value = record.INTEREST_RATE;
+                            ws.Cells[i, 14].Value = record.BENEFICIARY_ACCOUNT_NUMBER;
+                            ws.Cells[i, 15].Value = record.LOCATION_OF_BENEFICIARY;
+                            ws.Cells[i, 16].Value = record.RELATIONSHIP_TYPE;
+                            ws.Cells[i, 17].Value = record.COMPANY_SIZE;
+                            ws.Cells[i, 18].Value = record.FUNDING_SOURCE_CATEGORY;
+                            ws.Cells[i, 19].Value = record.ECCI_NUMBER;
+                            ws.Cells[i, 20].Value = record.FUNDING_SOURCE;
+                            ws.Cells[i, 21].Value = record.LEGAL_STATUS;
+                            ws.Cells[i, 22].Value = record.CLASSIFICATION_BY_BUSINESS_LINES;
+                            ws.Cells[i, 23].Value = record.CLASSIFICATION_BY_BUSINESS_LINES_SUB_SECTOR;
+                            ws.Cells[i, 24].Value = record.SPECIALISED_LOAN;
+                            ws.Cells[i, 25].Value = record.MORATORIUMDURATION;//record.FIRSTPRINCIPALPAYMENTDATE != null ? ((DateTime)record.FIRSTPRINCIPALPAYMENTDATE - record.EFFECTIVE_DATE).TotalDays : 0;// record.SPECIALISED_LOAN_MORATORIUM_PERIOD;
+                            ws.Cells[i, 26].Value = record.DIRECTOR_UNIQUE_IDENTIFIER;
+                            ws.Cells[i, 27].Value = record.SYNDICATION;
+                            ws.Cells[i, 28].Value = record.SYNDICATION_STATUS;
+                            ws.Cells[i, 29].Value = record.SYNDICATION_REF_NUMBER;
+                            ws.Cells[i, 30].Value = record.COLLATERAL_PRESENT;
+                            ws.Cells[i, 31].Value = record.COLLATERAL_SECURE;
+                            ws.Cells[i, 32].Value = record.SECURITY_TYPE;
+                            ws.Cells[i, 33].Value = record.ADDRESS_OF_SECURITY;
+                            ws.Cells[i, 34].Value = record.OWNER_OF_SECURITY;
+                            if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 1) { ws.Cells[i, 35].Value = "BVN"; }
+                            else if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 2) { ws.Cells[i, 35].Value = "TIN"; }
+                            else { ws.Cells[i, 35].Value = ""; }
+                            ws.Cells[i, 36].Value = record.UNIQUE_IDENTIFIER_OF_SECURITY_OWNER;
+                            ws.Cells[i, 37].Value = record.GUARANTEE != null ? "YES" : "NO";
+                            if (record.GUARANTEE_TYPE == 1) { ws.Cells[i, 38].Value = "INDIVIDUAL"; }
+                            else if (record.GUARANTEE_TYPE == 2) { ws.Cells[i, 38].Value = "NON_INDIVIDUAL"; }
+                            else { ws.Cells[i, 38].Value = ""; }
+                            ws.Cells[i, 39].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE != null ? "BVN" : "TIN"; //record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE;
+                            ws.Cells[i, 40].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION;// record.GUARANTOR_UNIQUE_IDENTIFICATION;
+                            ws.Cells[i, 41].Value = record.AMOUNT_GUARANTEED;// record.AMOUNT_GUARANTEED;
+                            ws.Cells[i, 42].Value = record.REFERENCENUMBER; ;
+                        }
+                        var output = new List<CRMSTemplateViewModel>();
+                        var directors = new List<CRMSTemplateViewModel>();
 
-
-                            ws.Cells[i, 10].Value = result;
-
+                        if (forSingle == 1)
+                        {
+                            output = GetFee(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
                         }
                         else
                         {
-                            ws.Cells[i, 10].Value = 0;
+                            output = GetFee(param).Where(x => DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)).ToList();
                         }
-                        //ws.Cells[i, 10].Value = (record.EXPIRY_DATE - record.EFFECTIVE_DATE).TotalDays; //temor
-                        ws.Cells[i, 11].Value = record.EXPIRY_DATE.ToString("dd/MM/yyyy");
-                        ws.Cells[i, 12].Value = record.REPAYMENT_AGREEMENT_MODE;
-                        ws.Cells[i, 13].Value = record.INTEREST_RATE;
-                        ws.Cells[i, 14].Value = record.BENEFICIARY_ACCOUNT_NUMBER;
-                        ws.Cells[i, 15].Value = record.LOCATION_OF_BENEFICIARY;
-                        ws.Cells[i, 16].Value = record.RELATIONSHIP_TYPE;
-                        ws.Cells[i, 17].Value = record.COMPANY_SIZE;
-                        ws.Cells[i, 18].Value = record.FUNDING_SOURCE_CATEGORY;
-                        ws.Cells[i, 19].Value = record.ECCI_NUMBER;
-                        ws.Cells[i, 20].Value = record.FUNDING_SOURCE;
-                        ws.Cells[i, 21].Value = record.LEGAL_STATUS;
-                        ws.Cells[i, 22].Value = record.CLASSIFICATION_BY_BUSINESS_LINES;
-                        ws.Cells[i, 23].Value = record.CLASSIFICATION_BY_BUSINESS_LINES_SUB_SECTOR;
-                        ws.Cells[i, 24].Value = record.SPECIALISED_LOAN;
-                        ws.Cells[i, 25].Value = record.MORATORIUMDURATION;//record.FIRSTPRINCIPALPAYMENTDATE != null ? ((DateTime)record.FIRSTPRINCIPALPAYMENTDATE - record.EFFECTIVE_DATE).TotalDays : 0;// record.SPECIALISED_LOAN_MORATORIUM_PERIOD;
-                        ws.Cells[i, 26].Value = record.DIRECTOR_UNIQUE_IDENTIFIER;
-                        ws.Cells[i, 27].Value = record.SYNDICATION;
-                        ws.Cells[i, 28].Value = record.SYNDICATION_STATUS;
-                        ws.Cells[i, 29].Value = record.SYNDICATION_REF_NUMBER;
-                        ws.Cells[i, 30].Value = record.COLLATERAL_PRESENT;
-                        ws.Cells[i, 31].Value = record.COLLATERAL_SECURE;
-                        ws.Cells[i, 32].Value = record.SECURITY_TYPE;
-                        ws.Cells[i, 33].Value = record.ADDRESS_OF_SECURITY;
-                        ws.Cells[i, 34].Value = record.OWNER_OF_SECURITY;
-                        if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 1) { ws.Cells[i, 35].Value = "BVN"; }
-                        else if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 2) { ws.Cells[i, 35].Value = "TIN"; }
-                        else { ws.Cells[i, 35].Value = ""; }
-                        ws.Cells[i, 36].Value = record.UNIQUE_IDENTIFIER_OF_SECURITY_OWNER;
-                        ws.Cells[i, 37].Value = record.GUARANTEE != null ? "YES" : "NO";
-                        if (record.GUARANTEE_TYPE == 1) { ws.Cells[i, 38].Value = "INDIVIDUAL"; }
-                        else if (record.GUARANTEE_TYPE == 2) { ws.Cells[i, 38].Value = "NON_INDIVIDUAL"; }
-                        else { ws.Cells[i, 38].Value = ""; }
-                        ws.Cells[i, 39].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE != null ? "BVN" : "TIN"; //record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE;
-                        ws.Cells[i, 40].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION;// record.GUARANTOR_UNIQUE_IDENTIFICATION;
-                        ws.Cells[i, 41].Value = record.AMOUNT_GUARANTEED;// record.AMOUNT_GUARANTEED;
-                        ws.Cells[i, 42].Value = record.REFERENCENUMBER; ;
-                    }
-                    var output = new List<CRMSTemplateViewModel>();
-                    var directors = new List<CRMSTemplateViewModel>();
 
-                    if (forSingle == 1)
-                    {
-                        output = GetFee(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
-                    }
-                    else
-                    {
-                        output = GetFee(param).Where(x => DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                     && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)).ToList();
-                    }
-
-
-                    if (output != null)
-                    {
-                        output = output.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
-
-                        ExcelWorksheet ws2 = pck.Workbook.Worksheets.Add("FEE");
-                        ws2.Cells[1, 1].Value = "ACCOUNT";
-                        ws2.Cells[1, 2].Value = "FEE_TYPE";
-                        ws2.Cells[1, 3].Value = "FEE_AMOUNT";
-
-                        for (int i = 2; i <= output.Count + 1; i++)
+                        if(rowCount <= 1)
                         {
-                            var feeRecord = output[i - 2];
+                            if (output != null)
+                            {
+                                output = output.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
 
-                            ws2.Cells[i, 1].Value = feeRecord.ACCOUNT==null? "n/a": feeRecord.ACCOUNT;
-                            ws2.Cells[i, 2].Value = feeRecord.FEE_TYPE;
-                            ws2.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
+                                ExcelWorksheet ws2 = pck.Workbook.Worksheets.Add("FEE");
+                                ws2.Cells[1, 1].Value = "ACCOUNT";
+                                ws2.Cells[1, 2].Value = "FEE_TYPE";
+                                ws2.Cells[1, 3].Value = "FEE_AMOUNT";
+
+                                for (int i = 2; i <= output.Count + 1; i++)
+                                {
+                                    var feeRecord = output[i - 2];
+
+                                    ws2.Cells[i, 1].Value = feeRecord.ACCOUNT == null ? "n/a" : feeRecord.ACCOUNT;
+                                    ws2.Cells[i, 2].Value = feeRecord.FEE_TYPE;
+                                    ws2.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
+                                }
+
+
+                            }
+
+
+                            //var directors = GetDirectors(param);
+                            if (forSingle == 1 )
+                            {
+                                directors = GetDirectors(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
+                            }
+                            else
+                            {
+                                directors = GetDirectors(param).Where(x => DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                             && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)).ToList();
+                            }
+
+
+                            if (directors != null )
+                            {
+                                directors = directors.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
+
+                                ExcelWorksheet ws3 = pck.Workbook.Worksheets.Add("DIRECTORS");
+                                ws3.Cells[1, 1].Value = "ACCOUNT";
+                                ws3.Cells[1, 2].Value = "ID_TTPE";
+                                ws3.Cells[1, 3].Value = "ID_DETAIL";
+                                ws3.Cells[1, 4].Value = "EMAIL";
+
+                                for (int i = 2; i <= directors.Count + 1; i++)
+                                {
+                                    var record = directors[i - 2];
+
+                                    ws3.Cells[i, 1].Value = record.ACCOUNT == null ? "n/a" : record.ACCOUNT;
+                                    ws3.Cells[i, 2].Value = record.ID_TTPE;
+                                    ws3.Cells[i, 3].Value = record.ID_DETAIL;
+                                    ws3.Cells[i, 4].Value = record.EMAIL;
+                                }
+                            }
+
+
+                            fileBytes = pck.GetAsByteArray();
+                            excel.reportData = fileBytes;
+                            excel.templateTypeName = "CRMS_T300";
                         }
-
-
+                        
                     }
-
-                    //var directors = GetDirectors(param);
-                    if (forSingle == 1)
-                    {
-                        directors = GetDirectors(param).Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
-                    }
-                    else
-                    {
-                        directors = GetDirectors(param).Where(x => DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                     && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)).ToList();
-                    }
-
-                    if (directors != null)
-                    {
-                        directors = directors.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
-
-                        ExcelWorksheet ws3 = pck.Workbook.Worksheets.Add("DIRECTORS");
-                        ws3.Cells[1, 1].Value = "ACCOUNT";
-                        ws3.Cells[1, 2].Value = "ID_TTPE";
-                        ws3.Cells[1, 3].Value = "ID_DETAIL";
-                        ws3.Cells[1, 4].Value = "EMAIL";
-
-                        for (int i = 2; i <= directors.Count + 1; i++)
-                        {
-                            var record = directors[i - 2];
-
-                            ws3.Cells[i, 1].Value = record.ACCOUNT== null ? "n/a" : record.ACCOUNT;
-                            ws3.Cells[i, 2].Value = record.ID_TTPE;
-                            ws3.Cells[i, 3].Value = record.ID_DETAIL;
-                            ws3.Cells[i, 4].Value = record.EMAIL;
-                        }
-                    }
-
-                    fileBytes = pck.GetAsByteArray();
-                    excel.reportData = fileBytes;
-                    excel.templateTypeName = "CRMS_T300";
-
                 }
 
             }
@@ -2601,29 +2611,38 @@ namespace FintrakBanking.Repositories.CRMS
             return GenerateCRMS400BTemplate(result.ToList(), param);
 
         }
-        private CRMSRecord GenerateCRMS300TemplateByLoanAppId(CRMSViewModel param)
+        private CRMSRecord GenerateCRMS300TemplateByLoanAppId(List<CRMSViewModel> paramx)
         {
             int forSingle = 1;
-            var record = GenerateCRMSReport(param, forSingle).ToList();
-            var result = record.Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
+            List<CRMSTemplateViewModel> result = new List<CRMSTemplateViewModel>();
+            foreach (var param in paramx)
+            {
+                var record = GenerateCRMSReport(param, forSingle).ToList();
+                result = record.Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
+            }
+
             result = result.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).ToList();
             if (result == null)
                 throw new ConditionNotMetException("Record Not Found For T300");
 
-            return GenerateCRMS300Template(result.ToList(), param, forSingle);
+            return GenerateCRMS300Template(result.ToList(), paramx, forSingle);
         }
-        private CRMSRecord GenerateCRMS300Template(CRMSViewModel param)
+        private CRMSRecord GenerateCRMS300Template(List<CRMSViewModel> paramx)
         {
             int forSingle = 0;
-            var record = GenerateCRMSReport(param, forSingle).ToList();
-
-            var result = record.Where(x =>  x.CRMSDATE >= param.startDate.Date
+            List<CRMSTemplateViewModel> result = new List<CRMSTemplateViewModel>();
+            foreach (var param in paramx)
+            {
+                var record = GenerateCRMSReport(param, forSingle).ToList();
+                result = record.Where(x => x.CRMSDATE >= param.startDate.Date
                      && x.CRMSDATE <= param.endDate.Date).ToList();
+            }
+
             result = result.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).ToList();
             if (result == null)
                 throw new ConditionNotMetException("Record Not Found For T300");
 
-            return GenerateCRMS300Template(result.ToList(), param, forSingle);
+            return GenerateCRMS300Template(result.ToList(), paramx, forSingle);
         }
 
 
@@ -2677,11 +2696,17 @@ namespace FintrakBanking.Repositories.CRMS
             return GenerateCRMS200Template(result.ToList());
         }
 
-        private CRMSRecord GenerateCRMS600TemplateByLoanAppId(CRMSViewModel param)
+        private CRMSRecord GenerateCRMS600TemplateByLoanAppId(List<CRMSViewModel> paramx)
         {
             int forSingle = 1;
-            var record = GenerateCRMSReport(param, forSingle).ToList();
-            var result = record.Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
+            List<CRMSTemplateViewModel> result = new List<CRMSTemplateViewModel>();
+            foreach (var param in paramx)
+            {
+                var record = GenerateCRMSReport(param, forSingle).ToList();
+                result = record.Where(a => a.LOANAPPLICATIONDETAILID == param.loanId).ToList();
+            }
+            
+            
             result = result.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).ToList();
             if (result == null)
                 throw new ConditionNotMetException("Record Not Found For T600");
@@ -2702,8 +2727,9 @@ namespace FintrakBanking.Repositories.CRMS
             return GenerateCRMS600Template(result.ToList());
         }
 
-        public CRMSRecord GenerateCBNReport(CRMSViewModel param)
+        public CRMSRecord GenerateCBNReport(List<CRMSViewModel> paramx)
         {
+            var param = paramx.FirstOrDefault();
             if (param.templateTypeId == (int)CRMSTemplate.Template100)
             {
                 return GenerateCRMS100Template(param);
@@ -2714,7 +2740,7 @@ namespace FintrakBanking.Repositories.CRMS
             }
             else if (param.templateTypeId == (int)CRMSTemplate.Template300)
             {
-                return GenerateCRMS300Template(param);
+                return GenerateCRMS300Template(paramx);
             }
             else if (param.templateTypeId == (int)CRMSTemplate.Template600)
             {
@@ -2734,8 +2760,10 @@ namespace FintrakBanking.Repositories.CRMS
             }
             return new CRMSRecord();
         }
-        public CRMSRecord GenerateCBNReportByLoanAppId(CRMSViewModel param)
+
+        public CRMSRecord GenerateCBNReportByLoanAppId(List<CRMSViewModel> paramx)
         {
+            var param = paramx.FirstOrDefault();
             if (param.templateTypeId == (int)CRMSTemplate.Template100)
             {
                 return GenerateCRMS100TemplateByLoanAppId(param);
@@ -2746,11 +2774,11 @@ namespace FintrakBanking.Repositories.CRMS
             }
             else if (param.templateTypeId == (int)CRMSTemplate.Template300)
             {
-                return GenerateCRMS300TemplateByLoanAppId(param);
+                return GenerateCRMS300TemplateByLoanAppId(paramx);
             }
             else if (param.templateTypeId == (int)CRMSTemplate.Template600)
             {
-                return GenerateCRMS600TemplateByLoanAppId(param);
+                return GenerateCRMS600TemplateByLoanAppId(paramx);
             }
             else if (param.templateTypeId == (int)CRMSTemplate.Template400A)
             {
@@ -2766,9 +2794,9 @@ namespace FintrakBanking.Repositories.CRMS
             }
             return new CRMSRecord();
         }
+
         public CRMSRecord GenerateBatchPosting(DateRange model)
         {
-
             var loanInput = finacleIntegration.GetBatchPostingDetailSearch(model.startDate, model.endDate, model.status);
 
             Byte[] fileBytes = null;

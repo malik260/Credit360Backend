@@ -145,5 +145,9 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlowByProductClassId(short productClassId, short productId, short productTypeId);
 
         IEnumerable<LoanApplicationViewModel> GetFacilityByApplicationId(int loanApplicationId);
+
+        bool LoanApplicationFlowChange(int loanApplicationId);
+
+        bool DeleteLoanApplicationThatFailedRAC(int loanApplicationId, int deletedBy);
     }
 }
