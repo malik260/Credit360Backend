@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.credit
         {
             return (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
-                    where x.DELETED == false
+                    where x.DELETED == false && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
                     select new AtcLodgmentViewModel
                     {
                         atcLodgmentId = x.ATCLODGMENTID,
@@ -420,7 +420,7 @@ namespace FintrakBanking.Repositories.credit
                 UNITNUMBER = model.unitNumber,
                 //  CERTIFICATENUMBER = model.certificateNumber,
                 STATUSID = model.statusId,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -431,19 +431,29 @@ namespace FintrakBanking.Repositories.credit
 
             var id = context.TBL_ATC_LODGMENT.Add(entity);
 
-            if (context.SaveChanges() > 0)
-            {
-                workflow.StaffId = model.createdBy;
-                workflow.CompanyId = model.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = id.ATCLODGMENTID;
-                workflow.Comment = "Request for ATC Lodgement approval";
-                workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
-                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                workflow.ExternalInitialization = true;
-                workflow.LogActivity();
-            }
+            return context.SaveChanges() != 0;
+        }
 
+        public bool atclodgmentApproval(AtcLodgmentViewModel model)
+        {
+            var data = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == model.atcLodgmentId && o.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval)
+                                                    .FirstOrDefault();
+
+
+            var entity = context.TBL_ATC_LODGMENT.Where(o => o.ATCLODGMENTID == model.atcLodgmentId)
+                        .FirstOrDefault();
+
+            if (data != null) return false;
+
+            workflow.StaffId = model.createdBy;
+            workflow.CompanyId = model.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.Comment = "Request for ATC Lodgement approval";
+            workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
+            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workflow.ExternalInitialization = true;
+            workflow.TargetId = model.atcLodgmentId;
+            workflow.LogActivity();
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             //// Audit Section ---------------------------
@@ -452,13 +462,18 @@ namespace FintrakBanking.Repositories.credit
                 AUDITTYPEID = (short)AuditTypeEnum.AtcLodgmentAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"TBL_Atc Lodgment '{entity.DESCRIPTION}' created by {auditStaff}",
+                DETAIL = $"TBL_Atc Lodgment '{model.description}' created by {auditStaff}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             });
             // Audit Section end ------------------------
+
+            if(context.SaveChanges() != 0)
+            {
+                entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            }
 
             return context.SaveChanges() != 0;
         }
@@ -474,7 +489,7 @@ namespace FintrakBanking.Repositories.credit
             entity.UNITNUMBER = model.unitNumber;
             //entity.CERTIFICATENUMBER = model.certificateNumber;
             entity.STATUSID = model.statusId;
-            entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
             entity.BRANCHID = model.branchId;
             entity.CURRENCYID = model.currencyId;
             entity.NUMBEROFBAGS = model.numberOfBags;
@@ -482,21 +497,21 @@ namespace FintrakBanking.Repositories.credit
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.AtcLodgmentUpdated,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_Atc Lodgment '{entity.DESCRIPTION}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.ATCLODGMENTID
-            });
-            // Audit Section end ------------------------
+            //var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            //// Audit Section ---------------------------
+            //this.audit.AddAuditTrail(new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.AtcLodgmentUpdated,
+            //    STAFFID = user.createdBy,
+            //    BRANCHID = (short)user.BranchId,
+            //    DETAIL = $"TBL_Atc Lodgment '{entity.DESCRIPTION}' was updated by {auditStaff}",
+            //    IPADDRESS = user.userIPAddress,
+            //    URL = user.applicationUrl,
+            //    APPLICATIONDATE = general.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = entity.ATCLODGMENTID
+            //});
+            //// Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
         }

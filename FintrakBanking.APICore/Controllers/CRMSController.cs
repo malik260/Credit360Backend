@@ -86,12 +86,13 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("regulatory/export")]
-        public HttpResponseMessage ExportScheduleToExcel([FromBody] CRMSViewModel model)
+        public HttpResponseMessage ExportScheduleToExcel([FromBody] List<CRMSViewModel> models)
         {
             try
             {
-                model.companyId = token.GetCompanyId;
-                var fileBytes = repo.GenerateCBNReport(model);
+                foreach(var model in models) { model.companyId = token.GetCompanyId; }
+                
+                var fileBytes = repo.GenerateCBNReport(models);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
             }
@@ -112,12 +113,12 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("regulatory/export-by-loan-application-id")]
-        public HttpResponseMessage ExportCRMSToExcel([FromBody] CRMSViewModel model)
+        public HttpResponseMessage ExportCRMSToExcel([FromBody] List<CRMSViewModel> models)
         {
             try
             {
-                model.companyId = token.GetCompanyId;
-                var fileBytes = repo.GenerateCBNReportByLoanAppId(model);
+                foreach(var model in models) { model.companyId = token.GetCompanyId; }
+                var fileBytes = repo.GenerateCBNReportByLoanAppId(models);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
             }
@@ -141,12 +142,12 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("postingdetail/export")]
-        public HttpResponseMessage ExportPostingDetailToExcel([FromBody] CRMSViewModel model)
+        public HttpResponseMessage ExportPostingDetailToExcel([FromBody] List<CRMSViewModel> models)
         {
             try
             {
-                model.companyId = token.GetCompanyId;
-                var fileBytes = repo.GenerateCBNReport(model);
+                foreach (var model in models) { model.companyId = token.GetCompanyId; }
+                var fileBytes = repo.GenerateCBNReport(models);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
             }
