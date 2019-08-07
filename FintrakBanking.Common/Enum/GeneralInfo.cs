@@ -389,7 +389,9 @@ namespace FintrakBanking.Common.Enum
         ESGCategoryDeleted = 455,
         ESGSUBCategoryAdded = 456,
         ESGSUBCategoryUpdated = 457,
-        ESGSUBCategoryDeleted = 458
+        ESGSUBCategoryDeleted = 458,
+        LCReleaseAmountAdded = 459,
+        LCReleaseAmountUpdated = 500
     };
     public enum RegulatoryTypeEnum
     {

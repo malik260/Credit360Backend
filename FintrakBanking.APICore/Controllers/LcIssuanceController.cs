@@ -112,15 +112,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpGet]
-        //[ClaimsAuthorization]
-        //[Route("lc-issuance/{id}")]
-        //public HttpResponseMessage GetLcIssuance(int id)
-        //{
-        //    LcIssuanceViewModel response = repo.GetLcIssuance(id);
-        //    if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-        //}
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-issuance/{lcIssuanceId}")]
+        public HttpResponseMessage GetLcIssuance(int lcIssuanceId)
+        {
+            IEnumerable<LcIssuanceViewModel> response = repo.GetLcIssuance(lcIssuanceId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -597,6 +597,28 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
             
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lc-release")]
+        public HttpResponseMessage AddLCReleaseAmount([FromBody] LcReleaseAmountViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+            try
+            {
+                var response = repo.AddLCReleaseAmount(entity);
+                if (response.lcIssuanceId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been added successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error adding this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
         #endregion RELEASEOFSHIPPINGDOCUMENTS
 

@@ -502,6 +502,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customers-information/")]
+        public HttpResponseMessage SearchRandomCustomersBySearchQuery(string searchQuery)
+
+        {
+            try
+            {
+                var data = repo.SearchRandomCustomersBySearchQuery(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("single-corporate-customers-information/")]
@@ -2365,7 +2390,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.customerSensitivityLevelId = 1;
               
-                var data = repo.UpdatePropectToCustomer(customerId, entity);
+                var data =  repo.UpdatePropectToCustomer(customerId, entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
