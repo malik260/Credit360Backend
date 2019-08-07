@@ -562,10 +562,10 @@ namespace FintrakBanking.APICore.Controllers
 
                 entity.misCode = "001";
                 entity.teamMisCode = "004";
-               //if( entity.LoanApplicationDetail.Count == 0)
-               //     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No facility detail is provided" });
+            //if( entity.LoanApplicationDetail.Count == 0)
+            //     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No facility detail is provided" });
 
-
+            try { 
                 var response = repo.AddLoanApplication(entity);
                 if (response != null)
                 {
@@ -574,7 +574,10 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-
+            }
+            catch (Exception ex) {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
         }
 
 
@@ -1680,6 +1683,27 @@ namespace FintrakBanking.APICore.Controllers
         {
             var response = repo.GetFacilityByApplicationId(loanApplicationId);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application-flowchange/{loanApplicationId}")]
+        public HttpResponseMessage LoanApplicationFlowChange(int loanApplicationId)
+        {
+            var response = repo.LoanApplicationFlowChange(loanApplicationId);
+            if (!response) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-failedrac-loan-application/{loanApplicationId}")]
+        public HttpResponseMessage DeleteLoanApplicationThatFailedRAC(int loanApplicationId)
+        {
+            var response = repo.DeleteLoanApplicationThatFailedRAC(loanApplicationId, token.GetStaffId);
+            if (!response) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
     }
