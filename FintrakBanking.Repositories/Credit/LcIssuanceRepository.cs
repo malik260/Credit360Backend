@@ -408,6 +408,7 @@ namespace FintrakBanking.Repositories.credit
             ValidateAmounts(model);
 
             var entity = this.context.TBL_LC_ISSUANCE.Find(id);
+            entity.LCREFERENCENUMBER = model.lcReferenceNumber;
             entity.BENEFICIARYNAME = model.beneficiaryName;
             entity.TOTALAPPROVEDAMOUNT = model.totalApprovedAmount;
             entity.TOTALAPPROVEDAMOUNTCURRENCYID = model.totalApprovedAmountCurrencyId;
