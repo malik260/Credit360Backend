@@ -1060,14 +1060,19 @@ namespace FintrakBanking.Repositories.Credit
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
                 {
-                    if(casa != null)
-                    {
-                        creditCommon.LoadCustomerTurnover(
+                    creditCommon.LoadCustomerTurnover(
                             applicationId,
                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                             staffId
                         );
-                    }
+                    //if (casa != null)
+                    //{
+                    //    creditCommon.LoadCustomerTurnover(
+                    //        applicationId,
+                    //        loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                    //        staffId
+                    //    );
+                    //}
                 }
 
                 return new LoanApplicationUpdateMessage
@@ -1480,7 +1485,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var docContext = new Entities.DocumentModels.FinTrakBankingDocumentsContext();
                 if (!docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
-                        && x.OPERATIONID == operationId
+                        && x.OPERATIONID == (int)OperationsEnum.CreditAppraisal
                         && x.TARGETID == targetId
                 ).Any())
                     return false;
