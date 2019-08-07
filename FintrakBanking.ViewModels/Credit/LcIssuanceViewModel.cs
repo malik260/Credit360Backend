@@ -63,6 +63,12 @@ namespace FintrakBanking.ViewModels.credit
 
         public decimal? percentageToCover { get; set; }
 
+        public decimal? lcTolerancePercentage { get; set; }
+
+        public decimal? lcToleranceValue { get; set; }
+
+        public decimal releaseAmount { get; set; }
+        
         //ussance
         public int lcUssanceId { get; set; }
         public decimal ussanceAmount { get; set; }
@@ -134,6 +140,8 @@ namespace FintrakBanking.ViewModels.credit
     public class LcIssuanceApprovalViewModel : GeneralEntity
     {
         public int lcIssuanceId { get; set; }
+
+        public int lcReleaseAmountId { get; set; }
 
         public string lcReferenceNumber { get; set; }
 
@@ -243,5 +251,12 @@ namespace FintrakBanking.ViewModels.credit
         public DateTime? lcEffectiveDate { get; set; }
         public DateTime? lcMaturityDate { get; set; }
         public int? usanceAmountCurrencyId { get; set; }
+    }
+
+    public class LcReleaseAmountViewModel : GeneralEntity
+    {
+        public int lcReleaseAmountId { get; set; }
+        public int lcIssuanceId { get; set; }
+        public decimal? releaseAmount { get; set; }
     }
 }
