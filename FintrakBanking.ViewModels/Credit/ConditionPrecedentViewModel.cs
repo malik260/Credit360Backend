@@ -25,6 +25,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatus { get; set; }
         public bool isAvailment { get; set; }
         public DateTime? deferedDate { get; set; }
+        public int? deferedDays { get; set; }
         public string reason { get; set; }
         public string status { get; set; }
         public int? timelineId { get; set; }

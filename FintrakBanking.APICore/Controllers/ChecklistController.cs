@@ -1199,39 +1199,32 @@ namespace FintrakBanking.APICore.Controllers
         [Route("update-loan-condition-precedence-status")]
         public HttpResponseMessage UpdateLoanConditionPrecedenceStatus([FromBody] ConditionPrecedentViewModel model)
         {
-            try
-            {
-                if (model.conditionId == 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                 new { success = false, message = "Please select a checklist to continue" });
-                }
-                if (model.deferedDate < DateTime.Now)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                 new { success = false, message = "Deferred date cannot be less than today's date" });
-                }
-                model.userBranchId = (short)token.GetBranchId;
-                model.companyId = token.GetCompanyId;
-                model.createdBy = token.GetStaffId;
-                model.applicationUrl = HttpContext.Current.Request.Path;
-                model.userIPAddress = CommonHelpers.GetUserIP();
-
-                var data = repo.UpdateLoanConditionPrecedenceStatus(model);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                 new { success = true, message = "The Checklist Status has been updated successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-            new { success = false, message = "There was an error updating this Checklist" });
-            }
-            catch (SecureException e)
+            if (model.conditionId == 0)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-            new { success = false, message = $"There was an error creating this record {e.Message}" });
+             new { success = false, message = "Please select a checklist to continue" });
             }
+            if (model.deferedDate < DateTime.Now)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false, message = "Deferred date cannot be less than today's date" });
+            }
+            model.userBranchId = (short)token.GetBranchId;
+            model.companyId = token.GetCompanyId;
+            model.createdBy = token.GetStaffId;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.userIPAddress = CommonHelpers.GetUserIP();
+
+            var data = repo.UpdateLoanConditionPrecedenceStatus(model);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = true, message = "The Checklist Status has been updated successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+        new { success = false, message = "There was an error updating this Checklist" });
+
         }
 
         [HttpPost]

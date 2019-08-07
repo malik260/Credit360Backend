@@ -1145,9 +1145,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                 toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                 fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
-            }).OrderByDescending(x => x.approvalTrailId);
+            }).OrderByDescending(x => x.approvalTrailId).ToList();
 
-            return data;
+            return data.OrderByDescending(p => p.approvalTrailId);
         }
     }
 }

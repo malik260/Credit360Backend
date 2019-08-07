@@ -14,7 +14,7 @@ namespace FintrakBanking.Entities.Models
 
         public int COLLATERALCUSTOMERID { get; set; }
 
-        public int LOANAPPLICATIONID { get; set; }
+        public int? LOANAPPLICATIONID { get; set; }
 
         public bool? LEGAL_FEE_TAKEN { get; set; }
 
@@ -35,6 +35,10 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }
+
+        public int? LOANAPPLICATIONDETAILID { get; set; }
+
+        public int APPROVALSTATUSID { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
 
