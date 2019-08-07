@@ -1392,7 +1392,18 @@ namespace FintrakBanking.Repositories.Credit
                     AddloanApplicationSub(loan);
                 }
 
-                if (loan.LoanApplicationDetail.Count > 0) AddLoanApplicationDetail(loan);
+                if (loan.LoanApplicationDetail.Count > 0) {
+
+                 int racReponse =  AddLoanApplicationDetail(loan);
+                    if (racReponse > 1)
+                    {
+                        LoanApplicationViewModel model = new LoanApplicationViewModel();
+                        model.loanApplicationId = racReponse;
+                        model.failedRacStartCam = true;
+
+                        return model;
+                    }
+                }
             }
             else
             {
@@ -1429,13 +1440,13 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        private void SaveRac(RacInformationViewModel rac, int operationId, int targetId, int staffId)
+        private int SaveRac(RacInformationViewModel rac, int operationId,int productId, int targetId, int staffId, int applicationId)
         {
-            if (rac.form == null) return;
+            if (rac.form == null) return 0;
             var ids = rac.form.Select(x => x.criteriaId);
 
             var definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                && x.OPERATIONID == operationId && ids.Contains(x.RACDEFINITIONID)
+                && x.PRODUCTID == productId && ids.Contains(x.RACDEFINITIONID)
             ).ToList();
 
             List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
@@ -1444,7 +1455,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 if (submission == null) continue;
-                if (!ValidRacSubmission(definition, submission.value, operationId, targetId)) throw new SecureException("Cannot Proceed as RAC not met for " + definition.TBL_RAC_ITEM.CRITERIA);
+                if (!ValidRacSubmission(definition, submission.value, operationId, targetId)) return applicationId;//throw new SecureException("Cannot Proceed as RAC not met for " + definition.TBL_RAC_ITEM.CRITERIA);
                 details.Add(new TBL_RAC_DETAIL
                 {
                     RACDEFINITIONID = definition.RACDEFINITIONID,
@@ -1457,6 +1468,8 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             context.TBL_RAC_DETAIL.AddRange(details);
+
+            return 1;
         }
 
         private bool ValidRacSubmission(TBL_RAC_DEFINITION definition, string value, int operationId, int targetId)
@@ -1912,7 +1925,7 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETL_INV.AddRange(data);
         }
 
-        private void AddLoanApplicationDetail(LoanApplicationViewModel loan)//List<LoanApplicationDetailViewModel> entity, int createdBy)
+        private int AddLoanApplicationDetail(LoanApplicationViewModel loan)//List<LoanApplicationDetailViewModel> entity, int createdBy)
         {
             var createdBy = loan.createdBy;
             //foreach (var a in entity)
@@ -1969,7 +1982,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
                     && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
-                    && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY);
+                    && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED !=true);
 
             if (loanExist==true) throw new SecureException("This loan application has already been saved!");
 
@@ -2011,7 +2024,13 @@ namespace FintrakBanking.Repositories.Credit
 
             response = context.SaveChanges();
 
-            if (response > 0) SaveRac(loan.rac, (int)loan.rac.operationId, data.LOANAPPLICATIONDETAILID, loan.createdBy); // todo 99999
+            if (response > 0) {
+
+                int recResponse = SaveRac(loan.rac, (int)loan.rac.operationId, (int)loan.rac.productId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
+                  if (recResponse > 1) return recResponse;
+                    } // todo 99999
+
+            return 1;
         }
 
         public LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId)
@@ -4509,6 +4528,28 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationId = x.LOANAPPLICATIONID,
             })).ToList();
         }
+
+
+        public bool LoanApplicationFlowChange(int loanApplicationId)
+        {
+            var detail =context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == loanApplicationId).Select(o => o).FirstOrDefault();
+
+            detail.FLOWCHANGEID = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o=>o.PLACEHOLDER=="FAM").Select(o=>o.FLOWCHANGEID).FirstOrDefault();
+
+            return context.SaveChanges() > 0;
+        }
+
+        public bool DeleteLoanApplicationThatFailedRAC(int loanApplicationId , int deletedBy)
+        {
+            var detail = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == loanApplicationId).Select(o => o).FirstOrDefault();
+
+            detail.DELETED = true;
+            detail.DATETIMEDELETED = genSetup.GetApplicationDate();
+            detail.DELETEDBY = deletedBy;
+
+            return context.SaveChanges() > 0;
+        }
+
 
 
     }

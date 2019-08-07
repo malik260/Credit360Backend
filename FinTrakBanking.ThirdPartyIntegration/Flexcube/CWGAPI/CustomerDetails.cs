@@ -310,7 +310,7 @@
                                 productAccountNumber = d.accountNumber,
                                 productAccountName = d.accountName,
                                 productCode = d.product,
-                                productName = d.productType == string.Empty ? "N/A" : d.productType,
+                                productName = d.productType ,
                                 currency = d.currencyType,
                                 branchCode = d.branch,
                                 accountStatusName = d.accountStatus,

@@ -16,6 +16,7 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public bool jumpedDestination { get; set; }
+        public bool failedRacStartCam { get; set; }
         public bool isNewApplication { get; set; }
         public bool closeApplication { get; set; }        
         public int loanApplicationId { get; set; }
