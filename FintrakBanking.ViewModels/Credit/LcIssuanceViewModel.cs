@@ -70,7 +70,9 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? lcToleranceValue { get; set; }
 
         public decimal releaseAmount { get; set; }
-        
+
+        public int? lcReleaseAmountId { get; set; }
+
         //ussance
         public int lcUssanceId { get; set; }
         public decimal ussanceAmount { get; set; }
