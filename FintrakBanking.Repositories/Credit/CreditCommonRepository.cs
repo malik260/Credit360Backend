@@ -47,6 +47,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int turnoverDuration = newDuration;
             var apiTransactions = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
+            var apiCustomerAccounts = new List<ViewModels.CASA.CasaViewModel>();
             var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
 
             //var customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL 
@@ -60,72 +61,84 @@ namespace FintrakBanking.Repositories.Credit
             //            }).Distinct().ToList();
 
             var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));//.Select(x => x.CUSTOMERCODE);
-
+            
             foreach (var customer in customers)
             {
-                var casa = context.TBL_CASA.Where(x => x.CUSTOMERID == customer.CUSTOMERID);
-                //Task.Run(async () => { apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
-                //Task.Run(async () => apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration)).GetAwaiter().GetResult();
-                apiTransactions = integration.GetCustomerAccountTurnover(customer.CUSTOMERCODE, turnoverDuration);
-
-                foreach (var transaction in apiTransactions)
+                if(customer.ISPROSPECT == false)
                 {
-
-                    context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
+                    var casa = context.TBL_CASA.Where(x => x.CUSTOMERID == customer.CUSTOMERID);
+                    //Task.Run(async () => { apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
+                    //Task.Run(async () => apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration)).GetAwaiter().GetResult();
+                    //apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode(customer.CUSTOMERCODE);
+                    apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode("003068763");
+                    foreach (var account in apiCustomerAccounts) 
                     {
-                        LOANAPPLICATIONID = applicationId,
-                        CUSTOMERID = customer.CUSTOMERID,
-                        CUSTOMERCODE = customer.CUSTOMERCODE,
-                        ACCOUNTNUMBER = transaction.accountNumber,
-                        PERIOD = transaction.period,
-                        PRODUCTNAME = transaction.productName,
-                        MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
-                        MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
-                        MINIMUMCREDITBALANCE = transaction.min_Credit_Balance,
-                        MAXIMUMCREDITBALANCE = transaction.max_Credit_Balance,
-                        DEBITTURNOVER = transaction.debit_Turnover,
-                        CREDITTURNOVER = transaction.credit_Turnover,
-                        SMSALERT = transaction.sms_Alert,
-                        AMC = transaction.amc,
-                        VAT = transaction.vat,
-                        MANAGEMENTFEE = transaction.management_Fee,
-                        COMMITMENTFEE = transaction.commitment_Fees,
-                        CONTINGENTLIABILITYCOMM = transaction.com_Contigent_Liab,
-                        LC_COMMISSION = transaction.lc_Commission,
-                        CREATEDBY = staffId,
-                        DATETIMECREATED = DateTime.Now,
-                        MONTH = transaction.month,
-                        YEAR = transaction.year,
-                        ISLMS = isLms
-                    });
+                        apiTransactions = integration.GetCustomerAccountTurnover(account.productAccountNumber, turnoverDuration);
+
+                        foreach (var transaction in apiTransactions)
+                        {
+
+                            context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
+                            {
+                                LOANAPPLICATIONID = applicationId,
+                                CUSTOMERID = customer.CUSTOMERID,
+                                CUSTOMERCODE = customer.CUSTOMERCODE,
+                                ACCOUNTNUMBER = transaction.accountNumber,
+                                PERIOD = transaction.period,
+                                PRODUCTNAME = transaction.productName,
+                                MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
+                                MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
+                                MINIMUMCREDITBALANCE = transaction.min_Credit_Balance,
+                                MAXIMUMCREDITBALANCE = transaction.max_Credit_Balance,
+                                DEBITTURNOVER = transaction.debit_Turnover,
+                                CREDITTURNOVER = transaction.credit_Turnover,
+                                SMSALERT = transaction.sms_Alert,
+                                AMC = transaction.amc,
+                                VAT = transaction.vat,
+                                MANAGEMENTFEE = transaction.management_Fee,
+                                COMMITMENTFEE = transaction.commitment_Fees,
+                                CONTINGENTLIABILITYCOMM = transaction.com_Contigent_Liab,
+                                LC_COMMISSION = transaction.lc_Commission,
+                                CREATEDBY = staffId,
+                                DATETIMECREATED = DateTime.Now,
+                                MONTH = transaction.month,
+                                YEAR = transaction.year,
+                                ISLMS = isLms
+                            });
+                        }
+                    }
+
                 }
             }
 
             foreach (var customer in customers)
             {
-                //Task.Run(async () => { itx = await _customerIntegration.GetCustomerInterestTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
-
-                apiTransactionsOthers = integration.GetCustomerAccountInterestTransactions(customer.CUSTOMERCODE, turnoverDuration);
-
-                foreach (var item in apiTransactionsOthers)
+                if(customer.ISPROSPECT == false)
                 {
-                    context.TBL_LOAN_APPLICATION_TRANS2.Add(new TBL_LOAN_APPLICATION_TRANS2
-                    {
-                        LOANAPPLICATIONID = applicationId,
-                        CUSTOMERID = customer.CUSTOMERID,
-                        CUSTOMERCODE = customer.CUSTOMERCODE,
-                        ACCOUNTNUMBER = item.accountNumber,
-                        PERIOD = item.period,
-                        PRODUCTNAME = "n/a",
-                        FLOATCHARGE = item.float_Charge,
-                        INTEREST = item.interest,
-                        CREATEDBY = staffId,
-                        DATETIMECREATED = DateTime.Now,
-                        MONTH = item.month,
-                        YEAR = item.year,
-                        ISLMS = isLms
+                    //Task.Run(async () => { itx = await _customerIntegration.GetCustomerInterestTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
 
-                    });
+                    apiTransactionsOthers = integration.GetCustomerAccountInterestTransactions(customer.CUSTOMERCODE, turnoverDuration);
+
+                    foreach (var item in apiTransactionsOthers)
+                    {
+                        context.TBL_LOAN_APPLICATION_TRANS2.Add(new TBL_LOAN_APPLICATION_TRANS2
+                        {
+                            LOANAPPLICATIONID = applicationId,
+                            CUSTOMERID = customer.CUSTOMERID,
+                            CUSTOMERCODE = customer.CUSTOMERCODE,
+                            ACCOUNTNUMBER = item.accountNumber,
+                            PERIOD = item.period,
+                            PRODUCTNAME = "n/a",
+                            FLOATCHARGE = item.float_Charge,
+                            INTEREST = item.interest,
+                            CREATEDBY = staffId,
+                            DATETIMECREATED = DateTime.Now,
+                            MONTH = item.month,
+                            YEAR = item.year,
+                            ISLMS = isLms
+
+                        });
+                    }
                 }
             }
 

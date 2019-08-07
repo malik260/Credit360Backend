@@ -1060,14 +1060,19 @@ namespace FintrakBanking.Repositories.Credit
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
                 {
-                    if(casa != null)
-                    {
-                        creditCommon.LoadCustomerTurnover(
+                    creditCommon.LoadCustomerTurnover(
                             applicationId,
                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                             staffId
                         );
-                    }
+                    //if (casa != null)
+                    //{
+                    //    creditCommon.LoadCustomerTurnover(
+                    //        applicationId,
+                    //        loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                    //        staffId
+                    //    );
+                    //}
                 }
 
                 return new LoanApplicationUpdateMessage
