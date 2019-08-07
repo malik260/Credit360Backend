@@ -1485,7 +1485,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var docContext = new Entities.DocumentModels.FinTrakBankingDocumentsContext();
                 if (!docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
-                        && x.OPERATIONID == operationId
+                        && x.OPERATIONID == (int)OperationsEnum.CreditAppraisal
                         && x.TARGETID == targetId
                 ).Any())
                     return false;

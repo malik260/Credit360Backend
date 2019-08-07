@@ -80,7 +80,9 @@ namespace FintrakBanking.Repositories.credit
         public IEnumerable<LcIssuanceViewModel> GetLcIssuancesForUssance()
         {
             var lcs = (from x in context.TBL_LC_ISSUANCE where
-                        (x.DELETED == false && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted)
+                        (x.DELETED == false && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                        || (x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
+                                    && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved))
                         //join y in context.TBL_LC_USSANCE.Where(y => y.DELETED == false)
                         //on x.LCISSUANCEID equals y.LCISSUANCEID
                             select new LcIssuanceViewModel()
@@ -91,9 +93,12 @@ namespace FintrakBanking.Repositories.credit
                                 totalApprovedAmountCurrencyId = x.TOTALAPPROVEDAMOUNTCURRENCYID,
                                 availableAmountCurrencyId = x.AVAILABLEAMOUNTCURRENCYID,
                                 cashBuildUpAvailable = x.CASHBUILDUPAVAILABLE,
-                                cashBuildUpReferenceNumber = (string)x.CASHBUILDUPREFERENCETYPE,
-                                cashBuildUpReferenceType = (string)x.CASHBUILDUPREFERENCENUMBER,
+                                cashBuildUpReferenceNumber = x.CASHBUILDUPREFERENCETYPE,
+                                cashBuildUpReferenceType = x.CASHBUILDUPREFERENCENUMBER,
                                 percentageToCover = x.PERCENTAGETOCOVER,
+                                lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
+                                lcToleranceValue = x.LCTOLERANCEVALUE,
+                                releaseAmount = x.RELEASEDAMOUNT,
                                 letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                                 isDraftRequired = x.ISDRAFTREQUIRED,
                                 beneficiaryAddress = x.BENEFICIARYADDRESS,
@@ -126,6 +131,7 @@ namespace FintrakBanking.Repositories.credit
 
         public LcUssanceViewModel AddLcUssance(LcUssanceViewModel model)
         {
+            ValidateUsanceAmount(model);
             var entity = new TBL_LC_USSANCE
             {
                 LCISSUANCEID = model.lcIssuanceId,
@@ -160,6 +166,18 @@ namespace FintrakBanking.Repositories.credit
             var createdlcUssance = context.TBL_LC_USSANCE.FirstOrDefault(lc => lc.LCISSUANCEID == model.lcIssuanceId);
             model.lcUssanceId = createdlcUssance.LCUSSANCEID;
             return model;
+        }
+
+        private bool ValidateUsanceAmount(LcUssanceViewModel model)
+        {
+            var lc = context.TBL_LC_ISSUANCE.Find(model.lcIssuanceId);
+            var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == model.lcIssuanceId).Sum(r => r.RELEASEAMOUNT);
+            var availableAmount = lc.LCTOLERANCEVALUE - totalReleasedAmount;
+            if (model.ussanceAmount > availableAmount)
+            {
+                throw new SecureException("Usance Amount cannot be greater than remainder tolerance amount" + availableAmount);
+            }
+            return true;
         }
 
         public bool UpdateLcUssance(LcUssanceViewModel model, int id, UserInfo user)
@@ -272,6 +290,9 @@ namespace FintrakBanking.Repositories.credit
                              cashBuildUpReferenceNumber = (string)a.CASHBUILDUPREFERENCETYPE,
                              cashBuildUpReferenceType = (string)a.CASHBUILDUPREFERENCENUMBER,
                              percentageToCover = a.PERCENTAGETOCOVER,
+                             lcTolerancePercentage = a.LCTOLERANCEPERCENTAGE,
+                             lcToleranceValue = a.LCTOLERANCEVALUE,
+                             releaseAmount = a.RELEASEDAMOUNT,
                              beneficiaryAddress = a.BENEFICIARYADDRESS,
                              beneficiaryEmail = a.BENEFICIARYEMAIL,
                              customerId = a.CUSTOMERID,

@@ -1590,7 +1590,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal availableCollateralValue = 0;
             decimal expectedCollateralCoverage = 0;
             decimal actualCollateralCoverage = 0;
-            decimal sumOfMultipleCollateralValues = 0;
+          //  decimal sumOfMultipleCollateralValues = 0;
 
             var collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
                                join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
@@ -1608,9 +1608,12 @@ namespace FintrakBanking.Repositories.Credit
 
                                }).FirstOrDefault();
 
+
             if (collaterals == null) return new List<CollateralCoverageViewModel>();
 
+
             var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collaterals.collateralSubTypeId && o.CURRENCYID== currencyId).Select(o => o).FirstOrDefault();
+            if (data == null) throw new SecureException("Collateral Coverage has not been set");
 
             if (data == null) return new List<CollateralCoverageViewModel>();
 
