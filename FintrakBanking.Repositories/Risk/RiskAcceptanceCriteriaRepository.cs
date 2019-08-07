@@ -73,8 +73,11 @@ namespace FintrakBanking.Repositories.Risk
             foreach (var productRacCategory in productRacCategories)
             {
                 ProductRacCategory racCategory = new ProductRacCategory();
+                List<ProductRacItem> items = new List<ProductRacItem>();
 
-                List<ProductRacItem> items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+                if (racCategoryTypeId != 0 && racCategoryTypeId != null)
+                {
+                    items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.RACCATEGORYTYPEID== racCategoryTypeId && x.ISACTIVE == true && x.DELETED == false)
                     .Select(x => new ProductRacItem
                     {
                         id = x.RACDEFINITIONID,
@@ -89,7 +92,25 @@ namespace FintrakBanking.Repositories.Risk
                         hasException = x.ISREQUIRED == false,
                     })
                     .ToList();
-
+                }
+                else
+                {
+                    items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+                    .Select(x => new ProductRacItem
+                    {
+                        id = x.RACDEFINITIONID,
+                        categoryId = x.RACCATEGORYID,
+                        //id = x.TBL_RAC_ITEM.RACITEMID,
+                        criteria = x.TBL_RAC_ITEM.CRITERIA,
+                        required = x.TBL_RAC_ITEM.DESCRIPTION,
+                        typeId = x.RACINPUTTYPEID,
+                        type = context.TBL_RAC_INPUT_TYPE.FirstOrDefault(t => t.RACINPUTTYPEID == x.RACINPUTTYPEID).INPUTTAG,
+                        optionId = x.RACOPTIONID,
+                        fileUpload = x.REQUIREUPLOAD,
+                        hasException = x.ISREQUIRED == false,
+                    })
+                    .ToList();
+                }
 
                 foreach (var item in items)
                 {
