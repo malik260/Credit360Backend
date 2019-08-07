@@ -1590,7 +1590,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal availableCollateralValue = 0;
             decimal expectedCollateralCoverage = 0;
             decimal actualCollateralCoverage = 0;
-            decimal sumOfMultipleCollateralValues = 0;
+          //  decimal sumOfMultipleCollateralValues = 0;
 
             var collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
                                join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
