@@ -69,8 +69,8 @@ namespace FintrakBanking.Repositories.Credit
                     var casa = context.TBL_CASA.Where(x => x.CUSTOMERID == customer.CUSTOMERID);
                     //Task.Run(async () => { apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
                     //Task.Run(async () => apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration)).GetAwaiter().GetResult();
-                    //apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode(customer.CUSTOMERCODE);
-                    apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode("003068763");
+                    apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode(customer.CUSTOMERCODE);
+                    //apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode("003068763");
                     foreach (var account in apiCustomerAccounts) 
                     {
                         apiTransactions = integration.GetCustomerAccountTurnover(account.productAccountNumber, turnoverDuration);
