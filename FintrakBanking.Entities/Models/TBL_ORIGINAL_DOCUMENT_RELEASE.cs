@@ -23,7 +23,7 @@ namespace FintrakBanking.Entities.Models
         public int CREATEDBY { get; set; }
         public DateTime? DATETIMECREATED { get; set; }
         public int LASTUPDATEDBY { get; set; }
-        public DateTime DATETIMEUPDATED { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
         public bool DELETED { get; set; }
         public int DELETEDBY { get; set; }
         public DateTime DATETIMEDELETED { get; set; }
