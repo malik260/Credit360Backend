@@ -2,8 +2,8 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Finance;
 using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService;
-//using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService;
-using FinTrakBanking.ThirdPartyIntegration.ServiceReference1;
+using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService;
+//using FinTrakBanking.ThirdPartyIntegration.ServiceReference1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
