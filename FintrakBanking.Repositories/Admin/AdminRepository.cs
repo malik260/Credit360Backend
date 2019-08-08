@@ -1251,6 +1251,7 @@ namespace FintrakBanking.Repositories.Admin
         
         public bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId, decimal levelAmount = 0)
         {
+            return true;  ///TEST ONLY> TO BE REMOVED
             bool output = false;
             if (USE_THIRD_PARTY_INTEGRATION == true)
             {

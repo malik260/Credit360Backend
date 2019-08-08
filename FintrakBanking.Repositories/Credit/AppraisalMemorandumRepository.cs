@@ -20,6 +20,7 @@ using FintrakBanking.Common;
 using FintrakBanking.Interfaces.AlertMonitoring;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using FintrakBanking.ViewModels.credit;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -930,6 +931,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse LcReleaseMemorandum(LcForwardViewModel model)
         {
+            LcReleaseAmountViewModel release = new LcReleaseAmountViewModel();
+                release.lcReleaseAmountId = model.lcReleaseAmountId;
+                release.lcIssuanceId = model.LcIssuanceId;
+                release.releaseAmount = model.releaseAmount;
+                ValidateReleaseAmount(release);
             int operationId = (int)OperationsEnum.lcReleaseOfShippingDocuments; // CHANGE
             //var applicationDate = general.GetApplicationDate();
             var lc = context.TBL_LC_ISSUANCE.Find(model.LcIssuanceId);
@@ -940,7 +946,7 @@ namespace FintrakBanking.Repositories.Credit
             //workflow.ResolveMultipleProductPath(operationId, items.Select(x => (short)x.APPROVEDPRODUCTID).ToList());
             workflow.OperationId = operationId;
             workflow.StaffId = model.createdBy;
-            workflow.TargetId = model.LcIssuanceId;
+            workflow.TargetId = model.lcReleaseAmountId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
             if (model.forwardAction == (int)ApprovalStatusEnum.Reroute)
@@ -1000,6 +1006,8 @@ namespace FintrakBanking.Repositories.Credit
                 else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
                 {
                     lc.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    //var lcRelease = context.TBL_LCRELEASE_AMOUNT.Find(model.lcReleaseAmountId);
+                    //context.TBL_LCRELEASE_AMOUNT.Remove(lcRelease);
                     //SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
                 }
 
@@ -1220,6 +1228,20 @@ namespace FintrakBanking.Repositories.Credit
             ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
+        }
+
+        private bool ValidateReleaseAmount(LcReleaseAmountViewModel model)
+        {
+            var approvedReleaseIds = context.TBL_APPROVAL_TRAIL.Where(t => t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                                                        && t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments).Select(t => t.TARGETID).ToList();
+            var lc = context.TBL_LC_ISSUANCE.Find(model.lcIssuanceId);
+            var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => approvedReleaseIds.Contains(r.LCRELEASEAMOUNTID)).Sum(r => r.RELEASEAMOUNT) ?? 0;
+            var availableAmount = lc.LCTOLERANCEVALUE - totalReleasedAmount;
+            if (model.releaseAmount > availableAmount)
+            {
+                throw new SecureException("Sorry, remainder tolerance amount is now " + availableAmount);
+            }
+            return true;
         }
 
         public bool ValidateAllFromReceiverLevels(int staffId, int operationId)
