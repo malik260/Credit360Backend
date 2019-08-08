@@ -27,6 +27,8 @@ namespace FintrakBanking.ViewModels.credit
 
         public int customerId { get; set; }
 
+        public string customerName { get; set; }
+
         public int fundSourceId { get; set; }
 
         public int fundSourceDetails { get; set; }
@@ -68,7 +70,9 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? lcToleranceValue { get; set; }
 
         public decimal releaseAmount { get; set; }
-        
+
+        public int? lcReleaseAmountId { get; set; }
+
         //ussance
         public int lcUssanceId { get; set; }
         public decimal ussanceAmount { get; set; }
@@ -229,6 +233,13 @@ namespace FintrakBanking.ViewModels.credit
         public string cashBuildUpReferenceNumber { get; set; }
 
         public decimal? percentageToCover { get; set; }
+
+        public decimal? lcTolerancePercentage { get; set; }
+
+        public decimal? lcToleranceValue { get; set; }
+
+        public decimal releaseAmount { get; set; }
+
 
         //ussance
         public int lcUssanceId { get; set; }

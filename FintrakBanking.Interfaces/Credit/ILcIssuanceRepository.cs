@@ -25,6 +25,8 @@ namespace FintrakBanking.Interfaces.credit
 
         LcReleaseAmountViewModel AddLCReleaseAmount(LcReleaseAmountViewModel entity);
 
+        LcReleaseAmountViewModel UpdateLCReleaseAmount(LcReleaseAmountViewModel entity);
+
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForApproval(int staffId);
 
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForReleaseApproval(int staffId);
