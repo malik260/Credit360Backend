@@ -572,7 +572,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                IEnumerable<LcIssuanceViewModel> response = repo.GetLcIssuancesForRelease();
+                IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForRelease();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (SecureException ex)
@@ -634,7 +634,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.UpdateLCReleaseAmount(entity);
-                if (response.lcReleaseAmountId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been added successfully" });
+                if (response.lcReleaseAmountId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been updated successfully" });
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error adding this record" });
             }
             catch (SecureException ex)
