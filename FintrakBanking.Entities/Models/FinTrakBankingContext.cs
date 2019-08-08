@@ -529,6 +529,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_PROPOSE> TBL_COLLATERAL_PROPOSE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_COVERAGE> TBL_COLLATERAL_COVERAGE { get; set; }
         public virtual DbSet<TBL_LCRELEASE_AMOUNT> TBL_LCRELEASE_AMOUNT { get; set; }
+      
+
         
 
 

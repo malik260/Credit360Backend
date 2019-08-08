@@ -148,6 +148,7 @@
     <Compile Include="Credit\TestCollateralRepository.cs" />
     <Compile Include="Credit\ValuationReportRepository.cs" />
     <Compile Include="Credit\ValuationRequestTypeRepository.cs" />
+    <Compile Include="Credit\WorkFlowChangeRepository.cs" />
     <Compile Include="Media\DocumentCategoryRepository.cs" />
     <Compile Include="Media\DocumentCategoryTypeRepository.cs" />
     <Compile Include="Media\DocumentTypeRepository.cs" />
