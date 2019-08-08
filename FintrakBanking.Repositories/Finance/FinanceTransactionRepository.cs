@@ -566,11 +566,11 @@ namespace FintrakBanking.Repositories.Finance
                 {
                     //DateTime date = generalSetup.GetApplicationDate().Date;
                     var rateInfo = (from x in this.context.TBL_CURRENCY_EXCHANGERATE
-                                    where x.CURRENCYID == currencyId && x.DATE == date.Date && x.RATECODEID == 1
+                                    where x.CURRENCYID == currencyId && x.DATE == generalSetup.GetApplicationDate() && x.RATECODEID == 1
                                     select x).FirstOrDefault();
 
                     if (rateInfo == null)
-                        throw new ConditionNotMetException($"Exchange rate for {date} is not defined. Define the exchange rate and try again");
+                        throw new ConditionNotMetException($"Exchange rate for {generalSetup.GetApplicationDate()} is not defined. Define the exchange rate and try again");
 
                     return new CurrencyExchangeRateViewModel
                     {

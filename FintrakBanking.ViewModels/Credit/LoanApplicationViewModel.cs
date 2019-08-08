@@ -835,6 +835,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerGroupName { get; set; }
         public List<LoanApplicationDatailViewModel> details { get; set; }
         public string customerCode { get; set; }
+        public int customerId { get; set; }
+        public int operationId { get; set; }
     }
     
     public class ManagementPositionViewModel : GeneralEntity
