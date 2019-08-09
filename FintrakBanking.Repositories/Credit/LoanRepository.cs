@@ -6410,7 +6410,10 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in data)
             {
-
+                var approvedLCIssuanceIds = context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.lcIssuance && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Select(t => t.TARGETID).ToList();
+                var lcIFFRequests = context.TBL_LC_ISSUANCE.Where(l => l.DELETED == false && l.FUNDSOURCEID == (int)LCFundSource.IFF).ToList();
+                var lcapprovedLCIFFs = lcIFFRequests.Where(i => approvedLCIssuanceIds.Contains(i.LCISSUANCEID)).Select(i => new { i.FUNDSOURCEDETAILS, i.LETTEROFCREDITAMOUNT});
+                var lcApprovedAmounts = lcapprovedLCIFFs.Where(i => i.FUNDSOURCEDETAILS == item.loanApplicationId).Sum(i => i.LETTEROFCREDITAMOUNT);
                 var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
 
                 if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
@@ -6434,6 +6437,10 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
+                if (lcApprovedAmounts > 0)
+                {
+                    item.customerAvailableAmount -= lcApprovedAmounts;
+                }
             }
 
             return data;

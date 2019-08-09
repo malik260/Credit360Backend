@@ -290,7 +290,7 @@
                     CasaViewModel casaViewModels = new CasaViewModel();
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"api/Customer/getcustomeraccountbalances/{customerCode}");
+                    response = await client.GetAsync($"api/Customer/GetCustomerAccountBalances/{customerCode}");
                     //response = await client.GetAsync($"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}");
 
                     List<CasaViewModel> casa = new List<CasaViewModel>();
@@ -599,7 +599,129 @@
                 }
             }
 
-            public async Task<List<CustomerTurnoverViewModel>> GetCustomerTransactions(string customerCode, int durationInMonths)
+            //public async Task<List<CustomerTurnoverViewModel>> GetCustomerTransactions(string customerCode, int durationInMonths)
+            //{
+            //    //month = 48;
+            //    //cifid = "483008974";
+            //    HttpClientHandler handler = new HttpClientHandler();
+            //    HttpClient httpClientInstance;
+
+            //    //var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
+            //    //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
+            //    var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/07-2019";
+
+            //    httpClientInstance = new HttpClient();
+            //    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            //    //
+            //    handler.UseDefaultCredentials = true;
+            //    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+            //    HttpClient client = new HttpClient(handler);
+            //    client.Timeout = TimeSpan.FromSeconds(180);
+            //    client.BaseAddress = new Uri(API_URL);
+            //    client.DefaultRequestHeaders.Authorization = token;
+            //    client.DefaultRequestHeaders.Accept.Clear();
+            //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            //    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+            //    HttpResponseMessage response = null;
+            //    DateTime requestTime = new DateTime();
+            //    DateTime responseTime = new DateTime();
+
+            //    requestTime = DateTime.Now;
+            //    response = await client.GetAsync(endpointUrl);
+            //    responseTime = DateTime.Now;
+
+            //    List<CustomerTurnoverViewModelAPI> result = null;
+
+            //    List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
+
+            //    var responseMessage = await response.Content.ReadAsStringAsync();
+
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
+
+            //        var responseData = await response.Content.ReadAsStringAsync();
+            //        JObject responseDataJsonString = JObject.Parse(responseData);
+
+            //        var data = responseDataJsonString["data"].ToString();
+            //        var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverViewModelAPI>>(data);
+
+
+            //        //var jsonString = await response.Content.ReadAsStringAsync();
+
+            //        //var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverViewModelAPI>>(jsonString);
+
+            //        foreach (var item in apiData)
+            //        {
+
+            //            decimal amc = 0;
+            //            Decimal.TryParse(item.amc.Replace(",", ""), out amc);
+
+            //            decimal vat = 0;
+            //            Decimal.TryParse(item.vat.Replace(",", ""), out vat);
+
+            //            decimal management_Fee = 0;
+            //            Decimal.TryParse(item.management_Fee.Replace(",", ""), out management_Fee);
+
+            //            decimal commitment_Fees = 0;
+            //            Decimal.TryParse(item.commitment_Fees.Replace(",", ""), out commitment_Fees);
+
+            //            decimal com_Contigent_Liab = 0;
+            //            Decimal.TryParse(item.com_Contigent_Liab.Replace(",", ""), out com_Contigent_Liab);
+
+            //            decimal lc_Commission = 0;
+            //            Decimal.TryParse(item.lc_Commission.Replace(",", ""), out lc_Commission);
+
+            //            decimal sms_Alert = 0;
+            //            Decimal.TryParse(item.sms_Alert.Replace(",", ""), out lc_Commission);
+
+            //            accounts.Add(new CustomerTurnoverViewModel
+            //            {
+            //                accountNumber = item.foracid,
+            //                customerCode = item.cust_Id,
+            //                period = item.period,
+            //                productName = item.schm_Type,
+            //                max_Credit_Balance = item.max_Credit_Balance,
+            //                max_Debit_Balance = item.max_Debit_Balance,
+            //                min_Credit_Balance = item.min_Credit_Balance,
+            //                min_Debit_Balance = item.min_Debit_Balance,
+            //                credit_Turnover = item.credit_Turnover,
+            //                debit_Turnover = item.debit_Turnover,
+            //                amc = amc,
+            //                vat = vat,
+            //                management_Fee = management_Fee,
+            //                commitment_Fees = commitment_Fees,
+            //                com_Contigent_Liab = com_Contigent_Liab,
+            //                lc_Commission = lc_Commission,
+            //                sms_Alert = sms_Alert,
+            //                month=item.month,
+            //                year = item.year,
+
+            //            });
+            //        }
+
+            //    }
+
+
+            //    handler.Dispose();
+            //    client.Dispose();
+
+            //    FintrakBankingDatabaseCustomerTurnoverOperations(
+            //        endpointUrl,
+            //        customerCode,
+            //        requestTime,
+            //        responseTime,
+            //        "Cif_Id={cifid}&Month={month}",
+            //        responseMessage
+            //    );
+
+            //    return accounts;
+            //}
+
+            public async Task<List<CustomerTurnoverViewModel>> GetCustomerTransactions(string accountNumber, int durationInMonths)
             {
                 //month = 48;
                 //cifid = "483008974";
@@ -608,7 +730,7 @@
 
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
-                var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/07-2019";
+                var endpointUrl = $"api/Customer/GetCustomerTransactions/{accountNumber}/07-2019";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -697,7 +819,7 @@
                             com_Contigent_Liab = com_Contigent_Liab,
                             lc_Commission = lc_Commission,
                             sms_Alert = sms_Alert,
-                            month=item.month,
+                            month = item.month,
                             year = item.year,
 
                         });
@@ -711,7 +833,7 @@
 
                 FintrakBankingDatabaseCustomerTurnoverOperations(
                     endpointUrl,
-                    customerCode,
+                    accountNumber,
                     requestTime,
                     responseTime,
                     "Cif_Id={cifid}&Month={month}",
@@ -721,6 +843,7 @@
                 return accounts;
             }
 
+
             public async Task<List<CustomerTurnoverViewModel>> GetCustomerInterestTransactions(string customerCode, int durationInMonths)
             {
                 //month = 48;
@@ -728,6 +851,7 @@
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
+                //var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails/{customerCode}/{durationInMonths}";
                 var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails/{customerCode}/{durationInMonths}";
 
                 httpClientInstance = new HttpClient();

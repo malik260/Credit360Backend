@@ -141,4 +141,10 @@ namespace FintrakBanking.Common.Enum
         CallMemo = 149,
 
     }
+
+    public enum LCFundSource
+    {
+        Cash = 1,
+        IFF = 2
+    }
 }

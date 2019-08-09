@@ -74,5 +74,8 @@ namespace FintrakBanking.Interfaces.Customer
         #endregion tbl_Customer Group Mapping repository
         List<CurrentCustomerExposure> GetGroupExposureByCustomerId(int customerId, int companyId);
         List<CurrentCustomerExposure> GetGroupExposureByGroupId(int customerGroupId, int companyId);
+
+        IEnumerable<CustomerGroupViewModel> GetAllTempCustomerGroups();
+        IEnumerable<CustomerGroupMappingViewModel> GetTempCustomerGroupMappingByGroupId(int customerGroupId);
     }
 }
