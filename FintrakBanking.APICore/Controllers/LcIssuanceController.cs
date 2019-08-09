@@ -572,7 +572,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                IEnumerable<LcIssuanceViewModel> response = repo.GetLcIssuancesForRelease();
+                IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuancesForRelease();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (SecureException ex)
@@ -612,7 +612,29 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.AddLCReleaseAmount(entity);
-                if (response.lcIssuanceId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been added successfully" });
+                if (response.lcReleaseAmountId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been added successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error adding this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("lc-release")]
+        public HttpResponseMessage UpdateLCReleaseAmount([FromBody] LcReleaseAmountViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+            try
+            {
+                var response = repo.UpdateLCReleaseAmount(entity);
+                if (response.lcReleaseAmountId > 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been updated successfully" });
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error adding this record" });
             }
             catch (SecureException ex)

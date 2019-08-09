@@ -1060,14 +1060,19 @@ namespace FintrakBanking.Repositories.Credit
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
                 {
-                    if(casa != null)
-                    {
-                        creditCommon.LoadCustomerTurnover(
+                    creditCommon.LoadCustomerTurnover(
                             applicationId,
                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                             staffId
                         );
-                    }
+                    //if (casa != null)
+                    //{
+                    //    creditCommon.LoadCustomerTurnover(
+                    //        applicationId,
+                    //        loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                    //        staffId
+                    //    );
+                    //}
                 }
 
                 return new LoanApplicationUpdateMessage
@@ -2961,6 +2966,8 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationId = x.q.a.LOANAPPLICATIONID,
                         applicationReferenceNumber = x.q.a.APPLICATIONREFERENCENUMBER,
                         applicationDate = x.q.a.APPLICATIONDATE,
+                        customerId = x.q.a.CUSTOMERID.Value,
+                        operationId = x.q.a.OPERATIONID,
                         customerGroupName = x.q.a.CUSTOMERGROUPID.HasValue ? x.q.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                     });
             }

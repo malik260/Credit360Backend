@@ -32,5 +32,7 @@ namespace FintrakBanking.Interfaces.Media
         IEnumerable<OriginalDocumentApprovalViewModel> SearchForApprovedOriginalDocument(string searchString);
 
         List<OriginalDocumentApprovalViewModel> GetOriginalDocument(int id);
+
+        List<OriginalDocumentApprovalViewModel> GetReleaseDocumentByCollateralCustomerId(int id);
     }
 }
