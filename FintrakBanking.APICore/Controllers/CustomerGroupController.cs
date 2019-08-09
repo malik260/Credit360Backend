@@ -130,7 +130,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-temp-customer-groups")]
+        public HttpResponseMessage GetTempCustomerGroups()
+        {
+
+            try
+            {
+                var data = repo.GetAllTempCustomerGroups();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                // errorLogger.LogError(e, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/awaiting-approval")]
         public HttpResponseMessage GetCustomerGroupAwaitingApproval()
         {
@@ -505,7 +528,25 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-temp-customer-group-mapping/{customerGroupId}")]
+        public HttpResponseMessage GetTempCustomerGroupMappingByGroupId(int customerGroupId)
+        {
+            try
+            {
+                var data = repo.GetTempCustomerGroupMappingByGroupId(customerGroupId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group-mapping/relationship-types")]
         public HttpResponseMessage GetCustomerGroupRelationshipTypes()
         {

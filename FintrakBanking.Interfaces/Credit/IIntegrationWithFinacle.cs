@@ -33,6 +33,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<CustomerViewModels> GetCustomerByAccountsNumber(string customerAccount);
         List<CasaViewModel> GetCustomerAccountsBalanceByCustomerCode(string customerCode);
 
+        //List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths);
         List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths);
         List<CustomerTurnoverViewModel> GetCustomerAccountInterestTransactions(string customerCode, int durationInMonths);
 

@@ -315,10 +315,8 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<ValuationPrerequisiteViewModel> GetAllValuationRequest(int collteralId)
         {
             var res = from C in _context.TBL_COLLATERAL_CUSTOMER
-                      join T in _context.TBL_COLLATERAL_VALUATION
-                      on C.COLLATERALCUSTOMERID equals T.COLLATERALCUSTOMERID
-                      join V in _context.TBL_COLLATERAL_VALUATION_PRE
-                      on T.COLLATERALVALUATIONID equals V.COLLATERALVALUATIONID
+                      join T in _context.TBL_COLLATERAL_VALUATION on C.COLLATERALCUSTOMERID equals T.COLLATERALCUSTOMERID
+                      join V in _context.TBL_COLLATERAL_VALUATION_PRE on T.COLLATERALVALUATIONID equals V.COLLATERALVALUATIONID
                       where T.COLLATERALCUSTOMERID == collteralId
                       select new ValuationPrerequisiteViewModel
                       {
@@ -328,11 +326,12 @@ namespace FintrakBanking.Repositories.Credit
                           collateralType = _context.TBL_COLLATERAL_TYPE.Where(O => O.COLLATERALTYPEID == C.COLLATERALTYPEID).Select(O => O.COLLATERALTYPENAME).FirstOrDefault(),
                           approvalStatusId = V.APPROVALSTATUSID,
                           approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == V.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
-                          collateralValuationId = V.COLLATERALVALUATIONID
+                          collateralValuationId = V.COLLATERALVALUATIONID,
+                          operationId = V.OPERATIONID
                           //collateralCustomerId = C.COLLATERALCUSTOMERID
                       };
 
-            return res;
+            return res.ToList();
         }
 
         public IEnumerable<ValuationPrerequisiteViewModel> GetCollateralValuationRequestWaitingForApproval(int staffId)
@@ -341,7 +340,7 @@ namespace FintrakBanking.Repositories.Credit
             //_context.Configuration.ProxyCreationEnabled = false;
 
             var res = from q in _context.TBL_COLLATERAL_VALUATION 
-                join C in _context.TBL_COLLATERAL_CUSTOMER on q.COLLATERALCUSTOMERID equals C.COLLATERALCUSTOMERID
+                      join C in _context.TBL_COLLATERAL_CUSTOMER on q.COLLATERALCUSTOMERID equals C.COLLATERALCUSTOMERID
                       join atrail in _context.TBL_APPROVAL_TRAIL on q.COLLATERALVALUATIONID equals atrail.TARGETID
                       join cus in _context.TBL_CUSTOMER on C.CUSTOMERID equals cus.CUSTOMERID
                       join valPre in _context.TBL_COLLATERAL_VALUATION_PRE on q.COLLATERALVALUATIONID equals valPre.COLLATERALVALUATIONID
@@ -360,6 +359,7 @@ namespace FintrakBanking.Repositories.Credit
                           valuationComment = valPre.VALUATIONCOMMENT,
                           valuationName = q.VALUATIONNAME,
                           valuationReason = q.VALUATIONREASON,
+                          operationId = valPre.OPERATIONID,
                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == valPre.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
                       };
 
