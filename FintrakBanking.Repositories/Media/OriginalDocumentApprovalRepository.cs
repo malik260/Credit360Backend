@@ -139,6 +139,57 @@ namespace FintrakBanking.Repositories.Media
             return entity;
         }
 
+        public List<OriginalDocumentApprovalViewModel> GetReleaseDocumentByCollateralCustomerId(int id)
+        {
+            List<OriginalDocumentApprovalViewModel> data = new List<OriginalDocumentApprovalViewModel>();
+
+            var collateralcustomerIds = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                                         join cc in context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                                         where cc.CUSTOMERID == id
+                                         select cc.COLLATERALCUSTOMERID
+                                       ).ToList();
+
+            if (collateralcustomerIds != null)
+            {
+                foreach (var ccId in collateralcustomerIds)
+                {
+                    var entities = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                                    join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+                                    where oda.COLLATERALCUSTOMERID == ccId && oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
+                                    select new OriginalDocumentApprovalViewModel
+                                    {
+                                      originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
+                                      loanApplicationId = oda.LOANAPPLICATIONID,
+                                      description = oda.DESCRIPTION,
+                                      approvalStatusName = context.TBL_APPROVAL_STATUS.FirstOrDefault(o => o.APPROVALSTATUSID == oda.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                      //applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                                      //referenceNumber = x.REFERENCENUMBER,
+                                      arrivalDate = atrail.ARRIVALDATE,
+                                      //dateTimeCreated = x.DATETIMECREATED,
+                                      //approvalDate = x.APPROVALDATE,
+                                      approvalStatusId = (short)oda.APPROVALSTATUSID,
+                                      collateralCustomerId = oda.COLLATERALCUSTOMERID,
+                                      //approvedPerson = atrail.RELIEVEDSTAFFID == null ? "n/a" : context.TBL_STAFF.Where(x => x.STAFFID == atrail.RESPONSESTAFFID).Select(s => s.STAFFCODE).FirstOrDefault(),
+                                      //responsiblePerson = atrail.RESPONSESTAFFID == null ? "n/a" : context.TBL_STAFF.Where(x => x.STAFFID == atrail.TOSTAFFID).Select( s => s.STAFFCODE).FirstOrDefault(),
+                                      //responsiblePerson = atrail.TOSTAFFID == null ? "n/a" : atrail.TBL_STAFF1.STAFFCODE + " - " + atrail.TBL_STAFF1.FIRSTNAME + " " + atrail.TBL_STAFF1.MIDDLENAME + " " + atrail.TBL_STAFF1.LASTNAME,
+                                      approvalTrailId = atrail.APPROVALTRAILID,
+                                      currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME : "n/a",
+                                      //customerId = x.COLLATERALCUSTOMERID,
+                                      operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                                  }).OrderByDescending(e => e.approvalTrailId);
+
+                    var entity = entities.FirstOrDefault();
+                    
+                    if (entity != null)
+                    {
+                        data.Add(entity);
+                    }
+                }
+            }
+
+            return data.OrderByDescending(d => d.approvalTrailId).ToList();
+        }
+
         public List<OriginalDocumentApprovalViewModel> GetOriginalDocument(int id)
         {
             var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)

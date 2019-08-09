@@ -59,6 +59,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int forwardAction { get; set; } // statusId
         public int LcIssuanceId { get; set; } // targetId
+        public int lcReleaseAmountId { get; set; }
+        public int releaseAmount { get; set; }
         public int appraisalMemorandumId { get; set; }
         public int? productClassId { get; set; }
         public int? productId { get; set; }

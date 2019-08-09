@@ -384,7 +384,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 .SelectMany(x => x.TBL_APPROVAL_LEVEL
                 .Where(l => l.DELETED == false && l.ISACTIVE == true)).ToList();
 
-            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId).ToList();
+                var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId).ToList();
 
             if (staffWorkflow.Count() > 0) scope = staffWorkflow.Max(x => x.PROCESSVIEWSCOPEID);
 

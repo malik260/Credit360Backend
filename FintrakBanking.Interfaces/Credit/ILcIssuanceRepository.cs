@@ -21,7 +21,7 @@ namespace FintrakBanking.Interfaces.credit
 
         IEnumerable<CamProcessedLoanViewModel> GetIFFLinesForLCByCustomerId(int CustomerId, int companyId, int staffId, int branchId);
 
-        IEnumerable<LcIssuanceViewModel> GetLcIssuancesForRelease();
+        IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForRelease();
 
         LcReleaseAmountViewModel AddLCReleaseAmount(LcReleaseAmountViewModel entity);
 

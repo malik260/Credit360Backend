@@ -40,5 +40,9 @@ namespace FintrakBanking.ViewModels.Media
         public decimal exposureValue { get; set; }
         public string collateralCode { get; set; }
         public int collateralTypeId { get; set; }
+        public DateTime arrivalDate { get; set; }
+        public string responsiblePerson { get; set; }
+        public int approvalTrailId { get; set; }
+        public string currentApprovalLevel { get; set; }
     }
 }

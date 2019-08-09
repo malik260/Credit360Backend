@@ -33,7 +33,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public int fundSourceDetails { get; set; }
 
-        public int formNumber { get; set; }
+        public string formMNumber { get; set; }
 
         public int beneficiaryPhoneNumber { get; set; }
 
@@ -167,7 +167,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public int fundSourceDetails { get; set; }
 
-        public int formNumber { get; set; }
+        public string formMNumber { get; set; }
 
         public int beneficiaryPhoneNumber { get; set; }
 
