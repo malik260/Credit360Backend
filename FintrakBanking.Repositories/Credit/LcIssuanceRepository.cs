@@ -498,21 +498,23 @@ namespace FintrakBanking.Repositories.credit
             var lcsReleasesInTrail = context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments).Select(t => t.TARGETID);
             var lcReleases = context.TBL_LCRELEASE_AMOUNT.Where(y => !lcsReleasesInTrail.Contains(y.LCRELEASEAMOUNTID)).ToList();
             var lcIssuanceIds = lcReleases.Select(r => r.LCISSUANCEID).ToList();
-            var lcs = ( from t in context.TBL_APPROVAL_TRAIL where (t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments
-                        && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
-                        join u in context.TBL_LCRELEASE_AMOUNT on t.TARGETID equals u.LCRELEASEAMOUNTID into tu
-                        from u in tu.DefaultIfEmpty()
-                        join x in context.TBL_LC_ISSUANCE on u.LCISSUANCEID equals x.LCISSUANCEID where (x.DELETED == false
+            var lcs = ( from 
+                        //t in context.TBL_APPROVAL_TRAIL where (t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments
+                        //&& t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                        //join u in context.TBL_LCRELEASE_AMOUNT on t.TARGETID equals u.LCRELEASEAMOUNTID into tu
+                        //from u in tu.DefaultIfEmpty()
+                        //join 
+                        x in context.TBL_LC_ISSUANCE
+                        //on u.LCISSUANCEID equals x.LCISSUANCEID 
+                         where (x.DELETED == false
                         && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
                         || (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
                         && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved))
-                       //join y in context.TBL_LCRELEASE_AMOUNT on x.LCISSUANCEID equals y.LCISSUANCEID
-                       //where (!lcsReleasesInTrail.Contains(y.LCRELEASEAMOUNTID))
                        select new LcIssuanceApprovalViewModel
                        {
                     lcIssuanceId = x.LCISSUANCEID,
                     //lcReleaseAmountId = y.LCRELEASEAMOUNTID,
-                    approvalStatusId = t.APPROVALSTATUSID,
+                    //approvalStatusId = t.APPROVALSTATUSID,
                     beneficiaryName = x.BENEFICIARYNAME,
                     totalApprovedAmount = x.TOTALAPPROVEDAMOUNT,
                     totalApprovedAmountCurrencyId = x.TOTALAPPROVEDAMOUNTCURRENCYID,
