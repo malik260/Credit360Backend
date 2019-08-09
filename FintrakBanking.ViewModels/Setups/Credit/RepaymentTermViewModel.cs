@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Setups.Credit
 {
-    class RepaymentTermViewModel : GeneralEntity
+     public class RepaymentTermViewModel : GeneralEntity
     {
         public int repaymentTermId { get; set; }
 
