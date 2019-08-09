@@ -24,8 +24,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     HashHelper hash = new HashHelper();
 
-                    RSR psr = new RSR();
-
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
                     if (extension != null)
@@ -34,10 +32,41 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         fieldInfo.SetValue(extension, false);
                     }
 
-                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    RSR psr = new RSR();
+
+                    var projectSiteRepor = psr.GetProjectSiteReports(projectSiteReportId);
+                    ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
-                  //  reportDataSource.Value = data;
-                    reportDataSource.Name = "Audit";
+                    reportDataSource.Value = projectSiteRepor;
+                    reportDataSource.Name = "detail";
+
+
+                    //var facilities = psr.GetFacilities(projectSiteReportId);
+                    //ReportDataSource dsOfferLetterDetails = new ReportDataSource();
+                    //dsOfferLetterDetails.Value = facilities;
+                    //dsOfferLetterDetails.Name = "OfferLetterDetails";
+
+                    var performaceEvaluation = psr.GetPsrPerformanceEvaluations(projectSiteReportId);
+                    ReportDataSource dsPerformaceEvaluation = new ReportDataSource();
+                    dsPerformaceEvaluation.Value = performaceEvaluation;
+                    dsPerformaceEvaluation.Name = "detail";
+
+
+                    var observations = psr.GetPsrObservations(projectSiteReportId);
+                    ReportDataSource dsObservations = new ReportDataSource();
+                    dsObservations.Value = observations;
+                    dsObservations.Name = "observation";
+
+                    var comment = psr.GetPsrComments(projectSiteReportId);
+                    ReportDataSource dsComment = new ReportDataSource();
+                    dsComment.Value = comment;
+                    dsComment.Name = "comment";
+
+                    var nextInspection = psr.GetPsrNextInspectionTasks(projectSiteReportId);
+                    ReportDataSource dsNextInspection = new ReportDataSource();
+                    dsNextInspection.Value = nextInspection;
+                    dsNextInspection.Name = "nextInspection";
+
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     if (psrReportTypeId == 1)

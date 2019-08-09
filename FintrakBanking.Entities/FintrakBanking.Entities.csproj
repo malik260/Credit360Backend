@@ -136,6 +136,7 @@
     <Compile Include="Models\TBL_PSR_NEXT_INSPECTION_TASK.cs" />
     <Compile Include="Models\TBL_PSR_OBSERVATION.cs" />
     <Compile Include="Models\TBL_PSR_PERFORMANCE_EVALUATION.cs" />
+    <Compile Include="Models\TBL_PSR_PROJECT_FACILITIES.cs" />
     <Compile Include="Models\TBL_PSR_PROJECT_SITE_REPORT.cs" />
     <Compile Include="Models\TBL_PSR_RECOMMENDATION.cs" />
     <Compile Include="Models\TBL_PSR_REPORT_TYPE.cs" />

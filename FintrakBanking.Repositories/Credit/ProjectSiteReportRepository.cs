@@ -69,10 +69,38 @@ namespace FintrakBanking.Repositories.credit
                     }).ToList();
         }
 
-        public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports(int id)
+        public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)
         {
-            return context.TBL_PSR_PROJECT_SITE_REPORT.Where(x => x.DELETED == false && x.LOANAPPLICATIONID == id)
-                .Select(x => new ProjectSiteReportViewModel
+            return (from p in context.TBL_PSR_PROJECT_FACILITIES
+                    join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
+                    join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                  // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    where p.PROJECTSITEREPORTID  == id
+
+                    select new LoanApplicationViewModel
+                    {
+                       // customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                       // customerCode = c.CUSTOMERCODE,
+                        applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                        loanApplicationId = x.LOANAPPLICATIONID,
+                      //  customerId = c.CUSTOMERID,
+                        //branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        applicationDate = x.APPLICATIONDATE,
+                        applicationAmount = x.APPLICATIONAMOUNT,
+                        interestRate = x.INTERESTRATE,
+                       productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                        isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                    }).ToList();
+        }
+
+        public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports()
+        {
+            return context.TBL_PSR_PROJECT_SITE_REPORT.Select(x => new ProjectSiteReportViewModel
                 {
                     projectSiteReportId = x.PROJECTSITEREPORTID,
                     psrReportTypeId = x.PSRREPORTTYPEID,
@@ -92,6 +120,31 @@ namespace FintrakBanking.Repositories.credit
                     currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
 
                 }).OrderByDescending(o=>o.projectSiteReportId)
+                .ToList();
+        }
+
+        public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports(int projectSiteReportId)
+        {
+            return context.TBL_PSR_PROJECT_SITE_REPORT.Where(x=>x.PROJECTSITEREPORTID== projectSiteReportId).Select(x => new ProjectSiteReportViewModel
+            {
+                projectSiteReportId = x.PROJECTSITEREPORTID,
+                psrReportTypeId = x.PSRREPORTTYPEID,
+                clientName = x.CLIENTNAME,
+                contractorName = x.CONTRACTORNAME,
+                consultantName = x.CONSULTANTNAME,
+                projectAmount = x.PROJECTAMOUNT,
+                projectDescription = x.PROJECTDESCRIPTION,
+                commencementDate = x.COMMENCEMENTDATE,
+                completionDate = x.COMPLETIONDATE,
+                nextVisitationDate = x.NEXTVISITATIONDATE,
+                loanApplicationId = x.LOANAPPLICATIONID,
+                projectLocation = x.PROJECTLOCATION,
+                approvalStatusId = x.APPROVALSTATUSID,
+                currencyId = x.CURRENCYID,
+                approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
+
+            }).OrderByDescending(o => o.projectSiteReportId)
                 .ToList();
         }
 
@@ -176,7 +229,7 @@ namespace FintrakBanking.Repositories.credit
                 .ToList();
         }
 
-        public bool AddProjectSiteReport(ProjectSiteReportViewModel model)
+        public int AddProjectSiteReport(ProjectSiteReportViewModel model)
         {
             var entity = new TBL_PSR_PROJECT_SITE_REPORT
             {
@@ -202,6 +255,22 @@ namespace FintrakBanking.Repositories.credit
 
             if (context.SaveChanges() > 0)
             {
+                foreach (var x in model.loanApplicationViewModel)
+                {
+                    var proj = new TBL_PSR_PROJECT_FACILITIES
+                    {
+                        CREATEDBY = model.createdBy,
+                        DATETIMECREATED = general.GetApplicationDate(),
+                        LOANAPPLICATIONID = x.loanApplicationId,
+                        LOANAPPLICATIONDETAILID = x.loanApplicationDetailId,
+                        DELETED = false,
+                        PROJECTSITEREPORTID = entity.PROJECTSITEREPORTID
+                    };
+
+                    context.TBL_PSR_PROJECT_FACILITIES.Add(proj);
+
+                }
+
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
@@ -228,7 +297,9 @@ namespace FintrakBanking.Repositories.credit
             });
             // Audit Section end ------------------------
 
-            return context.SaveChanges() != 0;
+            context.SaveChanges();
+
+            return entity.PROJECTSITEREPORTID;
         }
 
         public bool UpdateProjectSiteReport(ProjectSiteReportViewModel model, int id, UserInfo user)
@@ -855,7 +926,12 @@ namespace FintrakBanking.Repositories.credit
 
             return report;
         }
+
+
     }
+
+
+    
 }
 
 // kernel.Bind<IProjectSiteReportRepository>().To<ProjectSiteReportRepository>();

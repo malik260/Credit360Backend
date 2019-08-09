@@ -12,9 +12,9 @@ namespace FintrakBanking.Interfaces.credit
 {
     public interface IProjectSiteReportRepository
     {
-        IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports(int id);
+        IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports();
 
-        bool AddProjectSiteReport(ProjectSiteReportViewModel model);
+        int AddProjectSiteReport(ProjectSiteReportViewModel model);
 
         bool UpdateProjectSiteReport(ProjectSiteReportViewModel model, int id, UserInfo user);
 
@@ -25,6 +25,8 @@ namespace FintrakBanking.Interfaces.credit
         IEnumerable<PsrReportTypeViewModel> GetPsrReportTypes();
 
         PsrReportViewModel GeneratePSRReport(int id);
+
+        IEnumerable<LoanApplicationViewModel> GetFacilities(int id);
 
 
         #region
@@ -91,6 +93,9 @@ namespace FintrakBanking.Interfaces.credit
         bool UpdatePsrNextInspectionTask(PsrNextInspectionTaskViewModel model, int id, UserInfo user);
 
         bool UpdatePsrObservation(PsrObservationViewModel model, int id, UserInfo user);
+
+        IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports(int projectSiteReportId);
+
 
     }
 }
