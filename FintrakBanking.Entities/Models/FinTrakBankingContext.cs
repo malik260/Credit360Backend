@@ -40,6 +40,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PSR_OBSERVATION> TBL_PSR_OBSERVATION { get; set; }
         public virtual DbSet<TBL_PSR_PERFORMANCE_EVALUATION> TBL_PSR_PERFORMANCE_EVALUATION { get; set; }
         public virtual DbSet<TBL_PSR_RECOMMENDATION> TBL_PSR_RECOMMENDATION { get; set; }
+        public virtual DbSet<TBL_PSR_PROJECT_FACILITIES> TBL_PSR_PROJECT_FACILITIES { get; set; }
         public virtual DbSet<TBL_INSURANCE_TYPE> TBL_INSURANCE_TYPE { get; set; }
         public virtual DbSet<TBL_INSURANCE_COMPANY> TBL_INSURANCE_COMPANY { get; set; }
 
