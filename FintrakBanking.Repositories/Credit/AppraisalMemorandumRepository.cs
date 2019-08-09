@@ -62,8 +62,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
 
+            List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE where flow.FLOWCHANGEID == appl.FLOWCHANGEID
+                                             select flow.OPERATIONID).ToList();
+            if(ExclusiveOperations.Count == 0)
+            {
+                ExclusiveOperations.Add((int)OperationsEnum.CreditAppraisal);
+            }
+            
             var groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
-                x.OPERATIONID == (int)OperationsEnum.CreditAppraisal
+                ExclusiveOperations.Contains(x.OPERATIONID) // == (int)OperationsEnum.CreditAppraisal
                 && x.PRODUCTCLASSID == appl.PRODUCTCLASSID
             // && x.ProductId == appl.ProductId // ---- REFACTOR when we have appl.PRODUCTID!!!
             );
@@ -71,7 +78,7 @@ namespace FintrakBanking.Repositories.Credit
             if (groupMappings.Any() == false) // -----  MAY BECOME REDUNDANT!
             {
                 groupMappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x =>
-                    x.OPERATIONID == (int)OperationsEnum.CreditAppraisal
+                    ExclusiveOperations.Contains(x.OPERATIONID) // == (int)OperationsEnum.CreditAppraisal
                     && x.PRODUCTCLASSID == appl.PRODUCTCLASSID
                 );
             }
@@ -118,7 +125,16 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
 
-            int approvalLevelId = GetFirstApprovalLevelId(model.createdBy, (int)OperationsEnum.CreditAppraisal, appl.PRODUCTCLASSID, null);
+            List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
+                                             where flow.FLOWCHANGEID == appl.FLOWCHANGEID
+                                             select flow.OPERATIONID).ToList();
+            
+            if(ExclusiveOperations.Count == 0)
+            {
+                ExclusiveOperations.Add((int)OperationsEnum.CreditAppraisal);
+            }
+            
+            int approvalLevelId = GetFirstApprovalLevelId(model.createdBy, ExclusiveOperations.FirstOrDefault(), appl.PRODUCTCLASSID, null);
 
             var memo = context.TBL_CREDIT_APPRAISAL_MEMORANDM.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).SingleOrDefault();
 

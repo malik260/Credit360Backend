@@ -14,6 +14,10 @@ namespace FintrakBanking.ViewModels.Risk
         public int productId { get; set; }
         public int racCategoryTypeId { get; set; }
         public int? loanApplicationId { get; set; }
+        public int? currencyId { get; set; }
+        public string currencyType { get; set; }
+        public bool isDrawdown { get; set; }
+        public int? operationId { get; set; }
     }
 
     public class ProductRacCategory
@@ -67,6 +71,8 @@ namespace FintrakBanking.ViewModels.Risk
 
     public class RacDefinitionViewModel : GeneralEntity
     {
+        public short? currencyId { get; set; }
+
         public int racDefinitionId { get; set; }
 
         public int productId { get; set; }
@@ -89,7 +95,7 @@ namespace FintrakBanking.ViewModels.Risk
 
         public bool requireUpload { get; set; }
 
-        public int operationId { get; set; }
+        public int? operationId { get; set; }
 
         public int? approvalLevelId { get; set; }
 
@@ -109,8 +115,8 @@ namespace FintrakBanking.ViewModels.Risk
         public string racCategoryType { get; set; }
         public int? racCategoryTypeId { get; set; }
         public bool? showAtDrawDown { get; set; }
+        public string currencyType { get; set; }
         public bool requireComment { get; set; }
-
         public string selectedValue { get; set; }
         public string value { get; set; }
     }

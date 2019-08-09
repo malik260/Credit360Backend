@@ -730,7 +730,7 @@
 
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
-                var endpointUrl = $"api/Customer/GetCustomerTransactions/{accountNumber}/07-2019";
+                var endpointUrl = $"api/Customer/GetCustomerTransactions/{accountNumber}/06-2019";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -752,7 +752,8 @@
                 DateTime responseTime = new DateTime();
 
                 requestTime = DateTime.Now;
-                response = await client.GetAsync(endpointUrl);
+                try { response = await client.GetAsync(endpointUrl); }catch(Exception e) { throw new ConditionNotMetException(e.Message); }
+
                 responseTime = DateTime.Now;
 
                 List<CustomerTurnoverViewModelAPI> result = null;

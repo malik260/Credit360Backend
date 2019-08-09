@@ -2939,18 +2939,27 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationTypeId, int staffId)
         {
-            List<int> ids;
+            List<int> ids = new List<int>();
             string applicationType;
             IQueryable<CreditApplicationViewModel> applications = null;
 
+            List<int> ExclusiveOperations = (from flow in context.TBL_LOAN_APPLICATN_FLOW_CHANGE select flow.OPERATIONID).ToList();
+
+            
+
             if (applicationTypeId == 1)
             {
+                ExclusiveOperations.Add((int)OperationsEnum.CreditAppraisal);
+                foreach (var i in ExclusiveOperations)
+                {
+                    ids.AddRange(genSetup.GetStaffApprovalLevelIds(staffId, i).ToList());
+                }
                 applicationType = "Loan Origination";
-                ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditAppraisal).ToList();
+                //ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CreditAppraisal).ToList();
                 applications = context.TBL_LOAN_APPLICATION
                     //.Join(context.TBL_LOAN_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
                     .Join(context.TBL_CUSTOMER, a => a.CUSTOMERID, c => c.CUSTOMERID, (a, c) => new { a, c })
-                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.CreditAppraisal
+                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => ExclusiveOperations.Contains(t.OPERATIONID)
                             && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended
                             && ids.Contains((int)t.TOAPPROVALLEVELID)
                         ),
@@ -2963,6 +2972,7 @@ namespace FintrakBanking.Repositories.Credit
                         middleName = x.q.c.MIDDLENAME,
                         lastName = x.q.c.LASTNAME,
                         customerCode = x.q.c.CUSTOMERCODE,
+                        customerId = x.q.c.CUSTOMERID,
                         loanApplicationId = x.q.a.LOANAPPLICATIONID,
                         applicationReferenceNumber = x.q.a.APPLICATIONREFERENCENUMBER,
                         applicationDate = x.q.a.APPLICATIONDATE,
@@ -2976,6 +2986,12 @@ namespace FintrakBanking.Repositories.Credit
                 operationIds.Add(46);
                 operationIds.Add(71);
                 operationIds.Add(79);
+
+                //ExclusiveOperations.AddRange(operationIds);
+                //foreach (var i in ExclusiveOperations)
+                //{
+                //    ids.AddRange(genSetup.GetStaffApprovalLevelIds(staffId, i).ToList());
+                //}
                 applicationType = "Loan Management";
                 ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanReviewApprovalAppraisal).ToList();
                 applications = context.TBL_LMSR_APPLICATION
@@ -2996,6 +3012,7 @@ namespace FintrakBanking.Repositories.Credit
                         middleName = x.q.c.MIDDLENAME,
                         lastName = x.q.c.LASTNAME,
                         customerCode = x.q.c.CUSTOMERCODE,
+                        customerId = x.q.c.CUSTOMERID,
                         loanApplicationId = x.q.a.LOANAPPLICATIONID,
                         applicationReferenceNumber = x.q.a.APPLICATIONREFERENCENUMBER,
                         applicationDate = x.q.a.APPLICATIONDATE,
