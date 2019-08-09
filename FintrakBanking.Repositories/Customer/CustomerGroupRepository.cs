@@ -298,6 +298,27 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
             return customerGroup;
         }
 
+        public IEnumerable<CustomerGroupViewModel> GetAllTempCustomerGroups()
+        {
+            var data = (from a in context.TBL_TEMP_CUSTOMER_GROUP
+                        //join b in context.TBL_CUSTOMER_RISK_RATING on a.RISKRATINGID equals b.RISKRATINGID
+                        //into bb from b in bb.DefaultIfEmpty()
+                        where a.DELETED == false
+                        select new CustomerGroupViewModel
+                        {
+                            groupCode = a.GROUPCODE,
+                            groupName = a.GROUPNAME,
+                            groupDescription = a.GROUPDESCRIPTION,
+                            //riskRating = b.RISKRATING,
+                            riskRatingId = a.RISKRATINGID,
+                            customerGroupId = a.CUSTOMERGROUPID,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            createdBy = a.CREATEDBY
+                        }).ToList();
+            return data;
+        }
+
+
         public CustomerGroupViewModel GetCustomerGroupByCustomerId(int customerGroupId)
         {
             var customerGroup = GetCustomerGroup().Where(x => x.customerGroupId == customerGroupId);
@@ -664,88 +685,200 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
         {
             if (customerGroups.Count <= 0)
                 return false;
-            List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG> listOfMappedGroup = new List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG>();
+
             bool output = false;
+            //short relationshipTypeId = 0;
+            var customerGroup = customerGroups[0];
+            TBL_TEMP_CUSTOMER_GROUP_MAPPNG groupMap;
+            List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG> listOfMappedGroup = new List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG>();
+
+            var oldGroups = this.context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Where(x => x.CUSTOMERGROUPID == customerGroup.customerGroupId
+                                                                                && x.DELETED == false).ToList();
+
             foreach (CustomerGroupMappingViewModel item in customerGroups)
             {
-                var group = this.context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.FirstOrDefault(x => x.CUSTOMERID == item.customerId && x.CUSTOMERGROUPID == item.customerGroupId);
-                if (group == null)
+                var thisgroup = oldGroups.FirstOrDefault(O => O.CUSTOMERID == item.customerId &&
+                                                            O.CUSTOMERGROUPID == customerGroup.customerGroupId);
+
+                groupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPNG();
+                groupMap.CUSTOMERID = item.customerId;
+                groupMap.CUSTOMERGROUPID = item.customerGroupId;
+                groupMap.COMPANYID = companyId;
+                groupMap.CREATEDBY = createdBy;
+                groupMap.DELETED = false;
+                groupMap.ISCURRENT = true;
+                groupMap.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+                groupMap.DATETIMECREATED = DateTime.Now;
+
+                if (thisgroup == null && oldGroups == null) {
+                    groupMap.RELATIONSHIPTYPEID = item.relationshipTypeId;
+                }
+                else {
+                    groupMap.RELATIONSHIPTYPEID = oldGroups[0].RELATIONSHIPTYPEID;
+                }
+                //else if (thisgroup == null && oldGroups != null) {
+                //    groupMap.RELATIONSHIPTYPEID = customerGroup.relationshipTypeId;
+                //}
+
+                //listOfMappedGroup.Add(groupMap);
+                context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Add(groupMap);
+
+                // Audit Section ---------------------------
+                var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
+                                                        .Select(x => new
+                                                        {
+                                                            customerName = x.FIRSTNAME + " " + x.LASTNAME
+                                                        }).FirstOrDefault();
+
+                var groupName = (from gr in this.context.TBL_CUSTOMER_GROUP where gr.CUSTOMERGROUPID == customerGroup.customerGroupId select gr.GROUPNAME).FirstOrDefault();
+
+                var audit = new TBL_AUDIT
                 {
-                    var groupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPNG
-                    {
-                        CUSTOMERID = item.customerId,
-                        CUSTOMERGROUPID = item.customerGroupId,
-                        RELATIONSHIPTYPEID = item.relationshipTypeId,
-                        COMPANYID = companyId,
-                        CREATEDBY = createdBy,
-                        DELETED = false,
-                        ISCURRENT = true,
-                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                        DATETIMECREATED = DateTime.Now
-                    };
-                    listOfMappedGroup.Add(groupMap);
+                    AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingAdded,
+                    STAFFID = createdBy,
+                    BRANCHID = userBranchId,
+                    DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {customerGroup.customerCode } to group  ( { groupName } ) ",
+                    //IPAddress = entity.userIPAddress,
+                    //Url = entity.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.auditTrail.AddAuditTrail(audit);
+                //end of Audit section -----------------------
 
-                    // Audit Section ---------------------------
-                    var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
-                                                            .Select(x => new
-                                                            {
-                                                                customerName = x.FIRSTNAME + " " + x.LASTNAME
-                                                            }).FirstOrDefault();
-                    var groupName = (from gr in this.context.TBL_CUSTOMER_GROUP where gr.CUSTOMERGROUPID == item.customerGroupId select gr.GROUPNAME).FirstOrDefault();
+                // Change status of the old customer groups
+                foreach (var oldGroup in oldGroups)
+                {
+                    oldGroup.DELETED = true;
+                    oldGroup.DELETEDBY = createdBy;
+                    oldGroup.DATETIMEDELETED = DateTime.Now;
+                }
 
-                    var audit = new TBL_AUDIT
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
                     {
-                        AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingAdded,
-                        STAFFID = createdBy,
-                        BRANCHID = userBranchId,
-                        DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {item.customerCode } to group  ( { groupName } ) ",
-                        //IPAddress = entity.userIPAddress,
-                        //Url = entity.applicationUrl,
-                        APPLICATIONDATE = genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    //this.auditTrail.AddAuditTrail(audit);
-                    //end of Audit section -----------------------
+                        //context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.AddRange(listOfMappedGroup);
+                        //context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.AddRange(listOfMappedGroup);
+                        output = context.SaveChanges() > 0;
 
-                    using (var trans = context.Database.BeginTransaction())
-                    {
-                        try
+                        var entity = new ApprovalViewModel
                         {
-                            auditTrail.AddAuditTrail(audit);
-                            context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.AddRange(listOfMappedGroup);
-                            output = context.SaveChanges() > 0;
-                            if (!output)
-                            {
-                                trans.Rollback(); throw new Exception("Customer Group Mapping failed.");
-                            }
-                            var entity = new ApprovalViewModel
-                            {
-                                staffId = createdBy,
-                                companyId = companyId,
-                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                                targetId = groupMap.CUSTOMERGROUPMAPPINGID,
-                                operationId = (int)OperationsEnum.CustomerGroupMapping,
-                                BranchId = userBranchId,
-                                externalInitialization = true
-                            };
-                            var response = workFlow.LogForApproval(entity);
+                            staffId = createdBy,
+                            companyId = companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            targetId = groupMap.CUSTOMERGROUPMAPPINGID,
+                            operationId = (int)OperationsEnum.CustomerGroupMapping,
+                            BranchId = userBranchId,
+                            externalInitialization = true
+                        };
 
-                            if (response)
-                            {
-                                trans.Commit();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            trans.Rollback();
-                            throw new SecureException(ex.Message);
-                        }
+                        var response = workFlow.LogForApproval(entity);
+                        trans.Commit();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
                     }
                 }
 
+                
+
             }
+
+            
+
             return output;
         }
+
+        //public bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups, int createdBy, short userBranchId, int companyId)
+        //{
+        //    if (customerGroups.Count <= 0)
+        //        return false;
+        //    List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG> listOfMappedGroup = new List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG>();
+        //    bool output = false;
+        //    foreach (CustomerGroupMappingViewModel item in customerGroups)
+        //    {
+        //        var group = this.context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.FirstOrDefault(x => x.CUSTOMERID == item.customerId && x.CUSTOMERGROUPID == item.customerGroupId);
+        //        if (group == null)
+        //        {
+        //            var groupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPNG
+        //            {
+        //                CUSTOMERID = item.customerId,
+        //                CUSTOMERGROUPID = item.customerGroupId,
+        //                RELATIONSHIPTYPEID = item.relationshipTypeId,
+        //                COMPANYID = companyId,
+        //                CREATEDBY = createdBy,
+        //                DELETED = false,
+        //                ISCURRENT = true,
+        //                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+        //                DATETIMECREATED = DateTime.Now
+        //            };
+        //            listOfMappedGroup.Add(groupMap);
+
+        //            // Audit Section ---------------------------
+        //            var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
+        //                                                    .Select(x => new
+        //                                                    {
+        //                                                        customerName = x.FIRSTNAME + " " + x.LASTNAME
+        //                                                    }).FirstOrDefault();
+        //            var groupName = (from gr in this.context.TBL_CUSTOMER_GROUP where gr.CUSTOMERGROUPID == item.customerGroupId select gr.GROUPNAME).FirstOrDefault();
+
+        //            var audit = new TBL_AUDIT
+        //            {
+        //                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingAdded,
+        //                STAFFID = createdBy,
+        //                BRANCHID = userBranchId,
+        //                DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {item.customerCode } to group  ( { groupName } ) ",
+        //                //IPAddress = entity.userIPAddress,
+        //                //Url = entity.applicationUrl,
+        //                APPLICATIONDATE = genSetup.GetApplicationDate(),
+        //                SYSTEMDATETIME = DateTime.Now
+        //            };
+        //            //this.auditTrail.AddAuditTrail(audit);
+        //            //end of Audit section -----------------------
+
+        //            using (var trans = context.Database.BeginTransaction())
+        //            {
+        //                try
+        //                {
+        //                    auditTrail.AddAuditTrail(audit);
+        //                    context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.AddRange(listOfMappedGroup);
+        //                    output = context.SaveChanges() > 0;
+        //                    if (!output)
+        //                    {
+        //                        trans.Rollback(); throw new Exception("Customer Group Mapping failed.");
+        //                    }
+        //                    var entity = new ApprovalViewModel
+        //                    {
+        //                        staffId = createdBy,
+        //                        companyId = companyId,
+        //                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+        //                        targetId = groupMap.CUSTOMERGROUPMAPPINGID,
+        //                        operationId = (int)OperationsEnum.CustomerGroupMapping,
+        //                        BranchId = userBranchId,
+        //                        externalInitialization = true
+        //                    };
+        //                    var response = workFlow.LogForApproval(entity);
+
+        //                    if (response)
+        //                    {
+        //                        trans.Commit();
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    trans.Rollback();
+        //                    throw new SecureException(ex.Message);
+        //                }
+        //            }
+        //        }
+
+        //    }
+        //    return output;
+        //}
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
         {
@@ -784,6 +917,27 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMappingByGroupId(int customerGroupId)
         {
             var customerGroupMapping = from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                       where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
+                                       select new CustomerGroupMappingViewModel
+                                       {
+                                           customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                           customerGroupId = a.CUSTOMERGROUPID,
+                                           relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                           relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                           //createdBy = a.CreatedBy,
+                                           customerId = a.CUSTOMERID,
+                                           customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                           customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                           customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                           //dateTimeCreated = a.DateTimeCreated
+                                       };
+
+            return customerGroupMapping;
+        }
+
+        public IEnumerable<CustomerGroupMappingViewModel> GetTempCustomerGroupMappingByGroupId(int customerGroupId)
+        {
+            var customerGroupMapping = from a in context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG
                                        where a.CUSTOMERGROUPID == customerGroupId && a.DELETED == false
                                        select new CustomerGroupMappingViewModel
                                        {

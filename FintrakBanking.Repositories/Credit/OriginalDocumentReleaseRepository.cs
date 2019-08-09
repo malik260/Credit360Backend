@@ -33,31 +33,31 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddOriginalDocumentRelease(IEnumerable<OriginalDocumentReleaseViewModel> model)
         {
-            var releaseList = model.ToList();
-            int index;
+            //var releaseList = model.ToList();
+            //int index;
+
+            //foreach (var o in model)
+            //{
+            //    index = releaseList.FindIndex(x => x.documentUploadId == o.documentUploadId);
+            //    var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId)
+            //                                                        .Select(x => new OriginalDocumentReleaseViewModel
+            //                                                        {
+            //                                                            originalDocumentApprovalId = o.originalDocumentApprovalId,
+            //                                                            originalDocumentReleaseId = o.originalDocumentReleaseId,
+            //                                                            documentUploadId = o.documentUploadId,
+            //                                                            approvalStatusId = o.approvalStatusId,
+            //                                                            companyId = o.companyId,
+            //                                                            documentCategoryName = o.documentCategoryName,
+            //                                                            documentTypeName = o.documentTypeName
+            //                                                        }).FirstOrDefault();
+                
+            //    if (result != null)
+            //    {
+            //        releaseList.RemoveAt(index);
+            //    }
+            //}
 
             foreach (var o in model)
-            {
-                index = releaseList.FindIndex(x => x.documentUploadId == o.documentUploadId);
-                var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId)
-                                                                    .Select(x => new OriginalDocumentReleaseViewModel
-                                                                    {
-                                                                        originalDocumentApprovalId = o.originalDocumentApprovalId,
-                                                                        originalDocumentReleaseId = o.originalDocumentReleaseId,
-                                                                        documentUploadId = o.documentUploadId,
-                                                                        approvalStatusId = o.approvalStatusId,
-                                                                        companyId = o.companyId,
-                                                                        documentCategoryName = o.documentCategoryName,
-                                                                        documentTypeName = o.documentTypeName
-                                                                    }).FirstOrDefault();
-                
-                if (result != null)
-                {
-                    releaseList.RemoveAt(index);
-                }
-            }
-
-            foreach (var o in releaseList)
             {
                 var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId).Any();
 

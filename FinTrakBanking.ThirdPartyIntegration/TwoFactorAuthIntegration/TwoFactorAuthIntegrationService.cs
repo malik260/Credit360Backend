@@ -3,6 +3,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Finance;
 using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService;
 using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService;
+//using FinTrakBanking.ThirdPartyIntegration.ServiceReference1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,13 +40,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
 
                 var client = new ServiceSoapClient();
                 //client.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
-                var res = client.ResponseOnly(staffCode, passCode);
+                var res = client.ResponseOnlyAsync(staffCode, passCode);
                 var responseDateTime = DateTime.Now;
 
                 var output = new TwoFactorAutheticationOutputViewModel()
                 {
                     authenticated = false, //authResponse.Authenticated,
-                    message = res //authResponse.Message
+                    message = res.Status.ToString() //authResponse.Message
                 };
 
                 client.Close();
@@ -59,7 +60,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = $"CustId : {staffCode} , PassCode : {passCode}",
                         RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = res //authResponse.Message,
+                        RESPONSEMESSAGE = res.Status.ToString() //authResponse.Message,
                     };
 
                     FinTrakBankingContext logContext = new FinTrakBankingContext();

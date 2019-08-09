@@ -115,6 +115,7 @@
     <Compile Include="Risk\IRiskAcceptanceCriteriaRepository.cs" />
     <Compile Include="Setups\Credit\ICrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\IFXAccountCreationRepository.cs" />
+    <Compile Include="Setups\Credit\IRepaymentTermsRepository.cs" />
     <Compile Include="Setups\Finance\ICustomChartOfAccountRepository.cs" />
     <Compile Include="Setups\General\IStaffMIS.cs" />
     <Compile Include="ThridPartyIntegration\IFinacleIntegrationRepository.cs" />

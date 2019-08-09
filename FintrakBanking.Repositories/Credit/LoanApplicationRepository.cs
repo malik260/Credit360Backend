@@ -2976,6 +2976,8 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationId = x.q.a.LOANAPPLICATIONID,
                         applicationReferenceNumber = x.q.a.APPLICATIONREFERENCENUMBER,
                         applicationDate = x.q.a.APPLICATIONDATE,
+                        customerId = x.q.a.CUSTOMERID.Value,
+                        operationId = x.q.a.OPERATIONID,
                         customerGroupName = x.q.a.CUSTOMERGROUPID.HasValue ? x.q.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                     });
             }

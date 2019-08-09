@@ -138,7 +138,13 @@ namespace FintrakBanking.Common.Enum
         CreditCardsCleanCards = 146,
         SecurityRelease = 147,
         InitiationLevelAppraisal = 148,
-        CallMemo = 149,
+        CallMemo = 150,
 
+    }
+
+    public enum LCFundSource
+    {
+        Cash = 1,
+        IFF = 2
     }
 }

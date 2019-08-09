@@ -40,6 +40,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PSR_OBSERVATION> TBL_PSR_OBSERVATION { get; set; }
         public virtual DbSet<TBL_PSR_PERFORMANCE_EVALUATION> TBL_PSR_PERFORMANCE_EVALUATION { get; set; }
         public virtual DbSet<TBL_PSR_RECOMMENDATION> TBL_PSR_RECOMMENDATION { get; set; }
+        public virtual DbSet<TBL_PSR_PROJECT_FACILITIES> TBL_PSR_PROJECT_FACILITIES { get; set; }
         public virtual DbSet<TBL_INSURANCE_TYPE> TBL_INSURANCE_TYPE { get; set; }
         public virtual DbSet<TBL_INSURANCE_COMPANY> TBL_INSURANCE_COMPANY { get; set; }
 
@@ -529,7 +530,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_PROPOSE> TBL_COLLATERAL_PROPOSE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_COVERAGE> TBL_COLLATERAL_COVERAGE { get; set; }
         public virtual DbSet<TBL_LCRELEASE_AMOUNT> TBL_LCRELEASE_AMOUNT { get; set; }
+        public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
         
+
 
 
 
