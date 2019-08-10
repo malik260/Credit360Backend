@@ -25,6 +25,7 @@ using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using Newtonsoft.Json;
 using System.ServiceModel;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -1341,6 +1342,31 @@ namespace FintrakBanking.Repositories.Credit
             return false;
 
         }
+
+        public string GetReferenceNumber()
+        {
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+            return referenceNumber;
+        }
+        public bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model)
+        {
+            var policy = context.TBL_INSURANCE_REQUEST.Add(new TBL_INSURANCE_REQUEST
+            {
+                COLLATERALCUSTOMERID = model.collateralCustomerId,
+                REQUESTNUMBER = model.requestNumber,
+                REQUESTREASON = model.requestReason,
+                REQUESTCOMMENT = model.requestComment,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = model.dateTimeCreated,
+                DATETIMEUPDATED = model.dateTimeUpdated,
+                DATETIMEDELETED = model.dateTimeDeleted
+            });
+
+            return context.SaveChanges() > 0;
+
+        }
+
         public bool SaveCollateralMainDocument(CollateralViewModel model, int collateralId, byte[] file)
         {
             if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
