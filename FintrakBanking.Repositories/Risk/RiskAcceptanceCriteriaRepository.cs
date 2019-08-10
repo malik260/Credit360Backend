@@ -142,11 +142,11 @@ namespace FintrakBanking.Repositories.Risk
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
             List<RacCategoryViewModel> productRacCategories = new List<RacCategoryViewModel>();
 
-            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId 
-                                                            && x.CURRENCYTYPE == model.currencyType 
+            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => ((x.PRODUCTID == model.productId ) ||
+                                                            ( x.CURRENCYTYPE == model.currencyType 
                                                             && x.CURRENCYID == model.currencyId
+                                                            && x.OPERATIONID == model.operationId))
                                                             //&& (x.SHOWATDRAWDOWN == model.isDrawdown  || x.SHOWATDRAWDOWN == null)
-                                                            && x.OPERATIONID == model.operationId
                                                             && x.ISACTIVE == true && x.DELETED == false)
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
