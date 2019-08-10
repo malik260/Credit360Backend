@@ -282,6 +282,7 @@
     <Compile Include="Setups\General\UserViewModel.cs" />
     <Compile Include="Setups\Risk\RiskAssessmentIndexViewModels.cs" />
     <Compile Include="Setups\Risk\RiskRatingViewModel.cs" />
+    <Compile Include="ThridPartyIntegration\RatingAndRatioViewModel.cs" />
     <Compile Include="ThridPartyIntegration\TransactionPostingViewModel.cs" />
     <Compile Include="ThridPartyIntegration\CreditBureauSearchViewModel.cs" />
     <Compile Include="ThridPartyIntegration\CasaIntegrationViewModel.cs" />

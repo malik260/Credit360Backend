@@ -81,21 +81,19 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
             }
-            try { 
-            var entity = new DocumentUploadViewModel
-            {
-                fileName = provider.FormData["fileName"],
-                fileExtension = provider.FormData["fileExtension"],
-                fileSize = Convert.ToInt32(provider.FormData["fileSize"]),
-                documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]),
-                issueDate = GetCulture(provider.FormData["issueDate"]),
-                expiryDate = GetCulture(provider.FormData["expiryDate"]),
-                targetReferenceNumber = provider.FormData["targetReferenceNumber"],
-                operationId = Convert.ToInt32(provider.FormData["operationId"]),
-                customerId = Convert.ToInt32(provider.FormData["customerId"]),
-                overwrite = provider.FormData["overwrite"] == "true",
-               
-            };
+            try {
+                var entity = new DocumentUploadViewModel();
+                entity.fileName = provider.FormData["fileName"];
+                entity.fileExtension = provider.FormData["fileExtension"];
+                entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
+                entity.documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]);
+                entity.issueDate = GetCulture(provider.FormData["issueDate"]);
+                entity.expiryDate = GetCulture(provider.FormData["expiryDate"]);
+                entity.targetReferenceNumber = provider.FormData["targetReferenceNumber"];
+                entity.operationId = Convert.ToInt32(provider.FormData["operationId"]);
+                entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
+                entity.overwrite = provider.FormData["overwrite"] == "true";
+            
                 var a = provider.FormData["targetId"];
 
                 if (provider.FormData["targetId"] != null && provider.FormData["targetId"]!= "undefined")
