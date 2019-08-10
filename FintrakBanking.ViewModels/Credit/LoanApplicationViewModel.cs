@@ -824,6 +824,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CreditApplicationViewModel
     {
+       
+
         public int loanApplicationId { get; set; }
         public string applicationType { get; set; }
         public DateTime applicationDate { get; set; }

@@ -27,6 +27,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int? docSubmissionOperationId { get; set; }
         public DateTime? approvalDate { get; set; }
         public string collateralCode { get; set; }
-        public int collateralCustomerId { get; set; }
+        public int? collateralCustomerId { get; set; }
+        public int loanApplicationId { get; set; }
+        public string description { get; set; }
+        public string approvalStatusName { get; set; }
+        public DateTime arrivalDate { get; set; }
+        public string responsiblePerson { get; set; }
+        public int approvalTrailId { get; set; }
+        public string currentApprovalLevel { get; set; }
     }
 }

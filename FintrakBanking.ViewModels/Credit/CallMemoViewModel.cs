@@ -62,6 +62,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string SearchName { get; set; }
         public DateTime CallTime { get; set; }
         public DateTime NextCallTime { get; set; }
+        public string Comment { get; set; }
     }
     public class CallLimitViewModel : GeneralEntity
     {
