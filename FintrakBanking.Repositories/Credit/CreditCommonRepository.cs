@@ -69,8 +69,8 @@ namespace FintrakBanking.Repositories.Credit
                     var casa = context.TBL_CASA.Where(x => x.CUSTOMERID == customer.CUSTOMERID);
                     //Task.Run(async () => { apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
                     //Task.Run(async () => apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration)).GetAwaiter().GetResult();
-                    apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode(customer.CUSTOMERCODE);
-                    //apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode("003068763");
+                    //apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode(customer.CUSTOMERCODE);
+                    apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode("003068763");
                     foreach (var account in apiCustomerAccounts) 
                     {
                         apiTransactions = integration.GetCustomerAccountTurnover(account.productAccountNumber, turnoverDuration);
@@ -116,8 +116,8 @@ namespace FintrakBanking.Repositories.Credit
                 if(customer.ISPROSPECT == false)
                 {
                     //Task.Run(async () => { itx = await _customerIntegration.GetCustomerInterestTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
-
-                    apiTransactionsOthers = integration.GetCustomerAccountInterestTransactions(customer.CUSTOMERCODE, turnoverDuration);
+                    //apiTransactionsOthers = integration.GetCustomerAccountInterestTransactions(customer.CUSTOMERCODE, turnoverDuration);
+                    apiTransactionsOthers = integration.GetCustomerAccountInterestTransactions("003068763", turnoverDuration);
 
                     foreach (var item in apiTransactionsOthers)
                     {

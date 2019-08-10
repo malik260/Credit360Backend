@@ -159,7 +159,7 @@ namespace FintrakBanking.Repositories.credit
                     customerId = x.CUSTOMERID,
                     fundSourceId = x.FUNDSOURCEID,
                     fundSourceDetails = x.FUNDSOURCEDETAILS,
-                    formNumber = x.FORMMNUMBER,
+                    formMNumber = x.FORMMNUMBER,
                     beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
                     beneficiaryBank = x.BENEFICIARYBANK,
                     currencyId = x.CURRENCYID,
@@ -235,7 +235,7 @@ namespace FintrakBanking.Repositories.credit
                                 customerId = a.CUSTOMERID,
                                 fundSourceId = a.FUNDSOURCEID,
                                 fundSourceDetails = a.FUNDSOURCEDETAILS,
-                                formNumber = a.FORMMNUMBER,
+                                formMNumber = a.FORMMNUMBER,
                                 beneficiaryPhoneNumber = a.BENEFICIARYPHONENUMBER,
                                 beneficiaryBank = a.BENEFICIARYBANK,
                                 currencyId = a.CURRENCYID,
@@ -299,7 +299,7 @@ namespace FintrakBanking.Repositories.credit
                     customerId = x.CUSTOMERID,
                     fundSourceId = x.FUNDSOURCEID,
                     fundSourceDetails = x.FUNDSOURCEDETAILS,
-                    formNumber = x.FORMMNUMBER,
+                    formMNumber = x.FORMMNUMBER,
                     beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
                     beneficiaryBank = x.BENEFICIARYBANK,
                     currencyId = x.CURRENCYID,
@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.credit
                 CUSTOMERID = model.customerId,
                 FUNDSOURCEID = model.fundSourceId,
                 FUNDSOURCEDETAILS = model.fundSourceDetails,
-                FORMMNUMBER = model.formNumber,
+                FORMMNUMBER = model.formMNumber,
                 BENEFICIARYPHONENUMBER = model.beneficiaryPhoneNumber,
                 BENEFICIARYBANK = model.beneficiaryBank,
                 CURRENCYID = model.currencyId,
@@ -431,7 +431,7 @@ namespace FintrakBanking.Repositories.credit
             entity.CUSTOMERID = model.customerId;
             entity.FUNDSOURCEID = model.fundSourceId;
             entity.FUNDSOURCEDETAILS = model.fundSourceDetails;
-            entity.FORMMNUMBER = model.formNumber;
+            entity.FORMMNUMBER = model.formMNumber;
             entity.BENEFICIARYPHONENUMBER = model.beneficiaryPhoneNumber;
             entity.BENEFICIARYBANK = model.beneficiaryBank;
             entity.CURRENCYID = model.currencyId;
@@ -534,7 +534,7 @@ namespace FintrakBanking.Repositories.credit
                     customerName = x.TBL_CUSTOMER.FIRSTNAME + x.TBL_CUSTOMER.MIDDLENAME + x.TBL_CUSTOMER.LASTNAME,
                     fundSourceId = x.FUNDSOURCEID,
                     fundSourceDetails = x.FUNDSOURCEDETAILS,
-                    formNumber = x.FORMMNUMBER,
+                    formMNumber = x.FORMMNUMBER,
                     beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
                     beneficiaryBank = x.BENEFICIARYBANK,
                     currencyId = x.CURRENCYID,
@@ -599,6 +599,7 @@ namespace FintrakBanking.Repositories.credit
                          {
                              lcIssuanceId = a.LCISSUANCEID,
                              lcReleaseAmountId = b.LCRELEASEAMOUNTID,
+                             releaseAmount = (decimal)b.RELEASEAMOUNT,
                              isDraftRequired = a.ISDRAFTREQUIRED,
                              lcReferenceNumber = a.LCREFERENCENUMBER,
                              letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
@@ -612,13 +613,12 @@ namespace FintrakBanking.Repositories.credit
                              percentageToCover = a.PERCENTAGETOCOVER,
                              lcTolerancePercentage = a.LCTOLERANCEPERCENTAGE,
                              lcToleranceValue = a.LCTOLERANCEVALUE,
-                             releaseAmount = (decimal)b.RELEASEAMOUNT,
                              beneficiaryAddress = a.BENEFICIARYADDRESS,
                              beneficiaryEmail = a.BENEFICIARYEMAIL,
                              customerId = a.CUSTOMERID,
                              fundSourceId = a.FUNDSOURCEID,
                              fundSourceDetails = a.FUNDSOURCEDETAILS,
-                             formNumber = a.FORMMNUMBER,
+                             formMNumber = a.FORMMNUMBER,
                              beneficiaryPhoneNumber = a.BENEFICIARYPHONENUMBER,
                              beneficiaryBank = a.BENEFICIARYBANK,
                              currencyId = a.CURRENCYID,
@@ -638,7 +638,6 @@ namespace FintrakBanking.Repositories.credit
                              approvalStatusId = (short)a.APPROVALSTATUSID,
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              createdBy = (int)a.CREATEDBY,
-                             //customerName = context.TBL_CUSTOMER.Find(a.CUSTOMERID).FIRSTNAME + context.TBL_CUSTOMER.Find(a.CUSTOMERID).LASTNAME,
                              customerName = a.TBL_CUSTOMER.FIRSTNAME + a.TBL_CUSTOMER.MIDDLENAME + a.TBL_CUSTOMER.LASTNAME,
                              operationId = operationId,
                              dateTimeCreated = (DateTime)a.DATETIMECREATED
@@ -729,11 +728,12 @@ namespace FintrakBanking.Repositories.credit
             var approvedReleaseIds = context.TBL_APPROVAL_TRAIL.Where(t => t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
                                                                         && t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments).Select(t => t.TARGETID).ToList();
             var lc = context.TBL_LC_ISSUANCE.Find(model.lcIssuanceId);
-            var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => approvedReleaseIds.Contains(r.LCRELEASEAMOUNTID)).Sum(r => r.RELEASEAMOUNT) ?? 0;
+            var currCode = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == lc.CURRENCYID).CURRENCYCODE;
+            var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => approvedReleaseIds.Contains(r.LCRELEASEAMOUNTID) && r.LCISSUANCEID == model.lcIssuanceId).Sum(r => r.RELEASEAMOUNT) ?? 0;
             var availableAmount = lc.LCTOLERANCEVALUE - totalReleasedAmount;
             if (model.releaseAmount > availableAmount)
             {
-                throw new SecureException("Release Amount cannot be greater than remainder tolerance amount " + availableAmount);
+                throw new SecureException("Release Amount cannot be greater than remainder tolerance amount " + currCode + " " + availableAmount);
             }
             return true;
         }

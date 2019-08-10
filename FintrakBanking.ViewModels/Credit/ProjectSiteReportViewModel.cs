@@ -1,3 +1,4 @@
+using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,5 +38,7 @@ namespace FintrakBanking.ViewModels.credit
         public int operationId { get; set; }
         public int? currencyId { get; set; }
         public string currency { get; set; }
+
+        public IEnumerable<LoanApplicationViewModel> loanApplicationViewModel { get; set; }
     }
 }

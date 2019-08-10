@@ -737,8 +737,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
-            Task.Run(async () => accounts = await customer.GetCustomerTransactions(accountNumber, durationInMonths)).GetAwaiter()
-                .GetResult();
+            Task.Run(async () => accounts = await customer.GetCustomerTransactions(accountNumber, durationInMonths))?.GetAwaiter().GetResult();
 
             return accounts;
         }
@@ -747,7 +746,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
-            Task.Run(async () => accounts = await customer.GetCustomerInterestTransactions(customerCode, durationInMonths)).GetAwaiter()
+            Task.Run(async () => accounts = await customer.GetCustomerInterestTransactions(customerCode, durationInMonths))?.GetAwaiter()
                 .GetResult();
 
             return accounts;
