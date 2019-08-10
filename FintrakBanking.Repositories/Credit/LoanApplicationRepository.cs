@@ -42,6 +42,8 @@ namespace FintrakBanking.Repositories.Credit
         private IApprovalLevelStaffRepository approvalLevel;
         private CreditCommonRepository creditCommon;
         private int? workflowProductId = null;
+        private IAuditTrailRepository audit;
+        private IGeneralSetupRepository general;
 
         public int response { get; set; }
         public bool isGroupLoan { get; set; }
@@ -58,7 +60,9 @@ namespace FintrakBanking.Repositories.Credit
              IIntegrationWithFinacle _integration,
             IFinanceTransactionRepository fina,
             ICreditLimitValidationsRepository limitValidation,
-            CreditCommonRepository creditCommon
+            CreditCommonRepository creditCommon,
+            IAuditTrailRepository _audit,
+             IGeneralSetupRepository _general
             )
         {
             this.collateral = _collateral;
@@ -73,6 +77,8 @@ namespace FintrakBanking.Repositories.Credit
             this.integration = _integration;
             this.limitValidation = limitValidation;
             this.creditCommon = creditCommon;
+            this.audit = _audit;
+            this.general = _general;
         }
 
         // public
@@ -4557,7 +4563,131 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
+        public LoanApplicationFlowChangeViewModel GetLoanAppicationFlowChange(int id)
+        {
+            var entity = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(x => x.FLOWCHANGEID == id && x.DELETED == false);
+
+            return new LoanApplicationFlowChangeViewModel
+            {
+                FlowChangeId = entity.FLOWCHANGEID,
+                label = entity.LABEL,
+                placeHolder = entity.PLACEHOLDER,
+                skipflow = entity.ISSKIPPROCESSENABLED,
+                productClassId = entity.PRODUCTCLASSID,
+                productId = entity.PRODUCTID,
+                operationId = entity.OPERATIONID,
+                destinationUrl = entity.DESTINATIONURL,
+                productTypeId = entity.PRODUCTTYPEID,
+            };
+        }
+
+        public IEnumerable<LoanApplicationFlowChangeViewModel> GetLoanApplicationFlowChange()
+        {
+            return context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(x => x.DELETED == false)
+                .Select(x => new LoanApplicationFlowChangeViewModel
+                {
+                    FlowChangeId = x.FLOWCHANGEID,
+                    label = x.LABEL,
+                    placeHolder=x.PLACEHOLDER,
+                    operationId=x.OPERATIONID,
+                    destinationUrl=x.DESTINATIONURL,
+                    productTypeId=x.PRODUCTTYPEID,
+                    productClassId=x.PRODUCTCLASSID,
+                    skipflow=x.ISSKIPPROCESSENABLED
+                    
+                })
+                .ToList();
+        }
+
+        public bool AddLoanApplicationFlowChange(LoanApplicationFlowChangeViewModel model)
+        {
+            var entity = new TBL_LOAN_APPLICATN_FLOW_CHANGE
+            {
+                LABEL = model.label,
+                PLACEHOLDER = model.placeHolder,
+                ISSKIPPROCESSENABLED = model.skipflow,
+                PRODUCTCLASSID = model.productClassId,
+                OPERATIONID = model.operationId,
+                DESTINATIONURL = model.destinationUrl,
+                PRODUCTTYPEID = model.productTypeId,
+                
+            };
+            context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationFlowChangeAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_LOAN_APPLICATN_FLOW_CHANGE '{entity.ToString()}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateLoanApplicationFlowChange(LoanApplicationFlowChangeViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(id);
+            entity.LABEL = model.label;
+            entity.PLACEHOLDER = model.placeHolder;
+            entity.ISSKIPPROCESSENABLED = model.skipflow;
+            entity.PRODUCTCLASSID = model.productClassId;
+            entity.OPERATIONID = model.operationId;
+            entity.DESTINATIONURL = model.destinationUrl;
+            entity.PRODUCTTYPEID = model.productTypeId;
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationFlowChangeUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_LOAN_APPLICATN_FLOW_CHANGE '{entity.ToString()}' was updated by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.FLOWCHANGEID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
 
 
+        }
+       
+        public bool DeleteLoanApplicationFlowChange(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(id);
+            entity.DELETED = true;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationFlowChangeDeleted, //still missing its value
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_LOAN_APPLICATN_FLOW_CHANGE '{entity.ToString()}' was deleted by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.FLOWCHANGEID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+       
     }
 }
