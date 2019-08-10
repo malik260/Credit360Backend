@@ -53,8 +53,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.MonitoringMe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.LoanRepaymentBackgroundService", "FintrakBanking.LoanRepaymentBackgroundService\FintrakBanking.LoanRepaymentBackgroundService.csproj", "{BFAEEB68-C7AC-4B1D-A5B4-119516641323}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{255C808B-B9BE-4D1F-8386-58D7F78C5745}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -252,7 +250,6 @@ Global
 		{2853B1D8-AF5F-4691-A513-9EB63A45DD4D} = {D07C7CF8-D25B-4D24-980D-57D67F88DFC3}
 		{974DA792-AAE4-4415-BA86-A4C22F0680EF} = {B93C09B6-CCD8-4C8D-8FF5-7B1A6CEB4694}
 		{BFAEEB68-C7AC-4B1D-A5B4-119516641323} = {B93C09B6-CCD8-4C8D-8FF5-7B1A6CEB4694}
-		{255C808B-B9BE-4D1F-8386-58D7F78C5745} = {E8BE4AB8-3E3A-4689-936C-12E986B90B07}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0FBE970E-7E0B-4494-8ECA-E322C2AD8272}
