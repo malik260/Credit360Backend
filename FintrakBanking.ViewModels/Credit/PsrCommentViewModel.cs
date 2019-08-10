@@ -1,3 +1,4 @@
+using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,4 +26,15 @@ namespace FintrakBanking.ViewModels.credit
         public string taskForNextInspection { get; set; }
         public string apgExposure { get; set; }
     }
+
+    public class PsrProjectViewModel : GeneralEntity
+    {
+        public IEnumerable< LoanApplicationViewModel> loanApplicationViewModel { get; set; }
+        public string title { get; set; }
+        public string description { get; set; }
+    }
+
+
+
+
 }

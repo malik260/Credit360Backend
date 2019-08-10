@@ -303,7 +303,8 @@ namespace FintrakBanking.Repositories.Credit
                         //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where (c.FIRSTNAME + " " + c.LASTNAME).ToLower().Contains(model.CustomerName.ToLower())
-                        && a.NEXTCALLDATE >= model.StartDate && a.NEXTCALLDATE <= model.EndDate
+                        && a.NEXTCALLDATE >= model.StartDate && a.NEXTCALLDATE <= model.EndDate 
+                        && c.APPROVALSTATUS == (int) ApprovalStatusEnum.Approved
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
@@ -512,9 +513,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 _workflow.StaffId = model.createdBy;
                 _workflow.CompanyId = model.companyId;
-                _workflow.StatusId = model.ApprovalStatusId != 1 ? (int) ApprovalStatusEnum.Disapproved : (int) ApprovalStatusEnum.Processing;
+                _workflow.StatusId = model.ApprovalStatusId == 3 ? (int) ApprovalStatusEnum.Disapproved : (int) ApprovalStatusEnum.Processing;
                 _workflow.TargetId = model.CallMemoId;
-                //_workflow.Comment = model.comment;
+                _workflow.Comment = model.Comment;
                 _workflow.OperationId = (int) OperationsEnum.CallMemo;
                 _workflow.DeferredExecution = true;
                 _workflow.LogActivity();
@@ -552,8 +553,10 @@ namespace FintrakBanking.Repositories.Credit
                         //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         join atrail in _context.TBL_APPROVAL_TRAIL on a.CALLMEMOID equals atrail.TARGETID
-                        where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing && atrail.RESPONSESTAFFID == null
-                        && ids.Contains((int) atrail.TOAPPROVALLEVELID) && atrail.OPERATIONID == (int) OperationsEnum.CallMemo
+                        where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Processing 
+                        && atrail.RESPONSESTAFFID == null
+                        && ids.Contains((int) atrail.TOAPPROVALLEVELID) 
+                        && atrail.OPERATIONID == (int) OperationsEnum.CallMemo
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {

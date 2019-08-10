@@ -32,12 +32,43 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("project-site-report/{id}")]
-        public HttpResponseMessage GetProjectSiteReport(int id)
+        [Route("project-site-report")]
+        public HttpResponseMessage GetProjectSiteReport()
         {
             try
             {
-                IEnumerable<ProjectSiteReportViewModel> response = repo.GetProjectSiteReports(id);
+                IEnumerable<ProjectSiteReportViewModel> response = repo.GetProjectSiteReports();
+                if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "No record found" }); }
+        }
+
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("project-site-report/{projectSiteReportId}/projectSiteReportId")]
+        public HttpResponseMessage GetProjectSiteReport(int projectSiteReportId)
+        {
+            try
+            {
+                IEnumerable<ProjectSiteReportViewModel> response = repo.GetProjectSiteReports(projectSiteReportId);
+                if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "No record found" }); }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("facilities/{projectSiteReportId}")]
+        public HttpResponseMessage GetFacilities(int projectSiteReportId)
+        {
+            try
+            {
+                IEnumerable<LoanApplicationViewModel> response = repo.GetFacilities(projectSiteReportId);
                 if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
             }
@@ -96,7 +127,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
                 var response = repo.AddProjectSiteReport(model);
-                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                if (response!=0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch(SecureException ex)
@@ -151,6 +182,10 @@ namespace FintrakBanking.APICore.Controllers
             IEnumerable<PsrReportTypeViewModel> response = repo.GetPsrReportTypes();
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
+
+
+
+       
 
         #region
         [HttpGet]

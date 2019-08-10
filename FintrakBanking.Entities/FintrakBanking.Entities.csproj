@@ -137,6 +137,7 @@
     <Compile Include="Models\TBL_PSR_NEXT_INSPECTION_TASK.cs" />
     <Compile Include="Models\TBL_PSR_OBSERVATION.cs" />
     <Compile Include="Models\TBL_PSR_PERFORMANCE_EVALUATION.cs" />
+    <Compile Include="Models\TBL_PSR_PROJECT_FACILITIES.cs" />
     <Compile Include="Models\TBL_PSR_PROJECT_SITE_REPORT.cs" />
     <Compile Include="Models\TBL_PSR_RECOMMENDATION.cs" />
     <Compile Include="Models\TBL_PSR_REPORT_TYPE.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Models\TBL_RAC_OPTION.cs" />
     <Compile Include="Models\TBL_RAC_OPTION_ITEM.cs" />
     <Compile Include="Models\TBL_CORR_RISK_MATRIX.cs" />
+    <Compile Include="Models\TBL_REPAYMENT_TERMS.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_INDEMNITY.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_ISPO.cs" />
