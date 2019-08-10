@@ -157,6 +157,7 @@
     <Compile Include="Enum\ProductClassProcessEnum.cs" />
     <Compile Include="Enum\ProductClassEnum.cs" />
     <Compile Include="Enum\ProductEnum.cs" />
+    <Compile Include="Enum\RacAccessEnum.cs" />
     <Compile Include="Enum\RequestStatusEnum.cs" />
     <Compile Include="Enum\RequireCollateralTypeEnum.cs" />
     <Compile Include="Enum\SourceApplicationEnum.cs" />

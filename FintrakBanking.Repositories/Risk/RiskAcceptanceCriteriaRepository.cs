@@ -142,14 +142,26 @@ namespace FintrakBanking.Repositories.Risk
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
             List<RacCategoryViewModel> productRacCategories = new List<RacCategoryViewModel>();
 
-            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => ((x.PRODUCTID == model.productId ) ||
-                                                            ( x.CURRENCYTYPE == model.currencyType 
+            List<int> categoryIds = new List<int>();
+            if (model.searchBaseId  == (short)RacAccessEnum.Product || model.searchBaseId == null)
+            {
+                 categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
+                                                           && (x.SHOWATDRAWDOWN == model.isDrawdown  || x.SHOWATDRAWDOWN == null)
+                                                           && x.ISACTIVE == true && x.DELETED == false)
+               .Select(x => x.RACCATEGORYID)
+               .ToList();
+            }
+            if (model.searchBaseId == (short)RacAccessEnum.CreditCard)
+            {
+                categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.CURRENCYTYPE == model.currencyType
                                                             && x.CURRENCYID == model.currencyId
-                                                            && x.OPERATIONID == model.operationId))
-                                                            //&& (x.SHOWATDRAWDOWN == model.isDrawdown  || x.SHOWATDRAWDOWN == null)
+                                                            && x.OPERATIONID == model.operationId
+                                                            && (x.SHOWATDRAWDOWN == model.isDrawdown  || x.SHOWATDRAWDOWN == null)
                                                             && x.ISACTIVE == true && x.DELETED == false)
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
+            }
+            
 
             if (model.racCategoryTypeId != 0 )
             {

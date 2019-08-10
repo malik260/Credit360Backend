@@ -18,6 +18,7 @@ namespace FintrakBanking.ViewModels.Risk
         public string currencyType { get; set; }
         public bool isDrawdown { get; set; }
         public int? operationId { get; set; }
+        public short? searchBaseId { get; set; }
     }
 
     public class ProductRacCategory
