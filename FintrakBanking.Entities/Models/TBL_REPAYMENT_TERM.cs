@@ -6,11 +6,11 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_REPAYMENT_TERMS")]
-    public partial class TBL_REPAYMENT_TERMS
+    [Table("TBL_REPAYMENT_TERM")]
+    public partial class TBL_REPAYMENT_TERM
     {
         [Key]
-        public long REPAYMENTTERMID { get; set; }
+        public int REPAYMENTTERMID { get; set; }
 
         [Required]
         [StringLength(4000)]

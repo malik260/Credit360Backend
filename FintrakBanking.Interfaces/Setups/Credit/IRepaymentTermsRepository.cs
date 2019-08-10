@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Setups.Credit;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Interfaces.Setups.Credit
 {
@@ -11,10 +12,14 @@ namespace FintrakBanking.Interfaces.Setups.Credit
     {
         IEnumerable<RepaymentTermViewModel> GetAllRepaymentTerms();
 
-        //IEnumerable<RepaymentTermViewModel> GetAllRepaymentTerms();
+        //IEnumerable<RepaymentTermViewModel> GetRepaymentTerms(int id);
 
-        //IEnumerable<RepaymentTermViewModel> GetAllRepaymentTerms();
+        RepaymentTermViewModel GetRepaymentTerm(int id);
 
-        //IEnumerable<RepaymentTermViewModel> GetAllRepaymentTerms();
+        bool AddRepaymentTerm(RepaymentTermViewModel model);
+
+        bool UpdateRepaymentTerm(RepaymentTermViewModel model);
+
+        bool DeleteRepaymentTerm(int id, UserInfo user);
     }
 }
