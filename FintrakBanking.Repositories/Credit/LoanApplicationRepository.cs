@@ -2061,6 +2061,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanPurpose = d.LOANPURPOSE,
                 casaAccountId = d.CASAACCOUNTID,
                 repaymentTerm = d.REPAYMENTTERMS,
+                repaymentScheduleId = int.Parse(d.REPAYMENTSCHEDULEID),
                 crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
                 crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
                 crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,

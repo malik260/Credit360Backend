@@ -30,38 +30,38 @@ namespace FintrakBanking.Repositories.Setups.Credit
             this.auditTrail = _auditTrail;
         }
 
-        public IEnumerable<RepaymentTermViewModel> GetAllRepaymentTerms()
+        public IEnumerable<RepaymentScheduleTermSetupViewModel> GetAllRepaymentTerms()
         {
             var terms = context.TBL_REPAYMENT_TERM.Select(t =>
-                new RepaymentTermViewModel
+                new RepaymentScheduleTermSetupViewModel
                 {
-                    repaymentTermId = t.REPAYMENTTERMID,
-                    RepaymentTermIdDetail = t.REPAYMENTTERMDETAIL,
+                    repaymentScheduleId = t.REPAYMENTTERMID,
+                    repaymentScheduleDetail = t.REPAYMENTTERMDETAIL,
                 }).ToList();
             // todo code
             return terms;
         }
 
-        public RepaymentTermViewModel GetRepaymentTerm(int id)
+        public RepaymentScheduleTermSetupViewModel GetRepaymentTerm(int id)
         {
             var term = context.TBL_REPAYMENT_TERM.Find(id);
             if (term != null)
             {
-                return new RepaymentTermViewModel
+                return new RepaymentScheduleTermSetupViewModel
                 {
-                    repaymentTermId = term.REPAYMENTTERMID,
-                    RepaymentTermIdDetail = term.REPAYMENTTERMDETAIL,
+                    repaymentScheduleId = term.REPAYMENTTERMID,
+                    repaymentScheduleDetail = term.REPAYMENTTERMDETAIL,
                 };
             }
             return null;
         }
 
-        public bool AddRepaymentTerm(RepaymentTermViewModel model)
+        public bool AddRepaymentTerm(RepaymentScheduleTermSetupViewModel model)
         {
             context.TBL_REPAYMENT_TERM.Add(
                 new TBL_REPAYMENT_TERM
                 {
-                    REPAYMENTTERMDETAIL = model.RepaymentTermIdDetail
+                    REPAYMENTTERMDETAIL = model.repaymentScheduleDetail
                 });
 
             auditTrail.AddAuditTrail(
@@ -79,13 +79,13 @@ namespace FintrakBanking.Repositories.Setups.Credit
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateRepaymentTerm(RepaymentTermViewModel model)
+        public bool UpdateRepaymentTerm(RepaymentScheduleTermSetupViewModel model)
         {
 
-            var term = context.TBL_REPAYMENT_TERM.Find(model.repaymentTermId);
+            var term = context.TBL_REPAYMENT_TERM.Find(model.repaymentScheduleId);
             if (term != null)
             {
-                term.REPAYMENTTERMDETAIL = model.RepaymentTermIdDetail;
+                term.REPAYMENTTERMDETAIL = model.repaymentScheduleDetail;
             }
 
             context.Entry(term).State = EntityState.Modified;

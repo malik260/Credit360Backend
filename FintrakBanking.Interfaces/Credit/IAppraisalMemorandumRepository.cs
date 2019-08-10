@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.Setups.Credit;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -68,6 +69,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool WorkflowTest();
 
         List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity);
+        IEnumerable<RepaymentScheduleTermSetupViewModel> GetAllSetupRepaymentTerms();
         List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity);
         List<ProductLimitValidationViewModel> GetProductLimitValidation(int applicationId, int classId);
 

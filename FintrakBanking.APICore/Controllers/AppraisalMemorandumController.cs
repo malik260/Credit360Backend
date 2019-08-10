@@ -643,6 +643,22 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion MONITORING TRIGGERS
 
+        [HttpGet]
+        //[ClaimsAuthorization]
+        [Route("repayment-schedule-terms")]
+        public HttpResponseMessage GetAllSetupRepaymentTerms()
+        {
+            //try
+            //{
+            var response = repo.GetAllSetupRepaymentTerms();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            //}
+            //catch (SecureException ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            //}
+        }
+
         [HttpPost]
         //[ClaimsAuthorization]
         [Route("repayment-schedule-terms")]

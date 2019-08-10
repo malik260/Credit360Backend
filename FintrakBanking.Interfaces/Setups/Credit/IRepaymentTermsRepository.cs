@@ -10,15 +10,15 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 {
      public interface IRepaymentTermsRepository
     {
-        IEnumerable<RepaymentTermViewModel> GetAllRepaymentTerms();
+        IEnumerable<RepaymentScheduleTermSetupViewModel> GetAllRepaymentTerms();
 
         //IEnumerable<RepaymentTermViewModel> GetRepaymentTerms(int id);
 
-        RepaymentTermViewModel GetRepaymentTerm(int id);
+        RepaymentScheduleTermSetupViewModel GetRepaymentTerm(int id);
 
-        bool AddRepaymentTerm(RepaymentTermViewModel model);
+        bool AddRepaymentTerm(RepaymentScheduleTermSetupViewModel model);
 
-        bool UpdateRepaymentTerm(RepaymentTermViewModel model);
+        bool UpdateRepaymentTerm(RepaymentScheduleTermSetupViewModel model);
 
         bool DeleteRepaymentTerm(int id, UserInfo user);
     }
