@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    [Table("TBL_LOAN_APPLICATION_FLOW_CHANGE")]
+    [Table("TBL_LOAN_APPLICATN_FLOW_CHANGE")]
    public partial  class TBL_LOAN_APPLICATN_FLOW_CHANGE
    {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOveridableMethodsInConstructors")]
