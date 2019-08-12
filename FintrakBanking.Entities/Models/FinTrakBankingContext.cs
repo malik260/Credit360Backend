@@ -537,6 +537,8 @@ namespace FintrakBanking.Entities.Models
         
 
 
+        
+
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
