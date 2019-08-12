@@ -227,31 +227,33 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<DepartmentViewModel> GetJobDepartmentByJobTypeId(short jobTypeId)
         {
-            var departmentList = new List<DepartmentViewModel>();
+            //var departmentList = new List<DepartmentViewModel>();
 
-            //var staffDepartment = department.GetAllDepartment().Where(x => x.staffId == staffId);
-            var jobDeptMapping = context.TBL_JOB_TYPE_DEPARTMENT.Where(x => x.JOBTYPEID == jobTypeId);
+            ////var staffDepartment = department.GetAllDepartment().Where(x => x.staffId == staffId);
+            //var jobDeptMapping = context.TBL_JOB_TYPE_DEPARTMENT.Where(x => x.JOBTYPEID == jobTypeId);
 
-            foreach (var mapping in jobDeptMapping)
-            {
-                var depts = (from d in context.TBL_DEPARTMENT
-                             where d.DEPARTMENTID == mapping.DEPARTMENTID
-                             select new DepartmentViewModel()
-                             {
-                                 createdBy = d.CREATEDBY.Value,
-                                 departmentName = d.DEPARTMENTNAME,
-                                 departmentCode = d.DEPARTMENTCODE,
-                                 description = d.DESCRIPTION,
-                                 departmentId = d.DEPARTMENTID
-                             }).ToList();
+            //foreach (var mapping in jobDeptMapping)
+            //{
+            //    var depts = (from d in context.TBL_DEPARTMENT
+            //                 where d.DEPARTMENTID == mapping.DEPARTMENTID
+            //                 select new DepartmentViewModel()
+            //                 {
+            //                     createdBy = d.CREATEDBY.Value,
+            //                     departmentName = d.DEPARTMENTNAME,
+            //                     departmentCode = d.DEPARTMENTCODE,
+            //                     description = d.DESCRIPTION,
+            //                     departmentId = d.DEPARTMENTID
+            //                 }).ToList();
 
-                foreach (var dept in depts)
-                {
-                    departmentList.Add(dept);
-                }
-            }
+            //    foreach (var dept in depts)
+            //    {
+            //        departmentList.Add(dept);
+            //    }
+            //}
 
-            return departmentList;
+            //return departmentList;
+
+            return null;
         }
 
         public IEnumerable<DepartmentViewModel> GetAllDepartmentUnits(short departmentId)

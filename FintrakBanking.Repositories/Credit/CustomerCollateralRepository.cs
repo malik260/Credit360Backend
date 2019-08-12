@@ -1351,6 +1351,9 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model)
         {
+            var data = context.TBL_INSURANCE_REQUEST.FirstOrDefault(d => d.COLLATERALCUSTOMERID == model.collateralCustomerId);
+            if (data != null) return false;
+        
             var policy = context.TBL_INSURANCE_REQUEST.Add(new TBL_INSURANCE_REQUEST
             {
                 COLLATERALCUSTOMERID = model.collateralCustomerId,

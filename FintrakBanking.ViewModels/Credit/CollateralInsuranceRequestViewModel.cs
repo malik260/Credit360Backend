@@ -10,7 +10,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int collateralInsuranceRequestId { get; set; }
 
-        public int requestNumber { get; set; }
+        public string requestNumber { get; set; }
 
         public string requestReason { get; set; }
 

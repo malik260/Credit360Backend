@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int INSURANCEREQUESTID { get; set; }
-        public int REQUESTNUMBER { get; set; }
+        public string REQUESTNUMBER { get; set; }
 
         public string REQUESTREASON { get; set; }
         public string REQUESTCOMMENT { get; set; }
