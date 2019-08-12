@@ -527,6 +527,7 @@ namespace FintrakBanking.Repositories.Finance
 
         public CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId)
         {
+            var systemDate = generalSetup.GetApplicationDate();
             var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
 
 

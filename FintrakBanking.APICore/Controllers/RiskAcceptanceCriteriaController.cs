@@ -50,6 +50,8 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.categories.Count() });
         }
 
+        
+
         #endregion
 
         #region RacCategory 
