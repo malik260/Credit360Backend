@@ -36,22 +36,43 @@ namespace FintrakBanking.Repositories.Risk
 
         #region
 
-        public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId)
+        public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(RiskAcceptanceCriteriaViewModel model)
         {
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
             List<RacCategoryViewModel> productRacCategories = new List<RacCategoryViewModel>();
 
-            var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
-                .Select(x => x.RACCATEGORYID)
-                .ToList();
+            //var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+            //    .Select(x => x.RACCATEGORYID)
+            //    .ToList();
 
-            var racCategoryTypeId = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+            var racCategoryTypeId = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.ISACTIVE == true && x.DELETED == false)
                 .Select(x => x.RACCATEGORYTYPEID)
                 .FirstOrDefault();
 
-            
-                productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
+            List<int> categoryIds = new List<int>();
+            if (model.searchBaseId == (short)RacAccessEnum.Product || model.searchBaseId == null)
+            {
+                categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
+                                                          && (x.SHOWATDRAWDOWN == model.isDrawdown || x.SHOWATDRAWDOWN == null)
+                                                          && x.ISACTIVE == true && x.DELETED == false)
+              .Select(x => x.RACCATEGORYID)
+              .ToList();
+            }
+            if (model.searchBaseId == (short)RacAccessEnum.CreditCard)
+            {
+                categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.CURRENCYTYPE == model.currencyType
+                                                            && x.CURRENCYID == model.currencyId
+                                                            && x.OPERATIONID == model.operationId
+                                                            && (x.SHOWATDRAWDOWN == model.isDrawdown || x.SHOWATDRAWDOWN == null)
+                                                            && x.ISACTIVE == true && x.DELETED == false)
+                .Select(x => x.RACCATEGORYID)
+                .ToList();
+            }
+
+
+
+            productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
                 {
                     racCategoryId = x.RACCATEGORYID,
                     categoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
@@ -70,7 +91,7 @@ namespace FintrakBanking.Repositories.Risk
 
                 if (racCategoryTypeId != 0 && racCategoryTypeId != null)
                 {
-                    items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.RACCATEGORYTYPEID== racCategoryTypeId && x.ISACTIVE == true && x.DELETED == false)
+                    items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.RACCATEGORYTYPEID== racCategoryTypeId && x.ISACTIVE == true && x.DELETED == false)
                     .Select(x => new ProductRacItem
                     {
                         id = x.RACDEFINITIONID,
@@ -88,7 +109,7 @@ namespace FintrakBanking.Repositories.Risk
                 }
                 else
                 {
-                    items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+                    items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.ISACTIVE == true && x.DELETED == false)
                     .Select(x => new ProductRacItem
                     {
                         id = x.RACDEFINITIONID,
@@ -572,8 +593,8 @@ namespace FintrakBanking.Repositories.Risk
                 showAtDrawDown = entity.SHOWATDRAWDOWN,
                 requireComment = entity.REQUIRECOMMENT,
                 currencyId = entity.CURRENCYID,
-                currencyType = entity.CURRENCYTYPE
-                requireComment = entity.REQUIRECOMMENT,
+                currencyType = entity.CURRENCYTYPE,
+                //requireComment = entity.REQUIRECOMMENT,
                 isRacTierControlKey=entity.ISRACTIERCONTROLKEY
             };
         }
@@ -604,8 +625,7 @@ namespace FintrakBanking.Repositories.Risk
                 RACCATEGORYTYPEID = model.racCategoryTypeId,
                 SHOWATDRAWDOWN = model.showAtDrawDown,
                 CURRENCYTYPE = model.currencyType,
-                CURRENCYID = model.currencyId
-                SHOWATDRAWDOWN = model.showAtDrawDown,
+                CURRENCYID = model.currencyId,
                 ISRACTIERCONTROLKEY = model.isRacTierControlKey
             };
 
