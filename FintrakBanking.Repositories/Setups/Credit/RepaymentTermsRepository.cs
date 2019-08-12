@@ -61,7 +61,10 @@ namespace FintrakBanking.Repositories.Setups.Credit
             context.TBL_REPAYMENT_TERM.Add(
                 new TBL_REPAYMENT_TERM
                 {
-                    REPAYMENTTERMDETAIL = model.repaymentScheduleDetail
+                    REPAYMENTTERMDETAIL = model.repaymentScheduleDetail,
+                    DELETED = false,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = DateTime.Now
                 });
 
             auditTrail.AddAuditTrail(
@@ -86,6 +89,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
             if (term != null)
             {
                 term.REPAYMENTTERMDETAIL = model.repaymentScheduleDetail;
+                term.LASTUPDATEDBY = model.createdBy;
+                term.DATETIMEUPDATED = DateTime.Now;
             }
 
             context.Entry(term).State = EntityState.Modified;
@@ -110,6 +115,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
             if (term != null)
             {
                 term.DELETED = true;
+                term.DATETIMEDELETED = DateTime.Now;
             }
 
             context.Entry(term).State = EntityState.Modified;

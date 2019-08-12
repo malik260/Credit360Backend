@@ -1971,6 +1971,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANPURPOSE = a.loanPurpose,
                 CASAACCOUNTID = a.casaAccountId,
                 OPERATINGCASAACCOUNTID = a.operatingCasaAccountId,
+                REPAYMENTSCHEDULEID = a.repaymentScheduleId.ToString(),
                 REPAYMENTTERMS = a.repaymentTerm,
                 CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
                 CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,

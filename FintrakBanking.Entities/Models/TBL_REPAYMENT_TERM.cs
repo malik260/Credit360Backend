@@ -13,9 +13,15 @@
         public int REPAYMENTTERMID { get; set; }
 
         [Required]
-        [StringLength(4000)]
+        [StringLength(1000)]
         public string REPAYMENTTERMDETAIL { get; set; }
 
         public bool DELETED { get; set; }
+        public int CREATEDBY { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
+        public int? DELETEDBY { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
     }
 }

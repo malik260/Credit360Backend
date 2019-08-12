@@ -1737,7 +1737,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("repayment-term")]
-        public HttpResponseMessage AddRepaymentTerm([FromBody] RepaymentTermViewModel entity)
+        public HttpResponseMessage AddRepaymentTerm([FromBody] RepaymentScheduleTermSetupViewModel entity)
         {
             try
             {
@@ -1763,7 +1763,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("repayment-term")]
-        public HttpResponseMessage UpdateRepaymentTerm([FromBody] RepaymentTermViewModel entity)
+        public HttpResponseMessage UpdateRepaymentTerm([FromBody] RepaymentScheduleTermSetupViewModel entity)
         {
             try
             {
