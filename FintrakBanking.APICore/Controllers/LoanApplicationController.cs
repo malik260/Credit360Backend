@@ -5,9 +5,11 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.Interfaces.Setups.Credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -29,13 +31,15 @@ namespace FintrakBanking.APICore.Controllers
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
         private IErrorLogRepository errorLogger;
+        private IRepaymentTermsRepository repaymentRepo;
 
         public LoanApplicationController(
             ILoanApplicationRepository _repo,
             ILoanRepository _loanRepository,
             ICreditLimitValidationsRepository _creditLimitValidationsRepository,
             ILoanPreliminaryEvaluationRepository _repoLoanPEN,
-            IErrorLogRepository _errorLogger
+            IErrorLogRepository _errorLogger,
+            IRepaymentTermsRepository _repaymentRepo
             )
         {
             this.repo = _repo;
@@ -43,6 +47,7 @@ namespace FintrakBanking.APICore.Controllers
             this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
             errorLogger = _errorLogger;
+            repaymentRepo = _repaymentRepo;
         }
 
         #region Loan Application
@@ -1561,7 +1566,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         
-             [HttpGet]
+        [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-syndication-type")]
         public HttpResponseMessage GetAllSyndicationType()
@@ -1705,74 +1710,6 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.DeleteLoanApplicationThatFailedRAC(loanApplicationId, token.GetStaffId);
             if (!response) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-        }
-
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("loan-application-flow-change")]
-        public HttpResponseMessage GetLoanAppicationFlowChange()
-        {
-            IEnumerable<LoanApplicationFlowChangeViewModel> response = repo.GetLoanApplicationFlowChange();
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
-        }
-
-
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("loan-application-flow-change/{id}")]
-        public HttpResponseMessage GetLoanApplicationFlowChange(int id)
-        {
-            LoanApplicationFlowChangeViewModel response = repo.GetLoanAppicationFlowChange(id);
-            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-        }
-
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("loan-application-flow-change")]
-        public HttpResponseMessage AddLoanApplicationFlowChange([FromBody]  LoanApplicationFlowChangeViewModel model)
-        {
-            model.userBranchId = (short)token.GetBranchId;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            var response = repo.AddLoanApplicationFlowChange(model);
-            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-        }
-        [HttpPut]
-        [ClaimsAuthorization]
-        [Route("loan-application-flow-change/{id}")]
-        public HttpResponseMessage UpdateLoanApplicationFlowChange([FromBody]  LoanApplicationFlowChangeViewModel model, int id)
-        {
-            UserInfo user = new UserInfo()
-            {
-                BranchId = token.GetBranchId,
-                companyId = token.GetCompanyId,
-                createdBy = token.GetStaffId,
-                applicationUrl = HttpContext.Current.Request.Path,
-                userIPAddress = HttpContext.Current.Request.UserHostAddress
-            };
-            bool response = repo.UpdateLoanApplicationFlowChange(model, id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
-        }
-
-        [HttpDelete]
-        [ClaimsAuthorization]
-        [Route("loan-application-flow-change/{id}")]
-        public HttpResponseMessage DeleteLoanApplicationFlowChange(int id)
-        {
-            UserInfo user = new UserInfo()
-            {
-                BranchId = token.GetBranchId,
-                companyId = token.GetCompanyId,
-                createdBy = token.GetStaffId,
-                applicationUrl = HttpContext.Current.Request.Path,
-                userIPAddress = HttpContext.Current.Request.UserHostAddress
-            };
-            bool response = repo.DeleteLoanApplicationFlowChange(id, user);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
     }
 }

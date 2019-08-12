@@ -396,6 +396,9 @@ namespace FintrakBanking.Common.Enum
         LoanApplicationFlowChangeAdded =501,
         LoanApplicationFlowChangeUpdated=502,
         LoanApplicationFlowChangeDeleted =503,
+        RepaymentTermAdded = 504,
+        RepaymentTermUpdated = 505,
+        RepaymentTermDeleted = 506
     };
     public enum RegulatoryTypeEnum
     {

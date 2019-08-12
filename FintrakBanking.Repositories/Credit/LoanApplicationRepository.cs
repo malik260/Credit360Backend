@@ -1058,7 +1058,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             if (PushApplicationToDrawdown(application.APPLICATIONREFERENCENUMBER)) { jumpToDrawdown = true; }
-            
+
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex) == 1)
             {
                 var casa = context.TBL_CASA.Find(application.CASAACCOUNTID);
@@ -1102,18 +1102,18 @@ namespace FintrakBanking.Repositories.Credit
 
         public short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
         {
-             
-             /* 0 = failed 
-             * 1 = successfully move to appraisal
-             * 2 = successfuly moved to drawdown **/
+
+            /* 0 = failed 
+            * 1 = successfully move to appraisal
+            * 2 = successfuly moved to drawdown **/
 
             var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x=>x.LOANAPPLICATIONID == applicationId).FirstOrDefault();
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId).FirstOrDefault();
 
             if (appl.LOANAPPROVEDLIMITID > 0)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
-                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest,appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
                 context.SaveChanges();
                 return 1;
             }
@@ -1129,7 +1129,7 @@ namespace FintrakBanking.Repositories.Credit
             int operationId;
             var product = context.TBL_PRODUCT.Find(detail.PROPOSEDPRODUCTID);
             var productBahaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == detail.PROPOSEDPRODUCTID).FirstOrDefault();
-            
+
             if (appl.ISADHOCAPPLICATION == true)
             {
                 operationId = (int)OperationsEnum.AdhocApproval;
@@ -1161,7 +1161,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductId = appl.PRODUCTID;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
-            workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID; 
+            workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
 
             if (workflow.LogActivity()) return 1;
             else return 0;
@@ -1276,7 +1276,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.LoanApplicationDetail.Count() > 0)
             {
                 var newlineRecord = model.LoanApplicationDetail.FirstOrDefault();
-                
+
                 if (newlineRecord.proposedProductId == 12)
                 {
                     foreach (var line in lineRecords)
@@ -1310,7 +1310,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var lineRecords = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == headerrecord.LOANAPPLICATIONID);
             var lineRecord = lineRecords.FirstOrDefault();
-            var productBehaviour = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(headerrecord.FLOWCHANGEID );
+            var productBehaviour = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(headerrecord.FLOWCHANGEID);
 
             if (productBehaviour != null && productBehaviour.ISSKIPPROCESSENABLED == true)
             {
@@ -1380,7 +1380,7 @@ namespace FintrakBanking.Repositories.Credit
 
             loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
 
-            if(loan.productClassId == (short)ProductClassEnum.Creditcards)
+            if (loan.productClassId == (short)ProductClassEnum.Creditcards)
             {
                 validateNonComformingProduct(loan, loanData, savedDetails);
             }
@@ -1394,7 +1394,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
                     loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
                     loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
-                      
+
                 }
 
                 if (loanData == null) // first time
@@ -1403,9 +1403,10 @@ namespace FintrakBanking.Repositories.Credit
                     AddloanApplicationSub(loan);
                 }
 
-                if (loan.LoanApplicationDetail.Count > 0) {
+                if (loan.LoanApplicationDetail.Count > 0)
+                {
 
-                 int racReponse =  AddLoanApplicationDetail(loan);
+                    int racReponse = AddLoanApplicationDetail(loan);
                     if (racReponse > 1)
                     {
                         LoanApplicationViewModel model = new LoanApplicationViewModel();
@@ -1438,7 +1439,7 @@ namespace FintrakBanking.Repositories.Credit
                 //returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
             }
 
-            
+
 
             return returndate;
         }
@@ -1451,14 +1452,32 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        private int SaveRac(RacInformationViewModel rac, int operationId,int productId, int targetId, int staffId, int applicationId)
+        private int SaveRac(RacInformationViewModel rac, int operationId, int productId, int targetId, int staffId, int applicationId)
         {
+            IEnumerable<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
+
             if (rac.form == null) return 0;
             var ids = rac.form.Select(x => x.criteriaId);
 
-            var definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                && x.PRODUCTID == productId && ids.Contains(x.RACDEFINITIONID)
-            ).ToList();
+            definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+               && x.PRODUCTID == productId && ids.Contains(x.RACDEFINITIONID)
+           ).ToList();
+
+            // is tier related?, get default rac
+            var isRacRelated = definitions.Where(o => o.RACCATEGORYTYPEID != null).Any();
+
+            if (isRacRelated == true)
+            {
+                var defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID)
+             ).Select(x => x).FirstOrDefault();
+
+                var racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true 
+             ).Select(x => x).ToList();
+
+                definitions = racTiers.Where(o => o.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList();
+            }
 
             List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
 
@@ -1648,10 +1667,10 @@ namespace FintrakBanking.Repositories.Credit
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + (loan.LoanApplicationDetail.Sum(x => x.exchangeAmount));
             var loanStatusId = (short)LoanStatusEnum.Inactive;
 
-            if(loan.flowchangeId != null && loan.flowchangeId > 0)
+            if (loan.flowchangeId != null && loan.flowchangeId > 0)
             {
                 var newWorkflowBaseRecord = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(loan.flowchangeId);
-                if(newWorkflowBaseRecord != null)
+                if (newWorkflowBaseRecord != null)
                 {
                     loan.exclusiveOperationId = newWorkflowBaseRecord.OPERATIONID;
                 }
@@ -1977,6 +1996,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANPURPOSE = a.loanPurpose,
                 CASAACCOUNTID = a.casaAccountId,
                 OPERATINGCASAACCOUNTID = a.operatingCasaAccountId,
+                REPAYMENTSCHEDULEID = a.repaymentScheduleId.ToString(),
                 REPAYMENTTERMS = a.repaymentTerm,
                 CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
                 CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
@@ -1993,9 +2013,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
                     && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
-                    && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED !=true);
+                    && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED != true);
 
-            if (loanExist==true) throw new SecureException("This loan application has already been saved!");
+            if (loanExist == true) throw new SecureException("This loan application has already been saved!");
 
             context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
 
@@ -2035,11 +2055,12 @@ namespace FintrakBanking.Repositories.Credit
 
             response = context.SaveChanges();
 
-            if (response > 0) {
+            if (response > 0)
+            {
 
                 int recResponse = SaveRac(loan.rac, (int)loan.rac.operationId, (int)loan.rac.productId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
-                  if (recResponse > 1) return recResponse;
-                    } // todo 99999
+                if (recResponse > 1) return recResponse;
+            } // todo 99999
 
             return 1;
         }
@@ -2067,6 +2088,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanPurpose = d.LOANPURPOSE,
                 casaAccountId = d.CASAACCOUNTID,
                 repaymentTerm = d.REPAYMENTTERMS,
+                repaymentScheduleId = int.Parse(d.REPAYMENTSCHEDULEID),
                 crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
                 crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
                 crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,
@@ -4376,70 +4398,72 @@ namespace FintrakBanking.Repositories.Credit
 
         public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
         {
-                var details = application.LoanApplicationDetail;
-                int branchId = (int)application.branchId;
-                int customerId = (int)application.customerId;
-                int productId = application.productId;
+            var details = application.LoanApplicationDetail;
+            int branchId = (int)application.branchId;
+            int customerId = (int)application.customerId;
+            int productId = application.productId;
 
-                var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
-                        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                    .FirstOrDefault();
+            var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
+                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                .FirstOrDefault();
 
-                var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
-                        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                    .FirstOrDefault();
+            var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
+                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                .FirstOrDefault();
 
-                // if productoverride is to be used
-                //var productOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                //    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.productLimitOverride && x.ISUSED == false),
-                //        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                //    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                //    .FirstOrDefault();
+            // if productoverride is to be used
+            //var productOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+            //    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.productLimitOverride && x.ISUSED == false),
+            //        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+            //    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+            //    .FirstOrDefault();
 
-                if (branchOverrideRequest != null)
+            if (branchOverrideRequest != null)
+            {
+                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                //request.ISUSED = true;
+            }
+            else
+            {
+                // branch limits
+                var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
+                decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
+                decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
+                var branch = context.TBL_BRANCH.Find(branchId);
+                if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+            }
+
+            if (sectorOverrideRequest != null)
+            {
+                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                //request.ISUSED = true;
+            }
+            else
+            {
+                // sector limits
+                // sectorId here is actually the subsectorId
+                List<short> sectorIds = details.Select(x => x.subSectorId).ToList();
+                foreach (var sectorId in sectorIds)
                 {
-                    //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
-                    //request.ISUSED = true;
+                    var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
+                    decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
+                    //var sector = context.TBL_SECTOR.Find(sectorId);
+                    if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
                 }
-                else
-                {
-                    // branch limits
-                    var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
-                    decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
-                    decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
-                    var branch = context.TBL_BRANCH.Find(branchId);
-                    if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
-                }
-
-                if (sectorOverrideRequest != null)
-                {
-                    //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
-                    //request.ISUSED = true;
-                }
-                else
-                {
-                    // sector limits
-                    // sectorId here is actually the subsectorId
-                    List<short> sectorIds = details.Select(x => x.subSectorId).ToList();
-                    foreach (var sectorId in sectorIds)
-                    {
-                        var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
-                        decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
-                        //var sector = context.TBL_SECTOR.Find(sectorId);
-                        if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
-                    }
-                }
-            try {
+            }
+            try
+            {
                 if (limitValidation.ProductLimitExceeded(productId, application.proposedAmount))
                 {
                     throw new SecureException("Product Limit exceeded!");
                 }
-            } catch (Exception ex) { }
-                
+            }
+            catch (Exception ex) { }
+
         }
 
         public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
@@ -4493,22 +4517,22 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<RevisedProcessFlowModel> getFacilityApplicationRevisedProcessFlowByProductClassId(short productClassId, short productId, short productTypeId)
         {
             var productTypeFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
-                                    where c.PRODUCTTYPEID == productTypeId && c.PRODUCTID == null && c.PRODUCTCLASSID == null
-                                    select new RevisedProcessFlowModel
-                                    {
-                                        flowchangeId = c.FLOWCHANGEID,
-                                        placeHolder = c.PLACEHOLDER,
-                                        productClassId = c.PRODUCTCLASSID,
-                                        productId = c.PRODUCTID,
-                                        productTypeId = c.PRODUCTTYPEID,
-                                        destinationUrl = c.DESTINATIONURL,
-                                        skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
-                                        operationId = c.OPERATIONID,
-                                        label = c.LABEL,
-                                        dateTimeCreated = c.DATETIMECREATED,
-                                        createdBy = c.CREATEDBY
-                                    }).ToList();
-            
+                                   where c.PRODUCTTYPEID == productTypeId && c.PRODUCTID == null && c.PRODUCTCLASSID == null
+                                   select new RevisedProcessFlowModel
+                                   {
+                                       flowchangeId = c.FLOWCHANGEID,
+                                       placeHolder = c.PLACEHOLDER,
+                                       productClassId = c.PRODUCTCLASSID,
+                                       productId = c.PRODUCTID,
+                                       productTypeId = c.PRODUCTTYPEID,
+                                       destinationUrl = c.DESTINATIONURL,
+                                       skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
+                                       operationId = c.OPERATIONID,
+                                       label = c.LABEL,
+                                       dateTimeCreated = c.DATETIMECREATED,
+                                       createdBy = c.CREATEDBY
+                                   }).ToList();
+
             var productClassFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
                                     where c.PRODUCTCLASSID == productClassId && c.PRODUCTID == null && c.PRODUCTTYPEID == null
                                     select new RevisedProcessFlowModel
@@ -4527,33 +4551,34 @@ namespace FintrakBanking.Repositories.Credit
                                     }).ToList();
 
             var productFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
-                                    where c.PRODUCTCLASSID == null && c.PRODUCTTYPEID == null && c.PRODUCTID == productId
-                                    select new RevisedProcessFlowModel
-                                    {
-                                        flowchangeId = c.FLOWCHANGEID,
-                                        placeHolder = c.PLACEHOLDER,
-                                        productClassId = c.PRODUCTCLASSID,
-                                        productId = c.PRODUCTID,
-                                        productTypeId = c.PRODUCTTYPEID,
-                                        destinationUrl = c.DESTINATIONURL,
-                                        skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
-                                        operationId = c.OPERATIONID,
-                                        label = c.LABEL,
-                                        dateTimeCreated = c.DATETIMECREATED,
-                                        createdBy = c.CREATEDBY
-                                    }).ToList();
+                               where c.PRODUCTCLASSID == null && c.PRODUCTTYPEID == null && c.PRODUCTID == productId
+                               select new RevisedProcessFlowModel
+                               {
+                                   flowchangeId = c.FLOWCHANGEID,
+                                   placeHolder = c.PLACEHOLDER,
+                                   productClassId = c.PRODUCTCLASSID,
+                                   productId = c.PRODUCTID,
+                                   productTypeId = c.PRODUCTTYPEID,
+                                   destinationUrl = c.DESTINATIONURL,
+                                   skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
+                                   operationId = c.OPERATIONID,
+                                   label = c.LABEL,
+                                   dateTimeCreated = c.DATETIMECREATED,
+                                   createdBy = c.CREATEDBY
+                               }).ToList();
 
             if (productClassFlow.Count() > 0) return productClassFlow;
             if (productTypeFlow.Count() > 0) return productTypeFlow;
             else return productFlow;
-        } 
-         
+        }
+
         public IEnumerable<LoanApplicationViewModel> GetFacilityByApplicationId(int loanApplicationId)
         {
-            return (context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x=> new LoanApplicationViewModel {
+            return (context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x => new LoanApplicationViewModel
+            {
                 productId = x.PROPOSEDPRODUCTID,
                 loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
-                productName = context.TBL_PRODUCT.Where(o=>o.PRODUCTID==x.PROPOSEDPRODUCTID).Select(o=>o.PRODUCTNAME).FirstOrDefault(),
+                productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == x.PROPOSEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                 facilityAmount = x.APPROVEDAMOUNT,
                 loanApplicationId = x.LOANAPPLICATIONID,
             })).ToList();
@@ -4562,14 +4587,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool LoanApplicationFlowChange(int loanApplicationId)
         {
-            var detail =context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == loanApplicationId).Select(o => o).FirstOrDefault();
+            var detail = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == loanApplicationId).Select(o => o).FirstOrDefault();
 
-            detail.FLOWCHANGEID = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o=>o.PLACEHOLDER=="FAM").Select(o=>o.FLOWCHANGEID).FirstOrDefault();
+            detail.FLOWCHANGEID = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.PLACEHOLDER == "FAM").Select(o => o.FLOWCHANGEID).FirstOrDefault();
 
             return context.SaveChanges() > 0;
         }
 
-        public bool DeleteLoanApplicationThatFailedRAC(int loanApplicationId , int deletedBy)
+        public bool DeleteLoanApplicationThatFailedRAC(int loanApplicationId, int deletedBy)
         {
             var detail = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == loanApplicationId).Select(o => o).FirstOrDefault();
 
