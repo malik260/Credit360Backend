@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.Risk
     public interface IRiskAcceptanceCriteriaRepository
     {
         #region
-        RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId ,int? racCategoryTypeId);
+        RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId);
 
         RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProductAndTarget(int productId, int targetId);
 

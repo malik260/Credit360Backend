@@ -113,6 +113,7 @@ namespace FintrakBanking.ViewModels.Risk
 
         public string selectedValue { get; set; }
         public string value { get; set; }
+        public bool? isRacTierControlKey { get; set; }
     }
 
     public class RacDetailViewModel : GeneralEntity
