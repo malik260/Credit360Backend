@@ -14,6 +14,7 @@ namespace FintrakBanking.Interfaces.Risk
         #region
         RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId ,int? racCategoryTypeId);
         RiskAcceptanceCriteriaViewModel GetDynamicRiskAcceptanceCriteriaByProduct(RiskAcceptanceCriteriaViewModel model);
+        RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId);
 
         RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProductAndTarget(int productId, int targetId);
 

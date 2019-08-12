@@ -13,37 +13,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
    public class RSR
     {
         FinTrakBankingContext context = new FinTrakBankingContext();
-        public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)
-        {
-
-            return (from p in context.TBL_PSR_PROJECT_FACILITIES
-                    join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
-                    join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                    // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                    where p.PROJECTSITEREPORTID == id
-
-                    select new LoanApplicationViewModel
-                    {
-                        // customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
-                        // customerCode = c.CUSTOMERCODE,
-                        applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
-                        loanApplicationId = x.LOANAPPLICATIONID,
-                        //  customerId = c.CUSTOMERID,
-                        //branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                        applicationDate = x.APPLICATIONDATE,
-                        applicationAmount = x.APPLICATIONAMOUNT,
-                        interestRate = x.INTERESTRATE,
-                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
-                        relationshipOfficerId = x.RELATIONSHIPOFFICERID,
-                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        relationshipManagerId = x.RELATIONSHIPMANAGERID,
-                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                        operationId = (int)OperationsEnum.OriginalDocumentApproval,
-                        isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
-                    }).ToList();
-        }
-
-
+       
         public IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports(int projectSiteReportId)
         {
 
@@ -112,6 +82,19 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 .ToList();
         }
 
+        public IEnumerable<PsrRecommendationViewModel> Getrecomendations(int id)
+        {
+
+            return context.TBL_PSR_RECOMMENDATION.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrRecommendationViewModel
+                {
+                    psrRecommendationId = x.PSRRECOMMENDATIONID,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    comment = x.COMMENTS,
+                })
+                .ToList();
+        }
+
         public IEnumerable<PsrNextInspectionTaskViewModel> GetPsrNextInspectionTasks(int id)
         {
             return context.TBL_PSR_NEXT_INSPECTION_TASK.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
@@ -136,6 +119,37 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     comment = x.COMMENTS,
                 })
                 .ToList();
+        }
+
+        public IEnumerable<LoanApplicationViewModel> GetFacilities(int id)
+        {
+            return (from p in context.TBL_PSR_PROJECT_FACILITIES
+                    join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
+                    // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
+
+                    where p.PROJECTSITEREPORTID == id
+
+                    select new LoanApplicationViewModel
+                    {
+                        // customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        // customerCode = c.CUSTOMERCODE,
+                        applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                        loanApplicationId = x.LOANAPPLICATIONID,
+                        //  customerId = c.CUSTOMERID,
+                        //branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        applicationDate = x.APPLICATIONDATE,
+                        applicationAmount = x.APPLICATIONAMOUNT,
+                        interestRate = x.INTERESTRATE,
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == loan_Application_detail.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        tenor = loan_Application_detail.APPROVEDTENOR,
+                        relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                        relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                        relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                        operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                        isProjectRelated = x.ISPROJECTRELATED == true ? "YES" : "NO"
+                    }).ToList();
         }
     }
 }

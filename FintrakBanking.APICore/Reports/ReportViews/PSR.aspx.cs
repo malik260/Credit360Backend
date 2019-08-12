@@ -40,35 +40,43 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     reportDataSource.Value = projectSiteRepor;
                     reportDataSource.Name = "detail";
 
-
-                    //var facilities = psr.GetFacilities(projectSiteReportId);
-                    //ReportDataSource dsOfferLetterDetails = new ReportDataSource();
-                    //dsOfferLetterDetails.Value = facilities;
-                    //dsOfferLetterDetails.Name = "OfferLetterDetails";
-
                     var performaceEvaluation = psr.GetPsrPerformanceEvaluations(projectSiteReportId);
                     ReportDataSource dsPerformaceEvaluation = new ReportDataSource();
                     dsPerformaceEvaluation.Value = performaceEvaluation;
                     dsPerformaceEvaluation.Name = "detail";
+                    ReportViewer.LocalReport.DataSources.Add(reportDataSource);
 
+                    var facilities = psr.GetFacilities(projectSiteReportId);
+                    ReportDataSource dsfacilities = new ReportDataSource();
+                    dsfacilities.Value = facilities;
+                    dsfacilities.Name = "facilities";
+                    ReportViewer.LocalReport.DataSources.Add(dsfacilities);
 
                     var observations = psr.GetPsrObservations(projectSiteReportId);
                     ReportDataSource dsObservations = new ReportDataSource();
                     dsObservations.Value = observations;
-                    dsObservations.Name = "observation";
+                    dsObservations.Name = "observation"; 
+                    ReportViewer.LocalReport.DataSources.Add(dsObservations);
+
+                    var recomendations = psr.Getrecomendations(projectSiteReportId);
+                    ReportDataSource dsrecomendations = new ReportDataSource();
+                    dsrecomendations.Value = recomendations;
+                    dsrecomendations.Name = "recomendations"; 
+                    ReportViewer.LocalReport.DataSources.Add(dsrecomendations);
 
                     var comment = psr.GetPsrComments(projectSiteReportId);
                     ReportDataSource dsComment = new ReportDataSource();
                     dsComment.Value = comment;
                     dsComment.Name = "comment";
+                    ReportViewer.LocalReport.DataSources.Add(dsComment);
 
                     var nextInspection = psr.GetPsrNextInspectionTasks(projectSiteReportId);
                     ReportDataSource dsNextInspection = new ReportDataSource();
                     dsNextInspection.Value = nextInspection;
                     dsNextInspection.Name = "nextInspection";
+                    ReportViewer.LocalReport.DataSources.Add(dsNextInspection);
 
 
-                    this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     if (psrReportTypeId == 1)
                     {
                         this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/PSR_Direct.rdlc");

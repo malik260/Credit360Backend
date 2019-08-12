@@ -36,7 +36,7 @@ namespace FintrakBanking.Repositories.Risk
 
         #region
 
-        public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId, int? racCategoryTypeId)
+        public RiskAcceptanceCriteriaViewModel GetRiskAcceptanceCriteriaByProduct(int productId)
         {
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
@@ -46,17 +46,11 @@ namespace FintrakBanking.Repositories.Risk
                 .Select(x => x.RACCATEGORYID)
                 .ToList();
 
-            if (racCategoryTypeId != 0 && racCategoryTypeId != null)
-            {
-                productRacCategories = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYTYPEID == racCategoryTypeId && categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
-                {
-                    racCategoryId = x.RACCATEGORYID,
-                    categoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
+            var racCategoryTypeId = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
+                .Select(x => x.RACCATEGORYTYPEID)
+                .FirstOrDefault();
 
-                }).ToList();
-            }
-            else
-            {
+            
                 productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
                 {
                     racCategoryId = x.RACCATEGORYID,
@@ -64,7 +58,6 @@ namespace FintrakBanking.Repositories.Risk
 
                 }).ToList();
 
-            }
             /*
             value: '',
             status: 2,
@@ -531,6 +524,7 @@ namespace FintrakBanking.Repositories.Risk
                     operationId = x.OPERATIONID,
                     approvalLevelId = x.APPROVALLEVELID,
                     roleId = x.ROLEID,
+                   isRacTierControlKey= x.ISRACTIERCONTROLKEY,
                     racCategoryType = context.TBL_RAC_CATEGORY_TYPE.Where(o => o.RACCATEGORYTYPEID == x.RACCATEGORYTYPEID).Select(o => o.RACCATEGORYTYPE).FirstOrDefault(),
                     productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == x.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                     CategoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
@@ -579,6 +573,8 @@ namespace FintrakBanking.Repositories.Risk
                 requireComment = entity.REQUIRECOMMENT,
                 currencyId = entity.CURRENCYID,
                 currencyType = entity.CURRENCYTYPE
+                requireComment = entity.REQUIRECOMMENT,
+                isRacTierControlKey=entity.ISRACTIERCONTROLKEY
             };
         }
 
@@ -609,6 +605,8 @@ namespace FintrakBanking.Repositories.Risk
                 SHOWATDRAWDOWN = model.showAtDrawDown,
                 CURRENCYTYPE = model.currencyType,
                 CURRENCYID = model.currencyId
+                SHOWATDRAWDOWN = model.showAtDrawDown,
+                ISRACTIERCONTROLKEY = model.isRacTierControlKey
             };
 
             context.TBL_RAC_DEFINITION.Add(entity);
@@ -652,6 +650,8 @@ namespace FintrakBanking.Repositories.Risk
             entity.REQUIRECOMMENT = model.requireComment;
             entity.CURRENCYTYPE = model.currencyType;
             entity.CURRENCYID = model.currencyId;
+            entity.ISRACTIERCONTROLKEY = model.isRacTierControlKey;
+
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 
