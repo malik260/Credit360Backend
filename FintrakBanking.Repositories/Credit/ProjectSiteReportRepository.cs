@@ -73,8 +73,9 @@ namespace FintrakBanking.Repositories.credit
         {
             return (from p in context.TBL_PSR_PROJECT_FACILITIES
                     join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
-                    join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                  // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    let productId = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o.APPROVEDPRODUCTID).FirstOrDefault()
+
                     where p.PROJECTSITEREPORTID  == id
 
                     select new LoanApplicationViewModel
@@ -88,7 +89,7 @@ namespace FintrakBanking.Repositories.credit
                         applicationDate = x.APPLICATIONDATE,
                         applicationAmount = x.APPLICATIONAMOUNT,
                         interestRate = x.INTERESTRATE,
-                       productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == productId).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                         relationshipManagerId = x.RELATIONSHIPMANAGERID,

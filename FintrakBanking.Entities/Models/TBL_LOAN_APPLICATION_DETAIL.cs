@@ -89,8 +89,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(2000)]
         public string REPAYMENTTERMS { get; set; }
 
-        [StringLength(2000)]
-        public string REPAYMENTSCHEDULE { get; set; }
+        public string REPAYMENTSCHEDULEID { get; set; }
 
         //[Column(TypeName = "date")]
         public DateTime? EFFECTIVEDATE { get; set; }

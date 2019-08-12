@@ -5,9 +5,11 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.Interfaces.Setups.Credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -29,13 +31,15 @@ namespace FintrakBanking.APICore.Controllers
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
         private IErrorLogRepository errorLogger;
+        private IRepaymentTermsRepository repaymentRepo;
 
         public LoanApplicationController(
             ILoanApplicationRepository _repo,
             ILoanRepository _loanRepository,
             ICreditLimitValidationsRepository _creditLimitValidationsRepository,
             ILoanPreliminaryEvaluationRepository _repoLoanPEN,
-            IErrorLogRepository _errorLogger
+            IErrorLogRepository _errorLogger,
+            IRepaymentTermsRepository _repaymentRepo
             )
         {
             this.repo = _repo;
@@ -43,6 +47,7 @@ namespace FintrakBanking.APICore.Controllers
             this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
             errorLogger = _errorLogger;
+            repaymentRepo = _repaymentRepo;
         }
 
         #region Loan Application
@@ -1561,7 +1566,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         
-             [HttpGet]
+        [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-syndication-type")]
         public HttpResponseMessage GetAllSyndicationType()
@@ -1706,5 +1711,99 @@ namespace FintrakBanking.APICore.Controllers
             if (!response) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
+
+
+        #region repaymentterm
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("repayment-terms")]
+        public HttpResponseMessage GetAllRepaymentTerms()
+        {
+            var response = repaymentRepo.GetAllRepaymentTerms();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("repayment-term/{id}")]
+        public HttpResponseMessage GetRepaymentTerms(int id)
+        {
+            var response = repaymentRepo.GetRepaymentTerm(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("repayment-term")]
+        public HttpResponseMessage AddRepaymentTerm([FromBody] RepaymentScheduleTermSetupViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;  //FinTrakBankingContext
+                entity.userBranchId = (short)token.GetBranchId;
+
+                var response = repaymentRepo.AddRepaymentTerm(entity);
+                if (response == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Repayment updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("repayment-term")]
+        public HttpResponseMessage UpdateRepaymentTerm([FromBody] RepaymentScheduleTermSetupViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;  //FinTrakBankingContext
+                entity.userBranchId = (short)token.GetBranchId;
+
+                var response = repaymentRepo.UpdateRepaymentTerm(entity);
+                if (response == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Repayment updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
+            }
+        }
+
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("repayment-term/{id}")]
+        public HttpResponseMessage DeleteRepaymentTerm(int id)
+        {
+            var user = new UserInfo
+            {
+                createdBy = token.GetStaffId,
+                BranchId = token.GetBranchId,
+                //userIPAddress = token.
+            };
+            var response = repaymentRepo.DeleteRepaymentTerm(id, user);
+            if (!response) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+        
+        #endregion repaaymentterm
+
     }
 }
