@@ -530,9 +530,14 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_PROPOSE> TBL_COLLATERAL_PROPOSE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_COVERAGE> TBL_COLLATERAL_COVERAGE { get; set; }
         public virtual DbSet<TBL_LCRELEASE_AMOUNT> TBL_LCRELEASE_AMOUNT { get; set; }
-        public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
+        public virtual DbSet<TBL_REPAYMENT_TERM> TBL_REPAYMENT_TERM { get; set; }
+        public virtual DbSet<TBL_INSURANCE_REQUEST> TBL_INSURANCE_REQUEST { get; set; }
+
+        //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
         
 
+
+        
 
 
 
@@ -4746,7 +4751,7 @@ namespace FintrakBanking.Entities.Models
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
-                .Property(e => e.REPAYMENTSCHEDULE)
+                .Property(e => e.REPAYMENTSCHEDULEID)
                 .IsUnicode(false);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()

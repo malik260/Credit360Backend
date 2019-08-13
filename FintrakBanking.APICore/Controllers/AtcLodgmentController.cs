@@ -36,7 +36,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("atc-lodgment")]
         public HttpResponseMessage GetAtcLodgments()
         {
-            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcLodgments();
+            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcLodgments(token.GetStaffId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 

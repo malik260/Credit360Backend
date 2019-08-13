@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Setups.Credit
 {
-     public class RepaymentTermViewModel : GeneralEntity
+     public class RepaymentScheduleTermSetupViewModel : GeneralEntity
     {
-        public int repaymentTermId { get; set; }
+        public int repaymentScheduleId { get; set; }
 
-        public string RepaymentTermIdDetail { get; set; }
+        public string repaymentScheduleDetail { get; set; }
 
         public bool DELETED { get; set; }
     }

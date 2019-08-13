@@ -172,6 +172,7 @@ namespace FintrakBanking.Repositories.Credit
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
+                
             };
 
             var refNumber = CommonHelpers.GenerateRandomDigitCode(10);

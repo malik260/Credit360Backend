@@ -145,5 +145,11 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddCollateralCoverage(CollateralCoverageViewModel model);
         bool DeleteCollateralCoverage(int collateralCoverageId, int createdById);
         IEnumerable<CollateralCoverageViewModel> CalculateCoverateOfCollateral(CollateralCoverageViewModel model);
+
+        #region collateralInsuranceRequest
+
+        bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model);
+        string GetReferenceNumber();
+        #endregion
     }
 }
