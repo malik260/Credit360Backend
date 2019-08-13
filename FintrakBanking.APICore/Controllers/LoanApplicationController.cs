@@ -5,9 +5,11 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.Interfaces.Setups.Credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -29,13 +31,15 @@ namespace FintrakBanking.APICore.Controllers
         private ILoanPreliminaryEvaluationRepository repoLoanPEN;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
         private IErrorLogRepository errorLogger;
+        private IRepaymentTermsRepository repaymentRepo;
 
         public LoanApplicationController(
             ILoanApplicationRepository _repo,
             ILoanRepository _loanRepository,
             ICreditLimitValidationsRepository _creditLimitValidationsRepository,
             ILoanPreliminaryEvaluationRepository _repoLoanPEN,
-            IErrorLogRepository _errorLogger
+            IErrorLogRepository _errorLogger,
+            IRepaymentTermsRepository _repaymentRepo
             )
         {
             this.repo = _repo;
@@ -43,6 +47,7 @@ namespace FintrakBanking.APICore.Controllers
             this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
             repoLoanPEN = _repoLoanPEN;
             errorLogger = _errorLogger;
+            repaymentRepo = _repaymentRepo;
         }
 
         #region Loan Application
@@ -1561,7 +1566,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         
-             [HttpGet]
+        [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-syndication-type")]
         public HttpResponseMessage GetAllSyndicationType()

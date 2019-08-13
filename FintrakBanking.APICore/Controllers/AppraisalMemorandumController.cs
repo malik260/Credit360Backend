@@ -166,7 +166,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 WorkflowResponse response = repo.LcAppraisalMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The LC ISSUANCE request has been APPROVED successfully" : "The LC ISSUANCE request has been acted on successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The LC ISSUANCE request has been acted on successfully" : "The LC ISSUANCE request has been APPROVED successfully" });
             }
             catch (SecureException ex)
             {
@@ -642,6 +642,22 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion MONITORING TRIGGERS
+
+        [HttpGet]
+        //[ClaimsAuthorization]
+        [Route("repayment-schedule-terms")]
+        public HttpResponseMessage GetAllSetupRepaymentTerms()
+        {
+            //try
+            //{
+            var response = repo.GetAllSetupRepaymentTerms();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            //}
+            //catch (SecureException ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            //}
+        }
 
         [HttpPost]
         //[ClaimsAuthorization]
