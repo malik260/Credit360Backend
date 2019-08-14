@@ -4588,7 +4588,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanApplicationFlowChange(int loanApplicationId)
         {
             var detail = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == loanApplicationId).Select(o => o).FirstOrDefault();
-
+            detail.PRODUCT_CLASS_PROCESSID = 1;
             detail.FLOWCHANGEID = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.PLACEHOLDER == "FAM").Select(o => o.FLOWCHANGEID).FirstOrDefault();
 
             return context.SaveChanges() > 0;
