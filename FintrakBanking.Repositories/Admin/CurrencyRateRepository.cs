@@ -37,8 +37,10 @@ namespace FintrakBanking.Repositories.Admin
                         select new CurrencyViewModel
                         {
                             currencyId = a.CURRENCYID,
+                            lookupId = a.CURRENCYID,
                             currencyCode = a.CURRENCYCODE,
-                            currencyName = a.CURRENCYNAME
+                            currencyName = a.CURRENCYNAME,
+                            lookupName = a.CURRENCYNAME,
                         }).ToList();
             return data;
         }

@@ -109,9 +109,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>..\..\..\..\Users\FINTRAK\Documents\XLeratorDLL-financial Trial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +147,7 @@
     <Compile Include="Credit\TestCollateralRepository.cs" />
     <Compile Include="Credit\ValuationReportRepository.cs" />
     <Compile Include="Credit\ValuationRequestTypeRepository.cs" />
+    <Compile Include="Credit\WorkFlowChangeRepository.cs" />
     <Compile Include="Media\DocumentCategoryRepository.cs" />
     <Compile Include="Media\DocumentCategoryTypeRepository.cs" />
     <Compile Include="Media\DocumentTypeRepository.cs" />
@@ -166,6 +166,7 @@
     <Compile Include="Risk\RiskAcceptanceCriteriaRepository.cs" />
     <Compile Include="Setups\Credit\CrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\FXAccountCreationRepository.cs" />
+    <Compile Include="Setups\Credit\RepaymentTermsRepository.cs" />
     <Compile Include="Setups\Finance\CustomChartOfAccountRepository.cs" />
     <Compile Include="ThirdPartyIntegration\FinacleIntegrationRepository.cs" />
     <Compile Include="Validetion\CreditLimitValidationsRepository.cs" />

@@ -373,6 +373,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string repaymentTerm { get; set; }
 
+        public int repaymentScheduleId { get; set; }
+
         public int?  crmsFundingSourceId { get; set; }
 
         public int? crmsPaymentSourceId { get; set; }
@@ -824,6 +826,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CreditApplicationViewModel
     {
+       
+
         public int loanApplicationId { get; set; }
         public string applicationType { get; set; }
         public DateTime applicationDate { get; set; }
@@ -922,6 +926,18 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class LoanApplicationFlowChangeViewModel : GeneralEntity
+    {
+        public int FlowChangeId { get; set; }
+        public string label { get; set; }
+        public string placeHolder { get; set; }
+        public bool skipflow { get; set; }
+        public short? productClassId { get; set; }
+        public int? productId { get; set; }
+        public int operationId { get; set; }
+        public string destinationUrl { get; set; }
+        public short? productTypeId { get; set; }
+    }
 
 }
 

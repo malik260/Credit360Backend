@@ -49,7 +49,7 @@ namespace FintrakBanking.Entities.Models
 
         public string FORMMNUMBER { get; set; }
 
-        public int BENEFICIARYPHONENUMBER { get; set; }
+        public string BENEFICIARYPHONENUMBER { get; set; }
 
         public string BENEFICIARYBANK { get; set; }
 

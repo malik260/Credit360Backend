@@ -100,6 +100,7 @@
     <Compile Include="Credit\CashBackedBondAndGuarantee.cs" />
     <Compile Include="Credit\CashCollaterizedCredits.cs" />
     <Compile Include="Credit\ChecklistSearchViewModel.cs" />
+    <Compile Include="Credit\CollateralInsuranceRequestViewModel.cs" />
     <Compile Include="Credit\DailyAccrualDetailViewModel.cs" />
     <Compile Include="Credit\Form3800BReportViewModel.cs" />
     <Compile Include="Credit\ClassifiedAssetManagementViewModel.cs" />
@@ -234,7 +235,7 @@
     <Compile Include="Setups\Credit\LoanCovenantTypeViewModel.cs" />
     <Compile Include="Setups\Credit\PrudentialGuidelineViewModel.cs" />
     <Compile Include="Setups\Credit\CompanySetupViewModel.cs" />
-    <Compile Include="Setups\Credit\RepaymentTermViewModel.cs" />
+    <Compile Include="Setups\Credit\RepaymentScheduleTermSetupViewModel.cs" />
     <Compile Include="Setups\Finance\AccountCategoryViewModel.cs" />
     <Compile Include="Setups\Finance\AccountTypeViewModel.cs" />
     <Compile Include="Setups\Finance\ChargeFeeViewModel.cs" />
@@ -282,6 +283,7 @@
     <Compile Include="Setups\General\UserViewModel.cs" />
     <Compile Include="Setups\Risk\RiskAssessmentIndexViewModels.cs" />
     <Compile Include="Setups\Risk\RiskRatingViewModel.cs" />
+    <Compile Include="ThridPartyIntegration\RatingAndRatioViewModel.cs" />
     <Compile Include="ThridPartyIntegration\TransactionPostingViewModel.cs" />
     <Compile Include="ThridPartyIntegration\CreditBureauSearchViewModel.cs" />
     <Compile Include="ThridPartyIntegration\CasaIntegrationViewModel.cs" />
