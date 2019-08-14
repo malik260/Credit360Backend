@@ -76,7 +76,7 @@ namespace FintrakBanking.ViewModels.Risk
 
         public int racDefinitionId { get; set; }
 
-        public int productId { get; set; }
+        public int? productId { get; set; }
 
         public int racCategoryId { get; set; }
 

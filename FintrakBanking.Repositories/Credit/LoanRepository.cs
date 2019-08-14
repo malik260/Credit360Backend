@@ -6410,7 +6410,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in data)
             {
-                var approvedLCIssuanceIds = context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.lcIssuance && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).Select(t => t.TARGETID).ToList();
+                var approvedLCIssuanceIds = context.TBL_LC_ISSUANCE.Where(t => t.APPLICATIONSTATUSID != null && t.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcIssuanceInProgress).Select(t => t.LCISSUANCEID).ToList();
                 var lcIFFRequests = context.TBL_LC_ISSUANCE.Where(l => l.DELETED == false && l.FUNDSOURCEID == (int)LCFundSource.IFF).ToList();
                 var lcapprovedLCIFFs = lcIFFRequests.Where(i => approvedLCIssuanceIds.Contains(i.LCISSUANCEID)).Select(i => new { i.FUNDSOURCEDETAILS, i.LETTEROFCREDITAMOUNT});
                 var lcApprovedAmounts = lcapprovedLCIFFs.Where(i => i.FUNDSOURCEDETAILS == item.loanApplicationId).Sum(i => i.LETTEROFCREDITAMOUNT);
@@ -7481,7 +7481,7 @@ namespace FintrakBanking.Repositories.Credit
                             isBidbond = p.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees ? true : false,
                             isOverdraft = p.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
                             repaymentTerms = d.REPAYMENTTERMS,
-                            repaymentSchedule = d.REPAYMENTSCHEDULE,
+                            repaymentSchedule = d.REPAYMENTSCHEDULEID,
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
                             applicationDate = m.APPLICATIONDATE,

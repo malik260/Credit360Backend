@@ -237,7 +237,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
                                        customerPhoneNumber = g.PHONENUMBER,//a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
                                        loanApplicationId = applicationRefNumber,
-                                       repaymentSchedule = b.REPAYMENTSCHEDULE ?? "Not applicable",
+                                       repaymentSchedule = b.REPAYMENTSCHEDULEID ?? "Not applicable",
                                        repaymentTerms = b.REPAYMENTTERMS ?? "Not applicable",
                                        purpose = b.LOANPURPOSE,
                                        productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x=>x.PRODUCTPRICEINDEXID==b.PRODUCTPRICEINDEXID).Select(x=>x.PRICEINDEXNAME).FirstOrDefault() : "",

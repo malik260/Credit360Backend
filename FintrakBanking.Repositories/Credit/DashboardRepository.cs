@@ -189,7 +189,7 @@ namespace FintrakBanking.Repositories.Credit
                          where  x.STATUSID == (int)ApprovalStatusEnum.Approved
                                 && l.COMPANYID == companyId
                                 && x.DATETIMECREATED >= startDate && x.DATETIMECREATED <= endDate
-                                select new {x,l,a}).ToList();
+                                select new {x,l,a})?.ToList();
 
             if (staff.TBL_STAFF_ROLE.STAFFROLECODE == "RM")
             {

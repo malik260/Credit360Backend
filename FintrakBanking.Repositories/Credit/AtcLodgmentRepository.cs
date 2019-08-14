@@ -37,9 +37,9 @@ namespace FintrakBanking.Repositories.credit
             this.workflow = _workflow;
         }
 
-        public IEnumerable<AtcLodgmentViewModel> GetAtcLodgments()
+        public IEnumerable<AtcLodgmentViewModel> GetAtcLodgments(int staffId)
         {
-            return (from x in context.TBL_ATC_LODGMENT
+            var data = (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                     where x.DELETED == false && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
                     select new AtcLodgmentViewModel
@@ -67,6 +67,44 @@ namespace FintrakBanking.Repositories.credit
                        
                     }).OrderByDescending(o=>o.atcLodgmentId)
              .ToList();
+
+            var data2 = (from x in context.TBL_ATC_LODGMENT
+                         join trail in context.TBL_APPROVAL_TRAIL on x.ATCLODGMENTID equals trail.TARGETID
+                         join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                         where  trail.OPERATIONID == (short)OperationsEnum.AtcLodgementApproval 
+                         && trail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved     //temporary Fix only!!! should be rejected
+                         && x.DELETED == false 
+                        // && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
+                       
+                        select new AtcLodgmentViewModel
+                        {
+                            atcLodgmentId = x.ATCLODGMENTID,
+                            customerId = x.CUSTOMERID,
+                            atcTypeId = x.ATCTYPEID,
+                            description = x.DESCRIPTION,
+                            depot = x.DEPOT,
+                            unitValue = x.UNITVALUE,
+                            unitNumber = x.UNITNUMBER,
+                            numberOfBags = x.NUMBEROFBAGS,
+                            atcType = context.TBL_ATC_TYPE.Where(o => o.ATCTYPEID == x.ATCTYPEID).Select(o => o.ACTTYPENAME).FirstOrDefault(),
+                            certificateNumber = x.CERTIFICATENUMBER,
+                            statusId = x.STATUSID,
+                            approvalStatusId = x.APPROVALSTATUSID,
+                            dateCreated = x.DATETIMECREATED,
+                            approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                            customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                            customerCode = c.CUSTOMERCODE,
+                            branchId = x.BRANCHID,
+                            currencyId = x.CURRENCYID,
+                            currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
+                            branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+
+                        }).OrderByDescending(o => o.atcLodgmentId)
+             .ToList();
+
+            data = data.Union(data2).ToList();
+
+            return data;
         }
 
         public IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForApproval(int staffId)

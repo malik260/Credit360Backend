@@ -1473,7 +1473,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                          //100
                          GOVERNMENT_CODE = stateCode + "-" + lgaCode,
-                         REPAYMENT_SOURCE = a.REPAYMENTSCHEDULE,
+                         REPAYMENT_SOURCE = a.REPAYMENTSCHEDULEID,
 
                          //200
                          GOVERNMENT_MDA_TIN = b.TAXNUMBER,
@@ -1564,7 +1564,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                              //100
                              GOVERNMENT_CODE = stateCode + "-" + lgaCode,
-                             REPAYMENT_SOURCE = a.REPAYMENTSCHEDULE,
+                             REPAYMENT_SOURCE = a.REPAYMENTSCHEDULEID,
 
                              //200
                              GOVERNMENT_MDA_TIN = b.TAXNUMBER,
@@ -1655,7 +1655,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                               //100
                               GOVERNMENT_CODE = stateCode + "-" + lgaCode,
-                              REPAYMENT_SOURCE = a.REPAYMENTSCHEDULE,
+                              REPAYMENT_SOURCE = a.REPAYMENTSCHEDULEID,
 
                               //200
                               GOVERNMENT_MDA_TIN = b.TAXNUMBER,
@@ -2387,7 +2387,7 @@ namespace FintrakBanking.Repositories.CRMS
                          GOVERNMENT_CODE = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault() + "-" + context.TBL_LOCALGOVERNMENT.Where(aa => aa.LOCALGOVERNMENTID == context.TBL_CUSTOMER_ADDRESS
                      .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()).Select(aa => aa.LGACODE).FirstOrDefault(),
-                         REPAYMENT_SOURCE = a.REPAYMENTSCHEDULE,
+                         REPAYMENT_SOURCE = a.REPAYMENTSCHEDULEID,
 
                          //200
                          GOVERNMENT_MDA_TIN = b.TAXNUMBER,

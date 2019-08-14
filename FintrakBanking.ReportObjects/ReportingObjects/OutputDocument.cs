@@ -201,7 +201,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                    productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTNAME,
                                     purpose = b.LOANPURPOSE,
                                     tenor = b.APPROVEDTENOR,
-                                    repaymentSchedule = b.REPAYMENTSCHEDULE ?? "Not applicable",
+                                    repaymentSchedule = b.REPAYMENTSCHEDULEID ?? "Not applicable",
 
                                }).ToList();
         }

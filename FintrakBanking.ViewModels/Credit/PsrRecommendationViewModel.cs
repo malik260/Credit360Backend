@@ -12,5 +12,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public string comment { get; set; }
         public int projectSiteReportId { get; set; }
+        public string projectRiskRating { get; set; }
+        public string customerRating { get; set; }
     }
 }

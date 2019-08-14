@@ -148,7 +148,6 @@ namespace FintrakBanking.Repositories.Media
                                          where cc.CUSTOMERID == id
                                          select new OriginalDocumentApprovalViewModel { collateralCustomerId = cc.COLLATERALCUSTOMERID,
                                                                                         originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID }
-
                                        ).ToList();
 
             if (collateralcustomerIds != null)
@@ -157,8 +156,7 @@ namespace FintrakBanking.Repositories.Media
                 {
                     var entities = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                                     join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
-                                    where oda.COLLATERALCUSTOMERID == ccId.collateralCustomerId && oda.ORIGINALDOCUMENTAPPROVALID == ccId.originalDocumentApprovalId 
-                                    && oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
+                                    where oda.COLLATERALCUSTOMERID == ccId && oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
                                     select new OriginalDocumentApprovalViewModel
                                     {
                                       originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
@@ -179,7 +177,7 @@ namespace FintrakBanking.Repositories.Media
                                       currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME : "n/a",
                                       //customerId = x.COLLATERALCUSTOMERID,
                                       operationId = (int)OperationsEnum.OriginalDocumentApproval,
-                                  }).OrderByDescending(e => e.approvalTrailId);
+                                  }).OrderByDescending(e => e.approvalTrailId).ToList();
 
                     var entity = entities.FirstOrDefault();
                     

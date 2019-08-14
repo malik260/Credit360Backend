@@ -268,6 +268,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICollateralValuationRepository>().To<CollateralValuationRepository>();
             kernel.Bind<IValuationRequestTypeRepository>().To<ValuationRequestTypeRepository>();
             kernel.Bind<IOriginalDocumentReleaseRepository>().To<OriginalDocumentReleaseRepository>();
+            kernel.Bind<IRepaymentTermsRepository>().To<RepaymentTermsRepository>();
 
         }
 

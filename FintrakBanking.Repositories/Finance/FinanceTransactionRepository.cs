@@ -565,7 +565,7 @@ namespace FintrakBanking.Repositories.Finance
                 }
                 else
                 {
-                    DateTime systemDate = generalSetup.GetApplicationDate();
+                    //DateTime systemDate = generalSetup.GetApplicationDate();
                     //DateTime date = generalSetup.GetApplicationDate().Date;
                     var rateInfo = (from x in this.context.TBL_CURRENCY_EXCHANGERATE
                                     where x.CURRENCYID == currencyId && x.DATE == systemDate && x.RATECODEID == 1

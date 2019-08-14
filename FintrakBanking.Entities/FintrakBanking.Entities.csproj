@@ -94,6 +94,7 @@
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOMICILIATION.cs" />
     <Compile Include="Models\TBL_COLLATERAL_INDEMNITY.cs" />
+    <Compile Include="Models\TBL_INSURANCE_REQUEST.cs" />
     <Compile Include="Models\TBL_COLLATERAL_ISPO.cs" />
     <Compile Include="Models\TBL_COLLATERAL_PROPOSE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_RELEASE_DOC.cs" />
@@ -149,7 +150,7 @@
     <Compile Include="Models\TBL_RAC_OPTION.cs" />
     <Compile Include="Models\TBL_RAC_OPTION_ITEM.cs" />
     <Compile Include="Models\TBL_CORR_RISK_MATRIX.cs" />
-    <Compile Include="Models\TBL_REPAYMENT_TERMS.cs" />
+    <Compile Include="Models\TBL_REPAYMENT_TERM.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_DOMCLTN.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_INDEMNITY.cs" />
     <Compile Include="Models\TBL_TEMP_COLLATERAL_ISPO.cs" />
