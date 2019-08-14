@@ -49,7 +49,7 @@ namespace FintrakBanking.Entities.Models
 
         public string FORMMNUMBER { get; set; }
 
-        public int BENEFICIARYPHONENUMBER { get; set; }
+        public string BENEFICIARYPHONENUMBER { get; set; }
 
         public string BENEFICIARYBANK { get; set; }
 
@@ -58,7 +58,6 @@ namespace FintrakBanking.Entities.Models
         public string PROFORMAINVOICEID { get; set; }
 
         public decimal AVAILABLEAMOUNT { get; set; }
-
         public decimal LETTEROFCREDITAMOUNT { get; set; }
 
         public DateTime LETTEROFCREDITEXPIRYDATE { get; set; }

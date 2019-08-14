@@ -29,5 +29,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<ValuationPrerequisiteViewModel> GetAllCollateralValuerIformation(int id);
 
         bool DeleteValuationPrerequisite(int valuationPrerequisiteId, UserInfo user);
+
+        List<ValuationPrerequisiteViewModel> GetCollateralValuationPrerequisiteById(int valuationPrerequisiteId);
     }
 }

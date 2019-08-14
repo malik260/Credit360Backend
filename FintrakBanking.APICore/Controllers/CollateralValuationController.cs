@@ -139,6 +139,25 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-valuation-Prerequisite/{valuationPrerequisiteId}/valuationPrerequisiteId")]
+        public HttpResponseMessage GetCollateralValuationPrerequisiteById(int valuationPrerequisiteId)
+        {
+            try
+            {
+                var Prerequisites = _colValuationRepo.GetCollateralValuationPrerequisiteById(valuationPrerequisiteId);
+                int totalItems = Prerequisites.Count();
+
+                Prerequisites = Prerequisites.OrderBy(x => x.dateTimeCreated).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = Prerequisites, count = totalItems });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-all-valuation-Prerequisites/{collateralValuationId}/collateralValuationId")]
         public HttpResponseMessage GetAllValuationPrerequisites(int collateralValuationId)
         {

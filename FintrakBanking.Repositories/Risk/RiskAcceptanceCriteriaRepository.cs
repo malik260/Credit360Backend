@@ -562,7 +562,8 @@ namespace FintrakBanking.Repositories.Risk
                     showAtDrawDown = x.SHOWATDRAWDOWN,
                     requireComment = x.REQUIRECOMMENT,
                     currencyId = x.CURRENCYID,
-                    currencyType = x.CURRENCYTYPE
+                    currencyType = x.CURRENCYTYPE,
+                    racCategoryTypeId = x.RACCATEGORYTYPEID,
                 }).OrderBy(o => o.racItemId)
                 .ToList();
         }
@@ -670,7 +671,7 @@ namespace FintrakBanking.Repositories.Risk
             entity.CURRENCYTYPE = model.currencyType;
             entity.CURRENCYID = model.currencyId;
             entity.ISRACTIERCONTROLKEY = model.isRacTierControlKey;
-
+            entity.RACCATEGORYTYPEID = model.racCategoryTypeId;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 

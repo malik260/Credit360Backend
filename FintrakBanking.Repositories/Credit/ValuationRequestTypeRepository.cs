@@ -26,8 +26,6 @@ namespace FintrakBanking.Repositories.Credit
                         valuationRequestTypeId = O.VALUATIONREQUESTTYPEID,
                         valuationRequestType = O.VALUATIONREQUESTTYPE,
                     }).ToList();
-
-
         }
     }
 }

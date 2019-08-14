@@ -197,8 +197,6 @@ namespace FintrakBanking.Repositories.credit
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ProjectSiteReportApproval).ToList();
 
             return (from x in context.TBL_PSR_PROJECT_SITE_REPORT
-                    join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
-                    join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                    join atrail in context.TBL_APPROVAL_TRAIL on x.PROJECTSITEREPORTID equals atrail.TARGETID
                    where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                     && atrail.RESPONSESTAFFID == null
@@ -206,8 +204,6 @@ namespace FintrakBanking.Repositories.credit
                     && atrail.OPERATIONID == (int)OperationsEnum.ProjectSiteReportApproval
                    select new ProjectSiteReportViewModel
                    {
-                        appplicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
-                        customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                        projectSiteReportId = x.PROJECTSITEREPORTID,
                        psrReportTypeId = x.PSRREPORTTYPEID,
                        clientName = x.CLIENTNAME,
@@ -226,7 +222,7 @@ namespace FintrakBanking.Repositories.credit
 
                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
 
-                   }).OrderBy(o => o.projectSiteReportId)
+                   }).OrderByDescending(o => o.projectSiteReportId)
                 .ToList();
         }
 
@@ -382,6 +378,8 @@ namespace FintrakBanking.Repositories.credit
                 .Select(x => new PsrRecommendationViewModel
                 {
                     psrRecommendationId = x.PSRRECOMMENDATIONID,
+                    customerRating = x.CUSTOMERRATING,
+                    projectRiskRating = x.PROJECTRISKRATING,
                     projectSiteReportId = x.PROJECTSITEREPORTID,
                     comment = x.COMMENTS,
                 })
@@ -392,7 +390,8 @@ namespace FintrakBanking.Repositories.credit
         {
             var entity = this.context.TBL_PSR_RECOMMENDATION.Find(id);
             entity.COMMENTS = model.comment;
-
+            entity.CUSTOMERRATING = model.customerRating;
+            entity.PROJECTRISKRATING = model.projectRiskRating;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 
@@ -419,6 +418,8 @@ namespace FintrakBanking.Repositories.credit
             var entity = new TBL_PSR_RECOMMENDATION
             {
                 COMMENTS = model.comment,
+                CUSTOMERRATING = model.customerRating,
+                PROJECTRISKRATING = model.projectRiskRating,
                 PROJECTSITEREPORTID = model.projectSiteReportId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -497,7 +498,7 @@ namespace FintrakBanking.Repositories.credit
                     psrReportTypeId = x.PSRREPORTTYPEID,
                     approvalStatusId = x.APPROVALSTATUSID,
                     psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o=>o.PSRREPORTTYPEID== x.PROJECTSITEREPORTID).Select(o=>o.REPORTTYPENAME).FirstOrDefault(),
-                }).OrderBy(o => o.psrPerformanceEvaluationId)
+                }).OrderByDescending(o => o.psrPerformanceEvaluationId)
                 .ToList();
         }
         public bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id)
