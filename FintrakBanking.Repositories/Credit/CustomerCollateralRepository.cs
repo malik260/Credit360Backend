@@ -98,10 +98,10 @@ namespace FintrakBanking.Repositories.Credit
                     case (int)CollateralTypeEnum.Gaurantee: AddTempGuaranteeCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.CASA: AddTempCasaCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Property: AddTempImmovablePropertyCollateral(collateralId, entity); break;
-                    case (int)CollateralTypeEnum.MarketableSecurities: AddTempMarketableSecuritiesCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.TreasuryBillsAndBonds: AddTempMarketableSecuritiesCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.InsurancePolicy: AddTempPolicyCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.PreciousMetal: AddTempPreciousMetalCollateral(collateralId, entity); break;
-                    case (int)CollateralTypeEnum.Stock: AddTempStockCollateral(collateralId, entity); break;
+                    case (int)CollateralTypeEnum.MarketableSecurities_Shares: AddTempStockCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Vehicle: AddVehicleCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.Promissory: AddPromissoryCollateral(collateralId, entity); break;
                     case (int)CollateralTypeEnum.ISPO: AddISPOCollateral(collateralId, entity); break;
@@ -876,10 +876,10 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(entity); break;
                 case (int)CollateralTypeEnum.CASA: UpdateCasaCollateral(entity); break;
                 case (int)CollateralTypeEnum.Property: UpdateImmovablePropertyCollateral(entity); break;
-                case (int)CollateralTypeEnum.MarketableSecurities: UpdateMarketableSecuritiesCollateral(entity); break;
+                case (int)CollateralTypeEnum.TreasuryBillsAndBonds: UpdateMarketableSecuritiesCollateral(entity); break;
                 case (int)CollateralTypeEnum.InsurancePolicy: UpdatePolicyCollateral(entity); break;
                 case (int)CollateralTypeEnum.PreciousMetal: UpdatePreciousMetalCollateral(entity); break;
-                case (int)CollateralTypeEnum.Stock: UpdateStockCollateral(entity); break;
+                case (int)CollateralTypeEnum.MarketableSecurities_Shares: UpdateStockCollateral(entity); break;
                 case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(entity); break;
                 case (int)CollateralTypeEnum.Promissory: UpdatePromissoryCollateral(entity); break;
 
@@ -907,10 +907,10 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(entity); break;
                 case (int)CollateralTypeEnum.CASA: UpdateCasaCollateral(entity); break;
                 case (int)CollateralTypeEnum.Property: UpdateImmovablePropertyCollateral(entity); break;
-                case (int)CollateralTypeEnum.MarketableSecurities: UpdateMarketableSecuritiesCollateral(entity); break;
+                case (int)CollateralTypeEnum.TreasuryBillsAndBonds: UpdateMarketableSecuritiesCollateral(entity); break;
                 case (int)CollateralTypeEnum.InsurancePolicy: UpdatePolicyCollateral(entity); break;
                 case (int)CollateralTypeEnum.PreciousMetal: UpdatePreciousMetalCollateral(entity); break;
-                case (int)CollateralTypeEnum.Stock: UpdateStockCollateral(entity); break;
+                case (int)CollateralTypeEnum.MarketableSecurities_Shares: UpdateStockCollateral(entity); break;
                 case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(entity); break;
                 case (int)CollateralTypeEnum.Promissory: UpdatePromissoryCollateral(entity); break;
                 case (int)CollateralTypeEnum.ISPO: UpdateISPOCollateral(entity); break;
@@ -1595,6 +1595,7 @@ namespace FintrakBanking.Repositories.Credit
                         accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
                         collateralUsageStatus = c.c.COLLATERALUSAGESTATUSID,
                         loanApplicationId = c.c.LOANAPPLICATIONID
+                        //remark = c.c.
                     })
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First())
@@ -1925,10 +1926,10 @@ namespace FintrakBanking.Repositories.Credit
                     case (int)CollateralTypeEnum.Gaurantee: data = GetCollateralGuarantee(collateralId); break;
                     case (int)CollateralTypeEnum.CASA: data = GetCollateralCasa(collateralId); break;
                     case (int)CollateralTypeEnum.Property: data = GetCollateralImmovableProperty(collateralId); break;
-                    case (int)CollateralTypeEnum.MarketableSecurities: data = GetCollateralMarketableSecurities(collateralId); break;
+                    case (int)CollateralTypeEnum.TreasuryBillsAndBonds: data = GetCollateralMarketableSecurities(collateralId); break;
                     case (int)CollateralTypeEnum.InsurancePolicy: data = GetCollateralPolicy(collateralId); break;
                     case (int)CollateralTypeEnum.PreciousMetal: data = GetCollateralPreciousMetal(collateralId); break;
-                    case (int)CollateralTypeEnum.Stock: data = GetCollateralStock(collateralId); break;
+                    case (int)CollateralTypeEnum.MarketableSecurities_Shares: data = GetCollateralStock(collateralId); break;
                     case (int)CollateralTypeEnum.Vehicle: data = GetCollateralVehicle(collateralId); break;
                     case (int)CollateralTypeEnum.Promissory: data = GetCollateralPromissory(collateralId); break;
                     case (int)CollateralTypeEnum.ISPO: data = GetISPOCollateral(collateralId); break;
@@ -4920,7 +4921,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             ICollection<TBL_COLLATERAL_MKT_SECURITY> collateral;
 
-            if (collateralType != CollateralTypeEnum.MarketableSecurities)
+            if (collateralType != CollateralTypeEnum.TreasuryBillsAndBonds)
                 return null;
 
             collateral = new List<TBL_COLLATERAL_MKT_SECURITY>();
@@ -5720,7 +5721,7 @@ namespace FintrakBanking.Repositories.Credit
                                                  }).FirstOrDefault();
 
                 }
-                else if (record.collateralTypeId == (int)CollateralTypeEnum.MarketableSecurities)
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.TreasuryBillsAndBonds)
                 {
                     record.collateralMarketableSecurity = (from x in context.TBL_COLLATERAL_MKT_SECURITY.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
                                                            select new CollateralMarketableSecurityViewModel
@@ -5829,7 +5830,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 }).FirstOrDefault();
 
                 }
-                else if (record.collateralTypeId == (int)CollateralTypeEnum.Stock)
+                else if (record.collateralTypeId == (int)CollateralTypeEnum.MarketableSecurities_Shares)
                 {
                     record.collateralStock = (from x in context.TBL_COLLATERAL_STOCK.Where(s => s.COLLATERALCUSTOMERID == record.collateralId)
                                               select new CollateralStockViewModel
@@ -6831,10 +6832,10 @@ namespace FintrakBanking.Repositories.Credit
                                 case (int)CollateralTypeEnum.Miscellaneous: UpdateMiscellaneousCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
                                 case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
                                 case (int)CollateralTypeEnum.Property: UpdateApprovedImmovableCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
-                                case (int)CollateralTypeEnum.MarketableSecurities: UpdateMarketSecurityCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
+                                case (int)CollateralTypeEnum.TreasuryBillsAndBonds: UpdateMarketSecurityCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
                                 case (int)CollateralTypeEnum.InsurancePolicy: UpdatePolicyCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
                                 case (int)CollateralTypeEnum.PreciousMetal: UpdateMetalCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
-                                case (int)CollateralTypeEnum.Stock: UpdateStockCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
+                                case (int)CollateralTypeEnum.MarketableSecurities_Shares: UpdateStockCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
                                 case (int)CollateralTypeEnum.Vehicle: UpdateVehicleCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
                                 case (int)CollateralTypeEnum.Promissory: UpdatePromissoryCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
                                 case (int)CollateralTypeEnum.ISPO: UpdateISPOCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); break;
@@ -7741,10 +7742,10 @@ namespace FintrakBanking.Repositories.Credit
                 case (int)CollateralTypeEnum.Gaurantee: data = GetTempCollateralGuarantee(collateralId); break;
                 case (int)CollateralTypeEnum.CASA: data = GetTempCollateralCasa(collateralId); break;
                 case (int)CollateralTypeEnum.Property: data = GetTempCollateralImmovableProperty(collateralId); break;
-                case (int)CollateralTypeEnum.MarketableSecurities: data = GetTempCollateralMarketableSecurities(collateralId); break;
+                case (int)CollateralTypeEnum.TreasuryBillsAndBonds: data = GetTempCollateralMarketableSecurities(collateralId); break;
                 case (int)CollateralTypeEnum.InsurancePolicy: data = GetTempCollateralPolicy(collateralId); break;
                 case (int)CollateralTypeEnum.PreciousMetal: data = GetTempCollateralPreciousMetal(collateralId); break;
-                case (int)CollateralTypeEnum.Stock: data = GetTempCollateralStock(collateralId); break;
+                case (int)CollateralTypeEnum.MarketableSecurities_Shares: data = GetTempCollateralStock(collateralId); break;
                 case (int)CollateralTypeEnum.Vehicle: data = GetTempCollateralVehicle(collateralId); break;
                 case (int)CollateralTypeEnum.Promissory: data = GetTempCollateralPromissory(collateralId); break;
                 case (int)CollateralTypeEnum.ISPO: data = GetTempCollateralISPO(collateralId); break;
