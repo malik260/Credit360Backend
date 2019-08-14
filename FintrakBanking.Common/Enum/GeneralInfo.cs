@@ -392,6 +392,10 @@ namespace FintrakBanking.Common.Enum
         ESGSUBCategoryDeleted = 458,
         LCReleaseAmountAdded = 459,
         LCReleaseAmountUpdated = 500,
+        //new by Kingsley
+        LoanApplicationFlowChangeAdded =501,
+        LoanApplicationFlowChangeUpdated=502,
+        LoanApplicationFlowChangeDeleted =503,
         RepaymentTermAdded = 504,
         RepaymentTermUpdated = 505,
         RepaymentTermDeleted = 506

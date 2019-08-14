@@ -39,12 +39,25 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = projectSiteRepor;
                     reportDataSource.Name = "detail";
+                    ReportViewer.LocalReport.DataSources.Add(reportDataSource);
 
                     var performaceEvaluation = psr.GetPsrPerformanceEvaluations(projectSiteReportId);
                     ReportDataSource dsPerformaceEvaluation = new ReportDataSource();
                     dsPerformaceEvaluation.Value = performaceEvaluation;
-                    dsPerformaceEvaluation.Name = "detail";
-                    ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                    dsPerformaceEvaluation.Name = "evaluation";
+                    ReportViewer.LocalReport.DataSources.Add(dsPerformaceEvaluation);
+
+                    var apg = psr.GetProjectSiteReports(projectSiteReportId);
+                    ReportDataSource dsApg = new ReportDataSource();
+                    dsApg.Value = apg;
+                    dsApg.Name = "apg";
+                    ReportViewer.LocalReport.DataSources.Add(dsApg);
+
+                    var analysis = psr.GetProjectSiteReports(projectSiteReportId);
+                    ReportDataSource dsAnalysis = new ReportDataSource();
+                    dsAnalysis.Value = analysis;
+                    dsAnalysis.Name = "analysis";
+                    ReportViewer.LocalReport.DataSources.Add(dsAnalysis);
 
                     var facilities = psr.GetFacilities(projectSiteReportId);
                     ReportDataSource dsfacilities = new ReportDataSource();

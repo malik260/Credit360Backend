@@ -100,6 +100,7 @@
     <Compile Include="Credit\CashBackedBondAndGuarantee.cs" />
     <Compile Include="Credit\CashCollaterizedCredits.cs" />
     <Compile Include="Credit\ChecklistSearchViewModel.cs" />
+    <Compile Include="Credit\CollateralInsuranceRequestViewModel.cs" />
     <Compile Include="Credit\DailyAccrualDetailViewModel.cs" />
     <Compile Include="Credit\Form3800BReportViewModel.cs" />
     <Compile Include="Credit\ClassifiedAssetManagementViewModel.cs" />

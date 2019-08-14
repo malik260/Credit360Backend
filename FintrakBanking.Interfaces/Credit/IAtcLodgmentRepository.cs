@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.credit
     {
         AtcLodgmentViewModel GetAtcLodgment(int id);
 
-        IEnumerable<AtcLodgmentViewModel> GetAtcLodgments();
+        IEnumerable<AtcLodgmentViewModel> GetAtcLodgments(int staffId);
 
         IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForRelease();
 
