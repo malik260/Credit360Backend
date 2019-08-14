@@ -940,7 +940,7 @@ namespace FintrakBanking.Repositories.Credit
   */
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
-            ValidateAllFromReceiverLevels(model.createdBy, operationId);
+            //ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
 
@@ -1075,7 +1075,7 @@ namespace FintrakBanking.Repositories.Credit
 
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
-            ValidateAllFromReceiverLevels(model.createdBy, operationId);
+            //ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
@@ -1169,7 +1169,7 @@ namespace FintrakBanking.Repositories.Credit
 
             lc.DATEACTEDON = DateTime.Now;
             context.SaveChanges();
-            ValidateAllFromReceiverLevels(model.createdBy, operationId);
+            //ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
@@ -1242,7 +1242,7 @@ namespace FintrakBanking.Repositories.Credit
             lgr.DATEACTEDON = DateTime.Now;
             //ValidateAllFromReceiverLevels(model.createdBy, operationId);
             context.SaveChanges();
-            ValidateAllFromReceiverLevels(model.createdBy, operationId);
+            //ValidateAllFromReceiverLevels(model.createdBy, operationId);
             //workflow.Response.success = true;
             return workflow.Response;
         }
@@ -1250,13 +1250,14 @@ namespace FintrakBanking.Repositories.Credit
         private bool ValidateReleaseAmount(LcReleaseAmountViewModel model)
         {
             var approvedReleaseIds = context.TBL_APPROVAL_TRAIL.Where(t => t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                                                        && t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments).Select(t => t.TARGETID).ToList();
+                                                                         && t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments).Select(t => t.TARGETID).ToList();
             var lc = context.TBL_LC_ISSUANCE.Find(model.lcIssuanceId);
-            var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => approvedReleaseIds.Contains(r.LCRELEASEAMOUNTID)).Sum(r => r.RELEASEAMOUNT) ?? 0;
+            var currCode = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == lc.CURRENCYID).CURRENCYCODE;
+            var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => approvedReleaseIds.Contains(r.LCRELEASEAMOUNTID) && r.LCISSUANCEID == model.lcIssuanceId).Sum(r => r.RELEASEAMOUNT) ?? 0;
             var availableAmount = lc.LCTOLERANCEVALUE - totalReleasedAmount;
             if (model.releaseAmount > availableAmount)
             {
-                throw new SecureException("Sorry, remainder tolerance amount is now " + availableAmount);
+                throw new SecureException("Sorry, Released Amount is now " + currCode + " " + availableAmount);
             }
             return true;
         }
