@@ -156,7 +156,8 @@ namespace FintrakBanking.Repositories.Media
                 {
                     var entities = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                                     join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
-                                    where oda.COLLATERALCUSTOMERID == ccId && oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
+                                    where oda.COLLATERALCUSTOMERID == ccId.collateralCustomerId && oda.ORIGINALDOCUMENTAPPROVALID == ccId.originalDocumentApprovalId
+                                    && oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
                                     select new OriginalDocumentApprovalViewModel
                                     {
                                       originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
