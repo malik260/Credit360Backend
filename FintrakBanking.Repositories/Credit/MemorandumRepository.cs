@@ -51,7 +51,7 @@ namespace FintrakBanking.Repositories.Credit
         TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
         TBL_LMSR_APPLICATION lmsrApplication = null;
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
-        int customerId = null;
+        int customerId;
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
         private long legalLendingLimit = 100000000000;
 
@@ -2245,6 +2245,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 </table>
             ";
+            return result;
         }
 
         private string GetCollateralCoverageMarkupLOS()
