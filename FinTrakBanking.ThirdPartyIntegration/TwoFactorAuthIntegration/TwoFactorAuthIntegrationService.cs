@@ -46,7 +46,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                 var output = new TwoFactorAutheticationOutputViewModel()
                 {
                     authenticated = false, //authResponse.Authenticated,
-                    message = res.Status.ToString() //authResponse.Message
+                    message = res.Result //authResponse.Message
                 };
 
                 client.Close();
@@ -60,7 +60,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = $"CustId : {staffCode} , PassCode : {passCode}",
                         RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = res.Status.ToString() //authResponse.Message,
+                        RESPONSEMESSAGE = res.Result //authResponse.Message,
                     };
 
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
