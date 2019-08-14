@@ -9,7 +9,9 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IMemorandumRepository
     {
-        bool Init(int operationId, int targetId);
+        bool Init(int operationId, int targetId, bool isDrawdwon = false);
         string Replace(string content);
+
+        string GetDrawdownMemoHtml(int staffId, int operationId, int targetId);
     }
 }

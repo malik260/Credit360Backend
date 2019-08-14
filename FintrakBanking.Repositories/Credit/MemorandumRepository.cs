@@ -47,7 +47,8 @@ namespace FintrakBanking.Repositories.Credit
         List<CustomerExposure> customerIds; // init
 
         // field variables
-        TBL_LOAN_APPLICATION loanApplication = null; 
+        TBL_LOAN_APPLICATION loanApplication = null;
+        TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail = null;
         TBL_LMSR_APPLICATION lmsrApplication = null;
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
         int customerId = null;
@@ -175,10 +176,90 @@ namespace FintrakBanking.Repositories.Credit
         private string amountProposed;
         private string customerTurnover;
 
+        // for drawdown memo
+        //private string customerName;
+        private string currentAccountNo;
+        //private string branchName;
+        private string facilityType;
+        private decimal drawdownAmount;
+        private int tenor;
+        private int? moratorium;
+        private string principalRepayment;
+        private string interestRepayment;
+        private double interestRate;
+        private string processingFee;
+        private string managementFee;
+        private string commitmentFee;
+        private string otherFee;
+        private string effectiveDate;
+        //private string misCode;
+
+        private decimal approvedAmount;
+        private decimal amountUtilised;
+        private string newRequest;
+
+        private string requestType;
+
+        private string inPlace1;
+        private string perfected1;
+        private string deferred1;
+        private string inPlace2;
+        private string perfected2;
+        private string deferred2;
+        private string inPlace3;
+        private string perfected3;
+        private string deferred3;
+        private string inPlace4;
+        private string perfected4;
+        private string deferred4;
+        private string inPlace5;
+        private string perfected5;
+        private string deferred5;
+        private string inPlace6;
+        private string perfected6;
+        private string deferred6;
+        private string inPlace7;
+        private string perfected7;
+        private string deferred7;
+
+        private string relationshipOfficer;
+        private string relationshipManager;
+        private string riskManagement;
+        private string legal;
+        private string treasury;
+        private string coo;
+        private string crmInternational;
+
+        private string othersInPlace1;
+        private string othersPerfected1;
+        private string othersDeferred1;
+        private string othersInPlace2;
+        private string othersPerfected2;
+        private string othersDeferred2;
+        private string othersInPlace3;
+        private string othersPerfected3;
+        private string othersDeferred3;
+        private string othersInPlace4;
+        private string othersPerfected4;
+        private string othersDeferred4;
+        private string othersInPlace5;
+        private string othersPerfected5;
+        private string othersDeferred5;
+        private string othersInPlace6;
+        private string othersPerfected6;
+        private string othersDeferred6;
+        private string othersInPlace7;
+        private string othersPerfected7;
+        private string othersDeferred7;
 
         // init
-        public bool Init(int operationId, int targetId) // feeder
+        public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
         {
+            if (isDrawdwon)
+            {
+                return InitializeDrawdownMemoProperties(operationId, targetId);
+            }
+
             this.targetId = targetId;
             this.operationId = operationId;
             if (loanApplication.CUSTOMERGROUPID != null) this.customerId = (int)loanApplication.CUSTOMERGROUPID;
@@ -313,6 +394,105 @@ namespace FintrakBanking.Repositories.Credit
 
             return true;
         }
+
+        private bool InitializeDrawdownMemoProperties(int operationId, int targetId) // feeder
+        {
+            this.targetId = targetId;
+            this.operationId = operationId;
+
+            //if (operationId == (int) OperationsEnum.CreditAppraisal) // LOS 
+            //{
+                if (loanApplicationDetail == null)
+                {
+                    this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
+                    this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
+                    //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
+                    //this.customerExposure = CustomerExposureMarkup();
+                }
+
+                string customerName = String.Empty;
+                if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+                if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+
+                this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
+                this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault();
+                this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
+                this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT;
+                this.tenor = loanApplicationDetail.APPROVEDTENOR;
+                this.moratorium = loanApplicationDetail.MORATORIUMDURATION;
+                this.principalRepayment = "";
+                this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
+                this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
+                this.processingFee = ""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
+                this.managementFee = "";
+                this.commitmentFee = "";
+                this.otherFee = "";
+                this.effectiveDate = "";
+                this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
+
+                approvedAmount = 0;
+                amountUtilised = 0;
+                newRequest = "";
+
+                requestType = "";
+
+                inPlace1 = "";
+                perfected1 = "";
+                deferred1 = "";
+                inPlace2 = "";
+                perfected2 = "";
+                deferred2 = "";
+                inPlace3 = "";
+                perfected3 = "";
+                deferred3 = "";
+                inPlace4 = "";
+                perfected4 = "";
+                deferred4 = "";
+                inPlace5 = "";
+                perfected5 = "";
+                deferred5 = "";
+                inPlace6 = "";
+                perfected6 = "";
+                deferred6 = "";
+                inPlace7 = "";
+                perfected7 = "";
+                deferred7 = "";
+
+                relationshipOfficer = "";
+                relationshipManager = "";
+                riskManagement = "";
+                legal = "";
+                treasury = "";
+                coo = "";
+                crmInternational = "";
+
+                othersInPlace1 = "";
+                othersPerfected1 = "";
+                othersDeferred1 = "";
+                othersInPlace2 = "";
+                othersPerfected2 = "";
+                othersDeferred2 = "";
+                othersInPlace3 = "";
+                othersPerfected3 = "";
+                othersDeferred3 = "";
+                othersInPlace4 = "";
+                othersPerfected4 = "";
+                othersDeferred4 = "";
+                othersInPlace5 = "";
+                othersPerfected5 = "";
+                othersDeferred5 = "";
+                othersInPlace6 = "";
+                othersPerfected6 = "";
+                othersDeferred6 = "";
+                othersInPlace7 = "";
+                othersPerfected7 = "";
+                othersDeferred7 = "";
+
+            //}
+
+            return true;
+        }
+
 
         public List<DropDownSelect> GetProposedConditions()
         {
@@ -488,6 +668,307 @@ namespace FintrakBanking.Repositories.Credit
 
 
         //markups
+        
+        public string GetDrawdownMemoHtml(int staffId, int operationId, int targetId)
+        {
+            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <th><b>NAME OF CUSTOMER:</b></th>
+                        <th><b></b></th>
+                        <th><b>CURRENT/APG A/C NO:</b></th>
+                        <th><b></b></th>
+                    </tr>
+                      
+                    <tr>
+                        <td>BRANCH:</td>
+                        <td>{branchName}</td>
+                        <td>MIS CODE:</td>
+                        <td>{misCode}</td>
+                    </tr>
+                    <tr>
+                        <td>FACILITY TYPE:</td>
+                        <td>{facilityType}</td>
+                        <td>INTEREST RATE:</td>
+                        <td>{interestRate}</td>
+                    </tr>
+                    <tr>
+                        <td>DRAWDOWN AMOUNT:</td>
+                        <td>{drawdownAmount}</td>
+                        <td>PROCESSING FEE:</td>
+                        <td>{processingFee}</td>
+                    </tr>
+                    <tr>
+                        <td>TENOR:</td>
+                        <td>{tenor}</td>
+                        <td>MGT FEE:</td>
+                        <td>{managementFee}</td>
+                    </tr>
+                    <tr>
+                        <td>MORATORIUM:</td>
+                        <td>{moratorium}</td>
+                        <td>COMMITMENT FEE:</td>
+                        <td>{commitmentFee}</td>
+                    </tr>
+                    <tr>
+                        <td>PRINCIPAL REPAYMENT:</td>
+                        <td>{principalRepayment}</td>
+                        <td>OTHER FEES (SPECIFY):</td>
+                        <td>{otherFee}</td>
+                    </tr>
+                    <tr>
+                        <td>INTEREST REPAYMENT:</td>
+                        <td>{interestRepayment}</td>
+                        <td>EFFECTIVE DATE:</td>
+                        <td>{effectiveDate}</td>
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            result = result + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml() + GetApprovalLevelsHtml() + GetOtherConditionsHtml();
+            return result;
+        }
+
+        public string GetTrancheDisbursementHtml()
+        {
+             //< tr >
+             //           < th >< b ></ b ></ th >
+             //           < th >< b ></ b ></ th >
+             //           < th >< b ></ b ></ th >
+             //       </ tr >
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <td><b>TRANCHE DISBURSEMENT:</b></td>
+                        <td>APPROVED AMOUNT</td>
+                        <td>{approvedAmount}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>AMOUNT UTILIZED</td>
+                        <td>{amountUtilised}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>NEW REQUEST</td>
+                        <td>{newRequest}</td>
+                    </tr>";
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string GetRequestTypeHtml()
+        {
+             //< tr >
+             //           < th >< b ></ b ></ th >
+             //           < th >< b ></ b ></ th >
+             //       </ tr >
+
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <td><b>REQUEST TYPE</b></td>
+                        <td>{requestType}</td>
+                    </tr>
+                   ";
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string GetPrecedentConditionsHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <h3><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></h3>
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>CONDITIONS</b></th>
+                        <th><b>STATUS</b></th>
+                        <th><b></b></th>
+                        <th><b></b></th>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>In Place</td>
+                        <td>Perfected</td>
+                        <td>Deferred</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Request letter for the facility</td>
+                        <td>{inPlace1}</td>
+                        <td>{perfected1}</td>
+                        <td>{deferred1}</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Accepted offer letter</td>
+                        <td>{inPlace2}</td>
+                        <td>{perfected2}</td>
+                        <td>{deferred2}</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Board resolution accepting the facility (for corporate customers)</td>
+                        <td>{inPlace3}</td>
+                        <td>{perfected3}</td>
+                        <td>{deferred3}</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Positive CRMS/Credit check</td>
+                        <td>{inPlace4}</td>
+                        <td>{perfected4}</td>
+                        <td>{deferred4}</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Evidence of payroll mandate (for corporate customers)</td>
+                        <td>{inPlace5}</td>
+                        <td>{perfected5}</td>
+                        <td>{deferred5}</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Status of Perfection of Mortgage/Debenture</td>
+                        <td>{inPlace6}</td>
+                        <td>{perfected6}</td>
+                        <td>{deferred6}</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Other conditions as specified on the approval memo/FAM (please see overleaf)</td>
+                        <td>{inPlace7}</td>
+                        <td>{perfected7}</td>
+                        <td>{deferred7}</td>
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string GetApprovalLevelsHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <th><b>APPROVALS:</b></th>
+                        <th><b></b></th>
+                    </tr>
+                    <tr>
+                        <td>RELATIONSHIP OFFICER:</td>
+                        <td>{relationshipOfficer}</td>
+                    </tr>
+                    <tr>
+                        <td>RELATIONSHIP MANAGER:</td>
+                        <td>{relationshipManager}</td>
+                    </tr>
+                    <tr>
+                        <td>RISK MANAGEMENT:</td>
+                        <td>{riskManagement}</td>
+                    </tr>
+                    <tr>
+                        <td>LEGAL:</td>
+                        <td>{legal}</td>
+                    </tr>
+                    <tr>
+                        <td>TREASURY:</td>
+                        <td>{treasury}</td>
+                    </tr>
+                    <tr>
+                        <td>COO:</td>
+                        <td>{coo}</td>
+                    </tr>
+                    <tr>
+                        <td>CRM INTERNATIONAL:</td>
+                        <td>{crmInternational}</td>
+                    </tr>";
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string GetOtherConditionsHtml()
+        {
+            var result = String.Empty;
+            result = result + $@"
+                <br />
+                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <th><b>S/N</b></th>
+                        <th><b>OTHER CONDITIONS PRECEDENT TO DRAWDOWN AS APPROVED IN THE FAM</b></th>
+                        <th><b>STATUS</b></th>
+                        <th><b></b></th>
+                        <th><b></b></th>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>In Place</td>
+                        <td>Perfected</td>
+                        <td>Deferred</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td></td>
+                        <td>{othersInPlace1}</td>
+                        <td>{othersPerfected1}</td>
+                        <td>{othersDeferred1}</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td></td>
+                        <td>{othersInPlace2}</td>
+                        <td>{othersPerfected2}</td>
+                        <td>{othersDeferred2}</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td></td>
+                        <td>{othersInPlace3}</td>
+                        <td>{othersPerfected3}</td>
+                        <td>{othersDeferred3}</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td></td>
+                        <td>{othersInPlace4}</td>
+                        <td>{othersPerfected4}</td>
+                        <td>{othersDeferred4}</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td></td>
+                        <td>{othersInPlace5}</td>
+                        <td>{othersPerfected5}</td>
+                        <td>{othersDeferred5}</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td></td>
+                        <td>{othersInPlace6}</td>
+                        <td>{othersPerfected6}</td>
+                        <td>{othersDeferred6}</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td></td>
+                        <td>{othersInPlace7}</td>
+                        <td>{othersPerfected7}</td>
+                        <td>{othersDeferred7}</td>
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
         private string GetProposedConditionsMarkup()
         {
             var conditions = GetProposedConditions(); // new

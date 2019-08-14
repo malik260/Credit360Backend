@@ -51,6 +51,10 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? SLADATETIME { get; set; }
 
+        public int? LOOPEDINSTAFFID { get; set; }
+
+        public int? LOOPEDINROLEID { get; set; }
+
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL1 { get; set; }
