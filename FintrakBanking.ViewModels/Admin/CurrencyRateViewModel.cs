@@ -26,6 +26,9 @@ namespace FintrakBanking.ViewModels.Admin
 
     public class CurrencyViewModel 
     {
+        public short lookupId { get; set; }
+        public string lookupName { get; set; }
+
         public short currencyId { get; set; }
         public string currencyCode { get; set; }
         public string currencyName { get; set; }

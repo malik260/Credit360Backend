@@ -1964,6 +1964,54 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost, Route("insurance-policy-request")]
+        public HttpResponseMessage AddInsurancePolicyRequest([FromBody] CollateralInsuranceRequestViewModel model)
+        {
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+
+                var response = repo.AddInsurancePolicyRequest(model);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this request, Insurance request may already exist" });
+            }
+
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("insurance-request-referenceNumber")]
+        public HttpResponseMessage GetReferenceNumber()
+        {
+            try
+            {
+                var response = repo.GetReferenceNumber();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("collateral-coverage/{collateralSubTypeId}/collateralSubTypeId")]
