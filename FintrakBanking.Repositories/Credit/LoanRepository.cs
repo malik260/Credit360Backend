@@ -6041,7 +6041,7 @@ namespace FintrakBanking.Repositories.Credit
                            isLocationBased = (bool)x.ISLOCATIONBASED,
                            valuationCycle = x.VALUATIONCYCLE,
                            haircut = x.HAIRCUT,
-                           approvalStatus = x.APPROVALSTATUS,
+                           approvalStatusName = x.APPROVALSTATUS,
                        }).ToList(),
                    };
 
