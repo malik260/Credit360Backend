@@ -2652,7 +2652,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                             proposedProductId = b.PROPOSEDPRODUCTID,
-                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedProductName = (a.FLOWCHANGEID == null || a.FLOWCHANGEID <= 0 || a.FLOWCHANGEID == (short)FlowChangeEnum.FAM) ? b.TBL_PRODUCT.PRODUCTNAME : b.TBL_PRODUCT.PRODUCTNAME +"("+context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(x=>x.FLOWCHANGEID == a.FLOWCHANGEID).PLACEHOLDER +")" ,
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedAmount = b.PROPOSEDAMOUNT,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
@@ -4588,7 +4588,7 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanApplicationFlowChange(int loanApplicationId)
         {
             var detail = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == loanApplicationId).Select(o => o).FirstOrDefault();
-
+            detail.PRODUCT_CLASS_PROCESSID = 1;
             detail.FLOWCHANGEID = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.PLACEHOLDER == "FAM").Select(o => o.FLOWCHANGEID).FirstOrDefault();
 
             return context.SaveChanges() > 0;
