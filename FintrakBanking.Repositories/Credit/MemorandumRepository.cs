@@ -266,9 +266,6 @@ namespace FintrakBanking.Repositories.Credit
 
             this.targetId = targetId;
             this.operationId = operationId;
-            if (loanApplication.CUSTOMERGROUPID != null) this.customerId = (int)loanApplication.CUSTOMERGROUPID;
-            if (loanApplication.CUSTOMERID != null) this.customerId = (int)loanApplication.CUSTOMERID;
-            this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId).ToList();
             if (operationId == (int)OperationsEnum.CreditAppraisal) // LOS 
             {
                 if (loanApplication == null)
@@ -279,9 +276,18 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 //string customerName = String.Empty;
-                if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
-                if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+                if (loanApplication.CUSTOMERGROUPID != null)
+                {
+                    this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+                    this.customerId = (int)loanApplication.CUSTOMERGROUPID;
+                }
+                if (loanApplication.CUSTOMERID != null)
+                {
+                    this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+                    this.customerId = (int)loanApplication.CUSTOMERID;
+                }
 
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId).ToList();
                 this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
                 this.isRelatedParty = loanApplication.ISRELATEDPARTY == true ? "Yes" : "No";
