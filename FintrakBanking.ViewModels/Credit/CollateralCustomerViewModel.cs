@@ -380,6 +380,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string requestNumber { get; set; }
         public int insuranceRequestId { get; set; }
         public string statusName { get; set; }
+        public string requestReason { get; set; }
+        public string requestComment { get; set; }
     }
 
     public class crossGarantee

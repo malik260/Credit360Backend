@@ -2055,7 +2055,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-insurance-request")]
+        [Route("get-insurance-requests")]
         public HttpResponseMessage GetInsuranceRequests()
         {
             try
@@ -2068,6 +2068,17 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
+        }
+
+        [HttpDelete, Route("delete-insurance-request/{insuranceRequestId}")]
+        public HttpResponseMessage DeleteInsuranceRequest(int insuranceRequestId)
+        {
+            var response = repo.DeleteInsuranceRequest(insuranceRequestId);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been removed successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error removing this record" });
         }
 
 

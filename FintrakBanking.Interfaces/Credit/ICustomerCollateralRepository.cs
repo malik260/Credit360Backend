@@ -153,6 +153,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CollateralViewModel> GetInsuranceRequests();
         bool InsuranceRequestGoForApproval(CollateralViewModel model);
         InsurancePolicies GetInsurancePolicy(int collateralId);
+        bool DeleteInsuranceRequest(int insuranceRequestId);
         #endregion
     }
 }

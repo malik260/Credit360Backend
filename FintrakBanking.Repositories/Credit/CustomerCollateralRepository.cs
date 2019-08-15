@@ -1399,6 +1399,8 @@ namespace FintrakBanking.Repositories.Credit
                                                                 requestNumber = ir.REQUESTNUMBER,
                                                                 haircut = cc.HAIRCUT,
                                                                 insuranceRequestId = ir.INSURANCEREQUESTID,
+                                                                requestReason = ir.REQUESTREASON,
+                                                                requestComment = ir.REQUESTCOMMENT
                                                             }).OrderByDescending(ir => ir.insuranceRequestId).ToList();
             return result;
         }
@@ -8739,6 +8741,15 @@ namespace FintrakBanking.Repositories.Credit
             data.DELETED = true;
             data.DELETEDBY = createdById;
             data.DATETIMEDELETED = genSetup.GetApplicationDate();
+
+            return context.SaveChanges() > 0;
+
+        }
+
+        public bool DeleteInsuranceRequest(int insuranceRequestId)
+        {
+            var entity = context.TBL_INSURANCE_REQUEST.FirstOrDefault(ir => ir.INSURANCEREQUESTID == insuranceRequestId);
+            if(entity != null) context.TBL_INSURANCE_REQUEST.Remove(entity);
 
             return context.SaveChanges() > 0;
 
