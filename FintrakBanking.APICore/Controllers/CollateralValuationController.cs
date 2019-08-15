@@ -195,7 +195,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("go-for-approval")]
-        public HttpResponseMessage GoForApproval([FromBody] CollateralValuationViewModel model)
+        public HttpResponseMessage GoForApproval([FromBody] ValuationPrerequisiteViewModel model)
         {
             try
             {
@@ -307,7 +307,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("submit-approval")]
-        public HttpResponseMessage SubmitApproval([FromBody] CollateralValuationViewModel model)
+        public HttpResponseMessage SubmitApproval([FromBody] ValuationPrerequisiteViewModel model)
         {
             try
             {
