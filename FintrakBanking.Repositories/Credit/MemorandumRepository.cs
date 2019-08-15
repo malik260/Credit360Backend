@@ -97,7 +97,9 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string approvalsHolder = "@{{Approvals}}";
         private readonly string currentDateHolder = "@{{CurrentDate}}";
         private readonly string annualReviewDateHolder = "@{{AnnualReviewDate}}";
+        private readonly string allCustomerCollateralRemarksHolder = "@{{AllCustomerCollateralRemarks}}";
         private readonly string collateralCoverageHolder = "@{{CollateralCoverage}}";
+        private readonly string allCustomerFacilitiesHolder = "@{{AllCustomerFacilities}}";
         //private readonly string totalGroupExposureHolder = "@{{TotalGroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
@@ -156,7 +158,9 @@ namespace FintrakBanking.Repositories.Credit
         private string approvals;
         private string currentDate;
         private string annualReviewDate;
+        private string allCustomerCollateralRemarks;
         private string collateralCoverage;
+        private string allCustomerFacilities;
         //private string totalGroupExposure;
         // lms
         private string securityType;
@@ -291,7 +295,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.reviewType = "Initial";
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
                 this.businessSectors = GetBusinessSectorsMarkupLOS();
-                this.exchangeRate = this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().EXCHANGERATE.ToString();
+                this.exchangeRate = GetAllExchangeRates();
                 this.groupFacilitySummary = GetGroupFacilitySummaryMarkupLOS();
                 this.groupFacilitySummaryFcy = GetGroupFacilitySummaryFCYMarkupLOS();
                 //this.contingentFacilities = GetContingentFacilitiesMarkupLOS();
@@ -310,6 +314,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.currentDate = DateTime.Now.ToShortDateString();
                 this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
+                this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
+                this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
 
 
@@ -493,7 +499,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-
+        
         public List<DropDownSelect> GetProposedConditions()
         {
             var result = new List<DropDownSelect>();
@@ -997,6 +1003,18 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        private string GetAllExchangeRates()
+        {
+            var result = String.Empty;
+            var exchangeRates = context.TBL_CURRENCY_EXCHANGERATE.ToList();
+            foreach (var x in exchangeRates)
+            {
+                result = result + $@"
+                        {x.TBL_CURRENCY.CURRENCYCODE}: {x.EXCHANGERATE}   
+                ";
+            }
+            return result;
+        }
         private string GetConditionsPrecedentToDrawdownMarkup()
         {
             var conditions = GetConditionsPrecedentToDrawdown(); // new
@@ -2169,7 +2187,7 @@ namespace FintrakBanking.Repositories.Credit
             return String.Empty;
         }
 
-        private string GetCustomerFacilitiesMarkup()
+        private string GetAllCustomerFacilitiesMarkup()
         {
             var result = String.Empty;
             result += $@"
@@ -2240,7 +2258,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Security / Support</b></th>
                     </tr>
                     <tr>
-                    <th>{GetCustomerFacilitiesMarkup()}</th>
+                    <th>{GetAllCustomerFacilitiesMarkup()}</th>
                     <th>{GetAllCustomerCollateralsMarkup()}</th>
                     </tr>
                 </table>
@@ -2556,7 +2574,9 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(approvalsHolder, approvals);
             content = content.Replace(currentDateHolder, currentDate);
             content = content.Replace(annualReviewDateHolder, annualReviewDate);
+            content = content.Replace(allCustomerCollateralRemarksHolder, allCustomerCollateralRemarks);
             content = content.Replace(collateralCoverageHolder, collateralCoverage);
+            content = content.Replace(allCustomerFacilitiesHolder, allCustomerFacilities);
             //content = content.Replace(totalGroupExposureHolder, totalGroupExposure);
 
             if (content.Contains(customerTurnoverHolder))
