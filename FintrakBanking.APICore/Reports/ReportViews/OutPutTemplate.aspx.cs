@@ -31,13 +31,13 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             if (!IsPostBack)
             {
 
-                var queryString = Request.QueryString["loanApplicationId"];
+                //var queryString = Request.QueryString["loanApplicationId"];
 
-                if (!String.IsNullOrEmpty(queryString))
-                {
-                    int loanApplicationId = Convert.ToInt32(queryString);
-                    GenerateOutPutDocument(loanApplicationId);
-                }
+                //if (!String.IsNullOrEmpty(queryString))
+                //{
+                //    int loanApplicationId = Convert.ToInt32(queryString);
+                //    GenerateOutPutDocument(loanApplicationId);
+                //}
             }
         }
 
