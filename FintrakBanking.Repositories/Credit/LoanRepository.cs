@@ -2265,12 +2265,21 @@ namespace FintrakBanking.Repositories.Credit
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
-                        where ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
+                        where (
+                                (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) 
+                                || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
+                                || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+                              )
                               && operationIds.Contains(atrail.OPERATIONID)
                               && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                               && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                               && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                              && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || ids2.Contains((int)atrail.TOAPPROVALLEVELID) || ids3.Contains((int)atrail.TOAPPROVALLEVELID))
+                              && (
+                                    ids.Contains((int)atrail.TOAPPROVALLEVELID) 
+                                    || (ids2.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID != null)
+                                    || (ids3.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID != null)
+                                    || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred && atrail.LOOPEDSTAFFID == staffId)
+                                 )
                               && (atrail.TOSTAFFID == null || atrail.TOSTAFFID == staffId)
                               && atrail.RESPONSESTAFFID == null
                         orderby d.LOANAPPLICATIONDETAILID descending
@@ -6041,7 +6050,7 @@ namespace FintrakBanking.Repositories.Credit
                            isLocationBased = (bool)x.ISLOCATIONBASED,
                            valuationCycle = x.VALUATIONCYCLE,
                            haircut = x.HAIRCUT,
-                           approvalStatus = x.APPROVALSTATUS,
+                           approvalStatusName = x.APPROVALSTATUS,
                        }).ToList(),
                    };
 
@@ -6253,6 +6262,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
             var company = context.TBL_COMPANY.Find(companyId);
+
+            IEnumerable<CamProcessedLoanViewModel> data2;
 
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
@@ -7591,6 +7602,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return data.ToList();
         }
+
 
         public LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model)
         {
@@ -11750,6 +11762,46 @@ namespace FintrakBanking.Repositories.Credit
                         //isVisible = data.ISVISIBLE,
                         //value = data.VALUE,
                     });
+        }
+
+        public bool LoopInStaff(ApprovalViewModel model)
+        {
+            int staffId = model.staffId;
+
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+           
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = null;
+            workflow.ProductId = null;
+            //workflow.NextLevelId = model.approvalLevelId;
+            //workflow.ToStaffId = staffId; 
+            workflow.LoopedRoleId = staff.STAFFROLEID;
+            workflow.LoopedStaffId = model.staffId;
+            workflow.StatusId = (int)ApprovalStatusEnum.LoopedIn;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+
+            workflow.LogActivity();
+
+            //Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.facilityBookingReferedBack,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.BranchId,
+                DETAIL = $"facility booking with booking account number  refered back to modifier.",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            context.TBL_AUDIT.Add(audit);
+            //end of Audit section -------------------------------
+
+            return context.SaveChanges() > 0;
         }
 
 

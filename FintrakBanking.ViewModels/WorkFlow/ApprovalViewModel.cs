@@ -11,6 +11,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int? approvalLevelId { get; set; }
         public int operationId { get; set; }
         public int? exclusiveFlowChangeId { get; set; }
+        public int? loopedStaffId { get; set; }
+        public int? loopedRoleId { get; set; }
         public int targetId { get; set; }
         public int? loanApplicationId { get; set; }
         public short approvalStatusId { get; set; }

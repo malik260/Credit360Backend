@@ -16,6 +16,7 @@ namespace FintrakBanking.Common.Enum
         Escalated = 7,
         RePresent = 8,
         StepDown = 9,
+        LoopedIn = 10,
     }
 
   

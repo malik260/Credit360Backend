@@ -24,5 +24,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+        public int STATUSID { get; set; }
     }
 }

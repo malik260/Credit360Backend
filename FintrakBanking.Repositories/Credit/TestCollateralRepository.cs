@@ -65,7 +65,7 @@ namespace FintrakBanking.Repositories.Credit
                                     isLocationBased = (bool) O.ISLOCATIONBASED,
                                     valuationCycle = O.VALUATIONCYCLE,
                                     haircut = O.HAIRCUT,
-                                    approvalStatus = O.APPROVALSTATUS,
+                                    approvalStatusName = O.APPROVALSTATUS,
                                     //collateralValue = x.CollateralValue
                                     exchangeRate = O.EXCHANGERATE
                                 }).FirstOrDefault();
