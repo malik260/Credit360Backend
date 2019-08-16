@@ -98,7 +98,7 @@ namespace FintrakBanking.Repositories.credit
                                         //operationId = x.OPERATIONID,
                                         // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                         //isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.APPLICATIONREFERENCENUMBER).Any()
-                                    }).OrderByDescending(l => l.approvalTrailId);
+                                    }).OrderByDescending(l => l.approvalTrailId).GroupBy(a => a.lcReferenceNumber).Select(g =>g.FirstOrDefault());
                 foreach (var app in applications)
                 {
                     app.applicationStatusId = VerifyApplicationStatus(app.lcIssuanceId, app.lcIssuanceId);

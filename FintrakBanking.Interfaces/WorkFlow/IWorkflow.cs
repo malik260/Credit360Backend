@@ -7,6 +7,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
     {
         int OperationId { set; }
         int? ExclusiveFlowChangeId { get; set; }
+        int? LoopedStaffId { get; set; }
+        int? LoopedRoleId { get; set; }
         int? ProductClassId { set; }
         int? ProductId { set; }
         int StaffId { set; }
