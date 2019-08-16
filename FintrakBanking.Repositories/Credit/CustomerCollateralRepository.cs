@@ -1224,25 +1224,27 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_COLLATERAL_ITEM_POLICY.Add(new TBL_COLLATERAL_ITEM_POLICY
                     {
                         COLLATERALCUSTOMERID = collateralId,
-                        CREATEDBY = entity.createdBy,
-                        DATETIMECREATED = entity.dateTimeCreated,
-                        ENDDATE = (DateTime)entity.endDate,
-                        INSURANCECOMPANYID = entity.insuranceCompanyId,
-                        INSURANCETYPEID = entity.insuranceTypeId,
-                        LASTUPDATEDBY = entity.lastUpdatedBy,
                         POLICYREFERENCENUMBER = entity.referenceNumber,
-                        STARTDATE = (DateTime)entity.startDate,
+                        INSURANCECOMPANYID = entity.insuranceCompanyId,
                         SUMINSURED = entity.sumInsured,
-                        PREMIUMAMOUNT = entity.premiumAmount,
-                        DESCRIPTION = entity.description,
-                        PREMIUMPERCENT = entity.premiumPercent,
+                        STARTDATE = (DateTime)entity.startDate,
+                        ENDDATE = (DateTime)entity.expiryDate,
+                        INSURANCETYPEID = entity.insuranceTypeId,
+                        CREATEDBY = entity.createdBy,
+                        DATETIMECREATED = DateTime.Now,
                         DELETED = false,
+                        PREMIUMAMOUNT = entity.inSurPremiumAmount,
+                        PREMIUMPERCENT = entity.premiumPercent,
+                        DESCRIPTION = entity.description,
                         HASEXPIRED = false,
+                        //APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing
                         // APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing
 
                     });
 
                 }
+
+
             }
             else
             {
