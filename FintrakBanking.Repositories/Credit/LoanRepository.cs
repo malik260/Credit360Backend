@@ -3731,6 +3731,7 @@ namespace FintrakBanking.Repositories.Credit
                             sanctionAuthorizer = "999"
                         };
                         InterestRateInquiryViewModel accountOutput = finacle.GetInterestRateInquiry(model.accountNumber, acctType);
+                        
                         if (accountOutput.interestRateAmount == model.interestRateAmount)
                         {
                             ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);

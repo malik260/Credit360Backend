@@ -163,14 +163,14 @@ namespace FintrakBanking.Repositories.Credit
                        select new ValuationPrerequisiteViewModel
                        {
                            valuerId = x.VALUERID,
-                           valuer =  _context.TBL_ACCREDITEDCONSULTANT.Where(o=>o.ACCREDITEDCONSULTANTID==x.VALUERID).Select(o=>o.NAME).FirstOrDefault(),
+                           valuer =  _context.TBL_ACCREDITEDCONSULTANT.Where(o => o.ACCREDITEDCONSULTANTID == x.VALUERID).Select(o => o.NAME).FirstOrDefault(),
                            collateralValuationId = x.COLLATERALVALUATIONID,
                            valuationFee = x.VALUATIONFEE,
                            accountNumber = x.ACCOUNTNUMBER,
                            wht = x.WHT,
                            valuationComment = x.VALUERCOMMENT,
                            valuationReportId = x.VALUATIONREPORTID,
-
+                           operationId = (int) OperationsEnum.CollateralValuationRequest
                        };
             return data.ToList();
         }
@@ -419,6 +419,7 @@ namespace FintrakBanking.Repositories.Credit
                       select new ValuationPrerequisiteViewModel
                       {
                           customerName = cus.FIRSTNAME + " " + cus.LASTNAME + " " + cus.MAIDENNAME,
+                          customerId = cus.CUSTOMERID,
                           collateralCode = C.COLLATERALCODE,
                           collateralType = _context.TBL_COLLATERAL_TYPE.Where(O => O.COLLATERALTYPEID == C.COLLATERALTYPEID).Select(O => O.COLLATERALTYPENAME).FirstOrDefault(),
                           collateralValue = C.COLLATERALVALUE,
@@ -431,7 +432,7 @@ namespace FintrakBanking.Repositories.Credit
                           valuationPrerequisiteId = valPre.VALUATIONPREREQUISITEID,
                           approvalStatusId = atrail.APPROVALSTATUSID,
                           //approvalStatusId = valPre.APPROVALSTATUSID,
-                          approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == valPre.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                          approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == valPre.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == valPre.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
                       };
 
