@@ -58,7 +58,6 @@ namespace FintrakBanking.Entities.Models
         public string PROFORMAINVOICEID { get; set; }
 
         public decimal AVAILABLEAMOUNT { get; set; }
-
         public decimal LETTEROFCREDITAMOUNT { get; set; }
 
         public DateTime LETTEROFCREDITEXPIRYDATE { get; set; }

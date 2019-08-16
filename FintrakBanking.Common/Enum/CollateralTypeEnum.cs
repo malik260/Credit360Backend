@@ -6,7 +6,7 @@ namespace FintrakBanking.Common.Enum
 {
     public enum CollateralTypeEnum
     {
-        MarketableSecurities = 1,
+        TreasuryBillsAndBonds = 1,
         Property = 2,
         PlantAndMachinery = 3,
         InsurancePolicy = 4,
@@ -16,7 +16,7 @@ namespace FintrakBanking.Common.Enum
         CASA = 8,
         Gaurantee = 9,
         Miscellaneous = 17,
-        Stock = 14,
+        MarketableSecurities_Shares = 14,
         Promissory = 18,
         ISPO = 19,
         DomiciliationContract =20,

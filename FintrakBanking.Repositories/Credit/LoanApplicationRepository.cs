@@ -2652,7 +2652,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                             proposedProductId = b.PROPOSEDPRODUCTID,
-                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedProductName = (a.FLOWCHANGEID == null || a.FLOWCHANGEID <= 0 || a.FLOWCHANGEID == (short)FlowChangeEnum.FAM) ? b.TBL_PRODUCT.PRODUCTNAME : b.TBL_PRODUCT.PRODUCTNAME +"("+context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(x=>x.FLOWCHANGEID == a.FLOWCHANGEID).PLACEHOLDER +")" ,
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedAmount = b.PROPOSEDAMOUNT,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
@@ -4634,8 +4634,11 @@ namespace FintrakBanking.Repositories.Credit
                     operationId=x.OPERATIONID,
                     destinationUrl=x.DESTINATIONURL,
                     productTypeId=x.PRODUCTTYPEID,
-                    productClassId=x.PRODUCTCLASSID,
-                    skipflow=x.ISSKIPPROCESSENABLED
+                    productType = context.TBL_PRODUCT_TYPE.Where(pt => pt.PRODUCTTYPEID == x.PRODUCTTYPEID).Select( s => s.PRODUCTTYPENAME).FirstOrDefault(),
+                    productClass = context.TBL_PRODUCT_CLASS.Where(pc => pc.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(s => s.PRODUCTCLASSNAME).FirstOrDefault(),
+                    productClassId =x.PRODUCTCLASSID,
+                    skipflow=x.ISSKIPPROCESSENABLED,
+                    operation=context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==o.OPERATIONID).Select(s=>s.OPERATIONNAME).FirstOrDefault(),
                     
                 })
                 .ToList();

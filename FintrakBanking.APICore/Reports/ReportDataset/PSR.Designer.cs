@@ -1790,6 +1790,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columncomment;
             
+            private global::System.Data.DataColumn columncustomerRating;
+            
+            private global::System.Data.DataColumn columnprojectRiskRating;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public RECOMENDATIONSDataTable() {
@@ -1833,6 +1837,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn customerRatingColumn {
+                get {
+                    return this.columncustomerRating;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn projectRiskRatingColumn {
+                get {
+                    return this.columnprojectRiskRating;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1868,10 +1888,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public RECOMENDATIONSRow AddRECOMENDATIONSRow(string comment) {
+            public RECOMENDATIONSRow AddRECOMENDATIONSRow(string comment, string customerRating, string projectRiskRating) {
                 RECOMENDATIONSRow rowRECOMENDATIONSRow = ((RECOMENDATIONSRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
-                        comment};
+                        comment,
+                        customerRating,
+                        projectRiskRating};
                 rowRECOMENDATIONSRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowRECOMENDATIONSRow);
                 return rowRECOMENDATIONSRow;
@@ -1895,6 +1917,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             internal void InitVars() {
                 this.columncomment = base.Columns["comment"];
+                this.columncustomerRating = base.Columns["customerRating"];
+                this.columnprojectRiskRating = base.Columns["projectRiskRating"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1902,6 +1926,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             private void InitClass() {
                 this.columncomment = new global::System.Data.DataColumn("comment", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncomment);
+                this.columncustomerRating = new global::System.Data.DataColumn("customerRating", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncustomerRating);
+                this.columnprojectRiskRating = new global::System.Data.DataColumn("projectRiskRating", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnprojectRiskRating);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4945,6 +4973,38 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string customerRating {
+                get {
+                    try {
+                        return ((string)(this[this.tableRECOMENDATIONS.customerRatingColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerRating\' in table \'RECOMENDATIONS\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableRECOMENDATIONS.customerRatingColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string projectRiskRating {
+                get {
+                    try {
+                        return ((string)(this[this.tableRECOMENDATIONS.projectRiskRatingColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'projectRiskRating\' in table \'RECOMENDATIONS\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableRECOMENDATIONS.projectRiskRatingColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscommentNull() {
                 return this.IsNull(this.tableRECOMENDATIONS.commentColumn);
             }
@@ -4953,6 +5013,30 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcommentNull() {
                 this[this.tableRECOMENDATIONS.commentColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IscustomerRatingNull() {
+                return this.IsNull(this.tableRECOMENDATIONS.customerRatingColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetcustomerRatingNull() {
+                this[this.tableRECOMENDATIONS.customerRatingColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsprojectRiskRatingNull() {
+                return this.IsNull(this.tableRECOMENDATIONS.projectRiskRatingColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetprojectRiskRatingNull() {
+                this[this.tableRECOMENDATIONS.projectRiskRatingColumn] = global::System.Convert.DBNull;
             }
         }
         

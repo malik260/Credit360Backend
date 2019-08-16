@@ -18,10 +18,12 @@ namespace FintrakBanking.APICore.Controllers
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
         private ICreditTemplateRepository repo;
+        private IMemorandumRepository _memoRepo;
 
-        public CreditTemplateController(ICreditTemplateRepository repo)
+        public CreditTemplateController(ICreditTemplateRepository repo, IMemorandumRepository memoRepo)
         {
             this.repo = repo;
+            this._memoRepo = memoRepo;
         }
 
         #region DOCUMENT TEMPLATE DEPRECATED
@@ -482,6 +484,22 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #region DOCUMENT TEMPLATE IMPL
+        // added by Ade for drawdown memo
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-drawdown-memo-html/{operationId}/operationId/{targetId}/targetId")]
+        public HttpResponseMessage GetDrawdownMemoHtml(int operationId, int targetId)
+        {
+            try
+            {
+                var response = _memoRepo.GetDrawdownMemoHtml(token.GetStaffId, operationId, targetId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [ClaimsAuthorization]
