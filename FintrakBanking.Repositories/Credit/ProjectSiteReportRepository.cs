@@ -74,13 +74,13 @@ namespace FintrakBanking.Repositories.credit
             return (from p in context.TBL_PSR_PROJECT_FACILITIES
                     join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
                     // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                    let productId = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o.APPROVEDPRODUCTID).FirstOrDefault()
+                    let loan_application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
 
                     where p.PROJECTSITEREPORTID  == id
 
                     select new LoanApplicationViewModel
                     {
-                       // customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                        customerName = context.TBL_CUSTOMER.Where(o=>o.CUSTOMERID== loan_application_detail.CUSTOMERID).Select(o=>o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                        // customerCode = c.CUSTOMERCODE,
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                         loanApplicationId = x.LOANAPPLICATIONID,
@@ -89,7 +89,7 @@ namespace FintrakBanking.Repositories.credit
                         applicationDate = x.APPLICATIONDATE,
                         applicationAmount = x.APPLICATIONAMOUNT,
                         interestRate = x.INTERESTRATE,
-                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == productId).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                        productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == loan_application_detail.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                         relationshipOfficerId = x.RELATIONSHIPOFFICERID,
                         relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
                         relationshipManagerId = x.RELATIONSHIPMANAGERID,
@@ -567,7 +567,7 @@ namespace FintrakBanking.Repositories.credit
                 PSRREPORTTYPEID = model.psrReportTypeId
             };
 
-            context.TBL_PSR_PERFORMANCE_EVALUATION.Add(entity);
+     var  a=       context.TBL_PSR_PERFORMANCE_EVALUATION.Add(entity);
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -583,7 +583,7 @@ namespace FintrakBanking.Repositories.credit
                 SYSTEMDATETIME = DateTime.Now
             });
             // Audit Section end ------------------------
-
+            context.SaveChanges();
             return context.SaveChanges() != 0;
         }
 

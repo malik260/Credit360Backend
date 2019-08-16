@@ -266,9 +266,6 @@ namespace FintrakBanking.Repositories.Credit
 
             this.targetId = targetId;
             this.operationId = operationId;
-            if (loanApplication != null && loanApplication.CUSTOMERGROUPID != null) this.customerId = (int)loanApplication.CUSTOMERGROUPID;
-            if (loanApplication != null && loanApplication.CUSTOMERID != null) this.customerId = (int)loanApplication.CUSTOMERID;
-            this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId).ToList();
             if (operationId == (int)OperationsEnum.CreditAppraisal) // LOS 
             {
                 if (loanApplication == null)
@@ -279,9 +276,18 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 //string customerName = String.Empty;
-                if (loanApplication != null &&  loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
-                if (loanApplication != null &&  loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+                if (loanApplication.CUSTOMERGROUPID != null)
+                {
+                    this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+                    this.customerId = (int)loanApplication.CUSTOMERGROUPID;
+                }
+                if (loanApplication.CUSTOMERID != null)
+                {
+                    this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+                    this.customerId = (int)loanApplication.CUSTOMERID;
+                }
 
+                this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId).ToList();
                 this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
                 this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
                 this.isRelatedParty = loanApplication.ISRELATEDPARTY == true ? "Yes" : "No";
@@ -2196,7 +2202,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var f in this.customerFacilities)
             {
                 result += $@"
-                            <li>{f.TBL_PRODUCT.PRODUCTNAME + " " + f.TBL_CUSTOMER.CUSTOMERCODE + String.Format("{0:0,0.00}", f.APPROVEDAMOUNT)}</li>
+                            <li>{f.TBL_PRODUCT.PRODUCTNAME + " " + f.TBL_CURRENCY.CURRENCYCODE + String.Format("{0:0,0.00}", f.APPROVEDAMOUNT)}</li>
                         ";
             }
             result += $@"
@@ -2258,8 +2264,8 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Security / Support</b></th>
                     </tr>
                     <tr>
-                    <th>{GetAllCustomerFacilitiesMarkup()}</th>
-                    <th>{GetAllCustomerCollateralsMarkup()}</th>
+                    <td>{GetAllCustomerFacilitiesMarkup()}</td>
+                    <td>{GetAllCustomerCollateralsMarkup()}</td>
                     </tr>
                 </table>
             ";
@@ -2271,6 +2277,7 @@ namespace FintrakBanking.Repositories.Credit
             var collaterals = this.collateralRepo.GetCustomerPropertyCollaterals(this.loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
             var result = String.Empty;
             decimal totalMarketValue = 0;
+            var custFacilities = this.customerFacilities.Sum(f => f.APPROVEDAMOUNT);
             int n = 0;
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
@@ -2309,7 +2316,7 @@ namespace FintrakBanking.Repositories.Credit
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>NET COVERAGE</b></td>
-                    <td>{String.Format("{0:0,0.00}", totalMarketValue / this.customerFacilities.Sum(f => f.APPROVEDAMOUNT))} %</td>
+                    <td>{String.Format("{0:0,0.00}", (totalMarketValue/custFacilities))} %</td>
                     <td>&nbsp;</td>
                 </tr>
             ";
