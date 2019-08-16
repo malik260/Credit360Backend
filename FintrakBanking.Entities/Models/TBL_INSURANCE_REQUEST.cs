@@ -13,16 +13,12 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int INSURANCEREQUESTID { get; set; }
-        public string REQUESTNUMBER { get; set; }
-
+        public int REQUESTNUMBER { get; set; }
         public string REQUESTREASON { get; set; }
         public string REQUESTCOMMENT { get; set; }
+        public int? APPROVALSTATUSID { get; set; }
         public int COLLATERALCUSTOMERID { get; set; }
-        public int CREATEDBY { get; set; }
-        public DateTime DATETIMECREATED { get; set; }
-
-        public DateTime? DATETIMEUPDATED { get; set; }
-
-        public DateTime? DATETIMEDELETED { get; set; }
+        public int? CREATEDBY { get; set; }
+        public DateTime? DATETIMECREATED { get; set; }
     }
 }

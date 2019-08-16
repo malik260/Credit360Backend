@@ -1664,21 +1664,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="paymentToDate">
+                    <Textbox Name="progressPayment">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!paymentToDate.Value</Value>
+                              <Value>=Fields!progressPayment.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>paymentToDate</rd:DefaultName>
+                      <rd:DefaultName>progressPayment</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -2692,6 +2692,10 @@
         </Field>
         <Field Name="timeVariation">
           <DataField>timeVariation</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="progressPayment">
+          <DataField>progressPayment</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

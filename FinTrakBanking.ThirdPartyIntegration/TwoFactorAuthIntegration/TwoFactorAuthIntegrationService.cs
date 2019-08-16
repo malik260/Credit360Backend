@@ -40,6 +40,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
 
                 var client = new ServiceSoapClient();
                 //client.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
+                client.Open();
                 var res = client.ResponseOnlyAsync(staffCode, passCode);
                 var responseDateTime = DateTime.Now;
 
