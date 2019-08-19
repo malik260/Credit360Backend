@@ -41,7 +41,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string capturedBy { get; set; }
         public string address { get; set; }
         // presentation
-        public int approvalStatus { get; set; }
+        
 
         // insurance
         public string referenceNumber { get; set; }
@@ -51,7 +51,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? expiryDate { get; set; }
         public InsurancePolicies insurancePolicies { get; set; }
         public int policyId { get; set; }
-
+        public int approvalStatusName { get; set; }
         public List<InsurancePolicies> insurancePolicy { get; set; }
         public List<CollateralDocumentViewModel> documents { get; set; }
 
@@ -377,6 +377,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int insuranceTypeId { get; set; }
         public int insuranceCompanyId { get; set; }
         public string prevoiusInsurance { get; set; }
+        public int requestNumber { get; set; }
+        public int insuranceRequestId { get; set; }
+        public string statusName { get; set; }
+        public string requestReason { get; set; }
+        public string requestComment { get; set; }
     }
 
     public class crossGarantee
@@ -469,7 +474,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string phoneNumber { get; set; }
         public string email { get; set; }
         public int operationId { get; set; }
-        public string requestNumber { get; set; }
+        public int requestNumber { get; set; }
+        public int insuranceRequestId { get; set; }
+        public double haircut { get; set; }
+        public string collateralReleaseStatusName { get; set; }
+        public int? collateralUsageStatus { get; set; }
+        public string requestReason { get; set; }
+        public string requestComment { get; set; }
     }
 
     public class NewCollateralViewModel

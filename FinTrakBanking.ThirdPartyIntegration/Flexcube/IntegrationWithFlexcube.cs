@@ -1053,11 +1053,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public InterestRateInquiryViewModel GetInterestRateInquiry(string accountNumber, string accountType)
         {
-            InterestRateInquiryViewModel accountOutput = null;
+            InterestRateInquiryViewModel accountOutput =  new InterestRateInquiryViewModel();
 
-            Task.Run(async () => accountOutput = await customer.GetInterestRateInquiry(accountNumber, accountType)).GetAwaiter()
-                .GetResult();
-
+            //Task.Run(async () => accountOutput = await customer.GetInterestRateInquiry(accountNumber, accountType)).GetAwaiter()
+            //    .GetResult();
+            accountOutput.interestRateAmount = String.Format("{0:0.00}", accountOutput.interestRateAmount);
             return accountOutput;
         }
 
