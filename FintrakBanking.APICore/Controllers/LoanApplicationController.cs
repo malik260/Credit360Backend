@@ -1702,6 +1702,23 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application-flow-change")]
+        public HttpResponseMessage LoanApplicationFlowChange()
+        {
+            try
+            {
+                var response = repo.GetLoanApplicationFlowChange();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch(SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+            
+        }
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("delete-failedrac-loan-application/{loanApplicationId}")]

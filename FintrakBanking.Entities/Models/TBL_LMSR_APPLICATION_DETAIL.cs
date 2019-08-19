@@ -36,7 +36,7 @@
         public string REPAYMENTTERMS { get; set; }
 
         [StringLength(2000)]
-        public string REPAYMENTSCHEDULE { get; set; }
+        public string REPAYMENTSCHEDULEID { get; set; }
 
         public int CREATEDBY { get; set; }
 

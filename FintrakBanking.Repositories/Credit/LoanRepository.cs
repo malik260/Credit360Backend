@@ -3717,6 +3717,7 @@ namespace FintrakBanking.Repositories.Credit
                             sanctionAuthorizer = "999"
                         };
                         InterestRateInquiryViewModel accountOutput = finacle.GetInterestRateInquiry(model.accountNumber, acctType);
+                        
                         if (accountOutput.interestRateAmount == model.interestRateAmount)
                         {
                             ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
@@ -6036,7 +6037,7 @@ namespace FintrakBanking.Repositories.Credit
                            isLocationBased = (bool)x.ISLOCATIONBASED,
                            valuationCycle = x.VALUATIONCYCLE,
                            haircut = x.HAIRCUT,
-                           approvalStatus = x.APPROVALSTATUS,
+                           approvalStatusName = x.APPROVALSTATUS,
                        }).ToList(),
                    };
 
@@ -11794,7 +11795,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductClassId = null;
             workflow.ProductId = null;
             workflow.NextLevelId = model.approvalLevelId;
-            //workflow.ToStaffId = staffId; 
+            workflow.ToStaffId = staffId; 
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;

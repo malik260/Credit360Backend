@@ -609,9 +609,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/OutPutTemplate.aspx?loanApplicationId=" + "14938";
-
-            // path = reportPath + "ReportViews/AuditTrailView.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&staffId=" + staffId + "&auditTypeId="+dateRange.auditTypeId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue ;
+             path = reportPath + "ReportViews/AuditTrailView.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&staffId=" + staffId + "&auditTypeId="+dateRange.auditTypeId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue ;
             return path;
         }
         public string GetLoanInterestReceivableAndPayable(ReportSearchEntity searchEntity, int companyId, int staffId)

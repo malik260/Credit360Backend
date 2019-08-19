@@ -4699,8 +4699,11 @@ namespace FintrakBanking.Repositories.Credit
                     operationId=x.OPERATIONID,
                     destinationUrl=x.DESTINATIONURL,
                     productTypeId=x.PRODUCTTYPEID,
-                    productClassId=x.PRODUCTCLASSID,
-                    skipflow=x.ISSKIPPROCESSENABLED
+                    productType = context.TBL_PRODUCT_TYPE.Where(pt => pt.PRODUCTTYPEID == x.PRODUCTTYPEID).Select( s => s.PRODUCTTYPENAME).FirstOrDefault(),
+                    productClass = context.TBL_PRODUCT_CLASS.Where(pc => pc.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(s => s.PRODUCTCLASSNAME).FirstOrDefault(),
+                    productClassId =x.PRODUCTCLASSID,
+                    skipflow=x.ISSKIPPROCESSENABLED,
+                    operation=context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==o.OPERATIONID).Select(s=>s.OPERATIONNAME).FirstOrDefault(),
                     
                 })
                 .ToList();
