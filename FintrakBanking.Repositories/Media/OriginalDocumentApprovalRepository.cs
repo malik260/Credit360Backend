@@ -215,6 +215,55 @@ namespace FintrakBanking.Repositories.Media
 
             return entity;
         }
+
+        public List<OriginalDocumentApprovalViewModel> GetDocumentUploadList()
+        {
+
+            var model1 = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                        join cc in context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                        join c in context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
+                        join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+                        where oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
+
+                        select new OriginalDocumentApprovalViewModel
+                        {
+                            originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
+                            description = oda.DESCRIPTION,
+                            customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                            collateralCode = cc.COLLATERALCODE,
+                            referenceNumber = oda.REFERENCENUMBER,
+                            dateTimeCreated = oda.DATETIMECREATED,
+                            collateralCustomerId = cc.COLLATERALCUSTOMERID,
+                            approvalStatusId = atrail.APPROVALSTATUSID,
+                            approvalStatusName = atrail.APPROVALSTATUSID != (int)ApprovalStatusEnum.Pending ? "Pending" : context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
+
+
+                        }).OrderByDescending(o => o.originalDocumentApprovalId).ToList();
+
+            var model2 = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                          join cc in context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                          join c in context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
+                          where oda.DELETED == false
+
+                          select new OriginalDocumentApprovalViewModel
+                          {
+                              originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
+                              description = oda.DESCRIPTION,
+                              customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                              collateralCode = cc.COLLATERALCODE,
+                              referenceNumber = oda.REFERENCENUMBER,
+                              dateTimeCreated = oda.DATETIMECREATED,
+                              collateralCustomerId = cc.COLLATERALCUSTOMERID,
+                              approvalStatusId = oda.APPROVALSTATUSID,
+                              approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == oda.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
+
+
+                          }).OrderByDescending(o => o.originalDocumentApprovalId).ToList();
+
+            var model = model1.Union(model2).ToList();
+
+            return model;
+        }
         public int AddOriginalDocumentApproval(OriginalDocumentApprovalViewModel model)
         {
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);

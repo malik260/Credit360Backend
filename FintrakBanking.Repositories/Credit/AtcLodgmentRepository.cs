@@ -1,16 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.credit;
+using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.credit;
-using FintrakBanking.Interfaces.WorkFlow;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -72,7 +71,7 @@ namespace FintrakBanking.Repositories.credit
                          join trail in context.TBL_APPROVAL_TRAIL on x.ATCLODGMENTID equals trail.TARGETID
                          join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                          where  trail.OPERATIONID == (short)OperationsEnum.AtcLodgementApproval 
-                         && trail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved     //temporary Fix only!!! should be rejected
+                         && trail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred     //temporary Fix only!!! should be rejected
                          && x.DELETED == false 
                         // && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
                        
@@ -89,7 +88,7 @@ namespace FintrakBanking.Repositories.credit
                             atcType = context.TBL_ATC_TYPE.Where(o => o.ATCTYPEID == x.ATCTYPEID).Select(o => o.ACTTYPENAME).FirstOrDefault(),
                             certificateNumber = x.CERTIFICATENUMBER,
                             statusId = x.STATUSID,
-                            approvalStatusId = x.APPROVALSTATUSID,
+                            approvalStatusId = trail.APPROVALSTATUSID,
                             dateCreated = x.DATETIMECREATED,
                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                             customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
@@ -114,8 +113,8 @@ namespace FintrakBanking.Repositories.credit
             return (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ATCLODGMENTID equals atrail.TARGETID
-                    where x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
-                     && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                    where x.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
+                     || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                      && atrail.RESPONSESTAFFID == null
                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval
@@ -131,7 +130,7 @@ namespace FintrakBanking.Repositories.credit
                         unitNumber = x.UNITNUMBER,
                         certificateNumber = x.CERTIFICATENUMBER,
                         statusId = x.STATUSID,
-                        approvalStatusId = x.APPROVALSTATUSID,
+                        approvalStatusId = atrail.APPROVALSTATUSID,
                         dateCreated = x.DATETIMECREATED,
                         operationId = atrail.OPERATIONID,
                         approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
