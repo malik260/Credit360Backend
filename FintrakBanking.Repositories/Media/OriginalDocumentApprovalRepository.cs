@@ -168,7 +168,7 @@ namespace FintrakBanking.Repositories.Media
                                       //referenceNumber = x.REFERENCENUMBER,
                                       arrivalDate = atrail.ARRIVALDATE,
                                       //dateTimeCreated = x.DATETIMECREATED,
-                                      //approvalDate = x.APPROVALDATE,
+                                      approvalDate = oda.APPROVALDATE,
                                       approvalStatusId = (short)oda.APPROVALSTATUSID,
                                       collateralCustomerId = oda.COLLATERALCUSTOMERID,
                                       //approvedPerson = atrail.RELIEVEDSTAFFID == null ? "n/a" : context.TBL_STAFF.Where(x => x.STAFFID == atrail.RESPONSESTAFFID).Select(s => s.STAFFCODE).FirstOrDefault(),
