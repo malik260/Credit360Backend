@@ -659,6 +659,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvedProductTypeName { get; set; }
         public int approvedProductTypeId { get; set; }
         public decimal approvedAmount { get; set; }
+        public short productId { get; set; }
 
     }
 
