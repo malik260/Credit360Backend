@@ -2300,7 +2300,15 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 ";
             }
-            result = result + $@"
+            string netCoverage = string.Empty;
+
+            if(this.customerFacilities?.Sum(f => f.APPROVEDAMOUNT) > 0)
+            {
+                netCoverage = String.Format("{0:0,0.00}", totalMarketValue / this.customerFacilities?.Sum(f => f.APPROVEDAMOUNT));
+            }
+            else { netCoverage = String.Format("{0:0,0.00}", totalMarketValue); }
+
+           result = result + $@"
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>TOTAL</b></td>
@@ -2310,13 +2318,13 @@ namespace FintrakBanking.Repositories.Credit
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>TOTAL FACILITY AMOUNT</b></td>
-                    <td>{String.Format("{0:0,0.00}", (this.customerFacilities.Sum(f => f.APPROVEDAMOUNT)))}</td>
+                    <td>{String.Format("{0:0,0.00}", (this.customerFacilities?.Sum(f => f.APPROVEDAMOUNT)))}</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>NET COVERAGE</b></td>
-                    <td>{String.Format("{0:0,0.00}", (totalMarketValue/custFacilities))} %</td>
+                    <td >{netCoverage} %</td>
                     <td>&nbsp;</td>
                 </tr>
             ";
