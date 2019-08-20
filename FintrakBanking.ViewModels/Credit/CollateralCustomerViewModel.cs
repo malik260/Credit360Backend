@@ -383,6 +383,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string requestReason { get; set; }
         public string requestComment { get; set; }
         public bool isMapped { get; set; }
+        public string collateralSummary { get; set; }
     }
 
     public class crossGarantee

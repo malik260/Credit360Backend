@@ -985,6 +985,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.LASTUPDATEDBY = model.lastUpdatedBy;
             collateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
             collateral.EXCHANGERATE = model.exchangeRate;
+            collateral.COLLATERALSUMMARY = model.collateralSummary;
         }
 
         private void DeleteCollateral(int collateralId)
@@ -1552,6 +1553,7 @@ namespace FintrakBanking.Repositories.Credit
                         requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                         exchangeRate = c.c.EXCHANGERATE,
                         availableValue = 0,
+                        collateralSummary = c.c.COLLATERALSUMMARY,
                         accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == c.c.CUSTOMERID).ACCOUNTNUMBER,
                     }).FirstOrDefault()
                     ;
@@ -1654,6 +1656,7 @@ namespace FintrakBanking.Repositories.Credit
                         accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
                         collateralUsageStatus = c.c.COLLATERALUSAGESTATUSID,
                         loanApplicationId = c.c.LOANAPPLICATIONID,
+                        collateralSummary = c.c.COLLATERALSUMMARY,
                         isMapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o=>o.COLLATERALCUSTOMERID== c.c.COLLATERALCUSTOMERID).Any(),                        //remark = c.c.
                     })
                     .ToList()
@@ -1741,6 +1744,7 @@ namespace FintrakBanking.Repositories.Credit
             var cov = new CollateralCoverageViewModel
             {
                 collateralId = collaterals.collateralId,
+                collateralCode = collaterals.collateralCode,
                 collateralValue = collateralValue,
                 facilityAmount = facilityAmount,
                 expectedCollateralCoverage = expectedCollateralCoverage,
@@ -1801,6 +1805,7 @@ namespace FintrakBanking.Repositories.Credit
                                    allowApplicationMapping = typeIds.Contains((short)d.COLLATERALTYPEID),
                                    requireInsurancePolicy = d.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                                    exchangeRate = d.EXCHANGERATE,
+                                   collateralSummary = d.COLLATERALSUMMARY,
                                    availableValue = 0,
                                    // accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
 
@@ -1919,7 +1924,8 @@ namespace FintrakBanking.Repositories.Credit
                 haircut = x.HAIRCUT,
                 approvalStatusName = x.APPROVALSTATUS,
                 //collateralValue = x.CollateralValue
-                exchangeRate = x.EXCHANGERATE
+                exchangeRate = x.EXCHANGERATE,
+               collateralSummary = x.COLLATERALSUMMARY
 
             })
             .OrderByDescending(x => x.collateralId)
@@ -1955,7 +1961,8 @@ namespace FintrakBanking.Repositories.Credit
                 haircut = x.HAIRCUT,
                 approvalStatusName = x.APPROVALSTATUS,
                 //collateralValue = x.CollateralValue
-                exchangeRate = x.EXCHANGERATE
+                exchangeRate = x.EXCHANGERATE,
+                collateralSummary = x.COLLATERALSUMMARY
 
             })
             .FirstOrDefault();
@@ -4163,7 +4170,8 @@ namespace FintrakBanking.Repositories.Credit
                     //exchangeRate = x.CollateralApplication.Application.ExchangeRate,
                     //tenor = x.CollateralApplication.Application.Tenor,
                     loanInformation = x.CollateralApplication.Application.LOANINFORMATION,
-                    exchangeRate = x.Mapping.TBL_COLLATERAL_CUSTOMER.EXCHANGERATE
+                    exchangeRate = x.Mapping.TBL_COLLATERAL_CUSTOMER.EXCHANGERATE,
+                   
                 })
                 .Where(x => x.isReleased == false)
                 .Distinct();
@@ -6608,7 +6616,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainCollateral.DATETIMECREATED = genSetup.GetApplicationDate();
                     mainCollateral.ACTEDONBY = model.createdBy;
                     mainCollateral.RELATEDCOLLATERALCODE = model.relatedCollateralCode;
-
+                    mainCollateral.COLLATERALSUMMARY = model.collateralSummary;
                     context.SaveChanges();
                     return mainCollateral.COLLATERALCUSTOMERID;
 
@@ -6636,6 +6644,7 @@ namespace FintrakBanking.Repositories.Credit
                         ACTEDONBY = model.createdBy,
                         RELATEDCOLLATERALCODE = model.relatedCollateralCode,
                         LOANAPPLICATIONID = model.loanApplicationId,
+                        COLLATERALSUMMARY = model.collateralSummary,
                         COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
                     });
 
@@ -6672,6 +6681,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     ACTEDONBY = model.staffId,
                     ISCURRENT = true,
+                    COLLATERALSUMMARY = model.collateralSummary,
                     RELATEDCOLLATERALCODE = model.relatedCollateralCode,
                     COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
 
@@ -7000,6 +7010,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.VALUATIONCYCLE = mainCollateral.VALUATIONCYCLE;
                     data.EXCHANGERATE = mainCollateral.EXCHANGERATE;
                     data.APPROVALSTATUS = (int)ApprovalStatusEnum.Approved;
+                    data.COLLATERALSUMMARY = mainCollateral.COLLATERALSUMMARY;
                     context.SaveChanges();
                     return data.COLLATERALCUSTOMERID;
                 }
@@ -7024,6 +7035,7 @@ namespace FintrakBanking.Repositories.Credit
                         ISLOCATIONBASED = mainCollateral.ISLOCATIONBASED,
                         VALUATIONCYCLE = mainCollateral.VALUATIONCYCLE,
                         EXCHANGERATE = mainCollateral.EXCHANGERATE,
+                        COLLATERALSUMMARY = mainCollateral.COLLATERALSUMMARY,
                         APPROVALSTATUS = (int)ApprovalStatusEnum.Approved
 
 
