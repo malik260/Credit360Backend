@@ -1076,6 +1076,12 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                             staffId
                         );
+
+                    creditCommon.LoadCustomerRatios(
+                            applicationId,
+                            loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                            staffId
+                        );
                     //if (casa != null)
                     //{
                     //    creditCommon.LoadCustomerTurnover(
@@ -1459,7 +1465,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private int SaveRac(RacInformationViewModel rac, int operationId, int productId, int targetId, int staffId, int applicationId)
         {
-            IEnumerable<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
+            List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
 
             if (rac.form == null) return 0;
             var ids = rac.form.Select(x => x.criteriaId);
@@ -1470,27 +1476,51 @@ namespace FintrakBanking.Repositories.Credit
 
             // is tier related?, get default rac
             var isRacRelated = definitions.Where(o => o.RACCATEGORYTYPEID != null).Any();
-
+            TBL_RAC_DEFINITION defaultTier = new TBL_RAC_DEFINITION();
+            List<TBL_RAC_DEFINITION> racTiers = new List<TBL_RAC_DEFINITION>();
             if (isRacRelated == true)
             {
-                var defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
                 && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID)
              ).Select(x => x).FirstOrDefault();
 
-                var racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true 
+                racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true
              ).Select(x => x).ToList();
 
                 definitions = racTiers.Where(o => o.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList();
             }
 
-            List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
+            List< TBL_RAC_CATEGORY_TYPE> allTiers = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYID == racTiers.FirstOrDefault().RACCATEGORYID ).ToList();
 
-            foreach (var definition in definitions)
+            List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
+            
+            int index; int ctr = 0;
+            for (int i = 0; i < definitions.Count; i++)
             {
+  
+                var definition = definitions[i];
+                index = i;
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 if (submission == null) continue;
-                if (!ValidRacSubmission(definition, submission.value, operationId, targetId)) return applicationId;//throw new SecureException("Cannot Proceed as RAC not met for " + definition.TBL_RAC_ITEM.CRITERIA);
+                if (ValidRacSubmission(definition, submission.value, operationId, targetId) == false && ctr == 0)
+                {
+                    if (ctr == 0)
+                    {
+                        definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                        && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
+                        && x.RACCATEGORYID == defaultTier.RACCATEGORYID
+                        ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
+
+                        continue;
+                    }
+
+                    ctr = ctr + 1;
+                }
+                else
+                {
+                    return applicationId;
+                } 
                 details.Add(new TBL_RAC_DETAIL
                 {
                     RACDEFINITIONID = definition.RACDEFINITIONID,
@@ -1500,11 +1530,52 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = staffId,
                     DATETIMECREATED = DateTime.Now,
                 });
+
+                break;
+                //if (definitions[i].Prop == oProp)
+                //{
+
+                //}
             }
 
             context.TBL_RAC_DETAIL.AddRange(details);
 
             return 1;
+
+            //foreach (var definition in definitions)
+            //{
+            //    var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
+            //    if (submission == null) continue;
+            //    if (ValidRacSubmission(definition, submission.value, operationId, targetId) == false && ctr == 0)
+            //    {
+            //        //int index = definitions.FindIndex(x => x.RACDEFINITIONID == definition.RACDEFINITIONID);
+            //        if (ctr == 0)
+            //        {
+            //            definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+            //            && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
+            //            && x.RACCATEGORYID == defaultTier.RACCATEGORYID
+            //            ).Select(x => x).OrderByDescending(i => i.RACCATEGORYTYPEID).ThenByDescending(i => i.RACITEMID).ToList();
+
+            //            continue;
+            //        }
+
+            //        ctr = ctr + 1;
+            //    }
+            //    else { return applicationId; } // throw new SecureException("Cannot Proceed. RAC not met for " + definition.TBL_RAC_ITEM.CRITERIA); }
+
+            //    //if (!ValidRacSubmission(definition, submission.value, operationId, targetId)) return applicationId;//throw new SecureException("Cannot Proceed as RAC not met for " + definition.TBL_RAC_ITEM.CRITERIA);
+            //    details.Add(new TBL_RAC_DETAIL
+            //    {
+            //        RACDEFINITIONID = definition.RACDEFINITIONID,
+            //        OPERATIONID = operationId,
+            //        TARGETID = targetId,
+            //        ACTUALVALUE = submission.value,
+            //        CREATEDBY = staffId,
+            //        DATETIMECREATED = DateTime.Now,
+            //    });
+            //}
+
+
         }
 
         private bool ValidRacSubmission(TBL_RAC_DEFINITION definition, string value, int operationId, int targetId)
@@ -1821,23 +1892,23 @@ namespace FintrakBanking.Repositories.Credit
                 bond.REFERENCENO = bondUpdate.referenceNo;
             }
 
-            if (productClassId == (int)ProductClassEnum.FirstEdu)
-            {
-                var edu = context.TBL_LOAN_APPLICATION_DETL_EDU.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
-                var eduUpdate = update.educationLoan;
-                edu.NUMBER_OF_STUDENTS = eduUpdate.numberOfStudent;
-                edu.AVERAGE_SCHOOL_FEES = eduUpdate.averageSchoolFees;
-                edu.TOTAL_PREVIOUS_TERM_SCHOL_FEES = eduUpdate.totalPreviousTermSchoolFees;
-            }
+            //if (productClassId == (int)ProductClassEnum.FirstEdu)
+            //{
+            //    var edu = context.TBL_LOAN_APPLICATION_DETL_EDU.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
+            //    var eduUpdate = update.educationLoan;
+            //    edu.NUMBER_OF_STUDENTS = eduUpdate.numberOfStudent;
+            //    edu.AVERAGE_SCHOOL_FEES = eduUpdate.averageSchoolFees;
+            //    edu.TOTAL_PREVIOUS_TERM_SCHOL_FEES = eduUpdate.totalPreviousTermSchoolFees;
+            //}
 
-            if (productClassId == (int)ProductClassEnum.FirstTrader)
-            {
-                var trader = context.TBL_LOAN_APPLICATION_DETL_TRA.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
-                var traderUpdate = update.traderLoan;
-                trader.MARKETID = traderUpdate.marketId;
-                trader.AVERAGE_MONTHLY_TURNOVER = traderUpdate.averageMonthlyTurnover;
-                trader.SOLDITEMS = traderUpdate.soldItems;
-            }
+            //if (productClassId == (int)ProductClassEnum.FirstTrader)
+            //{
+            //    var trader = context.TBL_LOAN_APPLICATION_DETL_TRA.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
+            //    var traderUpdate = update.traderLoan;
+            //    trader.MARKETID = traderUpdate.marketId;
+            //    trader.AVERAGE_MONTHLY_TURNOVER = traderUpdate.averageMonthlyTurnover;
+            //    trader.SOLDITEMS = traderUpdate.soldItems;
+            //}
 
             if (context.SaveChanges() == 0) throw new SecureException("Nothing was updated!");
 
@@ -2028,15 +2099,15 @@ namespace FintrakBanking.Repositories.Credit
             {
                 InvoiceDetails(a.invoiceDetails, createdBy, applicationId, a.customerId);
             }
-            if (a.educationLoan != null && a.productClassId == (short)ProductClassEnum.FirstEdu)
-            {
-                EducationLoan(a.educationLoan, a.loanApplicationDetailId, createdBy);
-            }
+            //if (a.educationLoan != null && a.productClassId == (short)ProductClassEnum.FirstEdu)
+            //{
+            //    EducationLoan(a.educationLoan, a.loanApplicationDetailId, createdBy);
+            //}
 
-            if (a.traderLoan != null && a.productClassId == (short)ProductClassEnum.FirstTrader)
-            {
-                TradderLoan(a.traderLoan, a.loanApplicationDetailId, createdBy);
-            }
+            //if (a.traderLoan != null && a.productClassId == (short)ProductClassEnum.FirstTrader)
+            //{
+            //    TradderLoan(a.traderLoan, a.loanApplicationDetailId, createdBy);
+            //}
             if (a.bondDetails != null && a.productClassId == (short)ProductClassEnum.BondAndGuarantees)
             {
                 BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
@@ -2657,7 +2728,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                             proposedProductId = b.PROPOSEDPRODUCTID,
-                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedProductName = (a.FLOWCHANGEID == null || a.FLOWCHANGEID <= 0 || a.FLOWCHANGEID == (short)FlowChangeEnum.FAM) ? b.TBL_PRODUCT.PRODUCTNAME : b.TBL_PRODUCT.PRODUCTNAME +"("+context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(x=>x.FLOWCHANGEID == a.FLOWCHANGEID).PLACEHOLDER +")" ,
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedAmount = b.PROPOSEDAMOUNT,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
@@ -3118,37 +3189,37 @@ namespace FintrakBanking.Repositories.Credit
                            }).ToList();
                 return inv;
             }
-            else if (details == (short)ProductClassEnum.FirstTrader)
-            {
-                var trader = (from tra in context.TBL_LOAN_APPLICATION_DETL_TRA
-                              where tra.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                              select new TraderLoanViewModel()
-                              {
-                                  traderId = tra.TRADDERID,
-                                  loanApplicationDetailId = tra.LOANAPPLICATIONDETAILID,
-                                  marketId = tra.MARKETID,
-                                  marketName = tra.TBL_LOAN_MARKET.MARKETNAME,
-                                  averageMonthlyTurnover = tra.AVERAGE_MONTHLY_TURNOVER,
-                                  productClassId = (int)ProductClassEnum.FirstTrader,
-                                  soldItems = tra.SOLDITEMS
-                              }).ToList();
-                return trader;
-            }
-            else if (details == (short)ProductClassEnum.FirstEdu)
-            {
-                var edu = (from e in context.TBL_LOAN_APPLICATION_DETL_EDU
-                           where e.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                           select new EducationLoanViewModel()
-                           {
-                               educationId = e.EDUCATIONID,
-                               loanApplicationDetailId = e.LOANAPPLICATIONDETAILID,
-                               numberOfStudent = e.NUMBER_OF_STUDENTS,
-                               averageSchoolFees = e.AVERAGE_SCHOOL_FEES,
-                               totalPreviousTermSchoolFees = e.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
-                               productClassId = (int)ProductClassEnum.FirstEdu
-                           }).ToList();
-                return edu;
-            }
+            //else if (details == (short)ProductClassEnum.FirstTrader)
+            //{
+            //    var trader = (from tra in context.TBL_LOAN_APPLICATION_DETL_TRA
+            //                  where tra.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+            //                  select new TraderLoanViewModel()
+            //                  {
+            //                      traderId = tra.TRADDERID,
+            //                      loanApplicationDetailId = tra.LOANAPPLICATIONDETAILID,
+            //                      marketId = tra.MARKETID,
+            //                      marketName = tra.TBL_LOAN_MARKET.MARKETNAME,
+            //                      averageMonthlyTurnover = tra.AVERAGE_MONTHLY_TURNOVER,
+            //                      productClassId = (int)ProductClassEnum.FirstTrader,
+            //                      soldItems = tra.SOLDITEMS
+            //                  }).ToList();
+            //    return trader;
+            //}
+            //else if (details == (short)ProductClassEnum.FirstEdu)
+            //{
+            //    var edu = (from e in context.TBL_LOAN_APPLICATION_DETL_EDU
+            //               where e.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+            //               select new EducationLoanViewModel()
+            //               {
+            //                   educationId = e.EDUCATIONID,
+            //                   loanApplicationDetailId = e.LOANAPPLICATIONDETAILID,
+            //                   numberOfStudent = e.NUMBER_OF_STUDENTS,
+            //                   averageSchoolFees = e.AVERAGE_SCHOOL_FEES,
+            //                   totalPreviousTermSchoolFees = e.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
+            //                   productClassId = (int)ProductClassEnum.FirstEdu
+            //               }).ToList();
+            //    return edu;
+            //}
             else if (details == (short)ProductClassEnum.BondAndGuarantees)
             {
 
@@ -4639,8 +4710,11 @@ namespace FintrakBanking.Repositories.Credit
                     operationId=x.OPERATIONID,
                     destinationUrl=x.DESTINATIONURL,
                     productTypeId=x.PRODUCTTYPEID,
-                    productClassId=x.PRODUCTCLASSID,
-                    skipflow=x.ISSKIPPROCESSENABLED
+                    productType = context.TBL_PRODUCT_TYPE.Where(pt => pt.PRODUCTTYPEID == x.PRODUCTTYPEID).Select( s => s.PRODUCTTYPENAME).FirstOrDefault(),
+                    productClass = context.TBL_PRODUCT_CLASS.Where(pc => pc.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(s => s.PRODUCTCLASSNAME).FirstOrDefault(),
+                    productClassId =x.PRODUCTCLASSID,
+                    skipflow=x.ISSKIPPROCESSENABLED,
+                    operation=context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==o.OPERATIONID).Select(s=>s.OPERATIONNAME).FirstOrDefault(),
                     
                 })
                 .ToList();

@@ -67,6 +67,8 @@
           <xs:complexType>
             <xs:sequence>
               <xs:element name="comment" msprop:Generator_ColumnVarNameInTable="columncomment" msprop:Generator_ColumnPropNameInRow="comment" msprop:Generator_ColumnPropNameInTable="commentColumn" msprop:Generator_UserColumnName="comment" type="xs:string" minOccurs="0" />
+              <xs:element name="customerRating" msprop:Generator_ColumnVarNameInTable="columncustomerRating" msprop:Generator_ColumnPropNameInRow="customerRating" msprop:Generator_ColumnPropNameInTable="customerRatingColumn" msprop:Generator_UserColumnName="customerRating" type="xs:string" minOccurs="0" />
+              <xs:element name="projectRiskRating" msprop:Generator_ColumnVarNameInTable="columnprojectRiskRating" msprop:Generator_ColumnPropNameInRow="projectRiskRating" msprop:Generator_ColumnPropNameInTable="projectRiskRatingColumn" msprop:Generator_UserColumnName="projectRiskRating" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -109,6 +111,7 @@
               <xs:element name="consoltantVowd" msprop:Generator_ColumnVarNameInTable="columnconsoltantVowd" msprop:Generator_ColumnPropNameInRow="consoltantVowd" msprop:Generator_ColumnPropNameInTable="consoltantVowdColumn" msprop:Generator_UserColumnName="consoltantVowd" type="xs:string" minOccurs="0" />
               <xs:element name="costVariation" msprop:Generator_ColumnVarNameInTable="columncostVariation" msprop:Generator_ColumnPropNameInRow="costVariation" msprop:Generator_ColumnPropNameInTable="costVariationColumn" msprop:Generator_UserColumnName="costVariation" type="xs:string" minOccurs="0" />
               <xs:element name="timeVariation" msprop:Generator_ColumnVarNameInTable="columntimeVariation" msprop:Generator_ColumnPropNameInRow="timeVariation" msprop:Generator_ColumnPropNameInTable="timeVariationColumn" msprop:Generator_UserColumnName="timeVariation" type="xs:string" minOccurs="0" />
+              <xs:element name="progressPayment" msprop:Generator_ColumnVarNameInTable="columnprogressPayment" msprop:Generator_ColumnPropNameInRow="progressPayment" msprop:Generator_ColumnPropNameInTable="progressPaymentColumn" msprop:Generator_UserColumnName="progressPayment" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

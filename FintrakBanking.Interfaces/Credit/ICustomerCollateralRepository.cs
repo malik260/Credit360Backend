@@ -81,6 +81,7 @@ namespace FintrakBanking.Interfaces.Credit
         #endregion End Of Listing Functions
 
         IEnumerable<LoanApplicationCollateralViewModel> MapApplicationCollateral(ApplicationCollateralMapping entity);
+        bool IsCollateralMapped(ApplicationCollateralMapping entity);
         IEnumerable<LoanApplicationCollateralViewModel> UnmapApplicationCollateral(ApplicationCollateralMapping entity);
 
         //  IEnumerable<CollateralLoanApplication> GetAllUnmappedCustomerCollateral(int customerId, int loanApplicationId, int companyId);
@@ -150,6 +151,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model);
         string GetReferenceNumber();
+        IEnumerable<CollateralViewModel> GetInsuranceRequests();
+        bool InsuranceRequestGoForApproval(CollateralViewModel model);
+        InsurancePolicies GetInsurancePolicy(int collateralId);
+        bool DeleteInsuranceRequest(int insuranceRequestId);
         #endregion
     }
 }

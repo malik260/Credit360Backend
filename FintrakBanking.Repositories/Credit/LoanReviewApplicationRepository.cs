@@ -156,7 +156,7 @@ namespace FintrakBanking.Repositories.Credit
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
                     statusId = d.APPROVALSTATUSID,
                     terms = d.REPAYMENTTERMS,
-                    schedule = d.REPAYMENTSCHEDULE,
+                    schedule = d.REPAYMENTSCHEDULEID,
                     //loanReferenceNumber = d.LOANREFERENCENUMBER,
                 })
 
@@ -383,7 +383,7 @@ namespace FintrakBanking.Repositories.Credit
                     REVIEWDETAILS = detail.reviewDetails,
                     PRODUCTID = detail.productId,
                     REPAYMENTTERMS = String.Empty,
-                    REPAYMENTSCHEDULE = String.Empty,
+                    REPAYMENTSCHEDULEID = String.Empty,
                     CUSTOMERID = loan.customerId,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
                     CREATEDBY = staffId,

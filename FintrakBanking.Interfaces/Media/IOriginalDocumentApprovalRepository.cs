@@ -34,5 +34,6 @@ namespace FintrakBanking.Interfaces.Media
         List<OriginalDocumentApprovalViewModel> GetOriginalDocument(int id);
 
         List<OriginalDocumentApprovalViewModel> GetReleaseDocumentByCollateralCustomerId(int id);
+        List<OriginalDocumentApprovalViewModel> GetDocumentUploadList();
     }
 }

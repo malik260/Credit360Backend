@@ -47,42 +47,36 @@ namespace FintrakBanking.Repositories.Risk
             if (model.searchBaseId == (short)RacAccessEnum.Product || model.searchBaseId == null)
             {
                 racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
-                                                          && (x.SHOWATDRAWDOWN == model.isDrawdown || x.SHOWATDRAWDOWN == null)
-                                                          && x.ISACTIVE == true && x.DELETED == false)
-              //.Select(x => x.RACCATEGORYID)
-              .ToList();
+                                                          && x.SHOWATDRAWDOWN == model.isDrawdown 
+                                                          && x.ISACTIVE == true && x.DELETED == false).ToList();
 
             }
             if (model.searchBaseId == (short)RacAccessEnum.CreditCard)
             {
+                var localCurrencyId = context.TBL_COMPANY.FirstOrDefault().CURRENCYID;
+                // && model.currencyId == localCurrencyId
                 racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.CURRENCYTYPE == model.currencyType
-                                                            && x.CURRENCYID == model.currencyId
+                                                            && (
+                                                                (x.CURRENCYTYPE =="LCY" && model.currencyId == localCurrencyId && model.currencyId != null) 
+                                                                || (x.CURRENCYTYPE == "FCY" && model.currencyId != localCurrencyId && model.currencyId != null) 
+                                                                || (x.CURRENCYTYPE == "CUSTOM" && x.CURRENCYID == model.currencyId && model.currencyId != null) 
+                                                                || (x.CURRENCYTYPE == null && x.CURRENCYID == model.currencyId)
+                                                                || (x.CURRENCYTYPE == null && x.CURRENCYID == null)
+                                                                )
                                                             && x.OPERATIONID == model.operationId
-                                                            && (x.SHOWATDRAWDOWN == model.isDrawdown || x.SHOWATDRAWDOWN == null)
-                                                            && x.ISACTIVE == true && x.DELETED == false)
-                //.Select(x => x.RACCATEGORYID)
-                .ToList();
+                                                            && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                            && x.ISACTIVE == true && x.DELETED == false).ToList();
             }
-
-            //var categoryIds = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
-            //    .Select(x => x.RACCATEGORYID)
-            //    .ToList();
 
             categoryIds.AddRange(racDefinition.Select(x => x.RACCATEGORYID).ToList());
 
             var racCategoryTypeId = racDefinition.Select(x => x.RACCATEGORYTYPEID).FirstOrDefault();
 
-            //var racCategoryTypeId = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.ISACTIVE == true && x.DELETED == false)
-            //    .Select(x => x.RACCATEGORYTYPEID)
-            //    .FirstOrDefault();
-
-            
-                productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
-                {
-                    racCategoryId = x.RACCATEGORYID,
-                    categoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
-
-                }).ToList();
+            productRacCategories = context.TBL_RAC_CATEGORY.Where(x => categoryIds.Contains(x.RACCATEGORYID)).Select(x => new RacCategoryViewModel
+            {
+                racCategoryId = x.RACCATEGORYID,
+                categoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
+            }).ToList();
 
             /*
             value: '',
@@ -96,7 +90,6 @@ namespace FintrakBanking.Repositories.Risk
 
                 if (racCategoryTypeId != 0 && racCategoryTypeId != null)
                 {
-                    //items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.RACCATEGORYTYPEID== racCategoryTypeId && x.ISACTIVE == true && x.DELETED == false)
                     items = racDefinition.Where(x => x.RACCATEGORYTYPEID == racCategoryTypeId && x.ISACTIVE == true && x.DELETED == false)
                     .Select(x => new ProductRacItem
                     {
@@ -115,7 +108,6 @@ namespace FintrakBanking.Repositories.Risk
                 }
                 else
                 {
-                    //items = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == productId && x.ISACTIVE == true && x.DELETED == false)
                     items = racDefinition
                     .Select(x => new ProductRacItem
                     {

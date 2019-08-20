@@ -69,11 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Basel\BaselIntegration.cs" />
-    <Compile Include="Connected Services\ServiceReference1\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="Connected Services\TestService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -157,10 +152,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\FbnAlertWS\Service2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Connected Services\ServiceReference1\Service.wsdl" />
-    <None Include="Connected Services\ServiceReference1\Service.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\TestService\FinTrakBanking.ThirdPartyIntegration.TestService.ForecastReturn.datasource">
@@ -266,7 +257,6 @@
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\CRCWebService\" />
     <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
-    <WCFMetadataStorage Include="Connected Services\ServiceReference1\" />
     <WCFMetadataStorage Include="Connected Services\TestService\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthService\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthSoapService\" />
@@ -337,12 +327,6 @@
     <None Include="Connected Services\TestService\configuration91.svcinfo" />
     <None Include="Connected Services\TestService\configuration.svcinfo" />
     <None Include="Connected Services\TestService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Connected Services\ServiceReference1\configuration91.svcinfo" />
-    <None Include="Connected Services\ServiceReference1\configuration.svcinfo" />
-    <None Include="Connected Services\ServiceReference1\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

@@ -15,13 +15,13 @@ namespace FintrakBanking.Interfaces.Credit
         CollateralValuationViewModel GetCollateralValuation(int collteralValuationId);
         List<CollateralValuationViewModel> GetAllCollateralValuations(int collateralId);
         List<ValuationPrerequisiteViewModel> GetAllValuationPrerequisitesById(int collateralValuationId);
-        bool GoForCollateralValuationApproval(CollateralValuationViewModel entity);
+        bool GoForCollateralValuationApproval(ValuationPrerequisiteViewModel entity);
 
         IEnumerable<ValuationPrerequisiteViewModel> GetAllValuationRequest(int staffId);
 
         IEnumerable<ValuationPrerequisiteViewModel> GetCollateralValuationRequestWaitingForApproval(int staffId);
 
-        bool SubmitApproval(CollateralValuationViewModel model);
+        bool SubmitApproval(ValuationPrerequisiteViewModel model);
 
         bool AddCollateralValurerInfo(ValuationPrerequisiteViewModel model);
         List<ValuationPrerequisiteViewModel> GetAllCollateralValuerIformation();

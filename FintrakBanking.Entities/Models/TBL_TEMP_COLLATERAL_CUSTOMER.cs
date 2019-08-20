@@ -70,6 +70,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISCURRENT { get; set; }
 
+        public string COLLATERALSUMMARY { get; set; }
+
         public string RELATEDCOLLATERALCODE { get; set; }
         public int? COLLATERALUSAGESTATUSID { get; set; }
 
