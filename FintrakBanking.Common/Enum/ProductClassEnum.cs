@@ -8,23 +8,28 @@ namespace FintrakBanking.Common.Enum
 {
    public enum ProductClassEnum
     {
-        Corporate = 1,
-        Commercial = 2,
-        Retail = 3,
-        Individual = 4,
-        CashBackedOnly = 5,
         InvoiceDiscountingFacility = 6,
-        FirstEdu = 7,
-        FirstTrader = 8,
-        ImportFinance = 9,
         BondAndGuarantees = 10,
         ImportFinanceFacilities = 41,
         EmergingBusiness = 33,
-        ContingentFacilities = 40,
-        AutoLoans = 22,
-        Creditcards = 25
-
+        Creditcards = 25,
+        Corporate = 1,
+    	Commercial = 2,
+	    Individual = 4,
+    	CashCollaterized = 5, 
+    	PublicSector = 11,
+    	PrivateBanking = 21,
+    	ImportFinanceFacility = 41,
+	    AutoLoans = 22,
+    	PersonalLoan  = 23,
+	    FacilityUpgradeSupportScheme = 24,
+	    MortgageLoan = 26,
+	    MHSS = 30,
+	    WPOWER =  31,
+	    MPOWER = 32,
+	    AdvanceForSchoolFees = 39,
     }
+
     public enum ProductGroupEnum
     {
         LoansAndAdvances = 1,

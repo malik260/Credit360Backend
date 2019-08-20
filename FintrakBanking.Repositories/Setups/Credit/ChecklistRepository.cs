@@ -1468,7 +1468,9 @@ namespace FintrakBanking.Repositories.Credit
                                      checkListStatusId = c.CHECKLISTSTATUSID,
                                      validationStatus = c.CHECKLISTVALIDATED,
                                      approvalStatusId = c.APPROVALSTATUSID,
-
+                                     operationId = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.OPERATIONID,
+                                     customerId = c.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,
+                                     loanApplicationReferenceNumber = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER
                                  }).ToList();
                 return condition;
             }

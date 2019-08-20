@@ -1724,21 +1724,21 @@ namespace FintrakBanking.Repositories.Credit
                     case (short)ProductClassEnum.BondAndGuarantees:
                         templateLink = links.BondsAndGuarantees;
                         break;
-                    case (short)ProductClassEnum.CashBackedOnly:
-                        templateLink = links.CashBackedOnly;
-                        break;
+                    //case (short)ProductClassEnum.CashBackedOnly:
+                    //    templateLink = links.CashBackedOnly;
+                    //    break;
 
-                    case (short)ProductClassEnum.FirstEdu:
-                        templateLink = links.FirstEdu;
-                        break;
+                    //case (short)ProductClassEnum.FirstEdu:
+                    //    templateLink = links.FirstEdu;
+                    //    break;
 
-                    case (short)ProductClassEnum.FirstTrader:
-                        templateLink = links.FirstTrader;
-                        break;
+                    //case (short)ProductClassEnum.FirstTrader:
+                    //    templateLink = links.FirstTrader;
+                    //    break;
 
-                    case (short)ProductClassEnum.ImportFinance:
-                        templateLink = links.ImportFinance;
-                        break;
+                    //case (short)ProductClassEnum.ImportFinance:
+                    //    templateLink = links.ImportFinance;
+                    //    break;
 
                     case (short)ProductClassEnum.InvoiceDiscountingFacility:
                         templateLink = links.IDF;
@@ -2747,15 +2747,17 @@ namespace FintrakBanking.Repositories.Credit
                 acceptance = acceptance.Replace("{@DATE}", DateTime.Now.ToLongDateString());
                 acceptance = acceptance.Replace("{@OBLIGUR}", customer);
 
-                if (approvedProduct == (int)ProductClassEnum.ContingentFacilities)
-                {
-                    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE_BG").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
-                }
-                else if (approvedProduct == (int)ProductClassEnum.AutoLoans )
+                
+                if (approvedProduct == (int)ProductClassEnum.AutoLoans )
                 {
                     clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTER_LEASE_FACILITY").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
 
-                } else if (approvedProduct == (int)ProductClassEnum.ImportFinanceFacilities)
+                }
+                //else if (approvedProduct == (int)ProductClassEnum.ContingentFacilities)
+                //{
+                //    clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE_BG").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                //}
+                else if (approvedProduct == (int)ProductClassEnum.ImportFinanceFacilities)
                 {
                     clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTER_IMPORT_FINANCE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
                 }else

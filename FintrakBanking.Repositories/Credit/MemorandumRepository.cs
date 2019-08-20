@@ -2205,8 +2205,9 @@ namespace FintrakBanking.Repositories.Credit
                         ";
             foreach (var f in this.customerFacilities)
             {
-                result += $@"<li>{f.TBL_PRODUCT.PRODUCTNAME + " " + f.TBL_CURRENCY.CURRENCYCODE + 
-                                String.Format("{0:0,0.00}", f.APPROVEDAMOUNT)}</li>";
+                result += $@"
+                            <li>{f.TBL_PRODUCT.PRODUCTNAME + " " + f.TBL_CURRENCY.CURRENCYCODE + String.Format("{0:0,0.00}", f.APPROVEDAMOUNT)}</li>
+                        ";
             }
             result += $@"
                         </ul>
@@ -2261,7 +2262,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result += $@"
-                <table border=1 width=800 cellpadding=15 cellspacing=0>
+                <table border=1 width=600 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Security / Support</b></th>
