@@ -9,6 +9,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -146,6 +147,55 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
+        }
+
+        private void LoadCustomerRating(List<int> customerIds) 
+        {
+            var apiTransactions = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
+            var apiCustomerRatio = new List<RatingAndRatioViewModel>();
+            var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
+
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
+
+            foreach (var customer in customers)
+            {
+                if (customer.ISPROSPECT == false)
+                {
+                    apiCustomerRatio = integration.GetCustomerRatioByCustomerCode(customer.CUSTOMERCODE);
+                    foreach (var item in apiCustomerRatio)
+                    {
+                        context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
+                        {
+                            //LOANAPPLICATIONID = applicationId,
+                            //CUSTOMERID = customer.CUSTOMERID,
+                            //CUSTOMERCODE = customer.CUSTOMERCODE,
+                            //ACCOUNTNUMBER = transaction.accountNumber,
+                            //PERIOD = transaction.period,
+                            //PRODUCTNAME = transaction.productName,
+                            //MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
+                            //MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
+                            //MINIMUMCREDITBALANCE = transaction.min_Credit_Balance,
+                            //MAXIMUMCREDITBALANCE = transaction.max_Credit_Balance,
+                            //DEBITTURNOVER = transaction.debit_Turnover,
+                            //CREDITTURNOVER = transaction.credit_Turnover,
+                            //SMSALERT = transaction.sms_Alert,
+                            //AMC = transaction.amc,
+                            //VAT = transaction.vat,
+                            //MANAGEMENTFEE = transaction.management_Fee,
+                            //COMMITMENTFEE = transaction.commitment_Fees,
+                            //CONTINGENTLIABILITYCOMM = transaction.com_Contigent_Liab,
+                            //LC_COMMISSION = transaction.lc_Commission,
+                            //CREATEDBY = staffId,
+                            //DATETIMECREATED = DateTime.Now,
+                            //MONTH = transaction.month,
+                            //YEAR = transaction.year,
+                            //ISLMS = isLms
+                        });
+                    }
+                }
+            }
+
+            context.SaveChanges();
         }
 
         public void ValidateLoanApplicationLimits(

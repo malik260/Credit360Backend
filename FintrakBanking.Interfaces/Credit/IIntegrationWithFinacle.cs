@@ -46,5 +46,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddCustomerAccounts(int customerId, string customerCode);
         Users GetUserRoleFinacle(string staffCode);
 
+        List<RatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode);
+
     }
 }
