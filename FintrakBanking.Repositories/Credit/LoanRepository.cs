@@ -11760,6 +11760,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             int staffId = model.staffId;
 
+            //if (model.loopedStaffId != null) staffId = (int)model.loopedStaffId;
+
+            //int staffId = model.staffId;
+
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
             var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
@@ -11795,7 +11799,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductClassId = null;
             workflow.ProductId = null;
             workflow.NextLevelId = model.approvalLevelId;
-            workflow.ToStaffId = staffId; 
+            //workflow.ToStaffId = staffId;
+            workflow.ToStaffId = model.loopedStaffId;
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;

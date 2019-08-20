@@ -81,6 +81,7 @@ namespace FintrakBanking.Interfaces.Credit
         #endregion End Of Listing Functions
 
         IEnumerable<LoanApplicationCollateralViewModel> MapApplicationCollateral(ApplicationCollateralMapping entity);
+        bool IsCollateralMapped(ApplicationCollateralMapping entity);
         IEnumerable<LoanApplicationCollateralViewModel> UnmapApplicationCollateral(ApplicationCollateralMapping entity);
 
         //  IEnumerable<CollateralLoanApplication> GetAllUnmappedCustomerCollateral(int customerId, int loanApplicationId, int companyId);

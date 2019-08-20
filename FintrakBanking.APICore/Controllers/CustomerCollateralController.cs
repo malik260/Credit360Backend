@@ -1731,6 +1731,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost, Route("application-collateral/mapped")]
+        public HttpResponseMessage IsCollateralMapped([FromBody] ApplicationCollateralMapping entity)
+        {
+            try
+            {
+
+          //      entity.staffId = token.GetStaffId;
+
+                var response = repo.IsCollateralMapped(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
         [HttpPost, Route("application-collateral/unmap")]
         public HttpResponseMessage UnmapApplicationCollateral([FromBody] ApplicationCollateralMapping entity)
         {
@@ -2131,15 +2148,22 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost, Route("calculate-collateral-coverage")]
         public HttpResponseMessage CalculateCoverateOfCollateral([FromBody] CollateralCoverageViewModel entity)
         {
+            try { 
             var response = repo.CalculateCoverateOfCollateral(entity);
             if (response !=null)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
             }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message});
+            }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
         }
 
-       
+
     }
 }
 
