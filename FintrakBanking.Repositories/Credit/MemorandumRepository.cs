@@ -2226,30 +2226,30 @@ namespace FintrakBanking.Repositories.Credit
                         ";
             foreach (var cc in customerCollaterals)
             {
-                switch (cc.collateralTypeId)
-                {
-                    case (int)CollateralTypeEnum.TermDeposit: remark = context.TBL_COLLATERAL_DEPOSIT.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.PlantAndMachinery: remark = context.TBL_COLLATERAL_PLANT_AND_EQUIP.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.Miscellaneous: remark = context.TBL_COLLATERAL_MISCELLANEOUS.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.NOTE; break;
-                    case (int)CollateralTypeEnum.Gaurantee: remark = context.TBL_COLLATERAL_GAURANTEE.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.CASA: remark = context.TBL_COLLATERAL_CASA.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.Property: remark = context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.TreasuryBillsAndBonds: remark = context.TBL_COLLATERAL_MKT_SECURITY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.InsurancePolicy: remark = context.TBL_COLLATERAL_POLICY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.PreciousMetal: remark = context.TBL_COLLATERAL_PRECIOUSMETAL.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.MarketableSecurities_Shares: remark = context.TBL_COLLATERAL_STOCK.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.COMPANYNAME; break;
-                    case (int)CollateralTypeEnum.Vehicle: remark = context.TBL_COLLATERAL_VEHICLE.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.Promissory: remark = context.TBL_COLLATERAL_PROMISSORY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.PROMISSORYNOTEID; break;
-                    case (int)CollateralTypeEnum.ISPO: remark = context.TBL_COLLATERAL_ISPO.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.DomiciliationContract: remark = context.TBL_COLLATERAL_INDEMNITY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.DomiciliationSalary: remark = context.TBL_COLLATERAL_DOMICILIATION.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                    case (int)CollateralTypeEnum.Indemity: remark = context.TBL_COLLATERAL_INDEMNITY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //switch (cc.collateralTypeId)
+                //{
+                //    case (int)CollateralTypeEnum.TermDeposit: remark = context.TBL_COLLATERAL_DEPOSIT.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.PlantAndMachinery: remark = context.TBL_COLLATERAL_PLANT_AND_EQUIP.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.Miscellaneous: remark = context.TBL_COLLATERAL_MISCELLANEOUS.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.NOTE; break;
+                //    case (int)CollateralTypeEnum.Gaurantee: remark = context.TBL_COLLATERAL_GAURANTEE.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.CASA: remark = context.TBL_COLLATERAL_CASA.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.Property: remark = context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.TreasuryBillsAndBonds: remark = context.TBL_COLLATERAL_MKT_SECURITY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.InsurancePolicy: remark = context.TBL_COLLATERAL_POLICY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.PreciousMetal: remark = context.TBL_COLLATERAL_PRECIOUSMETAL.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.MarketableSecurities_Shares: remark = context.TBL_COLLATERAL_STOCK.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.COMPANYNAME; break;
+                //    case (int)CollateralTypeEnum.Vehicle: remark = context.TBL_COLLATERAL_VEHICLE.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.Promissory: remark = context.TBL_COLLATERAL_PROMISSORY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.PROMISSORYNOTEID; break;
+                //    case (int)CollateralTypeEnum.ISPO: remark = context.TBL_COLLATERAL_ISPO.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.DomiciliationContract: remark = context.TBL_COLLATERAL_INDEMNITY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.DomiciliationSalary: remark = context.TBL_COLLATERAL_DOMICILIATION.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
+                //    case (int)CollateralTypeEnum.Indemity: remark = context.TBL_COLLATERAL_INDEMNITY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
 
-                    default:
-                        break;
-                }
+                //    default:
+                //        break;
+                //}
                         result += $@"
-                            <li>{remark}</li>
+                            <li>{cc.collateralSummary}</li>
                         ";
             }
             result += $@"
@@ -2278,29 +2278,40 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetCollateralCoverageMarkupLOS()
         {
-            var collaterals = new List<CollateralViewModel>();
-
-            var collateral = this.collateralRepo.GetCustomerPropertyCollaterals(this.loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
+            var collaterals = new List<CollateralCoverageViewModel>();
+            var custFacilitiesAmount = new decimal();
+            foreach (var f in customerFacilities)
+            {
+                var collateral = collateralRepo.GetProposedCustomerCollateral(f.LOANAPPLICATIONDETAILID, f.CURRENCYID, f.TBL_LOAN_APPLICATION.COMPANYID);
+                if (collateral.Count() > 0)
+                {
+                    collaterals.AddRange(collateral);
+                }
+            }
+            if (collaterals.Count() < 0) return "";
             var result = String.Empty;
-            decimal totalMarketValue = 0;
-            var custFacilities = this.customerFacilities.Sum(f => f.APPROVEDAMOUNT);
+            decimal totalCollateralValue = collaterals.Sum(c => c.collateralValue);
+            var collateralGroup = collaterals.GroupBy(c => c.loanApplicationDetailId);
+            foreach (var g in collateralGroup)
+            {
+                custFacilitiesAmount += context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == g.Key).APPROVEDAMOUNT;
+            }
             int n = 0;
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
-                        <th><b>DESCRIPTION</b></th>
-                        <th><b>Original VALUE</b></th>
-                        <th><b>FORCED SALE VALUE</b></th>
+                        <th><b>DESCRIPTION/SUMMARY</b></th>
+                        <th><b>COLLATERAL VALUE</b></th>
                     </tr>
                     ";
-            foreach (var c in collateral)
+
+            foreach (var c in collaterals)
             { ++n;
-                totalMarketValue += (decimal)c.openMarketValue;
                 result = result + $@"
                     <tr>
                         <td>{n}</td>
-                        <td>{c.collateralTypeName + ": " + c.collateralDetail}</td>
+                        <td>{c.}</td>
                         <td>{String.Format("{0:0,0.00}", c.openMarketValue)}</td>
                         <td>{String.Format("{0:0,0.00}", c.forcedSaleValue)}</td>
                     </tr>
@@ -2310,7 +2321,7 @@ namespace FintrakBanking.Repositories.Credit
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>TOTAL</b></td>
-                    <td>{String.Format("{0:0,0.00}", totalMarketValue)}</td>
+                    <td>{String.Format("{0:0,0.00}", totalCollateralValue)}</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
@@ -2322,7 +2333,7 @@ namespace FintrakBanking.Repositories.Credit
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>NET COVERAGE</b></td>
-                    <td>{String.Format("{0:0,0.00}", (totalMarketValue/custFacilities))} %</td>
+                    <td>{String.Format("{0:0,0.00}", (totalCollateralValue/custFacilitiesAmount))} %</td>
                     <td>&nbsp;</td>
                 </tr>
             ";

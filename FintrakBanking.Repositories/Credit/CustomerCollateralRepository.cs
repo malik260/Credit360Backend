@@ -1743,6 +1743,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var cov = new CollateralCoverageViewModel
             {
+                collateralSummary = collaterals.collateralSummary,
+                loanApplicationDetailId = applicationDetailId,
                 collateralId = collaterals.collateralId,
                 collateralCode = collaterals.collateralCode,
                 collateralValue = collateralValue,
