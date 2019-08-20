@@ -224,7 +224,7 @@ namespace FintrakBanking.Repositories.Media
                         join c in context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
                         join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                         where oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
-
+                        && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
                         select new OriginalDocumentApprovalViewModel
                         {
                             originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
@@ -234,8 +234,10 @@ namespace FintrakBanking.Repositories.Media
                             referenceNumber = oda.REFERENCENUMBER,
                             dateTimeCreated = oda.DATETIMECREATED,
                             collateralCustomerId = cc.COLLATERALCUSTOMERID,
+                            customerId = c.CUSTOMERID,
+                            operationId = (int)OperationsEnum.OriginalDocumentApproval,
                             approvalStatusId = atrail.APPROVALSTATUSID,
-                            approvalStatusName = atrail.APPROVALSTATUSID != (int)ApprovalStatusEnum.Pending ? "Pending" : context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
+                            approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
 
 
                         }).OrderByDescending(o => o.originalDocumentApprovalId).ToList();
@@ -243,7 +245,7 @@ namespace FintrakBanking.Repositories.Media
             var model2 = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                           join cc in context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                           join c in context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
-                          where oda.DELETED == false
+                          where oda.DELETED == false && oda.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
 
                           select new OriginalDocumentApprovalViewModel
                           {
@@ -254,6 +256,8 @@ namespace FintrakBanking.Repositories.Media
                               referenceNumber = oda.REFERENCENUMBER,
                               dateTimeCreated = oda.DATETIMECREATED,
                               collateralCustomerId = cc.COLLATERALCUSTOMERID,
+                              customerId = c.CUSTOMERID,
+                              operationId = (int)OperationsEnum.OriginalDocumentApproval,
                               approvalStatusId = oda.APPROVALSTATUSID,
                               approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == oda.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
 
