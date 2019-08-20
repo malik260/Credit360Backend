@@ -36,7 +36,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
         private ResponseMessageViewModel responseAPI;
 
-        public async Task<List<RatingAndRatioViewModel>> GetCustomerRatio(RatingAndRatioViewModel model, string customerNumber)
+        public async Task<List<RatingAndRatioViewModel>> GetCustomerRatio( string customerNumber)
         {
             HttpClientHandler handler = new HttpClientHandler();
             HttpClient httpClientInstance;

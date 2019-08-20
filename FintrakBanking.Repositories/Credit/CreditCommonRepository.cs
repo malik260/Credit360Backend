@@ -35,7 +35,7 @@ namespace FintrakBanking.Repositories.Credit
             this.limitValidation = limitValidation;
         }
 
-        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, int staffId, bool isLms = false) // OBIE (Page 4)
+        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, int staffId, bool isLms = false) 
         {
             string duration = WebConfigurationManager.AppSettings["AccountStatisticsDurationInMonths"];
             int newDuration = 0;
@@ -149,7 +149,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private void LoadCustomerRating(List<int> customerIds) 
+        public void LoadCustomerRatios(int applicationId, List<int> customerIds, int staffId) 
         {
             var apiTransactions = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
             var apiCustomerRatio = new List<RatingAndRatioViewModel>();
@@ -164,32 +164,13 @@ namespace FintrakBanking.Repositories.Credit
                     apiCustomerRatio = integration.GetCustomerRatioByCustomerCode(customer.CUSTOMERCODE);
                     foreach (var item in apiCustomerRatio)
                     {
-                        context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
+                        context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
                         {
-                            //LOANAPPLICATIONID = applicationId,
-                            //CUSTOMERID = customer.CUSTOMERID,
-                            //CUSTOMERCODE = customer.CUSTOMERCODE,
-                            //ACCOUNTNUMBER = transaction.accountNumber,
-                            //PERIOD = transaction.period,
-                            //PRODUCTNAME = transaction.productName,
-                            //MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
-                            //MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
-                            //MINIMUMCREDITBALANCE = transaction.min_Credit_Balance,
-                            //MAXIMUMCREDITBALANCE = transaction.max_Credit_Balance,
-                            //DEBITTURNOVER = transaction.debit_Turnover,
-                            //CREDITTURNOVER = transaction.credit_Turnover,
-                            //SMSALERT = transaction.sms_Alert,
-                            //AMC = transaction.amc,
-                            //VAT = transaction.vat,
-                            //MANAGEMENTFEE = transaction.management_Fee,
-                            //COMMITMENTFEE = transaction.commitment_Fees,
-                            //CONTINGENTLIABILITYCOMM = transaction.com_Contigent_Liab,
-                            //LC_COMMISSION = transaction.lc_Commission,
-                            //CREATEDBY = staffId,
-                            //DATETIMECREATED = DateTime.Now,
-                            //MONTH = transaction.month,
-                            //YEAR = transaction.year,
-                            //ISLMS = isLms
+                            DESCRIPTION = item.indicatorname,
+                            VALUE = item.indicatorvalue,
+                            DATETIMECREATED = DateTime.Now,
+                            CREATEDBY = staffId,
+                            DELETED = false,
                         });
                     }
                 }
