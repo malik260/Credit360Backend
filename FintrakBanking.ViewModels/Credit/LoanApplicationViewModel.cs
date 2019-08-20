@@ -886,8 +886,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productName { get; set; } // "2909416.54",
         public int? month { get; set; } // "0",
         public int? year { get; set; } // "0",
-
-
+        public string productAccountName { get; set; }
     }
 
     public class LoanApplicationTagsViewModel : GeneralEntity
