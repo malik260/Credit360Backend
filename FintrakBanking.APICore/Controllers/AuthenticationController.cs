@@ -212,7 +212,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 _context.SaveChanges();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "1001 Login Failure." });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = "1001 Login Failure." });
             }
 
             var currUser = foundUser;
