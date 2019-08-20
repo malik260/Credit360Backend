@@ -2311,9 +2311,8 @@ namespace FintrakBanking.Repositories.Credit
                 result = result + $@"
                     <tr>
                         <td>{n}</td>
-                        <td>{c.}</td>
-                        <td>{String.Format("{0:0,0.00}", c.openMarketValue)}</td>
-                        <td>{String.Format("{0:0,0.00}", c.forcedSaleValue)}</td>
+                        <td>{c.collateralSummary}</td>
+                        <td>{String.Format("{0:0,0.00}", c.collateralValue)}</td>
                     </tr>
                 ";
             }
@@ -2327,7 +2326,7 @@ namespace FintrakBanking.Repositories.Credit
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>TOTAL FACILITY AMOUNT</b></td>
-                    <td>{String.Format("{0:0,0.00}", (this.customerFacilities.Sum(f => f.APPROVEDAMOUNT)))}</td>
+                    <td>{String.Format("{0:0,0.00}", (custFacilitiesAmount))}</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
