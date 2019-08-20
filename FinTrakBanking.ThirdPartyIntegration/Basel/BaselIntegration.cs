@@ -1,6 +1,8 @@
 ﻿using FintrakBanking.Common.CustomException;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,89 +32,176 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             //    API_URL = configdata.APIURL;
             //}
         }
-        private static HttpClient _httpClientInstance;
+       // private static HttpClient _httpClientInstance;
 
-        private ResponseMessageViewModel responseAPI;
+       // private ResponseMessageViewModel responseAPI;
 
-        //public async Task<ResponseMessage> APICustomerRatio(RatingAndRatioViewModel model, int customerNumber)
-        //{
-        //    HttpClientHandler handler = new HttpClientHandler();
-        //    HttpClient httpClientInstance;
+        public async Task<List<RatingAndRatioViewModel>> GetCustomerRatio( string customerNumber)
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClientInstance;
 
-        //    HttpClient client = new HttpClient(handler);
-        //    DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
-        //    HttpResponseMessage response = null;
-        //    ResponseMessageViewModel res = null;
-        //    string responseMessage = "";
-        //    try
-        //    {
-        //        handler.UseDefaultCredentials = true;
+            HttpClient client = new HttpClient(handler);
+            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+            HttpResponseMessage response = null;
+            ResponseMessageViewModel res = null;
+            string responseMessage = "";
+            string endPointUrl = $"api/Credit360API/corporateRatioPDCosolidatedByCustomer_ID/{customerNumber}";
+            try
+            {
+                handler.UseDefaultCredentials = true;
 
-        //        var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-        //        httpClientInstance = new HttpClient();
-        //        httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-        //        client.Timeout = TimeSpan.FromSeconds(180);
-        //        client.BaseAddress = new Uri(API_URL);
-        //        client.DefaultRequestHeaders.Accept.Clear();
-        //        client.DefaultRequestHeaders.Accept.Add(
-        //            new MediaTypeWithQualityHeaderValue("application/json"));
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(180);
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
 
-        //        ServicePointManager.ServerCertificateValidationCallback +=
-        //            (sender, cert, chain, sslPolicyErrors) => true;
-        //        requestDatetime = DateTime.Now;
-               
-        //        response = await client.GetAsync(
-        //            $"api/Credit360API/corporateRatioPDCosolidatedByCustomer_ID/{customerNumber}");
-        //        responseDateTime = DateTime.Now;
-        //        List<RatingAndRatioViewModel> customerRatios;
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            customerRatios = await response.Content.ReadAsAsync<RatingAndRatioViewModel>();
+                ServicePointManager.ServerCertificateValidationCallback +=
+                    (sender, cert, chain, sslPolicyErrors) => true;
+                requestDatetime = DateTime.Now;
 
-                   
+                try
+                {
+                    response = await client.GetAsync(endPointUrl
+                    );
+                    responseDateTime = DateTime.Now;
+                }
+                catch (Exception e) { throw new ConditionNotMetException(e.Message); }
 
-        //        }
+                responseMessage = await response.Content.ReadAsStringAsync();
 
-        //        responseMessage = await response.Content.ReadAsStringAsync();
+                List<RatingAndRatioViewModel> customerRatios = new List<RatingAndRatioViewModel>();
+                if (response.IsSuccessStatusCode)
+                {
+                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
 
-        //        //handler.Dispose();
-        //        //client.Dispose();
+                    var responseData = await response.Content.ReadAsStringAsync();
+                    JObject responseDataJsonString = JObject.Parse(responseData);
 
-        //        return exchangeRateOutput;
-        //    }
-        //    catch (APIErrorException ex)
-        //    {
-        //        throw new APIErrorException(ex.Message);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new APIErrorException($"Error" + ex.Message);
-        //    }
-        //    finally
-        //    {
-        //        handler.Dispose();
-        //        client.Dispose();
+                    var data = responseDataJsonString["data"].ToString();
+                    customerRatios = JsonConvert.DeserializeObject<List<RatingAndRatioViewModel>>(data);
+
+                }
+              
+
+                return customerRatios;
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new APIErrorException($"Error" + ex.Message);
+            }
+            finally
+            {
+                handler.Dispose();
+                client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = endPointUrl,
+                    LOGTYPEID = 3,
+                    REFERENCENUMBER = customerNumber.ToString(),
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = customerNumber,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
+            }
+        }
+
+        public async Task<List<CutomerRatingViewModel>> GetCorporateCustomerRatingByCustomerCode(string customerNumber)
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClientInstance;
+
+            HttpClient client = new HttpClient(handler);
+            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+            HttpResponseMessage response = null;
+            ResponseMessageViewModel res = null;
+            string responseMessage = "";
+            string endPointUrl = $"api/Credit360API/corporatePDByCustomerID/{customerNumber}";
+            try
+            {
+                handler.UseDefaultCredentials = true;
+
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(180);
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback +=
+                    (sender, cert, chain, sslPolicyErrors) => true;
+                requestDatetime = DateTime.Now;
+
+                    response = await client.GetAsync(endPointUrl);
+                    responseDateTime = DateTime.Now;
+                
+
+                responseMessage = await response.Content.ReadAsStringAsync();
+
+                List<CutomerRatingViewModel> customerRatios = new List<CutomerRatingViewModel>();
+                if (response.IsSuccessStatusCode)
+                {
+                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
+
+                    var responseData = await response.Content.ReadAsStringAsync();
+                    JObject responseDataJsonString = JObject.Parse(responseData);
+
+                    var data = responseDataJsonString["data"].ToString();
+                    customerRatios = JsonConvert.DeserializeObject<List<CutomerRatingViewModel>>(data);
+                }
 
 
+                return customerRatios;
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new APIErrorException($"Error" + ex.Message);
+            }
+            finally
+            {
+                handler.Dispose();
+                client.Dispose();
 
-        //        var logs = new TBL_CUSTOM_API_LOGS
-        //        {
-        //            APIURL = $"api/ExchangeRate/GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}",
-        //            LOGTYPEID = 3,
-        //            REFERENCENUMBER = fromCurrencyCode + "--" + toCurrencyCode + "--" + rateCode,
-        //            REQUESTDATETIME = requestDatetime,
-        //            REQUESTMESSAGE = fromCurrencyCode + "--" + toCurrencyCode + "--" + rateCode,
-        //            RESPONSEDATETIME = responseDateTime,
-        //            RESPONSEMESSAGE = responseMessage,
-        //        };
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = endPointUrl,
+                    LOGTYPEID = 3,
+                    REFERENCENUMBER = customerNumber.ToString(),
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = customerNumber,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
 
-        //        FinTrakBankingContext logContext = new FinTrakBankingContext();
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
 
-        //        logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
-        //        logContext.SaveChanges();
-        //    }
-        //}
+                logContext.SaveChanges();
+            }
+        }
 
     }
 

@@ -31,7 +31,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
-        IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral( int? applicationId, int currencyId, int companyId);
+        IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral( int? applicationDetailId, int currencyId, int companyId);
         CollateralViewModel GetCustomerCollateralInformation(int collateralCustomerId, int companyId);
         List<CollateralViewModel> GetCustomerPropertyCollaterals(int? customerId, int companyId);
 
@@ -81,6 +81,7 @@ namespace FintrakBanking.Interfaces.Credit
         #endregion End Of Listing Functions
 
         IEnumerable<LoanApplicationCollateralViewModel> MapApplicationCollateral(ApplicationCollateralMapping entity);
+        bool IsCollateralMapped(ApplicationCollateralMapping entity);
         IEnumerable<LoanApplicationCollateralViewModel> UnmapApplicationCollateral(ApplicationCollateralMapping entity);
 
         //  IEnumerable<CollateralLoanApplication> GetAllUnmappedCustomerCollateral(int customerId, int loanApplicationId, int companyId);

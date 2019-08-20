@@ -362,17 +362,17 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                     case (short)ProductClassEnum.BondAndGuarantees:
                         return links.BondsAndGuarantees;
 
-                    case (short)ProductClassEnum.CashBackedOnly:
+                    case (short)ProductClassEnum.CashCollaterized:
                         return links.CashBackedOnly;
 
-                    case (short)ProductClassEnum.FirstEdu:
-                        return links.FirstEdu;
+                    //case (short)ProductClassEnum.FirstEdu:
+                    //    return links.FirstEdu;
 
-                    case (short)ProductClassEnum.FirstTrader:
-                        return links.FirstTrader;
+                    //case (short)ProductClassEnum.FirstTrader:
+                    //    return links.FirstTrader;
 
-                    case (short)ProductClassEnum.ImportFinance:
-                        return links.ImportFinance;
+                    //case (short)ProductClassEnum.ImportFinance:
+                    //    return links.ImportFinance;
 
                     case (short)ProductClassEnum.InvoiceDiscountingFacility:
                         return links.InvoiceDiscountingFacility;

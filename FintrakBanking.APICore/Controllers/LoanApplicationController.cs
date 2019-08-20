@@ -413,6 +413,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("customer-ratios/{customerId}/{applicationId}")]
+        public HttpResponseMessage GetCustomerRatios(int customerId, int applicationId)
+        {
+            try
+            {
+                var status = repo.GetCustomerRatios(customerId, applicationId, false);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpGet]
         [Route("lms-customer-transactions/{customerId}/{applicationId}")]
         public HttpResponseMessage GetLmsCustomerTransactions(int customerId, int applicationId)
@@ -1700,6 +1716,23 @@ namespace FintrakBanking.APICore.Controllers
             var response = repo.LoanApplicationFlowChange(loanApplicationId);
             if (!response) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application-flow-change")]
+        public HttpResponseMessage LoanApplicationFlowChange()
+        {
+            try
+            {
+                var response = repo.GetLoanApplicationFlowChange();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch(SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+            
         }
 
         [HttpDelete]
