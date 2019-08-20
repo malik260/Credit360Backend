@@ -361,39 +361,73 @@ namespace FintrakBanking.Repositories.Setups.General
                 });
             }
 
-            foreach (var item in tempActivities)
+            if (existingActivities.Count > tempActivities.Count)
             {
-                if (existingActivities.Any(x => x.ACTIVITYID == item.ACTIVITYID)) continue;
-                newActivities.Add(new TBL_PROFILE_STAFF_ROLE_ADT_ACT()
+                foreach (var item in tempActivities)
                 {
-                    STAFFROLEID = item.STAFFROLEID,
-                    ACTIVITYID = item.ACTIVITYID,
-                    CANADD = false,
-                    CANEDIT = false,
-                    CANAPPROVE = false,
-                    CANDELETE = false,
-                    CANVIEW = false,
-                    CREATEDBY = item.CREATEDBY,
-                    DATETIMECREATED = item.DATETIMECREATED
-                });
-            }
+                    if (existingActivities.Any(x => x.ACTIVITYID == item.ACTIVITYID)) continue;
+                    newActivities.Add(new TBL_PROFILE_STAFF_ROLE_ADT_ACT()
+                    {
+                        STAFFROLEID = item.STAFFROLEID,
+                        ACTIVITYID = item.ACTIVITYID,
+                        CANADD = false,
+                        CANEDIT = false,
+                        CANAPPROVE = false,
+                        CANDELETE = false,
+                        CANVIEW = false,
+                        CREATEDBY = item.CREATEDBY,
+                        DATETIMECREATED = item.DATETIMECREATED
+                    });
+                }
 
-            foreach (var item in tempGroup)
+                foreach (var item in tempGroup)
+                {
+                    item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    item.ISCURRENT = false;
+                    item.DATEAPPROVED = DateTime.Now;
+                }
+
+                foreach (var item in tempActivities)
+                {
+                    item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                    item.ISCURRENT = false;
+                    item.DATETIMEUPDATED = DateTime.Now;
+                }
+
+                context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.AddRange(newActivities);
+                context.TBL_PROFILE_STAFF_ROLE_GROUP.AddRange(newGroups);
+            }
+            else
             {
-                item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                item.ISCURRENT = false;
-                item.DATEAPPROVED = DateTime.Now;
+                var temActivity = tempActivities.Select(o => o.ACTIVITYID);
+                var exitingActivity = existingActivities.Select(o => o.ACTIVITYID);
+
+                var diff = temActivity.Except(exitingActivity);
+
+                foreach (var item in diff)
+                {
+                    var activityToRemove = tempActivities.Where(o => o.ACTIVITYID == item).Select(o => o).FirstOrDefault();
+
+                    var activityToDelete = new TBL_TEMP_PROFILE_STAFF_ROLE_AA()
+                    {
+                        STAFFROLEID = activityToRemove.STAFFROLEID,
+                        ACTIVITYID = activityToRemove.ACTIVITYID,
+                        CANADD = false,
+                        CANEDIT = false,
+                        CANAPPROVE = false,
+                        CANDELETE = false,
+                        CANVIEW = false,
+                        CREATEDBY = activityToRemove.CREATEDBY,
+                        DATETIMECREATED = activityToRemove.DATETIMECREATED
+                    };
+                    try
+                    {
+                        context.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Remove(activityToDelete);
+                    }
+                    catch (Exception ex) { }
+                }
             }
 
-            foreach (var item in tempActivities)
-            {
-                item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                item.ISCURRENT = false;
-                item.DATETIMEUPDATED = DateTime.Now;
-            }
-
-            context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.AddRange(newActivities);
-            context.TBL_PROFILE_STAFF_ROLE_GROUP.AddRange(newGroups);
             auditTrail.AddAuditTrail(new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.UserApproved,

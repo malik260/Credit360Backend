@@ -2740,7 +2740,7 @@ namespace FintrakBanking.Repositories.Customer
                     customer.GENDER = entity.gender;
                     customer.LASTNAME = entity.lastName;
                     customer.MAIDENNAME = entity.maidenName;
-                    customer.MARITALSTATUS = Convert.ToInt16(entity.maritalStatus);
+                    customer.MARITALSTATUS = entity.maritalStatus == "F" ? 2 : entity.maritalStatus == "M" ? 1 :  Convert.ToInt16(entity.maritalStatus);  //Convert.ToInt16(entity.maritalStatus);
                     customer.TITLE = entity.title;
                     customer.MIDDLENAME = entity.middleName;
                     customer.MISCODE = entity.misCode;
@@ -2789,7 +2789,8 @@ namespace FintrakBanking.Repositories.Customer
                     customer.GENDER = entity.gender;
                     customer.LASTNAME = entity.lastName;
                     customer.MAIDENNAME = entity.maidenName;
-                    customer.MARITALSTATUS = Convert.ToInt16(entity.maritalStatus);
+                    //customer.MARITALSTATUS = Convert.ToInt16(entity.maritalStatus);
+                    customer.MARITALSTATUS = entity.maritalStatus == "F" ? 2 : entity.maritalStatus == "M" ? 1 : Convert.ToInt16(entity.maritalStatus);
                     customer.TITLE = entity.title;
                     customer.MIDDLENAME = entity.middleName;
                     customer.MISCODE = entity.misCode;

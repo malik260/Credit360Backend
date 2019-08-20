@@ -952,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
                                                     select r).ToList();
 
                         if (middleOfficeRequests.Count <= 0)
-                            throw new ConditionNotMetException($"Job Request to middle office for product {product.PRODUCTNAME} is required!");
+                            throw new ConditionNotMetException($"Job Request to relationship team for product {product.PRODUCTNAME} is required!");
                     }
 
                     var checklistTypes = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
@@ -1498,7 +1498,8 @@ namespace FintrakBanking.Repositories.Credit
                 index = i;
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 if (submission == null) continue;
-                if (ValidRacSubmission(definition, submission.value, operationId, targetId) == false && ctr == 0)
+                bool validation = ValidRacSubmission(definition, submission.value, operationId, targetId);
+                if (validation == false && ctr == 0)
                 {
                     if (ctr == 0)
                     {
@@ -1512,7 +1513,11 @@ namespace FintrakBanking.Repositories.Credit
 
                     ctr = ctr + 1;
                 }
-                else
+                else if (validation == true)
+                {
+                    continue;
+
+                }else
                 {
                     return applicationId;
                 } 
@@ -1640,7 +1645,7 @@ namespace FintrakBanking.Repositories.Credit
             if (integerValue != null) // selects
             {
                 var optionItem = context.TBL_RAC_OPTION_ITEM.FirstOrDefault(x => x.RACOPTIONITEMID == definition.CONTROLOPTIONID);
-                if (optionItem != null) return integerValue == optionItem.KEY;
+                if (optionItem != null) { if (integerValue == optionItem.KEY) return true; }
                 return false;
             }
             else if (decimalValue != null) // amount
@@ -1649,25 +1654,25 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     case 1:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue == definition.CONTROLAMOUNT;
-                        else return decimalValue == GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                        else return decimalValue == ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     case 2:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue != definition.CONTROLAMOUNT;
-                        else return decimalValue > GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                        else return decimalValue > ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     case 3:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue > definition.CONTROLAMOUNT;
-                        else return decimalValue >= GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                        else return decimalValue >= ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     case 4:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue >= definition.CONTROLAMOUNT;
-                        else return decimalValue < GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                        else return decimalValue < ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     case 5:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue < definition.CONTROLAMOUNT;
-                        else return decimalValue <= GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                        else return decimalValue <= ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     case 6:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue <= definition.CONTROLAMOUNT;
-                        else return decimalValue != GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                        else return decimalValue != ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     default:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue == definition.CONTROLAMOUNT;
-                        else return decimalValue == GetDefinedFunctionAmount(definition.DEFINEDFUNCTIONID); // TODO...
+                        else return decimalValue == ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                 }
             }
             else
@@ -1676,7 +1681,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private decimal? GetDefinedFunctionAmount(int DEFINEDFUNCTIONID) // TODO...
+        private decimal? ReturnNotImplementedException(int DEFINEDFUNCTIONID) // TODO...
         {
             throw new NotImplementedException();
         }
