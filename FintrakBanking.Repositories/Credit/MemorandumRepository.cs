@@ -97,6 +97,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string approvalsHolder = "@{{Approvals}}";
         private readonly string currentDateHolder = "@{{CurrentDate}}";
         private readonly string annualReviewDateHolder = "@{{AnnualReviewDate}}";
+        private readonly string securityAnalysisHolder = "@{{SecurityAnalysis}}";
         private readonly string allCustomerCollateralRemarksHolder = "@{{AllCustomerCollateralRemarks}}";
         private readonly string collateralCoverageHolder = "@{{CollateralCoverage}}";
         private readonly string allCustomerFacilitiesHolder = "@{{AllCustomerFacilities}}";
@@ -158,6 +159,7 @@ namespace FintrakBanking.Repositories.Credit
         private string approvals;
         private string currentDate;
         private string annualReviewDate;
+        private string securityAnalysis;
         private string allCustomerCollateralRemarks;
         private string collateralCoverage;
         private string allCustomerFacilities;
@@ -319,6 +321,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.approvals = GetApprovalsMarkupLOS();
                 this.currentDate = DateTime.Now.ToShortDateString();
                 this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
+                this.securityAnalysis = this.GetSecurityAnalysisMarkUP();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
@@ -371,6 +374,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.approvals = GetApprovalsMarkupLOS();
                 this.currentDate = DateTime.Now.ToShortDateString();
                 this.annualReviewDate = this.loanApplication.APPLICATIONDATE.AddYears(1).ToShortDateString();
+                this.securityAnalysis = this.GetSecurityAnalysisMarkUP();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
 
 
@@ -2201,9 +2205,8 @@ namespace FintrakBanking.Repositories.Credit
                         ";
             foreach (var f in this.customerFacilities)
             {
-                result += $@"
-                            <li>{f.TBL_PRODUCT.PRODUCTNAME + " " + f.TBL_CURRENCY.CURRENCYCODE + String.Format("{0:0,0.00}", f.APPROVEDAMOUNT)}</li>
-                        ";
+                result += $@"<li>{f.TBL_PRODUCT.PRODUCTNAME + " " + f.TBL_CURRENCY.CURRENCYCODE + 
+                                String.Format("{0:0,0.00}", f.APPROVEDAMOUNT)}</li>";
             }
             result += $@"
                         </ul>
@@ -2258,7 +2261,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result += $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=800 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Security / Support</b></th>
@@ -2274,7 +2277,9 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetCollateralCoverageMarkupLOS()
         {
-            var collaterals = this.collateralRepo.GetCustomerPropertyCollaterals(this.loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
+            var collaterals = new List<CollateralViewModel>();
+
+            var collateral = this.collateralRepo.GetCustomerPropertyCollaterals(this.loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
             var result = String.Empty;
             decimal totalMarketValue = 0;
             var custFacilities = this.customerFacilities.Sum(f => f.APPROVEDAMOUNT);
@@ -2284,11 +2289,11 @@ namespace FintrakBanking.Repositories.Credit
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>DESCRIPTION</b></th>
-                        <th><b>MARKET VALUE</b></th>
+                        <th><b>Original VALUE</b></th>
                         <th><b>FORCED SALE VALUE</b></th>
                     </tr>
                     ";
-            foreach (var c in collaterals)
+            foreach (var c in collateral)
             { ++n;
                 totalMarketValue += (decimal)c.openMarketValue;
                 result = result + $@"
@@ -2581,6 +2586,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(approvalsHolder, approvals);
             content = content.Replace(currentDateHolder, currentDate);
             content = content.Replace(annualReviewDateHolder, annualReviewDate);
+            content = content.Replace(securityAnalysisHolder, securityAnalysis);
             content = content.Replace(allCustomerCollateralRemarksHolder, allCustomerCollateralRemarks);
             content = content.Replace(collateralCoverageHolder, collateralCoverage);
             content = content.Replace(allCustomerFacilitiesHolder, allCustomerFacilities);
