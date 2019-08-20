@@ -473,6 +473,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
         public bool GoForGroupMappingApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.CustomerGroupMapping;
+            workFlow.StatusId = entity.approvalStatusIdUI == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
 
             entity.externalInitialization = false;
 
@@ -1238,10 +1239,15 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     join g in context.TBL_CUSTOMER_GROUP on c.CUSTOMERGROUPID equals g.CUSTOMERGROUPID
                     join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
                     join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPMAPPINGID equals atrail.TARGETID
-                    where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
-                          && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupMapping && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                    where atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Pending 
+                    && c.ISCURRENT == true
+                    && c.DELETED == false
+                    && atrail.OPERATIONID == (int) OperationsEnum.CustomerGroupMapping 
+                    && ids.Contains((int) atrail.TOAPPROVALLEVELID)
+                    orderby c.CUSTOMERGROUPMAPPINGID descending
                     select new CustomerGroupMappingViewModel()
                     {
+                        approvalStatusId = c.APPROVALSTATUSID,
                         companyId = c.COMPANYID,
                         companyName = coy.NAME,
                         customerGroupId = c.CUSTOMERGROUPID,
@@ -1254,6 +1260,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                         relationshipTypeId = c.RELATIONSHIPTYPEID,
                         relationshipTypeName = c.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
                         customerName = c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.LASTNAME,
+                        operationId = (int) OperationsEnum.CustomerGroupMapping
                     }).ToList();
             return data;
         }

@@ -16,6 +16,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Approval;
 using FintrakBanking.ViewModels.Media;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -181,8 +182,8 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                var response = repo.SubmitApproval(model);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+                WorkflowResponse response = repo.SubmitApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
             }
             catch (SecureException ex)
             {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Media;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.Interfaces.Media
 {
@@ -27,7 +28,8 @@ namespace FintrakBanking.Interfaces.Media
 
         bool GoForApproval(OriginalDocumentApprovalViewModel model);
 
-       bool SubmitApproval(OriginalDocumentApprovalViewModel entity);
+        //bool SubmitApproval(OriginalDocumentApprovalViewModel entity);
+        WorkflowResponse SubmitApproval(OriginalDocumentApprovalViewModel entity);
 
         IEnumerable<OriginalDocumentApprovalViewModel> SearchForApprovedOriginalDocument(string searchString);
 
