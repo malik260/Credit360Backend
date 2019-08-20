@@ -1670,7 +1670,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return collaterals.OrderByDescending(x => x.collateralId);
         }
-        public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral( int? applicationId,int currencyId, int companyId)
+        public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral( int? applicationDetailId,int currencyId, int companyId)
         {
 
 
@@ -1688,7 +1688,7 @@ namespace FintrakBanking.Repositories.Credit
                                join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
                                join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
-                               where x.LOANAPPLICATIONID == applicationId
+                               where x.LOANAPPLICATIONDETAILID == applicationDetailId
 
                                select new CollateralCoverageViewModel
                                {
@@ -1696,7 +1696,7 @@ namespace FintrakBanking.Repositories.Credit
                                    collateralCode = c.COLLATERALCODE,
                                    collateralValue = c.COLLATERALVALUE,
                                    collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
-                                   facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o=>o.LOANAPPLICATIONID == applicationId).Select(o=>o.APPROVEDAMOUNT).Sum(),
+                                   facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o=>o.LOANAPPLICATIONDETAILID == applicationDetailId).Select(o=>o.APPROVEDAMOUNT).Sum(),
 
                                }).FirstOrDefault();
 
@@ -1743,6 +1743,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var cov = new CollateralCoverageViewModel
             {
+                collateralSummary = collaterals.collateralSummary,
+                loanApplicationDetailId = applicationDetailId,
                 collateralId = collaterals.collateralId,
                 collateralCode = collaterals.collateralCode,
                 collateralValue = collateralValue,
@@ -1750,8 +1752,8 @@ namespace FintrakBanking.Repositories.Credit
                 expectedCollateralCoverage = expectedCollateralCoverage,
                 availableCollateralValue = availableCollateralValue,
                 actualCollateralCoverage = actualCollateralCoverage,
-                ReferenceNumber = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
-                productName = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId).Select(x => x.TBL_PRODUCT.PRODUCTNAME).FirstOrDefault(),
+                ReferenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                productName = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationDetailId).Select(x => x.TBL_PRODUCT.PRODUCTNAME).FirstOrDefault(),
             };
 
             list.Add(cov);
