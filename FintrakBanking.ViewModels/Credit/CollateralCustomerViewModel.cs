@@ -377,7 +377,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int insuranceTypeId { get; set; }
         public int insuranceCompanyId { get; set; }
         public string prevoiusInsurance { get; set; }
-        public string requestNumber { get; set; }
+        public int requestNumber { get; set; }
         public int insuranceRequestId { get; set; }
         public string statusName { get; set; }
         public string requestReason { get; set; }
@@ -475,7 +475,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string phoneNumber { get; set; }
         public string email { get; set; }
         public int operationId { get; set; }
-        public string requestNumber { get; set; }
+        public int requestNumber { get; set; }
         public int insuranceRequestId { get; set; }
         public double haircut { get; set; }
         public string collateralReleaseStatusName { get; set; }

@@ -362,17 +362,17 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                     case (short)ProductClassEnum.BondAndGuarantees:
                         return links.BondsAndGuarantees;
 
-                    case (short)ProductClassEnum.CashBackedOnly:
+                    case (short)ProductClassEnum.CashCollaterized:
                         return links.CashBackedOnly;
 
-                    case (short)ProductClassEnum.FirstEdu:
-                        return links.FirstEdu;
+                    //case (short)ProductClassEnum.FirstEdu:
+                    //    return links.FirstEdu;
 
-                    case (short)ProductClassEnum.FirstTrader:
-                        return links.FirstTrader;
+                    //case (short)ProductClassEnum.FirstTrader:
+                    //    return links.FirstTrader;
 
-                    case (short)ProductClassEnum.ImportFinance:
-                        return links.ImportFinance;
+                    //case (short)ProductClassEnum.ImportFinance:
+                    //    return links.ImportFinance;
 
                     case (short)ProductClassEnum.InvoiceDiscountingFacility:
                         return links.InvoiceDiscountingFacility;
@@ -609,9 +609,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/OutPutTemplate.aspx?loanApplicationId=" + "14938";
-
-            // path = reportPath + "ReportViews/AuditTrailView.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&staffId=" + staffId + "&auditTypeId="+dateRange.auditTypeId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue ;
+             path = reportPath + "ReportViews/AuditTrailView.aspx?username=" + dateRange.username + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&staffId=" + staffId + "&auditTypeId="+dateRange.auditTypeId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue ;
             return path;
         }
         public string GetLoanInterestReceivableAndPayable(ReportSearchEntity searchEntity, int companyId, int staffId)

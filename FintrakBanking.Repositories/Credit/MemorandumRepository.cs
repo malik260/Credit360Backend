@@ -2202,7 +2202,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var f in this.customerFacilities)
             {
                 result += $@"
-                            <li>{f.TBL_PRODUCT.PRODUCTNAME + " " + f.TBL_CUSTOMER.CUSTOMERCODE + String.Format("{0:0,0.00}", f.APPROVEDAMOUNT)}</li>
+                            <li>{f.TBL_PRODUCT.PRODUCTNAME + " " + f.TBL_CURRENCY.CURRENCYCODE + String.Format("{0:0,0.00}", f.APPROVEDAMOUNT)}</li>
                         ";
             }
             result += $@"
@@ -2264,8 +2264,8 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Security / Support</b></th>
                     </tr>
                     <tr>
-                    <th>{GetAllCustomerFacilitiesMarkup()}</th>
-                    <th>{GetAllCustomerCollateralsMarkup()}</th>
+                    <td>{GetAllCustomerFacilitiesMarkup()}</td>
+                    <td>{GetAllCustomerCollateralsMarkup()}</td>
                     </tr>
                 </table>
             ";
@@ -2277,6 +2277,7 @@ namespace FintrakBanking.Repositories.Credit
             var collaterals = this.collateralRepo.GetCustomerPropertyCollaterals(this.loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
             var result = String.Empty;
             decimal totalMarketValue = 0;
+            var custFacilities = this.customerFacilities.Sum(f => f.APPROVEDAMOUNT);
             int n = 0;
             result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
@@ -2299,7 +2300,15 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                 ";
             }
-            result = result + $@"
+            string netCoverage = string.Empty;
+
+            if(this.customerFacilities?.Sum(f => f.APPROVEDAMOUNT) > 0)
+            {
+                netCoverage = String.Format("{0:0,0.00}", totalMarketValue / this.customerFacilities?.Sum(f => f.APPROVEDAMOUNT));
+            }
+            else { netCoverage = String.Format("{0:0,0.00}", totalMarketValue); }
+
+           result = result + $@"
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>TOTAL</b></td>
@@ -2309,13 +2318,13 @@ namespace FintrakBanking.Repositories.Credit
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>TOTAL FACILITY AMOUNT</b></td>
-                    <td>{String.Format("{0:0,0.00}", (this.customerFacilities.Sum(f => f.APPROVEDAMOUNT)))}</td>
+                    <td>{String.Format("{0:0,0.00}", (this.customerFacilities?.Sum(f => f.APPROVEDAMOUNT)))}</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>NET COVERAGE</b></td>
-                    <td>{String.Format("{0:0,0.00}", totalMarketValue / this.customerFacilities.Sum(f => f.APPROVEDAMOUNT))} %</td>
+                    <td >{netCoverage} %</td>
                     <td>&nbsp;</td>
                 </tr>
             ";
