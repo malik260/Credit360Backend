@@ -9,6 +9,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -34,7 +35,7 @@ namespace FintrakBanking.Repositories.Credit
             this.limitValidation = limitValidation;
         }
 
-        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, int staffId, bool isLms = false) // OBIE (Page 4)
+        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, int staffId, bool isLms = false) 
         {
             string duration = WebConfigurationManager.AppSettings["AccountStatisticsDurationInMonths"];
             int newDuration = 0;
@@ -146,6 +147,36 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
 
+        }
+
+        public void LoadCustomerRatios(int applicationId, List<int> customerIds, int staffId) 
+        {
+            var apiTransactions = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
+            var apiCustomerRatio = new List<RatingAndRatioViewModel>();
+            var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
+
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
+
+            foreach (var customer in customers)
+            {
+                if (customer.ISPROSPECT == false)
+                {
+                    apiCustomerRatio = integration.GetCustomerRatioByCustomerCode(customer.CUSTOMERCODE);
+                    foreach (var item in apiCustomerRatio)
+                    {
+                        context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
+                        {
+                            DESCRIPTION = item.indicatorname,
+                            VALUE = item.indicatorvalue,
+                            DATETIMECREATED = DateTime.Now,
+                            CREATEDBY = staffId,
+                            DELETED = false,
+                        });
+                    }
+                }
+            }
+
+            context.SaveChanges();
         }
 
         public void ValidateLoanApplicationLimits(

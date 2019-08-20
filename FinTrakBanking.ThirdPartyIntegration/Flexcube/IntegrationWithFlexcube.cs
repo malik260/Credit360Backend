@@ -21,6 +21,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using FintrakBanking.Common.Enum;
     using FintrakBanking.ViewModels.Admin;
     using FinTrakBanking.ThirdPartyIntegration.StaffInfo;
+    using FinTrakBanking.ThirdPartyIntegration.Basel;
 
     public class IntegrationWithFlexcube : IIntegrationWithFinacle
     {
@@ -29,6 +30,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         private OverDraft overDraft;
         private ForeignCurrencyAccount account;
         private CustomerDetails customer;
+        private BaselIntegration basel;
         private StaffDetails staff;
         private AccountDetail accountDetail;
         private ITwoFactorAuthIntegrationService twoFactorAuth;
@@ -723,6 +725,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return casa;
         }
 
+        public List<RatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode)
+        {
+            List<RatingAndRatioViewModel> customerRatio = new List<RatingAndRatioViewModel>();
+            Task.Run(async () => customerRatio = await basel.GetCustomerRatio(customerCode))
+                .GetAwaiter().GetResult();
+            return customerRatio;
+        }
         //public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths)
         //{
         //    List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();

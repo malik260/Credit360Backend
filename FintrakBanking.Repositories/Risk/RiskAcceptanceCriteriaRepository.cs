@@ -47,10 +47,7 @@ namespace FintrakBanking.Repositories.Risk
             if (model.searchBaseId == (short)RacAccessEnum.Product || model.searchBaseId == null)
             {
                 racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
-                                                          //&& (
-                                                          //      (x.SHOWATDRAWDOWN == model.isDrawdown && model.isDrawdown == true)
-                                                          //      || ((x.SHOWATDRAWDOWN == model.isDrawdown && ((model.isDrawdown == false) || (x.SHOWATDRAWDOWN == null))))
-                                                          //  )
+                                                          && x.SHOWATDRAWDOWN == model.isDrawdown 
                                                           && x.ISACTIVE == true && x.DELETED == false).ToList();
 
             }
@@ -66,12 +63,8 @@ namespace FintrakBanking.Repositories.Risk
                                                                 || (x.CURRENCYTYPE == null && x.CURRENCYID == model.currencyId)
                                                                 || (x.CURRENCYTYPE == null && x.CURRENCYID == null)
                                                                 )
-                                                            //&& x.CURRENCYID == model.currencyId 
                                                             && x.OPERATIONID == model.operationId
-                                                            //&& (
-                                                            //    (x.SHOWATDRAWDOWN == model.isDrawdown && model.isDrawdown == true) 
-                                                            //        || ( (x.SHOWATDRAWDOWN == model.isDrawdown && ((model.isDrawdown == false) || (x.SHOWATDRAWDOWN == null)) ) ) 
-                                                            //  )
+                                                            && x.SHOWATDRAWDOWN == model.isDrawdown
                                                             && x.ISACTIVE == true && x.DELETED == false).ToList();
             }
 
