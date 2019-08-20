@@ -1033,6 +1033,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal actualCollateralCoverage { get; set; }
         public string ReferenceNumber { get; set; }
         public string productName { get; set; }
+        public string collateralSummary { get; set; }
         public string collateralCode { get; set; }
     }
     public class CollateralUsageStatus

@@ -361,6 +361,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 });
             }
 
+
             foreach (var item in tempActivities)
             {
                 if (existingActivities.Any(x => x.ACTIVITYID == item.ACTIVITYID)) continue;
@@ -394,6 +395,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.AddRange(newActivities);
             context.TBL_PROFILE_STAFF_ROLE_GROUP.AddRange(newGroups);
+
             auditTrail.AddAuditTrail(new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.UserApproved,
