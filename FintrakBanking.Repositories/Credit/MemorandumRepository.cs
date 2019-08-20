@@ -2288,7 +2288,7 @@ namespace FintrakBanking.Repositories.Credit
                     collaterals.AddRange(collateral);
                 }
             }
-            if (collaterals.Count() < 0) return "";
+            if (collaterals.Count() < 1) return "";
             var result = String.Empty;
             decimal totalCollateralValue = collaterals.Sum(c => c.collateralValue);
             var collateralGroup = collaterals.GroupBy(c => c.loanApplicationDetailId);
