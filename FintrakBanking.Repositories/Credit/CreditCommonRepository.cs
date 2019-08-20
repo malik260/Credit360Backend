@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Credit
                     //Task.Run(async () => { apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
                     //Task.Run(async () => apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration)).GetAwaiter().GetResult();
                     //apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode(customer.CUSTOMERCODE);
-                    apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode("003068763");
+                    apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode("0689601167");
                     foreach (var account in apiCustomerAccounts) 
                     {
                         apiTransactions = integration.GetCustomerAccountTurnover(account.productAccountNumber, turnoverDuration);
@@ -108,9 +108,11 @@ namespace FintrakBanking.Repositories.Credit
                             });
                         }
                     }
+                    
 
                 }
             }
+            context.SaveChanges();
 
             foreach (var customer in customers)
             {
@@ -168,6 +170,38 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             DESCRIPTION = item.indicatorname,
                             VALUE = item.indicatorvalue,
+                            CUSTOMERID = item.customerId,
+                            DATETIMECREATED = DateTime.Now,
+                            CREATEDBY = staffId,
+                            DELETED = false,
+                        });
+                    }
+                }
+            }
+
+            context.SaveChanges();
+        }
+
+        public void GetCorporateCustomerRating(List<int> customerIds, int staffId)
+        {
+            var apiTransactions = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
+            var apiCustomerRatio = new List<RatingAndRatioViewModel>();
+            var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
+
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
+
+            foreach (var customer in customers)
+            {
+                if (customer.ISPROSPECT == false)
+                {
+                    apiCustomerRatio = integration.GetCustomerRatioByCustomerCode(customer.CUSTOMERCODE);
+                    foreach (var item in apiCustomerRatio)
+                    {
+                        context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
+                        {
+                            DESCRIPTION = item.indicatorname,
+                            VALUE = item.indicatorvalue,
+                            CUSTOMERID = item.customerId,
                             DATETIMECREATED = DateTime.Now,
                             CREATEDBY = staffId,
                             DELETED = false,

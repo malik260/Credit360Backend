@@ -18,6 +18,7 @@ using FintrakBanking.ViewModels.Report;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Extensions;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -1181,35 +1182,53 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [Route("loan-request/approval/{loanBookingRequestId}")]
         public HttpResponseMessage ApproveInitiatedLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
         {
-            model.applicationUrl = HttpContext.Current.Request.Path;
-            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-            model.createdBy = token.GetStaffId;
-            model.companyId = token.GetCompanyId;
-            model.BranchId = (short)token.GetBranchId;
-            model.staffId = token.GetStaffId;
+            //model.applicationUrl = HttpContext.Current.Request.Path;
+            //model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            //model.createdBy = token.GetStaffId;
+            //model.companyId = token.GetCompanyId;
+            //model.BranchId = (short)token.GetBranchId;
+            //model.staffId = token.GetStaffId;
 
-            var responseId = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
+            //var responseId = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
 
-            if (responseId == 1)
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.BranchId = (short) token.GetBranchId;
+                model.staffId = token.GetStaffId;
+
+                WorkflowResponse response = repo.GoForBookingRequestApproval(model, loanBookingRequestId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Operation successful, request has been routed to the next approving office" });
             }
-            else if (responseId == 0)
+            catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                                        new { success = true, message = "Loan request has been successfully approved" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
-            else if (responseId == 2)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                                        new { success = true, message = "Loan request was successfully disapproved" });
-            }
-            else
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
-            }
+
+            //if (responseId == 1)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK,
+            //        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            //}
+            //else if (responseId == 0)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK,
+            //                            new { success = true, message = "Loan request has been successfully approved" });
+            //}
+            //else if (responseId == 3)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK,
+            //                            new { success = true, message = "Loan request was successfully disapproved" });
+            //}
+            //else
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK,
+            //        new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
+            //}
         }
 
         [HttpPost]

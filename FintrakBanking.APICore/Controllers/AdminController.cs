@@ -68,7 +68,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (!users.Any())
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { success = false, message = "No record found" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = users.ToList() });
             }
@@ -130,7 +130,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
         
@@ -159,12 +159,12 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "User account Status Change has been disapproved successfully" });
 
                 else
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
             }
             catch (SecureException ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
 
@@ -187,7 +187,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
 
         }
@@ -211,7 +211,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
 
         }
@@ -232,7 +232,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
                     if (repo.isStaffExist(user.staffId))
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK,
+                        return Request.CreateResponse(HttpStatusCode.BadRequest,
                            new { suucess = false, message = "Selected staff is already a user." });
                     }
                     user.createdBy = token.GetStaffId;
@@ -262,7 +262,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
 
         }
@@ -401,7 +401,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException ex)
             {
                 // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK,
+                return Request.CreateResponse(HttpStatusCode.BadRequest,
                    new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
             }
 
@@ -1015,7 +1015,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, (new { success = false, message = $"Action Failed" }));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, (new { success = false, message = $"Action Failed" }));
             }
 
         }

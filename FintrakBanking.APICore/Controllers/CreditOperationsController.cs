@@ -747,6 +747,7 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-convenant/")]
@@ -865,6 +866,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        
         [HttpPost]
         [ClaimsAuthorization]
         [Route("add-loan-review")]

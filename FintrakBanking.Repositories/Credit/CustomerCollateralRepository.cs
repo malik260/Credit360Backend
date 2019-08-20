@@ -1708,6 +1708,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateral.collateralSubTypeId && o.CURRENCYID == currencyId).Select(o => o).FirstOrDefault();
 
+                if (data == null) continue;
+
                 coveragePercentage = data.COVERAGE;
                 decimal coverage = decimal.Divide(data.COVERAGE, 100);
                 collateralValue = collateral.collateralValue;
