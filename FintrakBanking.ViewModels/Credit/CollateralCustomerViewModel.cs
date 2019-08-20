@@ -382,6 +382,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string statusName { get; set; }
         public string requestReason { get; set; }
         public string requestComment { get; set; }
+        public bool isMapped { get; set; }
     }
 
     public class crossGarantee
@@ -1024,7 +1025,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public int customerId { get; set; }
         public decimal facilityAmount { get; set; }
-        public int? loanApplicationId { get; set; }
+        public int loanApplicationId { get; set; }
         public int? loanApplicationDetailId { get; set; }
         public decimal availableCollateralValue { get; set; }
         public decimal expectedCollateralCoverage { get; set; }
