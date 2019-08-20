@@ -1071,6 +1071,12 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                             staffId
                         );
+
+                    creditCommon.LoadCustomerRatios(
+                            applicationId,
+                            loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                            staffId
+                        );
                     //if (casa != null)
                     //{
                     //    creditCommon.LoadCustomerTurnover(

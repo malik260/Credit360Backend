@@ -94,6 +94,7 @@
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOMICILIATION.cs" />
     <Compile Include="Models\TBL_COLLATERAL_INDEMNITY.cs" />
+    <Compile Include="Models\TBL_CUSTOMER_RATIOS.cs" />
     <Compile Include="Models\TBL_INSURANCE_REQUEST.cs" />
     <Compile Include="Models\TBL_COLLATERAL_ISPO.cs" />
     <Compile Include="Models\TBL_COLLATERAL_PROPOSE.cs" />
