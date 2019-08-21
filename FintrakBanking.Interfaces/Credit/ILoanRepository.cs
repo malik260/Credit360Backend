@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
@@ -197,7 +198,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId);
 
-        int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        //int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        WorkflowResponse GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
         IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview(int staffId, int companyId);
         IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReviewAwaitingApproval(int staffId, int companyId);
