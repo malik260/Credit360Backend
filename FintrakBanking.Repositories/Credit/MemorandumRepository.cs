@@ -1020,7 +1020,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var x in exchangeRates)
             {
                 result = result + $@"
-                        {x.TBL_CURRENCY.CURRENCYCODE}: {x.EXCHANGERATE}   
+                        {x.TBL_CURRENCY1.CURRENCYCODE}: {x.EXCHANGERATE}   
                 ";
             }
             return result;

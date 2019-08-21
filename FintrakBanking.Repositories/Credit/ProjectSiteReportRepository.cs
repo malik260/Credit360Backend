@@ -245,7 +245,7 @@ namespace FintrakBanking.Repositories.credit
                 LOANAPPLICATIONID = model.loanApplicationId,
                 PROJECTLOCATION = model.projectLocation,
                 CURRENCYID = model.currencyId,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
             };
 
           var id =  context.TBL_PSR_PROJECT_SITE_REPORT.Add(entity);
@@ -268,15 +268,7 @@ namespace FintrakBanking.Repositories.credit
 
                 }
 
-                workflow.StaffId = model.createdBy;
-                workflow.CompanyId = model.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = id.PROJECTSITEREPORTID;
-                workflow.Comment = "Request for Project Site Report approval";
-                workflow.OperationId = (int)OperationsEnum.ProjectSiteReportApproval;
-                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                workflow.ExternalInitialization = true;
-                workflow.LogActivity();
+                context.SaveChanges();
             }
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
@@ -297,6 +289,25 @@ namespace FintrakBanking.Repositories.credit
             context.SaveChanges();
 
             return entity.PROJECTSITEREPORTID;
+        }
+
+        public bool ProjectSiteReportGoForApproval(ProjectSiteReportViewModel model)
+        {
+            var id = context.TBL_PSR_PROJECT_SITE_REPORT.Where(x=>x.PROJECTSITEREPORTID==model.projectSiteReportId).Select(x=>x).FirstOrDefault();
+
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = id.PROJECTSITEREPORTID;
+                workflow.Comment = "Request for Project Site Report approval";
+                workflow.OperationId = (int)OperationsEnum.ProjectSiteReportApproval;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+            id.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+
+            return context.SaveChanges() > 0;
         }
 
         public bool UpdateProjectSiteReport(ProjectSiteReportViewModel model, int id, UserInfo user)
@@ -567,7 +578,7 @@ namespace FintrakBanking.Repositories.credit
                 PSRREPORTTYPEID = model.psrReportTypeId
             };
 
-     var  a=       context.TBL_PSR_PERFORMANCE_EVALUATION.Add(entity);
+     context.TBL_PSR_PERFORMANCE_EVALUATION.Add(entity);
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -583,7 +594,6 @@ namespace FintrakBanking.Repositories.credit
                 SYSTEMDATETIME = DateTime.Now
             });
             // Audit Section end ------------------------
-            context.SaveChanges();
             return context.SaveChanges() != 0;
         }
 
