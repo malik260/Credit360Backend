@@ -413,6 +413,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("customer-ratios/{customerId}/{applicationId}")]
+        public HttpResponseMessage GetCustomerRatios(int customerId, int applicationId)
+        {
+            try
+            {
+                var status = repo.GetCustomerRatios(customerId, applicationId, false);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpGet]
         [Route("lms-customer-transactions/{customerId}/{applicationId}")]
         public HttpResponseMessage GetLmsCustomerTransactions(int customerId, int applicationId)

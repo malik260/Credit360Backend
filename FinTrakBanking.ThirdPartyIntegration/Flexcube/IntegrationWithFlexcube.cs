@@ -731,7 +731,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
             Task.Run(async () => customerRatio = await basel.GetCustomerRatio(customerCode))
                 .GetAwaiter().GetResult();
             return customerRatio;
+        } // GetCorporateProbabilityDefaultByCustomerId
+
+        public List<CutomerRatingViewModel> GetCorporateCustomerRatingByCustomerCode(string customerCode)
+        {
+            List<CutomerRatingViewModel> customerRating = new List<CutomerRatingViewModel>();
+            Task.Run(async () => customerRating = await basel.GetCorporateCustomerRatingByCustomerCode(customerCode))
+                .GetAwaiter().GetResult();
+            return customerRating;
         }
+
         //public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths)
         //{
         //    List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
