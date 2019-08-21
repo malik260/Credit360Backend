@@ -899,7 +899,14 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         public List<RatingAndRatioViewModel> GetCustomerRatios(int customerId, int applicationId, bool isLms = false)
-        {
+        { 
+
+            var aa = context.TBL_CUSTOMER_RATIOS
+                .Select(o=> new RatingAndRatioViewModel {
+                    description = o.DESCRIPTION,
+                    value = o.VALUE,
+                }).ToList();
+
             var fields = (from a in context.TBL_CUSTOMER_RATIOS
                          where a.CUSTOMERID == customerId && a.DELETED == false
                          select new RatingAndRatioViewModel
