@@ -20,6 +20,7 @@ namespace FintrakBanking.Entities.Models
         public int RACITEMID { get; set; }
 
         public int? PRODUCTID { get; set; }
+        public int? PRODUCTCLASSID { get; set; }
 
         public int RACCATEGORYID { get; set; }
 
