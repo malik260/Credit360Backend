@@ -90,6 +90,21 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("project-site-schedule-for-approval")]
+        public HttpResponseMessage ProjectSiteReportGoForApproval([FromBody] ProjectSiteReportViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.ProjectSiteReportGoForApproval(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("project-site-report-approval")]
