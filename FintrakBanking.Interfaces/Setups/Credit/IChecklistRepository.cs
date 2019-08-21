@@ -70,6 +70,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklist(int loanApplicationId, bool isAvailment);
         IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklistStatus(int loanApplicationId, bool isAvailment);
         bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model);
+        bool ForwardChecklistForApproval(List<ConditionPrecedentViewModel> model);
         int GoForApproval(ApprovalViewModel entity);
         bool ExtendChecklistDeferralDate(ConditionPrecedentViewModel model);
         bool UpdateProvidedChecklist(ConditionPrecedentViewModel model);
