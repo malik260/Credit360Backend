@@ -12,6 +12,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -159,5 +160,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateLoanApplicationFlowChange(LoanApplicationFlowChangeViewModel model, int id, UserInfo user);
 
         bool DeleteLoanApplicationFlowChange(int id, UserInfo user);
+        List<RatingAndRatioViewModel> GetCustomerRatios(int customerId, int applicationId, bool isLms = false);
     }
 }
