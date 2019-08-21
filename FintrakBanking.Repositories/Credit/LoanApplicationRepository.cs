@@ -25,6 +25,7 @@ using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
 using System.Web.Configuration;
+using FintrakBanking.ViewModels.CASA;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -853,8 +854,11 @@ namespace FintrakBanking.Repositories.Credit
                              debit_Turnover = a.DEBITTURNOVER,
                              month = a.MONTH,
                              year = a.YEAR,
+                             productAccountName = context.TBL_CASA.Where(o=>o.CUSTOMERID==customerId).Select(o=>o.PRODUCTACCOUNTNAME).FirstOrDefault(),
+
                          }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
 
+            
             var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
                           where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.ISLMS == isLms
                           select new CustomerTransactionsViewModels
@@ -867,6 +871,7 @@ namespace FintrakBanking.Repositories.Credit
                               float_Charge = a.FLOATCHARGE,
                               month = a.MONTH,
                               year = a.YEAR,
+                              productAccountName = context.TBL_CASA.Where(o => o.CUSTOMERID == customerId).Select(o => o.PRODUCTACCOUNTNAME).FirstOrDefault(),
                           }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList(); ;
 
             first.Add(new CustomerTransactionsViewModels
@@ -889,6 +894,22 @@ namespace FintrakBanking.Repositories.Credit
 
             fields.firstTransaction = first;
             fields.secondTransaction = second;
+
+            return fields;
+        }
+
+        public RatingAndRatioViewModel GetCustomerRatios(int customerId, int applicationId, bool isLms = false)
+        {
+            var fields = new RatingAndRatioViewModel();
+
+            var first = (from a in context.TBL_CUSTOMER_RATIOS
+                         where a.CUSTOMERID == customerId && a.DELETED == false
+                         select new RatingAndRatioViewModel
+                         {
+                             description = a.DESCRIPTION,
+                             value = a.VALUE,
+
+                         }).ToList();
 
             return fields;
         }
