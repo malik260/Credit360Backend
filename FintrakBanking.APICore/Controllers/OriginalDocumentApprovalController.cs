@@ -86,7 +86,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("document-upload-list")]
         public HttpResponseMessage GetDocumentUploadList()
         {
-            var response = repo.GetDocumentUploadList();
+            var response = repo.GetDocumentUploadList(token.GetStaffId);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }

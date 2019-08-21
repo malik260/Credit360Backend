@@ -216,8 +216,11 @@ namespace FintrakBanking.Repositories.Media
             return entity;
         }
 
-        public List<OriginalDocumentApprovalViewModel> GetDocumentUploadList()
+        public List<OriginalDocumentApprovalViewModel> GetDocumentUploadList(int staffId)
         {
+            var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OriginalDocumentApproval).ToList();
+
+            var initiator = context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
 
             var model1 = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                         join cc in context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
@@ -225,19 +228,27 @@ namespace FintrakBanking.Repositories.Media
                         join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                         where oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
                         && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                        //&& ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new OriginalDocumentApprovalViewModel
                         {
                             originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
                             description = oda.DESCRIPTION,
+                            loanApplicationId = oda.LOANAPPLICATIONID,
+                            collateralType = context.TBL_COLLATERAL_TYPE.Where(a => a.COLLATERALTYPEID == cc.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
+                            collateralTypeId = cc.COLLATERALTYPEID,
                             customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
                             collateralCode = cc.COLLATERALCODE,
                             referenceNumber = oda.REFERENCENUMBER,
+                            applicationReferenceNumber = oda.APPLICATIONREFERNECENUMBER,
                             dateTimeCreated = oda.DATETIMECREATED,
                             collateralCustomerId = cc.COLLATERALCUSTOMERID,
                             customerId = c.CUSTOMERID,
+                            branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                             operationId = (int)OperationsEnum.OriginalDocumentApproval,
                             approvalStatusId = atrail.APPROVALSTATUSID,
                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
+                            relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == c.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                            atInitiator = staffId == context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID == oda.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
 
 
                         }).OrderByDescending(o => o.originalDocumentApprovalId).ToList();
