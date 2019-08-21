@@ -898,6 +898,22 @@ namespace FintrakBanking.Repositories.Credit
             return fields;
         }
 
+        public RatingAndRatioViewModel GetCustomerRatios(int customerId, int applicationId, bool isLms = false)
+        {
+            var fields = new RatingAndRatioViewModel();
+
+            var first = (from a in context.TBL_CUSTOMER_RATIOS
+                         where a.CUSTOMERID == customerId && a.DELETED == false
+                         select new RatingAndRatioViewModel
+                         {
+                             description = a.DESCRIPTION,
+                             value = a.VALUE,
+
+                         }).ToList();
+
+            return fields;
+        }
+
         // PLEASE RENAME THIS METHOD NAME TO BE MORE DESCRIPTIVE like LoanApplicationChecklistValidation
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {

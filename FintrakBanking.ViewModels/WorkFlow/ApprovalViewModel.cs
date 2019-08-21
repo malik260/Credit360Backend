@@ -33,7 +33,10 @@ namespace FintrakBanking.ViewModels.WorkFlow
         }
         public bool deferredExecution { get; set; }
         public string rollOverType { get; set; }
-        public string collateralCode { get; set; }
+
+
+        public int approvalStatusIdUI { get; set; }
+        
 
     }
     public class ApprovalResponse
