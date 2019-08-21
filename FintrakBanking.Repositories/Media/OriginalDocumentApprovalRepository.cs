@@ -426,7 +426,7 @@ namespace FintrakBanking.Repositories.Media
 
         }
 
-        public bool SubmitApproval(OriginalDocumentApprovalViewModel model)
+        public WorkflowResponse SubmitApproval(OriginalDocumentApprovalViewModel model)
         {
             bool responce = false;
 
@@ -454,7 +454,7 @@ namespace FintrakBanking.Repositories.Media
 
                 responce = context.SaveChanges() > 0;
 
-                return responce;
+                return workflow.Response;
             }
             catch (Exception ex)
             {

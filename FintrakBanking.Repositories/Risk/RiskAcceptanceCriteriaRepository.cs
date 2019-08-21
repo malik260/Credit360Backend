@@ -563,6 +563,8 @@ namespace FintrakBanking.Repositories.Risk
                     currencyId = x.CURRENCYID,
                     currencyType = x.CURRENCYTYPE,
                     racCategoryTypeId = x.RACCATEGORYTYPEID,
+                    productClassId = x.PRODUCTCLASSID,
+                    productClassName = ""
                 }).OrderBy(o => o.racItemId)
                 .ToList();
         }
@@ -594,7 +596,9 @@ namespace FintrakBanking.Repositories.Risk
                 requireComment = entity.REQUIRECOMMENT,
                 currencyId = entity.CURRENCYID,
                 currencyType = entity.CURRENCYTYPE,
-                isRacTierControlKey=entity.ISRACTIERCONTROLKEY
+                isRacTierControlKey=entity.ISRACTIERCONTROLKEY,
+                productClassId = entity.PRODUCTCLASSID,
+                productName = ""
             };
         }
 
@@ -603,6 +607,7 @@ namespace FintrakBanking.Repositories.Risk
             var entity = new TBL_RAC_DEFINITION
             {
                 PRODUCTID = model.productId,
+                PRODUCTCLASSID = model.productClassId,
                 RACCATEGORYID = model.racCategoryId,
                 ISACTIVE = true,
                 ISREQUIRED = model.isRequired,

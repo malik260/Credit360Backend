@@ -72,12 +72,14 @@ namespace FintrakBanking.ViewModels.Risk
 
     public class RacDefinitionViewModel : GeneralEntity
     {
+        public string productClassName { get; set; }
+
         public short? currencyId { get; set; }
 
         public int racDefinitionId { get; set; }
 
         public int? productId { get; set; }
-
+        public int? productClassId { get; set; }
         public int racCategoryId { get; set; }
 
         public bool isActive { get; set; }

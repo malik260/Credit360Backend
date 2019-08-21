@@ -44,6 +44,10 @@ namespace FintrakBanking.ViewModels.Customer
         public bool isBlackList { get; set; }
         public bool isOnWatchList { get; set; }
         public bool isCamsol { get; set; }
+
+        public int approvalStatusId { get; set; }
+        public int operationId { get; set; }
+        
     }
 
 

@@ -1020,7 +1020,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var x in exchangeRates)
             {
                 result = result + $@"
-                        {x.TBL_CURRENCY.CURRENCYCODE}: {x.EXCHANGERATE}   
+                        {x.TBL_CURRENCY1.CURRENCYCODE}: {x.EXCHANGERATE}   
                 ";
             }
             return result;
@@ -2288,7 +2288,7 @@ namespace FintrakBanking.Repositories.Credit
                     collaterals.AddRange(collateral);
                 }
             }
-            if (collaterals.Count() < 0) return "";
+            if (collaterals.Count() < 1) return "";
             var result = String.Empty;
             decimal totalCollateralValue = collaterals.Sum(c => c.collateralValue);
             var collateralGroup = collaterals.GroupBy(c => c.loanApplicationDetailId);
