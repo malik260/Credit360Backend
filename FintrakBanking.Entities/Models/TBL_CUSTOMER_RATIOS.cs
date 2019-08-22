@@ -23,7 +23,7 @@
         public int CUSTOMERID { get; set; }
         public int CREATEDBY { get; set; }
 
-        public int? LASTUPDATEDBY { get; set; }
+        // public int? LASTUPDATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
 

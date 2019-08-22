@@ -90,6 +90,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 {
                     psrRecommendationId = x.PSRRECOMMENDATIONID,
                     projectSiteReportId = x.PROJECTSITEREPORTID,
+                    projectRiskRating = x.PROJECTRISKRATING,
+                    customerRating = x.CUSTOMERRATING,
                     comment = x.COMMENTS,
                 })
                 .ToList();
