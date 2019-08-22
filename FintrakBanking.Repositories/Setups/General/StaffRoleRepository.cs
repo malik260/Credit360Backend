@@ -18,14 +18,14 @@ using System.Linq;
 namespace FintrakBanking.Repositories.Setups.General
 {
 
-    public class StaffRoleRepository : IStaffRoleRepository
+    public class StaffRoleRepository1 : IStaffRoleRepository1
     {
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
-        public StaffRoleRepository(FinTrakBankingContext _context, IAuditTrailRepository _auditTrail,
+        public StaffRoleRepository1(FinTrakBankingContext _context, IAuditTrailRepository _auditTrail,
              IGeneralSetupRepository _genSetup, IWorkflow _workFlow,
             IApprovalLevelStaffRepository _level)
         {

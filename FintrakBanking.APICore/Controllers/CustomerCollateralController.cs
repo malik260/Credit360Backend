@@ -1906,11 +1906,11 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
             }
             catch (Exception ex)
             {   
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
             }
         }
 
