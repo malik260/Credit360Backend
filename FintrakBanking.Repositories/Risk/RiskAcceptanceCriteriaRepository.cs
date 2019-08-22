@@ -44,6 +44,29 @@ namespace FintrakBanking.Repositories.Risk
             List<TBL_RAC_DEFINITION> racDefinition = new List<TBL_RAC_DEFINITION>();
 
             List<int> categoryIds = new List<int>();
+            if(model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS")
+            {
+                racDefinition = context.TBL_RAC_DEFINITION.Where(x => ((x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER =="PRODUCT") 
+                                                                    || (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"))
+                                                                    && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                    && x.ISACTIVE == true && x.DELETED == false).ToList();
+            }
+            else if (model.searchBasePlaceholder == "CREDITCARD")
+            {
+                var localCurrencyId = context.TBL_COMPANY.FirstOrDefault().CURRENCYID;
+                racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.CURRENCYTYPE == model.currencyType
+                                                            && (
+                                                                (x.CURRENCYTYPE == "LCY" && model.currencyId == localCurrencyId && model.currencyId != null)
+                                                                || (x.CURRENCYTYPE == "FCY" && model.currencyId != localCurrencyId && model.currencyId != null)
+                                                                || (x.CURRENCYTYPE == "CUSTOM" && x.CURRENCYID == model.currencyId && model.currencyId != null)
+                                                                || (x.CURRENCYTYPE == null && x.CURRENCYID == model.currencyId)
+                                                                || (x.CURRENCYTYPE == null && x.CURRENCYID == null)
+                                                                )
+                                                            && x.OPERATIONID == model.operationId
+                                                            && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                            && x.ISACTIVE == true && x.DELETED == false).ToList();
+            }
+            else
             if (model.searchBaseId == (short)RacAccessEnum.Product || model.searchBaseId == null)
             {
                 racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
@@ -51,10 +74,10 @@ namespace FintrakBanking.Repositories.Risk
                                                           && x.ISACTIVE == true && x.DELETED == false).ToList();
 
             }
+            else
             if (model.searchBaseId == (short)RacAccessEnum.CreditCard)
             {
                 var localCurrencyId = context.TBL_COMPANY.FirstOrDefault().CURRENCYID;
-                // && model.currencyId == localCurrencyId
                 racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.CURRENCYTYPE == model.currencyType
                                                             && (
                                                                 (x.CURRENCYTYPE =="LCY" && model.currencyId == localCurrencyId && model.currencyId != null) 
@@ -630,7 +653,8 @@ namespace FintrakBanking.Repositories.Risk
                 SHOWATDRAWDOWN = model.showAtDrawDown,
                 CURRENCYTYPE = model.currencyType,
                 CURRENCYID = model.currencyId,
-                ISRACTIERCONTROLKEY = model.isRacTierControlKey
+                ISRACTIERCONTROLKEY = model.isRacTierControlKey,
+                SEARCHPLACEHOLDER = model.searchBasePlaceholder
             };
 
             context.TBL_RAC_DEFINITION.Add(entity);
@@ -678,6 +702,8 @@ namespace FintrakBanking.Repositories.Risk
             entity.RACCATEGORYTYPEID = model.racCategoryTypeId;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
+            entity.PRODUCTCLASSID = model.productClassId;
+            entity.SEARCHPLACEHOLDER = model.searchBasePlaceholder;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------

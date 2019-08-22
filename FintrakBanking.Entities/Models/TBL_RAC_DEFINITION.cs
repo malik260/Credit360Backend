@@ -62,6 +62,7 @@ namespace FintrakBanking.Entities.Models
         public short? CURRENCYID { get; set; }
         public string CURRENCYTYPE { get; set; }
         public bool? ISRACTIERCONTROLKEY { get; set; }
+        public string SEARCHPLACEHOLDER { get; set; }
 
         public virtual ICollection<TBL_RAC_DETAIL> TBL_RAC_DETAIL { get; set; }
 
