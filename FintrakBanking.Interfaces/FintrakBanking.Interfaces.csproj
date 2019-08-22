@@ -118,6 +118,7 @@
     <Compile Include="Setups\Credit\IRepaymentTermsRepository.cs" />
     <Compile Include="Setups\Finance\ICustomChartOfAccountRepository.cs" />
     <Compile Include="Setups\General\IStaffMIS.cs" />
+    <Compile Include="Setups\General\IStaffRoleRepository.cs" />
     <Compile Include="ThridPartyIntegration\IFinacleIntegrationRepository.cs" />
     <Compile Include="Validation\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IIntegrationWithFinacle.cs" />
@@ -199,7 +200,7 @@
     <Compile Include="Setups\General\IProductFeeRepository.cs" />
     <Compile Include="Setups\General\IProductRepository.cs" />
     <Compile Include="Setups\General\IPublicHolidayRepository.cs" />
-    <Compile Include="Setups\General\IStaffRoleRepository.cs" />
+    <Compile Include="Setups\General\IStaffRoleRepository1.cs" />
     <Compile Include="Setups\General\IStaffRepository.cs" />
     <Compile Include="Setups\Credit\ICustomerProductFeeRepository.cs" />
     <Compile Include="Setups\Risk\IRiskSetupRepository.cs" />
