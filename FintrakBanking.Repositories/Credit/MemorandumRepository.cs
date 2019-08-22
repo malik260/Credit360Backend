@@ -2278,23 +2278,15 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetCollateralCoverageMarkupLOS()
         {
-            var collaterals = new List<CollateralCoverageViewModel>();
             var custFacilitiesAmount = new decimal();
-            foreach (var f in customerFacilities)
-            {
-                var collateral = collateralRepo.GetProposedCustomerCollateral(f.LOANAPPLICATIONDETAILID, f.CURRENCYID, f.TBL_LOAN_APPLICATION.COMPANYID);
-                if (collateral.Count() > 0)
-                {
-                    collaterals.AddRange(collateral);
-                }
-            }
-            if (collaterals.Count() < 1) return "";
+            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId);
             var result = String.Empty;
+            if (collaterals.Count() < 1) return result;
             decimal totalCollateralValue = collaterals.Sum(c => c.collateralValue);
             var collateralGroup = collaterals.GroupBy(c => c.loanApplicationDetailId);
             foreach (var g in collateralGroup)
             {
-                custFacilitiesAmount += context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == g.Key).APPROVEDAMOUNT;
+                custFacilitiesAmount += context.TBL_LOAN_APPLICATION_DETAIL.Find(g.Key).APPROVEDAMOUNT;
             }
             int n = 0;
             result = result + $@"
@@ -2321,19 +2313,16 @@ namespace FintrakBanking.Repositories.Credit
                     <td>&nbsp;</td>
                     <td><b>TOTAL</b></td>
                     <td>{String.Format("{0:0,0.00}", totalCollateralValue)}</td>
-                    <td>&nbsp;</td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>TOTAL FACILITY AMOUNT</b></td>
                     <td>{String.Format("{0:0,0.00}", (custFacilitiesAmount))}</td>
-                    <td>&nbsp;</td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>NET COVERAGE</b></td>
                     <td>{String.Format("{0:0,0.00}", (totalCollateralValue/custFacilitiesAmount))} %</td>
-                    <td>&nbsp;</td>
                 </tr>
             ";
 
