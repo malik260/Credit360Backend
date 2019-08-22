@@ -8,6 +8,8 @@ namespace FintrakBanking.ViewModels.Risk
 {
     public class RiskAcceptanceCriteriaViewModel : GeneralEntity
     {
+        public int customerId;
+
         public List<RacComment> comments { get; set; }
         public List<ProductRacCategory> categories { get; set; }
         public int count { get; set; }

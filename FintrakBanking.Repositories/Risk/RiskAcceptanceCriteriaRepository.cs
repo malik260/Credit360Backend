@@ -44,17 +44,35 @@ namespace FintrakBanking.Repositories.Risk
             List<TBL_RAC_DEFINITION> racDefinition = new List<TBL_RAC_DEFINITION>();
 
             List<int> categoryIds = new List<int>();
+
+            bool isSelfemployed = false;
+            var employmentTypeRecord = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(x => x.CUSTOMERID == model.customerId && x.ACTIVE == true).FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerId ).FirstOrDefault();
+
+            if (employmentTypeRecord != null)
+            {
+                isSelfemployed = employmentTypeRecord.EMPLOYERNAME.ToUpper() == "SELF EMPLOYED";
+            }
+
             if(model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS")
             {
                 var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
+                                                                   && ((x.EMPLOYMENTTYPE == null)
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true)
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false))
+                                                                  //&& x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
                                                                   && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                   && x.ISACTIVE == true && x.DELETED == false).ToList();
 
                 var racDefinitionOnProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
+                                                                    && ((x.EMPLOYMENTTYPE == null) 
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true) 
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false) )
+                                                                    //&& x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
                                                                     && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                     && x.ISACTIVE == true && x.DELETED == false).ToList();
 
-                racDefinition = racDefinitionOnProduct != null ? racDefinitionOnProduct : racDefinitionOnProductClass;
+                racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
 
             }
             else if (model.searchBasePlaceholder == "CREDITCARD")
