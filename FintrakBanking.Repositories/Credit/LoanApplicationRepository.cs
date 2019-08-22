@@ -898,6 +898,71 @@ namespace FintrakBanking.Repositories.Credit
             return fields;
         }
 
+        public CustomerApplicationTransactionsViewModels GetCustomerTransactionsByFilterLogic(int customerId, int applicationId,int froma,int to, int fYear,int tYear, bool isLms = false)
+        {
+            var fields = new CustomerApplicationTransactionsViewModels();
+
+            var first = (from a in context.TBL_LOAN_APPLICATION_TRANS
+                         where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.MONTH >= froma && a.MONTH <= to && a.YEAR >= fYear && a.YEAR <= tYear && a.ISLMS == isLms
+                         select new CustomerTransactionsViewModels
+                         {
+                             cust_Id = a.CUSTOMERTRANSACTIONID.ToString(),
+                             period = a.PERIOD,
+                             productName = a.PRODUCTNAME,
+                             accountNumber = a.ACCOUNTNUMBER,
+                             max_Credit_Balance = a.MAXIMUMCREDITBALANCE,
+                             max_Debit_Balance = a.MAXIMUMDEBITBALANCE,
+                             min_Credit_Balance = a.MINIMUMCREDITBALANCE,
+                             min_Debit_Balance = a.MINIMUMDEBITBALANCE,
+                             credit_Turnover = a.CREDITTURNOVER,
+                             debit_Turnover = a.DEBITTURNOVER,
+                             month = a.MONTH,
+                             year = a.YEAR,
+                             productAccountName = context.TBL_CASA.Where(o => o.CUSTOMERID == customerId).Select(o => o.PRODUCTACCOUNTNAME).FirstOrDefault(),
+
+                         }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList();
+
+
+            var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
+                          where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.MONTH >= froma && a.MONTH <= to && a.YEAR >= fYear && a.YEAR <= tYear && a.ISLMS == isLms
+                          select new CustomerTransactionsViewModels
+                          {
+                              cust_Id = a.CUSTOMERTRANSACTIONID2.ToString(),
+                              period = a.PERIOD,
+                              productName = a.PRODUCTNAME,
+                              accountNumber = a.ACCOUNTNUMBER,
+                              interest = a.INTEREST,
+                              float_Charge = a.FLOATCHARGE,
+                              month = a.MONTH,
+                              year = a.YEAR,
+                              productAccountName = context.TBL_CASA.Where(o => o.CUSTOMERID == customerId).Select(o => o.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                          }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList(); ;
+
+            first.Add(new CustomerTransactionsViewModels
+            {
+                cust_Id = "TOTAL",
+                max_Credit_Balance = first.Sum(t => t.max_Credit_Balance),
+                max_Debit_Balance = first.Sum(t => t.max_Debit_Balance),
+                min_Credit_Balance = first.Sum(t => t.min_Credit_Balance),
+                min_Debit_Balance = first.Sum(t => t.min_Debit_Balance),
+                credit_Turnover = first.Sum(t => t.credit_Turnover),
+                debit_Turnover = first.Sum(t => t.debit_Turnover),
+            });
+            second.Add(new CustomerTransactionsViewModels
+            {
+                cust_Id = "TOTAL",
+                interest = second.Sum(t => t.interest),
+                float_Charge = second.Sum(t => t.float_Charge),
+            });
+
+
+            fields.firstTransaction = first;
+            fields.secondTransaction = second;
+
+            return fields;
+        }
+
+
         public List<RatingAndRatioViewModel> GetCustomerRatios(int customerId, int applicationId, bool isLms = false)
         { 
 

@@ -146,6 +146,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_OVERDRAFTTOPUP> TBL_CUSTOM_OVERDRAFTTOPUP { get; set; }
         public virtual DbSet<TBL_CUSTOM_TEMPORARYOVERDRAFT> TBL_CUSTOM_TEMPORARYOVERDRAFT { get; set; }
         public virtual DbSet<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
+
+        public virtual DbSet<TBL_LOAN_BULK_DISBURSE_PACKAGE> TBL_LOAN_BULK_DISBURSE_PACKAGE { get; set; }
+        public virtual DbSet<TBL_LOAN_BULK_DISBURSE_SCHEME> TBL_LOAN_BULK_DISBURSE_SCHEME { get; set; }
+        public virtual DbSet<TBL_BULK_DISBURS_SCH_FEES> TBL_BULK_DISBURS_SCH_FEES { get; set; }
+
         public virtual DbSet<TBL_CUSTOMER_RATIOS> TBL_CUSTOMER_RATIOS { get; set; }
         
         public virtual DbSet<TBL_CUSTOMER_ACCOUNT_KYC_ITEM> TBL_CUSTOMER_ACCOUNT_KYC_ITEM { get; set; }
