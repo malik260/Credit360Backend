@@ -46,10 +46,16 @@ namespace FintrakBanking.Repositories.Risk
             List<int> categoryIds = new List<int>();
             if(model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS")
             {
-                racDefinition = context.TBL_RAC_DEFINITION.Where(x => ((x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER =="PRODUCT") 
-                                                                    || (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"))
+                var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
+                                                                  && x.SHOWATDRAWDOWN == model.isDrawdown
+                                                                  && x.ISACTIVE == true && x.DELETED == false).ToList();
+
+                var racDefinitionOnProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
                                                                     && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                     && x.ISACTIVE == true && x.DELETED == false).ToList();
+
+                racDefinition = racDefinitionOnProduct != null ? racDefinitionOnProduct : racDefinitionOnProductClass;
+
             }
             else if (model.searchBasePlaceholder == "CREDITCARD")
             {
@@ -66,30 +72,30 @@ namespace FintrakBanking.Repositories.Risk
                                                             && x.SHOWATDRAWDOWN == model.isDrawdown
                                                             && x.ISACTIVE == true && x.DELETED == false).ToList();
             }
-            else
-            if (model.searchBaseId == (short)RacAccessEnum.Product || model.searchBaseId == null)
-            {
-                racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
-                                                          && x.SHOWATDRAWDOWN == model.isDrawdown 
-                                                          && x.ISACTIVE == true && x.DELETED == false).ToList();
+            //else
+            //if (model.searchBaseId == (short)RacAccessEnum.Product || model.searchBaseId == null)
+            //{
+            //    racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
+            //                                              && x.SHOWATDRAWDOWN == model.isDrawdown 
+            //                                              && x.ISACTIVE == true && x.DELETED == false).ToList();
 
-            }
-            else
-            if (model.searchBaseId == (short)RacAccessEnum.CreditCard)
-            {
-                var localCurrencyId = context.TBL_COMPANY.FirstOrDefault().CURRENCYID;
-                racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.CURRENCYTYPE == model.currencyType
-                                                            && (
-                                                                (x.CURRENCYTYPE =="LCY" && model.currencyId == localCurrencyId && model.currencyId != null) 
-                                                                || (x.CURRENCYTYPE == "FCY" && model.currencyId != localCurrencyId && model.currencyId != null) 
-                                                                || (x.CURRENCYTYPE == "CUSTOM" && x.CURRENCYID == model.currencyId && model.currencyId != null) 
-                                                                || (x.CURRENCYTYPE == null && x.CURRENCYID == model.currencyId)
-                                                                || (x.CURRENCYTYPE == null && x.CURRENCYID == null)
-                                                                )
-                                                            && x.OPERATIONID == model.operationId
-                                                            && x.SHOWATDRAWDOWN == model.isDrawdown
-                                                            && x.ISACTIVE == true && x.DELETED == false).ToList();
-            }
+            //}
+            //else
+            //if (model.searchBaseId == (short)RacAccessEnum.CreditCard)
+            //{
+            //    var localCurrencyId = context.TBL_COMPANY.FirstOrDefault().CURRENCYID;
+            //    racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.CURRENCYTYPE == model.currencyType
+            //                                                && (
+            //                                                    (x.CURRENCYTYPE =="LCY" && model.currencyId == localCurrencyId && model.currencyId != null) 
+            //                                                    || (x.CURRENCYTYPE == "FCY" && model.currencyId != localCurrencyId && model.currencyId != null) 
+            //                                                    || (x.CURRENCYTYPE == "CUSTOM" && x.CURRENCYID == model.currencyId && model.currencyId != null) 
+            //                                                    || (x.CURRENCYTYPE == null && x.CURRENCYID == model.currencyId)
+            //                                                    || (x.CURRENCYTYPE == null && x.CURRENCYID == null)
+            //                                                    )
+            //                                                && x.OPERATIONID == model.operationId
+            //                                                && x.SHOWATDRAWDOWN == model.isDrawdown
+            //                                                && x.ISACTIVE == true && x.DELETED == false).ToList();
+            //}
 
             categoryIds.AddRange(racDefinition.Select(x => x.RACCATEGORYID).ToList());
 
