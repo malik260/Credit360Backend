@@ -587,8 +587,10 @@ namespace FintrakBanking.Repositories.Risk
                     currencyType = x.CURRENCYTYPE,
                     racCategoryTypeId = x.RACCATEGORYTYPEID,
                     productClassId = x.PRODUCTCLASSID,
-                    productClassName = ""
-                }).OrderBy(o => o.racItemId)
+                    productClassName = "",
+                    employmentType = x.EMPLOYMENTTYPE,
+                    customerTypeId = x.CUSTOMERTYPEID,
+                }).OrderByDescending(o => o.racDefinitionId)
                 .ToList();
         }
 
@@ -621,7 +623,9 @@ namespace FintrakBanking.Repositories.Risk
                 currencyType = entity.CURRENCYTYPE,
                 isRacTierControlKey=entity.ISRACTIERCONTROLKEY,
                 productClassId = entity.PRODUCTCLASSID,
-                productName = ""
+                productName = "",
+                employmentType = entity.EMPLOYMENTTYPE,
+                customerTypeId = entity.CUSTOMERTYPEID,
             };
         }
 
@@ -654,7 +658,9 @@ namespace FintrakBanking.Repositories.Risk
                 CURRENCYTYPE = model.currencyType,
                 CURRENCYID = model.currencyId,
                 ISRACTIERCONTROLKEY = model.isRacTierControlKey,
-                SEARCHPLACEHOLDER = model.searchBasePlaceholder
+                SEARCHPLACEHOLDER = model.searchBasePlaceholder,
+                EMPLOYMENTTYPE = model.employmentType,
+                CUSTOMERTYPEID = model.customerTypeId,
             };
 
             context.TBL_RAC_DEFINITION.Add(entity);
@@ -704,6 +710,8 @@ namespace FintrakBanking.Repositories.Risk
             entity.DATETIMEUPDATED = DateTime.Now;
             entity.PRODUCTCLASSID = model.productClassId;
             entity.SEARCHPLACEHOLDER = model.searchBasePlaceholder;
+            entity.EMPLOYMENTTYPE = model.employmentType;
+            entity.CUSTOMERTYPEID = model.customerTypeId;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
