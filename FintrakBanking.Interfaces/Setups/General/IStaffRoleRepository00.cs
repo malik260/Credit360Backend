@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
-    public interface IStaffRoleRepository
+    public interface IStaffRoleRepository00
     {
         IEnumerable<StaffRoleViewModel> GetStaffRole();
         StaffRoleViewModel GetStaffRoleByStaffId(int staffId);
