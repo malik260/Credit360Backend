@@ -8669,13 +8669,40 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool ProposeCollateralForUsage(CollateralCoverageViewModel model)
         {
+            decimal facilitiesValue = 0m;
+            decimal availableCollateralValues = 0m;
+
             var proposedCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Any(o => o.COLLATERALCUSTOMERID == model.collateralId
                                             && o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId);
                                    
+            if (proposedCollateral==true) throw new Exception("This Collateral has already been proposed for this facility");
 
-            if (proposedCollateral==true) throw new Exception("Already Proposed");
+            var collateralMappedToFacilities = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == model.collateralId).Select(o => o).ToList();
 
-                var data = new TBL_LOAN_APPLICATION_COLLATERL
+            var facilityMappedToCollaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).Select(o => o).ToList();
+
+            if (collateralMappedToFacilities.Count != 0)
+            {
+                foreach(var x in collateralMappedToFacilities)
+                {
+                    facilitiesValue = facilitiesValue + context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.APPROVEDAMOUNT).FirstOrDefault();
+                }
+            }
+
+            if (facilityMappedToCollaterals.Count != 0)
+            {
+                foreach (var x in facilityMappedToCollaterals)
+                {
+                    availableCollateralValues = availableCollateralValues + context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).Select(o => o.COLLATERALVALUE).FirstOrDefault();
+                }
+            }
+
+            availableCollateralValues = decimal.Subtract(availableCollateralValues, facilitiesValue);
+
+            if (availableCollateralValues > 0) throw new Exception("This facility is fully covered");
+
+
+            var data = new TBL_LOAN_APPLICATION_COLLATERL
                 {
                     COLLATERALCUSTOMERID = model.collateralId,
                     LOANAPPLICATIONID = model.loanApplicationId,
@@ -8683,12 +8710,12 @@ namespace FintrakBanking.Repositories.Credit
                     LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
+                    CUSTOMERID = model.customerId,
                     DELETED = false,
 
                 };
                 context.TBL_LOAN_APPLICATION_COLLATERL.Add(data);
           
-            
             if (context.SaveChanges() > 0)
                 return true;
             return false;

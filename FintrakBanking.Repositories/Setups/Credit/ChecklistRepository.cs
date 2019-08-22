@@ -1511,6 +1511,7 @@ namespace FintrakBanking.Repositories.Credit
                                   condition = c.CONDITION,
                                   conditionId = c.LOANCONDITIONID,
                                   status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                  checkListStatusId = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSID,
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                   loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                   validationStatus = c.CHECKLISTVALIDATED,
@@ -1534,6 +1535,7 @@ namespace FintrakBanking.Repositories.Credit
                                   condition = c.CONDITION,
                                   conditionId = c.LOANCONDITIONID,
                                   status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                  checkListStatusId = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSID,
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                   loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                   validationStatus = c.CHECKLISTVALIDATED,
@@ -1763,27 +1765,56 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             this.auditTrail.AddAuditTrail(audit);
-
+            var output = context.SaveChanges() != 0;
             //end of Audit section -------------------------------
-            using (var trans = context.Database.BeginTransaction())
-            {
-                var output = context.SaveChanges() != 0;
+            //using (var trans = context.Database.BeginTransaction())
+            //{
+            //    var output = context.SaveChanges() != 0;
 
-                if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
+            //    if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
+            //    {
+
+            //        workflow.StaffId = model.createdBy;
+            //        workflow.CompanyId = model.companyId;
+            //        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            //        workflow.TargetId = loanConditionId;
+            //        workflow.Comment = "LMS Checklist Approval";
+            //        workflow.OperationId = model.checkListStatusId == (int)CheckListStatusEnum.Deferred ? (int)OperationsEnum.DefferedChecklistApproval : (int)OperationsEnum.WaivedChecklistApproval;
+            //        workflow.ExternalInitialization = true;
+            //        workflow.LogActivity();
+            //    }
+            //    trans.Commit();
+            //    return output;
+            //}
+            return output;
+        }
+
+        public bool ForwardChecklistForApproval(List<ConditionPrecedentViewModel> models)
+        {
+            foreach (var model in models)
+            {
+                var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
+                var loanConditionId = data.LOANCONDITIONID;
+                using (var trans = context.Database.BeginTransaction())
                 {
 
-                    workflow.StaffId = model.createdBy;
-                    workflow.CompanyId = model.companyId;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                    workflow.TargetId = loanConditionId;
-                    workflow.Comment = "LMS Checklist Approval";
-                    workflow.OperationId = model.checkListStatusId == (int)CheckListStatusEnum.Deferred ? (int)OperationsEnum.DefferedChecklistApproval : (int)OperationsEnum.WaivedChecklistApproval;
-                    workflow.ExternalInitialization = true;
-                    workflow.LogActivity();
+                    if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
+                    {
+
+                        workflow.StaffId = model.createdBy;
+                        workflow.CompanyId = model.companyId;
+                        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                        workflow.TargetId = loanConditionId;
+                        workflow.Comment = "LMS Checklist Approval";
+                        workflow.OperationId = model.checkListStatusId == (int)CheckListStatusEnum.Deferred ? (int)OperationsEnum.DefferedChecklistApproval : (int)OperationsEnum.WaivedChecklistApproval;
+                        workflow.ExternalInitialization = true;
+                        workflow.LogActivity();
+                    }
+                    trans.Commit();
                 }
-                trans.Commit();
-                return output;
             }
+                    var output = context.SaveChanges() != 0;
+                    return output;
         }
 
         public IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int companyId)
@@ -1801,7 +1832,8 @@ namespace FintrakBanking.Repositories.Credit
                         orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
-                               customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            customerId = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID : a.TBL_CUSTOMER.CUSTOMERID,
                             proposedAmount = a.APPROVEDAMOUNT,
                             approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                             deferredDate = b.DEFEREDDATE,
@@ -2314,6 +2346,7 @@ namespace FintrakBanking.Repositories.Credit
                               condition = c.CONDITION,
                               conditionId = c.LOANCONDITIONID,
                               status = e.CHECKLISTSTATUSNAME,
+                              checkListStatusId = e.CHECKLISTSTATUSID,
                               approvalStatus = f.APPROVALSTATUSNAME,
                               loanApplicationId = d.LOANREVIEWAPPLICATIONID,
                               validationStatus = c.CHECKLISTVALIDATED,
@@ -3027,5 +3060,7 @@ namespace FintrakBanking.Repositories.Credit
             //      if ( == (short)CreditBureauEnum.CRMS) hascrms = true;
             return output;
         }
+
+       
     }
 }
