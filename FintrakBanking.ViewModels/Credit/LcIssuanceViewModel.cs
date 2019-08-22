@@ -217,9 +217,13 @@ namespace FintrakBanking.ViewModels.credit
 
         public short lcIssuanceStatusId { get; set; }
 
-        public string applicationStatus { get; set; }
+        public string lcApplicationStatus { get; set; }
+        public string usanceStatus { get; set; }
 
         public int? operationId { get; set; }
+        public short? UsanceApprovalStatusId { get; set; }
+        public string usanceApprovalStatus { get; set; }
+        public string UsanceCurrentApprovalLevel { get; set; }
 
 
         public int? totalApprovedAmountCurrencyId { get; set; }
