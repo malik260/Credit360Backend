@@ -682,24 +682,25 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
         }
 
         ///TODO: Implement a more efficient method
-        public bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups, int createdBy, short userBranchId, int companyId)
+        public bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> groupCustomers, int createdBy, short userBranchId, int companyId)
         {
-            if (customerGroups.Count <= 0)
+            if (groupCustomers.Count <= 0)
                 return false;
 
             bool output = false;
             //short relationshipTypeId = 0;
-            var customerGroup = customerGroups[0];
+            var groupCustomer = groupCustomers[0];
             TBL_TEMP_CUSTOMER_GROUP_MAPPNG groupMap;
             List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG> listOfMappedGroup = new List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG>();
 
-            var oldGroups = this.context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Where(x => x.CUSTOMERGROUPID == customerGroup.customerGroupId
+            var oldGroupCustomers = this.context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Where(x => x.CUSTOMERGROUPID == groupCustomer.customerGroupId
                                                                                 && x.DELETED == false).ToList();
 
-            foreach (CustomerGroupMappingViewModel item in customerGroups)
+            foreach (CustomerGroupMappingViewModel item in groupCustomers)
             {
-                var thisgroup = oldGroups.FirstOrDefault(O => O.CUSTOMERID == item.customerId &&
-                                                            O.CUSTOMERGROUPID == customerGroup.customerGroupId);
+                //groupCustomer.customerGroupId was used in place of item.customerGroupId before
+                var oldGroupCustomer = oldGroupCustomers.FirstOrDefault(O => O.CUSTOMERID == item.customerId &&
+                                                            O.CUSTOMERGROUPID == item.customerGroupId);
 
                 groupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPNG();
                 groupMap.CUSTOMERID = item.customerId;
@@ -711,17 +712,13 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 groupMap.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
                 groupMap.DATETIMECREATED = DateTime.Now;
 
-                if (thisgroup == null && oldGroups == null) {
+                if (oldGroupCustomer == null && oldGroupCustomers == null) {
                     groupMap.RELATIONSHIPTYPEID = item.relationshipTypeId;
                 }
                 else {
-                    groupMap.RELATIONSHIPTYPEID = oldGroups[0].RELATIONSHIPTYPEID;
+                    groupMap.RELATIONSHIPTYPEID = oldGroupCustomers[0].RELATIONSHIPTYPEID;
                 }
-                //else if (thisgroup == null && oldGroups != null) {
-                //    groupMap.RELATIONSHIPTYPEID = customerGroup.relationshipTypeId;
-                //}
-
-                //listOfMappedGroup.Add(groupMap);
+                
                 context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Add(groupMap);
 
                 // Audit Section ---------------------------
@@ -731,14 +728,14 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                                             customerName = x.FIRSTNAME + " " + x.LASTNAME
                                                         }).FirstOrDefault();
 
-                var groupName = (from gr in this.context.TBL_CUSTOMER_GROUP where gr.CUSTOMERGROUPID == customerGroup.customerGroupId select gr.GROUPNAME).FirstOrDefault();
+                var groupName = (from gr in this.context.TBL_CUSTOMER_GROUP where gr.CUSTOMERGROUPID == groupCustomer.customerGroupId select gr.GROUPNAME).FirstOrDefault();
 
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingAdded,
                     STAFFID = createdBy,
                     BRANCHID = userBranchId,
-                    DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {customerGroup.customerCode } to group  ( { groupName } ) ",
+                    DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {groupCustomer.customerCode } to group  ( { groupName } ) ",
                     //IPAddress = entity.userIPAddress,
                     //Url = entity.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
@@ -747,13 +744,22 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -----------------------
 
-                // Change status of the old customer groups
-                foreach (var oldGroup in oldGroups)
-                {
-                    oldGroup.DELETED = true;
-                    oldGroup.DELETEDBY = createdBy;
-                    oldGroup.DATETIMEDELETED = DateTime.Now;
+                // Change status of the oldGroupCustomer 
+                if (oldGroupCustomer != null) {
+                    oldGroupCustomer.DELETED = true;
+                    oldGroupCustomer.DELETEDBY = createdBy;
+                    oldGroupCustomer.DATETIMEDELETED = DateTime.Now;
+
+                    // Delete oldGroupCustomer from TBL_CUSTOMER_GROUP_MAPPING
+                    var cust = context.TBL_CUSTOMER_GROUP_MAPPING.Where(O => O.CUSTOMERID == oldGroupCustomer.CUSTOMERID && O.CUSTOMERGROUPID == oldGroupCustomer.CUSTOMERGROUPID).FirstOrDefault();
+
+                    if (cust != null) {
+                        context.TBL_CUSTOMER_GROUP_MAPPING.Remove(cust);
+
+                        //Todo insert this customer in the archived table
+                    }
                 }
+                
 
                 using (var trans = context.Database.BeginTransaction())
                 {
