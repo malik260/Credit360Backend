@@ -653,7 +653,8 @@ namespace FintrakBanking.Repositories.Risk
                 SHOWATDRAWDOWN = model.showAtDrawDown,
                 CURRENCYTYPE = model.currencyType,
                 CURRENCYID = model.currencyId,
-                ISRACTIERCONTROLKEY = model.isRacTierControlKey
+                ISRACTIERCONTROLKEY = model.isRacTierControlKey,
+                SEARCHPLACEHOLDER = model.searchBasePlaceholder
             };
 
             context.TBL_RAC_DEFINITION.Add(entity);
@@ -701,6 +702,8 @@ namespace FintrakBanking.Repositories.Risk
             entity.RACCATEGORYTYPEID = model.racCategoryTypeId;
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
+            entity.PRODUCTCLASSID = model.productClassId;
+            entity.SEARCHPLACEHOLDER = model.searchBasePlaceholder;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
