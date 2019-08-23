@@ -1035,6 +1035,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productName { get; set; }
         public string collateralSummary { get; set; }
         public string collateralCode { get; set; }
+        public int coveragePercentage { get; set; }
     }
     public class CollateralUsageStatus
     {

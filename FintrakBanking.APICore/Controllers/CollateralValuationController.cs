@@ -144,11 +144,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var Prerequisites = _colValuationRepo.GetCollateralValuationPrerequisiteById(valuationPrerequisiteId);
-                int totalItems = Prerequisites.Count();
+                var Prerequisite = _colValuationRepo.GetCollateralValuationPrerequisiteById(token.GetStaffId, valuationPrerequisiteId);
+                //int totalItems = Prerequisites.Count();
 
-                Prerequisites = Prerequisites.OrderBy(x => x.dateTimeCreated).ToList();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = Prerequisites, count = totalItems });
+                //Prerequisites = Prerequisites.OrderBy(x => x.dateTimeCreated).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = Prerequisite });
             }
             catch (SecureException ex)
             {
@@ -163,7 +163,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var Prerequisites = _colValuationRepo.GetAllValuationPrerequisitesById(collateralValuationId);
+                var Prerequisites = _colValuationRepo.GetAllValuationPrerequisitesById(token.GetStaffId, collateralValuationId);
                 int totalItems = Prerequisites.Count();
 
                 Prerequisites = Prerequisites.OrderBy(x => x.dateTimeCreated).ToList();
