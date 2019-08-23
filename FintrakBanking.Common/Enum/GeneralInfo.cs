@@ -400,6 +400,8 @@ namespace FintrakBanking.Common.Enum
         RepaymentTermUpdated = 505,
         RepaymentTermDeleted = 506,
         BulkDisbursementPackageAdded = 507,
+
+        ValuationPrerequisiteUpdated = 508
     };
     public enum RegulatoryTypeEnum
     {

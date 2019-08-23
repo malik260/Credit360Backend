@@ -102,6 +102,31 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
+        [HttpPut]
+        [Route("update-valuation-prerequisite/{valuationPrerequisiteId}/valuationPrerequisiteId")]
+        public HttpResponseMessage UpdateAppraisalMemorandum(int valuationPrerequisiteId, [FromBody] ValuationPrerequisiteViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = _colValuationRepo.UpdateValuationPrerequisite(valuationPrerequisiteId, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-collateral-valuation/{collteralValuationId}/collteralValuationId")]
