@@ -44,17 +44,35 @@ namespace FintrakBanking.Repositories.Risk
             List<TBL_RAC_DEFINITION> racDefinition = new List<TBL_RAC_DEFINITION>();
 
             List<int> categoryIds = new List<int>();
+
+            bool isSelfemployed = false;
+            var employmentTypeRecord = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(x => x.CUSTOMERID == model.customerId && x.ACTIVE == true).FirstOrDefault();
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerId ).FirstOrDefault();
+
+            if (employmentTypeRecord != null)
+            {
+                isSelfemployed = employmentTypeRecord.EMPLOYERNAME.ToUpper() == "SELF EMPLOYED";
+            }
+
             if(model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS")
             {
                 var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
+                                                                   && ((x.EMPLOYMENTTYPE == null)
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true)
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false))
+                                                                  //&& x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
                                                                   && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                   && x.ISACTIVE == true && x.DELETED == false).ToList();
 
                 var racDefinitionOnProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
+                                                                    && ((x.EMPLOYMENTTYPE == null) 
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true) 
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false) )
+                                                                    //&& x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
                                                                     && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                     && x.ISACTIVE == true && x.DELETED == false).ToList();
 
-                racDefinition = racDefinitionOnProduct != null ? racDefinitionOnProduct : racDefinitionOnProductClass;
+                racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
 
             }
             else if (model.searchBasePlaceholder == "CREDITCARD")
@@ -593,8 +611,10 @@ namespace FintrakBanking.Repositories.Risk
                     currencyType = x.CURRENCYTYPE,
                     racCategoryTypeId = x.RACCATEGORYTYPEID,
                     productClassId = x.PRODUCTCLASSID,
-                    productClassName = ""
-                }).OrderBy(o => o.racItemId)
+                    productClassName = "",
+                    employmentType = x.EMPLOYMENTTYPE,
+                    customerTypeId = x.CUSTOMERTYPEID,
+                }).OrderByDescending(o => o.racDefinitionId)
                 .ToList();
         }
 
@@ -627,7 +647,9 @@ namespace FintrakBanking.Repositories.Risk
                 currencyType = entity.CURRENCYTYPE,
                 isRacTierControlKey=entity.ISRACTIERCONTROLKEY,
                 productClassId = entity.PRODUCTCLASSID,
-                productName = ""
+                productName = "",
+                employmentType = entity.EMPLOYMENTTYPE,
+                customerTypeId = entity.CUSTOMERTYPEID,
             };
         }
 
@@ -660,7 +682,9 @@ namespace FintrakBanking.Repositories.Risk
                 CURRENCYTYPE = model.currencyType,
                 CURRENCYID = model.currencyId,
                 ISRACTIERCONTROLKEY = model.isRacTierControlKey,
-                SEARCHPLACEHOLDER = model.searchBasePlaceholder
+                SEARCHPLACEHOLDER = model.searchBasePlaceholder,
+                EMPLOYMENTTYPE = model.employmentType,
+                CUSTOMERTYPEID = model.customerTypeId,
             };
 
             context.TBL_RAC_DEFINITION.Add(entity);
@@ -710,6 +734,8 @@ namespace FintrakBanking.Repositories.Risk
             entity.DATETIMEUPDATED = DateTime.Now;
             entity.PRODUCTCLASSID = model.productClassId;
             entity.SEARCHPLACEHOLDER = model.searchBasePlaceholder;
+            entity.EMPLOYMENTTYPE = model.employmentType;
+            entity.CUSTOMERTYPEID = model.customerTypeId;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
