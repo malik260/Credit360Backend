@@ -48,16 +48,18 @@ namespace FintrakBanking.Repositories.Setups.Credit
 
         }
 
-        public IEnumerable<BulkDisbursementSetupPackageViewModel> GetAllBulkDisbursementPackageByCompany(int companyId)
+        public IEnumerable<BulkDisbursementSetupPackageViewModel> GetAllBulkDisbursementPackageByCompany()
         {
             var data = (from a in context.TBL_LOAN_BULK_DISBURSE_PACKAGE
-                        where a.COMPANYID == companyId && a.DELETED == false
+                       // where a.DELETED == false
                         select new BulkDisbursementSetupPackageViewModel
                         {
                             startDate = a.STARTDATE,
                             endDate = a.ENDDATE,
-                            groupCustomerId = a.GROUPCUSTOMERID,
-                            packageDescription = a.PACKAGEDESCRIPTION
+                            groupCustomerId =  a.GROUPCUSTOMERID,
+                            packageDescription = a.PACKAGEDESCRIPTION,
+                            customerName = context.TBL_CUSTOMER.Where(c=>c.CUSTOMERID == a.GROUPCUSTOMERID).FirstOrDefault().FIRSTNAME,
+                            
                         }).ToList();
             return data;
 

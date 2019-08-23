@@ -13,6 +13,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public string packageDescription { get; set; }
+        public string customerName { get; set; }
     }
 
     public class BulkDisbursementSetupSchemeViewModel : GeneralEntity

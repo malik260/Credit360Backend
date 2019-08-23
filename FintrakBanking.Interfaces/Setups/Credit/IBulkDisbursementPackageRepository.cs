@@ -11,7 +11,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
     public interface IBulkDisbursementPackageRepository
     {
         IEnumerable<BulkDisbursementSetupPackageViewModel> GetAllBulkDisbursementPackageByGroupCustomerId(int groupCustomerId);
-        IEnumerable<BulkDisbursementSetupPackageViewModel> GetAllBulkDisbursementPackageByCompany(int companyId);
+        IEnumerable<BulkDisbursementSetupPackageViewModel> GetAllBulkDisbursementPackageByCompany();
         IEnumerable<BulkDisbursementSetupPackageViewModel> GetBulkDisbursementPackageById(int disbursementPackageId);
         bool AddMultipleBulkDisbursementPackage(List<BulkDisbursementSetupPackageViewModel> models);
         bool UpdateBulkDisbursementPackage(int disbursementPackageId, BulkDisbursementSetupPackageViewModel model);

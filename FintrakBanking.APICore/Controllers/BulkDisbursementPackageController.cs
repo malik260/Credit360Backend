@@ -44,7 +44,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllBulkDisbursementPackageByCompany(token.GetCompanyId);
+                var data = repo.GetAllBulkDisbursementPackageByCompany();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
             catch (SecureException ex)
