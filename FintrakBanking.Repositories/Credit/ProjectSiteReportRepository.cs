@@ -567,7 +567,7 @@ namespace FintrakBanking.Repositories.credit
                 PSRREPORTTYPEID = model.psrReportTypeId
             };
 
-     var  a=       context.TBL_PSR_PERFORMANCE_EVALUATION.Add(entity);
+          context.TBL_PSR_PERFORMANCE_EVALUATION.Add(entity);
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -583,7 +583,6 @@ namespace FintrakBanking.Repositories.credit
                 SYSTEMDATETIME = DateTime.Now
             });
             // Audit Section end ------------------------
-            context.SaveChanges();
             return context.SaveChanges() != 0;
         }
 
