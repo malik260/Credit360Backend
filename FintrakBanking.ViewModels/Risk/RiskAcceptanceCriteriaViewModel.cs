@@ -8,10 +8,13 @@ namespace FintrakBanking.ViewModels.Risk
 {
     public class RiskAcceptanceCriteriaViewModel : GeneralEntity
     {
+        public int customerId;
+
         public List<RacComment> comments { get; set; }
         public List<ProductRacCategory> categories { get; set; }
         public int count { get; set; }
         public int productId { get; set; }
+        public int productClassId { get; set; }
         public int racCategoryTypeId { get; set; }
         public int? loanApplicationId { get; set; }
         public int? currencyId { get; set; }
@@ -19,6 +22,7 @@ namespace FintrakBanking.ViewModels.Risk
         public bool isDrawdown { get; set; }
         public int? operationId { get; set; }
         public short? searchBaseId { get; set; }
+        public string searchBasePlaceholder { get; set; }
     }
 
     public class ProductRacCategory
@@ -123,6 +127,9 @@ namespace FintrakBanking.ViewModels.Risk
         public string selectedValue { get; set; }
         public string value { get; set; }
         public bool? isRacTierControlKey { get; set; }
+        public string searchBasePlaceholder { get; set; }
+        public string employmentType { get; set; }
+        public short? customerTypeId { get; set; }
     }
 
     public class RacDetailViewModel : GeneralEntity

@@ -146,6 +146,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_OVERDRAFTTOPUP> TBL_CUSTOM_OVERDRAFTTOPUP { get; set; }
         public virtual DbSet<TBL_CUSTOM_TEMPORARYOVERDRAFT> TBL_CUSTOM_TEMPORARYOVERDRAFT { get; set; }
         public virtual DbSet<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
+
+        public virtual DbSet<TBL_LOAN_BULK_DISBURSE_PACKAGE> TBL_LOAN_BULK_DISBURSE_PACKAGE { get; set; }
+        public virtual DbSet<TBL_LOAN_BULK_DISBURSE_SCHEME> TBL_LOAN_BULK_DISBURSE_SCHEME { get; set; }
+        public virtual DbSet<TBL_BULK_DISBURS_SCH_FEES> TBL_BULK_DISBURS_SCH_FEES { get; set; }
+
         public virtual DbSet<TBL_CUSTOMER_RATIOS> TBL_CUSTOMER_RATIOS { get; set; }
         
         public virtual DbSet<TBL_CUSTOMER_ACCOUNT_KYC_ITEM> TBL_CUSTOMER_ACCOUNT_KYC_ITEM { get; set; }
@@ -534,12 +539,13 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LCRELEASE_AMOUNT> TBL_LCRELEASE_AMOUNT { get; set; }
         public virtual DbSet<TBL_REPAYMENT_TERM> TBL_REPAYMENT_TERM { get; set; }
         public virtual DbSet<TBL_INSURANCE_REQUEST> TBL_INSURANCE_REQUEST { get; set; }
+        public virtual DbSet<TBL_CUSTOMER_GROUP_MAPPING_ARC> TBL_CUSTOMER_GROUP_MAPPING_ARC { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
-        
 
 
-        
+
+
 
 
 
