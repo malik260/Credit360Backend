@@ -717,7 +717,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 newGroupCustomer.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
                 newGroupCustomer.DATETIMECREATED = DateTime.Now;
 
-                if (oldGroupCustomer == null && oldGroupCustomers == null) {
+                if (oldGroupCustomer == null && oldGroupCustomers.Count == 0) {
                     newGroupCustomer.RELATIONSHIPTYPEID = item.relationshipTypeId;
                 }
                 else {
