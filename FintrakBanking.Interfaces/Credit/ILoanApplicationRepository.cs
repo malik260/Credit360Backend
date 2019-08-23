@@ -160,6 +160,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateLoanApplicationFlowChange(LoanApplicationFlowChangeViewModel model, int id, UserInfo user);
 
         bool DeleteLoanApplicationFlowChange(int id, UserInfo user);
-        RatingAndRatioViewModel GetCustomerRatios(int customerId, int applicationId, bool isLms = false);
+        List<RatingAndRatioViewModel> GetCustomerRatios(int customerId, int applicationId, bool isLms = false);
+        CustomerApplicationTransactionsViewModels GetCustomerTransactionsByFilterLogic(int customerId, int applicationId, int froma, int to, int fYear, int tYear, bool v);
     }
 }

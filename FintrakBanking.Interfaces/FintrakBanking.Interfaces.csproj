@@ -113,11 +113,13 @@
     <Compile Include="Media\IOriginalDocumentApprovalRepository.cs" />
     <Compile Include="Risk\ICreditOfficerRiskRepository.cs" />
     <Compile Include="Risk\IRiskAcceptanceCriteriaRepository.cs" />
+    <Compile Include="Setups\Credit\IBulkDisbursementPackageRepository.cs" />
     <Compile Include="Setups\Credit\ICrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\IFXAccountCreationRepository.cs" />
     <Compile Include="Setups\Credit\IRepaymentTermsRepository.cs" />
     <Compile Include="Setups\Finance\ICustomChartOfAccountRepository.cs" />
     <Compile Include="Setups\General\IStaffMIS.cs" />
+    <Compile Include="Setups\General\IStaffRoleRepository00.cs" />
     <Compile Include="ThridPartyIntegration\IFinacleIntegrationRepository.cs" />
     <Compile Include="Validation\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IIntegrationWithFinacle.cs" />

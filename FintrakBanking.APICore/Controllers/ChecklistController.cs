@@ -1229,6 +1229,44 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("submit-loan-condition-precedence-status")]
+        public HttpResponseMessage ForwardChecklistForApproval([FromBody] List<ConditionPrecedentViewModel> models)
+        {
+            foreach (var model in models)
+            {
+                if (model.conditionId == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Please select a checklist to continue" });
+                }
+                if (model.deferedDate < DateTime.Now)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = "Deferred date cannot be less than today's date" });
+                }
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+            }
+            
+
+            var data = repo.ForwardChecklistForApproval(models);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = true, message = "The Checklist Status has been submitted successfully" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+        new { success = false, message = "There was an error submitting this Checklist" });
+
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("extend-checklist-deferral-date")]
         public HttpResponseMessage ExtendChecklistDeferralDate([FromBody] ConditionPrecedentViewModel model)
         {
@@ -2075,5 +2113,6 @@ namespace FintrakBanking.APICore.Controllers
             //}
         }
         #endregion
+        
     }
 }

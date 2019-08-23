@@ -38,6 +38,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOANAPPLICATIONDETAILID { get; set; }
 
+        public int? CUSTOMERID { get; set; }
+
         public int APPROVALSTATUSID { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
