@@ -1381,7 +1381,7 @@ namespace FintrakBanking.Repositories.Credit
                     systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
                     responseStaffId = x.RESPONSESTAFFID,
                     requestStaffId = x.REQUESTSTAFFID,
-                    fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                    fromApprovalLevelId = x.FROMAPPROVALLEVELID ,
                     fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? staffs.FirstOrDefault(r => r.STAFFID == x.REQUESTSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.Where(a=>a.APPROVALLEVELID ==x.FROMAPPROVALLEVELID).Select(a=>a.LEVELNAME).FirstOrDefault(),
                     toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a=>a.APPROVALLEVELID ==x.TOAPPROVALLEVELID).Select(a=>a.LEVELNAME).FirstOrDefault(),
                     toApprovalLevelId = x.TOAPPROVALLEVELID,

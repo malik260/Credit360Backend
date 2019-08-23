@@ -77,6 +77,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Repositories.Media;
     using FintrakBanking.Interfaces.credit;
     using FintrakBanking.Repositories.credit;
+    using FintrakBanking.APICore.Controllers;
 
     public static class NinjectWebCommon
     {
@@ -132,7 +133,8 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<FinTrakBankingContext>().To<FinTrakBankingContext>();
             kernel.Bind<FinTrakBankingDocumentsContext>().To<FinTrakBankingDocumentsContext>();
             kernel.Bind<FinTrakBankingStagingContext>().To<FinTrakBankingStagingContext>();
-
+            
+            kernel.Bind<IBulkDisbursementPackageRepository>().To<BulkDisbursementPackageRepository>();
             kernel.Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
             kernel.Bind<IAuthenticationRepository>().To<AuthenticationRepository>();
             kernel.Bind<IAuthorizationRepository>().To<AuthorizationRepository>();

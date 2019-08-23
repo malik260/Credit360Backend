@@ -647,7 +647,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currencyCode { get; set; }
 
         public int loanBookingRequestId { get; set; }
-
+        
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
 
@@ -660,6 +660,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvedProductTypeId { get; set; }
         public decimal approvedAmount { get; set; }
         public short productId { get; set; }
+        public int? operationId { get; set; }
+
 
     }
 
