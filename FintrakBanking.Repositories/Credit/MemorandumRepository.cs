@@ -691,7 +691,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>NAME OF CUSTOMER:</b></th>
                         <th><b></b></th>
@@ -756,7 +756,7 @@ namespace FintrakBanking.Repositories.Credit
              //       </ tr >
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <td><b>TRANCHE DISBURSEMENT:</b></td>
                         <td>APPROVED AMOUNT</td>
@@ -785,7 +785,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <td><b>REQUEST TYPE</b></td>
                         <td>{requestType}</td>
@@ -801,7 +801,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></h3>
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS</b></th>
@@ -874,7 +874,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>APPROVALS:</b></th>
                         <th><b></b></th>
@@ -916,7 +916,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             result = result + $@"
                 <br />
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>OTHER CONDITIONS PRECEDENT TO DRAWDOWN AS APPROVED IN THE FAM</b></th>

@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
         ValuationPrerequisiteViewModel AddValuationPrerequisite(ValuationPrerequisiteViewModel model);
         CollateralValuationViewModel GetCollateralValuation(int collteralValuationId);
         List<CollateralValuationViewModel> GetAllCollateralValuations(int collateralId);
-        List<ValuationPrerequisiteViewModel> GetAllValuationPrerequisitesById(int collateralValuationId);
+        List<ValuationPrerequisiteViewModel> GetAllValuationPrerequisitesById(int staffId, int collateralValuationId);
         bool GoForCollateralValuationApproval(ValuationPrerequisiteViewModel entity);
 
         IEnumerable<ValuationPrerequisiteViewModel> GetAllValuationRequest(int staffId);
@@ -30,6 +30,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool DeleteValuationPrerequisite(int valuationPrerequisiteId, UserInfo user);
 
-        List<ValuationPrerequisiteViewModel> GetCollateralValuationPrerequisiteById(int valuationPrerequisiteId);
+        List<ValuationPrerequisiteViewModel> GetCollateralValuationPrerequisiteById(int staffId, int valuationPrerequisiteId);
     }
 }
