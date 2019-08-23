@@ -139,6 +139,48 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public bool UpdateValuationPrerequisite(int valuationPrerequisiteId, ValuationPrerequisiteViewModel model)
+        {
+            var data = _context.TBL_COLLATERAL_VALUATION_PRE.Find(valuationPrerequisiteId);
+
+            if (data == null) { return false; }
+
+            if (data.LASTUPDATEDBY != model.lastUpdatedBy) // archive old
+            {
+                _context.TBL_COLLATERAL_VALUATION_PRE.Add(new TBL_COLLATERAL_VALUATION_PRE
+                {
+                    COLLATERALVALUATIONID = model.collateralValuationId,
+                    VALUATIONREQUESTTYPEID = model.valuationRequestTypeId,
+                    VALUATIONCOMMENT = model.valuationComment,
+                });
+            }
+
+            data.COLLATERALVALUATIONID = model.collateralValuationId;
+            data.VALUATIONREQUESTTYPEID = model.valuationRequestTypeId;
+            data.VALUATIONCOMMENT = model.valuationComment;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = _general.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short) AuditTypeEnum.ValuationPrerequisiteUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short) model.userBranchId,
+                DETAIL = $"Updated Valuation Prerequisite for '{ model.valuationPrerequisiteId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = _general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this._audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return _context.SaveChanges() != 0;
+        }
+
+
+
         public CollateralValuationViewModel GetCollateralValuation(int collteralValuationId)
         {
             var res = from C in _context.TBL_COLLATERAL_VALUATION

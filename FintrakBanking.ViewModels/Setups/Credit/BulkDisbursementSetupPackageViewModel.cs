@@ -12,6 +12,8 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int groupCustomerId { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
+        public string packageDescription { get; set; }
+        public string customerName { get; set; }
     }
 
     public class BulkDisbursementSetupSchemeViewModel : GeneralEntity
@@ -23,8 +25,8 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int scheduleMethodId { get; set; }
         public int interestRate { get; set; }
         public int productPriceIndexId { get; set; }
-        public bool INCLUDEPRODUCTFEES { get; set; }
-        public int APPROVALSTATUSID { get; set; }
+        public bool includeProductFees { get; set; }
+        public int approvalStatusId { get; set; }
         
     }
 
@@ -33,7 +35,9 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int schemeFeeId { get; set; }
         public int disburseSchemeId { get; set; }
         public int chargeFeeId { get; set; }
-        public int hasConcession { get; set; }
-        public int APPROVALSTATUSID { get; set; }
+        public bool hasConcession { get; set; }
+        public int approvalStatusId { get; set; }
     }
+
+
 }
