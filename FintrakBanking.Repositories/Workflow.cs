@@ -242,22 +242,29 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public void ResolveExternalFlowLoop(TBL_APPROVAL_TRAIL request, TBL_APPROVAL_TRAIL initiatorRequest)
         {
-            if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred )
+            if (staffId == initiatorRequest.REQUESTSTAFFID)
             {
-                if(staffId == initiatorRequest.REQUESTSTAFFID)
+                // this.fromLevelId = request.FROMAPPROVALLEVELID;
+               // this.loopedStaffId = this.staffId;
+                //this.toStaffId = request.REQUESTSTAFFID;
+                //this.staffId = request.REQUESTSTAFFID;
+            }
+            if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+            {
+                if (staffId == initiatorRequest.REQUESTSTAFFID)
                 {
-                    this.fromLevelId = request.FROMAPPROVALLEVELID;
-                    this.loopedStaffId = this.staffId;
-                    this.toStaffId = request.REQUESTSTAFFID;
-                    this.staffId = request.REQUESTSTAFFID;
+                    // this.fromLevelId = request.FROMAPPROVALLEVELID;
+                    this.loopedStaffId = request.REQUESTSTAFFID;
+                    //this.toStaffId = request.REQUESTSTAFFID;
+                    //this.staffId = request.REQUESTSTAFFID;
                 }
             }
 
-            if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.LoopedIn)
-            {
-                this.fromLevelId = request.FROMAPPROVALLEVELID;
-                this.staffId = request.REQUESTSTAFFID;
-            }
+            //if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.LoopedIn)
+            //{
+            //    this.fromLevelId = request.FROMAPPROVALLEVELID;
+            //    this.staffId = request.REQUESTSTAFFID;
+            //}
 
             //if(request.APPROVALSTATUSID == (int)ApprovalStatusEnum.LoopedIn)
             //{
@@ -533,7 +540,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //    this.neededNumberOfApproval = levelStaff.TBL_APPROVAL_LEVEL.NUMBEROFAPPROVALS;
             //}
 
-            if ((this.statusId == (int)ApprovalStatusEnum.Referred || this.statusId == (int)ApprovalStatusEnum.LoopedIn) && this.nextLevelId == null) { this.nextLevelId = this.requestLevelId; } // default return back to sender
+           // if ((this.statusId == (int)ApprovalStatusEnum.Referred || this.statusId == (int)ApprovalStatusEnum.LoopedIn) && this.nextLevelId == null) { this.nextLevelId = this.requestLevelId; } // default return back to sender
 
             if (this.nextLevelId == null && fromLevelId != null)
             {
