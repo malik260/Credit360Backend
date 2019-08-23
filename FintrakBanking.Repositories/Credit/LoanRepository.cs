@@ -7617,7 +7617,7 @@ namespace FintrakBanking.Repositories.Credit
                             isBidbond = p.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees ? true : false,
                             isOverdraft = p.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
                             repaymentTerms = d.REPAYMENTTERMS,
-                            repaymentSchedule = d.REPAYMENTSCHEDULEID,
+                            repaymentSchedule = d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                             approvedTenor = d.APPROVEDTENOR,
                             createdBy = m.CREATEDBY,
                             applicationDate = m.APPLICATIONDATE,

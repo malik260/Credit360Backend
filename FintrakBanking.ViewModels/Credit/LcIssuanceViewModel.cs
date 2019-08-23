@@ -74,7 +74,7 @@ namespace FintrakBanking.ViewModels.credit
         public int? lcReleaseAmountId { get; set; }
 
         //ussance
-        public int lcUssanceId { get; set; }
+        public int? lcUssanceId { get; set; }
         public decimal ussanceAmount { get; set; }
         public decimal ussanceRate { get; set; }
         public int ussanceTenor { get; set; }
@@ -145,7 +145,7 @@ namespace FintrakBanking.ViewModels.credit
     {
         public int lcIssuanceId { get; set; }
 
-        public int lcReleaseAmountId { get; set; }
+        public int? lcReleaseId { get; set; }
 
         public string lcReferenceNumber { get; set; }
 
@@ -246,7 +246,7 @@ namespace FintrakBanking.ViewModels.credit
 
 
         //ussance
-        public int lcUssanceId { get; set; }
+        public int? lcUssanceId { get; set; }
         public decimal ussanceAmount { get; set; }
         public double? ussanceRate { get; set; }
         public int ussanceTenor { get; set; }

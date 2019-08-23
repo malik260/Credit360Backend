@@ -4757,9 +4757,9 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.REPAYMENTTERMS)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
-                .Property(e => e.REPAYMENTSCHEDULEID)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
+            //    .Property(e => e.REPAYMENTSCHEDULEID)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
                 .HasMany(e => e.TBL_LOAN)
