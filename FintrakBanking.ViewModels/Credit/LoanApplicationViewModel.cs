@@ -889,6 +889,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productAccountName { get; set; }
     }
 
+
     public class LoanApplicationTagsViewModel : GeneralEntity
     {
         public bool withoutInstruction;

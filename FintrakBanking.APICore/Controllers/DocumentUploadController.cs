@@ -102,10 +102,10 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                     entity.userBranchId = (short)token.GetBranchId;
-                    entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    entity.createdBy = token.GetStaffId;
-                    entity.companyId = token.GetCompanyId;
+            entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
 
             var file = provider.Contents.FirstOrDefault();
             var buffer = await file.ReadAsByteArrayAsync();
@@ -115,8 +115,8 @@ namespace FintrakBanking.APICore.Controllers
             if (response == 2) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file has been uploaded successfully" });
             if (response == 3) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The file already exist" });
             }
-            catch (Exception ex) { }
-            return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = "There was an error uploading this file" });
+            catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file:  " + ex.Message }); }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error uploading this file" });
 
         }
 
