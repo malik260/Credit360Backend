@@ -4795,6 +4795,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationId = entity.OPERATIONID,
                 destinationUrl = entity.DESTINATIONURL,
                 productTypeId = entity.PRODUCTTYPEID,
+                documentOperation=entity.DOCUMENTOPERATION,
             };
         }
 
@@ -4804,6 +4805,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => new LoanApplicationFlowChangeViewModel
                 {
                     FlowChangeId = x.FLOWCHANGEID,
+                    documentOperation=x.DOCUMENTOPERATION,
                     label = x.LABEL,
                     placeHolder=x.PLACEHOLDER,
                     operationId=x.OPERATIONID,
@@ -4823,6 +4825,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var entity = new TBL_LOAN_APPLICATN_FLOW_CHANGE
             {
+                DOCUMENTOPERATION = model.documentOperation,
                 LABEL = model.label,
                 PLACEHOLDER = model.placeHolder,
                 ISSKIPPROCESSENABLED = model.skipflow,
@@ -4830,7 +4833,10 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONID = model.operationId,
                 DESTINATIONURL = model.destinationUrl,
                 PRODUCTTYPEID = model.productTypeId,
-                
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = model.createdBy,
+                DELETED = false
+
             };
             context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Add(entity);
 
@@ -4861,6 +4867,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.PRODUCTCLASSID = model.productClassId;
             entity.OPERATIONID = model.operationId;
             entity.DESTINATIONURL = model.destinationUrl;
+            entity.DOCUMENTOPERATION = model.documentOperation;
             entity.PRODUCTTYPEID = model.productTypeId;
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------

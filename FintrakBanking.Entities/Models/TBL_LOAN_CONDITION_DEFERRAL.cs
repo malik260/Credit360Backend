@@ -38,5 +38,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_LOAN_CONDITION_PRECEDENT TBL_LOAN_CONDITION_PRECEDENT { get; set; }
+
+        public int? CONDITIONDEFERRALSTATUS { get; set; }
     }
 }
