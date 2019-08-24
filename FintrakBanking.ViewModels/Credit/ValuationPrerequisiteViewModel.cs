@@ -33,5 +33,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public string valuationReason { get; set; }
         public string valuationName { get; set; }
+        public string approvalComment { get; set; }
     }
 }
