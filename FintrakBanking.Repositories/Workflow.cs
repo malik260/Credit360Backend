@@ -208,7 +208,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 
-            
 
             context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
@@ -227,7 +226,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 VOTE = this.vote,
                 TOSTAFFID = this.toStaffId,
                 LOOPEDROLEID = this.loopedRoleId,
-                LOOPEDSTAFFID = !isLoopResponse ? this.loopedStaffId : null,
+                LOOPEDSTAFFID = this.loopedStaffId,
                 
             });
 
