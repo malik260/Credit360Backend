@@ -89,7 +89,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(2000)]
         public string REPAYMENTTERMS { get; set; }
 
-        public string REPAYMENTSCHEDULEID { get; set; }
+        public int? REPAYMENTSCHEDULEID { get; set; }
 
         //[Column(TypeName = "date")]
         public DateTime? EFFECTIVEDATE { get; set; }
@@ -167,6 +167,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_PRODUCT TBL_PRODUCT1 { get; set; }
 
         public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
+
+        public virtual TBL_REPAYMENT_TERM TBL_REPAYMENT_TERM { get; set; }
 
         public virtual TBL_PRODUCT_PRICE_INDEX TBL_PRODUCT_PRICE_INDEX { get; set; }
 

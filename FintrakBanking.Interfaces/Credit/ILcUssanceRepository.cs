@@ -13,6 +13,8 @@ namespace FintrakBanking.Interfaces.credit
     {
         LcUssanceViewModel GetLcUssanceByLCIssuanceId(int lcIssuanceId);
 
+        LcUssanceViewModel GetLcUssanceByLCUsanceId(int lcUsanceId);
+
         IEnumerable<LcUssanceViewModel> GetLcUssances();
 
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForUssanceApproval(int staffId);

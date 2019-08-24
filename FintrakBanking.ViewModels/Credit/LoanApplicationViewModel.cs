@@ -940,6 +940,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productType { get; set; }
         public string productClass { get; set; }
         public string operation { get; set; }
+        public  int documentOperation { get; set; }
     }
 
 }
