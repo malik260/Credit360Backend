@@ -910,7 +910,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
 
 
-                return product;
+                return product.OrderBy(p => p.productName);
 
                 //return AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
             }

@@ -690,39 +690,44 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
             bool output = false;
             //short relationshipTypeId = 0;
             var groupCustomer = groupCustomers[0];
-            TBL_TEMP_CUSTOMER_GROUP_MAPPNG groupMap;
+            TBL_TEMP_CUSTOMER_GROUP_MAPPNG newGroupCustomer;
             List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG> listOfMappedGroup = new List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG>();
 
             var oldGroupCustomers = this.context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Where(x => x.CUSTOMERGROUPID == groupCustomer.customerGroupId
                                                                                 && x.DELETED == false).ToList();
+            // Change status of the oldGroupCustomers 
+            foreach (var oldGroupCustomer in oldGroupCustomers) {
+                oldGroupCustomer.DELETED = true;
+                oldGroupCustomer.DELETEDBY = createdBy;
+                oldGroupCustomer.DATETIMEDELETED = DateTime.Now;
+            }
 
             foreach (CustomerGroupMappingViewModel item in groupCustomers)
             {
-                //groupCustomer.customerGroupId was used in place of item.customerGroupId before
                 var oldGroupCustomer = oldGroupCustomers.FirstOrDefault(O => O.CUSTOMERID == item.customerId &&
                                                             O.CUSTOMERGROUPID == item.customerGroupId);
 
-                groupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPNG();
-                groupMap.CUSTOMERID = item.customerId;
-                groupMap.CUSTOMERGROUPID = item.customerGroupId;
-                groupMap.COMPANYID = companyId;
-                groupMap.CREATEDBY = createdBy;
-                groupMap.DELETED = false;
-                groupMap.ISCURRENT = true;
-                groupMap.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
-                groupMap.DATETIMECREATED = DateTime.Now;
+                newGroupCustomer = new TBL_TEMP_CUSTOMER_GROUP_MAPPNG();
+                newGroupCustomer.CUSTOMERID = item.customerId;
+                newGroupCustomer.CUSTOMERGROUPID = item.customerGroupId;
+                newGroupCustomer.COMPANYID = companyId;
+                newGroupCustomer.CREATEDBY = createdBy;
+                newGroupCustomer.DELETED = false;
+                newGroupCustomer.ISCURRENT = true;
+                newGroupCustomer.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+                newGroupCustomer.DATETIMECREATED = DateTime.Now;
 
-                if (oldGroupCustomer == null && oldGroupCustomers == null) {
-                    groupMap.RELATIONSHIPTYPEID = item.relationshipTypeId;
+                if (oldGroupCustomer == null && oldGroupCustomers.Count == 0) {
+                    newGroupCustomer.RELATIONSHIPTYPEID = item.relationshipTypeId;
                 }
                 else {
-                    groupMap.RELATIONSHIPTYPEID = oldGroupCustomers[0].RELATIONSHIPTYPEID;
+                    newGroupCustomer.RELATIONSHIPTYPEID = oldGroupCustomers[0].RELATIONSHIPTYPEID;
                 }
                 
-                context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Add(groupMap);
+                context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.Add(newGroupCustomer);
 
                 // Audit Section ---------------------------
-                var customer = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == groupMap.CUSTOMERID).ToList()
+                var customerName = this.context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == newGroupCustomer.CUSTOMERID).ToList()
                                                         .Select(x => new
                                                         {
                                                             customerName = x.FIRSTNAME + " " + x.LASTNAME
@@ -735,7 +740,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingAdded,
                     STAFFID = createdBy,
                     BRANCHID = userBranchId,
-                    DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {groupCustomer.customerCode } to group  ( { groupName } ) ",
+                    DETAIL = $"Added Customer Group Mapping to customer: { customerName } with code: { newGroupCustomer.TBL_CUSTOMER.CUSTOMERCODE } to group  ( { groupName } ) ",
                     //IPAddress = entity.userIPAddress,
                     //Url = entity.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
@@ -744,19 +749,27 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -----------------------
 
-                // Change status of the oldGroupCustomer 
+                
                 if (oldGroupCustomer != null) {
-                    oldGroupCustomer.DELETED = true;
-                    oldGroupCustomer.DELETEDBY = createdBy;
-                    oldGroupCustomer.DATETIMEDELETED = DateTime.Now;
-
                     // Delete oldGroupCustomer from TBL_CUSTOMER_GROUP_MAPPING
                     var cust = context.TBL_CUSTOMER_GROUP_MAPPING.Where(O => O.CUSTOMERID == oldGroupCustomer.CUSTOMERID && O.CUSTOMERGROUPID == oldGroupCustomer.CUSTOMERGROUPID).FirstOrDefault();
 
                     if (cust != null) {
                         context.TBL_CUSTOMER_GROUP_MAPPING.Remove(cust);
 
-                        //Todo insert this customer in the archived table
+                        // Insert this customer in TBL_CUSTOMER_GROUP_MAPPING_ARC
+                        var deletedGroupCustomer = new TBL_CUSTOMER_GROUP_MAPPING_ARC()
+                        {
+                            CUSTOMERGROUPMAPPINGID = cust.CUSTOMERGROUPMAPPINGID,
+                            CUSTOMERID = cust.CUSTOMERID,
+                            CUSTOMERGROUPID = cust.CUSTOMERGROUPID,
+                            CREATEDBY = cust.CREATEDBY,
+                            RELATIONSHIPTYPEID = cust.RELATIONSHIPTYPEID,
+                            DELETED = true,
+                            DATETIMECREATED = DateTime.Now
+                        };
+
+                        context.TBL_CUSTOMER_GROUP_MAPPING_ARC.Add(deletedGroupCustomer);
                     }
                 }
                 
@@ -765,8 +778,6 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 {
                     try
                     {
-                        //context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.AddRange(listOfMappedGroup);
-                        //context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.AddRange(listOfMappedGroup);
                         output = context.SaveChanges() > 0;
 
                         var entity = new ApprovalViewModel
@@ -774,7 +785,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                             staffId = createdBy,
                             companyId = companyId,
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = groupMap.CUSTOMERGROUPMAPPINGID,
+                            targetId = newGroupCustomer.CUSTOMERGROUPMAPPINGID,
                             operationId = (int)OperationsEnum.CustomerGroupMapping,
                             BranchId = userBranchId,
                             externalInitialization = true
@@ -782,7 +793,6 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
                         var response = workFlow.LogForApproval(entity);
                         trans.Commit();
-
                     }
                     catch (Exception ex)
                     {
@@ -791,11 +801,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     }
                 }
 
-                
-
             }
-
-            
 
             return output;
         }
