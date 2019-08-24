@@ -10,7 +10,7 @@
     public partial class TBL_REPAYMENT_TERM
     {
         [Key]
-        public int REPAYMENTTERMID { get; set; }
+        public int REPAYMENTSCHEDULEID { get; set; }
 
         [Required]
         [StringLength(1000)]
