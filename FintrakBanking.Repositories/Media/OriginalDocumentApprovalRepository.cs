@@ -403,22 +403,39 @@ namespace FintrakBanking.Repositories.Media
                     }).ToList();
         }
 
-        public bool GoForApproval(OriginalDocumentApprovalViewModel entity)
+        public bool GoForApproval(OriginalDocumentApprovalViewModel entity , short? approvalStatusId )
         {
             var document = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(entity.originalDocumentApprovalId);
             if (document != null)
             {
-                document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                if(approvalStatusId == null && approvalStatusId != (short)ApprovalStatusEnum.Referred)
+                {
+                    document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
-                workflow.StaffId = entity.createdBy;
-                workflow.CompanyId = entity.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = entity.originalDocumentApprovalId;
-                workflow.Comment = "Request for Original document submission approval";
-                workflow.OperationId = (int)OperationsEnum.OriginalDocumentApproval;
-                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                workflow.ExternalInitialization = true;
-                workflow.LogActivity();
+                    workflow.StaffId = entity.createdBy;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = entity.originalDocumentApprovalId;
+                    workflow.Comment = "Request for Original document submission approval";
+                    workflow.OperationId = (int)OperationsEnum.OriginalDocumentApproval;
+                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+                }
+
+                if (approvalStatusId != null && approvalStatusId == (short)ApprovalStatusEnum.Referred)
+                {
+
+                    workflow.StaffId = entity.createdBy;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = entity.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = entity.originalDocumentApprovalId;
+                    workflow.Comment = entity.comment;
+                    workflow.OperationId = (int)OperationsEnum.OriginalDocumentApproval;
+                    workflow.DeferredExecution = true;
+                    workflow.LogActivity();
+                }
+
             }
 
             return context.SaveChanges() != 0;
