@@ -1663,7 +1663,7 @@ namespace FintrakBanking.Repositories.Credit
                         statusId = x.d.STATUSID,
                         exchangeRate = x.d.EXCHANGERATE,
                         terms = x.d.REPAYMENTTERMS,
-                        schedule = x.d.REPAYMENTSCHEDULEID,
+                        schedule = x.d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                         crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
                         crmsRepaymentTypeId = x.d.CRMSREPAYMENTAGREEMENTID,
@@ -1739,7 +1739,7 @@ namespace FintrakBanking.Repositories.Credit
                     statusId = x.d.STATUSID,
                     exchangeRate = x.d.EXCHANGERATE,
                     terms = x.d.REPAYMENTTERMS,
-                    schedule = x.d.REPAYMENTSCHEDULEID,
+                    schedule = x.d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                     securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                     crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
                     isSpecialised = (bool)x.d.ISSPECIALISED,
@@ -2357,14 +2357,14 @@ namespace FintrakBanking.Repositories.Credit
         {
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.applicationDetailId);
             detail.REPAYMENTTERMS = model.terms;
-            detail.REPAYMENTSCHEDULEID = model.repaymentScheduleId.ToString();
+            detail.REPAYMENTSCHEDULEID = model.repaymentScheduleId;
             context.SaveChanges();
             return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID && x.DELETED == false)
                 .Select(x => new RepaymentScheduleTermsViewModel
                 {
                     applicationDetailId = x.LOANAPPLICATIONDETAILID,
                     terms = x.REPAYMENTTERMS,
-                    repaymentScheduleId = int.Parse(x.REPAYMENTSCHEDULEID),
+                    repaymentScheduleId = (int)x.REPAYMENTSCHEDULEID,
                     productCustomerName = x.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME
                 }).ToList();
 
@@ -2376,7 +2376,7 @@ namespace FintrakBanking.Repositories.Credit
             var terms = context.TBL_REPAYMENT_TERM.Select(t =>
                 new RepaymentScheduleTermSetupViewModel
                 {
-                    repaymentScheduleId = t.REPAYMENTTERMID,
+                    repaymentScheduleId = t.REPAYMENTSCHEDULEID,
                     repaymentScheduleDetail = t.REPAYMENTTERMDETAIL,
                 }).ToList();
             // todo code

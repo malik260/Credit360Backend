@@ -647,7 +647,7 @@ namespace FintrakBanking.APICore.Controllers
         #region LCUSSANCE
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lc-ussance/{lcIssuanceId}")]
+        [Route("lc-ussance-lcIssuanceId/{lcIssuanceId}")]
         public HttpResponseMessage GetLcUssanceByLCIssuanceId(int lcIssuanceId)
         {
             try
@@ -661,6 +661,24 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lc-ussance-lcUsanceId/{lcUsanceId}")]
+        public HttpResponseMessage GetLcUssanceByLCUsanceId(int lcUsanceId)
+        {
+            try
+            {
+                LcUssanceViewModel response = ussanceRepo.GetLcUssanceByLCUsanceId(lcUsanceId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
 
         [HttpPost]
         [ClaimsAuthorization]
