@@ -1937,6 +1937,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
             detail.PROPOSEDPRODUCTID = update.proposedProductId;
             detail.PROPOSEDTENOR = ConvertTenorToDays(update.proposedTenor, update.tenorModeId);
+            detail.REPAYMENTSCHEDULEID = update.repaymentScheduleId;
             detail.REPAYMENTTERMS = update.repaymentTerm;
             detail.LOANPURPOSE = update.loanPurpose;
             detail.PRODUCTPRICEINDEXID = update.productPriceIndexId;
@@ -1947,7 +1948,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.CURRENCYID = update.currencyId;
             detail.TENORFREQUENCYTYPEID = update.tenorModeId;
 
-            var productClassId = detail.TBL_PRODUCT.PRODUCTCLASSID;
+            var productClassId = detail.TBL_PRODUCT1.PRODUCTCLASSID;
 
             if (productClassId == (int)ProductClassEnum.InvoiceDiscountingFacility && update.invoiceDetails.Any())
             {
@@ -2031,6 +2032,7 @@ namespace FintrakBanking.Repositories.Credit
                 totalApplicationAmount = totalApplicationAmount + exchangeValue;
             }
 
+            this.loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
             this.loanData.REQUIRECOLLATERAL = loan.requireCollateral;
             this.loanData.TOTALEXPOSUREAMOUNT = totalAmount;
             this.loanData.INTERESTRATE = loan.interestRate;
@@ -2163,7 +2165,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANPURPOSE = a.loanPurpose,
                 CASAACCOUNTID = a.casaAccountId,
                 OPERATINGCASAACCOUNTID = a.operatingCasaAccountId,
-                REPAYMENTSCHEDULEID = a.repaymentScheduleId.ToString(),
+                REPAYMENTSCHEDULEID = a.repaymentScheduleId,
                 REPAYMENTTERMS = a.repaymentTerm,
                 CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
                 CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
@@ -2255,13 +2257,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPurpose = d.LOANPURPOSE,
                 casaAccountId = d.CASAACCOUNTID,
                 repaymentTerm = d.REPAYMENTTERMS,
-                repaymentScheduleId = int.Parse(d.REPAYMENTSCHEDULEID),
+                repaymentScheduleId = (int)d.REPAYMENTSCHEDULEID,
                 crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
                 crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
                 crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,
                 productPriceIndexId = d.PRODUCTPRICEINDEXID,
                 productPriceIndexRate = d.PRODUCTPRICEINDEXRATE,
-
+                operatingCasaAccountId = d.OPERATINGCASAACCOUNTID,
                 tenorModeId = d.TENORFREQUENCYTYPEID,
             };
 
@@ -4542,6 +4544,8 @@ namespace FintrakBanking.Repositories.Credit
                             proposedAmount = b.PROPOSEDAMOUNT,
 
                             //requireCollateral = a.REQUIRECOLLATERAL,
+                            repaymentScheduleId = (int)b.REPAYMENTSCHEDULEID,
+                            repaymentTerm = b.REPAYMENTTERMS,
                             loanApplicationId = b.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
@@ -4559,6 +4563,10 @@ namespace FintrakBanking.Repositories.Credit
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
+            //foreach (var f in result)
+            //{
+
+            //}
             // var test = result.Count();
             return result;
         }
@@ -4787,6 +4795,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationId = entity.OPERATIONID,
                 destinationUrl = entity.DESTINATIONURL,
                 productTypeId = entity.PRODUCTTYPEID,
+                documentOperation=entity.DOCUMENTOPERATION,
             };
         }
 
@@ -4796,6 +4805,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => new LoanApplicationFlowChangeViewModel
                 {
                     FlowChangeId = x.FLOWCHANGEID,
+                    documentOperation=x.DOCUMENTOPERATION,
                     label = x.LABEL,
                     placeHolder=x.PLACEHOLDER,
                     operationId=x.OPERATIONID,
@@ -4815,6 +4825,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var entity = new TBL_LOAN_APPLICATN_FLOW_CHANGE
             {
+                DOCUMENTOPERATION = model.documentOperation,
                 LABEL = model.label,
                 PLACEHOLDER = model.placeHolder,
                 ISSKIPPROCESSENABLED = model.skipflow,
@@ -4822,7 +4833,10 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONID = model.operationId,
                 DESTINATIONURL = model.destinationUrl,
                 PRODUCTTYPEID = model.productTypeId,
-                
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = model.createdBy,
+                DELETED = false
+
             };
             context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Add(entity);
 
@@ -4853,6 +4867,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.PRODUCTCLASSID = model.productClassId;
             entity.OPERATIONID = model.operationId;
             entity.DESTINATIONURL = model.destinationUrl;
+            entity.DOCUMENTOPERATION = model.documentOperation;
             entity.PRODUCTTYPEID = model.productTypeId;
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
