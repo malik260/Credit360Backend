@@ -1481,6 +1481,9 @@ namespace FintrakBanking.Repositories.Credit
                                 //&& c.ISEXTERNAL == true 
                                  && c.ISSUBSEQUENT == false &&
                                   c.CHECKLISTSTATUSID == null
+                                  && (c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
+                                      && c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                      && c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                                  select new ConditionPrecedentViewModel()
                                  {
                                      condition = c.CONDITION,
@@ -1529,6 +1532,9 @@ namespace FintrakBanking.Repositories.Credit
                 var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
                               where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId &&
                                c.CHECKLISTSTATUSID != null
+                               && (c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
+                                      && c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                      && c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                               orderby c.ISEXTERNAL descending
                               select new ConditionPrecedentViewModel()
                               {
@@ -1708,10 +1714,10 @@ namespace FintrakBanking.Repositories.Credit
                 if (data == null) return false;
                 loanConditionId = data.LOANCONDITIONID;
                 data.CHECKLISTSTATUSID = model.checkListStatusId;
-                data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                //data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                 if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
                 {
-                    data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+                    //data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
                     //data.DEFEREDDAYS = model.deferedDays;
                     data.DEFEREDDATE = model.deferedDate;
                 }
@@ -1725,10 +1731,10 @@ namespace FintrakBanking.Repositories.Credit
                 if (data == null) return false;
                 loanConditionId = data.LOANCONDITIONID;
                 data.CHECKLISTSTATUSID = model.checkListStatusId;
-                data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                //data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                 if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
                 {
-                    data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+                    //data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
                     data.DEFEREDDAYS = model.deferedDays;
                     //data.DEFEREDDATE = model.deferedDate;
                 }
@@ -1810,6 +1816,18 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.ExternalInitialization = true;
                         workflow.LogActivity();
                     }
+                    if (workflow.StatusId == (int)ApprovalStatusEnum.Pending)
+                    {
+                        data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    }
+                    //if (workflow.NewState == (int)ApprovalState.Ended)
+                    //{
+                    //    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                    //    {
+                    //        data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    //    }
+                    //    data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    //}
                     trans.Commit();
                 }
             }

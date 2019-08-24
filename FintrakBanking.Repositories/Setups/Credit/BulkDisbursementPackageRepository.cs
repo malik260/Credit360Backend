@@ -42,7 +42,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                            startDate = a.STARTDATE,
                            endDate = a.ENDDATE,
                            groupCustomerId = a.GROUPCUSTOMERID,
-                           packageDescription = a.PACKAGEDESCRIPTION
+                           packageDescription = a.PACKAGEDESCRIPTION,
+                            customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.GROUPCUSTOMERID).FirstOrDefault().FIRSTNAME,
                         }).ToList();
            return data;
 
@@ -77,11 +78,17 @@ namespace FintrakBanking.Repositories.Setups.Credit
 
             var data = new TBL_LOAN_BULK_DISBURSE_PACKAGE
             {
-                COMPANYID = (short)model.companyId,           
+                COMPANYID = (short)model.companyId,
                 STARTDATE = model.startDate,
                 ENDDATE = model.endDate,
                 GROUPCUSTOMERID = model.groupCustomerId,
-                PACKAGEDESCRIPTION = model.packageDescription
+                PACKAGEDESCRIPTION = model.packageDescription,
+                CREATEDBY = model.createdBy,
+                LASTUPDATEDBY = model.lastUpdatedBy,
+                DATETIMECREATED = _genSetup.GetApplicationDate(),
+                DELETED = false,
+                DELETEDBY = 0,
+                DATETIMEDELETED = _genSetup.GetApplicationDate()
             };
 
             //Audit Section ---------------------------
@@ -91,8 +98,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Bulk Disbursement Package for '{customerData.CUSTOMERCODE}'  ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
+                // IPADDRESS = model.userIPAddress,
+                // URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -100,6 +107,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
             context.TBL_LOAN_BULK_DISBURSE_PACKAGE.Add(data);
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
+
+
 
             return context.SaveChanges() != 0;
         }
@@ -129,10 +138,18 @@ namespace FintrakBanking.Repositories.Setups.Credit
             data.ENDDATE = model.endDate;
             data.GROUPCUSTOMERID = model.groupCustomerId;
             data.PACKAGEDESCRIPTION = model.packageDescription;
-            
+            data.COMPANYID = (short)model.companyId;
+            data.CREATEDBY = model.createdBy;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMECREATED = _genSetup.GetApplicationDate();
+            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+            data.DELETED = false;
+            data.DELETEDBY = 0;
+            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
+
             //Audit Section ---------------------------
 
-                var audit = new TBL_AUDIT
+            var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.BulkDisbursementPackageUpdated,
                     STAFFID = model.createdBy,
@@ -153,7 +170,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public bool DeleteBulkDisbursementPackage(int disbursementPackageId, UserInfo user)
         {
             var data = this.context.TBL_LOAN_BULK_DISBURSE_PACKAGE.Find(disbursementPackageId);
-            
+            data.DELETED = true;
+            data.DELETEDBY = user.staffId;
             // Audit Section ---------------------------
             var customerData = context.TBL_LOAN_BULK_DISBURSE_PACKAGE.Where(x => x.GROUPCUSTOMERID == data.GROUPCUSTOMERID).FirstOrDefault();
             var audit = new TBL_AUDIT

@@ -124,10 +124,18 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                bulkDisbursementSetup.companyId = token.GetCompanyId;
+                bulkDisbursementSetup.companyId = token.GetCompanyId;          
+                bulkDisbursementSetup.userBranchId = (short)token.GetBranchId;
 
                 var data = repo.AddBulkDisbursementPackage(bulkDisbursementSetup);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
+                if (data == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = data });
+                }
             }
             catch (SecureException ex)
             {
