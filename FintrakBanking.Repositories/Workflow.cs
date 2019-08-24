@@ -67,6 +67,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? toStaffId = null;
         private int? loopedRoleId = null;
         private int? loopedStaffId = null;
+        public int actualRequestStaffId = 0;
+        public bool isLoopResponse = false;
         private bool endProcess = false;
         private AlertPlaceholders placeholders = null;
         private LevelBusinessRule levelBusinessRule = null;
@@ -116,6 +118,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public WorkflowResponse Response { get { return response; } set { response = value; } }
 
         public bool isCrossOperationProcess { get; private set; }
+        
+        
 
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
@@ -189,6 +193,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.RESPONSEDATE = this.applicationDate;
                 request.SYSTEMRESPONSEDATETIME = this.systemDate;
                 request.RESPONSESTAFFID = this.staffId;
+
+                if(request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred)
+                { request.RESPONSESTAFFID = this.loopedStaffId; }
             }
 
             MakerCheckerControl();
@@ -209,7 +216,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 TOAPPROVALLEVELID = this.nextLevelId,
                 TARGETID = this.targetId,
                 COMPANYID = this.companyId,
-                REQUESTSTAFFID = this.staffId,
+                REQUESTSTAFFID = !isLoopResponse ? this.staffId : this.actualRequestStaffId,
                 OPERATIONID = this.operationId,
                 COMMENT = this.comment,
                 ARRIVALDATE = this.applicationDate,
@@ -220,7 +227,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 VOTE = this.vote,
                 TOSTAFFID = this.toStaffId,
                 LOOPEDROLEID = this.loopedRoleId,
-                LOOPEDSTAFFID = this.loopedStaffId
+                LOOPEDSTAFFID = !isLoopResponse ? this.loopedStaffId : null,
                 
             });
 
@@ -242,31 +249,29 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public void ResolveExternalFlowLoop(TBL_APPROVAL_TRAIL request, TBL_APPROVAL_TRAIL initiatorRequest)
         {
-            if (staffId == initiatorRequest.REQUESTSTAFFID)
-            {
-                // this.fromLevelId = request.FROMAPPROVALLEVELID;
-               // this.loopedStaffId = this.staffId;
-                //this.toStaffId = request.REQUESTSTAFFID;
-                //this.staffId = request.REQUESTSTAFFID;
-            }
             if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
             {
                 if (staffId == initiatorRequest.REQUESTSTAFFID)
                 {
-                    // this.fromLevelId = request.FROMAPPROVALLEVELID;
-                    this.loopedStaffId = request.REQUESTSTAFFID;
-                    //this.toStaffId = request.REQUESTSTAFFID;
-                    //this.staffId = request.REQUESTSTAFFID;
+                    this.fromLevelId = request.FROMAPPROVALLEVELID;
+                    this.loopedStaffId = staffId;
+                    this.toStaffId = request.REQUESTSTAFFID;
                 }
+
+                if(request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0) { this.toStaffId = request.REQUESTSTAFFID; }
             }
 
-            //if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.LoopedIn)
-            //{
-            //    this.fromLevelId = request.FROMAPPROVALLEVELID;
-            //    this.staffId = request.REQUESTSTAFFID;
-            //}
+            if (request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred)
+            {
+                this.actualRequestStaffId = this.staffId;
+                this.staffId = request.REQUESTSTAFFID;
+                this.toStaffId = request.REQUESTSTAFFID;
+                this.isLoopResponse = true;
+                this.fromLevelId = request.FROMAPPROVALLEVELID;
+                this.nextLevelId = request.FROMAPPROVALLEVELID;
+            }
 
-            //if(request.APPROVALSTATUSID == (int)ApprovalStatusEnum.LoopedIn)
+            //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0)
             //{
             //    this.fromLevelId = request.FROMAPPROVALLEVELID;
             //    this.toStaffId = request.REQUESTSTAFFID;
@@ -274,37 +279,37 @@ namespace FintrakBanking.Repositories.WorkFlow
             //}
 
         }
-/*
-        private void SkipLevelByAmount()
-        {
-            if (next.MaximumAmount < amount) SkipToNextApprovalLevel();
-        }
-
-        private void SkipToNextApprovalLevel(int? levelId = null) // WORK AROUND
-        {
-            if (levelId == null) levelId = this.nextLevelId;
-            bool found = false;
-            foreach (var level in approvalGrid)
-            {
-                if (found == true)
+        /*
+                private void SkipLevelByAmount()
                 {
-                    this.nextLevelId = level.ApprovalLevelId;
-                    next = level;
-                    SetNextLevelConfigurations(level);
-                    break;
+                    if (next.MaximumAmount < amount) SkipToNextApprovalLevel();
                 }
-                if (level.ApprovalLevelId == levelId) found = true;
-            }
-        }
 
-        private void SetNextLevelConfigurations(WorkflowSetup level)
-        {
-            this.smsNotification = level.CanRecieveSMS;
-            this.emailNotification = level.CanRecieveEmail;
-            this.nextLevelId = level.ApprovalLevelId;
-            this.slaInterval = level.SlaInterval;
-            this.useOrganogram = level.RouteViaStaffOrganogram;
-        }*/
+                private void SkipToNextApprovalLevel(int? levelId = null) // WORK AROUND
+                {
+                    if (levelId == null) levelId = this.nextLevelId;
+                    bool found = false;
+                    foreach (var level in approvalGrid)
+                    {
+                        if (found == true)
+                        {
+                            this.nextLevelId = level.ApprovalLevelId;
+                            next = level;
+                            SetNextLevelConfigurations(level);
+                            break;
+                        }
+                        if (level.ApprovalLevelId == levelId) found = true;
+                    }
+                }
+
+                private void SetNextLevelConfigurations(WorkflowSetup level)
+                {
+                    this.smsNotification = level.CanRecieveSMS;
+                    this.emailNotification = level.CanRecieveEmail;
+                    this.nextLevelId = level.ApprovalLevelId;
+                    this.slaInterval = level.SlaInterval;
+                    this.useOrganogram = level.RouteViaStaffOrganogram;
+                }*/
 
         private int? ResolveReroute(int? toStaffId)
         {
