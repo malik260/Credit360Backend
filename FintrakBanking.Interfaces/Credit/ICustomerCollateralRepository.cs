@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels;
+﻿using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
@@ -141,7 +142,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<InsurancePolicies> GetCollateralInsurancePoliciesWaitingForApproval(int staffId);
 
-        int GoForInsurancePolicyApproval(ApprovalViewModel model);
+        WorkflowResponse GoForInsurancePolicyApproval(ApprovalViewModel model);
         IEnumerable<CollateralCoverageViewModel> GetCollateralCoverage(int collateralSubTypeId);
         bool AddCollateralCoverage(CollateralCoverageViewModel model);
         bool DeleteCollateralCoverage(int collateralCoverageId, int createdById);

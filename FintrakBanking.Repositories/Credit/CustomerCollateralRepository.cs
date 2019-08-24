@@ -1334,42 +1334,38 @@ namespace FintrakBanking.Repositories.Credit
 
             });
 
-            //if (context.SaveChanges() > 0)
-            //{
-            //    workflow.StaffId = entity.createdBy;
-            //    workflow.CompanyId = entity.companyId;
-            //    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            //    workflow.TargetId = policy.POLICYID;
-            //    workflow.Comment = "Request for Insurance Policy approval";
-            //    workflow.OperationId = (int)OperationsEnum.IsurancePolicyApproval;
-            //    workflow.DeferredExecution = false; // false by default will call the internal SaveChanges()
-            //    workflow.ExternalInitialization = true;
-            //    workflow.LogActivity();
-
-            //    return true;
-            //}
-
             return (context.SaveChanges() > 0);
 
         }
 
         public bool InsuranceRequestGoForApproval(CollateralViewModel model)
         {
-            workflow.StaffId = model.createdBy;
-            workflow.CompanyId = model.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = model.insuranceRequestId;
-            workflow.Comment = "Request for Insurance Policy approval";
-            workflow.OperationId = (int)OperationsEnum.IsurancePolicyApproval;
-            workflow.DeferredExecution = false; // false by default will call the internal SaveChanges()
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
+            var entity = (from ir in context.TBL_INSURANCE_REQUEST
+                         join cip in context.TBL_COLLATERAL_ITEM_POLICY on ir.COLLATERALCUSTOMERID equals cip.COLLATERALCUSTOMERID
+                         where model.collateralId == cip.COLLATERALCUSTOMERID &&
+                            cip.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                         select ir).ToList();
 
-            var entity = context.TBL_INSURANCE_REQUEST.FirstOrDefault(ir => ir.INSURANCEREQUESTID == model.insuranceRequestId);
-            if (entity == null) return false;
-            entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            if (entity.Count > 0) return false;
+            
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = model.insuranceRequestId;
+                workflow.Comment = "Request for Insurance Policy approval";
+                workflow.OperationId = (int)OperationsEnum.IsurancePolicyApproval;
+                workflow.DeferredExecution = false; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
 
-            return context.SaveChanges() != 0;
+                var entity2 = context.TBL_INSURANCE_REQUEST.FirstOrDefault(ir => ir.INSURANCEREQUESTID == model.insuranceRequestId);
+                if (entity2 == null) return false;
+
+                entity2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+
+                return context.SaveChanges() != 0;
+            
+            
         }
 
         public string GetReferenceNumber()
@@ -6794,10 +6790,12 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public int GoForInsurancePolicyApproval(ApprovalViewModel model)
+        public WorkflowResponse GoForInsurancePolicyApproval(ApprovalViewModel model)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
+                bool responce;
+
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = model.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
@@ -6822,14 +6820,10 @@ namespace FintrakBanking.Repositories.Credit
                         }
                     }
 
-                    int responce = context.SaveChanges();
+                    responce = context.SaveChanges() > 0;
                     transaction.Commit();
 
-                    if (responce > 0)
-                    {
-                        return model.approvalStatusId;
-                    }
-                    return 0;
+                    return workflow.Response;
 
                 }
                 catch (Exception ex)
