@@ -25,11 +25,12 @@
 
         public int LASTUPDATEDBY { get; set; }
 
-        public int DATETIMECREATED { get; set; }
-        public int DATETIMEUPDATED { get; set; }
-        public int DELETED { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
+        public DateTime DATETIMEUPDATED { get; set; }
+        public bool DELETED { get; set; }
         public int DELETEDBY { get; set; }
-        public int DATETIMEDELETED { get; set; }
+        public DateTime DATETIMEDELETED { get; set; }
+        public string PACKAGEDESCRIPTION { get; set; }
 
 
     }

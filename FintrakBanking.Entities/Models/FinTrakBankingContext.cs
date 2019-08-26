@@ -539,12 +539,13 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LCRELEASE_AMOUNT> TBL_LCRELEASE_AMOUNT { get; set; }
         public virtual DbSet<TBL_REPAYMENT_TERM> TBL_REPAYMENT_TERM { get; set; }
         public virtual DbSet<TBL_INSURANCE_REQUEST> TBL_INSURANCE_REQUEST { get; set; }
+        public virtual DbSet<TBL_CUSTOMER_GROUP_MAPPING_ARC> TBL_CUSTOMER_GROUP_MAPPING_ARC { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
-        
 
 
-        
+
+
 
 
 
@@ -4757,9 +4758,9 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.REPAYMENTTERMS)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
-                .Property(e => e.REPAYMENTSCHEDULEID)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
+            //    .Property(e => e.REPAYMENTSCHEDULEID)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
                 .HasMany(e => e.TBL_LOAN)

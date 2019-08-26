@@ -74,13 +74,18 @@ namespace FintrakBanking.ViewModels.credit
         public int? lcReleaseAmountId { get; set; }
 
         //ussance
-        public int lcUssanceId { get; set; }
+        public int? lcUssanceId { get; set; }
         public decimal ussanceAmount { get; set; }
         public decimal ussanceRate { get; set; }
         public int ussanceTenor { get; set; }
         public DateTime lcEffectiveDate { get; set; }
         public DateTime lcMaturityDate { get; set; }
         public int? usanceAmountCurrencyId { get; set; }
+        public int? releaseApplicationStatusId { get; set; }
+        public int? releaseApprovalStatusId { get; set; }
+        public int? usanceApplicationStatusId { get; set; }
+        public int? usanceApprovalStatusId { get; set; }
+        public decimal? totalUsanceAmount { get; set; }
 
         #endregion LCISSUANCE
     }
@@ -145,7 +150,7 @@ namespace FintrakBanking.ViewModels.credit
     {
         public int lcIssuanceId { get; set; }
 
-        public int lcReleaseAmountId { get; set; }
+        public int? lcReleaseAmountId { get; set; }
 
         public string lcReferenceNumber { get; set; }
 
@@ -217,9 +222,13 @@ namespace FintrakBanking.ViewModels.credit
 
         public short lcIssuanceStatusId { get; set; }
 
-        public string applicationStatus { get; set; }
+        public string lcApplicationStatus { get; set; }
+        public string usanceStatus { get; set; }
+        public decimal? totalUsanceAmount { get; set; }
 
         public int? operationId { get; set; }
+        public string usanceApprovalStatus { get; set; }
+        public string UsanceCurrentApprovalLevel { get; set; }
 
 
         public int? totalApprovedAmountCurrencyId { get; set; }
@@ -242,13 +251,17 @@ namespace FintrakBanking.ViewModels.credit
 
 
         //ussance
-        public int lcUssanceId { get; set; }
+        public int? lcUssanceId { get; set; }
         public decimal ussanceAmount { get; set; }
         public double? ussanceRate { get; set; }
         public int ussanceTenor { get; set; }
         public DateTime lcEffectiveDate { get; set; }
         public DateTime lcMaturityDate { get; set; }
         public int? usanceAmountCurrencyId { get; set; }
+        public int? releaseApplicationStatusId { get; set; }
+        public int? releaseApprovalStatusId { get; set; }
+        public int? usanceApplicationStatusId { get; set; }
+        public int? usanceApprovalStatusId { get; set; }
     }
 
     public class LcUssanceViewModel : GeneralEntity
@@ -262,6 +275,8 @@ namespace FintrakBanking.ViewModels.credit
         public DateTime? lcEffectiveDate { get; set; }
         public DateTime? lcMaturityDate { get; set; }
         public int? usanceAmountCurrencyId { get; set; }
+        public int? usanceApplicationStatusId { get; set; }
+        public int? usanceApprovalStatusId { get; set; }
     }
 
     public class LcReleaseAmountViewModel : GeneralEntity
@@ -269,5 +284,7 @@ namespace FintrakBanking.ViewModels.credit
         public int lcReleaseAmountId { get; set; }
         public int lcIssuanceId { get; set; }
         public decimal? releaseAmount { get; set; }
+        public int? releaseApplicationStatusId { get; set; }
+        public int? releaseApprovalStatusId { get; set; }
     }
 }

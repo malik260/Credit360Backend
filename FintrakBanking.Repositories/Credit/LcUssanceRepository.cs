@@ -55,6 +55,28 @@ namespace FintrakBanking.Repositories.credit
                 .ToList();
         }
 
+        public LcUssanceViewModel GetLcUssanceByLCUsanceId(int lcUsanceId)
+        {
+            var entity = context.TBL_LC_USSANCE.FirstOrDefault(x => x.LCUSSANCEID == lcUsanceId && x.DELETED == false);
+
+            if (entity != null)
+            {
+                return new LcUssanceViewModel
+                {
+                    lcIssuanceId = entity.LCISSUANCEID,
+                    lcUssanceId = entity.LCUSSANCEID,
+                    ussanceAmount = entity.USSANCEAMOUNT,
+                    ussanceRate = entity.USSANCERATE,
+                    ussanceTenor = entity.USSANCETENOR,
+                    lcEffectiveDate = entity.LCUSSANCEEFFECTIVEDATE,
+                    lcMaturityDate = entity.LCUSSANCEMATURITYDATE,
+                    usanceAmountCurrencyId = entity.USANCEAMOUNTCURRENCYID
+                };
+            }
+
+            return null;
+        }
+
         public LcUssanceViewModel GetLcUssanceByLCIssuanceId(int lcIssuanceId)
         {
             var entity = context.TBL_LC_USSANCE.FirstOrDefault(x => x.LCISSUANCEID == lcIssuanceId && x.DELETED == false);
@@ -79,15 +101,20 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<LcIssuanceViewModel> GetLcIssuancesForUssance()
         {
-            var lcs = (from x in context.TBL_LC_ISSUANCE where
-                        (x.DELETED == false && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
-                        || (x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
-                                    && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved))
-                        //join y in context.TBL_LC_USSANCE.Where(y => y.DELETED == false)
-                        //on x.LCISSUANCEID equals y.LCISSUANCEID
-                            select new LcIssuanceViewModel()
+            var usances = context.TBL_LC_USSANCE.ToList();
+            var lcs = (from x in context.TBL_LC_ISSUANCE
+                       join y in context.TBL_LC_USSANCE on x.LCISSUANCEID equals y.LCISSUANCEID into xy
+                       from u in xy.DefaultIfEmpty() where 
+                       (x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                        && ((u.USANCEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceInProgress
+                        && u.USANCEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceCompleted)
+                        || (u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
+                            && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)))
+                           
+                       select new LcIssuanceViewModel()
                             {
                                 lcIssuanceId = x.LCISSUANCEID,
+                                lcUssanceId = u.LCUSSANCEID,
                                 beneficiaryName = x.BENEFICIARYNAME,
                                 totalApprovedAmount = x.TOTALAPPROVEDAMOUNT,
                                 totalApprovedAmountCurrencyId = x.TOTALAPPROVEDAMOUNTCURRENCYID,
@@ -98,6 +125,7 @@ namespace FintrakBanking.Repositories.credit
                                 percentageToCover = x.PERCENTAGETOCOVER,
                                 lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
                                 lcToleranceValue = x.LCTOLERANCEVALUE,
+                                totalUsanceAmount = usances.Where(u => u.LCISSUANCEID == x.LCISSUANCEID).Sum(u => u.USSANCEAMOUNT),
                                 releaseAmount = x.RELEASEDAMOUNT,
                                 letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                                 isDraftRequired = x.ISDRAFTREQUIRED,
@@ -119,13 +147,12 @@ namespace FintrakBanking.Repositories.credit
                                 invoiceDueDate = x.INVOICEDUEDATE,
                                 lcReferenceNumber = x.LCREFERENCENUMBER,
                                 dateTimeCreated = (DateTime)x.DATETIMECREATED,
-                                //lcUssanceId = y.LCUSSANCEID,
-                                //ussanceAmount = y.USSANCEAMOUNT,
-                                //ussanceRate = (int)y.USSANCERATE,
-                                //ussanceTenor = (int)y.USSANCETENOR,
-                                //lcEffectiveDate = (DateTime)y.LCUSSANCEEFFECTIVEDATE,
-                                //lcMaturityDate = (DateTime)y.LCUSSANCEMATURITYDATE
-                            })
+                           //ussanceAmount = y.USSANCEAMOUNT,
+                           //ussanceRate = (int)y.USSANCERATE,
+                           //ussanceTenor = (int)y.USSANCETENOR,
+                           //lcEffectiveDate = (DateTime)y.LCUSSANCEEFFECTIVEDATE,
+                           //lcMaturityDate = (DateTime)y.LCUSSANCEMATURITYDATE
+                       })
                             .ToList();
                         return lcs;
         }
@@ -164,7 +191,7 @@ namespace FintrakBanking.Repositories.credit
             });
             // Audit Section end ------------------------
             context.SaveChanges();
-            var createdlcUssance = context.TBL_LC_USSANCE.FirstOrDefault(lc => lc.LCISSUANCEID == model.lcIssuanceId);
+            var createdlcUssance = context.TBL_LC_USSANCE.FirstOrDefault(lc => lc.DATETIMECREATED == entity.DATETIMECREATED && lc.LCISSUANCEID == entity.LCISSUANCEID);
             model.lcUssanceId = createdlcUssance.LCUSSANCEID;
             return model;
         }
@@ -247,39 +274,39 @@ namespace FintrakBanking.Repositories.credit
             IQueryable<LcIssuanceApprovalViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
-            var querytest1 = (from a in context.TBL_LC_ISSUANCE
-                              where
-                                a.DELETED == false
-                                && a.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
-                                && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
-                              select a).ToList();
+            //var querytest1 = (from a in context.TBL_LC_ISSUANCE
+            //                  where
+            //                    a.DELETED == false
+            //                    && a.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
+            //                    && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+            //                  select a).ToList();
 
-            var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
-                              where
-                                (b.OPERATIONID == operationId)
-                                && b.APPROVALSTATEID != (int)ApprovalState.Ended
-                                && b.RESPONSESTAFFID == null
-                                && levelIds.Contains((int)b.TOAPPROVALLEVELID)
-                                && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
-                              select b).ToList();
+            //var querytest2 = (from b in context.TBL_APPROVAL_TRAIL
+            //                  where
+            //                    (b.OPERATIONID == operationId)
+            //                    && b.APPROVALSTATEID != (int)ApprovalState.Ended
+            //                    && b.RESPONSESTAFFID == null
+            //                    && levelIds.Contains((int)b.TOAPPROVALLEVELID)
+            //                    && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
+            //                  select b).ToList();
 
             var query = (from a in context.TBL_LC_ISSUANCE
-                         where
-                            (a.DELETED == false
-                            && a.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress)
-                         orderby a.LCISSUANCEID
-                         join b in context.TBL_APPROVAL_TRAIL on a.LCISSUANCEID equals b.TARGETID
+                         join u in context.TBL_LC_USSANCE on a.LCISSUANCEID equals u.LCISSUANCEID
+                         join ut in context.TBL_APPROVAL_TRAIL on u.LCUSSANCEID equals ut.TARGETID
                          where
                             (
-                            (b.OPERATIONID == operationId)
-                            && b.APPROVALSTATEID != (int)ApprovalState.Ended
-                            && b.RESPONSESTAFFID == null
-                            && levelIds.Contains((int)b.TOAPPROVALLEVELID)
-                            && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
+                            (ut.OPERATIONID == operationId)
+                            && a.DELETED == false
+                            && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
+                            && ut.APPROVALSTATEID != (int)ApprovalState.Ended
+                            && ut.RESPONSESTAFFID == null
+                            && levelIds.Contains((int)ut.TOAPPROVALLEVELID)
+                            && (ut.TOSTAFFID == null || ut.TOSTAFFID == staffId)
                             )
                          select new LcIssuanceApprovalViewModel()
                          {
                              lcIssuanceId = a.LCISSUANCEID,
+                             lcUssanceId = u.LCUSSANCEID,
                              isDraftRequired = a.ISDRAFTREQUIRED,
                              lcReferenceNumber = a.LCREFERENCENUMBER,
                              letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
@@ -310,20 +337,18 @@ namespace FintrakBanking.Repositories.credit
                              letterOfcreditExpirydate = a.LETTEROFCREDITEXPIRYDATE,
                              invoiceDate = a.INVOICEDATE,
                              invoiceDueDate = a.INVOICEDUEDATE,
-                             lastComment = b.COMMENT,
-                             currentApprovalStateId = b.APPROVALSTATEID,
-                             currentApprovalLevelId = b.TOAPPROVALLEVELID,
-                             currentApprovalLevel = b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
-                             currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
-                             approvalTrailId = b == null ? 0 : b.APPROVALTRAILID, // for inner sequence ordering
-                             toStaffId = b.TOSTAFFID,
-                             approvalStatusId = (short)a.APPROVALSTATUSID,
-                             applicationStatusId = a.APPLICATIONSTATUSID,
+                             lastComment = ut.COMMENT,
+                             currentApprovalStateId = ut.APPROVALSTATEID,
+                             currentApprovalLevelId = ut.TOAPPROVALLEVELID,
+                             currentApprovalLevel = ut.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                             currentApprovalLevelTypeId = ut.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
+                             approvalTrailId = ut == null ? 0 : ut.APPROVALTRAILID, // for inner sequence ordering
+                             toStaffId = ut.TOSTAFFID,
+                             approvalStatusId = (short)u.USANCEAPPROVALSTATUSID,
+                             applicationStatusId = u.USANCEAPPLICATIONSTATUSID,
                              createdBy = (int)a.CREATEDBY,
-                             //customerName = context.TBL_CUSTOMER.Find(a.CUSTOMERID).FIRSTNAME + context.TBL_CUSTOMER.Find(a.CUSTOMERID).LASTNAME,
                              operationId = operationId,
                              dateTimeCreated = (DateTime)a.DATETIMECREATED,
-                             //lcUssanceId = c.LCUSSANCEID,
                              //ussanceAmount = c.USSANCEAMOUNT,
                              //ussanceRate = (int)c.USSANCERATE,
                              //ussanceTenor = (int)c.USSANCETENOR,

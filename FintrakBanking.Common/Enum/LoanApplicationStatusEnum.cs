@@ -37,7 +37,9 @@ namespace FintrakBanking.Common.Enum
         lcUssanceCompleted = 28,
         LcIssuanceInProgress = 29,
         LetterGenerationRequestInProgress = 30,
-        LetterGenerationRequestCompleted = 31
+        LetterGenerationRequestCompleted = 31,
+        checklistDeferralInProgress = 32,
+        checklistDeferralCompleted = 33
         //AdhocApprovalInProgress =23,
     }
 }

@@ -910,7 +910,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
 
 
-                return product;
+                return product.OrderBy(p => p.productName);
 
                 //return AllProduct().Where(c => c.productClassId == productClassId && (c.productGroupId == 1));
             }
@@ -2691,7 +2691,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 priceIndexName = a.PRICEINDEXNAME,
                                 priceIndexRate = a.PRICEINDEXRATE,
                                 currencyId = a.CURRENCYID,
-                            }).FirstOrDefault(); ;
+                            }).FirstOrDefault();
 
                 return data;
             }
