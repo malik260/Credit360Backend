@@ -145,17 +145,17 @@ namespace FintrakBanking.Repositories.Credit
 
             if (data == null) { return false; }
 
-            if (data.LASTUPDATEDBY != model.lastUpdatedBy) // archive old
-            {
-                _context.TBL_COLLATERAL_VALUATION_PRE.Add(new TBL_COLLATERAL_VALUATION_PRE
-                {
-                    COLLATERALVALUATIONID = model.collateralValuationId,
-                    VALUATIONREQUESTTYPEID = model.valuationRequestTypeId,
-                    VALUATIONCOMMENT = model.valuationComment,
-                });
-            }
+            //if (data.LASTUPDATEDBY != model.lastUpdatedBy) // archive old
+            //{
+            //    _context.TBL_COLLATERAL_VALUATION_PRE.Add(new TBL_COLLATERAL_VALUATION_PRE
+            //    {
+            //        COLLATERALVALUATIONID = model.collateralValuationId,
+            //        VALUATIONREQUESTTYPEID = model.valuationRequestTypeId,
+            //        VALUATIONCOMMENT = model.valuationComment,
+            //    });
+            //}
 
-            data.COLLATERALVALUATIONID = model.collateralValuationId;
+            //data.COLLATERALVALUATIONID = model.collateralValuationId;
             data.VALUATIONREQUESTTYPEID = model.valuationRequestTypeId;
             data.VALUATIONCOMMENT = model.valuationComment;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
@@ -480,7 +480,9 @@ namespace FintrakBanking.Repositories.Credit
                           operationId = valPre.OPERATIONID,
                           valuationPrerequisiteId = valPre.VALUATIONPREREQUISITEID,
                           approvalStatusId = atrail.APPROVALSTATUSID,
+                          valuationRequestTypeId = valPre.VALUATIONREQUESTTYPEID,
                           //approvalStatusId = valPre.APPROVALSTATUSID,
+                          approvalComment = atrail.COMMENT,
                           approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
                           valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(O => O.VALUATIONREQUESTTYPEID == valPre.VALUATIONREQUESTTYPEID).Select(O => O.VALUATIONREQUESTTYPE).FirstOrDefault(),
                       };
