@@ -399,10 +399,9 @@ namespace FintrakBanking.Common.Enum
         RepaymentTermAdded = 504,
         RepaymentTermUpdated = 505,
         RepaymentTermDeleted = 506,
+        ValuationPrerequisiteUpdated = 508,
         // Benjamin
         BulkDisbursementPackageAdded = 507,
-
-        ValuationPrerequisiteUpdated = 508,
         BulkDisbursementPackageUpdated = 516,
         BulkDisbursementPackageDeleted = 509,
         BulkDisbursementSchemeAdded = 510,
