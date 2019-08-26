@@ -247,7 +247,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public decimal? lcToleranceValue { get; set; }
 
-        public decimal releaseAmount { get; set; }
+        public decimal? releaseAmount { get; set; }
 
 
         //ussance
