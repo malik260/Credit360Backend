@@ -2376,7 +2376,7 @@ namespace FintrakBanking.Repositories.Credit
             var terms = context.TBL_REPAYMENT_TERM.Select(t =>
                 new RepaymentScheduleTermSetupViewModel
                 {
-                    repaymentScheduleId = t.REPAYMENTTERMID,
+                    repaymentScheduleId = t.REPAYMENTSCHEDULEID,
                     repaymentScheduleDetail = t.REPAYMENTTERMDETAIL,
                 }).ToList();
             // todo code

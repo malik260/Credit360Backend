@@ -39,21 +39,21 @@ namespace FintrakBanking.APICore.Controllers
         private ICollateralTypeRepository type;
         private ICasaRepository casa;
 
-       // private IGuaranteeCollateralRepository guaratee;
+        // private IGuaranteeCollateralRepository guaratee;
 
         public CustomerCollateralController(
             ICustomerCollateralRepository repo,
             ICollateralTypeRepository type,
             ICollateralDocumentRepository document,
             ICasaRepository _casa
-           // IGuaranteeCollateralRepository guaratee
+            // IGuaranteeCollateralRepository guaratee
             )
         {
             this.repo = repo;
             this.type = type;
             this.document = document;
             this.casa = _casa;
-          //  this.guaratee = guaratee;
+            //  this.guaratee = guaratee;
         }
 
         #region
@@ -174,7 +174,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
 
-                var response =  repo.ReleaseCollateral(entity);
+                var response = repo.ReleaseCollateral(entity);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Updated successfully" });
@@ -246,13 +246,13 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
 
                 var response = repo.ReleaseCollateralGoForApproval(entity);
-                if (response.status==(int)ApprovalStatusEnum.Approved)
+                if (response.status == (int)ApprovalStatusEnum.Approved)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Approved successfully" });
                 }
                 if (response.status == (int)ApprovalStatusEnum.Processing)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Has Been Sent To The Next Approver (" + response.approvalLevel + ")"});
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Has Been Sent To The Next Approver (" + response.approvalLevel + ")" });
                 }
                 if (response.status == (int)ApprovalStatusEnum.Disapproved)
                 {
@@ -260,7 +260,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 if (response.status == (int)ApprovalStatusEnum.Referred)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Has Been Reffered Back successfull (" + response.approvalLevel + ")"});
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Collateral Release Has Been Reffered Back successfull (" + response.approvalLevel + ")" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
             }
@@ -295,7 +295,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetCollateralReleaseAwaitingJobRequest(token.GetCompanyId, token.GetBranchId).Where(a=>a.collateralCustomerId == collateralId); ;
+                var response = repo.GetCollateralReleaseAwaitingJobRequest(token.GetCompanyId, token.GetBranchId).Where(a => a.collateralCustomerId == collateralId); ;
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList() });
             }
             catch (SecureException ex)
@@ -335,47 +335,57 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost, Route("customer-collateral")]
         public async Task<HttpResponseMessage> AddCollateral()
         {
+            CollateralViewModel incomingData = new CollateralViewModel();
 
-                if (!Request.Content.IsMimeMultipartContent())
-                {
-                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
-                }
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+            }
 
-                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-                await Request.Content.ReadAsMultipartAsync(provider);
+            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
 
-                var formData = provider.FormData["formData"];
+            var formData = provider.FormData["formData"];
 
-                var errors = new List<string>();
-                CollateralViewModel incomingData = JsonConvert.DeserializeObject<CollateralViewModel>(formData,
-                    new JsonSerializerSettings
-                    {
-                        NullValueHandling = NullValueHandling.Include,
-                        Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs earg)
-                        {
-                            errors.Add(earg.ErrorContext.Member.ToString());
-                            earg.ErrorContext.Handled = true;
-                        }
-                    });
+            var errors = new List<string>();
+            try
+            {
+                incomingData = JsonConvert.DeserializeObject<CollateralViewModel>(formData,
+                 new JsonSerializerSettings
+                 {
+                     NullValueHandling = NullValueHandling.Include,
+                     Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs earg)
+                     {
+                         errors.Add(earg.ErrorContext.Member.ToString());
+                         earg.ErrorContext.Handled = true;
+                     }
+                 });
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
 
 
-                if (!provider.FileStreams.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
-                }
+            if (!provider.FileStreams.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+            }
 
-                incomingData.userBranchId = (short)token.GetBranchId;
-                incomingData.companyId = token.GetCompanyId;
-                incomingData.createdBy = token.GetStaffId;
-                incomingData.applicationUrl = HttpContext.Current.Request.Path;
+            incomingData.userBranchId = (short)token.GetBranchId;
+            incomingData.companyId = token.GetCompanyId;
+            incomingData.createdBy = token.GetStaffId;
+            incomingData.applicationUrl = HttpContext.Current.Request.Path;
 
-                var file = provider.Contents.FirstOrDefault();
-                var buffer = await file.ReadAsByteArrayAsync();
-                var data = repo.AddCollateral(incomingData, buffer);
+            var file = provider.Contents.FirstOrDefault();
+            var buffer = await file.ReadAsByteArrayAsync();
+            var data = repo.AddCollateral(incomingData, buffer);
 
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-           
-           
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+
+
         }
 
 
@@ -472,11 +482,11 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpGet, Route("collateral/application/{applicationId}/currencyId/{currencyId}")]
-        public HttpResponseMessage GetProposedCustomerCollateral(int? applicationId,int currencyId)
+        public HttpResponseMessage GetProposedCustomerCollateral(int? applicationId, int currencyId)
         {
             try
             {
-                var response = repo.GetProposedCustomerCollateral( applicationId, currencyId, token.GetCompanyId);
+                var response = repo.GetProposedCustomerCollateral(applicationId, currencyId, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -520,7 +530,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetTempCustomerCollateralForApproval(token.GetCompanyId,token.GetStaffId);
+                var response = repo.GetTempCustomerCollateralForApproval(token.GetCompanyId, token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -609,15 +619,15 @@ namespace FintrakBanking.APICore.Controllers
 
                 var response = repo.GoForApproval(model);
 
-                if (response== (int)ApprovalStatusEnum.Disapproved)
+                if (response == (int)ApprovalStatusEnum.Disapproved)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Disapproved Successfully" });
                 }
-                else if(response==0)
+                else if (response == 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Approval has failed" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message ="Approved Successfully"});
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Approved Successfully" });
             }
             catch (ConditionNotMetException ex)
             {
@@ -773,7 +783,7 @@ namespace FintrakBanking.APICore.Controllers
                 insurancePolicies.createdBy = token.GetStaffId;
                 insurancePolicies.applicationUrl = HttpContext.Current.Request.Path;
 
-                var respo  =  repo.AddNewItemInsurancePolicy(insurancePolicies);
+                var respo = repo.AddNewItemInsurancePolicy(insurancePolicies);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = repo });
             }
             catch (SecureException ex)
@@ -794,7 +804,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        
+
         [HttpGet, Route("temp-collateral-document/{collateralId}")]
         public HttpResponseMessage GetTempCollateralDocumentByCollateral(int collateralId)
         {
@@ -809,7 +819,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-visitation-file/{documentId}")]
         public HttpResponseMessage GetVisitationFile(int documentId)
         {
@@ -830,7 +841,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("temp-collateral-visitation-file/{documentId}")]
         public HttpResponseMessage GetTempVisitationFile(int documentId)
         {
@@ -850,7 +862,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-guarantee/{targetId}")]
         public HttpResponseMessage GetCollaterGuaranteeFile(int targetId)
         {
@@ -869,9 +882,10 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        
 
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-visitation/{collateralVisitationId}")]
         public HttpResponseMessage GetVisitationDocument(int collateralVisitationId)
         {
@@ -891,7 +905,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("temp-collateral-visitation/{collateralVisitationId}")]
         public HttpResponseMessage GetTempVisitationDocument(int collateralVisitationId)
         {
@@ -911,7 +926,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("visitation-document")]
         public async Task<HttpResponseMessage> AddVisitationDocument()
         {
@@ -973,7 +989,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("temp-visitation-document")]
         public async Task<HttpResponseMessage> AddTempVisitationDocument()
         {
@@ -1085,7 +1102,7 @@ namespace FintrakBanking.APICore.Controllers
                 var entity = new CollateralDocumentViewModel
                 {
                     documentTitle = provider.FormData["documentTitle"], // document code
-                    documentTypeId =  Convert.ToInt32(provider.FormData["documentTypeId"]),
+                    documentTypeId = Convert.ToInt32(provider.FormData["documentTypeId"]),
                     fileName = provider.FormData["fileName"],
                     fileExtension = provider.FormData["fileExtension"],
                     collateralCode = provider.FormData["collateralCode"],
@@ -1396,7 +1413,8 @@ namespace FintrakBanking.APICore.Controllers
 
 
 
-        [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-type")]
         public HttpResponseMessage GetCollateralType()
         {
@@ -1411,7 +1429,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-type/loan-application/{id}")]
         public HttpResponseMessage GetCollateralTypeByLoanApplicationId(int? id)
         {
@@ -1426,7 +1445,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-sub-type")]
         public HttpResponseMessage GetCollateralSubTypes()
         {
@@ -1440,7 +1460,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-sub-type/{id}")]
         public HttpResponseMessage GetCollateralSubTypes(int id)
         {
@@ -1459,7 +1480,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-sub-type/collateral-type/{collateralTypeId}")]
         public HttpResponseMessage GetCollateralSubTypeByCollateralTypeId(short collateralTypeId)
         {
@@ -1479,7 +1501,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("collateral-sub-type")]
         public async Task<HttpResponseMessage> AddCollateralSubType([FromBody] CollateralSubTypeViewModel entity)
         {
@@ -1504,7 +1527,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("collateral-type/{collateralTypeId}")]
         public async Task<HttpResponseMessage> UpdateCollateralType(short collateralTypeId, [FromBody] CollateralTypeViewModel entity)
         {
@@ -1529,7 +1553,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
+        [HttpPut]
+        [ClaimsAuthorization]
         [Route("collateral-sub-type/{collateralSubTypeId}")]
         public HttpResponseMessage UpdateCollateralSubType(short collateralSubTypeId, [FromBody] CollateralSubTypeViewModel entity)
         {
@@ -1556,7 +1581,8 @@ namespace FintrakBanking.APICore.Controllers
         #endregion  End of Collateral Types
 
         #region Seniority Of Claims
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-seniority-of-claims")]
         public HttpResponseMessage GetCollateralSeciorityOfClaims()
         {
@@ -1578,7 +1604,8 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion Seniority Of Claims
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-valuer")]
         public HttpResponseMessage GetCollateralValuers()
         {
@@ -1593,7 +1620,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-perfection-status")]
         public HttpResponseMessage GetCollateralPerfectionStatus()
         {
@@ -1608,7 +1636,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-valuer-type")]
         public HttpResponseMessage GetCollateralValuerType()
         {
@@ -1623,8 +1652,9 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
-       [Route("collateral-value-base-type/{collateralType}")]
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-value-base-type/{collateralType}")]
         public HttpResponseMessage GetCollateralValueBaseType(short collateralType)
         {
             try
@@ -1737,7 +1767,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
 
-          //      entity.staffId = token.GetStaffId;
+                //      entity.staffId = token.GetStaffId;
 
                 var response = repo.IsCollateralMapped(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
@@ -1776,7 +1806,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("get-fixeddeposit-lien-amount")]
         public HttpResponseMessage GetLienAmountForFD([FromBody]string accountNumber)
         {
@@ -1784,7 +1815,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var response = repo.GetAccountLeinAmountForFD(accountNumber);
                 var lienData = repo.GetAccountLienDetail(accountNumber);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response,data= lienData });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, data = lienData });
             }
             catch (SecureException ex)
             {
@@ -1792,7 +1823,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpGet] [ClaimsAuthorization]
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-casa-lien-amount/{accountNumber}")]
         public HttpResponseMessage GetLienAmountForCASA(string accountNumber)
         {
@@ -1808,7 +1840,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("collateral-history/{collateralID}")]
         public HttpResponseMessage GetCollateralHistory(short collateralID)
         {
@@ -1909,7 +1942,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
             }
             catch (Exception ex)
-            {   
+            {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = ex.Message });
             }
         }
@@ -1982,7 +2015,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            
+
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
@@ -2120,44 +2153,45 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost, Route("collateral-coverage")]
         public HttpResponseMessage AddCollateralCoverage([FromBody] CollateralCoverageViewModel entity)
         {
-                entity.createdBy = token.GetStaffId;
-                entity.companyId = token.GetCompanyId;
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
 
-                var response = repo.AddCollateralCoverage(entity);
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            var response = repo.AddCollateralCoverage(entity);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
         [HttpDelete, Route("delete-collateral-coverage/{collateralCoverageId}/collateralCoverageId")]
         public HttpResponseMessage DeleteCollateralCoverage(int collateralCoverageId)
         {
-                var response = repo.DeleteCollateralCoverage(collateralCoverageId, token.GetStaffId);
-                if (response)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            var response = repo.DeleteCollateralCoverage(collateralCoverageId, token.GetStaffId);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
         [HttpPost, Route("calculate-collateral-coverage")]
         public HttpResponseMessage CalculateCoverateOfCollateral([FromBody] CollateralCoverageViewModel entity)
         {
-            try { 
-            var response = repo.CalculateCoverateOfCollateral(entity);
-            if (response !=null)
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-            }
+                var response = repo.CalculateCoverateOfCollateral(entity);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message});
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 
