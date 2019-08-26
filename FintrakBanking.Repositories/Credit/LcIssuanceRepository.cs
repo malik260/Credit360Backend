@@ -546,7 +546,7 @@ namespace FintrakBanking.Repositories.credit
                        (
                        i.DELETED == false
                        && i.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
-                       && i.LCTOLERANCEVALUE < releases.Where(r => r.LCISSUANCEID == i.LCISSUANCEID).Sum(r => r.RELEASEAMOUNT)
+                       && i.LCTOLERANCEVALUE > (context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == i.LCISSUANCEID).Sum(r => r.RELEASEAMOUNT) ?? 0)
                        &&
                        ((r.RELEASEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
                           && r.RELEASEAPPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
@@ -568,7 +568,7 @@ namespace FintrakBanking.Repositories.credit
                            percentageToCover = i.PERCENTAGETOCOVER,
                            lcTolerancePercentage = i.LCTOLERANCEPERCENTAGE,
                            lcToleranceValue = i.LCTOLERANCEVALUE,
-                           releaseAmount = (decimal)r.RELEASEAMOUNT,
+                           releaseAmount = r.RELEASEAMOUNT,
                            letterOfCreditTypeId = i.LETTEROFCREDITTYPEID,
                            isDraftRequired = i.ISDRAFTREQUIRED,
                            beneficiaryAddress = i.BENEFICIARYADDRESS,
