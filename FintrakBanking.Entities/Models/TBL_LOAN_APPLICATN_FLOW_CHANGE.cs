@@ -46,7 +46,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? UPDATEDBY { get; set; }
         public int? DATETIMEUPDATED { get; set; }
-        public int DOCUMENTOPERATION { get; set; }
+        //public int DOCUMENTOPERATION { get; set; }
 
    }
 }
