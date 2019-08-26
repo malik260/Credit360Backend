@@ -1518,6 +1518,7 @@ namespace FintrakBanking.Repositories.Credit
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                   loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                   validationStatus = c.CHECKLISTVALIDATED,
+                                  approvalStatusId = c.APPROVALSTATUSID,
                                  // checklistDifinitionId = context.TBL_CHECKLIST_DETAIL.Where(o=>o.TARGETID== a.LOANAPPLICATIONDETAILID).Select(o=>o.CHECKLISTDEFINITIONID).FirstOrDefault(),
                                   isExternal = c.ISEXTERNAL
 
@@ -1533,7 +1534,7 @@ namespace FintrakBanking.Repositories.Credit
                               where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId &&
                                c.CHECKLISTSTATUSID != null
                                && (c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
-                                      && c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                      //&& c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                       && c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                               orderby c.ISEXTERNAL descending
                               select new ConditionPrecedentViewModel()
@@ -1545,7 +1546,8 @@ namespace FintrakBanking.Repositories.Credit
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                   loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                   validationStatus = c.CHECKLISTVALIDATED,
-                                  isExternal = c.ISEXTERNAL
+                                  isExternal = c.ISEXTERNAL,
+                                  approvalStatusId = c.APPROVALSTATUSID,
                               }).ToList();
                 return status;
             }

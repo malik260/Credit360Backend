@@ -19,9 +19,9 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetAllRiskRatingType(int companyId);
 
         ProductBehaviourViewModel GetProductBehaviour(int productId);
-        
-       // IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId);
-        ProductPriceIndexViewModel GetProductPriceIndexByProductId(int productId);
+
+        // IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId);
+       ProductPriceIndexViewModel GetProductPriceIndexByProductId(int productId);
         //IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId);
         #region Product
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
