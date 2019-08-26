@@ -399,10 +399,10 @@ namespace FintrakBanking.Common.Enum
         RepaymentTermAdded = 504,
         RepaymentTermUpdated = 505,
         RepaymentTermDeleted = 506,
-        ValuationPrerequisiteUpdated = 508,
         // Benjamin
         BulkDisbursementPackageAdded = 507,
-        BulkDisbursementPackageUpdated = 516,
+
+        ValuationPrerequisiteUpdated = 508,
         BulkDisbursementPackageDeleted = 509,
         BulkDisbursementSchemeAdded = 510,
         BulkDisbursementSchemeUpdated = 511,
@@ -410,6 +410,7 @@ namespace FintrakBanking.Common.Enum
         BulkDisbursementFeesAdded = 513,
         BulkDisbursementFeesUpdated = 514,
         BulkDisbursementFeesDeleted = 515,
+        BulkDisbursementPackageUpdated = 516,
     };
     public enum RegulatoryTypeEnum
     {
