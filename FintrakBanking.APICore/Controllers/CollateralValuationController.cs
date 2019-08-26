@@ -103,7 +103,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPut]
-        [Route("update-valuation-prerequisite/{valuationPrerequisiteId}/valuationPrerequisiteId")]
+        [Route("edit-valuation-prerequisite/{valuationPrerequisiteId}/valuationPrerequisiteId")]
         public HttpResponseMessage UpdateAppraisalMemorandum(int valuationPrerequisiteId, [FromBody] ValuationPrerequisiteViewModel entity)
         {
             try
