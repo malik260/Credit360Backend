@@ -88,7 +88,7 @@ namespace FintrakBanking.LoanRepaymentBackgroundService
             Bind<IAccountSensitivityRepository>().To<AccountSensitivityRepository>();
             Bind<IProductRepository>().To<ProductRepository>();
             Bind<IJobTitleRepository>().To<JobTitleRepository>();
-            Bind<IStaffRoleRepository1111>().To<StaffRoleRepository111>();
+            Bind<IStaffRoleRepository>().To<StaffRoleRepository>();
             Bind<IProductCollateralTypeRepository>().To<ProductCollateralTypeRepository>();
             Bind<IProductFeeRepository>().To<ProductFeeRepository>();
             Bind<ICustomerRepository>().To<CustomerRepository>();
