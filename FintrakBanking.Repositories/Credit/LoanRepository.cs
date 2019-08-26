@@ -12041,19 +12041,19 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
 
             //Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.facilityBookingReferedBack,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.BranchId,
-                DETAIL = $"facility booking with booking account number  refered back to modifier.",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            context.TBL_AUDIT.Add(audit);
-            //end of Audit section -------------------------------
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.facilityBookingReferedBack,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.BranchId,
+            //    DETAIL = $"facility booking with booking account number  refered back to modifier.",
+            //    IPADDRESS = model.userIPAddress,
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
+            //context.TBL_AUDIT.Add(audit);
+            ////end of Audit section -------------------------------
 
             return context.SaveChanges() > 0;
         }
