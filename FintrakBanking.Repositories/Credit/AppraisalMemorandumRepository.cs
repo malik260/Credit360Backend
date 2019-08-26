@@ -1005,6 +1005,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // UPDATE APPLICATION
             rl.RELEASEAPPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress;
+            rl.RELEASEAPPROVALSTATUSID = (short)workflow.StatusId;
             if ((short)workflow.StatusId == (int)ApprovalStatusEnum.Pending)
             {
                 rl.RELEASEAPPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
@@ -1110,6 +1111,7 @@ namespace FintrakBanking.Repositories.Credit
             // UPDATE APPLICATION
             //            if (model.vote == 1) { appl.DISPUTED = true; }
             us.USANCEAPPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.lcUssanceInProgress;
+            us.USANCEAPPROVALSTATUSID = (short)workflow.StatusId;
             if ((short)workflow.StatusId == (int)ApprovalStatusEnum.Pending)
             {
                 us.USANCEAPPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;

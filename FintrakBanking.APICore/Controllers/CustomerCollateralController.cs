@@ -25,6 +25,7 @@ using Newtonsoft.Json;
 using System.Net.Http.Formatting;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -664,16 +665,9 @@ namespace FintrakBanking.APICore.Controllers
                 model.companyId = token.GetCompanyId;
                 model.BranchId = token.GetBranchId;
 
-                var response = repo.GoForInsurancePolicyApproval(model);
-                if (response == (int)ApprovalStatusEnum.Disapproved)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Disapproved Successfully" });
-                }
-                else if (response == 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "Approval has failed" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Approved Successfully" });
+                WorkflowResponse response = repo.GoForInsurancePolicyApproval(model);
+                
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
             }
             catch (SecureException ex)
             {
@@ -1980,6 +1974,28 @@ namespace FintrakBanking.APICore.Controllers
                 var response = repo.GetInsuranceCompany();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("check-insurance-policy")]
+        public HttpResponseMessage checkInsurancePolicy([FromBody] InsurancePolicies model)
+        {
+            try
+            {
+                var response = repo.checkInsurancePolicy(model);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                
             }
             catch (SecureException ex)
             {

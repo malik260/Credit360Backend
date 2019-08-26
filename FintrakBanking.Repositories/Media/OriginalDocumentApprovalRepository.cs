@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Media
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                     where x.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                      && atrail.RESPONSESTAFFID == null
-                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                      && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                      && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
 
                     select new OriginalDocumentApprovalViewModel
@@ -194,7 +194,7 @@ namespace FintrakBanking.Repositories.Media
 
         public List<OriginalDocumentApprovalViewModel> GetOriginalDocument(int id)
         {
-            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred))
                 .Select(x => new OriginalDocumentApprovalViewModel
                 {
                     originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
@@ -228,6 +228,8 @@ namespace FintrakBanking.Repositories.Media
                         join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                         where oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
                         && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                        && atrail.LOOPEDSTAFFID == initiator 
+                        && atrail.RESPONSESTAFFID == null
                         //&& ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new OriginalDocumentApprovalViewModel
                         {
@@ -279,43 +281,81 @@ namespace FintrakBanking.Repositories.Media
 
             return model;
         }
+
+        public int updateOriginalDocumentApproval(OriginalDocumentApprovalViewModel model)
+        {
+            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(model.originalDocumentApprovalId);
+            if(entity != null)
+            {
+                entity.DESCRIPTION = model.description;
+                entity.DATETIMEUPDATED = general.GetApplicationDate();
+                entity.LASTUPDATEDBY = model.createdBy;
+                entity.APPROVALSTATUSID = model.approvalStatusId;
+
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+                // Audit Section ---------------------------
+                this.audit.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.OriginalDocumentApprovalAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"TBL_Original Document Approval '{entity.DESCRIPTION}' updated by {auditStaff}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                });
+                // Audit Section end ------------------------
+            }
+
+            if(context.SaveChanges() > 0) return entity.ORIGINALDOCUMENTAPPROVALID;
+
+            return 0;
+
+        }
         public int AddOriginalDocumentApproval(OriginalDocumentApprovalViewModel model)
         {
-            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            var search = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(model.originalDocumentApprovalId);
 
-            var entity = new TBL_ORIGINAL_DOCUMENT_APPROVAL
+            if (search != null)  return updateOriginalDocumentApproval(model);
+            else
             {
-                COLLATERALCUSTOMERID = model.collateralCustomerId,
-                DESCRIPTION = model.description,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                DATETIMECREATED = general.GetApplicationDate(),
-                APPLICATIONREFERNECENUMBER = model.applicationReferenceNumber,
-                REFERENCENUMBER = referenceNumber,
-                DELETED = false,
-                CREATEDBY = model.createdBy,
+                var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+                var entity = new TBL_ORIGINAL_DOCUMENT_APPROVAL
+                {
+                    COLLATERALCUSTOMERID = model.collateralCustomerId,
+                    DESCRIPTION = model.description,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    DATETIMECREATED = general.GetApplicationDate(),
+                    APPLICATIONREFERNECENUMBER = model.applicationReferenceNumber,
+                    REFERENCENUMBER = referenceNumber,
+                    DELETED = false,
+                    CREATEDBY = model.createdBy,
 
 
-            };
+                };
 
-            context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Add(entity);
+                context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Add(entity);
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.OriginalDocumentApprovalAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"TBL_Original Document Approval '{entity.DESCRIPTION}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            });
-            // Audit Section end ------------------------
-            context.SaveChanges();
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+                // Audit Section ---------------------------
+                this.audit.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.OriginalDocumentApprovalAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"TBL_Original Document Approval '{entity.DESCRIPTION}' created by {auditStaff}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                });
+                // Audit Section end ------------------------
+                context.SaveChanges();
 
-            return entity.ORIGINALDOCUMENTAPPROVALID;
+                return entity.ORIGINALDOCUMENTAPPROVALID;
+            }
         }
 
         public bool UpdateOriginalDocumentApproval(OriginalDocumentApprovalViewModel model, int id, UserInfo user)
@@ -403,22 +443,39 @@ namespace FintrakBanking.Repositories.Media
                     }).ToList();
         }
 
-        public bool GoForApproval(OriginalDocumentApprovalViewModel entity)
+        public bool GoForApproval(OriginalDocumentApprovalViewModel entity , short? approvalStatusId )
         {
             var document = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(entity.originalDocumentApprovalId);
             if (document != null)
             {
-                document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                if(approvalStatusId != (short)ApprovalStatusEnum.Referred)
+                {
+                    document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
-                workflow.StaffId = entity.createdBy;
-                workflow.CompanyId = entity.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = entity.originalDocumentApprovalId;
-                workflow.Comment = "Request for Original document submission approval";
-                workflow.OperationId = (int)OperationsEnum.OriginalDocumentApproval;
-                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                workflow.ExternalInitialization = true;
-                workflow.LogActivity();
+                    workflow.StaffId = entity.createdBy;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = entity.originalDocumentApprovalId;
+                    workflow.Comment = "Request for Original document submission approval";
+                    workflow.OperationId = (int)OperationsEnum.OriginalDocumentApproval;
+                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+                }
+
+                else if (approvalStatusId == (short)ApprovalStatusEnum.Referred)
+                {
+
+                    workflow.StaffId = entity.createdBy;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = entity.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = entity.originalDocumentApprovalId;
+                    workflow.Comment = entity.comment;
+                    workflow.OperationId = (int)OperationsEnum.OriginalDocumentApproval;
+                    workflow.DeferredExecution = true;
+                    workflow.LogActivity();
+                }
+
             }
 
             return context.SaveChanges() != 0;
