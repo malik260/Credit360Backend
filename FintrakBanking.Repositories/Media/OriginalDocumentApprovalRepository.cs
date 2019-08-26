@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Media
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                     where x.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                      && atrail.RESPONSESTAFFID == null
-                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                      && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                      && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
 
                     select new OriginalDocumentApprovalViewModel
@@ -228,6 +228,8 @@ namespace FintrakBanking.Repositories.Media
                         join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                         where oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
                         && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                        && atrail.LOOPEDSTAFFID == initiator 
+                        && atrail.RESPONSESTAFFID == null
                         //&& ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new OriginalDocumentApprovalViewModel
                         {
