@@ -982,7 +982,7 @@ namespace FintrakBanking.Repositories.Credit
                          }).ToList();
 
             return fields;
-        }
+        }   
 
         // PLEASE RENAME THIS METHOD NAME TO BE MORE DESCRIPTIVE like LoanApplicationChecklistValidation
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)

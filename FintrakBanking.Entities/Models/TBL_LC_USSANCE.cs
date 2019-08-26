@@ -21,6 +21,8 @@
         public double? USSANCERATE { get; set; }
 
         public int? USANCEAMOUNTCURRENCYID { get; set; }
+        public int? USANCEAPPLICATIONSTATUSID { get; set; }
+        public int? USANCEAPPROVALSTATUSID { get; set; }
 
         public virtual TBL_LC_ISSUANCE TBL_LC_ISSUANCE { get; set; }
 
