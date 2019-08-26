@@ -1307,11 +1307,21 @@ namespace FintrakBanking.Repositories.Credit
             return false;
 
         }
+
+        public bool checkInsurancePolicy(InsurancePolicies model)
+        {
+            var result = context.TBL_COLLATERAL_ITEM_POLICY.Where(ip => ip.COLLATERALCUSTOMERID == model.collateraalId
+                                                                    && ip.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
+                                                                    && ip.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved).ToList();
+            if (result.Count > 0) return false;
+            else return true;
+        }
         public bool AddInsurancePolicy(InsurancePolicies entity)
         {
             var result = context.TBL_COLLATERAL_ITEM_POLICY.Where(ip => ip.COLLATERALCUSTOMERID == entity.collateraalId
-                                                                    && ip.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved).Any();
-            if (result) return false;
+                                                                    && ip.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
+                                                                    && ip.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved).ToList();
+            if (result.Count > 0) return false;
 
             var policy = context.TBL_COLLATERAL_ITEM_POLICY.Add(new TBL_COLLATERAL_ITEM_POLICY
             {

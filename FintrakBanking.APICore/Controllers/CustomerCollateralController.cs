@@ -1958,6 +1958,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("check-insurance-policy")]
+        public HttpResponseMessage checkInsurancePolicy([FromBody] InsurancePolicies model)
+        {
+            try
+            {
+                var response = repo.checkInsurancePolicy(model);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost, Route("insurance-policy")]
         public HttpResponseMessage AddInsurancePolicy([FromBody] InsurancePolicies entity)
         {
