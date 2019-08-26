@@ -288,7 +288,7 @@ namespace FintrakBanking.Repositories.Media
                 entity.DESCRIPTION = model.description;
                 entity.DATETIMEUPDATED = general.GetApplicationDate();
                 entity.LASTUPDATEDBY = model.createdBy;
-                entity.APPROVALSTATUSID = (short)ApprovalStatusEnum.Referred;
+                entity.APPROVALSTATUSID = model.approvalStatusId;
 
                 var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
                 // Audit Section ---------------------------
@@ -313,44 +313,46 @@ namespace FintrakBanking.Repositories.Media
         }
         public int AddOriginalDocumentApproval(OriginalDocumentApprovalViewModel model)
         {
-            if (model.approvalStatusId >= 0)  return updateOriginalDocumentApproval(model);
+            var search = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(model.originalDocumentApprovalId);
+
+            if (search != null)  return updateOriginalDocumentApproval(model);
             else
             {
                 var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
-            var entity = new TBL_ORIGINAL_DOCUMENT_APPROVAL
-            {
-                COLLATERALCUSTOMERID = model.collateralCustomerId,
-                DESCRIPTION = model.description,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                DATETIMECREATED = general.GetApplicationDate(),
-                APPLICATIONREFERNECENUMBER = model.applicationReferenceNumber,
-                REFERENCENUMBER = referenceNumber,
-                DELETED = false,
-                CREATEDBY = model.createdBy,
+                var entity = new TBL_ORIGINAL_DOCUMENT_APPROVAL
+                {
+                    COLLATERALCUSTOMERID = model.collateralCustomerId,
+                    DESCRIPTION = model.description,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    DATETIMECREATED = general.GetApplicationDate(),
+                    APPLICATIONREFERNECENUMBER = model.applicationReferenceNumber,
+                    REFERENCENUMBER = referenceNumber,
+                    DELETED = false,
+                    CREATEDBY = model.createdBy,
 
 
-            };
+                };
 
-            context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Add(entity);
+                context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Add(entity);
 
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.OriginalDocumentApprovalAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"TBL_Original Document Approval '{entity.DESCRIPTION}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            });
-            // Audit Section end ------------------------
-            context.SaveChanges();
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+                // Audit Section ---------------------------
+                this.audit.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.OriginalDocumentApprovalAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"TBL_Original Document Approval '{entity.DESCRIPTION}' created by {auditStaff}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                });
+                // Audit Section end ------------------------
+                context.SaveChanges();
 
-            return entity.ORIGINALDOCUMENTAPPROVALID;
+                return entity.ORIGINALDOCUMENTAPPROVALID;
             }
         }
 
