@@ -248,26 +248,27 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public void ResolveExternalFlowLoop(TBL_APPROVAL_TRAIL request, TBL_APPROVAL_TRAIL initiatorRequest)
         {
-            if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+            if (this.StatusId == (int)ApprovalStatusEnum.Referred)
             {
-                if (staffId == initiatorRequest.REQUESTSTAFFID)
+                if (this.nextLevelId == null)
                 {
-                    this.fromLevelId = request.FROMAPPROVALLEVELID;
-                    this.loopedStaffId = staffId;
-                    this.toStaffId = request.REQUESTSTAFFID;
+                    this.fromLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID;
+                    this.nextLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID; ;
+                    this.loopedStaffId = (this.loopedStaffId != null && this.loopedStaffId > 0) ? this.loopedStaffId : initiatorRequest.REQUESTSTAFFID;
+                    this.toStaffId = staffId;
                 }
 
-                if(request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0) { this.toStaffId = request.REQUESTSTAFFID; }
+                //if(request.LOOPEDSTAFFID == null || request.LOOPEDSTAFFID <= 0) { this.toStaffId = request.REQUESTSTAFFID; }
             }
 
-            if (request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred)
+            if (request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && this.StatusId != (int)ApprovalStatusEnum.Referred)
             {
                 this.actualRequestStaffId = this.staffId;
                 this.staffId = request.REQUESTSTAFFID;
-                this.toStaffId = request.REQUESTSTAFFID;
+                this.toStaffId = staffId;
                 this.isLoopResponse = true;
-                this.fromLevelId = request.FROMAPPROVALLEVELID;
-                this.nextLevelId = request.FROMAPPROVALLEVELID;
+                this.fromLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID;
+                this.nextLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID;
             }
 
             //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0)
@@ -447,15 +448,15 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void ResolveReferred(int referrerId, int? fromId, int? toId)
         {
-            if (toId == null) throw new SecureException("Unable to resolve destination level!");
-            if (fromId == null) return;
-            var referrerGroup = context.TBL_APPROVAL_LEVEL.Find(fromId);
-            var recepientGroup = context.TBL_APPROVAL_LEVEL.Find(toId);
-            if (referrerGroup.GROUPID != recepientGroup.GROUPID)
-            {
-                this.toStaffId = referrerId;
-                this.nextLevelId = fromId;
-            }
+            //if (toId == null) throw new SecureException("Unable to resolve destination level!");
+            //if (fromId == null) return;
+            //var referrerGroup = context.TBL_APPROVAL_LEVEL.Find(fromId);
+            //var recepientGroup = context.TBL_APPROVAL_LEVEL.Find(toId);
+            //if (referrerGroup.GROUPID != recepientGroup.GROUPID)
+            //{
+            //    this.toStaffId = referrerId;
+            //    this.nextLevelId = fromId;
+            //}
         }
 
         private void ValidateDestinationConfiguration()

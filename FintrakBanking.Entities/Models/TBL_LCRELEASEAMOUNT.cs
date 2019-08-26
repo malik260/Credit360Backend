@@ -17,8 +17,12 @@
 
         public decimal? RELEASEAMOUNT { get; set; }
 
-        public DateTime? DATETIMECREATED { get; set; }
+        public int? RELEASEAPPROVALSTATUSID { get; set; }
 
+        public int? RELEASEAPPLICATIONSTATUSID { get; set; }
+
+        public DateTime? DATETIMECREATED { get; set; }
+        
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public bool DELETED { get; set; }
