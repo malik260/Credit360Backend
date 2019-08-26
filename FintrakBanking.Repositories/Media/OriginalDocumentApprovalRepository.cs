@@ -194,7 +194,7 @@ namespace FintrakBanking.Repositories.Media
 
         public List<OriginalDocumentApprovalViewModel> GetOriginalDocument(int id)
         {
-            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred))
                 .Select(x => new OriginalDocumentApprovalViewModel
                 {
                     originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
@@ -279,9 +279,44 @@ namespace FintrakBanking.Repositories.Media
 
             return model;
         }
+
+        public int updateOriginalDocumentApproval(OriginalDocumentApprovalViewModel model)
+        {
+            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(model.originalDocumentApprovalId);
+            if(entity != null)
+            {
+                entity.DESCRIPTION = model.description;
+                entity.DATETIMEUPDATED = general.GetApplicationDate();
+                entity.LASTUPDATEDBY = model.createdBy;
+                entity.APPROVALSTATUSID = (short)ApprovalStatusEnum.Referred;
+
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+                // Audit Section ---------------------------
+                this.audit.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.OriginalDocumentApprovalAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"TBL_Original Document Approval '{entity.DESCRIPTION}' updated by {auditStaff}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                });
+                // Audit Section end ------------------------
+            }
+
+            if(context.SaveChanges() > 0) return entity.ORIGINALDOCUMENTAPPROVALID;
+
+            return 0;
+
+        }
         public int AddOriginalDocumentApproval(OriginalDocumentApprovalViewModel model)
         {
-            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            if (model.approvalStatusId >= 0)  return updateOriginalDocumentApproval(model);
+            else
+            {
+                var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
             var entity = new TBL_ORIGINAL_DOCUMENT_APPROVAL
             {
@@ -316,6 +351,7 @@ namespace FintrakBanking.Repositories.Media
             context.SaveChanges();
 
             return entity.ORIGINALDOCUMENTAPPROVALID;
+            }
         }
 
         public bool UpdateOriginalDocumentApproval(OriginalDocumentApprovalViewModel model, int id, UserInfo user)
@@ -408,7 +444,7 @@ namespace FintrakBanking.Repositories.Media
             var document = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Find(entity.originalDocumentApprovalId);
             if (document != null)
             {
-                if(approvalStatusId == null && approvalStatusId != (short)ApprovalStatusEnum.Referred)
+                if(approvalStatusId != (short)ApprovalStatusEnum.Referred)
                 {
                     document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
@@ -423,7 +459,7 @@ namespace FintrakBanking.Repositories.Media
                     workflow.LogActivity();
                 }
 
-                if (approvalStatusId != null && approvalStatusId == (short)ApprovalStatusEnum.Referred)
+                else if (approvalStatusId == (short)ApprovalStatusEnum.Referred)
                 {
 
                     workflow.StaffId = entity.createdBy;
