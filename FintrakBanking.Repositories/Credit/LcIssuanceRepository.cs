@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.credit
         public List<LcIssuanceApprovalViewModel> SearchLc(string searchString)
         {
                 int[] operations = { (int)OperationsEnum.lcIssuance, (int)OperationsEnum.lcReleaseOfShippingDocuments, (int)OperationsEnum.lcUssance};
-            int[] currentApprovalLevelStatuses = {(int)LoanApplicationStatusEnum.LcIssuanceCompleted, (int)LoanApplicationStatusEnum.LcShippingReleaseCompleted};
+            int[] currentApprovalLevelStatuses = {(int)LoanApplicationStatusEnum.LcIssuanceInProgress, (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress};
 
                 searchString = searchString.Trim().ToLower();
 
@@ -65,7 +65,9 @@ namespace FintrakBanking.Repositories.credit
                                     from left3 in ustr.DefaultIfEmpty()
                                     where 
                                     //y.RESPONSESTAFFID == null
-                                    (operations.Contains(y.OPERATIONID)
+                                    (operations.Contains(y.OPERATIONID) &&
+                                    operations.Contains(reltrail.OPERATIONID) &&
+                                    operations.Contains(left3.OPERATIONID)
                                //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
                                && (x.LCREFERENCENUMBER.Contains(searchString))
                             || c.FIRSTNAME.ToLower().Contains(searchString)
@@ -75,7 +77,7 @@ namespace FintrakBanking.Repositories.credit
                             || x.FORMMNUMBER.ToString().Contains(searchString)
                             || x.LCISSUANCEID.ToString().Contains(searchString)
                             )
-                                    from final in resz2.DefaultIfEmpty() select new LcIssuanceApprovalViewModel
+                                    select new LcIssuanceApprovalViewModel
                                     {
                                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                                         customerCode = c.CUSTOMERCODE,
@@ -84,6 +86,10 @@ namespace FintrakBanking.Repositories.credit
                                         customerId = c.CUSTOMERID,
                                         operationId = y.OPERATIONID,
                                         lcReleaseAmountId = rel.LCRELEASEAMOUNTID,
+                                        releaseAmount = rel.RELEASEAMOUNT,
+                                        releaseApplicationStatus = rel.RELEASEAPPLICATIONSTATUSID == null ? "n/a" : context.TBL_LOAN_APPLICATION_STATUS.Where(o => o.APPLICATIONSTATUSID == rel.RELEASEAPPROVALSTATUSID).Select(o => o.APPLICATIONSTATUSNAME).FirstOrDefault(),
+                                        releaseApprovalStatus = rel.RELEASEAPPROVALSTATUSID == null ? "n/a" : context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == rel.RELEASEAPPROVALSTATUSID).APPROVALSTATUSNAME,
+                                        releaseCurrentApprovalLevel = reltrail.TOAPPROVALLEVELID == null ? "n/a" : context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == reltrail.TOAPPROVALLEVELID).LEVELNAME,
                                         lcUssanceId = u.LCUSSANCEID,
                                         arrivalDate = y.ARRIVALDATE,
                                         letterOfCreditAmount = x.LETTEROFCREDITAMOUNT,
@@ -91,7 +97,7 @@ namespace FintrakBanking.Repositories.credit
                                         approvalStatusId = (short)x.APPROVALSTATUSID,
                                         approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == x.APPROVALSTATUSID).APPROVALSTATUSNAME,
                                         currentApprovalLevelId = y.TOAPPROVALLEVELID,
-                                        currentApprovalLevel = ((currentApprovalLevelStatuses.Contains((int)x.APPLICATIONSTATUSID)) && y.TOAPPROVALLEVELID != null) ? context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == y.TOAPPROVALLEVELID).LEVELNAME : "n/a",
+                                        currentApprovalLevel = y.TOAPPROVALLEVELID != null ? context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == y.TOAPPROVALLEVELID).LEVELNAME : "n/a",
                                         approvalTrailId = y.APPROVALTRAILID,
                                         responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
 
@@ -106,15 +112,15 @@ namespace FintrakBanking.Repositories.credit
                                         createdBy = (int)x.CREATEDBY,
                                         //operationId = x.OPERATIONID,
                                     }).GroupBy(a => a.lcReferenceNumber).Select(g => g.OrderByDescending(l => l.approvalTrailId).FirstOrDefault()).ToList();
-            foreach (var app in applications)
-            {
-                //var releases = context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == app.lcIssuanceId).ToList();
-                //foreach (var r in releases)
-                //{
-                //    //app.lcReleaseAmountId
-                //}
-                VerifyIssuanceOrReleaseApprovalLevelId(app);
-            }
+            //foreach (var app in applications)
+            //{
+            //    //var releases = context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == app.lcIssuanceId).ToList();
+            //    //foreach (var r in releases)
+            //    //{
+            //    //    //app.lcReleaseAmountId
+            //    //}
+            //    //VerifyIssuanceOrReleaseApprovalLevelId(app);
+            //}
             List<LcIssuanceApprovalViewModel> apps = new List<LcIssuanceApprovalViewModel>();
                 apps.AddRange(applications);
                 return apps;
@@ -546,7 +552,7 @@ namespace FintrakBanking.Repositories.credit
                        (
                        i.DELETED == false
                        && i.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
-                       && i.LCTOLERANCEVALUE < releases.Where(r => r.LCISSUANCEID == i.LCISSUANCEID).Sum(r => r.RELEASEAMOUNT)
+                       && i.LCTOLERANCEVALUE > (context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == i.LCISSUANCEID).Sum(r => r.RELEASEAMOUNT) ?? 0)
                        &&
                        ((r.RELEASEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
                           && r.RELEASEAPPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
@@ -568,7 +574,7 @@ namespace FintrakBanking.Repositories.credit
                            percentageToCover = i.PERCENTAGETOCOVER,
                            lcTolerancePercentage = i.LCTOLERANCEPERCENTAGE,
                            lcToleranceValue = i.LCTOLERANCEVALUE,
-                           releaseAmount = (decimal)r.RELEASEAMOUNT,
+                           releaseAmount = r.RELEASEAMOUNT,
                            letterOfCreditTypeId = i.LETTEROFCREDITTYPEID,
                            isDraftRequired = i.ISDRAFTREQUIRED,
                            beneficiaryAddress = i.BENEFICIARYADDRESS,
