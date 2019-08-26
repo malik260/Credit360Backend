@@ -169,7 +169,7 @@
     <Compile Include="Setups\Credit\FXAccountCreationRepository.cs" />
     <Compile Include="Setups\Credit\RepaymentTermsRepository.cs" />
     <Compile Include="Setups\Finance\CustomChartOfAccountRepository.cs" />
-    <Compile Include="Setups\General\StaffRoleRepository00.cs" />
+    <Compile Include="Setups\General\StaffRoleRepository.cs" />
     <Compile Include="ThirdPartyIntegration\FinacleIntegrationRepository.cs" />
     <Compile Include="Validetion\CreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\LoanPerformanceRepository.cs" />
@@ -249,7 +249,6 @@
     <Compile Include="Setups\General\ProductFeeRepository.cs" />
     <Compile Include="Setups\General\ProductRepository.cs" />
     <Compile Include="Setups\General\PublicHolidayRepository.cs" />
-    <Compile Include="Setups\General\StaffRoleRepository.cs" />
     <Compile Include="Setups\General\StaffRepository.cs" />
     <Compile Include="Setups\Risk\RiskRepository.cs" />
     <Compile Include="Validetion\OverDraftValidation.cs" />
