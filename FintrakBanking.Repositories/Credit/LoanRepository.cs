@@ -12030,7 +12030,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = model.companyId;
             workflow.ProductClassId = null;
             workflow.ProductId = null;
-            workflow.NextLevelId = model.approvalLevelId != null ? model.approvalLevelId : staffRoleLevelId;
+            workflow.NextLevelId = model.approvalLevelId ;
             //workflow.ToStaffId = staffId;
             //workflow.ToStaffId = model.loopedStaffId;
             workflow.LoopedStaffId = model.loopedStaffId;
