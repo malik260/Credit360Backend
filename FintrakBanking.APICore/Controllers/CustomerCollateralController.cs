@@ -348,9 +348,7 @@ namespace FintrakBanking.APICore.Controllers
             var formData = provider.FormData["formData"];
 
             var errors = new List<string>();
-            try
-            {
-                incomingData = JsonConvert.DeserializeObject<CollateralViewModel>(formData,
+            incomingData = JsonConvert.DeserializeObject<CollateralViewModel>(formData,
                  new JsonSerializerSettings
                  {
                      NullValueHandling = NullValueHandling.Include,
@@ -360,13 +358,6 @@ namespace FintrakBanking.APICore.Controllers
                          earg.ErrorContext.Handled = true;
                      }
                  });
-
-            }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
 
 
             if (!provider.FileStreams.Any())
@@ -387,7 +378,6 @@ namespace FintrakBanking.APICore.Controllers
 
 
         }
-
 
         [HttpPost, Route("customer-join-collateral")]
         public async Task<HttpResponseMessage> AddJoinCollateralInformation()

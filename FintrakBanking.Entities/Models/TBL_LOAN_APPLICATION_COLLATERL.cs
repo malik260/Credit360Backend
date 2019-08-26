@@ -46,8 +46,6 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime SYSTEMDATETIME { get; set; }
 
-        public int COLLATERALSUMMARY { get; set; }
-
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
 
         public virtual TBL_LOAN_APPLICATION TBL_LOAN_APPLICATION { get; set; }
