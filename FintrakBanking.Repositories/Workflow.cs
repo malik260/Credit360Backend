@@ -125,6 +125,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private WorkflowSetup level;
         private WorkflowSetup next;
         private List<TBL_APPROVAL_TRAIL> trailLog;
+        private TBL_APPROVAL_TRAIL request;
         private bool skipLimitsCheck = false;
         private IEnumerable<WorkflowSetup> approvalGrid;
         private int slaInterval = 780; // 1month
@@ -144,7 +145,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
                             ).ToList();
 
-            var request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
+            request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
             var initiatingRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
 
             if (request == null)
@@ -362,8 +363,12 @@ namespace FintrakBanking.Repositories.WorkFlow
             response.nextPersonId = this.toStaffId;
             int finalStatusId = this.statusId;
 
+            if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && request.LOOPEDSTAFFID != null)
+            { response.nextLevelId = this.fromLevelId;}
+
             if (response.nextLevelId == null && finalStatusId == (int)ApprovalStatusEnum.Processing) finalStatusId = (int)ApprovalStatusEnum.Approved;
             response.statusId = finalStatusId;
+
 
             var s = context.TBL_APPROVAL_STATUS.Find(finalStatusId);
             response.statusName = s.APPROVALSTATUSNAME;
@@ -699,7 +704,9 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         private void EndProcess(int status)
-        {
+        {   
+            if(request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && request.LOOPEDSTAFFID != null) { maintainFlowStatus();  return; }
+
             this.statusId = ResolveLastStatus(status);
             this.newStateId = (int)ApprovalState.Ended;
             this.nextLevelId = null; // even if there are other higher level which have been resolve prior
@@ -904,6 +911,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             return statusId;
+        }
+
+        private void maintainFlowStatus()
+        {
+            this.statusId = (int)ApprovalStatusEnum.Pending;
+            this.newStateId = (int)ApprovalState.Processing;
+
         }
 
         private void SetReroute()

@@ -137,14 +137,10 @@ namespace FintrakBanking.Repositories.Setups.Credit
             data.GROUPCUSTOMERID = model.groupCustomerId;
             data.PACKAGEDESCRIPTION = model.packageDescription;
             data.COMPANYID = (short)model.companyId;
-            data.CREATEDBY = model.createdBy;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMECREATED = _genSetup.GetApplicationDate();
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.DELETED = false;
-            data.DELETEDBY = 0;
-            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
-
             //Audit Section ---------------------------
 
             var audit = new TBL_AUDIT
@@ -363,6 +359,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
             data.PRODUCTPRICEINDEXID = model.productPriceIndexId;
             data.INCLUDEPRODUCTFEES = model.includeProductFees;
             data.APPROVALSTATUSID = (short)model.approvalStatusId;
+            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
 
             //Audit Section ---------------------------
 
@@ -387,7 +385,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public bool DeleteBulkDisbursementScheme(int disbursementPackageId, UserInfo user)
         {
             var data = this.context.TBL_LOAN_BULK_DISBURSE_SCHEME.Find(disbursementPackageId);
-            
+            data.DELETED = true;
+            data.DELETEDBY = user.staffId;
             // Audit Section ---------------------------
             var customerData = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x => x.DISBURSEMENTPACKAGEID == data.DISBURSEMENTPACKAGEID).FirstOrDefault();
             var audit = new TBL_AUDIT
@@ -533,7 +532,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public bool DeleteBulkDisbursementSchemeFees(int schemeFeeId, UserInfo user)
         {
             var data = this.context.TBL_BULK_DISBURS_SCH_FEES.Find(schemeFeeId);
-
+            
             // Audit Section ---------------------------
             // var customerData = context.TBL_BULK_DISBURS_SCH_FEES.Where(x => x.DISBURSEMENTPACKAGEID == data.DISBURSEMENTPACKAGEID).FirstOrDefault();
             var audit = new TBL_AUDIT
