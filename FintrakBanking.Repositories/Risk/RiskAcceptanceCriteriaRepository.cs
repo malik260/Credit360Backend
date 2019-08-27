@@ -594,7 +594,7 @@ namespace FintrakBanking.Repositories.Risk
                     approvalLevelId = x.APPROVALLEVELID,
                     roleId = x.ROLEID,
                     isRacTierControlKey= x.ISRACTIERCONTROLKEY,
-                    racCategoryType = context.TBL_RAC_CATEGORY_TYPE.Where(o => o.RACCATEGORYTYPEID == x.RACCATEGORYTYPEID).Select(o => o.RACCATEGORYTYPE).FirstOrDefault(),
+                    racCategoryType = context.TBL_RAC_CATEGORY_TYPE.Where(o => o.RACCATEGORYTYPEID == x.RACCATEGORYTYPEID).Select(o => o.RACCATEGORYTYPE).FirstOrDefault() ?? "N/A",
                     productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == x.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault() ?? "N/A",
                     productClassName = context.TBL_PRODUCT_CLASS.Where(o => o.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(o => o.PRODUCTCLASSNAME).FirstOrDefault() ?? "N/A",
                     CategoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),

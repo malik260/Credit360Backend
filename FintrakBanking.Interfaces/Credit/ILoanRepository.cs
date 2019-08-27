@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
@@ -238,6 +239,8 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanViewModel> SearchAllOverdraft(string searchQuery);
 
         AccountBalanceViewModel GetLoanBalances(int loanId, int companyId);
+
+        List<TBL_LOAN> disburseBulkLoans(byte[] file, UserInfo user);
 
 
     }
