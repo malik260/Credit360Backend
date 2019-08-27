@@ -40,6 +40,8 @@ namespace FintrakBanking.ViewModels.Credit
         public double exchangeRate { get; set; }
         public string capturedBy { get; set; }
         public string address { get; set; }
+
+
         // presentation
         
 
@@ -166,6 +168,13 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isOwnerOccupied { get; set; }
         public bool? isResidential { get; set; }
 
+        //public string thirdPartyName { get; set; }
+
+        //public decimal forcedSaleValue { get; set; }
+        //public decimal estimatedValue { get; set; }
+        //public decimal securityValue { get; set; }
+
+
         // marketableSecurities
         public int collateralMarketableSecurityId { get; set; }
 
@@ -282,6 +291,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool canMappedToApplication { get; set; }
         public bool allowApplicationMapping { get; set; }
         public string bank { get; set; }
+        //public decimal bankShareOfCollateral { get; set; }
         public int? stateId { get; set; }
 
         //File Upload
@@ -311,6 +321,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string propertyBaseType { get; set; }
         public string perfectionStatusName { get; set; }
         public decimal stampToCoverAmount { get; set; }
+        //public decimal stampToCover { get; set; }
         public short baseCurrency { get; set; }
         public short baseCurrencyId { get; set; }
         public bool disAllowCollateral { get; set; }
