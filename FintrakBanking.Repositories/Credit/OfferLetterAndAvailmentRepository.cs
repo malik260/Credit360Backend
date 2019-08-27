@@ -212,7 +212,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
                 .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
-                    && ids.Contains((int)x.TOAPPROVALLEVELID)
+                    && ((ids.Contains((int)x.TOAPPROVALLEVELID) && x.LOOPEDSTAFFID ==null) || (!ids.Contains((int)x.TOAPPROVALLEVELID) && x.LOOPEDSTAFFID == staffId))
                     && x.RESPONSESTAFFID == null
                     && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised)),
                     c => c.b.LOANAPPLICATIONID, d => d.TARGETID, (c, d) => new { c, d })
@@ -290,7 +290,7 @@ namespace FintrakBanking.Repositories.Credit
                     && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
                         x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised ||
                         x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                    && ids.Contains((int)x.TOAPPROVALLEVELID)
+                    && (ids.Contains((int)x.TOAPPROVALLEVELID) || (!ids.Contains((int)x.TOAPPROVALLEVELID) && x.LOOPEDSTAFFID == staffId))
                     && x.APPROVALSTATEID != (int)ApprovalState.Ended
                 ),
                     c => c.b.LOANAPPLICATIONID, d => d.TARGETID, (c, d) => new { c, d })

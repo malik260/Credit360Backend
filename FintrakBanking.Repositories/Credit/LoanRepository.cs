@@ -32,6 +32,8 @@ using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
 using FintrakBanking.Interfaces.Setups.Finance;
 using FinTrakBanking.ThirdPartyIntegration;
 using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
+using GemBox.Spreadsheet;
+using System.IO;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -13054,5 +13056,156 @@ namespace FintrakBanking.Repositories.Credit
 
             }).FirstOrDefault();
         }
+
+        public LoanViewModel disburseBulkLoans(byte[] file)
+        {
+            List<LoanViewModel> loans = new List<LoanViewModel>();
+            List<bulkDisbursementInputViewModel> loanInputs = GetLoanInputs(file);
+
+            foreach(var entry in loanInputs)
+            {
+                LoanViewModel loan = new LoanViewModel();
+                TBL_CUSTOMER customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == entry.customerCode).FirstOrDefault();
+                loan.customerId = customer.CUSTOMERID;
+            }
+            return new LoanViewModel();
+        }
+
+        private List<bulkDisbursementInputViewModel> GetLoanInputs( byte[] file)
+        {
+            List<bulkDisbursementInputViewModel> bulkEntries = new List<bulkDisbursementInputViewModel>();
+            bulkDisbursementInputViewModel currentLine = new bulkDisbursementInputViewModel();
+
+            //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
+
+            MemoryStream ms = new MemoryStream(file);
+
+            ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
+
+            //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+            ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
+
+            CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+
+            for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
+            {
+
+                for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
+                {
+                    ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
+
+                    string cellName = CellRange.RowColumnToPosition(j, i);
+                    string cellRow = ExcelRowCollection.RowIndexToName(j);
+                    string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
+                    if (Convert.ToInt32(cellRow) == 1) continue;
+
+                    switch (cellColumn)
+                    {
+                        case "A":
+                            currentLine.customerCode = cell.Value.ToString();
+                            break;
+                        case "B":
+                            currentLine.accountnumber = cell.Value.ToString();
+                            break;
+                        case "C":
+                            currentLine.PackageId = Convert.ToInt32( cell.Value);
+                            break;
+                        case "D":
+                            currentLine.schemeId = Convert.ToInt32(cell.Value);
+                            break;
+                        case "E":
+                            currentLine.LoanAmount = Convert.ToDecimal(cell.Value);
+                            break;
+                    }
+                    bulkEntries.Add(currentLine);
+                }
+            };
+
+            return bulkEntries;
+        }
+
+        private bool addLoan(LoanViewModel entity)
+        {
+            var loanReferenceNumber = GenerateLoanReferenceNumber(entity.branchId, entity.productId, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+            var data = new TBL_LOAN
+            {
+                LOAN_BOOKING_REQUESTID = entity.loanBookingRequestId,
+                LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
+                LOANREFERENCENUMBER = loanReferenceNumber,
+                RELATED_LOAN_REFERENCE_NUMBER = loanReferenceNumber,
+                LOANSTATUSID = (short)LoanStatusEnum.Active,
+                ISDISBURSED = false,
+                PRINCIPALNUMBEROFINSTALLMENT = 0,
+                INTERESTNUMBEROFINSTALLMENT = 0,
+                SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
+                SCH_PREPAYMENT_FREQUENCY_TYPID = null,
+
+                SUBSECTORID = entity.subSectorId,
+                CURRENCYID = (short)entity.currencyId,
+                EXCHANGERATE = entity.exchangeRate,
+
+                DISCHARGELETTER = false,
+                SUSPENDINTEREST = false,
+
+                CUSTOMERID = entity.customerId,
+                PRODUCTID = entity.productId,
+                COMPANYID = entity.companyId,
+                CASAACCOUNTID = entity.casaAccountId,
+                CASAACCOUNTID2 = entity.casaAccountId2,
+                BRANCHID = entity.branchId,
+                SHOULD_DISBURSE = true,
+
+                PRINCIPALFREQUENCYTYPEID = entity.loanScheduleInput.principalFrequency,
+                INTERESTFREQUENCYTYPEID = entity.loanScheduleInput.interestFrequency,
+
+                RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
+                RELATIONSHIPMANAGERID = entity.relationshipManagerId,
+                MISCODE = entity.misCode,
+                TEAMMISCODE = entity.teamMiscode,
+                INTERESTRATE = entity.interestRate,
+
+                PRINCIPALINSTALLMENTLEFT = 0,
+                INTERESTINSTALLMENTLEFT = 0,
+
+                SCHEDULETYPEID = entity.loanScheduleInput.scheduleMethodId,
+
+                PRINCIPALAMOUNT = Convert.ToDecimal(entity.loanScheduleInput.principalAmount),
+
+                OPERATIONID = entity.operationId = (int)OperationsEnum.TermLoanBooking,
+                LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,
+                EQUITYCONTRIBUTION = 0,
+                OUTSTANDINGPRINCIPAL = Convert.ToDecimal(entity.loanScheduleInput.principalAmount),
+                PRINCIPALADDITIONCOUNT = 0,
+                PRINCIPALREDUCTIONCOUNT = 0,
+                FIXEDPRINCIPAL = false,
+                PROFILELOAN = false,
+
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+
+                BOOKINGDATE = generalSetup.GetApplicationDate(),
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                EFFECTIVEDATE = entity.loanScheduleInput.effectiveDate,
+                MATURITYDATE = entity.loanScheduleInput.maturityDate,
+                LASTRESTRUCTUREDATE = entity.loanScheduleInput.effectiveDate,
+                FIRSTPRINCIPALPAYMENTDATE = entity.loanScheduleInput.principalFirstpaymentDate,
+                FIRSTINTERESTPAYMENTDATE = entity.loanScheduleInput.interestFirstpaymentDate,
+                ALLOWFORCEDEBITREPAYMENT = false,
+                SCHEDULEDAYCOUNTCONVENTIONID = entity.loanScheduleInput.accrualBasis,
+                USER_PRUDENTIAL_GUIDE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
+                EXT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
+                INT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
+
+                REPRICINGMODEID = entity.loanScheduleInput.repricingModeId != 0 ? entity.loanScheduleInput.repricingModeId : null,
+                REPRICINGDURATION = entity.loanScheduleInput.repricingDuration != 0 ? entity.loanScheduleInput.repricingDuration : null,
+
+            };
+            return context.SaveChanges() > 0;
+        }
+
+
+
+
     }
 }
