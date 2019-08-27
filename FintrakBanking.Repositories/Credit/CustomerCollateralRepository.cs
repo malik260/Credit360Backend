@@ -3755,7 +3755,7 @@ namespace FintrakBanking.Repositories.Credit
                 perfectionStatusId = x.PERFECTIONSTATUSID,
                 perfectionStatusName = context.TBL_COLLATERAL_PERFECTN_STAT.Where(l => l.PERFECTIONSTATUSID == x.PERFECTIONSTATUSID).Select(j => j.PERFECTIONSTATUSNAME).FirstOrDefault(),
 
-                perfectionStatusReason = x.PERFECTIONSTATUSREASON,
+                //perfectionStatusReason = x.PERFECTIONSTATUSREASON,
                 valuationAmount = x.VALUATIONAMOUNT,
                 isResidential = x.ISRESIDENTIAL,
                 isOwnerOccupied = x.ISOWNEROCCUPIED,
@@ -3767,6 +3767,15 @@ namespace FintrakBanking.Repositories.Credit
                 stateId = x.STATEID,
                 localGovtName = x.TBL_LOCALGOVERNMENT.NAME,
                 bankShareOfCollateral = x.BANKSHAREOFCOLLATERAL,
+
+                description = x.PROPERTYNAME,
+                valuationDate = x.LASTVALUATIONDATE,
+                lastValuationAmount = x.VALUATIONAMOUNT,
+                requestReason = x.PERFECTIONSTATUSREASON,
+                referenceNumber = x.VALUERREFERENCENUMBER,
+                marketPrice = (decimal) x.OPENMARKETVALUE,
+                perfectionStatusReason = x.PERFECTIONSTATUSID.ToString(),
+
             }).FirstOrDefault();
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -6801,7 +6810,8 @@ namespace FintrakBanking.Repositories.Credit
                     RELATEDCOLLATERALCODE = model.relatedCollateralCode,
                 //    LOANAPPLICATIONID = model.loanApplicationId,
                     COLLATERALSUMMARY = model.collateralSummary,
-                    COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
+                    COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose,
+                    ISCURRENT = true,
 
                 });
 

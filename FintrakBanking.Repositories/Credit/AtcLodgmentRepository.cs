@@ -178,7 +178,7 @@ namespace FintrakBanking.Repositories.credit
              .ToList();
         }
 
-        public bool SubmitApproval(AtcReleaseViewModel model)
+        public WorkflowResponse SubmitApproval(AtcReleaseViewModel model)
         {
             bool responce = false;
 
@@ -237,7 +237,7 @@ namespace FintrakBanking.Repositories.credit
                     responce = context.SaveChanges() > 0;
                     transaction.Commit();
 
-                    return responce;
+                    return workflow.Response;
                 }
                 catch (Exception ex)
                 {
