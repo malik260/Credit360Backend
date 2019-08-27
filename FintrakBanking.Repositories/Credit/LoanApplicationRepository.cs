@@ -1584,7 +1584,6 @@ namespace FintrakBanking.Repositories.Credit
             int index; int ctr = 0;
             for (int i = 0; i < definitions.Count; i++)
             {
-  
                 var definition = definitions[i];
                 index = i;
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
@@ -1592,6 +1591,12 @@ namespace FintrakBanking.Repositories.Credit
                 bool validation = ValidRacSubmission(definition, submission.value, operationId, targetId);
                 if (validation == false && ctr == 0)
                 {
+                    if(racTiers.Count() <= 0)
+                    {
+                        saveRacoptions(definitions, rac, operationId, targetId, staffId);
+                        return applicationId;
+                    }
+
                     if (ctr == 0)
                     {
                         definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
@@ -1601,32 +1606,30 @@ namespace FintrakBanking.Repositories.Credit
 
                         continue;
                     }
+                    if ( ctr > 0)
+                    {
+                        saveRacoptions(definitions, rac, operationId, targetId, staffId);
+                        return applicationId;
+                    }
 
                     ctr = ctr + 1;
                 }
-                else if (validation == true)
+                else if(validation == true)
                 {
+                    details.Add(new TBL_RAC_DETAIL
+                    {
+                        RACDEFINITIONID = definition.RACDEFINITIONID,
+                        OPERATIONID = operationId,
+                        TARGETID = targetId,
+                        ACTUALVALUE = submission.value,
+                        CREATEDBY = staffId,
+                        DATETIMECREATED = DateTime.Now,
+                    });
+
                     continue;
-
-                }else
-                {
-                    return applicationId;
-                } 
-                details.Add(new TBL_RAC_DETAIL
-                {
-                    RACDEFINITIONID = definition.RACDEFINITIONID,
-                    OPERATIONID = operationId,
-                    TARGETID = targetId,
-                    ACTUALVALUE = submission.value,
-                    CREATEDBY = staffId,
-                    DATETIMECREATED = DateTime.Now,
-                });
-
+                }
+               
                 break;
-                //if (definitions[i].Prop == oProp)
-                //{
-
-                //}
             }
 
             context.TBL_RAC_DETAIL.AddRange(details);
@@ -1669,6 +1672,27 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        private List<TBL_RAC_DETAIL> saveRacoptions(List<TBL_RAC_DEFINITION> definitions, RacInformationViewModel rac,int operationId, int targetId, int staffId)
+        {
+            List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
+            foreach(var definition in definitions)
+            {
+                var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
+                var detail = new TBL_RAC_DETAIL
+                {
+                    RACDEFINITIONID = definition.RACDEFINITIONID,
+                    OPERATIONID = operationId,
+                    TARGETID = targetId,
+                    ACTUALVALUE = submission.value,
+                    CREATEDBY = staffId,
+                    DATETIMECREATED = DateTime.Now,
+                };
+                details.Add(detail);
+            }
+            
+
+            return details;
+        }
         private bool ValidRacSubmission(TBL_RAC_DEFINITION definition, string value, int operationId, int targetId)
         {
             if (definition.ISREQUIRED == false) return true;
