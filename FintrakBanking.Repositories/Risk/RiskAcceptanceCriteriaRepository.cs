@@ -593,9 +593,10 @@ namespace FintrakBanking.Repositories.Risk
                     operationId = x.OPERATIONID,
                     approvalLevelId = x.APPROVALLEVELID,
                     roleId = x.ROLEID,
-                   isRacTierControlKey= x.ISRACTIERCONTROLKEY,
+                    isRacTierControlKey= x.ISRACTIERCONTROLKEY,
                     racCategoryType = context.TBL_RAC_CATEGORY_TYPE.Where(o => o.RACCATEGORYTYPEID == x.RACCATEGORYTYPEID).Select(o => o.RACCATEGORYTYPE).FirstOrDefault(),
-                    productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == x.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                    productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == x.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault() ?? "N/A",
+                    productClassName = context.TBL_PRODUCT_CLASS.Where(o => o.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(o => o.PRODUCTCLASSNAME).FirstOrDefault() ?? "N/A",
                     CategoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),
                     racItemName = context.TBL_RAC_ITEM.Where(o => o.RACITEMID == x.RACITEMID).Select(o => o.CRITERIA).FirstOrDefault(),
                     racInputType = context.TBL_RAC_INPUT_TYPE.Where(o => o.RACINPUTTYPEID == x.RACINPUTTYPEID).Select(o => o.INPUTTYPENAME).FirstOrDefault(),
@@ -613,9 +614,9 @@ namespace FintrakBanking.Repositories.Risk
                     currencyType = x.CURRENCYTYPE,
                     racCategoryTypeId = x.RACCATEGORYTYPEID,
                     productClassId = x.PRODUCTCLASSID,
-                    productClassName = "",
                     employmentType = x.EMPLOYMENTTYPE,
                     customerTypeId = x.CUSTOMERTYPEID,
+                    searchBasePlaceholder = x.SEARCHPLACEHOLDER
                 }).OrderByDescending(o => o.racDefinitionId)
                 .ToList();
         }
@@ -649,9 +650,11 @@ namespace FintrakBanking.Repositories.Risk
                 currencyType = entity.CURRENCYTYPE,
                 isRacTierControlKey=entity.ISRACTIERCONTROLKEY,
                 productClassId = entity.PRODUCTCLASSID,
-                productName = "",
+                productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == entity.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault() ?? "N/A",
+                productClassName = context.TBL_PRODUCT_CLASS.Where(o => o.PRODUCTCLASSID == entity.PRODUCTCLASSID).Select(o => o.PRODUCTCLASSNAME).FirstOrDefault() ?? "N/A",
                 employmentType = entity.EMPLOYMENTTYPE,
                 customerTypeId = entity.CUSTOMERTYPEID,
+                searchBasePlaceholder = entity.SEARCHPLACEHOLDER
             };
         }
 
@@ -738,7 +741,7 @@ namespace FintrakBanking.Repositories.Risk
             entity.SEARCHPLACEHOLDER = model.searchBasePlaceholder;
             entity.EMPLOYMENTTYPE = model.employmentType;
             entity.CUSTOMERTYPEID = model.customerTypeId;
-
+            
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             //this.audit.AddAuditTrail(new TBL_AUDIT

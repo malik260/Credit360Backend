@@ -2331,10 +2331,10 @@ namespace FintrakBanking.Repositories.Credit
                              join a in context.TBL_COLLATERAL_TYPE on s.COLLATERALTYPEID equals a.COLLATERALTYPEID
                              join c in context.TBL_CUSTOMER on s.CUSTOMERID equals c.CUSTOMERID
                              join b in context.TBL_COLLATERAL_TYPE_SUB on s.COLLATERALSUBTYPEID equals b.COLLATERALSUBTYPEID
-                             where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                                      && atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                                     && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                     // && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                                      && atrail.RESPONSESTAFFID == null
                              select new InsurancePolicies
                              {
@@ -2357,6 +2357,8 @@ namespace FintrakBanking.Repositories.Credit
                                  operationId = (int)OperationsEnum.IsurancePolicyApproval,
                                  requestReason = x.REQUESTREASON,
                                  requestComment = x.REQUESTCOMMENT,
+                                 approvalStatusId = atrail.APPROVALSTATUSID,
+                                 approvalStatusName = context.TBL_APPROVAL_STATUS.Where(s => s.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
 
                              }).ToList();
 
@@ -3753,7 +3755,7 @@ namespace FintrakBanking.Repositories.Credit
                 perfectionStatusId = x.PERFECTIONSTATUSID,
                 perfectionStatusName = context.TBL_COLLATERAL_PERFECTN_STAT.Where(l => l.PERFECTIONSTATUSID == x.PERFECTIONSTATUSID).Select(j => j.PERFECTIONSTATUSNAME).FirstOrDefault(),
 
-                perfectionStatusReason = x.PERFECTIONSTATUSREASON,
+                //perfectionStatusReason = x.PERFECTIONSTATUSREASON,
                 valuationAmount = x.VALUATIONAMOUNT,
                 isResidential = x.ISRESIDENTIAL,
                 isOwnerOccupied = x.ISOWNEROCCUPIED,
@@ -3765,6 +3767,15 @@ namespace FintrakBanking.Repositories.Credit
                 stateId = x.STATEID,
                 localGovtName = x.TBL_LOCALGOVERNMENT.NAME,
                 bankShareOfCollateral = x.BANKSHAREOFCOLLATERAL,
+
+                description = x.PROPERTYNAME,
+                valuationDate = x.LASTVALUATIONDATE,
+                lastValuationAmount = x.VALUATIONAMOUNT,
+                requestReason = x.PERFECTIONSTATUSREASON,
+                referenceNumber = x.VALUERREFERENCENUMBER,
+                marketPrice = (decimal) x.OPENMARKETVALUE,
+                perfectionStatusReason = x.PERFECTIONSTATUSID.ToString(),
+
             }).FirstOrDefault();
             details = GetCollateralInsurancePolicy(details);
             return details;

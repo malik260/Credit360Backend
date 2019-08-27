@@ -21,47 +21,41 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
         {
             try
             {
+                var groupName = "ACCESSUSERS";
                 var requestDatetime = DateTime.Now;
-                //AuthWrapperClient client = new AuthWrapperClient();
-
-                //AuthResponse authResponse = client.AuthMethod(new AuthRequest
-                //{
-                //    CustID = staffCode,
-                //    PassCode = passCode
-                //});
-
                 var binding = new BasicHttpBinding();
-                //var endPointAddress = new EndpointAddress("http://10.111.13.47:7080/Service?wsdl");
-                //var endPointAddress = new EndpointAddress("https://10.111.13.47:7080/Service");
 
-                //var client = new ServiceSoapClient(binding, endPointAddress);
-                //var client = new TestService.WeatherSoapClient();
-                //var res = client.GetCityWeatherByZIP("99501");
 
                 var client = new ServiceSoapClient();
-                //client.Security.Transport.ClientCredentialType = HttpClientCredentialType.Basic;
                 client.Open();
-                var res = client.ResponseOnlyAsync(staffCode, passCode);
+                //var res = client.ResponseOnlyAsync(staffCode, passCode);
+                var res = client.ResponseOnlyForGroup(staffCode, passCode, groupName);
                 var responseDateTime = DateTime.Now;
+
+                var status = int.Parse(res.Split('~')[0]);
+                var message = res.Split('~')[1];
 
                 var output = new TwoFactorAutheticationOutputViewModel()
                 {
-                    authenticated = false, //authResponse.Authenticated,
-                    message = res.Result //authResponse.Message
+                    message = message
                 };
 
-                client.Close();
+                if (status == 0)
+                    output.authenticated = true;
+                else
+                    output.authenticated = false;
+
                 if(staffCode != null)
                 {
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = "http://ho-bespoke07.nigeria.firstbank.local/EntrustWrapper/AuthWrapper.svc",
+                        APIURL = "https://esbentuser.accessbankplc.com:7085/Service?wsdl",
                         LOGTYPEID = 15,
                         REFERENCENUMBER = staffCode,
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = $"CustId : {staffCode} , PassCode : {passCode}",
                         RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = res.Result //authResponse.Message,
+                        RESPONSEMESSAGE = output.message //authResponse.Message,
                     };
 
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
