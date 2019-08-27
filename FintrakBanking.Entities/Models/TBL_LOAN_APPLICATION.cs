@@ -157,7 +157,7 @@ namespace FintrakBanking.Entities.Models
 
         public bool? ISADHOCAPPLICATION { get; set; }
 
-        public decimal LOANSWITHOTHERS { get; set; }
+        public decimal? LOANSWITHOTHERS { get; set; }
 
         public string OWNERSHIPSTRUCTURE { get; set; }
 

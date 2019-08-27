@@ -26,7 +26,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public bool requireCollateral { get; set; }
         public DateTime? newApplicationDate { get; set; }
-        public decimal loansWithOthers { get; set; }
+        public decimal? loansWithOthers { get; set; }
         public string ownershipStructure { get; set; }
 
 
@@ -300,7 +300,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public string branchName { get; set; }
         public string customerGroupName { get; set; }
-        public bool isTakeOverApplication { get; set; }
+        public bool? isTakeOverApplication { get; set; }
 
         public string customerType { get; set; }
         public string customerAccountNumber { get; set; }
