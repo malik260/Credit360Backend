@@ -129,6 +129,8 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = a.PRODUCTCLASSID,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             isadhocapplication = a.ISADHOCAPPLICATION,
+                            loansWithOthers = a.LOANSWITHOTHERS,
+                            ownershipStructure = a.OWNERSHIPSTRUCTURE,
                             loanApprovedLimitId = a.LOANAPPROVEDLIMITID,
 
 
@@ -1882,6 +1884,8 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
                 COLLATERALDETAIL = loan.collateralDetail,
                 ISADHOCAPPLICATION = loan.isadhocapplication,
+                LOANSWITHOTHERS = loan.loansWithOthers,
+                OWNERSHIPSTRUCTURE = loan.ownershipStructure,
                 LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
                 PRODUCTID = workflowProductId,
             };
@@ -1947,6 +1951,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.EQUITYCASAACCOUNTID = update.equityCasaAccountId;
             detail.CURRENCYID = update.currencyId;
             detail.TENORFREQUENCYTYPEID = update.tenorModeId;
+            detail.ISTAKEOVERAPPLICATION = update.isTakeOverApplication;
 
             var productClassId = detail.TBL_PRODUCT1.PRODUCTCLASSID;
 
@@ -2053,6 +2058,8 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.LOANTERMSHEETID = loan.loanTermSheetId;
             this.loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
             this.loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
+            this.loanData.LOANSWITHOTHERS = loan.loansWithOthers;
+            this.loanData.OWNERSHIPSTRUCTURE = loan.ownershipStructure;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -2178,6 +2185,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTPRICEINDEXRATE = a.productPriceIndexRate,
                 TENORFREQUENCYTYPEID = a.tenorModeId,
                 CRMSVALIDATED = false,
+                ISTAKEOVERAPPLICATION = a.isTakeOverApplication
             };
 
             var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
@@ -2258,6 +2266,7 @@ namespace FintrakBanking.Repositories.Credit
                 casaAccountId = d.CASAACCOUNTID,
                 repaymentTerm = d.REPAYMENTTERMS,
                 repaymentScheduleId = (int)d.REPAYMENTSCHEDULEID,
+                isTakeOverApplication = d.ISTAKEOVERAPPLICATION,
                 crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
                 crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
                 crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,
@@ -2944,12 +2953,12 @@ namespace FintrakBanking.Repositories.Credit
             var allApplicationDetails = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                          join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
-                                         where a.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchQuery)
-                                         //  || c.FIRSTNAME.ToLower().StartsWith(searchQuery)
-                                         //  || c.CUSTOMERCODE.ToLower().Contains(searchQuery)
-                                         //|| c.MIDDLENAME.ToLower().StartsWith(searchQuery)
-                                         //|| c.LASTNAME.ToLower().StartsWith(searchQuery)
-                                         //|| a.TBL_CASA.PRODUCTACCOUNTNUMBER==searchQuery
+                                         where a.APPLICATIONREFERENCENUMBER.Trim().ToLower().Contains(searchQuery)
+                                           || c.FIRSTNAME.ToLower().StartsWith(searchQuery)
+                                           || c.CUSTOMERCODE.ToLower().Contains(searchQuery)
+                                         || c.MIDDLENAME.ToLower().StartsWith(searchQuery)
+                                         || c.LASTNAME.ToLower().StartsWith(searchQuery)
+                                         || a.TBL_CASA.PRODUCTACCOUNTNUMBER == searchQuery
                                          select new LoanApplicationDetailViewModel
                                          {
                                              loanApplicationId = d.LOANAPPLICATIONID,
@@ -4545,6 +4554,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             //requireCollateral = a.REQUIRECOLLATERAL,
                             repaymentScheduleId = (int)b.REPAYMENTSCHEDULEID,
+                            isTakeOverApplication = b.ISTAKEOVERAPPLICATION,
                             repaymentTerm = b.REPAYMENTTERMS,
                             loanApplicationId = b.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,

@@ -2324,7 +2324,7 @@ namespace FintrakBanking.Repositories.Credit
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>NET COVERAGE</b></td>
-                    <td>{String.Format("{0:0,0.00}", (totalCollateralValue/custFacilitiesAmount))} %</td>
+                    <td>{String.Format("{0:0,0.00}", (totalCollateralValue/custFacilitiesAmount) * 100)} %</td>
                 </tr>
             ";
 
