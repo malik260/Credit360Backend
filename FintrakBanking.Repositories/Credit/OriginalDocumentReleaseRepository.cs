@@ -33,33 +33,12 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddOriginalDocumentRelease(IEnumerable<OriginalDocumentReleaseViewModel> model)
         {
-            //var releaseList = model.ToList();
-            //int index;
-
-            //foreach (var o in model)
-            //{
-            //    index = releaseList.FindIndex(x => x.documentUploadId == o.documentUploadId);
-            //    var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId)
-            //                                                        .Select(x => new OriginalDocumentReleaseViewModel
-            //                                                        {
-            //                                                            originalDocumentApprovalId = o.originalDocumentApprovalId,
-            //                                                            originalDocumentReleaseId = o.originalDocumentReleaseId,
-            //                                                            documentUploadId = o.documentUploadId,
-            //                                                            approvalStatusId = o.approvalStatusId,
-            //                                                            companyId = o.companyId,
-            //                                                            documentCategoryName = o.documentCategoryName,
-            //                                                            documentTypeName = o.documentTypeName
-            //                                                        }).FirstOrDefault();
-                
-            //    if (result != null)
-            //    {
-            //        releaseList.RemoveAt(index);
-            //    }
-            //}
 
             foreach (var o in model)
             {
-                var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId).Any();
+                var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId
+                                                                            && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
+                                                                    .Any(); //test this guy, add a rejected guy in the database
 
                 if(result == true) return false;
              
@@ -69,7 +48,7 @@ namespace FintrakBanking.Repositories.Credit
                         ORIGINALDOCUMENTAPPROVALID = o.originalDocumentApprovalId,
                         DOCUMENTUPLOADID = o.documentUploadId,
                         DOCSUBMISSIONOPERATIONID = (int)OperationsEnum.OriginalDocumentApproval,
-                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                         COMPANYID = o.companyId,
                         CREATEDBY = o.createdBy,
                         DATETIMECREATED = DateTime.Now
@@ -170,7 +149,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var x in record)
             {
-                var data = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.ORIGINALDOCUMENTAPPROVALID == x.originalDocumentApprovalId && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).Select(t => t).FirstOrDefault();
+                var data = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.ORIGINALDOCUMENTAPPROVALID == x.originalDocumentApprovalId && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing).FirstOrDefault();
 
                 if (data != null)
                 {
