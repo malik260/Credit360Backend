@@ -26,7 +26,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int productId { get; set; }
         public int tenor { get; set; }
         public int scheduleMethodId { get; set; }
-        public int interestRate { get; set; }
+        public float interestRate { get; set; }
         public int productPriceIndexId { get; set; }
         public bool includeProductFees { get; set; }
         public int approvalStatusId { get; set; }

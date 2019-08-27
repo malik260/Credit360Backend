@@ -21,7 +21,7 @@ namespace FintrakBanking.Entities.Models
         public int TENOR { get; set; }
 
         public string SCHEMENAME { get; set; }
-        public int INTERESTRATE { get; set; }
+        public float INTERESTRATE { get; set; }
         public int? PRODUCTPRICEINDEXID { get; set; }
         public bool INCLUDEPRODUCTFEES { get; set; }
 
