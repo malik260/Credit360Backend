@@ -6799,7 +6799,8 @@ namespace FintrakBanking.Repositories.Credit
                     RELATEDCOLLATERALCODE = model.relatedCollateralCode,
                 //    LOANAPPLICATIONID = model.loanApplicationId,
                     COLLATERALSUMMARY = model.collateralSummary,
-                    COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
+                    COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose,
+                    ISCURRENT = true,
 
                 });
 
