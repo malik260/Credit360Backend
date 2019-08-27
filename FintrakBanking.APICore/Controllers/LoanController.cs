@@ -2468,8 +2468,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 //}
 
 
-                byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
-                string password = Encoding.UTF8.GetString(pass);
+                //byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
+                //string password = Encoding.UTF8.GetString(pass);
 
                /* var entity = new StaffDocumentViewModel
                 {
