@@ -12,6 +12,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Setups.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels;
+using System.Web;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -93,6 +94,10 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 bulkDisbursement.companyId = token.GetCompanyId;
+                bulkDisbursement.userBranchId = (short)token.GetBranchId;
+                bulkDisbursement.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                bulkDisbursement.applicationUrl = HttpContext.Current.Request.Path;
+                bulkDisbursement.lastUpdatedBy = token.GetStaffId;
 
                 bool response = repo.UpdateBulkDisbursementPackage(disbursementPackageId, bulkDisbursement);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
@@ -124,8 +129,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                bulkDisbursementSetup.companyId = token.GetCompanyId;          
                 bulkDisbursementSetup.userBranchId = (short)token.GetBranchId;
+                bulkDisbursementSetup.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                bulkDisbursementSetup.applicationUrl = HttpContext.Current.Request.Path;
+                bulkDisbursementSetup.createdBy = token.GetStaffId;
+                bulkDisbursementSetup.companyId = token.GetCompanyId;
 
                 var data = repo.AddBulkDisbursementPackage(bulkDisbursementSetup);
                 if (data == true)
@@ -220,6 +228,10 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                bulkDisbursement.userBranchId = (short)token.GetBranchId;
+                bulkDisbursement.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                bulkDisbursement.applicationUrl = HttpContext.Current.Request.Path;
+                bulkDisbursement.lastUpdatedBy = token.GetStaffId;
                 bulkDisbursement.companyId = token.GetCompanyId;
 
                 bool response = repo.UpdateBulkDisbursementScheme(disbursementSchemeId, bulkDisbursement);
@@ -254,10 +266,24 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                
+                bulkDisbursementSetup.staffId = token.GetStaffId;
+                bulkDisbursementSetup.userBranchId = (short)token.GetBranchId;
+                bulkDisbursementSetup.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                bulkDisbursementSetup.applicationUrl = HttpContext.Current.Request.Path;
+                bulkDisbursementSetup.createdBy = token.GetStaffId;
                 bulkDisbursementSetup.companyId = token.GetCompanyId;
-
+                
                 var data = repo.AddBulkDisbursementScheme(bulkDisbursementSetup);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
+                if (data == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = data });
+
+                }
             }
             catch (SecureException ex)
             {
@@ -323,6 +349,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                bulkDisbursement.staffId = token.GetStaffId;
+                bulkDisbursement.userBranchId = (short)token.GetBranchId;
+                bulkDisbursement.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                bulkDisbursement.applicationUrl = HttpContext.Current.Request.Path;
+                bulkDisbursement.lastUpdatedBy = token.GetStaffId;
                 bulkDisbursement.companyId = token.GetCompanyId;
 
                 bool response = repo.UpdateBulkDisbursementSchemeFees(schemeFeeId, bulkDisbursement);
@@ -356,6 +387,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                bulkDisbursementSetup.staffId = token.GetStaffId;
+                bulkDisbursementSetup.userBranchId = (short)token.GetBranchId;
+                bulkDisbursementSetup.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                bulkDisbursementSetup.applicationUrl = HttpContext.Current.Request.Path;
+                bulkDisbursementSetup.createdBy = token.GetStaffId;
                 bulkDisbursementSetup.companyId = token.GetCompanyId;
 
                 var data = repo.AddBulkDisbursementSchemeFees(bulkDisbursementSetup);

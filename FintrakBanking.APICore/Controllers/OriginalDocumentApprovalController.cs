@@ -168,8 +168,9 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                var approvalStatusId = model.approvalStatusId;
 
-                var response = repo.GoForApproval(model);
+                var response = repo.GoForApproval(model, (short)approvalStatusId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
             }
             catch (SecureException ex)

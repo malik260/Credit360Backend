@@ -2691,7 +2691,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 priceIndexName = a.PRICEINDEXNAME,
                                 priceIndexRate = a.PRICEINDEXRATE,
                                 currencyId = a.CURRENCYID,
-                            }).FirstOrDefault(); ;
+                            }).FirstOrDefault();
 
                 return data;
             }

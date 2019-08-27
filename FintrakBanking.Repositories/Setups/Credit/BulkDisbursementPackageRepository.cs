@@ -39,11 +39,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         where a.GROUPCUSTOMERID == groupCustomerId && a.DELETED == false
                         select new BulkDisbursementSetupPackageViewModel
                        {
+                           disbursementPackageId = a.DISBURSEMENTPACKAGEID,
                            startDate = a.STARTDATE,
                            endDate = a.ENDDATE,
                            groupCustomerId = a.GROUPCUSTOMERID,
                            packageDescription = a.PACKAGEDESCRIPTION,
-                            customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.GROUPCUSTOMERID).FirstOrDefault().FIRSTNAME,
+                           customerName = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == a.GROUPCUSTOMERID).FirstOrDefault().FIRSTNAME,
                         }).ToList();
            return data;
 
@@ -84,11 +85,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 GROUPCUSTOMERID = model.groupCustomerId,
                 PACKAGEDESCRIPTION = model.packageDescription,
                 CREATEDBY = model.createdBy,
-                LASTUPDATEDBY = model.lastUpdatedBy,
                 DATETIMECREATED = _genSetup.GetApplicationDate(),
                 DELETED = false,
-                DELETEDBY = 0,
-                DATETIMEDELETED = _genSetup.GetApplicationDate()
             };
 
             //Audit Section ---------------------------
@@ -98,8 +96,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Bulk Disbursement Package for '{customerData.CUSTOMERCODE}'  ",
-                // IPADDRESS = model.userIPAddress,
-                // URL = model.applicationUrl,
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -139,14 +137,10 @@ namespace FintrakBanking.Repositories.Setups.Credit
             data.GROUPCUSTOMERID = model.groupCustomerId;
             data.PACKAGEDESCRIPTION = model.packageDescription;
             data.COMPANYID = (short)model.companyId;
-            data.CREATEDBY = model.createdBy;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMECREATED = _genSetup.GetApplicationDate();
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.DELETED = false;
-            data.DELETEDBY = 0;
-            data.DATETIMEDELETED = _genSetup.GetApplicationDate();
-
             //Audit Section ---------------------------
 
             var audit = new TBL_AUDIT
@@ -201,14 +195,19 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         where a.DISBURSEMENTPACKAGEID == disbursementPackageId
                         select new BulkDisbursementSetupSchemeViewModel
                         {
-                            disbursementPackageId = (int)a.DISBURSEMENTPACKAGEID,
+                            disburseSchemeId = a.DISBURSESCHEMEID,
+                            disbursementPackageId = a.DISBURSEMENTPACKAGEID,
+                            disbursementPackageName = context.TBL_LOAN_BULK_DISBURSE_PACKAGE.Where(c => c.DISBURSEMENTPACKAGEID == a.DISBURSEMENTPACKAGEID).FirstOrDefault().PACKAGEDESCRIPTION,
                             productId = a.PRODUCTID,
+                            facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,               
                             tenor = a.TENOR,
-                            scheduleMethodId = (short)a.SCHEDULEMETHODID,
+                            scheduleMethodId = (int)a.SCHEDULEMETHODID,
+                            schemeName = a.SCHEMENAME,
                             interestRate = a.INTERESTRATE,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
                             includeProductFees = a.INCLUDEPRODUCTFEES,
-                            approvalStatusId = (short)a.APPROVALSTATUSID
+                            scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
+                            //approvalStatusId = (int)a.APPROVALSTATUSID
                         }).ToList();
             return data;
 
@@ -221,14 +220,19 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         where a.PRODUCTID == productId
                         select new BulkDisbursementSetupSchemeViewModel
                         {
-                            disbursementPackageId = (int)a.DISBURSEMENTPACKAGEID,
+                            disburseSchemeId = a.DISBURSESCHEMEID,
+                            disbursementPackageId = a.DISBURSEMENTPACKAGEID,
+                            disbursementPackageName = context.TBL_LOAN_BULK_DISBURSE_PACKAGE.Where(c => c.DISBURSEMENTPACKAGEID == a.DISBURSEMENTPACKAGEID).FirstOrDefault().PACKAGEDESCRIPTION,
                             productId = a.PRODUCTID,
+                            facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
                             tenor = a.TENOR,
-                            scheduleMethodId = (short)a.SCHEDULEMETHODID,
+                            scheduleMethodId = (int)a.SCHEDULEMETHODID,
+                            schemeName = a.SCHEMENAME,
                             interestRate = a.INTERESTRATE,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
                             includeProductFees = a.INCLUDEPRODUCTFEES,
-                            approvalStatusId = (short)a.APPROVALSTATUSID
+                            scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
+                            //approvalStatusId = (int)a.APPROVALSTATUSID
                         }).ToList();
             return data;
 
@@ -241,14 +245,19 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         where a.DISBURSESCHEMEID == disburseSchemeId
                         select new BulkDisbursementSetupSchemeViewModel
                         {
-                            disbursementPackageId = (int)a.DISBURSEMENTPACKAGEID,
+                            disburseSchemeId = a.DISBURSESCHEMEID,
+                            disbursementPackageId = a.DISBURSEMENTPACKAGEID,
+                            disbursementPackageName = context.TBL_LOAN_BULK_DISBURSE_PACKAGE.Where(c => c.DISBURSEMENTPACKAGEID == a.DISBURSEMENTPACKAGEID).FirstOrDefault().PACKAGEDESCRIPTION,
                             productId = a.PRODUCTID,
+                            facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
                             tenor = a.TENOR,
-                            scheduleMethodId = (short)a.SCHEDULEMETHODID,
+                            scheduleMethodId = (int)a.SCHEDULEMETHODID,
+                            schemeName = a.SCHEMENAME,
                             interestRate = a.INTERESTRATE,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
                             includeProductFees = a.INCLUDEPRODUCTFEES,
-                            approvalStatusId = (short)a.APPROVALSTATUSID
+                            scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
+                            //approvalStatusId = (int)a.APPROVALSTATUSID
                         }).ToList();
             return data;
 
@@ -261,14 +270,19 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         where a.COMPANYID == companyId
                         select new BulkDisbursementSetupSchemeViewModel
                         {
-                            disbursementPackageId = (int)a.DISBURSEMENTPACKAGEID,
+                            disburseSchemeId = a.DISBURSESCHEMEID,
+                            disbursementPackageId = a.DISBURSEMENTPACKAGEID,
+                            disbursementPackageName = context.TBL_LOAN_BULK_DISBURSE_PACKAGE.Where(c => c.DISBURSEMENTPACKAGEID == a.DISBURSEMENTPACKAGEID).FirstOrDefault().PACKAGEDESCRIPTION,
                             productId = a.PRODUCTID,
+                            facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
                             tenor = a.TENOR,
-                            scheduleMethodId = (short)a.SCHEDULEMETHODID,
+                            scheduleMethodId = (int)a.SCHEDULEMETHODID,
+                            schemeName = a.SCHEMENAME,
                             interestRate = a.INTERESTRATE,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
                             includeProductFees = a.INCLUDEPRODUCTFEES,
-                            approvalStatusId = (short)a.APPROVALSTATUSID
+                            scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
+                            //approvalStatusId = (int)a.APPROVALSTATUSID
                         }).ToList();
             return data;
 
@@ -282,14 +296,18 @@ namespace FintrakBanking.Repositories.Setups.Credit
 
             var data = new TBL_LOAN_BULK_DISBURSE_SCHEME
             {
-                DISBURSEMENTPACKAGEID = (int)model.disbursementPackageId,
+                DISBURSEMENTPACKAGEID = model.disbursementPackageId,
                 PRODUCTID = model.productId,
                 TENOR = model.tenor,
                 SCHEDULEMETHODID = (short)model.scheduleMethodId,
                 INTERESTRATE = model.interestRate,
                 PRODUCTPRICEINDEXID = model.productPriceIndexId,
                 INCLUDEPRODUCTFEES = model.includeProductFees,
-                APPROVALSTATUSID = (short)model.approvalStatusId
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = _genSetup.GetApplicationDate(),
+                DELETED = false,
+                COMPANYID = (short)model.companyId,
+                SCHEMENAME = model.schemeName,
             };
 
             //Audit Section ---------------------------
@@ -341,6 +359,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
             data.PRODUCTPRICEINDEXID = model.productPriceIndexId;
             data.INCLUDEPRODUCTFEES = model.includeProductFees;
             data.APPROVALSTATUSID = (short)model.approvalStatusId;
+            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
 
             //Audit Section ---------------------------
 
@@ -365,7 +385,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public bool DeleteBulkDisbursementScheme(int disbursementPackageId, UserInfo user)
         {
             var data = this.context.TBL_LOAN_BULK_DISBURSE_SCHEME.Find(disbursementPackageId);
-            
+            data.DELETED = true;
+            data.DELETEDBY = user.staffId;
             // Audit Section ---------------------------
             var customerData = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x => x.DISBURSEMENTPACKAGEID == data.DISBURSEMENTPACKAGEID).FirstOrDefault();
             var audit = new TBL_AUDIT
@@ -395,10 +416,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         where a.DISBURSESCHEMEID == disburseSchemeId
                         select new BulkDisbursementSetupSchemeFeesViewModel
                         {
+                            schemeFeeId = a.SCHEMEFEEID,                  
                             disburseSchemeId = a.DISBURSESCHEMEID,
-                            chargeFeeId = a.DISBURSESCHEMEID,
+                            schemeName = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x => x.DISBURSESCHEMEID == a.DISBURSESCHEMEID).FirstOrDefault().SCHEMENAME,
+            chargeFeeId = a.DISBURSESCHEMEID,
                             hasConcession = a.HASCONCESSION,
-                            approvalStatusId = (short)a.APPROVALSTATUSID,
+                            //approvalStatusId = (int)a.APPROVALSTATUSID,
                         }).ToList();
             return data;
 
@@ -440,7 +463,6 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 DISBURSESCHEMEID = model.disburseSchemeId,
                 CHARGEFEEID = model.chargeFeeId,
                 HASCONCESSION = model.hasConcession,
-                APPROVALSTATUSID = (short)model.approvalStatusId
             };
 
             //Audit Section ---------------------------
@@ -510,7 +532,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public bool DeleteBulkDisbursementSchemeFees(int schemeFeeId, UserInfo user)
         {
             var data = this.context.TBL_BULK_DISBURS_SCH_FEES.Find(schemeFeeId);
-
+            
             // Audit Section ---------------------------
             // var customerData = context.TBL_BULK_DISBURS_SCH_FEES.Where(x => x.DISBURSEMENTPACKAGEID == data.DISBURSEMENTPACKAGEID).FirstOrDefault();
             var audit = new TBL_AUDIT
