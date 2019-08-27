@@ -16,6 +16,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Approval;
 using FintrakBanking.ViewModels.credit;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -340,9 +341,8 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-                var response = repo.SubmitApproval(model);
-                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                WorkflowResponse response = repo.SubmitApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
 
             }
             catch (SecureException ex)
