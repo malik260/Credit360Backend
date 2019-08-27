@@ -229,6 +229,7 @@ namespace FintrakBanking.ViewModels.credit
         public int? operationId { get; set; }
         public string usanceApprovalStatus { get; set; }
         public string UsanceCurrentApprovalLevel { get; set; }
+        public string releaseCurrentApprovalLevel { get; set; }
 
 
         public int? totalApprovedAmountCurrencyId { get; set; }
@@ -247,7 +248,7 @@ namespace FintrakBanking.ViewModels.credit
 
         public decimal? lcToleranceValue { get; set; }
 
-        public decimal releaseAmount { get; set; }
+        public decimal? releaseAmount { get; set; }
 
 
         //ussance
@@ -258,8 +259,8 @@ namespace FintrakBanking.ViewModels.credit
         public DateTime lcEffectiveDate { get; set; }
         public DateTime lcMaturityDate { get; set; }
         public int? usanceAmountCurrencyId { get; set; }
-        public int? releaseApplicationStatusId { get; set; }
-        public int? releaseApprovalStatusId { get; set; }
+        public string releaseApplicationStatus { get; set; }
+        public string releaseApprovalStatus { get; set; }
         public int? usanceApplicationStatusId { get; set; }
         public int? usanceApprovalStatusId { get; set; }
     }
