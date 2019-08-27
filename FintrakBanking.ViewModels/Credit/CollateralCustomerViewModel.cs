@@ -483,6 +483,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? collateralUsageStatus { get; set; }
         public string requestReason { get; set; }
         public string requestComment { get; set; }
+        public short approvalStatusId { get; set; }
+        public string approvalStatusName { get; set; }
     }
 
     public class NewCollateralViewModel
