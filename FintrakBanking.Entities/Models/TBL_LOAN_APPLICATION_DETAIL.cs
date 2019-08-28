@@ -94,6 +94,8 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "date")]
         public DateTime? EFFECTIVEDATE { get; set; }
 
+        public bool? ISTAKEOVERAPPLICATION { get; set; }
+
         //[Column(TypeName = "date")]
         public DateTime? EXPIRYDATE { get; set; }
 

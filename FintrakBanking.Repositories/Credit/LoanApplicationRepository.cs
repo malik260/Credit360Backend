@@ -129,6 +129,8 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = a.PRODUCTCLASSID,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             isadhocapplication = a.ISADHOCAPPLICATION,
+                            loansWithOthers = a.LOANSWITHOTHERS,
+                            ownershipStructure = a.OWNERSHIPSTRUCTURE,
                             loanApprovedLimitId = a.LOANAPPROVEDLIMITID,
 
 
@@ -999,194 +1001,203 @@ namespace FintrakBanking.Repositories.Credit
             bool isCamsolJobRequestSent = false;
             bool isCollateralSearchJobRequestSent = false;
 
-            if (loanApplicationDetails.Any())
+            try
             {
-                var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanApplication).ToList();
-
-                foreach (var detail in loanApplicationDetails)
+                if (loanApplicationDetails.Any())
                 {
+                    var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanApplication).ToList();
 
-                    /* Camsol Search Job Request */
-                    var camsolJobRequestsSub = (from r in context.TBL_JOB_REQUEST
-                                                join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
-                                                where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && r.TARGETID == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.camsolCheck
-                                                select r);
-
-                    var camsolJobRequests = camsolJobRequestsSub.ToList();
-
-                    if (camsolJobRequests.Count > 0)
-                        isCamsolJobRequestSent = true;
-
-                    /* Collateral Search Job Request */
-                    if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
+                    foreach (var detail in loanApplicationDetails)
                     {
-                        var legalRequestSub = context.TBL_JOB_REQUEST
-                            .Where(x => x.TARGETID == detail.LOANAPPLICATIONDETAILID
-                            && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
-                            && x.JOBTYPEID == (short)JobTypeEnum.legal
-                            && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated
-                        );
 
-                        var legalRequests = legalRequestSub.ToList();
-
-                        if (legalRequests.Count() > 0)
-                            isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
-                    }
-
-                    /* Middle office Job Request for IDF */
-                    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == detail.APPROVEDPRODUCTID);
-                    if (product.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
-                    {
-                        var middleOfficeRequests = (from r in context.TBL_JOB_REQUEST
+                        /* Camsol Search Job Request */
+                        var camsolJobRequestsSub = (from r in context.TBL_JOB_REQUEST
                                                     join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
-                                                    where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && r.TARGETID == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification
-                                                    select r).ToList();
+                                                    where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && r.TARGETID == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.camsolCheck
+                                                    select r);
 
-                        if (middleOfficeRequests.Count <= 0)
-                            throw new ConditionNotMetException($"Job Request to relationship team for product {product.PRODUCTNAME} is required!");
-                    }
+                        var camsolJobRequests = camsolJobRequestsSub.ToList();
 
-                    var checklistTypes = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
-                    foreach (var checklistType in checklistTypes) // through checklist types
-                    {
-                        if (checklistType.ISPRODUCT_BASED)
-                            targetId = detail.LOANAPPLICATIONDETAILID;
-                        else
-                            targetId = applicationId;
+                        if (camsolJobRequests.Count > 0)
+                            isCamsolJobRequestSent = true;
 
-                        var checklistDetails = from a in context.TBL_CHECKLIST_DEFINITION
-                                               join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
-                                               equals b.CHECKLISTDEFINITIONID
-                                               where b.TARGETID == targetId
-                                               && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
-                                               && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
-                                               && b.CHECKLISTSTATUSID != null && b.DATETIMEUPDATED != null
-                                               && ids.Contains((int)a.APPROVALLEVELID)
-                                               select b;
-
-                        var productId = checklistType.ISPRODUCT_BASED ? (short?)detail.APPROVEDPRODUCTID : null;
-
-                        var checklistDefinitions = (from a in context.TBL_CHECKLIST_DEFINITION
-                                                    join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
-                                                    where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID
-                                                    && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == productId
-                                                    select a).AsQueryable();
-
-                        var definitionsCount = checklistDefinitions.Count();
-                        var detailsCount = checklistDetails.Count();
-
-
-                        if (checklistType.ISPRODUCT_BASED)
+                        /* Collateral Search Job Request */
+                        if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
                         {
-                            var count1 = checklistDefinitions.Count();
-                            var count2 = checklistDetails.Count();
+                            var legalRequestSub = context.TBL_JOB_REQUEST
+                                .Where(x => x.TARGETID == detail.LOANAPPLICATIONDETAILID
+                                && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+                                && x.JOBTYPEID == (short)JobTypeEnum.legal
+                                && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated
+                            );
 
-                            if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
-                                continue;
+                            var legalRequests = legalRequestSub.ToList();
 
-                            if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
-                            {
-                                isCheckListDone = false;
-                                str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
-                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
-                            }
+                            if (legalRequests.Count() > 0)
+                                isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
                         }
-                        else
+
+                        /* Middle office Job Request for IDF */
+                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == detail.APPROVEDPRODUCTID);
+                        if (product.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
                         {
-                            var customerCount = (from a in loanApplicationDetails select a.CUSTOMERID).Distinct().Count();
+                            var middleOfficeRequests = (from r in context.TBL_JOB_REQUEST
+                                                        join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
+                                                        where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && r.TARGETID == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification
+                                                        select r).ToList();
 
-                            var validationCount = definitionsCount * customerCount;
+                            if (middleOfficeRequests.Count <= 0)
+                                throw new ConditionNotMetException($"Job Request to relationship team for product {product.PRODUCTNAME} is required!");
+                        }
 
-                            if (detailsCount != validationCount)
+                        var checklistTypes = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
+                        foreach (var checklistType in checklistTypes) // through checklist types
+                        {
+                            if (checklistType.ISPRODUCT_BASED)
+                                targetId = detail.LOANAPPLICATIONDETAILID;
+                            else
+                                targetId = applicationId;
+
+                            var checklistDetails = from a in context.TBL_CHECKLIST_DEFINITION
+                                                   join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
+                                                   equals b.CHECKLISTDEFINITIONID
+                                                   where b.TARGETID == targetId
+                                                   && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                                                   && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
+                                                   && b.CHECKLISTSTATUSID != null && b.DATETIMEUPDATED != null
+                                                   && ids.Contains((int)a.APPROVALLEVELID)
+                                                   select b;
+
+                            var productId = checklistType.ISPRODUCT_BASED ? (short?)detail.APPROVEDPRODUCTID : null;
+
+                            var checklistDefinitions = (from a in context.TBL_CHECKLIST_DEFINITION
+                                                        join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
+                                                        where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID
+                                                        && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == productId
+                                                        select a).AsQueryable();
+
+                            var definitionsCount = checklistDefinitions.Count();
+                            var detailsCount = checklistDetails.Count();
+
+
+                            if (checklistType.ISPRODUCT_BASED)
                             {
+                                var count1 = checklistDefinitions.Count();
+                                var count2 = checklistDetails.Count();
+
                                 if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
                                     continue;
 
-                                isCheckListDone = false;
-                                str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
-                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                                if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
+                                {
+                                    isCheckListDone = false;
+                                    str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                                    checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                                }
                             }
-                        }
+                            else
+                            {
+                                var customerCount = (from a in loanApplicationDetails select a.CUSTOMERID).Distinct().Count();
 
-                        var negativeChecklistDetails = checklistDetails.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
-                        if (negativeChecklistDetails.Any())
-                        {
-                            isCheckListDone = false;
-                            checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
-                            str = str + "One or more item(s) did not meet up with the condition." + Environment.NewLine
-                                        + " Please check your response to confirm." + Environment.NewLine;
-                        }
+                                var validationCount = definitionsCount * customerCount;
 
-                    } // foreach checklistTypes
+                                if (detailsCount != validationCount)
+                                {
+                                    if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
+                                        continue;
 
-                    // var rmSuggestion = (from a in context.TBL_LOAN_APPLICATION_DETAIL
-                    //                     where a.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID && (detail.CONDITIONPRECIDENT == null
-                    //                     || detail.CONDITIONSUBSEQUENT == null || a.TRANSACTIONDYNAMICS == null)
-                    //                     select a);
+                                    isCheckListDone = false;
+                                    str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                                    checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                                }
+                            }
 
-                    // if (rmSuggestion.Any())
-                    // {
-                    //     isCheckListDone = false;
-                    //     str = str + " Kindly Complete The RM Suggestions Record" + Environment.NewLine;
-                    //     checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
-                    // }
+                            var negativeChecklistDetails = checklistDetails.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
+                            if (negativeChecklistDetails.Any())
+                            {
+                                isCheckListDone = false;
+                                checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
+                                str = str + "One or more item(s) did not meet up with the condition." + Environment.NewLine
+                                            + " Please check your response to confirm." + Environment.NewLine;
+                            }
 
-                    if (isCheckListDone == false) break;
+                        } // foreach checklistTypes
 
-                } // foreach loanApplicationDetails
+                        // var rmSuggestion = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                        //                     where a.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID && (detail.CONDITIONPRECIDENT == null
+                        //                     || detail.CONDITIONSUBSEQUENT == null || a.TRANSACTIONDYNAMICS == null)
+                        //                     select a);
 
-            } // loanApplicationDetails.Any()
+                        // if (rmSuggestion.Any())
+                        // {
+                        //     isCheckListDone = false;
+                        //     str = str + " Kindly Complete The RM Suggestions Record" + Environment.NewLine;
+                        //     checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                        // }
 
-            //ValidateCollateralSearchJobRequests(applicationId, application.REQUIRECOLLATERALTYPEID, true);
+                        if (isCheckListDone == false) break;
 
-            // if (!isCamsolJobRequestSent) throw new ConditionNotMetException("Job Request must be sent to CAMSOL before you can proceed.");
+                    } // foreach loanApplicationDetails
 
-            if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
-            {
-                // if (isCollateralSearchJobRequestSent == false) throw new ConditionNotMetException("Job Request to Legal of type Collateral Related is required!");
+                } // loanApplicationDetails.Any()
 
-                //if (requests.Count() > 0) isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
-            }
+                //ValidateCollateralSearchJobRequests(applicationId, application.REQUIRECOLLATERALTYPEID, true);
 
-            if (PushApplicationToDrawdown(application.APPLICATIONREFERENCENUMBER)) { jumpToDrawdown = true; }
+                // if (!isCamsolJobRequestSent) throw new ConditionNotMetException("Job Request must be sent to CAMSOL before you can proceed.");
 
-            if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex) == 1)
-            {
-                var casa = context.TBL_CASA.Find(application.CASAACCOUNTID);
-
-                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
                 {
-                    creditCommon.LoadCustomerTurnover(
-                            applicationId,
-                            loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                            staffId
-                        );
+                    // if (isCollateralSearchJobRequestSent == false) throw new ConditionNotMetException("Job Request to Legal of type Collateral Related is required!");
 
-                    creditCommon.LoadCustomerRatios(
-                            applicationId,
-                            loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                            staffId
-                        );
-                    //if (casa != null)
-                    //{
-                    //    creditCommon.LoadCustomerTurnover(
-                    //        applicationId,
-                    //        loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                    //        staffId
-                    //    );
-                    //}
+                    //if (requests.Count() > 0) isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
                 }
 
-                return new LoanApplicationUpdateMessage
-                {
-                    isdone = isCheckListDone, // true
-                    messageStr = str,
-                    checkListIndex = (int)ChecklistErrorEnum.GoodChecklist, // okay
-                    jumpToDrawdown = jumpToDrawdown
-                };
-            }
+                if (PushApplicationToDrawdown(application.APPLICATIONREFERENCENUMBER)) { jumpToDrawdown = true; }
 
+                if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex) == 1)
+                {
+                    var casa = context.TBL_CASA.Find(application.CASAACCOUNTID);
+
+                    var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                    if (setup.USE_THIRD_PARTY_INTEGRATION)
+                    {
+                        creditCommon.LoadCustomerTurnover(
+                                applicationId,
+                                loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                                staffId
+                            );
+
+                        creditCommon.LoadCustomerRatios(
+                                applicationId,
+                                loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                                staffId
+                            );
+                        //if (casa != null)
+                        //{
+                        //    creditCommon.LoadCustomerTurnover(
+                        //        applicationId,
+                        //        loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //        staffId
+                        //    );
+                        //}
+                    }
+
+                    return new LoanApplicationUpdateMessage
+                    {
+                        isdone = isCheckListDone, // true
+                        messageStr = str,
+                        checkListIndex = (int)ChecklistErrorEnum.GoodChecklist, // okay
+                        jumpToDrawdown = jumpToDrawdown
+                    };
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        
             return new LoanApplicationUpdateMessage
             {
                 isdone = isCheckListDone,
@@ -1906,6 +1917,8 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
                 COLLATERALDETAIL = loan.collateralDetail,
                 ISADHOCAPPLICATION = loan.isadhocapplication,
+                LOANSWITHOTHERS = loan.loansWithOthers,
+                OWNERSHIPSTRUCTURE = loan.ownershipStructure,
                 LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
                 PRODUCTID = workflowProductId,
             };
@@ -1971,6 +1984,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.EQUITYCASAACCOUNTID = update.equityCasaAccountId;
             detail.CURRENCYID = update.currencyId;
             detail.TENORFREQUENCYTYPEID = update.tenorModeId;
+            detail.ISTAKEOVERAPPLICATION = update.isTakeOverApplication;
 
             var productClassId = detail.TBL_PRODUCT1.PRODUCTCLASSID;
 
@@ -2077,6 +2091,8 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.LOANTERMSHEETID = loan.loanTermSheetId;
             this.loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
             this.loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
+            this.loanData.LOANSWITHOTHERS = loan.loansWithOthers;
+            this.loanData.OWNERSHIPSTRUCTURE = loan.ownershipStructure;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -2202,6 +2218,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTPRICEINDEXRATE = a.productPriceIndexRate,
                 TENORFREQUENCYTYPEID = a.tenorModeId,
                 CRMSVALIDATED = false,
+                ISTAKEOVERAPPLICATION = a.isTakeOverApplication
             };
 
             var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
@@ -2282,6 +2299,7 @@ namespace FintrakBanking.Repositories.Credit
                 casaAccountId = d.CASAACCOUNTID,
                 repaymentTerm = d.REPAYMENTTERMS,
                 repaymentScheduleId = (int)d.REPAYMENTSCHEDULEID,
+                isTakeOverApplication = d.ISTAKEOVERAPPLICATION,
                 crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
                 crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
                 crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,
@@ -2968,12 +2986,12 @@ namespace FintrakBanking.Repositories.Credit
             var allApplicationDetails = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                          join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
-                                         where a.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchQuery)
-                                         //  || c.FIRSTNAME.ToLower().StartsWith(searchQuery)
-                                         //  || c.CUSTOMERCODE.ToLower().Contains(searchQuery)
-                                         //|| c.MIDDLENAME.ToLower().StartsWith(searchQuery)
-                                         //|| c.LASTNAME.ToLower().StartsWith(searchQuery)
-                                         //|| a.TBL_CASA.PRODUCTACCOUNTNUMBER==searchQuery
+                                         where a.APPLICATIONREFERENCENUMBER.Trim().ToLower().Contains(searchQuery)
+                                           || c.FIRSTNAME.ToLower().StartsWith(searchQuery)
+                                           || c.CUSTOMERCODE.ToLower().Contains(searchQuery)
+                                         || c.MIDDLENAME.ToLower().StartsWith(searchQuery)
+                                         || c.LASTNAME.ToLower().StartsWith(searchQuery)
+                                         || a.TBL_CASA.PRODUCTACCOUNTNUMBER == searchQuery
                                          select new LoanApplicationDetailViewModel
                                          {
                                              loanApplicationId = d.LOANAPPLICATIONID,
@@ -4569,6 +4587,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             //requireCollateral = a.REQUIRECOLLATERAL,
                             repaymentScheduleId = (int)b.REPAYMENTSCHEDULEID,
+                            isTakeOverApplication = b.ISTAKEOVERAPPLICATION,
                             repaymentTerm = b.REPAYMENTTERMS,
                             loanApplicationId = b.LOANAPPLICATIONID,
                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,

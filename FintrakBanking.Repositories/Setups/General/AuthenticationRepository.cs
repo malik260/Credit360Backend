@@ -168,7 +168,7 @@ namespace FintrakBanking.Repositories.Setups.General
             ActiveUserDetails result = new ActiveUserDetails();
             // var user = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == username);
 
-            var user = (from u in context.TBL_PROFILE_USER
+             var user = (from u in context.TBL_PROFILE_USER
                     join st in context.TBL_STAFF on u.STAFFID equals st.STAFFID
                     where u.USERNAME.ToLower() == username
                     select new UserViewModel
