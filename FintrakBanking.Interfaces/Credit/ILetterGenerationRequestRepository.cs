@@ -22,5 +22,6 @@ namespace FintrakBanking.Interfaces.Credit
         LetterGenerationRequestViewModel UpdateLetterGenerationRequest(LetterGenerationRequestViewModel model, int id, UserInfo user);
 
         bool DeleteLetterGenerationRequest(int id, UserInfo user);
+        List<CamsolDocumentViewModel> GetCamsolLoansByCustomerCode(string customerName, string customerCode);
     }
 }
