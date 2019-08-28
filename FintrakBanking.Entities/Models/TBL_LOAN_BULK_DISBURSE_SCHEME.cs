@@ -12,12 +12,11 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int DISBURSESCHEMEID { get; set; }
-
         public int PRODUCTID { get; set; }
-
-        public int DISBURSEMENTPACKAGEID { get; set; }
         public short? SCHEDULEMETHODID { get; set; }
-
+        public string APPLICATIONREFERENCENUMBER { get; set; }
+        public int LOANAPPLICATIONDETAILID { get; set; }
+        public int SCHEMECODE { get; set; }
         public int TENOR { get; set; }
 
         public string SCHEMENAME { get; set; }
