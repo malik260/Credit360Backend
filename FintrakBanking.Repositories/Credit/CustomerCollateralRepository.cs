@@ -4188,26 +4188,31 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationCollateralViewModel> MapApplicationCollateral(ApplicationCollateralMapping entity)
         {
-            int collateralId = entity.collateralId == null ? 0 : (int)entity.collateralId;
 
-            if (entity.collateralCode != null && entity.collateralId == null)
-            {
-                var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(x => x.COLLATERALCODE == entity.collateralCode);
-                if (collateral != null) { collateralId = collateral.COLLATERALCUSTOMERID; }
-            }
+            var proposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == entity.collateralId && o.LOANAPPLICATIONDETAILID == entity.applicationDetailId && o.APPROVALSTATUSID== (int)ApprovalStatusEnum.Processing).FirstOrDefault();
+            proposed.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
-            context.TBL_LOAN_APPLICATION_COLLATERL.Add(new TBL_LOAN_APPLICATION_COLLATERL
-            {
-                COLLATERALCUSTOMERID = collateralId,
-                LOANAPPLICATIONID = entity.applicationId,
-                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
-                CREATEDBY = entity.staffId,
-                DATETIMECREATED = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            });
+            //int collateralId = entity.collateralId == null ? 0 : (int)entity.collateralId;
+
+            //if (entity.collateralCode != null && entity.collateralId == null)
+            //{
+            //    var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(x => x.COLLATERALCODE == entity.collateralCode);
+            //    if (collateral != null) { collateralId = collateral.COLLATERALCUSTOMERID; }
+            //}
+
+            //context.TBL_LOAN_APPLICATION_COLLATERL.Add(new TBL_LOAN_APPLICATION_COLLATERL
+            //{
+            //    COLLATERALCUSTOMERID = collateralId,
+            //    LOANAPPLICATIONID = entity.applicationId,
+            //    LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+            //    CREATEDBY = entity.staffId,
+            //    DATETIMECREATED = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved
+            //});
             context.SaveChanges();
 
-            var mapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId).Select(c => new LoanApplicationCollateralViewModel
+            var mapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId && c.APPROVALSTATUSID== (int)ApprovalStatusEnum.Approved).Select(c => new LoanApplicationCollateralViewModel
             {
                 loanAppCollateralId = c.LOANAPPCOLLATERALID,
                 applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -4216,9 +4221,9 @@ namespace FintrakBanking.Repositories.Credit
                 collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                 collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                 loanApplicationId = c.LOANAPPLICATIONID,
-                //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                 haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID,
             }).OrderByDescending(x => x.loanAppCollateralId);
             return mapped;
         }
@@ -6763,9 +6768,9 @@ namespace FintrakBanking.Repositories.Credit
                         HAIRCUT = model.haircut,
                         CURRENCYID = model.currencyId,
                         EXCHANGERATE = repo.GetExchangeRate(date, model.currencyId, model.companyId).sellingRate,
-                        CUSTOMERID = model.applicationCustomerId,
+                        CUSTOMERID = model.customerId,
                         CAMREFNUMBER = model.camRefNumber,
-                        CREATEDBY = model.loanApplicationCustomerId,
+                        CREATEDBY = model.createdBy,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
                         ACTEDONBY = model.createdBy,
                         RELATEDCOLLATERALCODE = model.relatedCollateralCode,
@@ -6773,11 +6778,11 @@ namespace FintrakBanking.Repositories.Credit
                         COLLATERALSUMMARY = model.collateralSummary,
                         COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
                     });
-
                     if (context.SaveChanges() == 1)
                     {
                         return collateral.COLLATERALCUSTOMERID;
                     }
+
                 }
 
             }
