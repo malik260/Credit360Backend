@@ -31,7 +31,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         //[StringLength(20)]
         public decimal WHT { get; set; }
-        public decimal WHTAMOUNT { get; set; }
+        public decimal? WHTAMOUNT { get; set; }
 
         public int COMPANYID { get; set; }
 

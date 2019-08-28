@@ -239,8 +239,121 @@ namespace FintrakBanking.Repositories.Credit
             // Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
-        }        
+        }
 
+
+        public List<CamsolDocumentViewModel> GetCamsolLoansByCustomerCode(string customerName, string customerCode)
+        {
+            var data = from O in context.TBL_LOAN_CAMSOL
+                       join C in context.TBL_LOAN_CAMSOL_TYPE on O.CAMSOLTYPEID equals C.CAMSOLTYPEID
+                       where O.CUSTOMERNAME.Contains(customerName) || O.CUSTOMERCODE == customerCode
+                       orderby O.LOAN_CAMSOLID descending
+                       select new CamsolDocumentViewModel
+                       {
+                           customerCode = O.CUSTOMERCODE,
+                           customerName = O.CUSTOMERNAME,
+                           accountNumber = O.ACCOUNTNUMBER,
+                           balance = O.BALANCE,
+                           camsolTypeName = C.CAMSOLTYPENAME
+                       };
+            return data.ToList();
+        }
+
+        public string GetCamsolLoanDocument(int typeId)
+        {
+            if (typeId == 1) {
+                return GetLetterOfIndebtedness();
+            }
+            else if (typeId == 2) {
+                return GetLetterOfNonIndebtedness();
+            }
+            else {
+                return GetAuditorEnquiryHtml(new List<CamsolDocumentViewModel>());
+            }
+        }
+
+        public string GetLetterOfIndebtedness()
+        {
+            var reference = "ABP/ROG/OA/BO/03/2016/0061";
+            var date = DateTime.Now;
+            var address = "";
+            var fullName = "";
+            var accountNumber = "";
+            var debtAmount = 1000;
+            var salutation = $"<p><b>{reference}</b></p> <p><b>{date}.</b></p> <p><b>{fullName},</b> <br/> {address} </p> <p><b>Dear Sir/Ma,</b></p>";
+
+            string result = $"<p><b>{reference}</b></p> " +
+                $"<p><b>{date}.</b></p> " +
+                $"<p><b>{fullName},</b> <br/> {address} </p> " +
+                $"<p><b>Dear Sir/Ma,</b></p> " +
+                $"<p><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
+                $"<p>We hereby confirm that <b>{fullName}</b>, with account number {accountNumber} is indebted to our Bank as at {date}, to the tune of N{debtAmount}.</p> " +
+                $"<p>Please note that interest will continue to accrue on the above amount on a daily basis until the facility is fully liquidated.</p> " +
+                $"<p><b>This report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
+                $"<p>Thank you.</p> " +
+                $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
+                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
+                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p>";
+
+            return result;
+        }
+
+        public string GetLetterOfNonIndebtedness()
+        {
+            var reference = "ABP/ROG/OA/BO/03/2016/0061";
+            var date = DateTime.Now;
+            var address = "";
+            var fullName = "";
+            var accountNumber = "";
+            var salutation = $"<p><b>{reference}</b></p> <p><b>{date}.</b></p> <p><b>{fullName},</b> <br/> {address} </p> <p><b>Dear Sir/Ma,</b></p>";
+
+            string result = $"<p><b>{reference}</b></p> " +
+                $"<p><b>{date}.</b></p> " +
+                $"<p><b>{fullName},</b> <br/> {address} </p> " +
+                $"<p><b>Dear Sir/Ma,</b></p> " +
+                $"<p><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
+                $"<p>We hereby confirm that {fullName}, is not indebted to our Bank as at {date}.</p> " +
+                $"<p><b>Please note that this report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
+                $"<p>Thank you.</p> " +
+                $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
+                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
+                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p>";
+
+            return result;
+        }
+
+        public string GetAuditorEnquiryHtml(List<CamsolDocumentViewModel> list)
+        {
+            var n = 0;
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Loan Amount (N)</b></th>
+                        <th><b>Outstanding Amount (N)</b></th>
+                        <th><b>Rate</b></th>
+                        <th><b>Value Date</b></th>
+                        <th><b>Maturity Date</b></th>
+                    </tr>";
+
+            foreach (var item in list)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{item.accountNumber}</td>
+                        <td>{item.applicationUrl}</td>'
+                        <td>{item.balance}</td>
+                        <td>{item.branchId}</td>
+                        <td>{item.camsolTypeName}</td>
+                        <td>{item.company}</td>
+                    </tr>";
+            }
+
+            result = result + $"</table>";
+            return result;
+        }
     }
 }
 
