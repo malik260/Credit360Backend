@@ -2485,15 +2485,15 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
                 }
-                /*
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.branchId = (short)token.GetBranchId;
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                */
+
+                //entity.userBranchId = (short)token.GetBranchId;
+                //entity.companyId = token.GetCompanyId;
+                //entity.createdBy = token.GetStaffId;
+                //entity.applicationUrl = HttpContext.Current.Request.Path;
+                //entity.branchId = (short)token.GetBranchId;
+                //entity.userBranchId = (short)token.GetBranchId;
+                //entity.applicationUrl = HttpContext.Current.Request.Path;
+
 
                 var file = provider.Contents.FirstOrDefault();
                 var buffer = await file.ReadAsByteArrayAsync();
