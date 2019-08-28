@@ -363,7 +363,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             response.nextPersonId = this.toStaffId;
             int finalStatusId = this.statusId;
 
-            if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && request.LOOPEDSTAFFID != null)
+            if (request != null && request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && request.LOOPEDSTAFFID != null)
             { response.nextLevelId = this.fromLevelId;}
 
             if (response.nextLevelId == null && finalStatusId == (int)ApprovalStatusEnum.Processing) finalStatusId = (int)ApprovalStatusEnum.Approved;

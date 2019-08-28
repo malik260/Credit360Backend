@@ -99,19 +99,27 @@ namespace FintrakBanking.Repositories.credit
             return null;
         }
 
-        public IEnumerable<LcIssuanceViewModel> GetLcIssuancesForUssance()
+        public IEnumerable<LcIssuanceViewModel> GetLcIssuancesForUssance(int staffId)
         {
             var usances = context.TBL_LC_USSANCE.ToList();
             var lcs = (from x in context.TBL_LC_ISSUANCE
                        join y in context.TBL_LC_USSANCE on x.LCISSUANCEID equals y.LCISSUANCEID into xy
-                       from u in xy.DefaultIfEmpty() where 
-                       (x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
-                        && ((u.USANCEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceInProgress
-                        && u.USANCEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceCompleted)
+                       from u in xy.DefaultIfEmpty()
+                       join t in context.TBL_APPROVAL_TRAIL on u.LCUSSANCEID equals t.TARGETID into ut
+                       from utrail in ut.DefaultIfEmpty() where 
+                       (
+                       x.DELETED == false
+                       && utrail.OPERATIONID == (int)OperationsEnum.lcUssance
+                       && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                       && 
+                       (u.USANCEAPPLICATIONSTATUSID == null
                         || (u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
-                            && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)))
-                           
-                       select new LcIssuanceViewModel()
+                            && utrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                        || (u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
+                            && utrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                            && utrail.LOOPEDSTAFFID == staffId))
+                        )
+                        select new LcIssuanceViewModel()
                             {
                                 lcIssuanceId = x.LCISSUANCEID,
                                 lcUssanceId = u.LCUSSANCEID,
@@ -125,7 +133,7 @@ namespace FintrakBanking.Repositories.credit
                                 percentageToCover = x.PERCENTAGETOCOVER,
                                 lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
                                 lcToleranceValue = x.LCTOLERANCEVALUE,
-                                totalUsanceAmount = usances.Where(u => u.LCISSUANCEID == x.LCISSUANCEID).Sum(u => u.USSANCEAMOUNT),
+                                totalUsanceAmount = usances.Where(u => u.LCISSUANCEID == x.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT),
                                 releaseAmount = x.RELEASEDAMOUNT,
                                 letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                                 isDraftRequired = x.ISDRAFTREQUIRED,
@@ -311,6 +319,7 @@ namespace FintrakBanking.Repositories.credit
                              lcReferenceNumber = a.LCREFERENCENUMBER,
                              letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
                              beneficiaryName = a.BENEFICIARYNAME,
+                             totalUsanceAmount = context.TBL_LC_USSANCE.Where(u => u.LCISSUANCEID == a.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT),
                              totalApprovedAmount = a.TOTALAPPROVEDAMOUNT,
                              totalApprovedAmountCurrencyId = a.TOTALAPPROVEDAMOUNTCURRENCYID,
                              availableAmountCurrencyId = a.AVAILABLEAMOUNTCURRENCYID,
