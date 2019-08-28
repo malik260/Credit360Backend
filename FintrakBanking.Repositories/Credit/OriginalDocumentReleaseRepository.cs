@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Credit
                         ORIGINALDOCUMENTAPPROVALID = o.originalDocumentApprovalId,
                         DOCUMENTUPLOADID = o.documentUploadId,
                         DOCSUBMISSIONOPERATIONID = (int)OperationsEnum.OriginalDocumentApproval,
-                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                         COMPANYID = o.companyId,
                         CREATEDBY = o.createdBy,
                         DATETIMECREATED = DateTime.Now
@@ -149,11 +149,11 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var x in record)
             {
-                var data = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.ORIGINALDOCUMENTAPPROVALID == x.originalDocumentApprovalId && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing).FirstOrDefault();
+                var data = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.ORIGINALDOCUMENTAPPROVALID == x.originalDocumentApprovalId && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).FirstOrDefault();
 
                 if (data != null)
                 {
-                    var release = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == data.ORIGINALDOCUMENTAPPROVALID).Select(o => o).ToList();
+                    var release = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == data.ORIGINALDOCUMENTAPPROVALID).ToList();
                     data.CREATEDBY = x.createdBy;
 
                     foreach (var d in release)
