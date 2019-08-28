@@ -19,6 +19,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Extensions;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
+using System.Text;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -2443,5 +2444,75 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        // benjamin
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("disbursement/multiple-disburse-data")]
+        public async Task<HttpResponseMessage> UploadBulkDisbursementData()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                //int uploadType;
+                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
+                //}
+
+
+                //byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
+                //string password = Encoding.UTF8.GetString(pass);
+
+               /* var entity = new StaffDocumentViewModel
+                {
+                    staffCode = provider.FormData["staffCode"],
+                    documentTitle = provider.FormData["documentTitle"],
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                    loginStaffPassword = password,
+                    loginStaffCode = token.GetUsername
+                };*/
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+                /*
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.branchId = (short)token.GetBranchId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                */
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                //var data = repo.UploadStaffData(entity, buffer);
+
+                if (buffer != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "ok", message = "Bulk Disbursement data was successfully uploaded" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Bulk Disbursement data" });
+            }
+            catch (SecureException ex)
+            {
+               // errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " + ex.Message });
+            }
+        }
+
     }
 }
