@@ -70,7 +70,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string gender { get; set; }
         public DateTime? dateOfBirth { get; set; }
         public string placeOfBirth { get; set; }
-        public string nationality { get; set; }
+        public int? nationalityId { get; set; }
         public string maritalStatus { get; set; }
         public string emailAddress { get; set; }
         public string maidenName { get; set; }

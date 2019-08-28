@@ -6009,7 +6009,7 @@ namespace FintrakBanking.Repositories.Credit
                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                        misCode = a.MISCODE,
                        misStaff = a.MISSTAFF,
-                       nationality = a.NATIONALITY,
+                       nationalityId = a.NATIONALITYID,
                        occupation = a.OCCUPATION,
                        placeOfBirth = a.PLACEOFBIRTH,
                        isInvestmentGrade = a.ISINVESTMENTGRADE,
