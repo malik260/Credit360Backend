@@ -119,7 +119,7 @@ namespace FintrakBanking.Repositories.Customer
                 MIDDLENAME = entity.middleName,
                 MISCODE = entity.misCode,
                 MISSTAFF = entity.misStaff,
-                NATIONALITY = entity.nationality,
+                NATIONALITYID = entity.nationalityId,
                 OCCUPATION = entity.occupation,
                 PLACEOFBIRTH = entity.placeOfBirth,
                 ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed,
@@ -2084,7 +2084,7 @@ namespace FintrakBanking.Repositories.Customer
                            middleName = a.MIDDLENAME,
                            misCode = a.MISCODE,
                            misStaff = a.MISSTAFF,
-                           nationality = a.NATIONALITY,
+                           nationalityId = a.NATIONALITYID,
                            occupation = a.OCCUPATION,
                            placeOfBirth = a.PLACEOFBIRTH,
                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
@@ -2166,7 +2166,7 @@ namespace FintrakBanking.Repositories.Customer
                            // customerTypeName =  context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                            misCode = a.MISCODE,
                            misStaff = a.MISSTAFF,
-                           nationality = a.NATIONALITY,
+                           nationalityId = a.NATIONALITYID,
                            occupation = a.OCCUPATION,
                            placeOfBirth = a.PLACEOFBIRTH,
                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
@@ -2397,7 +2397,7 @@ namespace FintrakBanking.Repositories.Customer
                                .FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                            misCode = a.MISCODE,
                            misStaff = a.MISSTAFF,
-                           nationality = a.NATIONALITY,
+                           nationalityId = a.NATIONALITYID,
                            occupation = a.OCCUPATION,
                            placeOfBirth = a.PLACEOFBIRTH,
                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED == false
@@ -2508,7 +2508,7 @@ namespace FintrakBanking.Repositories.Customer
                         .NAME, // context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                 misCode = a.MISCODE,
                 misStaff = a.MISSTAFF,
-                nationality = a.NATIONALITY,
+                nationalityId = a.NATIONALITYID,
                 occupation = a.OCCUPATION,
                 placeOfBirth = a.PLACEOFBIRTH,
                 isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
@@ -2693,7 +2693,7 @@ namespace FintrakBanking.Repositories.Customer
                 customerMain.MIDDLENAME = entity.middleName;
                 customerMain.MISCODE = entity.misCode;
                 customerMain.MISSTAFF = entity.misStaff;
-                customerMain.NATIONALITY = entity.nationality;
+                customerMain.NATIONALITYID = entity.nationalityId;
                 customerMain.OCCUPATION = entity.occupation;
                 customerMain.PLACEOFBIRTH = entity.placeOfBirth;
                 customerMain.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
@@ -2745,7 +2745,7 @@ namespace FintrakBanking.Repositories.Customer
                     customer.MIDDLENAME = entity.middleName;
                     customer.MISCODE = entity.misCode;
                     customer.MISSTAFF = entity.misStaff;
-                    customer.NATIONALITY = entity.nationality;
+                    customer.NATIONALITYID = entity.nationalityId;
                     customer.OCCUPATION = entity.occupation;
                     customer.PLACEOFBIRTH = entity.placeOfBirth;
                     customer.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
@@ -2795,7 +2795,7 @@ namespace FintrakBanking.Repositories.Customer
                     customer.MIDDLENAME = entity.middleName;
                     customer.MISCODE = entity.misCode;
                     customer.MISSTAFF = entity.misStaff;
-                    customer.NATIONALITY = entity.nationality;
+                    customer.NATIONALITYID = entity.nationalityId;
                     customer.OCCUPATION = entity.occupation;
                     customer.PLACEOFBIRTH = entity.placeOfBirth;
                     customer.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
@@ -3205,7 +3205,7 @@ namespace FintrakBanking.Repositories.Customer
                             customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
                             misCode = a.MISCODE,
                             misStaff = a.MISSTAFF,
-                            nationality = a.NATIONALITY,
+                            nationalityId = a.NATIONALITYID,
                             occupation = a.OCCUPATION,
                             placeOfBirth = a.PLACEOFBIRTH,
                             isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
@@ -3258,7 +3258,7 @@ namespace FintrakBanking.Repositories.Customer
                             customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
                             misCode = a.MISCODE,
                             misStaff = a.MISSTAFF,
-                            nationality = a.NATIONALITY,
+                            nationalityId = a.NATIONALITYID,
                             occupation = a.OCCUPATION,
                             placeOfBirth = a.PLACEOFBIRTH,
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
@@ -3309,7 +3309,7 @@ namespace FintrakBanking.Repositories.Customer
                                 .FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                             misCode = a.MISCODE,
                             misStaff = a.MISSTAFF,
-                            nationality = a.NATIONALITY,
+                            nationalityId = a.NATIONALITYID,
                             occupation = a.OCCUPATION,
                             placeOfBirth = a.PLACEOFBIRTH,
                             isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
@@ -4415,7 +4415,7 @@ namespace FintrakBanking.Repositories.Customer
                 entity.MIDDLENAME = temp.MIDDLENAME;
                 entity.MISCODE = temp.MISCODE;
                 entity.MISSTAFF = temp.MISSTAFF;
-                entity.NATIONALITY = temp.NATIONALITY;
+                entity.NATIONALITYID = temp.NATIONALITYID;
                 entity.OCCUPATION = temp.OCCUPATION;
                 entity.PLACEOFBIRTH = temp.PLACEOFBIRTH;
                 entity.ISINVESTMENTGRADE = temp.ISINVESTMENTGRADE;
@@ -5327,7 +5327,7 @@ namespace FintrakBanking.Repositories.Customer
                 customer.TITLE = customerMain.TITLE;
                 customer.MISCODE = customerMain.MISCODE;
                 customer.MISSTAFF = customerMain.MISSTAFF;
-                customer.NATIONALITY = customerMain.NATIONALITY;
+                customer.NATIONALITYID = customerMain.NATIONALITYID;
                 customer.OCCUPATION = customerMain.OCCUPATION;
                 customer.PLACEOFBIRTH = customerMain.PLACEOFBIRTH;
                 customer.ISPOLITICALLYEXPOSED = customerMain.ISPOLITICALLYEXPOSED;

@@ -118,7 +118,7 @@ namespace FintrakBanking.Repositories.Credit
                                title = a.TITLE,
                                middleName = a.MIDDLENAME,
                                customerTypeName = a.TBL_CUSTOMER_TYPE.NAME,
-                               nationality = a.NATIONALITY,
+                               nationalityId = a.NATIONALITYID,
                                occupation = a.OCCUPATION,
                                placeOfBirth = a.PLACEOFBIRTH,
                                isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,

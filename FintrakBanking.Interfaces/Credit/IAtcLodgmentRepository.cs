@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.credit;
 
@@ -33,7 +34,7 @@ namespace FintrakBanking.Interfaces.credit
 
         IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForApproval(int staffId);
 
-        bool SubmitApproval(AtcReleaseViewModel model);
+        WorkflowResponse SubmitApproval(AtcReleaseViewModel model);
 
         IEnumerable<AtcLodgmentViewModel> GetAtcReleaseForApproval(int staffId);
 
