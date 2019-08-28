@@ -3207,9 +3207,9 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.PLACEOFBIRTH)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_CUSTOMER>()
-                .Property(e => e.NATIONALITY)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_CUSTOMER>()
+            //    .Property(e => e.NATIONALITYID)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<TBL_CUSTOMER>()
                 .Property(e => e.EMAILADDRESS)
@@ -8373,9 +8373,9 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.PLACEOFBIRTH)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_TEMP_CUSTOMER>()
-                .Property(e => e.NATIONALITY)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_TEMP_CUSTOMER>()
+            //    .Property(e => e.NATIONALITY)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<TBL_TEMP_CUSTOMER>()
                 .Property(e => e.EMAILADDRESS)

@@ -34,6 +34,7 @@ using FinTrakBanking.ThirdPartyIntegration;
 using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using GemBox.Spreadsheet;
 using System.IO;
+using FintrakBanking.ViewModels.Setups.Credit;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -6011,7 +6012,7 @@ namespace FintrakBanking.Repositories.Credit
                        customerTypeName = context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                        misCode = a.MISCODE,
                        misStaff = a.MISSTAFF,
-                       nationality = a.NATIONALITY,
+                       nationalityId = a.NATIONALITYID,
                        occupation = a.OCCUPATION,
                        placeOfBirth = a.PLACEOFBIRTH,
                        isInvestmentGrade = a.ISINVESTMENTGRADE,
@@ -13057,21 +13058,105 @@ namespace FintrakBanking.Repositories.Credit
             }).FirstOrDefault();
         }
 
-        public LoanViewModel disburseBulkLoans(byte[] file)
+        public List<TBL_LOAN> disburseBulkLoans(byte[] file, UserInfo user)
         {
-            List<LoanViewModel> loans = new List<LoanViewModel>();
-            List<bulkDisbursementInputViewModel> loanInputs = GetLoanInputs(file);
+            List<TBL_LOAN> loans = new List<TBL_LOAN>();
+            List<bulkDisbursementInputViewModel> loanInputs = GetBulkLoanInputs(file);
 
             foreach(var entry in loanInputs)
             {
                 LoanViewModel loan = new LoanViewModel();
                 TBL_CUSTOMER customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == entry.customerCode).FirstOrDefault();
+                var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Find(entry.schemeId);
+
+                loan = buildLoanModel(entry, scheme,  user);
+
+                //loan.firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
+                //loan.firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
+                //loan.outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                //loan.outstandingInterest = a.OUTSTANDINGINTEREST,
+                //loan.principalAdditionCount = a.PRINCIPALADDITIONCOUNT ?? 0,
+                //loan.principalReductionCount = a.PRINCIPALREDUCTIONCOUNT ?? 0,
+                //loan.principalInstallmentLeft = a.PRINCIPALINSTALLMENTLEFT,
+                //loan.interestInstallmentLeft = a.INTERESTINSTALLMENTLEFT,
+                //loan.principalNumberOfInstallment = a.PRINCIPALNUMBEROFINSTALLMENT,
+                //loan.interestNumberOfInstallment = a.INTERESTNUMBEROFINSTALLMENT,
+                //loan.principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
+                //loan.interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
+
                 loan.customerId = customer.CUSTOMERID;
+                var loanRecord = addLoan(loan);
+                loans.Add(loanRecord);
             }
-            return new LoanViewModel();
+
+            return loans;
         }
 
-        private List<bulkDisbursementInputViewModel> GetLoanInputs( byte[] file)
+        private LoanViewModel buildLoanModel(bulkDisbursementInputViewModel input, TBL_LOAN_BULK_DISBURSE_SCHEME scheme , UserInfo user)
+        {
+            var casaAccount = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == input.accountnumber).FirstOrDefault();
+            if(casaAccount == null ) { throw new ConditionNotMetException("Account number '" + input.accountnumber + "' does not exist on Credit360");  }
+            
+            var product = context.TBL_PRODUCT.Find((short)scheme.PRODUCTID);
+
+            int? operationId = null;
+            var systemdate = generalSetup.GetApplicationDate();
+
+            TBL_CUSTOMER customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == input.customerCode).FirstOrDefault();
+            if(customer == null) { throw new ConditionNotMetException("Customer does not exist on Credit360");  }
+
+            if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan 
+                || product.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating
+                || product.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan) { operationId = (short)OperationsEnum.TermLoanBooking;  }
+            if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan) { operationId = (short)OperationsEnum.CommercialLoanBooking; }
+            if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving) { operationId = (short)OperationsEnum.ForeignExchangeLoanBooking; }
+
+            if(operationId == null) { throw new ConditionNotMetException("The selected scheme facility is not a loan related"); }
+
+            var model = new LoanViewModel
+            {
+                //loanId = a.TERMLOANID,
+                loanApplicationId = 0, //a.LOANAPPLICATIONDETAILID,
+                //customerId = a.CUSTOMERID,
+                productId = (short)scheme.PRODUCTID,
+                companyId = user.companyId,
+
+                casaAccountId = casaAccount.CASAACCOUNTID,
+                branchId = (short)user.BranchId,
+                productTypeId = product.PRODUCTTYPEID,
+
+                relationshipOfficerId = customer.RELATIONSHIPOFFICERID ?? 0,
+                relationshipManagerId = customer.RELATIONSHIPOFFICERID ?? 0,
+                misCode = customer.MISCODE,
+                teamMiscode = customer.MISCODE,
+                interestRate = scheme.INTERESTRATE,
+                effectiveDate = systemdate,
+                maturityDate = systemdate.AddDays(input.tenor),
+                bookingDate = DateTime.Now,
+                principalAmount = input.LoanAmount,
+                approvalStatusId = (short)ApprovalStatusEnum.Approved,
+                approvedBy = user.staffId,
+                approverComment = "BULK APPROVED",
+                dateApproved = systemdate,
+                loanStatusId = (short)LoanStatusEnum.Active,
+                scheduleTypeId = scheme.SCHEDULEMETHODID ?? 0,
+                isDisbursed = true,
+                disbursedBy = user.staffId,
+                disburserComment = "BULK APPROVED",
+                disburseDate = systemdate,
+                operationId = operationId,
+                loanTypeId = (short)LoanTypeEnum.CustomerGroup,
+                equityContribution = 0,
+                customerSensitivityLevelId = (short)CustomerSensitivityLevelENum.Negligible,
+                createdBy = user.staffId,
+                dateTimeCreated = DateTime.Now,
+                exchangeRate = 1, //scheme.e,
+                currencyId = 1,
+            };
+            return model;
+        }
+
+        private List<bulkDisbursementInputViewModel> GetBulkLoanInputs( byte[] file)
         {
             List<bulkDisbursementInputViewModel> bulkEntries = new List<bulkDisbursementInputViewModel>();
             bulkDisbursementInputViewModel currentLine = new bulkDisbursementInputViewModel();
@@ -13125,7 +13210,7 @@ namespace FintrakBanking.Repositories.Credit
             return bulkEntries;
         }
 
-        private bool addLoan(LoanViewModel entity)
+        private TBL_LOAN addLoan(LoanViewModel entity)
         {
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.branchId, entity.productId, (short)LoanSystemTypeEnum.TermDisbursedFacility);
             var data = new TBL_LOAN
@@ -13201,7 +13286,8 @@ namespace FintrakBanking.Repositories.Credit
                 REPRICINGDURATION = entity.loanScheduleInput.repricingDuration != 0 ? entity.loanScheduleInput.repricingDuration : null,
 
             };
-            return context.SaveChanges() > 0;
+            if (context.SaveChanges() > 0) { return data; }
+            else return null;
         }
 
 
