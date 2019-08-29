@@ -2327,7 +2327,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId)
+        public IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId, bool isInitiation = false)
         {
             List<int> levelIds = new List<int>();
             levelIds.AddRange(generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CorporateDrawdownRequest).ToList());
@@ -2339,9 +2339,11 @@ namespace FintrakBanking.Repositories.Credit
             operationIds.Add((int)OperationsEnum.IndividualDrawdownRequest);
             operationIds.Add((int)OperationsEnum.CreditCardDrawdownRequest);
 
+            List<CamProcessedLoanViewModel> data = new List<CamProcessedLoanViewModel>();
 
-
-            var data = (from req in context.TBL_LOAN_BOOKING_REQUEST
+            try
+            {
+                data = (from req in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on req.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join coy in context.TBL_COMPANY on m.COMPANYID equals coy.COMPANYID
@@ -2349,21 +2351,20 @@ namespace FintrakBanking.Repositories.Credit
                         join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                         join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
-                        where operationIds.Contains(atrail.OPERATIONID)
-                              && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
-                              && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
-                              && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                              &&  (
-                                        (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) 
-                                        || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                                        || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred) 
-                                   )
-                               && (
-                                        (levelIds.Contains((int)atrail.TOAPPROVALLEVELID)) // && (atrail.TOSTAFFID == null || atrail.TOSTAFFID == staffId) && atrail.LOOPEDSTAFFID == null)
-                                        || ( !levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId ) //&& atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred) 
-                                  )
-                                  
-                              && atrail.RESPONSESTAFFID == null
+                        where (
+                                  operationIds.Contains(atrail.OPERATIONID)
+                                  && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                                  && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
+                                  && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
+                                  && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)|| (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
+                                            || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
+
+                                  && ( (levelIds.Contains((int)atrail.TOAPPROVALLEVELID)) 
+                                            || (!levelIds.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == staffId) )
+
+                                  && atrail.RESPONSESTAFFID == null
+                              )
+                              || (isInitiation == true && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved && req.DELETED == false)
                         orderby d.LOANAPPLICATIONDETAILID descending
 
                         select new CamProcessedLoanViewModel
@@ -2433,42 +2434,50 @@ namespace FintrakBanking.Repositories.Credit
                             dateTimeCreated = d.DATETIMECREATED,
                             availmentDate = m.AVAILMENTDATE,
                             requestDate = req.DATETIMECREATED,
-                            
+
                         }).ToList();
 
-            foreach (var item in data)
-            {
-                var casa1 = context.TBL_CASA.Find(item.casaAccountId);
-                var casa2 = context.TBL_CASA.Find(item.casaAccountId2);
-                if (casa1 != null) item.accountNumber = casa1.PRODUCTACCOUNTNUMBER;
-                if (casa2 != null) item.accountNumber2 = casa2.PRODUCTACCOUNTNUMBER;
-
-
-                var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-
-                if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
-                    item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED);
-
-                if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
-                    item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
-
-                if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
-                    item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
-
-                item.disapprovedCount = (int)requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Count();
-
-                if (item.disapprovedCount > 0)
-                    item.disApprovedAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Sum(s => s.AMOUNT_REQUESTED);
-
-                item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
-
-                var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
-                if (disbursedLoan.Any())
+                foreach (var item in data)
                 {
-                    item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
-                }
+                    var casa1 = context.TBL_CASA.Find(item.casaAccountId);
+                    var casa2 = context.TBL_CASA.Find(item.casaAccountId2);
+                    if (casa1 != null) item.accountNumber = casa1.PRODUCTACCOUNTNUMBER;
+                    if (casa2 != null) item.accountNumber2 = casa2.PRODUCTACCOUNTNUMBER;
 
+
+                    var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+
+                    if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
+                        item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED);
+
+                    if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
+                        item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
+
+                    if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
+                        item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
+
+                    item.disapprovedCount = (int)requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Count();
+
+                    if (item.disapprovedCount > 0)
+                        item.disApprovedAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Sum(s => s.AMOUNT_REQUESTED);
+
+                    item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount);
+
+                    var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
+                    if (disbursedLoan.Any())
+                    {
+                        item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
+                    }
+
+                }
             }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+           
             return data.ToList();
         }
 
@@ -6355,7 +6364,10 @@ namespace FintrakBanking.Repositories.Credit
             var data2 = from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                         where a.COMPANYID == companyId && d.DELETED == false
-                        && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
+                        && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        &&  a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
+                        && a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
+                        //&& a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.BookingRequestInitiated
                         orderby a.AVAILMENTDATE descending, a.DATETIMECREATED descending
                         select new CamProcessedLoanViewModel
                         {
@@ -6585,7 +6597,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).ToList();
             data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
-            var referredItem = GetBookingRequestAwaitingApproval(staffId, companyId).Where(x => x.approvalStatusId == (short)ApprovalStatusEnum.Referred).ToList();
+            var referredItem = GetBookingRequestAwaitingApproval(staffId, companyId, true).Where(x => x.approvalStatusId == (short)ApprovalStatusEnum.Referred).ToList();
             data.AddRange(referredItem);
 
             foreach (var item in data)
@@ -13062,6 +13074,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             List<TBL_LOAN> loans = new List<TBL_LOAN>();
             List<bulkDisbursementInputViewModel> loanInputs = GetBulkLoanInputs(file);
+            var systemData = generalSetup.GetApplicationDate();
 
             foreach(var entry in loanInputs)
             {
@@ -13194,7 +13207,7 @@ namespace FintrakBanking.Repositories.Credit
                             currentLine.accountnumber = cell.Value.ToString();
                             break;
                         case "C":
-                            currentLine.PackageId = Convert.ToInt32( cell.Value);
+                           // currentLine.PackageId = Convert.ToInt32( cell.Value);
                             break;
                         case "D":
                             currentLine.schemeId = Convert.ToInt32(cell.Value);

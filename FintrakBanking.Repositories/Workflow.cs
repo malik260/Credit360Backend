@@ -67,6 +67,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? toStaffId = null;
         private int? loopedRoleId = null;
         private int? loopedStaffId = null;
+        private bool initiatorOrLooped = false;
         public int actualRequestStaffId = 0;
         public bool isLoopResponse = false;
         private bool endProcess = false;
@@ -195,7 +196,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.SYSTEMRESPONSEDATETIME = this.systemDate;
                 request.RESPONSESTAFFID = this.staffId;
 
-                if(request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred)
+                if(request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                 { request.RESPONSESTAFFID = this.loopedStaffId; }
             }
 
@@ -257,6 +258,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.nextLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID; ;
                     this.loopedStaffId = (this.loopedStaffId != null && this.loopedStaffId > 0) ? this.loopedStaffId : initiatorRequest.REQUESTSTAFFID;
                     this.toStaffId = staffId;
+                    this.initiatorOrLooped = true;
                 }
 
                 //if(request.LOOPEDSTAFFID == null || request.LOOPEDSTAFFID <= 0) { this.toStaffId = request.REQUESTSTAFFID; }
@@ -1143,6 +1145,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (this.toStaffId != null)
                 {
                     reciever = context.TBL_STAFF.Find(this.toStaffId);
+                    recipientName = reciever.FIRSTNAME;
+                }
+                else if (this.loopedStaffId != null)
+                {
+                    reciever = context.TBL_STAFF.Find(this.loopedStaffId);
                     recipientName = reciever.FIRSTNAME;
                 }
                 else

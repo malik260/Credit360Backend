@@ -1122,7 +1122,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
                     if (usTotalAmount == lc.LETTEROFCREDITAMOUNT)
-                    {
+                    { // if the whole lcamount has been used
                         lc.LCUSSANCESTATUSID = (int)LoanApplicationStatusEnum.lcUssanceCompleted;
                         lc.LCUSSANCEAPPROVEDDATE = DateTime.Now;
                         lc.DATEACTEDON = DateTime.Now;
