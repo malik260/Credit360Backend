@@ -147,7 +147,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("add-disbursement-scheme")]
         [HttpPost]
         [ClaimsAuthorization]
-        public HttpResponseMessage GetAllBulkDisbursementScheme(BulkDisbursementSetupSchemeViewModel bulkDisbursementSetup)
+        public HttpResponseMessage AddBulkDisbursementScheme(BulkDisbursementSetupSchemeViewModel bulkDisbursementSetup)
         {
             try
             {
