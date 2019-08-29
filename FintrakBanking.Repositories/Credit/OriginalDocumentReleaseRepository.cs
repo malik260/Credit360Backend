@@ -4,6 +4,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Repositories.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
@@ -34,27 +35,63 @@ namespace FintrakBanking.Repositories.Credit
         public bool AddOriginalDocumentRelease(IEnumerable<OriginalDocumentReleaseViewModel> model)
         {
 
-            foreach (var o in model)
-            {
-                var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == o.documentUploadId
-                                                                            && x.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved)
-                                                                    .Any(); //test this guy, add a rejected guy in the database
+            bool Update = false;
 
-                if(result == true) return false;
+            foreach (var mod in model)
+            {
+                
+
+                var resultCheck = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == mod.documentUploadId
+                                                                                && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
+                                                                         .Any();
+                if (resultCheck)
+                {
+                    Update = UpdateOriginalDocumentRelease(mod);
+                    if (Update == false) return false;
+                    else continue;
+                }
+
+                var result = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(x => x.DOCUMENTUPLOADID == mod.documentUploadId
+                                                                            && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                                                                   .Any(); //test this guy, add a rejected entry in the database
+
+
+
+                if (result == true) return false;
              
                     var entity = new TBL_ORIGINAL_DOCUMENT_RELEASE
                     {
-                        ORIGINALDOCUMENTRELEASEID = o.originalDocumentReleaseId,
-                        ORIGINALDOCUMENTAPPROVALID = o.originalDocumentApprovalId,
-                        DOCUMENTUPLOADID = o.documentUploadId,
+                        ORIGINALDOCUMENTRELEASEID = mod.originalDocumentReleaseId,
+                        ORIGINALDOCUMENTAPPROVALID = mod.originalDocumentApprovalId,
+                        DOCUMENTUPLOADID = mod.documentUploadId,
                         DOCSUBMISSIONOPERATIONID = (int)OperationsEnum.OriginalDocumentApproval,
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                        COMPANYID = o.companyId,
-                        CREATEDBY = o.createdBy,
+                        COMPANYID = mod.companyId,
+                        CREATEDBY = mod.createdBy,
                         DATETIMECREATED = DateTime.Now
                     };
                     _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Add(entity);
              
+            }
+            try
+            {
+                return _context.SaveChanges() > 0 || Update == true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool UpdateOriginalDocumentRelease(OriginalDocumentReleaseViewModel model)
+        {
+
+            var entity = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.FirstOrDefault(ct => ct.DOCUMENTUPLOADID == model.documentUploadId);
+
+            if (entity != null)
+            {
+                entity.LASTUPDATEDBY = model.createdBy;
+                entity.DATETIMEUPDATED = DateTime.Now;
             }
             try
             {
@@ -66,7 +103,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public IEnumerable<OriginalDocumentReleaseViewModel> GetLeaseDocumentForApproval(int staffId)
+            public IEnumerable<OriginalDocumentReleaseViewModel> GetLeaseDocumentForApproval(int staffId)
         {
             var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.SecurityRelease).ToList();
 
@@ -154,10 +191,13 @@ namespace FintrakBanking.Repositories.Credit
                 if (data != null)
                 {
                     var release = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(o => o.ORIGINALDOCUMENTAPPROVALID == data.ORIGINALDOCUMENTAPPROVALID).ToList();
-                    data.CREATEDBY = x.createdBy;
+                    //data.CREATEDBY = x.createdBy;
 
                     foreach (var d in release)
+                    {
                         d.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                        //d.CREATEDBY = x.createdBy;
+                    }
 
                     _workflow.StaffId = x.createdBy;
                     _workflow.CompanyId = x.companyId;
@@ -175,7 +215,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public bool SubmitApproval(OriginalDocumentReleaseViewModel model)
+        public WorkflowResponse SubmitApproval(OriginalDocumentReleaseViewModel model)
         {
             bool responce = false;
 
@@ -208,7 +248,7 @@ namespace FintrakBanking.Repositories.Credit
                     responce = _context.SaveChanges() > 0;
                     transaction.Commit();
 
-                    return responce;
+                    return _workflow.Response;
                 }
                 catch (Exception ex)
                 {
