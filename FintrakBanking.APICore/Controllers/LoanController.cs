@@ -815,7 +815,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId, false);
 
                 if (data.Any() == false)
                 {
