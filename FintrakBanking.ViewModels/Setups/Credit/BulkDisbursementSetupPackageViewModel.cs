@@ -22,6 +22,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int approvalStatusId { get; set; }
         public string scheduleName { get; set; }
         public string schemeName { get; set; }
+        public string applicationReferenceNumber { get; set; }
         // public TBL_LOAN_APPLICATION_DETAIL LOANAPPLICATIONDETAIL { get; set; }
     }
 

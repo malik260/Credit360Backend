@@ -152,6 +152,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 
+
                 bulkDisbursementSetup.staffId = token.GetStaffId;
                 bulkDisbursementSetup.userBranchId = (short)token.GetBranchId;
                 bulkDisbursementSetup.userIPAddress = HttpContext.Current.Request.UserHostAddress;
