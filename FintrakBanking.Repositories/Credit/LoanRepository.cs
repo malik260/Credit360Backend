@@ -13210,6 +13210,8 @@ namespace FintrakBanking.Repositories.Credit
             return bulkEntries;
         }
 
+        
+
         private TBL_LOAN addLoan(LoanViewModel entity)
         {
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.branchId, entity.productId, (short)LoanSystemTypeEnum.TermDisbursedFacility);

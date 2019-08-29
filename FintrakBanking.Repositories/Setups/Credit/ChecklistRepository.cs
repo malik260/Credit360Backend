@@ -2276,7 +2276,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
             if (data == null) return false;
-            data.APPROVALSTATUSID = model.approvalStatusId == 2 ? (short)ApprovalStatusEnum.Approved : (short)ApprovalStatusEnum.Disapproved; 
+            data.APPROVALSTATUSID =  (short)ApprovalStatusEnum.Approved ; 
             if (data.CHECKLISTSTATUSID != null)
             {
                 data.CHECKLISTSTATUSID = (int)CheckListStatusEnum.Provided;
