@@ -109,7 +109,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("update-disbursement-package-scheme/{disbursementSchemeId}")]
         [HttpPut]
         [ClaimsAuthorization]
-        public HttpResponseMessage UpdateBulkDisbursementScheme(int disbursementSchemeId, BulkDisbursementSetupSchemeViewModel bulkDisbursement)
+        public HttpResponseMessage UpdateBulkDisbursementScheme([FromUri]int disbursementSchemeId, [FromBody] BulkDisbursementSetupSchemeViewModel bulkDisbursement)
         {
             try
             {
