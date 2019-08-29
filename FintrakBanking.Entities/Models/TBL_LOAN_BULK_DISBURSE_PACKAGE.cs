@@ -12,7 +12,7 @@
         [Key]
         public int DISBURSEMENTPACKAGEID { get; set; }
 
-        public int GROUPCUSTOMERID { get; set; }
+        public string PACKAGENAME { get; set; }
 
         public DateTime STARTDATE { get; set; }
 
