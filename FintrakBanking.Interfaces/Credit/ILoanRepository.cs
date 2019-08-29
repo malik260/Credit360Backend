@@ -240,7 +240,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         AccountBalanceViewModel GetLoanBalances(int loanId, int companyId);
 
-        List<TBL_LOAN> disburseBulkLoans(byte[] file, UserInfo user);
+        Tuple<List<LoanViewModel>, bool> disburseBulkLoans(byte[] file, UserInfo user, bool isFinal);
 
 
     }
