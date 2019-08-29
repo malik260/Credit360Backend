@@ -316,7 +316,8 @@ namespace FintrakBanking.Repositories.Credit
             var collateralId = _context.TBL_COLLATERAL_VALUATION.Where(x => x.COLLATERALVALUATIONID == collateralValuationId)
                                                                     .Select(x => x.COLLATERALCUSTOMERID).FirstOrDefault();
 
-            var data = from O in _context.TBL_COLLATERAL_VALUATION_PRE
+            // fetching PENDING valuation prerequisite
+            var result = (from O in _context.TBL_COLLATERAL_VALUATION_PRE
                        where O.COLLATERALVALUATIONID == collateralValuationId
                        && O.APPROVALSTATUSID == (int) ApprovalStatusEnum.Pending
                        orderby O.VALUATIONPREREQUISITEID descending
@@ -330,16 +331,18 @@ namespace FintrakBanking.Repositories.Credit
                            operationId = O.OPERATIONID,
                            customerId = _context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId).Select(x => x.CUSTOMERID).FirstOrDefault(),
                            approvalStatusId = O.APPROVALSTATUSID,
+                           approvalComment = O.VALUATIONCOMMENT,
                            approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == o.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
-                       };
+                       });
 
-
-            var data2 = from O in _context.TBL_COLLATERAL_VALUATION_PRE
+            // fetching REFFERED valuation prerequisite
+            var result2 = (from O in _context.TBL_COLLATERAL_VALUATION_PRE
                        join atrail in _context.TBL_APPROVAL_TRAIL on O.VALUATIONPREREQUISITEID equals atrail.TARGETID
-                       where O.COLLATERALVALUATIONID == collateralValuationId 
-                       && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                       || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
-                       && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                       where O.COLLATERALVALUATIONID == collateralValuationId
+                       && atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Referred || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
+                       && atrail.RESPONSESTAFFID == null
+                       && ids.Contains((int) atrail.TOAPPROVALLEVELID)
+                       && atrail.OPERATIONID == (int) OperationsEnum.CollateralValuationRequest
                         orderby O.VALUATIONPREREQUISITEID descending
                        select new ValuationPrerequisiteViewModel
                        {
@@ -350,14 +353,35 @@ namespace FintrakBanking.Repositories.Credit
                            operationId = O.OPERATIONID,
                            customerId = _context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId).Select(x => x.CUSTOMERID).FirstOrDefault(),
                            approvalStatusId = atrail.APPROVALSTATUSID,
+                           approvalComment = atrail.COMMENT,
                            approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
-                       };
+                       });
 
-            //data = from O in data
-            //       select new ValuationPrerequisiteViewModel
-            //       { };
-            data = data.Union(data2);
-            return data.ToList();
+            // fetching DISAPPROVED valuation prerequisite
+            var result3 = (from O in _context.TBL_COLLATERAL_VALUATION_PRE
+                        join atrail in _context.TBL_APPROVAL_TRAIL on O.VALUATIONPREREQUISITEID equals atrail.TARGETID
+                        where O.COLLATERALVALUATIONID == collateralValuationId
+                        && atrail.APPROVALSTATUSID == (int) ApprovalStatusEnum.Disapproved || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                        && atrail.RESPONSESTAFFID == null
+                        && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                        && atrail.OPERATIONID == (int)OperationsEnum.CollateralValuationRequest
+                         orderby O.VALUATIONPREREQUISITEID descending
+                        select new ValuationPrerequisiteViewModel
+                        {
+                            valuationPrerequisiteId = O.VALUATIONPREREQUISITEID,
+                            collateralValuationId = O.COLLATERALVALUATIONID,
+                            valuationRequestType = _context.TBL_VALUATION_REQUEST_TYPE.Where(x => x.VALUATIONREQUESTTYPEID == O.VALUATIONREQUESTTYPEID).Select(x => x.VALUATIONREQUESTTYPE).FirstOrDefault(),
+                            valuationComment = O.VALUATIONCOMMENT,
+                            operationId = O.OPERATIONID,
+                            customerId = _context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId).Select(x => x.CUSTOMERID).FirstOrDefault(),
+                            approvalStatusId = atrail.APPROVALSTATUSID,
+                            approvalComment = atrail.COMMENT,
+                            approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
+                        });
+
+
+            result = result.Union(result2).Union(result3);
+            return result.ToList();
         }
 
         public bool GoForCollateralValuationApproval(ValuationPrerequisiteViewModel entity)

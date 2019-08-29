@@ -1560,7 +1560,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        private int SaveRac(RacInformationViewModel rac, int operationId, int productId, int targetId, int staffId, int applicationId)
+        private int SaveRac(RacInformationViewModel rac, int operationId, int productId, int productClassId, int targetId, int staffId, int applicationId)
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
 
@@ -1568,7 +1568,7 @@ namespace FintrakBanking.Repositories.Credit
             var ids = rac.form.Select(x => x.criteriaId);
 
             definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-               && x.PRODUCTID == productId && ids.Contains(x.RACDEFINITIONID)
+               && ids.Contains(x.RACDEFINITIONID)
            ).ToList();
 
             // is tier related?, get default rac
@@ -1578,17 +1578,25 @@ namespace FintrakBanking.Repositories.Credit
             if (isRacRelated == true)
             {
                 defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID)
+                 && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID)
              ).Select(x => x).FirstOrDefault();
 
+                if(defaultTier == null)
+                {
+                    defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && ids.Contains(x.RACDEFINITIONID)
+                                ).Select(x => x).FirstOrDefault();
+                }
+
                 racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true
+                && ((definitions.FirstOrDefault().PRODUCTID == productId && x.SEARCHPLACEHOLDER =="PRODUCT") 
+                        || (definitions.FirstOrDefault().PRODUCTCLASSID == productClassId) && x.SEARCHPLACEHOLDER == "PRODUCTCLASS")
+                && x.ISRACTIERCONTROLKEY == true
              ).Select(x => x).ToList();
 
-                definitions = racTiers.Where(o => o.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList();
+                definitions = racTiers.Count() > 0 ? racTiers.Where(o => o.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList() : definitions;
             }
 
-            List< TBL_RAC_CATEGORY_TYPE> allTiers = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYID == racTiers.FirstOrDefault().RACCATEGORYID ).ToList();
+            //List< TBL_RAC_CATEGORY_TYPE> allTiers = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYID == racTiers.FirstOrDefault().RACCATEGORYID ).ToList();
 
             List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
             
@@ -1611,7 +1619,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (ctr == 0)
                     {
                         definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                        && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
+                        && ids.Contains(x.RACDEFINITIONID) && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
                         && x.RACCATEGORYID == defaultTier.RACCATEGORYID
                         ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
 
@@ -2268,7 +2276,7 @@ namespace FintrakBanking.Repositories.Credit
             if (response > 0)
             {
 
-                int recResponse = SaveRac(loan.rac, (int)loan.rac.operationId, (int)loan.rac.productId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
+                int recResponse = SaveRac(loan.rac, (int)loan.rac.operationId, (int)loan.rac.productId, (int)loan.rac.productClassId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
                 if (recResponse > 1) return recResponse;
             } // todo 99999
 
