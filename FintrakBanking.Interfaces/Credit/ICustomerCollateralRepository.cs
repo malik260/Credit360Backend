@@ -149,7 +149,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteCollateralCoverage(int collateralCoverageId, int createdById);
         IEnumerable<CollateralCoverageViewModel> CalculateCoverateOfCollateral(CollateralCoverageViewModel model);
 
-        bool DeleteProposedCollateral(int loanApplicationDetailId);
+        bool DeleteProposedCollateral(CollateralCoverageViewModel model);
 
         #region collateralInsuranceRequest
 
