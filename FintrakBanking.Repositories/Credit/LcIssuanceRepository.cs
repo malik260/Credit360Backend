@@ -173,7 +173,7 @@ namespace FintrakBanking.Repositories.credit
             return null;
         }
 
-        public IEnumerable<LcIssuanceViewModel> GetLcIssuances(int staffId)
+        public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuances(int staffId)
         {
             var lcsInProgress = (from x in context.TBL_LC_ISSUANCE 
                                join t in context.TBL_APPROVAL_TRAIL on x.LCISSUANCEID equals t.TARGETID into xy
@@ -181,16 +181,14 @@ namespace FintrakBanking.Repositories.credit
                                (
                                 x.DELETED == false
                                 && itrail.OPERATIONID == (int)OperationsEnum.lcIssuance
-                                && 
-                                ((x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress
-                                && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
-                                || (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress
-                                && itrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                                && itrail.LOOPEDSTAFFID == staffId))
+                                && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress
                                 )
-                                select new LcIssuanceViewModel
+                                select new LcIssuanceApprovalViewModel
                                 {
                                     lcIssuanceId = x.LCISSUANCEID,
+                                    approvalTrailId = itrail.APPROVALTRAILID,
+                                    approvalStatusId = itrail.APPROVALSTATUSID,
+                                    loopedStaffId = itrail.LOOPEDSTAFFID,
                                     beneficiaryName = x.BENEFICIARYNAME,
                                     totalApprovedAmount = x.TOTALAPPROVEDAMOUNT,
                                     totalApprovedAmountCurrencyId = x.TOTALAPPROVEDAMOUNTCURRENCYID,
@@ -222,7 +220,10 @@ namespace FintrakBanking.Repositories.credit
                                     invoiceDueDate = x.INVOICEDUEDATE,
                                     lcReferenceNumber = x.LCREFERENCENUMBER,
                                     dateTimeCreated = (DateTime)x.DATETIMECREATED,
-                                }).ToList();
+                                }).GroupBy(l => l.lcIssuanceId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                                .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                && l.loopedStaffId == staffId)).ToList();
 
             var lcsNotStarted = (from x in context.TBL_LC_ISSUANCE
                                 where
@@ -230,7 +231,7 @@ namespace FintrakBanking.Repositories.credit
                                 x.DELETED == false
                                 && x.APPLICATIONSTATUSID == null
                                 )
-                                select new LcIssuanceViewModel
+                                select new LcIssuanceApprovalViewModel
                                 {
                                     lcIssuanceId = x.LCISSUANCEID,
                                     beneficiaryName = x.BENEFICIARYNAME,
@@ -600,16 +601,14 @@ namespace FintrakBanking.Repositories.credit
                        && t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments
                        && r.RELEASEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
                        && i.LCTOLERANCEVALUE > (context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == i.LCISSUANCEID).Sum(r => r.RELEASEAMOUNT) ?? 0)
-                       &&
-                       ((r.RELEASEAPPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
-                       || (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                          && t.LOOPEDSTAFFID == staffId))
                        )
                        select new LcIssuanceApprovalViewModel
                        {
                            lcIssuanceId = i.LCISSUANCEID,
                            lcReleaseAmountId = r.LCRELEASEAMOUNTID,
-                           approvalStatusId = (short)r.RELEASEAPPROVALSTATUSID,
+                           approvalStatusId = (short)t.APPROVALSTATUSID,
+                           approvalTrailId = t.APPROVALTRAILID,
+                           loopedStaffId = t.LOOPEDSTAFFID,
                            beneficiaryName = i.BENEFICIARYNAME,
                            totalApprovedAmount = i.TOTALAPPROVEDAMOUNT,
                            totalApprovedAmountCurrencyId = i.TOTALAPPROVEDAMOUNTCURRENCYID,
@@ -641,7 +640,10 @@ namespace FintrakBanking.Repositories.credit
                            invoiceDueDate = i.INVOICEDUEDATE,
                            lcReferenceNumber = i.LCREFERENCENUMBER,
                            dateTimeCreated = (DateTime)i.DATETIMECREATED,
-                       }).ToList();
+                       }).GroupBy(l => l.lcReleaseAmountId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                       .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                && l.loopedStaffId == staffId)).ToList();
 
             var lcsNotStarted = (from i in context.TBL_LC_ISSUANCE
                                  join r in context.TBL_LCRELEASE_AMOUNT on i.LCISSUANCEID equals r.LCISSUANCEID into ir
