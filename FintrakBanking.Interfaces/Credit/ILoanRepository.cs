@@ -197,7 +197,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         void DisburseLoan(LoanViewModel entity, TwoFactorAutheticationViewModel twoFactorAuthDetails = null);
 
-        IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId, bool isInitiation);
 
         //int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
         WorkflowResponse GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);

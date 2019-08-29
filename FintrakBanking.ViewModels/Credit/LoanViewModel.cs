@@ -1609,10 +1609,10 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string customerCode { get; set; }
         public decimal LoanAmount { get; set; }
-        public int PackageId { get; set; }
         public int schemeId { get; set; }
         public int tenor { get; set; }
         public string accountnumber { get; set; }
+        public int loanApplicationDetailId { get; set; }
     }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
