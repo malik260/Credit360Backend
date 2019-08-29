@@ -19,7 +19,7 @@ namespace FintrakBanking.Interfaces.credit
 
         IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForUssanceApproval(int staffId);
 
-        IEnumerable<LcIssuanceViewModel> GetLcIssuancesForUssance();
+        IEnumerable<LcIssuanceViewModel> GetLcIssuancesForUssance(int staffId);
 
         LcUssanceViewModel AddLcUssance(LcUssanceViewModel model);
 
