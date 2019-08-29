@@ -117,7 +117,7 @@ namespace FintrakBanking.MonitoringMessagesSender
 
 
                 Console.WriteLine("");
-                Console.WriteLine("email body loaded and sending stated  ~~~~~~~~~~~~~~~~~");
+                Console.WriteLine("email body loaded and sending started  ~~~~~~~~~~~~~~~~~");
                 Console.WriteLine("");
 
                 try

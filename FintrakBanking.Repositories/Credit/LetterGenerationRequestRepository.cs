@@ -115,7 +115,9 @@ namespace FintrakBanking.Repositories.Credit
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              createdBy = (int)a.CREATEDBY,
                              operationId = operationId,
-                             dateTimeCreated = (DateTime)a.DATEACTEDON
+                             dateTimeCreated = (DateTime)a.DATEACTEDON,
+                             customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                             accountNumber = context.TBL_CASA.Where(O => O.CUSTOMERID == a.CUSTOMERID).Select(O => O.OLDPRODUCTACCOUNTNUMBER1).FirstOrDefault(),
                          }).ToList();
 
             applications = query.AsQueryable()
@@ -259,35 +261,46 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
         }
 
-        public string GetCamsolLoanDocument(int typeId)
+        public string GetCamsolLoanDocument(int typeId, LetterGenerationRequestViewModel model)
         {
             if (typeId == 1) {
-                return GetLetterOfIndebtedness();
+                return GetLetterOfIndebtedness(model);
             }
             else if (typeId == 2) {
-                return GetLetterOfNonIndebtedness();
+                return GetLetterOfNonIndebtedness(model);
             }
             else {
                 return GetAuditorEnquiryHtml(new List<CamsolDocumentViewModel>());
             }
         }
 
-        public string GetLetterOfIndebtedness()
+        public string GetLetterOfIndebtedness(LetterGenerationRequestViewModel model)
         {
+            if (model == null) {
+                return "";
+            }
+
+            var camsol = context.TBL_TEMP_LOAN_CAMSOL.Where(O => O.CUSTOMERCODE == model.customerCode && O.CUSTOMERNAME == model.customerName).FirstOrDefault();
+
+            decimal debtAmount = 0;
             var reference = "ABP/ROG/OA/BO/03/2016/0061";
-            var date = DateTime.Now;
-            var address = "";
-            var fullName = "";
-            var accountNumber = "";
-            var debtAmount = 1000;
-            var salutation = $"<p><b>{reference}</b></p> <p><b>{date}.</b></p> <p><b>{fullName},</b> <br/> {address} </p> <p><b>Dear Sir/Ma,</b></p>";
+            var asAtDate = model.asAtDate;
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault().ADDRESS;
+            var customerCode = model.customerCode;
+            var fullName = model.customerName;
+            var accountNumber = model.accountNumber;
+            //var accountNumber = camsol.ACCOUNTNUMBER;
+            if (camsol != null) {
+                debtAmount = camsol.BALANCE;
+            }
+            //var salutation = $"<p><b>{reference}</b></p> <p><b>{asAtDate}.</b></p> <p><b>{fullName},</b> <br/> {address} </p> <p><b>Dear Sir/Ma,</b></p>";
 
             string result = $"<p><b>{reference}</b></p> " +
-                $"<p><b>{date}.</b></p> " +
+                $"<p><b>{asAtDate}.</b></p> " +
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +
                 $"<p><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
-                $"<p>We hereby confirm that <b>{fullName}</b>, with account number {accountNumber} is indebted to our Bank as at {date}, to the tune of N{debtAmount}.</p> " +
+                $"<p>We hereby confirm that <b>{fullName}</b>, with account number {accountNumber} is indebted to our Bank as at {asAtDate}, to the tune of N{debtAmount}.</p> " +
                 $"<p>Please note that interest will continue to accrue on the above amount on a daily basis until the facility is fully liquidated.</p> " +
                 $"<p><b>This report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
                 $"<p>Thank you.</p> " +
@@ -298,21 +311,27 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        public string GetLetterOfNonIndebtedness()
+        public string GetLetterOfNonIndebtedness(LetterGenerationRequestViewModel model)
         {
+            if (model == null) {
+                return "";
+            }
+
+            var camsol = context.TBL_TEMP_LOAN_CAMSOL.Where(O => O.CUSTOMERCODE == model.customerCode && O.CUSTOMERNAME == model.customerName).FirstOrDefault();
+
             var reference = "ABP/ROG/OA/BO/03/2016/0061";
-            var date = DateTime.Now;
-            var address = "";
-            var fullName = "";
-            var accountNumber = "";
-            var salutation = $"<p><b>{reference}</b></p> <p><b>{date}.</b></p> <p><b>{fullName},</b> <br/> {address} </p> <p><b>Dear Sir/Ma,</b></p>";
+            var asAtDate = model.asAtDate;
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault().ADDRESS;
+            var fullName = model.customerName;
+            var accountNumber = camsol.ACCOUNTNUMBER;
+            //var salutation = $"<p><b>{reference}</b></p> <p><b>{date}.</b></p> <p><b>{fullName},</b> <br/> {address} </p> <p><b>Dear Sir/Ma,</b></p>";
 
             string result = $"<p><b>{reference}</b></p> " +
-                $"<p><b>{date}.</b></p> " +
+                $"<p><b>{asAtDate}.</b></p> " +
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +
                 $"<p><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
-                $"<p>We hereby confirm that {fullName}, is not indebted to our Bank as at {date}.</p> " +
+                $"<p>We hereby confirm that {fullName}, is not indebted to our Bank as at {asAtDate}.</p> " +
                 $"<p><b>Please note that this report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
                 $"<p>Thank you.</p> " +
                 $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
@@ -327,7 +346,7 @@ namespace FintrakBanking.Repositories.Credit
             var n = 0;
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                <table border=1 width=750 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Loan Amount (N)</b></th>
