@@ -145,18 +145,20 @@ namespace FintrakBanking.Repositories.credit
         {
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.AtcReleaseApproval).ToList();
 
-            return (from x in context.TBL_ATC_LODGMENT
-                    join r in context.TBL_ATC_RELEASE on x.ATCLODGMENTID equals r.ATCLODGMENTID
+            return (from atrail in context.TBL_APPROVAL_TRAIL
+                    join r in context.TBL_ATC_RELEASE on atrail.TARGETID equals r.ATCLODGMENTID
+                    join x in context.TBL_ATC_LODGMENT on r.ATCLODGMENTID equals x.ATCLODGMENTID
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
-                    join atrail in context.TBL_APPROVAL_TRAIL on r.ATCLODGMENTID equals atrail.TARGETID
-                    where (x.DELETED == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                    where r.DELETED == false 
+                     && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+                     && r.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
                     select new AtcLodgmentViewModel
                     {
                         atcReleaseId = r.ATCRELEASEID,
-                        atcLodgmentId = x.ATCLODGMENTID,
+                        atcLodgmentId = r.ATCLODGMENTID,
                         customerId = x.CUSTOMERID,
                         atcTypeId = x.ATCTYPEID,
                         atcType = context.TBL_ATC_TYPE.Where(o => o.ATCTYPEID == x.ATCTYPEID).Select(o => o.ACTTYPENAME).FirstOrDefault(),
@@ -164,11 +166,11 @@ namespace FintrakBanking.Repositories.credit
                         depot = x.DEPOT,
                         unitValue = x.UNITVALUE,
                         unitNumber = x.UNITNUMBER,
-                        operationId = atrail.OPERATIONID,
+                        operationId = (int)OperationsEnum.AtcReleaseApproval,
                         unitToRelease = r.UNITTORELEASE,
                         certificateNumber = x.CERTIFICATENUMBER,
                         statusId = x.STATUSID,
-                        approvalStatusId = x.APPROVALSTATUSID,
+                        approvalStatusId = atrail.APPROVALSTATUSID,
                         dateCreated = x.DATETIMECREATED,
                         approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
@@ -385,17 +387,25 @@ namespace FintrakBanking.Repositories.credit
 
         public bool AddAtcRelease(IEnumerable<AtcReleaseViewModel> model)
         {
+            //Doing a Check to confirm if none of the ATC in the incoming list is already being Processed 
+            foreach(var atc in model)
+            {
+                var record = (from ar in context.TBL_ATC_RELEASE
+                               where atc.atcLodgmentId == ar.ATCLODGMENTID
+                               orderby ar.ATCLODGMENTID descending
+                               select ar).FirstOrDefault();
+                if (record == null || (record != null && (record.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || record.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)))
+                {
+                    continue;
+                }
+                else return false;
+            }
+
             foreach(var atc in model)
             {
                 //var balance = atc.unitNumber - (atc.unitBalance + atc.unitToRelease);   //don't understand this calculation
                 var balance = atc.unitNumber - atc.unitToRelease;   //my balance should be updated by subtracting unitToRelease from unitNumber
-                var data = (from ar in context.TBL_ATC_RELEASE
-                            join al in context.TBL_ATC_LODGMENT on ar.ATCLODGMENTID equals al.ATCLODGMENTID
-                            select ar).ToList();
-                var dataDistinct = data.Where(d => d.ATCLODGMENTID == atc.atcLodgmentId).FirstOrDefault();
-
-                if (dataDistinct == null || (dataDistinct != null && (dataDistinct.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || dataDistinct.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)))
-                {
+                
                     var entity = new TBL_ATC_RELEASE
                     {
                         ATCLODGMENTID = atc.atcLodgmentId,
@@ -438,8 +448,6 @@ namespace FintrakBanking.Repositories.credit
                         SYSTEMDATETIME = DateTime.Now
                     });
                     // Audit Section end ------------------------
-                }
-                else return false;
 
             }
 
