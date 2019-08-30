@@ -26,6 +26,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
 using System.Web.Configuration;
 using FintrakBanking.ViewModels.CASA;
+using GemBox.Spreadsheet;
+using System.IO;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -2153,7 +2155,7 @@ namespace FintrakBanking.Repositories.Credit
                 REVALIDATED = c.reValidated,
                 ENTRYSHEETNUMBER = c.entrySheetNumber
 
-            });
+            }).ToList();
 
             //foreach (var item in data) // invoice reuse check
             //{
@@ -3453,6 +3455,74 @@ namespace FintrakBanking.Repositories.Credit
 
             return invoice == null;
         }
+
+        //public List<InvoiceDetailViewModel> ValidateBulkLoanInvoice(byte[] file)
+        //{
+        //    var uploads = GetBulkLoanInvoice(file);
+        //    if (uploads.Count() > 0)
+        //    {
+        //        return uploads;
+        //    }
+        //    return null;
+        //}
+
+
+        public List<InvoiceDetailViewModel> GetBulkLoanInvoice(byte[] file, UserInfo user)
+        {
+            List<InvoiceDetailViewModel> bulkEntries = new List<InvoiceDetailViewModel>();
+
+            //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
+
+            MemoryStream ms = new MemoryStream(file);
+
+            ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
+
+            //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+            ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
+            CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+
+            for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
+            {
+                InvoiceDetailViewModel currentLine = new InvoiceDetailViewModel();
+                for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
+                {
+                    ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
+
+                    string cellName = CellRange.RowColumnToPosition(j, i);
+                    string cellRow = ExcelRowCollection.RowIndexToName(j);
+                    string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
+                    if (Convert.ToInt32(cellRow) == 1) continue;
+
+                    switch (cellColumn)
+                    {
+                        case "A":
+                            currentLine.contractNo = cell.Value.ToString();
+                            continue;
+                        case "B":
+                            currentLine.purchaseOrderNumber = cell.Value.ToString();
+                            continue;                       
+                        case "C":
+                            currentLine.entrySheetNumber = cell.Value.ToString();
+                            continue;
+                        case "D":
+                            currentLine.invoiceDate = Convert.ToDateTime(cell.Value);
+                            continue;
+                        case "E":
+                            currentLine.invoiceNo = cell.Value.ToString();
+                            continue;
+                        case "F":
+                            currentLine.invoiceAmount = Convert.ToDecimal(cell.Value);
+                            continue;
+
+                    }
+                }
+                    bulkEntries.Add(currentLine);
+            };
+            bulkEntries.RemoveAt(0);
+            return bulkEntries;
+        }
+
 
         #region All Operation Applications
 
