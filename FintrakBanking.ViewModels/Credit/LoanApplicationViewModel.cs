@@ -224,6 +224,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? targetId { get; set; }
         public int? checklistStatus { get; set; }
         public int? productId { get; set; }
+        public int? productClassId { get; set; }
     }
     public class RacFormControlValue
     {
@@ -517,6 +518,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
     }
+   
 
     public class CommitteFilterViewModel
     {

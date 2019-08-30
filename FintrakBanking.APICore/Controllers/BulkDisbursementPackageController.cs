@@ -37,121 +37,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        // for package processing
-        [Route("disbursement-packages")]
-        [HttpGet]
-        [ClaimsAuthorization]
-        public HttpResponseMessage GetAllBulkDisbursementPackage()
-        {
-            try
-            {
-                var data = repo.GetAllBulkDisbursementPackageByCompany();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-        }
-
-        [Route("disbursement-packages-group-id/{groupCustomerId}")]
-        [HttpGet]
-        [ClaimsAuthorization]
-        public HttpResponseMessage GetAllBulkDisbursementPackageByGroupId(int groupCustomerId)
-        {
-            try
-            {
-                var data = repo.GetAllBulkDisbursementPackageByGroupCustomerId(groupCustomerId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-        }
-
-        [Route("disbursement-package/{disbursementPackageId}")]
-        [HttpGet]
-        [ClaimsAuthorization]
-        public HttpResponseMessage GetBulkDisbursementPackageById(int disbursementPackageId)
-        {
-            try
-            {
-                var data = repo.GetBulkDisbursementPackageById(disbursementPackageId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-
-        }
-        [Route("update-disbursement-package/{disbursementPackageId}")]
-        [HttpPut]
-        [ClaimsAuthorization]
-        public HttpResponseMessage UpdateBulkDisbursementPackage(int disbursementPackageId, BulkDisbursementSetupPackageViewModel bulkDisbursement)
-        {
-            try
-            {
-                bulkDisbursement.companyId = token.GetCompanyId;
-                bulkDisbursement.userBranchId = (short)token.GetBranchId;
-                bulkDisbursement.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                bulkDisbursement.applicationUrl = HttpContext.Current.Request.Path;
-                bulkDisbursement.lastUpdatedBy = token.GetStaffId;
-
-                bool response = repo.UpdateBulkDisbursementPackage(disbursementPackageId, bulkDisbursement);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-        }
-        [Route("delete-disbursement-package/{disbursementPackageId}")]
-        [HttpDelete]
-        [ClaimsAuthorization]
-        public HttpResponseMessage DeleteBulkDisbursementPackage(int disbursementPackageId, UserInfo bulkDisbursement)
-        {
-            try
-            {
-                bool response = repo.DeleteBulkDisbursementPackage(disbursementPackageId, bulkDisbursement);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-        }
-        [Route("add-disbursement-package")]
-        [HttpPost]
-        [ClaimsAuthorization]
-        public HttpResponseMessage AddBulkDisbursementPackage(BulkDisbursementSetupPackageViewModel bulkDisbursementSetup)
-        {
-            try
-            {
-                bulkDisbursementSetup.userBranchId = (short)token.GetBranchId;
-                bulkDisbursementSetup.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                bulkDisbursementSetup.applicationUrl = HttpContext.Current.Request.Path;
-                bulkDisbursementSetup.createdBy = token.GetStaffId;
-                bulkDisbursementSetup.companyId = token.GetCompanyId;
-
-                var data = repo.AddBulkDisbursementPackage(bulkDisbursementSetup);
-                if (data == true)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
-                }
-                else
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = data });
-                }
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-        }
-
-
         // for scheme processing
         [Route("disbursement-package-schemes")]
         [HttpGet]
@@ -160,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllBulkDisbursementScheme(token.GetCompanyId);
+                var data = repo.GetAllBulkDisbursementScheme();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
             catch (SecureException ex)
@@ -203,14 +88,14 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-        [Route("disbursement-package-scheme-package-id/{disbursementPackageId}")]
+        [Route("disbursement-package-scheme-reference-number/{referenceNumber}")]
         [HttpGet]
         [ClaimsAuthorization]
-        public HttpResponseMessage GetAllBulkDisbursementSchemeByPackageId(int disbursementPackageId)
+        public HttpResponseMessage GetAllBulkDisburseSchemeByApplicationReferenceNumber(string referenceNumber)
         {
             try
             {
-                var data = repo.GetAllBulkDisbursementSchemeByPackageId(disbursementPackageId);
+                var data = repo.GetAllBulkDisburseSchemeByApplicationReferenceNumber(referenceNumber);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)
@@ -224,7 +109,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("update-disbursement-package-scheme/{disbursementSchemeId}")]
         [HttpPut]
         [ClaimsAuthorization]
-        public HttpResponseMessage UpdateBulkDisbursementScheme(int disbursementSchemeId, BulkDisbursementSetupSchemeViewModel bulkDisbursement)
+        public HttpResponseMessage UpdateBulkDisbursementScheme([FromUri]int disbursementSchemeId, [FromBody] BulkDisbursementSetupSchemeViewModel bulkDisbursement)
         {
             try
             {
@@ -262,11 +147,12 @@ namespace FintrakBanking.APICore.Controllers
         [Route("add-disbursement-scheme")]
         [HttpPost]
         [ClaimsAuthorization]
-        public HttpResponseMessage GetAllBulkDisbursementScheme(BulkDisbursementSetupSchemeViewModel bulkDisbursementSetup)
+        public HttpResponseMessage AddBulkDisbursementScheme(BulkDisbursementSetupSchemeViewModel bulkDisbursementSetup)
         {
             try
             {
                 
+
                 bulkDisbursementSetup.staffId = token.GetStaffId;
                 bulkDisbursementSetup.userBranchId = (short)token.GetBranchId;
                 bulkDisbursementSetup.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -291,116 +177,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        // for scheme fees processing
-        [Route("disbursement-package-schemes-fees-disburse-id/{disburseSchemeId}")]
-        [HttpGet]
-        [ClaimsAuthorization]
-        public HttpResponseMessage GetAllBulkDisbursementSchemeFees(int disburseSchemeId)
-        {
-            try
-            {
-                var data = repo.GetAllBulkDisbursementSchemeFeesDisburseSchemeId(disburseSchemeId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-        }
-
-        [Route("disbursement-package-scheme-fees")]
-        [HttpGet]
-        [ClaimsAuthorization]
-        public HttpResponseMessage GetBulkDisbursementSchemeFees()
-        {
-            try
-            {
-                var data = repo.GetAllBulkDisbursementSchemeFees();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-
-        }
-
-        [Route("disbursement-package-scheme-fees-id/{schemeFeeId}")]
-        [HttpGet]
-        [ClaimsAuthorization]
-        public HttpResponseMessage GetBulkDisbursementSchemeFeesById(int schemeFeeId)
-        {
-            try
-            {
-                var data = repo.GetBulkDisbursementSchemeFeesById(schemeFeeId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-
-        }
-
-        [Route("update-disbursement-package-scheme-fees/{schemeFeeId}")]
-        [HttpPut]
-        [ClaimsAuthorization]
-        public HttpResponseMessage UpdateBulkDisbursementSchemeFees(int schemeFeeId, BulkDisbursementSetupSchemeFeesViewModel bulkDisbursement)
-        {
-            try
-            {
-                bulkDisbursement.staffId = token.GetStaffId;
-                bulkDisbursement.userBranchId = (short)token.GetBranchId;
-                bulkDisbursement.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                bulkDisbursement.applicationUrl = HttpContext.Current.Request.Path;
-                bulkDisbursement.lastUpdatedBy = token.GetStaffId;
-                bulkDisbursement.companyId = token.GetCompanyId;
-
-                bool response = repo.UpdateBulkDisbursementSchemeFees(schemeFeeId, bulkDisbursement);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-        }
-        [Route("delete-disbursement-scheme-fees/{schemeFeeId}")]
-        [HttpDelete]
-        [ClaimsAuthorization]
-        public HttpResponseMessage DeleteBulkDisbursementSchemeFees(int schemeFeeId, UserInfo bulkDisbursement)
-        {
-            try
-            {
-                bool response = repo.DeleteBulkDisbursementSchemeFees(schemeFeeId, bulkDisbursement);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-        }
-
-        [Route("add-disbursement-package-scheme-fees")]
-        [HttpPost]
-        [ClaimsAuthorization]
-        public HttpResponseMessage AddBulkDisbursementSchemeFees(BulkDisbursementSetupSchemeFeesViewModel bulkDisbursementSetup)
-        {
-            try
-            {
-                bulkDisbursementSetup.staffId = token.GetStaffId;
-                bulkDisbursementSetup.userBranchId = (short)token.GetBranchId;
-                bulkDisbursementSetup.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                bulkDisbursementSetup.applicationUrl = HttpContext.Current.Request.Path;
-                bulkDisbursementSetup.createdBy = token.GetStaffId;
-                bulkDisbursementSetup.companyId = token.GetCompanyId;
-
-                var data = repo.AddBulkDisbursementSchemeFees(bulkDisbursementSetup);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-        }
+       
     }
 }

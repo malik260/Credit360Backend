@@ -26,6 +26,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
 using System.Web.Configuration;
 using FintrakBanking.ViewModels.CASA;
+using GemBox.Spreadsheet;
+using System.IO;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -1560,7 +1562,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        private int SaveRac(RacInformationViewModel rac, int operationId, int productId, int targetId, int staffId, int applicationId)
+        private int SaveRac(RacInformationViewModel rac, int operationId, int productId, int productClassId, int targetId, int staffId, int applicationId)
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
 
@@ -1568,7 +1570,7 @@ namespace FintrakBanking.Repositories.Credit
             var ids = rac.form.Select(x => x.criteriaId);
 
             definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-               && x.PRODUCTID == productId && ids.Contains(x.RACDEFINITIONID)
+               && ids.Contains(x.RACDEFINITIONID)
            ).ToList();
 
             // is tier related?, get default rac
@@ -1578,17 +1580,25 @@ namespace FintrakBanking.Repositories.Credit
             if (isRacRelated == true)
             {
                 defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID)
+                 && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID)
              ).Select(x => x).FirstOrDefault();
 
+                if(defaultTier == null)
+                {
+                    defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && ids.Contains(x.RACDEFINITIONID)
+                                ).Select(x => x).FirstOrDefault();
+                }
+
                 racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true
+                && ((definitions.FirstOrDefault().PRODUCTID == productId && x.SEARCHPLACEHOLDER =="PRODUCT") 
+                        || (definitions.FirstOrDefault().PRODUCTCLASSID == productClassId) && x.SEARCHPLACEHOLDER == "PRODUCTCLASS")
+                && x.ISRACTIERCONTROLKEY == true
              ).Select(x => x).ToList();
 
-                definitions = racTiers.Where(o => o.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList();
+                definitions = racTiers.Count() > 0 ? racTiers.Where(o => o.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList() : definitions;
             }
 
-            List< TBL_RAC_CATEGORY_TYPE> allTiers = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYID == racTiers.FirstOrDefault().RACCATEGORYID ).ToList();
+            //List< TBL_RAC_CATEGORY_TYPE> allTiers = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYID == racTiers.FirstOrDefault().RACCATEGORYID ).ToList();
 
             List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
             
@@ -1611,7 +1621,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (ctr == 0)
                     {
                         definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                        && x.PRODUCTID == productId && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
+                        && ids.Contains(x.RACDEFINITIONID) && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
                         && x.RACCATEGORYID == defaultTier.RACCATEGORYID
                         ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
 
@@ -2145,7 +2155,7 @@ namespace FintrakBanking.Repositories.Credit
                 REVALIDATED = c.reValidated,
                 ENTRYSHEETNUMBER = c.entrySheetNumber
 
-            });
+            }).ToList();
 
             //foreach (var item in data) // invoice reuse check
             //{
@@ -2268,7 +2278,7 @@ namespace FintrakBanking.Repositories.Credit
             if (response > 0)
             {
 
-                int recResponse = SaveRac(loan.rac, (int)loan.rac.operationId, (int)loan.rac.productId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
+                int recResponse = SaveRac(loan.rac, (int)loan.rac.operationId, (int)loan.rac.productId, (int)loan.rac.productClassId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
                 if (recResponse > 1) return recResponse;
             } // todo 99999
 
@@ -2667,7 +2677,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationCollateralViewModel> GetLoanApplicationCollateral(int loanApplicatioinCollateralId)
         {
-            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == loanApplicatioinCollateralId).Select(c => new LoanApplicationCollateralViewModel
+            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == loanApplicatioinCollateralId && c.APPROVALSTATUSID==(int)ApprovalStatusEnum.Approved).Select(c => new LoanApplicationCollateralViewModel
             {
                 loanAppCollateralId = c.LOANAPPCOLLATERALID,
                 applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -2676,9 +2686,10 @@ namespace FintrakBanking.Repositories.Credit
                 collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                 collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                 loanApplicationId = c.LOANAPPLICATIONID,
-                //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                approvalStatusId = c.APPROVALSTATUSID,
                 haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID,
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID.Value,
                 //collateralReleaseStatusId=c.TBL_COLLATERAL_CUSTOMER.COLLATERALRELEASESTATUSID,
                 //collateralReleaseStatusName = c.TBL_COLLATERAL_CUSTOMER.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Find((int)CollateralReleaseStatus.InVault).COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Find(c.TBL_COLLATERAL_CUSTOMER.COLLATERALRELEASESTATUSID).COLLATERALRELEASESTATUSNAME,
 
@@ -3444,6 +3455,74 @@ namespace FintrakBanking.Repositories.Credit
 
             return invoice == null;
         }
+
+        //public List<InvoiceDetailViewModel> ValidateBulkLoanInvoice(byte[] file)
+        //{
+        //    var uploads = GetBulkLoanInvoice(file);
+        //    if (uploads.Count() > 0)
+        //    {
+        //        return uploads;
+        //    }
+        //    return null;
+        //}
+
+
+        public List<InvoiceDetailViewModel> GetBulkLoanInvoice(byte[] file, UserInfo user)
+        {
+            List<InvoiceDetailViewModel> bulkEntries = new List<InvoiceDetailViewModel>();
+
+            //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
+            SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
+
+            MemoryStream ms = new MemoryStream(file);
+
+            ExcelFile ef = ExcelFile.Load(ms, LoadOptions.XlsxDefault);
+
+            //ExcelWorksheet ws = ef.Worksheets.ActiveWorksheet;
+            ExcelWorksheet ws = ef.Worksheets[0]; //.ActiveWorksheet;
+            CellRange range = ef.Worksheets.ActiveWorksheet.GetUsedCellRange(true);
+
+            for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
+            {
+                InvoiceDetailViewModel currentLine = new InvoiceDetailViewModel();
+                for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
+                {
+                    ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
+
+                    string cellName = CellRange.RowColumnToPosition(j, i);
+                    string cellRow = ExcelRowCollection.RowIndexToName(j);
+                    string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
+                    if (Convert.ToInt32(cellRow) == 1) continue;
+
+                    switch (cellColumn)
+                    {
+                        case "A":
+                            currentLine.contractNo = cell.Value.ToString();
+                            continue;
+                        case "B":
+                            currentLine.purchaseOrderNumber = cell.Value.ToString();
+                            continue;                       
+                        case "C":
+                            currentLine.entrySheetNumber = cell.Value.ToString();
+                            continue;
+                        case "D":
+                            currentLine.invoiceDate = Convert.ToDateTime(cell.Value);
+                            continue;
+                        case "E":
+                            currentLine.invoiceNo = cell.Value.ToString();
+                            continue;
+                        case "F":
+                            currentLine.invoiceAmount = Convert.ToDecimal(cell.Value);
+                            continue;
+
+                    }
+                }
+                    bulkEntries.Add(currentLine);
+            };
+            bulkEntries.RemoveAt(0);
+            return bulkEntries;
+        }
+
 
         #region All Operation Applications
 

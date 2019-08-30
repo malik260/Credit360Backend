@@ -2184,6 +2184,17 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
+        [HttpPost, Route("delete-proposed-collateral-coverage")]
+        public HttpResponseMessage DeleteProposedCollateral(CollateralCoverageViewModel model)
+        {
+            var response = repo.DeleteProposedCollateral(model);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
         [HttpPost, Route("calculate-collateral-coverage")]
         public HttpResponseMessage CalculateCoverateOfCollateral([FromBody] CollateralCoverageViewModel entity)
         {

@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -1113,6 +1114,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("validate-bulk-invoice-details")]
+        //public HttpResponseMessage ValidateBulkLoanInvoice([FromBody] byte[] data)
+        //{
+        //    try
+        //    {
+        //        var response = repo.ValidateBulkLoanInvoice(data);
+        //        if (response.Count > 0)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //        }
+
+        //        else
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Upload file was not found!" });
+        //        }      
+                
+        //    }
+        //    catch (SecureException e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
         [HttpGet, Route("loan-application-and-offer/rejected")]
         public HttpResponseMessage GetRejectedLoanApplications()
@@ -1858,6 +1883,68 @@ namespace FintrakBanking.APICore.Controllers
             };
             bool response = repo.DeleteLoanApplicationFlowChange(id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("multiple-invoice")]
+        public async Task<HttpResponseMessage> GetBulkLoanInvoice()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                //int uploadType;
+                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
+                //}
+
+
+                byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
+                string password = Encoding.UTF8.GetString(pass);
+
+                var entity = new UserInfo
+                {
+                    companyId = token.GetCompanyId,
+                    createdBy = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    BranchId = (short)token.GetBranchId,
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                
+
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+
+                var data = repo.GetBulkLoanInvoice( buffer, entity);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "bulk invoice data was successfully uploaded" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading bulk invoice data" });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " + ex.Message });
+            }
         }
 
     }

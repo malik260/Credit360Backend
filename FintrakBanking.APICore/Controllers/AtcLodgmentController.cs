@@ -277,7 +277,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 var response = repo.AddAtcRelease(model);
                 if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record, One or more records may curently be processing" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record, One or more records may curently be undergoing Approval" });
             }
 
             //try { 

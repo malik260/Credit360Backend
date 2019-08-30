@@ -90,7 +90,6 @@
     <Compile Include="Models\TBL_ATC_RELEASE.cs" />
     <Compile Include="Models\TBL_ATC_RELEASE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_ATC_TYPE.cs" />
-    <Compile Include="Models\TBL_BULK_DISBURS_SCH_FEES.cs" />
     <Compile Include="Models\TBL_COLLATERAL_COVERAGE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOMICILIATION.cs" />

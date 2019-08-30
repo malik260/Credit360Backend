@@ -20,6 +20,7 @@ using FintrakBanking.Common.Extensions;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using System.Text;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -815,7 +816,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId, false);
 
                 if (data.Any() == false)
                 {
@@ -2445,10 +2446,9 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        // benjamin
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("disbursement/multiple-disburse-data")]
+        [Route("multiple-disbursement")]  
         public async Task<HttpResponseMessage> UploadBulkDisbursementData()
         {
             try
@@ -2461,47 +2461,33 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
                 await Request.Content.ReadAsMultipartAsync(provider);
 
-                //int uploadType;
-                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
-                //{
-                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
-                //}
 
+                var isFinal = Convert.ToBoolean(provider.FormData["isFinal"]);
 
-                //byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
-                //string password = Encoding.UTF8.GetString(pass);
-
-               /* var entity = new StaffDocumentViewModel
+                var entity = new UserInfo 
                 {
-                    staffCode = provider.FormData["staffCode"],
-                    documentTitle = provider.FormData["documentTitle"],
-                    fileName = provider.FormData["fileName"],
-                    fileExtension = provider.FormData["fileExtension"],
-                    loginStaffPassword = password,
-                    loginStaffCode = token.GetUsername
-                };*/
+                     BranchId = (short)token.GetBranchId,
+                     companyId = token.GetCompanyId,
+                     createdBy = token.GetStaffId,
+                     applicationUrl = HttpContext.Current.Request.Path,
+                };
 
                 if (!provider.FileStreams.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
                 }
-                /*
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.branchId = (short)token.GetBranchId;
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                */
 
                 var file = provider.Contents.FirstOrDefault();
                 var buffer = await file.ReadAsByteArrayAsync();
-                //var data = repo.UploadStaffData(entity, buffer);
-
+                var data = repo.disburseBulkLoans(buffer, entity, isFinal);
+                
                 if (buffer != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "ok", message = "Bulk Disbursement data was successfully uploaded" });
+                    bool success = true;
+                    if(data.Item2 == false && isFinal) { success = false; }
+                    if (!success) { return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "bulk loan disbursement failed to uploaded." }); }
+
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Bulk Disbursement data was successfully uploaded" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Bulk Disbursement data" });

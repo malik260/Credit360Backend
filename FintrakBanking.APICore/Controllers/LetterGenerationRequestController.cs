@@ -138,14 +138,14 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("get-camsol-loan-document/{typeId}/typeId")]
-        public HttpResponseMessage GetCamsolLoanDocument(int typeId)
+        public HttpResponseMessage GetCamsolLoanDocument(int typeId, [FromBody] LetterGenerationRequestViewModel model)
         {
             try
             {
-                var docHtml = repo.GetCamsolLoanDocument(typeId);
+                var docHtml = repo.GetCamsolLoanDocument(typeId, model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = docHtml });
             }
             catch (SecureException ex)

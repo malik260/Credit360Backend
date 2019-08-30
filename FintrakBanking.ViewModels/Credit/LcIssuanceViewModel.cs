@@ -249,6 +249,7 @@ namespace FintrakBanking.ViewModels.credit
         public decimal? lcToleranceValue { get; set; }
 
         public decimal? releaseAmount { get; set; }
+        public int? loopedStaffId { get; set; }
 
 
         //ussance
