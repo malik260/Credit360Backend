@@ -143,6 +143,11 @@ namespace FintrakBanking.Repositories.Credit
             
         }
 
+        public IEnumerable<OriginalDocumentReleaseViewModel> GetRejectedAndReferredSecurityRelease(int staffId)
+        {
+
+        }
+
         //public OriginalDocumentReleaseViewModel GetOriginalDocmentReleaseById(int id)
         //{
         //    var entity = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(t => t.DOCUMENTUPLOADID == id)

@@ -23,5 +23,7 @@ namespace FintrakBanking.Interfaces.Credit
         WorkflowResponse SubmitApproval(OriginalDocumentReleaseViewModel model);
 
         bool UpdateOriginalDocumentRelease(OriginalDocumentReleaseViewModel mod);
+
+        IEnumerable<OriginalDocumentReleaseViewModel> GetRejectedAndReferredSecurityRelease(int staffId);
     }
 }

@@ -58,6 +58,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approval-security-release")]
+        public HttpResponseMessage GetRejectedAndReferredSecurityRelease()
+        {
+            try
+            {
+                var response = _repo.GetRejectedAndReferredSecurityRelease(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("security-release")]

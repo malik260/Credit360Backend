@@ -34,14 +34,14 @@ namespace FintrakBanking.Interfaces.credit
 
         IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForApproval(int staffId);
 
-        WorkflowResponse SubmitApproval(AtcReleaseViewModel model);
+        WorkflowResponse SubmitApproval(IEnumerable<AtcReleaseViewModel> model);
 
         IEnumerable<AtcLodgmentViewModel> GetAtcReleaseForApproval(int staffId);
 
         bool SubmitLodgementApproval(AtcLodgmentViewModel model);
         bool AddAtcType(AtcTypeViewModel model);
         bool DeleteAtcType(int id, UserInfo user);
-        IEnumerable<AtcReleaseViewModel> GetAtcLodgmentForReleaseList();
+        IEnumerable<AtcReleaseViewModel> GetAtcLodgmentForReleaseList(int staffId);
         bool atclodgmentApproval(AtcLodgmentViewModel model);
     }
 }
