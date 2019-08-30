@@ -132,153 +132,123 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddUpdateStaffRole(StaffRoleViewModel entity)
         {
+            if (entity == null) throw new SecureException("Session seems to have expired. Please logout and login again.");
 
-            if (entity != null)
+            List<TBL_TEMP_PROFILE_STAFF_ROL_GRP> tempGroups = new List<TBL_TEMP_PROFILE_STAFF_ROL_GRP>();
+            List<TBL_TEMP_PROFILE_STAFF_ROLE_AA> tempActivities = new List<TBL_TEMP_PROFILE_STAFF_ROLE_AA>();
+
+            foreach (var item in entity.activitieIds)
+            {
+                tempActivities.Add(new TBL_TEMP_PROFILE_STAFF_ROLE_AA()
+                {
+                    ACTIVITYID = item,
+                    CANADD = false,
+                    CANEDIT = false,
+                    CANAPPROVE = false,
+                    CANDELETE = false,
+                    CANVIEW = false,
+                    CREATEDBY = entity.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                    ISCURRENT = true,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
+                });
+            }
+
+            foreach (var item in entity.userGroupIds)
+            {
+                tempGroups.Add(new TBL_TEMP_PROFILE_STAFF_ROL_GRP()
+                {
+                    GROUPID = (short)item,
+                    DATETIMECREATED = DateTime.Now,
+                    CREATEDBY = entity.createdBy,
+                    ISCURRENT = true,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
+                });
+            }
+
+            TBL_STAFF_ROLE staffRole;
+
+            if (entity.staffRoleId > 0) // update
+            {
+                staffRole = context.TBL_STAFF_ROLE.Find(entity.staffRoleId);
+                if (staffRole == null) throw new SecureException("Cannot find the specified role!");
+
+                // Removing existing temp groups and activities
+                var targetGroups = context.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == staffRole.STAFFROLEID).ToList();
+                var targetActivities = context.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Where(x => x.STAFFROLEID == staffRole.STAFFROLEID).ToList();
+                if (targetGroups.Any()) foreach (var item in targetGroups) context.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Remove(item);
+                if (targetActivities.Any()) foreach (var item in targetActivities) context.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Remove(item);
+
+                staffRole.STAFFROLECODE = entity.staffRoleCode;
+                staffRole.STAFFROLENAME = entity.staffRoleName;
+                staffRole.WORKSTARTDURATION = entity.workStartDuration;
+                staffRole.WORKENDDURATION = entity.workEndDuration;
+                staffRole.TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups;
+                staffRole.TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities;
+            }
+            else // create new
+            {
+                staffRole = new TBL_STAFF_ROLE
+                {
+                    STAFFROLECODE = entity.staffRoleCode,
+                    STAFFROLENAME = entity.staffRoleName,
+                    WORKSTARTDURATION = entity.workStartDuration,
+                    WORKENDDURATION = entity.workEndDuration,
+                    COMPANYID = entity.companyId,
+                    TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups,
+                    TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities
+                };
+                context.TBL_STAFF_ROLE.Add(staffRole);
+            }
+
+            // Audit Section ----------------------------
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = "Added/Modified Staff Role",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+
+            if (context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == entity.companyId
+                                && x.OPERATIONID == (int)OperationsEnum.StaffRoleCreation
+                                && x.TARGETID == staffRole.STAFFROLEID
+                                && x.RESPONSESTAFFID == null
+                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                            ).Any())
+            {
+                throw new SecureException("There is an operation that is yet to be approved on this item!");
+            }
+
+                using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    bool output = false;
-
-                    List<TBL_TEMP_PROFILE_STAFF_ROL_GRP> tempGroups = new List<TBL_TEMP_PROFILE_STAFF_ROL_GRP>();
-                    List<TBL_TEMP_PROFILE_STAFF_ROLE_AA> tempActivities = new List<TBL_TEMP_PROFILE_STAFF_ROLE_AA>();
-
-                    if (entity.activities.Any())
+                    if (context.SaveChanges() > 0)
                     {
-                        foreach (var item in entity.activities)
-                        {
-                            var userActivity = new TBL_TEMP_PROFILE_STAFF_ROLE_AA()
-                            {
-                                ACTIVITYID = item.activityId,
-                                CANADD = false,
-                                CANEDIT = false,
-                                CANAPPROVE = false,
-                                CANDELETE = false,
-                                CANVIEW = false,
-                                CREATEDBY = entity.createdBy,
-                                DATETIMECREATED = DateTime.Now,
-                                ISCURRENT = true,
-                                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
-
-                            };
-                            tempActivities.Add(userActivity);
-                        }
-                    }
-
-                    if (entity.userGroup.Count > 0)
-                    {
-                        foreach (var item in entity.userGroup)
-                        {
-                            var grpItem = new TBL_TEMP_PROFILE_STAFF_ROL_GRP()
-                            {
-                                GROUPID = item.groupId,
-                                DATETIMECREATED = DateTime.Now,
-                                CREATEDBY = entity.createdBy,
-                                ISCURRENT = true,
-                                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending
-                            };
-                            tempGroups.Add(grpItem);
-                        }
-                    }
-
-                    TBL_STAFF_ROLE staffRole;
-                    if (entity.staffRoleId > 0)
-                    {
-                        staffRole = context.TBL_STAFF_ROLE.Where(o => o.STAFFROLEID == entity.staffRoleId).FirstOrDefault();
-
-                        if (staffRole != null)
-                        {
-                            // Removing existing groups and activities
-                            var targetGroups = context.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Where(x => x.STAFFROLEID == staffRole.STAFFROLEID).ToList();
-                            var targetActivities = context.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Where(x => x.STAFFROLEID == staffRole.STAFFROLEID).ToList();
-                            if (targetGroups.Any())
-                            {
-                                foreach (var item in targetGroups)
-                                {
-                                    context.TBL_TEMP_PROFILE_STAFF_ROL_GRP.Remove(item);
-                                }
-                            }
-
-                            if (targetActivities.Any())
-                            {
-                                foreach (var item in targetActivities)
-                                {
-                                    context.TBL_TEMP_PROFILE_STAFF_ROLE_AA.Remove(item);
-                                }
-                            }
-
-                            staffRole.STAFFROLECODE = entity.staffRoleCode;
-                            staffRole.STAFFROLENAME = entity.staffRoleName;
-                            staffRole.WORKSTARTDURATION = entity.workStartDuration;
-                            staffRole.WORKENDDURATION = entity.workEndDuration;
-                            staffRole.TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups;
-                            staffRole.TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities;
-                        }
-                    }
-                    else
-                    {
-                        staffRole = new TBL_STAFF_ROLE
-                        {
-                            STAFFROLECODE = entity.staffRoleCode,
-                            STAFFROLENAME = entity.staffRoleName,
-                            WORKSTARTDURATION = entity.workStartDuration,
-                            WORKENDDURATION = entity.workEndDuration,
-                            COMPANYID = entity.companyId,
-                            TBL_TEMP_PROFILE_STAFF_ROL_GRP = tempGroups,
-                            TBL_TEMP_PROFILE_STAFF_ROLE_AA = tempActivities
-                        };
-                        context.TBL_STAFF_ROLE.Add(staffRole);
-                    }
-                    // Audit Section ----------------------------
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
-                        STAFFID = entity.createdBy,
-                        BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added/Modified Staff Role",
-                        IPADDRESS = entity.userIPAddress,
-                        URL = entity.applicationUrl,
-                        APPLICATIONDATE = genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-
-                    using (var trans = context.Database.BeginTransaction())
-                    {
-                        try
-                        {
-                            auditTrail.AddAuditTrail(audit);
-                            output = context.SaveChanges() > 0;
-
-                            workFlow.StaffId = entity.createdBy;
-                            workFlow.CompanyId = entity.companyId;
-                            workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
-                            workFlow.TargetId = staffRole.STAFFROLEID;
-                            workFlow.Comment = "Create/Update Staff Role";
-                            workFlow.OperationId = (int)OperationsEnum.StaffRoleCreation;
-                            workFlow.ExternalInitialization = true;
-                         //   workFlow.SendEmailByRoleId = true;
-
-                            var response = workFlow.LogActivity();
-                            if (response)
-                            {
-                                trans.Commit();
-                            }
-                            return output;
-                        }
-                        catch (Exception ex)
-                        {
-                            trans.Rollback();
-                            throw ex;
-                        }
+                        workFlow.StaffId = entity.createdBy;
+                        workFlow.CompanyId = entity.companyId;
+                        workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                        workFlow.TargetId = staffRole.STAFFROLEID;
+                        workFlow.Comment = "Create/Update Staff Role";
+                        workFlow.OperationId = (int)OperationsEnum.StaffRoleCreation;
+                        workFlow.ExternalInitialization = true;
+                        if (workFlow.LogActivity()) trans.Commit();
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw ex;
+                    trans.Rollback();
+                    throw new Exception(ex.Message);
                 }
             }
-            return false;
 
-
+            return true;
         }
 
         public IEnumerable<StaffRoleViewModel> GetStaffRoleAwaitingApproval(int staffId, int companyId)

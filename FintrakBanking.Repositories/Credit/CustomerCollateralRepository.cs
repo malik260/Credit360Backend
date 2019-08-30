@@ -1704,6 +1704,7 @@ namespace FintrakBanking.Repositories.Credit
                                    loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                                    collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
                                    facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(o => o.APPROVEDAMOUNT).Sum(),
+                                   approvalStatusId = x.APPROVALSTATUSID,
 
                                }).ToList();
 
@@ -1761,6 +1762,7 @@ namespace FintrakBanking.Repositories.Credit
                     expectedCollateralCoverage = expectedCollateralCoverage,
                     availableCollateralValue = availableCollateralValue,
                     actualCollateralCoverage = actualCollateralCoverage,
+                    approvalStatusId = collateral.approvalStatusId,
                     ReferenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                     productName = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_PRODUCT.PRODUCTNAME).FirstOrDefault(),
                 };
@@ -1801,6 +1803,7 @@ namespace FintrakBanking.Repositories.Credit
                                        collateralValue = c.COLLATERALVALUE,
                                        loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                                        collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
+                                       approvalStatusId = x.APPROVALSTATUSID,
                                        facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
 
                                    }).ToList();
@@ -1858,6 +1861,7 @@ namespace FintrakBanking.Repositories.Credit
                         expectedCollateralCoverage = expectedCollateralCoverage,
                         availableCollateralValue = availableCollateralValue,
                         actualCollateralCoverage = actualCollateralCoverage,
+                        approvalStatusId = collateral.approvalStatusId,
                         ReferenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                         productName = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_PRODUCT.PRODUCTNAME).FirstOrDefault(),
                     };
@@ -4188,23 +4192,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationCollateralViewModel> MapApplicationCollateral(ApplicationCollateralMapping entity)
         {
-            int collateralId = entity.collateralId == null ? 0 : (int)entity.collateralId;
 
-            if (entity.collateralCode != null && entity.collateralId == null)
+            var proposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == entity.collateralId && o.LOANAPPLICATIONDETAILID == entity.applicationDetailId && o.APPROVALSTATUSID== (int)ApprovalStatusEnum.Processing).FirstOrDefault();
+            if (proposed != null)
             {
-                var collateral = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(x => x.COLLATERALCODE == entity.collateralCode);
-                if (collateral != null) { collateralId = collateral.COLLATERALCUSTOMERID; }
+                proposed.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
             }
 
-            context.TBL_LOAN_APPLICATION_COLLATERL.Add(new TBL_LOAN_APPLICATION_COLLATERL
-            {
-                COLLATERALCUSTOMERID = collateralId,
-                LOANAPPLICATIONID = entity.applicationId,
-                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
-                CREATEDBY = entity.staffId,
-                DATETIMECREATED = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            });
             context.SaveChanges();
 
             var mapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId).Select(c => new LoanApplicationCollateralViewModel
@@ -4216,9 +4210,9 @@ namespace FintrakBanking.Repositories.Credit
                 collateralReferenceNumber = c.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
                 collateralType = c.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                 loanApplicationId = c.LOANAPPLICATIONID,
-                //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                 haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID,
             }).OrderByDescending(x => x.loanAppCollateralId);
             return mapped;
         }
@@ -4229,13 +4223,13 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<LoanApplicationCollateralViewModel> UnmapApplicationCollateral(ApplicationCollateralMapping entity)
         {
-            var item = this.context.TBL_LOAN_APPLICATION_COLLATERL.FirstOrDefault(x => x.LOANAPPLICATIONID == entity.applicationId && x.COLLATERALCUSTOMERID == entity.collateralId);
+            var proposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == entity.collateralId && o.LOANAPPLICATIONDETAILID == entity.applicationDetailId && o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing).FirstOrDefault();
 
-            if (item != null)
+            if (proposed!=null)
             {
-                context.TBL_LOAN_APPLICATION_COLLATERL.Remove(item);
-                context.SaveChanges();
+                proposed.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
             }
+
 
             var mapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId).Select(c => new LoanApplicationCollateralViewModel
             {
@@ -5821,6 +5815,14 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
+        public bool DeleteProposedCollateral(int loanApplicationDetailId)
+        {
+            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == loanApplicationDetailId).Select(o => o).FirstOrDefault();
+            context.TBL_LOAN_APPLICATION_COLLATERL.Remove(data);
+            return context.SaveChanges() > 0;
+
+        }
+
         #region Collateral Information View
         // .....COMPLETE COLLATERAL INFORMATION VIEW............
         public IEnumerable<AllCollateralViewModel> GetCollateralInformationById(int customercollateralId)
@@ -6763,9 +6765,9 @@ namespace FintrakBanking.Repositories.Credit
                         HAIRCUT = model.haircut,
                         CURRENCYID = model.currencyId,
                         EXCHANGERATE = repo.GetExchangeRate(date, model.currencyId, model.companyId).sellingRate,
-                        CUSTOMERID = model.applicationCustomerId,
+                        CUSTOMERID = model.customerId,
                         CAMREFNUMBER = model.camRefNumber,
-                        CREATEDBY = model.loanApplicationCustomerId,
+                        CREATEDBY = model.createdBy,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
                         ACTEDONBY = model.createdBy,
                         RELATEDCOLLATERALCODE = model.relatedCollateralCode,
@@ -6773,11 +6775,11 @@ namespace FintrakBanking.Repositories.Credit
                         COLLATERALSUMMARY = model.collateralSummary,
                         COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
                     });
-
                     if (context.SaveChanges() == 1)
                     {
                         return collateral.COLLATERALCUSTOMERID;
                     }
+
                 }
 
             }

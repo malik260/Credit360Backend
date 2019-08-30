@@ -1049,6 +1049,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralSummary { get; set; }
         public string collateralCode { get; set; }
         public int coveragePercentage { get; set; }
+        public int approvalStatusId { get; set; }
     }
     public class CollateralUsageStatus
     {
