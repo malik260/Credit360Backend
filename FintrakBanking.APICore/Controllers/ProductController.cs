@@ -1837,5 +1837,109 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #endregion Product Classification
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-document-definition")]
+        public HttpResponseMessage GetAllProductDocumentDefinition()
+        {
+            try
+            {
+                var data = repo.GetAllDocumentDefinition().ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-product-document-definition")]
+        public HttpResponseMessage AddProductDocumentDefinition([FromBody] DocumentDefinitionViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.AddDocumentDefinition(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "product document definition has been created successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "product document definition not created" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-document-mapping")]
+        public HttpResponseMessage GetAllProductDocumentMapping()
+        {
+            try
+            {
+                var data = repo.GetAllProductDocumentMapping().ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-product-document-mapping")]
+        public HttpResponseMessage AddProductDocumentMapping([FromBody] ProductDocumentMappingViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.AddProductDocumentMapping(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "product document mapping has been created successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "product document mapping not created" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
+        }
     }
 }

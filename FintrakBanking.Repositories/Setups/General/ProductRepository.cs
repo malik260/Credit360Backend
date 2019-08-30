@@ -3335,6 +3335,128 @@ namespace FintrakBanking.Repositories.Setups.General
                 return context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSNAME == productClassName).Any();
             }
 
-            #endregion
+        #endregion
+
+            #region Product Document Mapping
+        public IEnumerable<ProductDocumentMappingViewModel> GetAllProductDocumentMapping()
+        {
+            return (from p in context.TBL_PRODUCT_DOCUMENT_MAPPING
+                    select new ProductDocumentMappingViewModel()
+                    {
+                        productDocMapId = p.PRODUCTDOCMAPID,
+                        productId = p.PRODUCTID,
+                        isRequired = p.ISREQUIRED,
+                        inUse = p.INUSE,
+                        documentDefinitionId = p.DOCUMENTDEFINITIONID
+                    });
         }
+
+
+        public bool AddProductDocumentMapping(ProductDocumentMappingViewModel model)
+        {
+            var documentDef = context.TBL_DOCUMENT_DEFINITION.Find(model.documentDefinitionId); 
+
+            if (documentDef == null) 
+            {
+                throw new SecureException("Document definition does not exist!");
+            }
+
+           var data = new TBL_PRODUCT_DOCUMENT_MAPPING()
+            {
+                PRODUCTID = model.productId,
+                PRODUCTDOCMAPID = model.productDocMapId,
+                INUSE = model.inUse,
+                ISREQUIRED = model.isRequired,
+                DOCUMENTDEFINITIONID = model.documentDefinitionId
+            };
+
+            this.context.TBL_PRODUCT_DOCUMENT_MAPPING.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ProductDocumentMappingAdded,
+                STAFFID = (int)model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added : TBL_PRODUCT_DOCUMENT_MAPPING'{model.productId}' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            var status = this.SaveAll();
+
+            if (status)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        
+    #endregion Product Document Mapping
+
+    #region Product Document Definition
+    public IEnumerable<DocumentDefinitionViewModel> GetAllDocumentDefinition()
+    {
+        return (from p in context.TBL_DOCUMENT_DEFINITION
+                select new DocumentDefinitionViewModel()
+                {
+                    documentDefinitionId = p.DOCUMENTDEFINITIONID,
+                    documentTitle = p.DOCUMENTTITLE,
+                    inUse = p.INUSE
+                });
     }
+
+
+    public bool AddDocumentDefinition(DocumentDefinitionViewModel model)
+    {
+        var documentDef = context.TBL_DOCUMENT_DEFINITION.Find(model.documentDefinitionId);
+
+        if (documentDef == null)
+        {
+            throw new SecureException("Document definition does not exist!");
+        }
+
+        var data = new TBL_DOCUMENT_DEFINITION()
+        {
+            DOCUMENTDEFINITIONID = model.documentDefinitionId,
+            DOCUMENTTITLE = model.documentTitle,
+            INUSE = model.inUse
+        };
+
+        this.context.TBL_DOCUMENT_DEFINITION.Add(data);
+
+        // Audit Section ---------------------------
+        var audit = new TBL_AUDIT
+        {
+            AUDITTYPEID = (short)AuditTypeEnum.DocumentDefinitionAdded,
+            STAFFID = (int)model.createdBy,
+            BRANCHID = (short)model.userBranchId,
+            DETAIL = $"Added : TBL_DOCUMENT_DEFINITION'{model.documentDefinitionId}' ",
+            IPADDRESS = model.userIPAddress,
+            URL = model.applicationUrl,
+            APPLICATIONDATE = genSetup.GetApplicationDate(),
+            SYSTEMDATETIME = DateTime.Now
+        };
+
+        this.auditTrail.AddAuditTrail(audit);
+        //end of Audit section -------------------------------
+
+        var status = this.SaveAll();
+
+        if (status)
+        {
+            return true;
+        }
+
+        return false;
+    }
+     #endregion Product Document Definition    
+    }
+}
