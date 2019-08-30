@@ -2155,7 +2155,7 @@ namespace FintrakBanking.Repositories.Credit
                 REVALIDATED = c.reValidated,
                 ENTRYSHEETNUMBER = c.entrySheetNumber
 
-            });
+            }).ToList();
 
             //foreach (var item in data) // invoice reuse check
             //{
@@ -3510,6 +3510,10 @@ namespace FintrakBanking.Repositories.Credit
                         case "E":
                             currentLine.invoiceNo = cell.Value.ToString();
                             continue;
+                        case "F":
+                            currentLine.invoiceAmount = Convert.ToDecimal(cell.Value);
+                            continue;
+
                     }
                 }
                     bulkEntries.Add(currentLine);
