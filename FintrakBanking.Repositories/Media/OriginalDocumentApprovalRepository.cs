@@ -539,7 +539,7 @@ namespace FintrakBanking.Repositories.Media
                         dateTimeCreated = x.DATETIMECREATED,
                         customerName = l.LASTNAME + " " + l.FIRSTNAME + " " + l.MIDDLENAME,
                         customerCode = l.CUSTOMERCODE,
-                        customerId = c.CUSTOMERID.Value,
+                        customerId = c.CUSTOMERID,
                         collateralValue = c.COLLATERALVALUE,
                         collateralType = context.TBL_COLLATERAL_TYPE.Where(o=>o.COLLATERALTYPEID==c.COLLATERALTYPEID).Select(o=>o.COLLATERALTYPENAME).FirstOrDefault(),
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == l.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),

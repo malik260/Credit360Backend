@@ -69,17 +69,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string camsolTypeName { get; set; }
 
     }
-
-    public class CamsolLoanDocumentViewModel
-    {
-        public string customerCode { get; set; }
-        public string customerName { get; set; }
-        public string accountNumber { get; set; }
-        public decimal balance { get; set; }
-        public string camsolTypeName { get; set; }
-
-    }
-
     public class camsolBulkFeedbackViewModel
     {
         public List<LoanCAMSOLViewModel> commitedRows { get; set; }

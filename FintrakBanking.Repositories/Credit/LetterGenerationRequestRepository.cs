@@ -55,8 +55,7 @@ namespace FintrakBanking.Repositories.Credit
                     asAtDate = x.ASATDATE,
                     comment = x.COMMENTS,
                     customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.LASTNAME,
-                    dateTimeCreated = x.DATETIMECREATED,
-                    requestRef = x.REQUESTREF
+                    dateTimeCreated = x.DATETIMECREATED
                 })
                 .ToList().OrderByDescending(r => r.dateTimeCreated);
         }
@@ -118,7 +117,7 @@ namespace FintrakBanking.Repositories.Credit
                              operationId = operationId,
                              dateTimeCreated = (DateTime)a.DATEACTEDON,
                              customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                             requestRef = a.REQUESTREF,
+                             accountNumber = context.TBL_CASA.Where(O => O.CUSTOMERID == a.CUSTOMERID).Select(O => O.OLDPRODUCTACCOUNTNUMBER1).FirstOrDefault(),
                          }).ToList();
 
             applications = query.AsQueryable()
@@ -245,13 +244,13 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public List<CamsolLoanDocumentViewModel> GetCamsolLoansByCustomerCode(string customerName, string customerCode)
+        public List<CamsolDocumentViewModel> GetCamsolLoansByCustomerCode(string customerName, string customerCode)
         {
             var data = from O in context.TBL_LOAN_CAMSOL
                        join C in context.TBL_LOAN_CAMSOL_TYPE on O.CAMSOLTYPEID equals C.CAMSOLTYPEID
-                       where O.CUSTOMERNAME.Contains(customerName.ToUpper()) || O.CUSTOMERCODE == customerCode
+                       where O.CUSTOMERNAME.Contains(customerName) || O.CUSTOMERCODE == customerCode
                        orderby O.LOAN_CAMSOLID descending
-                       select new CamsolLoanDocumentViewModel
+                       select new CamsolDocumentViewModel
                        {
                            customerCode = O.CUSTOMERCODE,
                            customerName = O.CUSTOMERNAME,
@@ -281,7 +280,7 @@ namespace FintrakBanking.Repositories.Credit
                 return "";
             }
 
-            var camsol = context.TBL_LOAN_CAMSOL.Where(O => O.CUSTOMERNAME.Contains(model.customerName.ToUpper()) || model.customerName.ToUpper().Contains(O.CUSTOMERNAME)).FirstOrDefault();
+            var camsol = context.TBL_TEMP_LOAN_CAMSOL.Where(O => O.CUSTOMERCODE == model.customerCode && O.CUSTOMERNAME == model.customerName).FirstOrDefault();
 
             decimal debtAmount = 0;
             var reference = "ABP/ROG/OA/BO/03/2016/0061";
@@ -289,16 +288,14 @@ namespace FintrakBanking.Repositories.Credit
             var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault().ADDRESS;
             var customerCode = model.customerCode;
             var fullName = model.customerName;
-            //var accountNumber = model.accountNumber;
-            string accountNumber = "0";
-
+            var accountNumber = model.accountNumber;
+            //var accountNumber = camsol.ACCOUNTNUMBER;
             if (camsol != null) {
                 debtAmount = camsol.BALANCE;
-                accountNumber = camsol.ACCOUNTNUMBER;
             }
             //var salutation = $"<p><b>{reference}</b></p> <p><b>{asAtDate}.</b></p> <p><b>{fullName},</b> <br/> {address} </p> <p><b>Dear Sir/Ma,</b></p>";
 
-            string result = $"<p><b>REF: {model.requestRef}</b></p> " +
+            string result = $"<p><b>{reference}</b></p> " +
                 $"<p><b>{asAtDate}.</b></p> " +
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +
@@ -320,19 +317,16 @@ namespace FintrakBanking.Repositories.Credit
                 return "";
             }
 
-            var camsol = context.TBL_LOAN_CAMSOL.Where(O => O.CUSTOMERNAME.Contains(model.customerName.ToUpper()) || model.customerName.ToUpper().Contains(O.CUSTOMERNAME)).FirstOrDefault();
+            var camsol = context.TBL_TEMP_LOAN_CAMSOL.Where(O => O.CUSTOMERCODE == model.customerCode && O.CUSTOMERNAME == model.customerName).FirstOrDefault();
 
             var reference = "ABP/ROG/OA/BO/03/2016/0061";
             var asAtDate = model.asAtDate;
             var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault().ADDRESS;
             var fullName = model.customerName;
-            string accountNumber = "0";
+            var accountNumber = camsol.ACCOUNTNUMBER;
+            //var salutation = $"<p><b>{reference}</b></p> <p><b>{date}.</b></p> <p><b>{fullName},</b> <br/> {address} </p> <p><b>Dear Sir/Ma,</b></p>";
 
-            if (camsol != null) {
-                accountNumber = camsol.ACCOUNTNUMBER;
-            }
-
-            string result = $"<p><b>REF: {model.requestRef}</b></p> " +
+            string result = $"<p><b>{reference}</b></p> " +
                 $"<p><b>{asAtDate}.</b></p> " +
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +

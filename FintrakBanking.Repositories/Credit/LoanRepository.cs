@@ -6126,7 +6126,7 @@ namespace FintrakBanking.Repositories.Credit
                            collateralId = x.COLLATERALCUSTOMERID,
                            collateralTypeId = x.COLLATERALTYPEID,
                            collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                           customerId = x.CUSTOMERID.Value,
+                           customerId = x.CUSTOMERID,
                            currencyId = x.CURRENCYID,
                            currency = x.TBL_CURRENCY.CURRENCYNAME,
                            collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,

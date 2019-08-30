@@ -163,7 +163,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                   collateralCustomerId = a.COLLATERALCUSTOMERID,
                                   collateralCode = b.COLLATERALCODE,
-                                  customerId = b.CUSTOMERID.Value,
+                                  customerId = b.CUSTOMERID,
                                   customerName = context.TBL_CUSTOMER.Where(q => q.CUSTOMERID == b.CUSTOMERID).Select(w => w.FIRSTNAME + " " + w.MIDDLENAME + " " + w.LASTNAME).FirstOrDefault(),
                                   collateralReleaseId = a.COLLATERALRELEASEID,
                                   collateralReleaseTypeId = a.COLLATERALRELEASETYPEID,
@@ -197,7 +197,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                   collateralCustomerId = a.COLLATERALCUSTOMERID,
                                   collateralCode = b.COLLATERALCODE,
-                                  customerId = b.CUSTOMERID.Value,
+                                  customerId = b.CUSTOMERID,
                                   customerName = context.TBL_CUSTOMER.Where(q => q.CUSTOMERID == b.CUSTOMERID).Select(w => w.FIRSTNAME + " " + w.MIDDLENAME + " " + w.LASTNAME).FirstOrDefault(),
                                   collateralReleaseId = a.COLLATERALRELEASEID,
                                   collateralReleaseTypeId = a.COLLATERALRELEASETYPEID,
@@ -1396,7 +1396,7 @@ namespace FintrakBanking.Repositories.Credit
                               collateralId = cc.COLLATERALCUSTOMERID,
                               collateralTypeId = cc.COLLATERALTYPEID,
                               collateralSubTypeId = cc.COLLATERALSUBTYPEID,
-                              customerId = cc.CUSTOMERID.Value,
+                              customerId = cc.CUSTOMERID,
                               collateralTypeName = context.TBL_COLLATERAL_TYPE.Where(ct => ct.COLLATERALTYPEID == cc.COLLATERALTYPEID).Select(s => s.COLLATERALTYPENAME).FirstOrDefault(),
                               collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(cts => cts.COLLATERALSUBTYPEID == cc.COLLATERALSUBTYPEID).Select(s => s.COLLATERALSUBTYPENAME).FirstOrDefault(),
                               collateralCode = cc.COLLATERALCODE,
@@ -1541,7 +1541,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralId = c.c.COLLATERALCUSTOMERID,
                         collateralTypeId = c.c.COLLATERALTYPEID,
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
-                        customerId = c.c.CUSTOMERID.Value,
+                        customerId = c.c.CUSTOMERID,
                         currencyId = c.c.CURRENCYID,
                         baseCurrencyId = company.CURRENCYID,
                         currency = c.c.TBL_CURRENCY.CURRENCYNAME,
@@ -1639,7 +1639,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralId = c.c.COLLATERALCUSTOMERID,
                         collateralTypeId = c.c.COLLATERALTYPEID,
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
-                        customerId = c.c.CUSTOMERID.Value,
+                        customerId = c.c.CUSTOMERID,
                         currencyId = c.c.CURRENCYID,
                         baseCurrencyId = company.CURRENCYID,
                         currency = c.c.TBL_CURRENCY.CURRENCYNAME,
@@ -1896,7 +1896,7 @@ namespace FintrakBanking.Repositories.Credit
                                    collateralId = a.COLLATERALCUSTOMERID,
                                    collateralTypeId = d.COLLATERALTYPEID,
                                    collateralSubTypeId = d.COLLATERALSUBTYPEID,
-                                   customerId = d.CUSTOMERID.Value,
+                                   customerId = d.CUSTOMERID,
                                    currencyId = d.CURRENCYID,
 
                                    baseCurrencyId = company.CURRENCYID,
@@ -2021,7 +2021,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralTypeId = x.COLLATERALTYPEID,
                 collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                 collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                customerId = x.CUSTOMERID.Value,
+                customerId = x.CUSTOMERID,
                 currencyId = x.CURRENCYID,
                 currency = x.TBL_CURRENCY.CURRENCYNAME,
                 currencyCode = x.TBL_CURRENCY.CURRENCYCODE,
@@ -2058,7 +2058,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralTypeId = x.COLLATERALTYPEID,
                 collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                 collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                customerId = x.CUSTOMERID.Value,
+                customerId = x.CUSTOMERID,
                 currencyId = x.CURRENCYID,
                 currency = x.TBL_CURRENCY.CURRENCYNAME,
                 currencyCode = x.TBL_CURRENCY.CURRENCYCODE,
@@ -4218,7 +4218,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationId = c.LOANAPPLICATIONID,
                 //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                 haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID.Value
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
             }).OrderByDescending(x => x.loanAppCollateralId);
             return mapped;
         }
@@ -4248,7 +4248,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationId = c.LOANAPPLICATIONID,
                 //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                 haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID.Value
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID
             }).OrderByDescending(x => x.loanAppCollateralId);
             return mapped;
         }
@@ -4509,7 +4509,7 @@ namespace FintrakBanking.Repositories.Credit
                     .Select(o => new CollateralSearchViewModel
                     {
                         collateralId = o.COLLATERALCUSTOMERID,
-                        customerId = o.CUSTOMERID.Value,
+                        customerId = o.CUSTOMERID,
                         collateralTypeId = o.COLLATERALSUBTYPEID,
                         collateralTypeName = o.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                         customerCode = o.TBL_CUSTOMER.CUSTOMERCODE,
@@ -5836,7 +5836,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralSubTypeId = x.COLLATERALSUBTYPEID,
                 collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(t => t.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID)
                                                                                    .FirstOrDefault().COLLATERALSUBTYPENAME,
-                customerId = x.CUSTOMERID.Value,
+                customerId = x.CUSTOMERID,
                 customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME,
                 currencyId = x.CURRENCYID,
                 currency = x.TBL_CURRENCY.CURRENCYNAME,
@@ -6658,7 +6658,7 @@ namespace FintrakBanking.Repositories.Credit
                                    collateralId = x.TEMPCOLLATERALCUSTOMERID,
                                    collateralTypeId = x.COLLATERALTYPEID,
                                    collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                                   customerId = x.CUSTOMERID.Value,
+                                   customerId = x.CUSTOMERID,
                                    currencyId = x.CURRENCYID,
                                    currency = x.TBL_CURRENCY.CURRENCYNAME,
                                    collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
@@ -6695,7 +6695,7 @@ namespace FintrakBanking.Repositories.Credit
                                    collateralId = x.COLLATERALCUSTOMERID,
                                    collateralTypeId = x.COLLATERALTYPEID,
                                    collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                                   customerId = x.CUSTOMERID.Value,
+                                   customerId = x.CUSTOMERID,
                                    currencyId = x.CURRENCYID,
                                    currency = x.TBL_CURRENCY.CURRENCYNAME,
                                    collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
@@ -6718,8 +6718,6 @@ namespace FintrakBanking.Repositories.Credit
         }
         private int AddTempCollateralMainForm(CollateralViewModel model)
         {
-            //var customerType = context.TBL_CUSTOMER.Where(O => O.CUSTOMERID == model.customerId).Select(O => O.TBL_CUSTOMER_TYPE.CUSTOMERTYPEID).FirstOrDefault();
-
             if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
                 var mainCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == model.collateralCode).Select(x => x).FirstOrDefault();
@@ -6738,12 +6736,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainCollateral.HAIRCUT = model.haircut;
                     mainCollateral.CURRENCYID = model.currencyId;
                     mainCollateral.EXCHANGERATE = repo.GetExchangeRate(DateTime.Now, model.currencyId, model.companyId).sellingRate;
-
-                    if (model.loanTypeId == 1)
-                        mainCollateral.CUSTOMERID = model.customerId;
-                    else if (model.loanTypeId == 2)
-                        mainCollateral.CUSTOMERGROUPID = model.customerGroupId;
-                    
+                    mainCollateral.CUSTOMERID = model.customerId;
                     mainCollateral.CAMREFNUMBER = model.camRefNumber;
                     mainCollateral.CREATEDBY = model.createdBy;
                     mainCollateral.DATETIMECREATED = genSetup.GetApplicationDate();
@@ -6770,7 +6763,7 @@ namespace FintrakBanking.Repositories.Credit
                         HAIRCUT = model.haircut,
                         CURRENCYID = model.currencyId,
                         EXCHANGERATE = repo.GetExchangeRate(date, model.currencyId, model.companyId).sellingRate,
-                        //CUSTOMERID = model.applicationCustomerId,
+                        CUSTOMERID = model.applicationCustomerId,
                         CAMREFNUMBER = model.camRefNumber,
                         CREATEDBY = model.loanApplicationCustomerId,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
@@ -6780,11 +6773,6 @@ namespace FintrakBanking.Repositories.Credit
                         COLLATERALSUMMARY = model.collateralSummary,
                         COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
                     });
-
-                    if (model.loanTypeId == 1)
-                        collateral.CUSTOMERID = model.applicationCustomerId;
-                    else if (model.loanTypeId == 2)
-                        collateral.CUSTOMERGROUPID = model.customerGroupId;
 
                     if (context.SaveChanges() == 1)
                     {
@@ -6814,7 +6802,7 @@ namespace FintrakBanking.Repositories.Credit
                     HAIRCUT = model.haircut,
                     CURRENCYID = model.currencyId,
                     EXCHANGERATE = repo.GetExchangeRate(date, model.currencyId, model.companyId).sellingRate,
-                    //CUSTOMERID = model.customerId,
+                    CUSTOMERID = model.customerId,
                     CAMREFNUMBER = model.camRefNumber,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
@@ -6826,11 +6814,6 @@ namespace FintrakBanking.Repositories.Credit
                     ISCURRENT = true,
 
                 });
-
-                if (model.loanTypeId == 1)
-                    collateral.CUSTOMERID = model.customerId;
-                else if (model.loanTypeId == 2)
-                    collateral.CUSTOMERGROUPID = model.customerGroupId;
 
 
                 try
@@ -8503,7 +8486,7 @@ namespace FintrakBanking.Repositories.Credit
                                    collateralId = x.COLLATERALCUSTOMERID,
                                    collateralTypeId = x.COLLATERALTYPEID,
                                    collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                                   customerId = x.CUSTOMERID.Value,
+                                   customerId = x.CUSTOMERID,
                                    currencyId = x.CURRENCYID,
                                    currency = x.TBL_CURRENCY.CURRENCYNAME,
                                    collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,

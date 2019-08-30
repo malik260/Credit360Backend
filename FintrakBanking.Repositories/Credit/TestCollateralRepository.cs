@@ -54,7 +54,7 @@ namespace FintrakBanking.Repositories.Credit
                                     collateralTypeId = O.COLLATERALTYPEID,
                                     collateralTypeName = O.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                     collateralSubTypeId = O.COLLATERALSUBTYPEID,
-                                    customerId = O.CUSTOMERID.Value,
+                                    customerId = O.CUSTOMERID,
                                     currencyId = O.CURRENCYID,
                                     currency = O.TBL_CURRENCY.CURRENCYNAME,
                                     currencyCode = O.TBL_CURRENCY.CURRENCYCODE,
