@@ -53,7 +53,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                IEnumerable<LcIssuanceViewModel> response = repo.GetLcIssuances(token.GetStaffId);
+                IEnumerable<LcIssuanceApprovalViewModel> response = repo.GetLcIssuances(token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (SecureException ex)
@@ -734,7 +734,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                IEnumerable<LcIssuanceViewModel> response = ussanceRepo.GetLcIssuancesForUssance(token.GetStaffId);
+                IEnumerable<LcIssuanceApprovalViewModel> response = ussanceRepo.GetLcIssuancesForUssance(token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (SecureException ex)

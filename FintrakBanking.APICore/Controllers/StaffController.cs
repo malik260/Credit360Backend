@@ -170,8 +170,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("staff/approvals/{staffCode}")]
         public HttpResponseMessage GetStaffDetailsById(string staffCode)
         {
-
-
             try
             {
                 var staffInfo = repo.GetStaffDetail(staffCode, token.GetCompanyId);
@@ -327,8 +325,6 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
-
-
         }
 
       [HttpGet] [ClaimsAuthorization]  
