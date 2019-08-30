@@ -2686,7 +2686,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationId = c.LOANAPPLICATIONID,
                 //loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                 haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID,
+                customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID.Value,
                 //collateralReleaseStatusId=c.TBL_COLLATERAL_CUSTOMER.COLLATERALRELEASESTATUSID,
                 //collateralReleaseStatusName = c.TBL_COLLATERAL_CUSTOMER.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Find((int)CollateralReleaseStatus.InVault).COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Find(c.TBL_COLLATERAL_CUSTOMER.COLLATERALRELEASESTATUSID).COLLATERALRELEASESTATUSNAME,
 

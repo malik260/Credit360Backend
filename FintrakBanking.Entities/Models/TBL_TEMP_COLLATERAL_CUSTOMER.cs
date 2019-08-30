@@ -45,7 +45,9 @@ namespace FintrakBanking.Entities.Models
 
         public double HAIRCUT { get; set; }
 
-        public int CUSTOMERID { get; set; }
+        public int? CUSTOMERID { get; set; }
+
+        public int? CUSTOMERGROUPID { get; set; }
 
         [StringLength(50)]
         public string CAMREFNUMBER { get; set; }

@@ -1401,6 +1401,7 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS11.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter - 24052019.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter - Copy %282%29.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter_ImportFinance.rdlc" />

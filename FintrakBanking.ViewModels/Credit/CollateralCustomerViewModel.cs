@@ -21,6 +21,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralTypeName { get; set; }
         public short collateralSubTypeId { get; set; }
         public int customerId { get; set; }
+        public int customerGroupId { get; set; }
         public string customerCode { get; set; }
         public short currencyId { get; set; }
         public string currencyCode { get; set; }
@@ -41,9 +42,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string capturedBy { get; set; }
         public string address { get; set; }
 
+        public short loanTypeId { get; set; }
 
-        // presentation
-        
+        // presentation 
+
 
         // insurance
         public string referenceNumber { get; set; }
