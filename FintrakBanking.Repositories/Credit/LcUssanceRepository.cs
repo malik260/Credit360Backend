@@ -99,7 +99,7 @@ namespace FintrakBanking.Repositories.credit
             return null;
         }
 
-        public IEnumerable<LcIssuanceViewModel> GetLcIssuancesForUssance(int staffId)
+        public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForUssance(int staffId)
         {
             var usances = context.TBL_LC_USSANCE.ToList();
             var lcsInProgress = (from x in context.TBL_LC_ISSUANCE
@@ -109,17 +109,15 @@ namespace FintrakBanking.Repositories.credit
                        (
                        x.DELETED == false
                        && utrail.OPERATIONID == (int)OperationsEnum.lcUssance
-                       && 
-                       ((u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
-                       && utrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
-                       || (u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
-                       && utrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                       && utrail.LOOPEDSTAFFID == staffId))
-                        )
-                        select new LcIssuanceViewModel()
+                       && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceInProgress
+                       )
+                        select new LcIssuanceApprovalViewModel()
                             {
                                 lcIssuanceId = x.LCISSUANCEID,
                                 lcUssanceId = u.LCUSSANCEID,
+                                approvalTrailId = utrail.APPROVALTRAILID,
+                                approvalStatusId = utrail.APPROVALSTATUSID,
+                                loopedStaffId = utrail.LOOPEDSTAFFID,
                                 beneficiaryName = x.BENEFICIARYNAME,
                                 totalApprovedAmount = x.TOTALAPPROVEDAMOUNT,
                                 totalApprovedAmountCurrencyId = x.TOTALAPPROVEDAMOUNTCURRENCYID,
@@ -130,7 +128,7 @@ namespace FintrakBanking.Repositories.credit
                                 percentageToCover = x.PERCENTAGETOCOVER,
                                 lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
                                 lcToleranceValue = x.LCTOLERANCEVALUE,
-                                totalUsanceAmount = usances.Where(u => u.LCISSUANCEID == x.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT),
+                                totalUsanceAmount = x.LETTEROFCREDITAMOUNT - ((decimal?)usances.Where(u => u.LCISSUANCEID == x.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT) ?? 0),
                                 releaseAmount = x.RELEASEDAMOUNT,
                                 letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                                 isDraftRequired = x.ISDRAFTREQUIRED,
@@ -151,14 +149,11 @@ namespace FintrakBanking.Repositories.credit
                                 invoiceDate = x.INVOICEDATE,
                                 invoiceDueDate = x.INVOICEDUEDATE,
                                 lcReferenceNumber = x.LCREFERENCENUMBER,
-                                dateTimeCreated = (DateTime)x.DATETIMECREATED,
-                           //ussanceAmount = y.USSANCEAMOUNT,
-                           //ussanceRate = (int)y.USSANCERATE,
-                           //ussanceTenor = (int)y.USSANCETENOR,
-                           //lcEffectiveDate = (DateTime)y.LCUSSANCEEFFECTIVEDATE,
-                           //lcMaturityDate = (DateTime)y.LCUSSANCEMATURITYDATE
-                       })
-                            .ToList();
+                                dateTimeCreated = (DateTime)x.DATETIMECREATED
+                                }).GroupBy(l => l.lcUssanceId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                                .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                && l.loopedStaffId == staffId)).ToList();
 
             var lcsNotStarted = (from x in context.TBL_LC_ISSUANCE
                                  join y in context.TBL_LC_USSANCE on x.LCISSUANCEID equals y.LCISSUANCEID into xy
@@ -169,7 +164,7 @@ namespace FintrakBanking.Repositories.credit
                                 && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
                                 && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
                                 )
-                                 select new LcIssuanceViewModel()
+                                 select new LcIssuanceApprovalViewModel()
                                  {
                                      lcIssuanceId = x.LCISSUANCEID,
                                      lcUssanceId = u.LCUSSANCEID,
@@ -183,7 +178,7 @@ namespace FintrakBanking.Repositories.credit
                                      percentageToCover = x.PERCENTAGETOCOVER,
                                      lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
                                      lcToleranceValue = x.LCTOLERANCEVALUE,
-                                     totalUsanceAmount = usances.Where(u => u.LCISSUANCEID == x.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT),
+                                     totalUsanceAmount = x.LETTEROFCREDITAMOUNT - ((decimal?)usances.Where(u => u.LCISSUANCEID == x.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT) ?? 0),
                                      releaseAmount = x.RELEASEDAMOUNT,
                                      letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                                      isDraftRequired = x.ISDRAFTREQUIRED,
@@ -204,12 +199,7 @@ namespace FintrakBanking.Repositories.credit
                                      invoiceDate = x.INVOICEDATE,
                                      invoiceDueDate = x.INVOICEDUEDATE,
                                      lcReferenceNumber = x.LCREFERENCENUMBER,
-                                     dateTimeCreated = (DateTime)x.DATETIMECREATED,
-                                     //ussanceAmount = y.USSANCEAMOUNT,
-                                     //ussanceRate = (int)y.USSANCERATE,
-                                     //ussanceTenor = (int)y.USSANCETENOR,
-                                     //lcEffectiveDate = (DateTime)y.LCUSSANCEEFFECTIVEDATE,
-                                     //lcMaturityDate = (DateTime)y.LCUSSANCEMATURITYDATE
+                                     dateTimeCreated = (DateTime)x.DATETIMECREATED
                                  })
                            .ToList();
             var lcs = lcsNotStarted.Union(lcsInProgress);
