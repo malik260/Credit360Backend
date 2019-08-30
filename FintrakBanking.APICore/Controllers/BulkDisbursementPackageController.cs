@@ -147,11 +147,12 @@ namespace FintrakBanking.APICore.Controllers
         [Route("add-disbursement-scheme")]
         [HttpPost]
         [ClaimsAuthorization]
-        public HttpResponseMessage GetAllBulkDisbursementScheme(BulkDisbursementSetupSchemeViewModel bulkDisbursementSetup)
+        public HttpResponseMessage AddBulkDisbursementScheme(BulkDisbursementSetupSchemeViewModel bulkDisbursementSetup)
         {
             try
             {
                 
+
                 bulkDisbursementSetup.staffId = token.GetStaffId;
                 bulkDisbursementSetup.userBranchId = (short)token.GetBranchId;
                 bulkDisbursementSetup.userIPAddress = HttpContext.Current.Request.UserHostAddress;
