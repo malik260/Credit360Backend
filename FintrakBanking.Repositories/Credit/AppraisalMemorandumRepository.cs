@@ -1258,6 +1258,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Sorry, Released Amount is now " + currCode + " " + availableAmount);
             }
             lc.RELEASEDAMOUNT = totalReleasedAmount;
+            context.SaveChanges();
             return true;
         }
 
