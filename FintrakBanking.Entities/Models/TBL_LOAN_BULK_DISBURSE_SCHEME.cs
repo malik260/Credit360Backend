@@ -21,7 +21,6 @@ namespace FintrakBanking.Entities.Models
         public string SCHEMENAME { get; set; }
         public float INTERESTRATE { get; set; }
         public int? PRODUCTPRICEINDEXID { get; set; }
-
         public short? APPROVALSTATUSID { get; set; }
 
         public short COMPANYID { get; set; }
@@ -35,6 +34,8 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public int DELETEDBY { get; set; }
         public DateTime DATETIMEDELETED { get; set; }
+        public int SCHEDULEDAYCOUNTCONVENTIONID { get; set; }
+        public int INTERESTFREQUENCYTYPEID { get; set; }
 
     }
 }

@@ -41,9 +41,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string capturedBy { get; set; }
         public string address { get; set; }
 
-
-        // presentation
+        public int? customerGroupId { get; set; }
+        public int loanTypeId { get; set; }
         
+
+        // presentation 
+
 
         // insurance
         public string referenceNumber { get; set; }
@@ -963,7 +966,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int? collateralId { get; set; }
         public int applicationId { get; set; }
-        public int? applicationDetailId { get; set; }
+        public int? loanApplicationDetailId { get; set; }
         public int staffId { get; set; }
         public string collateralCode { get; set; }
     }
