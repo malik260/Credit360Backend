@@ -173,59 +173,100 @@ namespace FintrakBanking.Repositories.credit
             return null;
         }
 
-        public IEnumerable<LcIssuanceViewModel> GetLcIssuances(int staffId)
+        public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuances(int staffId)
         {
-            var lcs = (from x in context.TBL_LC_ISSUANCE 
-                       join t in context.TBL_APPROVAL_TRAIL on x.LCISSUANCEID equals t.TARGETID into xy
-                       from itrail in xy.DefaultIfEmpty() where 
-                       (
-                        x.DELETED == false
-                        && itrail.OPERATIONID == (int)OperationsEnum.lcIssuance
-                        && 
-                        (x.APPLICATIONSTATUSID == null
-                        || (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress
-                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
-                        || (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress
-                        && itrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                        && itrail.LOOPEDSTAFFID == staffId))
-                        )
-                        select new LcIssuanceViewModel
-                {
-                    lcIssuanceId = x.LCISSUANCEID,
-                    beneficiaryName = x.BENEFICIARYNAME,
-                    totalApprovedAmount = x.TOTALAPPROVEDAMOUNT,
-                    totalApprovedAmountCurrencyId = x.TOTALAPPROVEDAMOUNTCURRENCYID,
-                    availableAmountCurrencyId = x.AVAILABLEAMOUNTCURRENCYID,
-                    cashBuildUpAvailable = x.CASHBUILDUPAVAILABLE,
-                    cashBuildUpReferenceNumber = x.CASHBUILDUPREFERENCETYPE,
-                    cashBuildUpReferenceType = x.CASHBUILDUPREFERENCENUMBER,
-                    percentageToCover = x.PERCENTAGETOCOVER,
-                    lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
-                    lcToleranceValue = x.LCTOLERANCEVALUE,
-                    releaseAmount = x.RELEASEDAMOUNT,
-                    letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
-                    isDraftRequired = x.ISDRAFTREQUIRED,
-                    beneficiaryAddress = x.BENEFICIARYADDRESS,
-                    beneficiaryEmail = x.BENEFICIARYEMAIL,
-                    customerId = x.CUSTOMERID,
-                    fundSourceId = x.FUNDSOURCEID,
-                    fundSourceDetails = x.FUNDSOURCEDETAILS,
-                    formMNumber = x.FORMMNUMBER,
-                    beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
-                    beneficiaryBank = x.BENEFICIARYBANK,
-                    currencyId = x.CURRENCYID,
-                    customerName = x.TBL_CUSTOMER.FIRSTNAME + x.TBL_CUSTOMER.MIDDLENAME + x.TBL_CUSTOMER.LASTNAME,
-                    proformaInvoiceId = x.PROFORMAINVOICEID,
-                    availableAmount = x.AVAILABLEAMOUNT,
-                    letterOfCreditAmount = x.LETTEROFCREDITAMOUNT,
-                    letterOfcreditExpirydate = x.LETTEROFCREDITEXPIRYDATE,
-                    invoiceDate = x.INVOICEDATE,
-                    invoiceDueDate = x.INVOICEDUEDATE,
-                    lcReferenceNumber = x.LCREFERENCENUMBER,
-                    dateTimeCreated = (DateTime)x.DATETIMECREATED,
-                    
-                })
-                .ToList();
+            var lcsInProgress = (from x in context.TBL_LC_ISSUANCE 
+                               join t in context.TBL_APPROVAL_TRAIL on x.LCISSUANCEID equals t.TARGETID into xy
+                               from itrail in xy.DefaultIfEmpty() where 
+                               (
+                                x.DELETED == false
+                                && itrail.OPERATIONID == (int)OperationsEnum.lcIssuance
+                                && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceInProgress
+                                )
+                                select new LcIssuanceApprovalViewModel
+                                {
+                                    lcIssuanceId = x.LCISSUANCEID,
+                                    approvalTrailId = itrail.APPROVALTRAILID,
+                                    approvalStatusId = itrail.APPROVALSTATUSID,
+                                    loopedStaffId = itrail.LOOPEDSTAFFID,
+                                    beneficiaryName = x.BENEFICIARYNAME,
+                                    totalApprovedAmount = x.TOTALAPPROVEDAMOUNT,
+                                    totalApprovedAmountCurrencyId = x.TOTALAPPROVEDAMOUNTCURRENCYID,
+                                    availableAmountCurrencyId = x.AVAILABLEAMOUNTCURRENCYID,
+                                    cashBuildUpAvailable = x.CASHBUILDUPAVAILABLE,
+                                    cashBuildUpReferenceNumber = x.CASHBUILDUPREFERENCETYPE,
+                                    cashBuildUpReferenceType = x.CASHBUILDUPREFERENCENUMBER,
+                                    percentageToCover = x.PERCENTAGETOCOVER,
+                                    lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
+                                    lcToleranceValue = x.LCTOLERANCEVALUE,
+                                    releaseAmount = x.RELEASEDAMOUNT,
+                                    letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
+                                    isDraftRequired = x.ISDRAFTREQUIRED,
+                                    beneficiaryAddress = x.BENEFICIARYADDRESS,
+                                    beneficiaryEmail = x.BENEFICIARYEMAIL,
+                                    customerId = x.CUSTOMERID,
+                                    fundSourceId = x.FUNDSOURCEID,
+                                    fundSourceDetails = x.FUNDSOURCEDETAILS,
+                                    formMNumber = x.FORMMNUMBER,
+                                    beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
+                                    beneficiaryBank = x.BENEFICIARYBANK,
+                                    currencyId = x.CURRENCYID,
+                                    customerName = x.TBL_CUSTOMER.FIRSTNAME + x.TBL_CUSTOMER.MIDDLENAME + x.TBL_CUSTOMER.LASTNAME,
+                                    proformaInvoiceId = x.PROFORMAINVOICEID,
+                                    availableAmount = x.AVAILABLEAMOUNT,
+                                    letterOfCreditAmount = x.LETTEROFCREDITAMOUNT,
+                                    letterOfcreditExpirydate = x.LETTEROFCREDITEXPIRYDATE,
+                                    invoiceDate = x.INVOICEDATE,
+                                    invoiceDueDate = x.INVOICEDUEDATE,
+                                    lcReferenceNumber = x.LCREFERENCENUMBER,
+                                    dateTimeCreated = (DateTime)x.DATETIMECREATED,
+                                }).GroupBy(l => l.lcIssuanceId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                                .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                && l.loopedStaffId == staffId)).ToList();
+
+            var lcsNotStarted = (from x in context.TBL_LC_ISSUANCE
+                                where
+                                (
+                                x.DELETED == false
+                                && x.APPLICATIONSTATUSID == null
+                                )
+                                select new LcIssuanceApprovalViewModel
+                                {
+                                    lcIssuanceId = x.LCISSUANCEID,
+                                    beneficiaryName = x.BENEFICIARYNAME,
+                                    totalApprovedAmount = x.TOTALAPPROVEDAMOUNT,
+                                    totalApprovedAmountCurrencyId = x.TOTALAPPROVEDAMOUNTCURRENCYID,
+                                    availableAmountCurrencyId = x.AVAILABLEAMOUNTCURRENCYID,
+                                    cashBuildUpAvailable = x.CASHBUILDUPAVAILABLE,
+                                    cashBuildUpReferenceNumber = x.CASHBUILDUPREFERENCETYPE,
+                                    cashBuildUpReferenceType = x.CASHBUILDUPREFERENCENUMBER,
+                                    percentageToCover = x.PERCENTAGETOCOVER,
+                                    lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
+                                    lcToleranceValue = x.LCTOLERANCEVALUE,
+                                    releaseAmount = x.RELEASEDAMOUNT,
+                                    letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
+                                    isDraftRequired = x.ISDRAFTREQUIRED,
+                                    beneficiaryAddress = x.BENEFICIARYADDRESS,
+                                    beneficiaryEmail = x.BENEFICIARYEMAIL,
+                                    customerId = x.CUSTOMERID,
+                                    fundSourceId = x.FUNDSOURCEID,
+                                    fundSourceDetails = x.FUNDSOURCEDETAILS,
+                                    formMNumber = x.FORMMNUMBER,
+                                    beneficiaryPhoneNumber = x.BENEFICIARYPHONENUMBER,
+                                    beneficiaryBank = x.BENEFICIARYBANK,
+                                    currencyId = x.CURRENCYID,
+                                    customerName = x.TBL_CUSTOMER.FIRSTNAME + x.TBL_CUSTOMER.MIDDLENAME + x.TBL_CUSTOMER.LASTNAME,
+                                    proformaInvoiceId = x.PROFORMAINVOICEID,
+                                    availableAmount = x.AVAILABLEAMOUNT,
+                                    letterOfCreditAmount = x.LETTEROFCREDITAMOUNT,
+                                    letterOfcreditExpirydate = x.LETTEROFCREDITEXPIRYDATE,
+                                    invoiceDate = x.INVOICEDATE,
+                                    invoiceDueDate = x.INVOICEDUEDATE,
+                                    lcReferenceNumber = x.LCREFERENCENUMBER,
+                                    dateTimeCreated = (DateTime)x.DATETIMECREATED,
+                                }).ToList();
+            var lcs = lcsNotStarted.Union(lcsInProgress);
             return lcs;
         }
 
@@ -550,30 +591,24 @@ namespace FintrakBanking.Repositories.credit
             //var lcReleases = context.TBL_LCRELEASE_AMOUNT.Where(y => !lcsReleasesInTrail.Contains(y.LCRELEASEAMOUNTID)).ToList();
             //var lcIssuanceIds = lcReleases.Select(r => r.LCISSUANCEID).ToList();
             var releases = context.TBL_LCRELEASE_AMOUNT.ToList();
-            var lcs = (from i in context.TBL_LC_ISSUANCE
-                       join r in context.TBL_LCRELEASE_AMOUNT on i.LCISSUANCEID equals r.LCISSUANCEID into ir
-                       from r in ir.DefaultIfEmpty()
+            var lcsInProgress = (from i in context.TBL_LC_ISSUANCE
+                       join r in context.TBL_LCRELEASE_AMOUNT on i.LCISSUANCEID equals r.LCISSUANCEID
                        join rt in context.TBL_APPROVAL_TRAIL on r.LCRELEASEAMOUNTID equals rt.TARGETID into irt
                        from t in irt.DefaultIfEmpty()
                        where
                        (
                        i.DELETED == false
                        && t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments
-                       && i.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                       && r.RELEASEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
                        && i.LCTOLERANCEVALUE > (context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == i.LCISSUANCEID).Sum(r => r.RELEASEAMOUNT) ?? 0)
-                       &&
-                       ((r.RELEASEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
-                          && r.RELEASEAPPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
-                       || r.RELEASEAPPLICATIONSTATUSID == null
-                       || (r.RELEASEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
-                          && t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                          && t.LOOPEDSTAFFID == staffId))
                        )
                        select new LcIssuanceApprovalViewModel
                        {
                            lcIssuanceId = i.LCISSUANCEID,
                            lcReleaseAmountId = r.LCRELEASEAMOUNTID,
-                           approvalStatusId = (short)r.RELEASEAPPROVALSTATUSID,
+                           approvalStatusId = (short)t.APPROVALSTATUSID,
+                           approvalTrailId = t.APPROVALTRAILID,
+                           loopedStaffId = t.LOOPEDSTAFFID,
                            beneficiaryName = i.BENEFICIARYNAME,
                            totalApprovedAmount = i.TOTALAPPROVEDAMOUNT,
                            totalApprovedAmountCurrencyId = i.TOTALAPPROVEDAMOUNTCURRENCYID,
@@ -585,6 +620,7 @@ namespace FintrakBanking.Repositories.credit
                            lcTolerancePercentage = i.LCTOLERANCEPERCENTAGE,
                            lcToleranceValue = i.LCTOLERANCEVALUE,
                            releaseAmount = r.RELEASEAMOUNT,
+                           releasedAmount = i.RELEASEDAMOUNT,
                            letterOfCreditTypeId = i.LETTEROFCREDITTYPEID,
                            isDraftRequired = i.ISDRAFTREQUIRED,
                            beneficiaryAddress = i.BENEFICIARYADDRESS,
@@ -605,7 +641,59 @@ namespace FintrakBanking.Repositories.credit
                            invoiceDueDate = i.INVOICEDUEDATE,
                            lcReferenceNumber = i.LCREFERENCENUMBER,
                            dateTimeCreated = (DateTime)i.DATETIMECREATED,
-                       }).ToList();
+                       }).GroupBy(l => l.lcReleaseAmountId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                       .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                && l.loopedStaffId == staffId)).ToList();
+
+            var lcsNotStarted = (from i in context.TBL_LC_ISSUANCE
+                                 join r in context.TBL_LCRELEASE_AMOUNT on i.LCISSUANCEID equals r.LCISSUANCEID into ir
+                                 from r in ir.DefaultIfEmpty()
+                                 where
+                                 (
+                                 i.DELETED == false
+                                 && i.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                                 && r.RELEASEAPPLICATIONSTATUSID == null
+                                 && i.LCTOLERANCEVALUE > (context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == i.LCISSUANCEID).Sum(r => r.RELEASEAMOUNT) ?? 0)
+                                 )
+                                 select new LcIssuanceApprovalViewModel
+                                 {
+                                     lcIssuanceId = i.LCISSUANCEID,
+                                     lcReleaseAmountId = r.LCRELEASEAMOUNTID,
+                                     approvalStatusId = (short)r.RELEASEAPPROVALSTATUSID,
+                                     beneficiaryName = i.BENEFICIARYNAME,
+                                     totalApprovedAmount = i.TOTALAPPROVEDAMOUNT,
+                                     totalApprovedAmountCurrencyId = i.TOTALAPPROVEDAMOUNTCURRENCYID,
+                                     availableAmountCurrencyId = i.AVAILABLEAMOUNTCURRENCYID,
+                                     cashBuildUpAvailable = i.CASHBUILDUPAVAILABLE,
+                                     cashBuildUpReferenceNumber = i.CASHBUILDUPREFERENCETYPE,
+                                     cashBuildUpReferenceType = i.CASHBUILDUPREFERENCENUMBER,
+                                     percentageToCover = i.PERCENTAGETOCOVER,
+                                     lcTolerancePercentage = i.LCTOLERANCEPERCENTAGE,
+                                     lcToleranceValue = i.LCTOLERANCEVALUE,
+                                     releaseAmount = r.RELEASEAMOUNT,
+                                     releasedAmount = i.RELEASEDAMOUNT,
+                                     letterOfCreditTypeId = i.LETTEROFCREDITTYPEID,
+                                     isDraftRequired = i.ISDRAFTREQUIRED,
+                                     beneficiaryAddress = i.BENEFICIARYADDRESS,
+                                     beneficiaryEmail = i.BENEFICIARYEMAIL,
+                                     customerId = i.CUSTOMERID,
+                                     customerName = i.TBL_CUSTOMER.FIRSTNAME + i.TBL_CUSTOMER.MIDDLENAME + i.TBL_CUSTOMER.LASTNAME,
+                                     fundSourceId = i.FUNDSOURCEID,
+                                     fundSourceDetails = i.FUNDSOURCEDETAILS,
+                                     formMNumber = i.FORMMNUMBER,
+                                     beneficiaryPhoneNumber = i.BENEFICIARYPHONENUMBER,
+                                     beneficiaryBank = i.BENEFICIARYBANK,
+                                     currencyId = i.CURRENCYID,
+                                     proformaInvoiceId = i.PROFORMAINVOICEID,
+                                     availableAmount = i.AVAILABLEAMOUNT,
+                                     letterOfCreditAmount = i.LETTEROFCREDITAMOUNT,
+                                     letterOfcreditExpirydate = i.LETTEROFCREDITEXPIRYDATE,
+                                     invoiceDate = i.INVOICEDATE,
+                                     invoiceDueDate = i.INVOICEDUEDATE,
+                                     lcReferenceNumber = i.LCREFERENCENUMBER,
+                                     dateTimeCreated = (DateTime)i.DATETIMECREATED,
+                                 }).ToList();
             //foreach (var lc in lcs)
             //{
             //    if (lcReleases.Exists(r => r.LCISSUANCEID == lc.lcIssuanceId))
@@ -614,6 +702,7 @@ namespace FintrakBanking.Repositories.credit
             //        lc.releaseAmount = (decimal)lcReleases.FirstOrDefault(r => r.LCISSUANCEID == lc.lcIssuanceId).RELEASEAMOUNT;
             //    }
             //}
+            var lcs = lcsNotStarted.Union(lcsInProgress);
             return lcs;
         }
 
@@ -661,6 +750,7 @@ namespace FintrakBanking.Repositories.credit
                              lcIssuanceId = a.LCISSUANCEID,
                              lcReleaseAmountId = b.LCRELEASEAMOUNTID,
                              releaseAmount = (decimal)b.RELEASEAMOUNT,
+                             releasedAmount = a.RELEASEDAMOUNT,
                              isDraftRequired = a.ISDRAFTREQUIRED,
                              lcReferenceNumber = a.LCREFERENCENUMBER,
                              letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
@@ -786,16 +876,17 @@ namespace FintrakBanking.Repositories.credit
 
         private bool ValidateReleaseAmount(LcReleaseAmountViewModel model)
         {
-            var approvedReleaseIds = context.TBL_APPROVAL_TRAIL.Where(t => t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
-                                                                        && t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments).Select(t => t.TARGETID).ToList();
             var lc = context.TBL_LC_ISSUANCE.Find(model.lcIssuanceId);
             var currCode = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == lc.CURRENCYID).CURRENCYCODE;
-            var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => approvedReleaseIds.Contains(r.LCRELEASEAMOUNTID) && r.LCISSUANCEID == model.lcIssuanceId).Sum(r => r.RELEASEAMOUNT) ?? 0;
+            var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => (r.RELEASEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseCompleted 
+                                                                         && r.RELEASEAPPROVALSTATUSID == (int)ApprovalStatusEnum.Approved) && r.LCISSUANCEID == model.lcIssuanceId).Sum(r => r.RELEASEAMOUNT) ?? 0;
             var availableAmount = lc.LCTOLERANCEVALUE - totalReleasedAmount;
             if (model.releaseAmount > availableAmount)
             {
                 throw new SecureException("Release Amount cannot be greater than remainder tolerance amount " + currCode + " " + availableAmount);
             }
+            lc.RELEASEDAMOUNT = totalReleasedAmount;
+            context.SaveChanges();
             return true;
         }
         #endregion RELEASEOFSHIPPINGDOCUMENTS

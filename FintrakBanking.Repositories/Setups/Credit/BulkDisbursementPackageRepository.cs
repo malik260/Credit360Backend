@@ -12,6 +12,7 @@ using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.Setups.Credit;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.Credit
 {
@@ -37,11 +38,10 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
 
             var data = (from a in context.TBL_LOAN_BULK_DISBURSE_SCHEME
-                        where a.APPLICATIONREFERENCENUMBER == applicationReferenceNumber
+                       // where a.APPLICATIONREFERENCENUMBER == applicationReferenceNumber
                         select new BulkDisbursementSetupSchemeViewModel
                         {
                             disburseSchemeId = a.DISBURSESCHEMEID,
-                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             //LOANAPPLICATIONDETAIL = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONDETAILID).Select(c=> new TBL_LOAN_APPLICATION_DETAIL {
 
@@ -54,7 +54,6 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             schemeName = a.SCHEMENAME,
                             interestRate = a.INTERESTRATE,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
-                            includeProductFees = a.INCLUDEPRODUCTFEES,
                             scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
                             //approvalStatusId = (int)a.APPROVALSTATUSID
                         }).ToList();
@@ -71,7 +70,6 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         select new BulkDisbursementSetupSchemeViewModel
                         {
                             disburseSchemeId = a.DISBURSESCHEMEID,
-                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             schemeCode = a.SCHEMECODE,
                             productId = a.PRODUCTID,
@@ -81,7 +79,6 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             schemeName = a.SCHEMENAME,
                             interestRate = a.INTERESTRATE,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
-                            includeProductFees = a.INCLUDEPRODUCTFEES,
                             scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
                             //approvalStatusId = (int)a.APPROVALSTATUSID
                         }).ToList();
@@ -97,7 +94,6 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         select new BulkDisbursementSetupSchemeViewModel
                         {
                             disburseSchemeId = a.DISBURSESCHEMEID,
-                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             schemeCode = a.SCHEMECODE,
                             productId = a.PRODUCTID,
@@ -108,7 +104,6 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             schemeName = a.SCHEMENAME,
                             interestRate = a.INTERESTRATE,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
-                            includeProductFees = a.INCLUDEPRODUCTFEES,
                             scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
                             //approvalStatusId = (int)a.APPROVALSTATUSID
                         }).ToList();
@@ -123,7 +118,6 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         select new BulkDisbursementSetupSchemeViewModel
                         {
                             disburseSchemeId = a.DISBURSESCHEMEID,
-                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             schemeCode = a.SCHEMECODE,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
@@ -133,9 +127,19 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             tenor = a.TENOR,
                             schemeName = a.SCHEMENAME,
                             interestRate = a.INTERESTRATE,
-                            includeProductFees = a.INCLUDEPRODUCTFEES,
                             scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,                       
                         }).ToList();
+
+            foreach(var i in data)
+            {
+                var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.loanApplicationDetailId).FirstOrDefault();
+                if(detail != null)
+                {
+                    var app = context.TBL_LOAN_APPLICATION.Find(detail.LOANAPPLICATIONID);
+                    i.applicationReferenceNumber = app.APPLICATIONREFERENCENUMBER;
+                }
+                
+            }
             return data;
 
         }
@@ -143,24 +147,9 @@ namespace FintrakBanking.Repositories.Setups.Credit
 
         public bool AddBulkDisbursementScheme(BulkDisbursementSetupSchemeViewModel model)
         {
-            var loanApplicationData = context.TBL_LOAN_APPLICATION.Where(l => l.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
-            if (loanApplicationData == null) {
-                throw new ConditionNotMetException("The APPLICATIONREFERENCENUMBER does not exist");
-            }
-
-            var loanApplicationDetailData = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId);
-            if (loanApplicationDetailData == null) {
-                throw new ConditionNotMetException("The LOANAPPLICATIONDETAILID does not exist");
-            }
-
-            var schedulTypeData = context.TBL_LOAN_SCHEDULE_TYPE.Where(s => s.SCHEDULETYPEID == model.scheduleMethodId);
+            var schedulTypeData = context.TBL_LOAN_SCHEDULE_TYPE.Where(s => s.SCHEDULETYPEID == model.scheduleMethodId).FirstOrDefault();
             if (schedulTypeData == null) {
                 throw new ConditionNotMetException("The LOANAPPLICATIONDETAILID does not exist");
-            }
-
-            var priceIndexData = context.TBL_PRODUCT_PRICE_INDEX.Where(pi => pi.PRODUCTPRICEINDEXID == model.productPriceIndexId);
-            if (priceIndexData == null) {
-                throw new ConditionNotMetException("The PRODUCTPRICEINDEXID does not exist");
             }
 
             var productData = context.TBL_PRODUCT.Where(p => p.PRODUCTID == model.productId);
@@ -168,22 +157,17 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 throw new ConditionNotMetException("The PRODUCTID does not exist");
             }
 
-            var customerData = context.TBL_CUSTOMER.Find(model.staffId);
-            if (customerData == null) {
-                throw new ConditionNotMetException("The CUSTOMER does not exist");
-            }
+            var schemeCode = CommonHelpers.GenerateRandomDigitCode(10);
 
             var data = new TBL_LOAN_BULK_DISBURSE_SCHEME
             {
-                APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber,
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
-                SCHEMECODE = model.schemeCode,
+                SCHEMECODE = schemeCode, //model.schemeCode,
                 PRODUCTID = model.productId,
                 TENOR = model.tenor,
                 SCHEDULEMETHODID = (short)model.scheduleMethodId,
                 INTERESTRATE = model.interestRate,
                 PRODUCTPRICEINDEXID = model.productPriceIndexId,
-                INCLUDEPRODUCTFEES = model.includeProductFees,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 DELETED = false,
@@ -197,7 +181,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.BulkDisbursementSchemeAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added Bulk Disbursement Scheme for '{customerData.CUSTOMERCODE}'  ",
+                DETAIL = $"Added Bulk Disbursement Scheme for   ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -227,20 +211,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
 
         public bool UpdateBulkDisbursementScheme(int disbursementSchemeId, BulkDisbursementSetupSchemeViewModel model)
         {
-            var loanApplicationData = context.TBL_LOAN_APPLICATION.Where(l => l.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
-            if (loanApplicationData == null)
-            {
-                throw new ConditionNotMetException("The APPLICATIONREFERENCENUMBER does not exist");
-            }
-
             var loanApplicationDetailData = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId);
             if (loanApplicationDetailData == null)
-            {
-                throw new ConditionNotMetException("The LOANAPPLICATIONDETAILID does not exist");
-            }
-
-            var schedulTypeData = context.TBL_LOAN_SCHEDULE_TYPE.Where(s => s.SCHEDULETYPEID == model.scheduleMethodId);
-            if (schedulTypeData == null)
             {
                 throw new ConditionNotMetException("The LOANAPPLICATIONDETAILID does not exist");
             }
@@ -257,12 +229,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 throw new ConditionNotMetException("The PRODUCTID does not exist");
             }
 
-            var customerData = context.TBL_CUSTOMER.Find(model.staffId);
-            if (customerData == null) { throw new ConditionNotMetException("The customer does not exist"); }
-
             var data = this.context.TBL_LOAN_BULK_DISBURSE_SCHEME.Find(disbursementSchemeId);
             if (data == null) return false;
-            data.APPLICATIONREFERENCENUMBER = model.applicationReferenceNumber;
             data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
             data.SCHEMECODE = model.schemeCode;
             data.PRODUCTID = model.productId;
@@ -270,7 +238,6 @@ namespace FintrakBanking.Repositories.Setups.Credit
             data.SCHEDULEMETHODID = (short)model.scheduleMethodId;
             data.INTERESTRATE = model.interestRate;
             data.PRODUCTPRICEINDEXID = model.productPriceIndexId;
-            data.INCLUDEPRODUCTFEES = model.includeProductFees;
             data.APPROVALSTATUSID = (short)model.approvalStatusId;
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.LASTUPDATEDBY = model.lastUpdatedBy;
@@ -282,7 +249,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.BulkDisbursementSchemeUpdated,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Updated Bulk Disbursement scheme with code '{customerData.CUSTOMERCODE}' ",
+                DETAIL = $"Updated Bulk Disbursement scheme with code '{model.createdBy}' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),

@@ -43,6 +43,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public decimal facilityAmount { get; set; }
         public double SN { get; set; }
+        public int approvalStatusId { get; set; }
     }
 
 

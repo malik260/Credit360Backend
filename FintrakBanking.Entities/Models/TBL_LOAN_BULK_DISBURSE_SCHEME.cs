@@ -14,16 +14,13 @@ namespace FintrakBanking.Entities.Models
         public int DISBURSESCHEMEID { get; set; }
         public int PRODUCTID { get; set; }
         public short? SCHEDULEMETHODID { get; set; }
-        public string APPLICATIONREFERENCENUMBER { get; set; }
         public int LOANAPPLICATIONDETAILID { get; set; }
-        public int SCHEMECODE { get; set; }
+        public string SCHEMECODE { get; set; }
         public int TENOR { get; set; }
 
         public string SCHEMENAME { get; set; }
         public float INTERESTRATE { get; set; }
         public int? PRODUCTPRICEINDEXID { get; set; }
-        public bool INCLUDEPRODUCTFEES { get; set; }
-
         public short? APPROVALSTATUSID { get; set; }
 
         public short COMPANYID { get; set; }
@@ -37,6 +34,8 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public int DELETEDBY { get; set; }
         public DateTime DATETIMEDELETED { get; set; }
+        public int SCHEDULEDAYCOUNTCONVENTIONID { get; set; }
+        public int INTERESTFREQUENCYTYPEID { get; set; }
 
     }
 }
