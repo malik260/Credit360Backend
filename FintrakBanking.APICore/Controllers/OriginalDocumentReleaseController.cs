@@ -60,7 +60,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("approval-security-release")]
+        [Route("rejected-referred-security-release")]
         public HttpResponseMessage GetRejectedAndReferredSecurityRelease()
         {
             try

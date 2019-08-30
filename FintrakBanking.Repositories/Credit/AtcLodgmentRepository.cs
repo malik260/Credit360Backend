@@ -672,7 +672,7 @@ namespace FintrakBanking.Repositories.credit
         public IEnumerable<AtcReleaseViewModel>GetAtcLodgmentForReleaseList(int staffId)
         {
 
-            var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.AtcReleaseApproval).ToList();
+            //var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.AtcReleaseApproval).ToList();
             var initiator = context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
 
             var model1 = (from ar in context.TBL_ATC_RELEASE
