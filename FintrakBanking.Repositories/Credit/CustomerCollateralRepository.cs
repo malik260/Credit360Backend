@@ -1694,7 +1694,7 @@ namespace FintrakBanking.Repositories.Credit
                                join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
                                join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
-                               where x.LOANAPPLICATIONID == loanApplicationId
+                               where x.LOANAPPLICATIONID == loanApplicationId && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
 
                                select new CollateralCoverageViewModel
                                {
@@ -4193,7 +4193,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationCollateralViewModel> MapApplicationCollateral(ApplicationCollateralMapping entity)
         {
 
-            var proposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == entity.collateralId && o.LOANAPPLICATIONDETAILID == entity.applicationDetailId ).FirstOrDefault();
+            var proposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == entity.collateralId && o.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId ).FirstOrDefault();
             if (proposed != null)
             {
                 proposed.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
@@ -4224,13 +4224,15 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<LoanApplicationCollateralViewModel> UnmapApplicationCollateral(ApplicationCollateralMapping entity)
         {
-            var proposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == entity.collateralId && o.LOANAPPLICATIONDETAILID == entity.applicationDetailId).FirstOrDefault();
+            var proposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == entity.collateralId && o.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).FirstOrDefault();
 
             if (proposed!=null)
             {
                 proposed.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                context.SaveChanges();
             }
 
+           
 
             var mapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId).Select(c => new LoanApplicationCollateralViewModel
             {

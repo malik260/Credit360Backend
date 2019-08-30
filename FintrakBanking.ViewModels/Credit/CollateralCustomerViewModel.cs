@@ -963,7 +963,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int? collateralId { get; set; }
         public int applicationId { get; set; }
-        public int? applicationDetailId { get; set; }
+        public int? loanApplicationDetailId { get; set; }
         public int staffId { get; set; }
         public string collateralCode { get; set; }
     }
