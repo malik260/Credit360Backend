@@ -34,6 +34,8 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public int DELETEDBY { get; set; }
         public DateTime DATETIMEDELETED { get; set; }
+        public int SCHEDULEDAYCOUNTCONVENTIONID { get; set; }
+        public int INTERESTFREQUENCYTYPEID { get; set; }
 
     }
 }
