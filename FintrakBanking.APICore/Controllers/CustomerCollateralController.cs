@@ -2184,10 +2184,10 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
 
-        [HttpDelete, Route("delete-proposed-collateral-coverage/loanApplicationDetailId")]
-        public HttpResponseMessage DeleteProposedCollateral(int loanApplicationDetailId)
+        [HttpPost, Route("delete-proposed-collateral-coverage")]
+        public HttpResponseMessage DeleteProposedCollateral(CollateralCoverageViewModel model)
         {
-            var response = repo.DeleteProposedCollateral(loanApplicationDetailId);
+            var response = repo.DeleteProposedCollateral(model);
             if (response)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });

@@ -4954,7 +4954,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddLoanCollateralMapping(int loanApplicationId, int loanId, short loanSystemTypeId)
         {
-            var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+            var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId && x.APPROVALSTATUSID==(int)ApprovalStatusEnum.Approved).ToList();
             foreach (var entity in collateralModel)
             {
                 var collateral = new TBL_LOAN_COLLATERAL_MAPPING
@@ -6137,7 +6137,7 @@ namespace FintrakBanking.Repositories.Credit
                            collateralId = x.COLLATERALCUSTOMERID,
                            collateralTypeId = x.COLLATERALTYPEID,
                            collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                           customerId = x.CUSTOMERID,
+                           customerId = x.CUSTOMERID.Value,
                            currencyId = x.CURRENCYID,
                            currency = x.TBL_CURRENCY.CURRENCYNAME,
                            collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
@@ -13089,7 +13089,7 @@ namespace FintrakBanking.Repositories.Credit
                     loan.errorMessage.AddRange(entry.errorMessages);
                 }
                 loan.passed = entry.passed;
-                var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x=>x.SCHEMECODE == entry.schemeCode).FirstOrDefault();
+                var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x=> entry.schemeCode.Contains(x.SCHEMECODE.Trim())).FirstOrDefault();
 
                 loan = buildLoanModel(entry, scheme,  user);
                 //entry = padOutPutModel(entry, loan);
@@ -13269,6 +13269,8 @@ namespace FintrakBanking.Repositories.Credit
 
             return bulkEntries;
         }
+
+        
 
         private TBL_LOAN addLoan(LoanViewModel entity)
         {
