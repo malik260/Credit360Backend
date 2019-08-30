@@ -147,8 +147,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
         public virtual DbSet<TBL_PRODUCT_DOCUMENT_MAPPING> TBL_PRODUCT_DOCUMENT_MAPPING { get; set; }
         public virtual DbSet<TBL_DOCUMENT_DEFINITION> TBL_DOCUMENT_DEFINITION { get; set; }
-        public virtual DbSet<TBL_LOAN_BULK_DISBURSE_SCHEME> TBL_LOAN_BULK_DISBURSE_SCHEME { get; set; }
-
+        
         public virtual DbSet<TBL_CUSTOMER_RATIOS> TBL_CUSTOMER_RATIOS { get; set; }
         
         public virtual DbSet<TBL_CUSTOMER_ACCOUNT_KYC_ITEM> TBL_CUSTOMER_ACCOUNT_KYC_ITEM { get; set; }

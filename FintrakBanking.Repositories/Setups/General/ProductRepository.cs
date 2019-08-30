@@ -50,7 +50,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private bool SaveAll()
         {
-            return this.context.SaveChanges() > 0;
+           return this.context.SaveChanges() > 0;
         }
 
         //public  IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId)
@@ -3364,7 +3364,6 @@ namespace FintrakBanking.Repositories.Setups.General
            var data = new TBL_PRODUCT_DOCUMENT_MAPPING()
             {
                 PRODUCTID = model.productId,
-                PRODUCTDOCMAPID = model.productDocMapId,
                 INUSE = model.inUse,
                 ISREQUIRED = model.isRequired,
                 DOCUMENTDEFINITIONID = model.documentDefinitionId
@@ -3416,16 +3415,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
     public bool AddDocumentDefinition(DocumentDefinitionViewModel model)
     {
-        var documentDef = context.TBL_DOCUMENT_DEFINITION.Find(model.documentDefinitionId);
-
-        if (documentDef == null)
+         var data = new TBL_DOCUMENT_DEFINITION()
         {
-            throw new SecureException("Document definition does not exist!");
-        }
-
-        var data = new TBL_DOCUMENT_DEFINITION()
-        {
-            DOCUMENTDEFINITIONID = model.documentDefinitionId,
             DOCUMENTTITLE = model.documentTitle,
             INUSE = model.inUse
         };

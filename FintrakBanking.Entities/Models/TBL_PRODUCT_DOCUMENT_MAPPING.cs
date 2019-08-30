@@ -7,7 +7,7 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_PRODUCT_DOCUMENT_MAPPING")]
+    [Table("TBL_PRODUCT_DOC_MAPPING")]
     public partial class TBL_PRODUCT_DOCUMENT_MAPPING
     {
         [Key]
