@@ -652,6 +652,7 @@ namespace FintrakBanking.Repositories.credit
                                  (
                                  i.DELETED == false
                                  && i.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                                 && r.RELEASEAPPLICATIONSTATUSID == null
                                  && i.LCTOLERANCEVALUE > (context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == i.LCISSUANCEID).Sum(r => r.RELEASEAMOUNT) ?? 0)
                                  )
                                  select new LcIssuanceApprovalViewModel
@@ -872,16 +873,16 @@ namespace FintrakBanking.Repositories.credit
 
         private bool ValidateReleaseAmount(LcReleaseAmountViewModel model)
         {
-            var approvedReleaseIds = context.TBL_APPROVAL_TRAIL.Where(t => t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved 
-                                                                        && t.OPERATIONID == (int)OperationsEnum.lcReleaseOfShippingDocuments).Select(t => t.TARGETID).ToList();
             var lc = context.TBL_LC_ISSUANCE.Find(model.lcIssuanceId);
             var currCode = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == lc.CURRENCYID).CURRENCYCODE;
-            var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => approvedReleaseIds.Contains(r.LCRELEASEAMOUNTID) && r.LCISSUANCEID == model.lcIssuanceId).Sum(r => r.RELEASEAMOUNT) ?? 0;
+            var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => (r.RELEASEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseCompleted 
+                                                                         && r.RELEASEAPPROVALSTATUSID == (int)ApprovalStatusEnum.Approved) && r.LCISSUANCEID == model.lcIssuanceId).Sum(r => r.RELEASEAMOUNT) ?? 0;
             var availableAmount = lc.LCTOLERANCEVALUE - totalReleasedAmount;
             if (model.releaseAmount > availableAmount)
             {
                 throw new SecureException("Release Amount cannot be greater than remainder tolerance amount " + currCode + " " + availableAmount);
             }
+            lc.RELEASEDAMOUNT = totalReleasedAmount;
             return true;
         }
         #endregion RELEASEOFSHIPPINGDOCUMENTS
