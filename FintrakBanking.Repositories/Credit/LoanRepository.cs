@@ -58,6 +58,7 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingStagingContext stgCon;
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
+
         //private CreditCommonRepository creditCommon;
 
         private IIntegrationWithFinacle finacle;
@@ -2562,7 +2563,7 @@ namespace FintrakBanking.Repositories.Credit
                                 //crmsCode = ln.CRMSCODE,
                                 staffId = staffId,
                                 timeIn = atrail.SYSTEMARRIVALDATETIME,
-                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.DESCRIPTION ?? null,
+                                principalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.DESCRIPTION ?? null,
                                 interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE1.DESCRIPTION ?? null,
                                 scheduleDayCountConventionId = ln.SCHEDULEDAYCOUNTCONVENTIONID,
                                 principalNumberOfInstallment = ln.PRINCIPALNUMBEROFINSTALLMENT,
@@ -2954,7 +2955,7 @@ namespace FintrakBanking.Repositories.Credit
                                 //crmsCode = ln.CRMSCODE,
                                 staffId = staffId,
                                 timeIn = atrail.SYSTEMARRIVALDATETIME,
-                                pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.DESCRIPTION ?? null,
+                                principalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.DESCRIPTION ?? null,
                                 interestFrequencyTypeName = ln.TBL_FREQUENCY_TYPE1.DESCRIPTION ?? null,
                                 scheduleDayCountConventionId = ln.SCHEDULEDAYCOUNTCONVENTIONID,
                                 principalNumberOfInstallment = ln.PRINCIPALNUMBEROFINSTALLMENT,
@@ -4953,7 +4954,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddLoanCollateralMapping(int loanApplicationId, int loanId, short loanSystemTypeId)
         {
-            var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+            var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId && x.APPROVALSTATUSID==(int)ApprovalStatusEnum.Approved).ToList();
             foreach (var entity in collateralModel)
             {
                 var collateral = new TBL_LOAN_COLLATERAL_MAPPING
@@ -5124,7 +5125,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanReferenceNumber = l.LOANREFERENCENUMBER,
 
                             principalFrequencyTypeId = (short)l.PRINCIPALFREQUENCYTYPEID,
-                            pricipalFrequencyTypeName = l.TBL_FREQUENCY_TYPE.DESCRIPTION,
+                            principalFrequencyTypeName = l.TBL_FREQUENCY_TYPE.DESCRIPTION,
                             interestFrequencyTypeId = (short)l.INTERESTFREQUENCYTYPEID,
                             interestFrequencyTypeName = l.TBL_FREQUENCY_TYPE.DESCRIPTION,
 
@@ -7859,7 +7860,7 @@ namespace FintrakBanking.Repositories.Credit
                                      branchName = context.TBL_BRANCH.Where(o=>o.BRANCHID==a.BRANCHID).Select(o=>o.BRANCHNAME).FirstOrDefault(),
                                     // applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER ?? "N/A",
                                      principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                     pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                     principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                      interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
                                      interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
                                      principalNumberOfInstallment = a.PRINCIPALNUMBEROFINSTALLMENT,
@@ -8926,7 +8927,7 @@ namespace FintrakBanking.Repositories.Credit
                                            loanReferenceNumber = a.LOANREFERENCENUMBER,
                                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                            principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                           pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                           principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                            interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
                                            interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
                                            productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
@@ -9307,7 +9308,7 @@ namespace FintrakBanking.Repositories.Credit
                                            loanReferenceNumber = a.LOANREFERENCENUMBER,
                                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                            principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                           pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                           principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                            interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
                                            interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
                                            productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
@@ -9407,7 +9408,7 @@ namespace FintrakBanking.Repositories.Credit
                                            loanReferenceNumber = a.LOANREFERENCENUMBER,
                                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                            principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                           pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                           principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                            interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
                                            interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
                                            productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
@@ -9829,7 +9830,7 @@ namespace FintrakBanking.Repositories.Credit
                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
                                    applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER ?? "N/A",
                                    principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                   pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                   principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                    interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
                                    interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
                                    productTypeId = f.PRODUCTTYPEID,
@@ -10270,7 +10271,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER ?? "N/A",
                                        principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                       pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                       principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                        interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
                                        interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
                                        productTypeId = f.PRODUCTTYPEID,
@@ -10858,7 +10859,7 @@ namespace FintrakBanking.Repositories.Credit
                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
                                    applicationReferenceNumber = e.APPLICATIONREFERENCENUMBER ?? "N/A",
                                    principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                   pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                   principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                    interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
                                    interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
                                    productTypeId = f.PRODUCTTYPEID,
@@ -12351,7 +12352,7 @@ namespace FintrakBanking.Repositories.Credit
                                        lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                        principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                       pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                       principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                        interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
                                        interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
@@ -12495,7 +12496,7 @@ namespace FintrakBanking.Repositories.Credit
                                            lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
                                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                            principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                           pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                           principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                            interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
                                            interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
                                            productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
@@ -12674,7 +12675,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                        principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                                       pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                       principalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                        interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
                                        interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
@@ -13073,41 +13074,64 @@ namespace FintrakBanking.Repositories.Credit
         public Tuple<List<LoanViewModel>,bool> disburseBulkLoans(byte[] file, UserInfo user, bool isFinal)
         {
             List<TBL_LOAN> loans = new List<TBL_LOAN>();
-            List<bulkDisbursementInputViewModel> loanInputs = GetBulkLoanInputs(file);
+            List<multipleDisbursementOutputViewModel> loanInputs = GetBulkLoanInputs(file);
             var systemData = generalSetup.GetApplicationDate();
             bool response = true;
             List<LoanViewModel> loanViewModels = new List<LoanViewModel>();
             foreach (var entry in loanInputs)
             {
-                
+                LoanPaymentScheduleInputViewModel inputSchedule = new LoanPaymentScheduleInputViewModel();
                 LoanViewModel loan = new LoanViewModel();
                 if (entry.passed == false)
                 {
                     loan.customerCode = entry.customerCode;
                     loan.passed = entry.passed;
-                    loan.errorMessage.AddRange(entry.errorMessage);
+                    loan.errorMessage.AddRange(entry.errorMessages);
                 }
                 loan.passed = entry.passed;
                 var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x=> entry.schemeCode.Contains(x.SCHEMECODE.Trim())).FirstOrDefault();
 
                 loan = buildLoanModel(entry, scheme,  user);
+                //entry = padOutPutModel(entry, loan);
+                entry.currencyCode = loan.currencyCode;
+                entry.productName = loan.productName;
+                entry.productId = loan.productId;
+                entry.customerId = loan.customerId;
+                entry.customerCode = loan.customerCode;
+                entry.tenor = loan.tenor;
+                entry.interestRate = loan.interestRate;
+                entry.effectiveDate = loan.effectiveDate;
+                entry.maturityDate = loan.maturityDate;
 
-                //loan.firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
-                //loan.firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
-                //loan.outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
-                //loan.outstandingInterest = a.OUTSTANDINGINTEREST,
-                //loan.principalAdditionCount = a.PRINCIPALADDITIONCOUNT ?? 0,
-                //loan.principalReductionCount = a.PRINCIPALREDUCTIONCOUNT ?? 0,
-                //loan.principalInstallmentLeft = a.PRINCIPALINSTALLMENTLEFT,
-                //loan.interestInstallmentLeft = a.INTERESTINSTALLMENTLEFT,
-                //loan.principalNumberOfInstallment = a.PRINCIPALNUMBEROFINSTALLMENT,
-                //loan.interestNumberOfInstallment = a.INTERESTNUMBEROFINSTALLMENT,
-                //loan.principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
-                //loan.interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
-                loanViewModels.Add(loan);
+                entry.interestRepaymentFrequencyName = loan.interestFrequencyTypeName;
+                entry.principalRepaymentFrequencyName = loan.principalFrequencyTypeName;
+                entry.schemeId = scheme.DISBURSESCHEMEID;
+                entry.loanApplicationDetailId = loan.loanApplicationDetailId;
+                entry.repaymentScheduleMethodName = loan.scheduleTypeName;
+                entry.tenor = loan.tenor;
+                entry.errorMessages.AddRange(loan.errorMessage);
+                //entry.loanScheduleInput = 
+
+                inputSchedule.accrualBasis = (short)DayCountConventionEnum.Actual_Actual;
+                inputSchedule.effectiveDate = DateTime.Now;
+                inputSchedule.firstPaymentDate = loan.firstPrincipalPaymentDate ?? DateTime.Now;
+                inputSchedule.interestFirstpaymentDate = loan.firstInterestPaymentDate ?? DateTime.Now;
+                inputSchedule.interestFrequencyTypeId = (short)FrequencyTypeEnum.Monthly;
+                inputSchedule.scheduleMethodId = scheme.SCHEDULEMETHODID ?? (short)LoanScheduleTypeEnum.BallonPayment;
+
+                entry.periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(inputSchedule);
+                //entry.loanChargeFee = 
+
+                //loanViewModels.Add(loan);
+               // var loanRecord = addLoan(loan);
+                //context.SaveChanges();
+
+               // loans.Add(loanRecord);
+                // entry.loanScheduleInput = BuildScheduleModel(loanRecord.TERMLOANID, user.createdBy);
 
                 if (isFinal && loan.passed)
                 {
+
                     var loanRecord = addLoan(loan);
                     loans.Add(loanRecord);
                 }
@@ -13118,12 +13142,16 @@ namespace FintrakBanking.Repositories.Credit
             return new Tuple<List<LoanViewModel>, bool>(loanViewModels,true);
         }
 
-        private LoanViewModel buildLoanModel(bulkDisbursementInputViewModel input, TBL_LOAN_BULK_DISBURSE_SCHEME scheme , UserInfo user)
+        //private multipleDisbursementOutputViewModel padOutPutModel(multipleDisbursementOutputViewModel output, LoanViewModel model)
+        //{
+        //    return output;
+        //}
+        private LoanViewModel buildLoanModel(multipleDisbursementOutputViewModel input, TBL_LOAN_BULK_DISBURSE_SCHEME scheme , UserInfo user)
         {
             var model = new LoanViewModel();
 
-            var casaAccount = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == input.accountnumber).FirstOrDefault();
-            if(casaAccount == null ) { model.passed = false; model.errorMessage.Add("Account number '" + input.accountnumber + "' does not exist on Credit360");  }
+            var casaAccount = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == input.accountNumber).FirstOrDefault();
+            if(casaAccount == null ) { model.passed = false; model.errorMessage.Add("Account number '" + input.accountNumber + "' does not exist on Credit360");  }
             
             var product = context.TBL_PRODUCT.Find((short)scheme.PRODUCTID);
 
@@ -13156,7 +13184,7 @@ namespace FintrakBanking.Repositories.Credit
             model.effectiveDate = systemdate;
             model.maturityDate = systemdate.AddDays(input.tenor);
             model.bookingDate = DateTime.Now;
-            model.principalAmount = input.LoanAmount;
+            model.principalAmount = input.loanAmount;
             model.approvalStatusId = (short)ApprovalStatusEnum.Approved;
             model.approvedBy = user.staffId;
             model.approverComment = "BULK APPROVED";
@@ -13179,10 +13207,10 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        private List<bulkDisbursementInputViewModel> GetBulkLoanInputs( byte[] file)
+        private List<multipleDisbursementOutputViewModel> GetBulkLoanInputs( byte[] file)
         {
-            List<bulkDisbursementInputViewModel> bulkEntries = new List<bulkDisbursementInputViewModel>();
-            bulkDisbursementInputViewModel currentLine = new bulkDisbursementInputViewModel();
+            List<multipleDisbursementOutputViewModel> bulkEntries = new List<multipleDisbursementOutputViewModel>();
+            multipleDisbursementOutputViewModel currentLine = new multipleDisbursementOutputViewModel();
 
             //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
             SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
@@ -13211,27 +13239,27 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         case "A":
                             currentLine.passed = true;
-                            try { currentLine.applicationReferenceNumber = cell.Value.ToString(); }catch(Exception e) { currentLine.passed = false; currentLine.errorMessage.Add(e.Message); }
+                            try { currentLine.applicationReferenceNumber = cell.Value.ToString(); }catch(Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
                             break;
                         case "B":
                             currentLine.passed = true;
-                            try { currentLine.schemeCode = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessage.Add(e.Message); }
+                            try { currentLine.schemeCode = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
                             break;
                         case "C":
                             currentLine.passed = true;
-                            try { currentLine.customerCode = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessage.Add(e.Message); }
+                            try { currentLine.customerCode = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
                             break;
                         case "D":
                             currentLine.passed = true;
-                            try { currentLine.accountnumber = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessage.Add(e.Message); }
+                            try { currentLine.accountNumber = cell.Value.ToString(); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
                             break;
                         case "E":
                             currentLine.passed = true;
-                            try { currentLine.LoanAmount = Convert.ToDecimal(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessage.Add(e.Message); }
+                            try { currentLine.loanAmount = Convert.ToDecimal(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
                             break;
                         case "F":
                             currentLine.passed = true;
-                            try { currentLine.tenor = Convert.ToInt16(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessage.Add(e.Message); }
+                            try { currentLine.tenor = Convert.ToInt16(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
                             break;
                     }
 
