@@ -13089,7 +13089,7 @@ namespace FintrakBanking.Repositories.Credit
                     loan.errorMessage.AddRange(entry.errorMessages);
                 }
                 loan.passed = entry.passed;
-                var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x=> entry.schemeCode.Contains(x.SCHEMECODE.Trim())).FirstOrDefault();
+                var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x=> x.SCHEMECODE == entry.schemeCode).FirstOrDefault();
 
                 loan = buildLoanModel(entry, scheme,  user);
                 //entry = padOutPutModel(entry, loan);
