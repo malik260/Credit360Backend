@@ -6136,7 +6136,7 @@ namespace FintrakBanking.Repositories.Credit
                            collateralId = x.COLLATERALCUSTOMERID,
                            collateralTypeId = x.COLLATERALTYPEID,
                            collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                           customerId = x.CUSTOMERID,
+                           customerId = x.CUSTOMERID.Value,
                            currencyId = x.CURRENCYID,
                            currency = x.TBL_CURRENCY.CURRENCYNAME,
                            collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
@@ -13088,7 +13088,7 @@ namespace FintrakBanking.Repositories.Credit
                     loan.errorMessage.AddRange(entry.errorMessage);
                 }
                 loan.passed = entry.passed;
-                var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x=>x.SCHEMECODE == entry.schemeCode).FirstOrDefault();
+                var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x=> entry.schemeCode.Contains(x.SCHEMECODE.Trim())).FirstOrDefault();
 
                 loan = buildLoanModel(entry, scheme,  user);
 
@@ -13241,6 +13241,8 @@ namespace FintrakBanking.Repositories.Credit
 
             return bulkEntries;
         }
+
+        
 
         private TBL_LOAN addLoan(LoanViewModel entity)
         {

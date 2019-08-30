@@ -518,6 +518,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
     }
+   
 
     public class CommitteFilterViewModel
     {
