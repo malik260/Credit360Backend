@@ -13096,6 +13096,8 @@ namespace FintrakBanking.Repositories.Credit
                 entry.currencyCode = loan.currencyCode;
                 entry.productName = loan.productName;
                 entry.productId = loan.productId;
+                entry.productName = loan.productName;
+                entry.productTypeName = loan.productTypeName;
                 entry.customerId = loan.customerId;
                 entry.customerCode = loan.customerCode;
                 entry.tenor = loan.tenor;
