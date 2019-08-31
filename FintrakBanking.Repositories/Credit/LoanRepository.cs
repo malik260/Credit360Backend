@@ -13104,7 +13104,6 @@ namespace FintrakBanking.Repositories.Credit
                 entry.interestRate = loan.interestRate;
                 entry.effectiveDate = loan.effectiveDate;
                 entry.maturityDate = loan.maturityDate;
-
                 entry.interestRepaymentFrequencyName = loan.interestFrequencyTypeName;
                 entry.principalRepaymentFrequencyName = loan.principalFrequencyTypeName;
                 entry.schemeId = scheme.DISBURSESCHEMEID;
@@ -13113,6 +13112,8 @@ namespace FintrakBanking.Repositories.Credit
                 entry.tenor = loan.tenor;
                 entry.schemeName = scheme.SCHEMENAME;
                 entry.schemeCode = scheme.SCHEMECODE;
+                entry.interestRepaymentFrequencyName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == scheme.INTERESTFREQUENCYTYPEID).FirstOrDefault()?.DESCRIPTION;
+                entry.principalRepaymentFrequencyName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == scheme.PRINCIPALFREQUENCYTYPEID).FirstOrDefault()?.DESCRIPTION;
                 entry.repaymentScheduleMethodName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == scheme.SCHEDULEMETHODID).FirstOrDefault()?.SCHEDULETYPENAME;
                 if(loan.errorMessage != null)entry.errorMessages.AddRange(loan.errorMessage);
                 //entry.loanScheduleInput = 
@@ -13180,11 +13181,15 @@ namespace FintrakBanking.Repositories.Credit
 
             model.loanApplicationId = scheme.LOANAPPLICATIONDETAILID;
             model.customerId = customer.CUSTOMERID;
+            model.customerCode = customer.CUSTOMERCODE;
+            //model.currencyCode = scheme.currencyCode;
             model.productId = (short)scheme.PRODUCTID;
             model.companyId = user.companyId;
             model.casaAccountId = casaAccount.CASAACCOUNTID;
             model.branchId = (short)user.BranchId;
             model.productTypeId = product.PRODUCTTYPEID;
+            model.productTypeName = product.TBL_PRODUCT_TYPE.PRODUCTTYPENAME;
+            model.productName = product.PRODUCTNAME;
             model.relationshipOfficerId = customer.RELATIONSHIPOFFICERID ?? 0;
             model.relationshipManagerId = customer.RELATIONSHIPOFFICERID ?? 0;
             model.misCode = customer.MISCODE;
