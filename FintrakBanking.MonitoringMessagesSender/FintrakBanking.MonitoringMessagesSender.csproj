@@ -138,6 +138,10 @@
       <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
       <Name>FintrakBanking.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.Repositories\FintrakBanking.Repositories.csproj">
+      <Project>{2853b1d8-af5f-4691-a513-9eb63a45dd4d}</Project>
+      <Name>FintrakBanking.Repositories</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
