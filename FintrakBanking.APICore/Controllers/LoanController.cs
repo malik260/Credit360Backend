@@ -2485,7 +2485,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 {
                     bool success = true;
                     if(data.Item2 == false && isFinal) { success = false; }
-                    if (!success) { return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "bulk loan disbursement failed to uploaded." }); }
+                    if (!success) { return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Bulk loan disbursement failed to uploaded." }); }
 
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Bulk Disbursement data was successfully uploaded" });
                 }

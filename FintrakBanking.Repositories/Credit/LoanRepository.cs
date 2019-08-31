@@ -13071,7 +13071,7 @@ namespace FintrakBanking.Repositories.Credit
             }).FirstOrDefault();
         }
         
-        public Tuple<List<LoanViewModel>,bool> disburseBulkLoans(byte[] file, UserInfo user, bool isFinal)
+        public Tuple<List<multipleDisbursementOutputViewModel>,bool> disburseBulkLoans(byte[] file, UserInfo user, bool isFinal)
         {
             List<TBL_LOAN> loans = new List<TBL_LOAN>();
             List<multipleDisbursementOutputViewModel> loanInputs = GetBulkLoanInputs(file);
@@ -13109,17 +13109,24 @@ namespace FintrakBanking.Repositories.Credit
                 entry.loanApplicationDetailId = loan.loanApplicationDetailId;
                 entry.repaymentScheduleMethodName = loan.scheduleTypeName;
                 entry.tenor = loan.tenor;
-                entry.errorMessages.AddRange(loan.errorMessage);
+                entry.schemeName = scheme.SCHEMENAME;
+                entry.schemeCode = scheme.SCHEMECODE;
+                entry.repaymentScheduleMethodName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == scheme.SCHEDULEMETHODID).FirstOrDefault()?.SCHEDULETYPENAME;
+                if(loan.errorMessage != null)entry.errorMessages.AddRange(loan.errorMessage);
                 //entry.loanScheduleInput = 
 
                 inputSchedule.accrualBasis = (short)DayCountConventionEnum.Actual_Actual;
                 inputSchedule.effectiveDate = DateTime.Now;
-                inputSchedule.firstPaymentDate = loan.firstPrincipalPaymentDate ?? DateTime.Now;
-                inputSchedule.interestFirstpaymentDate = loan.firstInterestPaymentDate ?? DateTime.Now;
+                inputSchedule.principalFirstpaymentDate = loan.firstPrincipalPaymentDate ?? DateTime.Now.AddDays(2);
+                inputSchedule.interestFirstpaymentDate = loan.firstInterestPaymentDate ?? DateTime.Now.AddDays(1);
                 inputSchedule.interestFrequencyTypeId = (short)FrequencyTypeEnum.Monthly;
+                inputSchedule.interestFrequency = (short)FrequencyTypeEnum.Monthly;
+                inputSchedule.principalFrequency = (short)FrequencyTypeEnum.Monthly;
                 inputSchedule.scheduleMethodId = scheme.SCHEDULEMETHODID ?? (short)LoanScheduleTypeEnum.BallonPayment;
+                inputSchedule.principalAmount = (double)entry.loanAmount ;
+                inputSchedule.maturityDate = inputSchedule.effectiveDate.AddDays(entry.tenor);
 
-                entry.periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(inputSchedule);
+                ///entry.periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(inputSchedule);
                 //entry.loanChargeFee = 
 
                 //loanViewModels.Add(loan);
@@ -13139,7 +13146,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if(isFinal) response = context.SaveChanges() > 0;
 
-            return new Tuple<List<LoanViewModel>, bool>(loanViewModels,true);
+            return new Tuple<List<multipleDisbursementOutputViewModel>, bool>(loanInputs, true);
         }
 
         //private multipleDisbursementOutputViewModel padOutPutModel(multipleDisbursementOutputViewModel output, LoanViewModel model)
@@ -13210,7 +13217,7 @@ namespace FintrakBanking.Repositories.Credit
         private List<multipleDisbursementOutputViewModel> GetBulkLoanInputs( byte[] file)
         {
             List<multipleDisbursementOutputViewModel> bulkEntries = new List<multipleDisbursementOutputViewModel>();
-            multipleDisbursementOutputViewModel currentLine = new multipleDisbursementOutputViewModel();
+            
 
             //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
             SpreadsheetInfo.SetLicense("E1H4-YMDW-014G-BAQ5");
@@ -13226,15 +13233,17 @@ namespace FintrakBanking.Repositories.Credit
 
             for (int j = range.FirstRowIndex; j <= range.LastRowIndex; j++)
             {
+                multipleDisbursementOutputViewModel currentLine = new multipleDisbursementOutputViewModel();
+                int ctr = 0;
                 for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
                 {
                     ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
-
+                    
                     string cellName = CellRange.RowColumnToPosition(j, i);
                     string cellRow = ExcelRowCollection.RowIndexToName(j);
                     string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
                     if (Convert.ToInt32(cellRow) == 1) continue;
-
+                    ctr = Convert.ToInt32(cellRow);
                     switch (cellColumn)
                     {
                         case "A":
@@ -13262,9 +13271,8 @@ namespace FintrakBanking.Repositories.Credit
                             try { currentLine.tenor = Convert.ToInt16(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
                             break;
                     }
-
-                    bulkEntries.Add(currentLine);
                 }
+                if (ctr > 1) bulkEntries.Add(currentLine);
             };
 
             return bulkEntries;
