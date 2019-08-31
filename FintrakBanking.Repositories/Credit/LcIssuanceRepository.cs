@@ -620,6 +620,7 @@ namespace FintrakBanking.Repositories.credit
                            lcTolerancePercentage = i.LCTOLERANCEPERCENTAGE,
                            lcToleranceValue = i.LCTOLERANCEVALUE,
                            releaseAmount = r.RELEASEAMOUNT,
+                           releasedAmount = i.RELEASEDAMOUNT,
                            letterOfCreditTypeId = i.LETTEROFCREDITTYPEID,
                            isDraftRequired = i.ISDRAFTREQUIRED,
                            beneficiaryAddress = i.BENEFICIARYADDRESS,
@@ -671,6 +672,7 @@ namespace FintrakBanking.Repositories.credit
                                      lcTolerancePercentage = i.LCTOLERANCEPERCENTAGE,
                                      lcToleranceValue = i.LCTOLERANCEVALUE,
                                      releaseAmount = r.RELEASEAMOUNT,
+                                     releasedAmount = i.RELEASEDAMOUNT,
                                      letterOfCreditTypeId = i.LETTEROFCREDITTYPEID,
                                      isDraftRequired = i.ISDRAFTREQUIRED,
                                      beneficiaryAddress = i.BENEFICIARYADDRESS,
@@ -748,6 +750,7 @@ namespace FintrakBanking.Repositories.credit
                              lcIssuanceId = a.LCISSUANCEID,
                              lcReleaseAmountId = b.LCRELEASEAMOUNTID,
                              releaseAmount = (decimal)b.RELEASEAMOUNT,
+                             releasedAmount = a.RELEASEDAMOUNT,
                              isDraftRequired = a.ISDRAFTREQUIRED,
                              lcReferenceNumber = a.LCREFERENCENUMBER,
                              letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
@@ -883,6 +886,7 @@ namespace FintrakBanking.Repositories.credit
                 throw new SecureException("Release Amount cannot be greater than remainder tolerance amount " + currCode + " " + availableAmount);
             }
             lc.RELEASEDAMOUNT = totalReleasedAmount;
+            context.SaveChanges();
             return true;
         }
         #endregion RELEASEOFSHIPPINGDOCUMENTS

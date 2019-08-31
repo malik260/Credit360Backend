@@ -1621,7 +1621,7 @@ namespace FintrakBanking.ViewModels.Credit
     //    public List<string> errorMessage { get; set; }
     //}
 
-    public class multipleDisbursementOutputViewModel
+    public class multipleDisbursementOutputViewModel : GeneralEntity
     {
         public string applicationReferenceNumber { get; set; }
         public int loanApplicationDetailId { get; set; }
