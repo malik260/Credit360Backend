@@ -93,28 +93,13 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [Route("current-camsol/customer")]
         public HttpResponseMessage GetCurrentCamsolByCustomer([FromBody] List<CustomerExposure> customer)
         {
-            try
-            {
-                var data = repo.GetCurrentCamsolByCustomer(customer, token.GetCompanyId);
-                //if (!data.Any())
-                //{
-                //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                //}
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
+            var data = repo.GetCurrentCamsolByCustomer(customer, token.GetCompanyId);
+            //if (!data.Any())
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            //}
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            
         }
         [HttpGet]
         [ClaimsAuthorization]
@@ -2448,7 +2433,26 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("multiple-disbursement")]  
+        [Route("multiple-disbursement")]
+        public HttpResponseMessage disburseMultipleLoans([FromBody] List<multipleDisbursementOutputViewModel> models, UserInfo user)
+        {
+
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            
+            var data = repo.startBulkLoanDisbursement(models, user);
+            //if (!data.Any())
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            //}
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+           
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("pre-multiple-disbursement")]  
         public async Task<HttpResponseMessage> UploadBulkDisbursementData()
         {
             try
@@ -2479,7 +2483,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
                 var file = provider.Contents.FirstOrDefault();
                 var buffer = await file.ReadAsByteArrayAsync();
-                var data = repo.disburseBulkLoans(buffer, entity, isFinal);
+                var data = repo.preBulkLoanDisbursement(buffer, entity, isFinal);
                 
                 if (buffer != null)
                 {

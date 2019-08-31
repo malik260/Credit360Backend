@@ -13070,8 +13070,37 @@ namespace FintrakBanking.Repositories.Credit
 
             }).FirstOrDefault();
         }
-        
-        public Tuple<List<multipleDisbursementOutputViewModel>,bool> disburseBulkLoans(byte[] file, UserInfo user, bool isFinal)
+
+        public List<multipleDisbursementOutputViewModel> startBulkLoanDisbursement(List<multipleDisbursementOutputViewModel> models, UserInfo user)
+        {
+            List<TBL_LOAN> loanTable = new List<TBL_LOAN>();
+            foreach (var customerRequest in models)
+            {
+                if (customerRequest.passed == true && customerRequest.shouldDisburse == true)
+                {
+                    LoanViewModel loan = new LoanViewModel();
+                    var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x => x.SCHEMECODE == customerRequest.schemeCode).FirstOrDefault();
+                    loan = buildLoanModel(customerRequest, scheme, user);
+
+                    var loanData = addLoan(loan);
+                    try
+                    {
+                        loanTable.Add(loanData);
+                    }
+                    catch(Exception ex)
+                    {
+                        customerRequest.passed = false;
+                        customerRequest.errorMessages.Add("Error occured saving loan");
+                    }
+                }
+            }
+
+            context.SaveChanges();
+
+            return models;
+        }
+
+        public Tuple<List<multipleDisbursementOutputViewModel>,bool> preBulkLoanDisbursement(byte[] file, UserInfo user, bool isFinal)
         {
             List<TBL_LOAN> loans = new List<TBL_LOAN>();
             List<multipleDisbursementOutputViewModel> loanInputs = GetBulkLoanInputs(file);
@@ -13092,7 +13121,6 @@ namespace FintrakBanking.Repositories.Credit
                 var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x=> x.SCHEMECODE == entry.schemeCode).FirstOrDefault();
 
                 loan = buildLoanModel(entry, scheme,  user);
-                //entry = padOutPutModel(entry, loan);
                 entry.currencyCode = loan.currencyCode;
                 entry.productName = loan.productName;
                 entry.productId = loan.productId;
@@ -13178,6 +13206,8 @@ namespace FintrakBanking.Repositories.Credit
             if (product.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving) { operationId = (short)OperationsEnum.ForeignExchangeLoanBooking; }
 
             if(operationId == null) { model.passed = false; model.errorMessage.Add("The selected scheme facility is not a loan related"); }
+
+           // var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(scheme.LOANAPPLICATIONDETAILID);
 
             model.loanApplicationId = scheme.LOANAPPLICATIONDETAILID;
             model.customerId = customer.CUSTOMERID;
@@ -13363,8 +13393,7 @@ namespace FintrakBanking.Repositories.Credit
                 REPRICINGDURATION = entity.loanScheduleInput.repricingDuration != 0 ? entity.loanScheduleInput.repricingDuration : null,
 
             };
-            if (context.SaveChanges() > 0) { return data; }
-            else return null;
+             return data; 
         }
 
 
