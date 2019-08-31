@@ -13112,8 +13112,8 @@ namespace FintrakBanking.Repositories.Credit
                 entry.tenor = loan.tenor;
                 entry.schemeName = scheme.SCHEMENAME;
                 entry.schemeCode = scheme.SCHEMECODE;
-                entry.interestRepaymentFrequencyName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == scheme.INTERESTFREQUENCYTYPEID).FirstOrDefault()?.DESCRIPTION;
-                entry.principalRepaymentFrequencyName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == scheme.PRINCIPALFREQUENCYTYPEID).FirstOrDefault()?.DESCRIPTION;
+                entry.interestRepaymentFrequencyName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == scheme.INTERESTFREQUENCYTYPEID).FirstOrDefault()?.MODE;
+                entry.principalRepaymentFrequencyName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == scheme.PRINCIPALFREQUENCYTYPEID).FirstOrDefault()?.MODE;
                 entry.repaymentScheduleMethodName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == scheme.SCHEDULEMETHODID).FirstOrDefault()?.SCHEDULETYPENAME;
                 if(loan.errorMessage != null)entry.errorMessages.AddRange(loan.errorMessage);
                 //entry.loanScheduleInput = 
