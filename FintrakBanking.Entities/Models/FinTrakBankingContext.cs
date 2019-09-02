@@ -551,9 +551,14 @@ namespace FintrakBanking.Entities.Models
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            var databaseUsername =
-                System.Configuration.ConfigurationManager.AppSettings["BankingOracleDatabaseUsername"];
-            modelBuilder.HasDefaultSchema(databaseUsername);
+            var dbType = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["IsOracleDatabase"]);
+            if (dbType == 1)
+            {
+                var databaseUsername =
+                               System.Configuration.ConfigurationManager.AppSettings["BankingOracleDatabaseUsername"];
+                modelBuilder.HasDefaultSchema(databaseUsername);
+            }
+            
 
             modelBuilder.Entity<TBL_LC_ISSUANCE>()
                 .HasMany(e => e.TBL_LC_DOCUMENT)

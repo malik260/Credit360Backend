@@ -67,10 +67,13 @@ namespace FintrakBanking.Entities.StagingModels
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-
-            var databaseUsername = System.Configuration.ConfigurationManager.AppSettings["StagingOracleDatabaseUsername"];
-
-            modelBuilder.HasDefaultSchema(databaseUsername);
+            var dbType = Convert.ToInt32(System.Configuration.ConfigurationManager.AppSettings["IsOracleDatabase"]);
+            if (dbType == 1)
+            {
+                var databaseUsername =
+                               System.Configuration.ConfigurationManager.AppSettings["StagingOracleDatabaseUsername"];
+                modelBuilder.HasDefaultSchema(databaseUsername);
+            }            
 
             //modelBuilder.Entity<STG_BRANCH>()
             //   // .Property(e => e.ID)
