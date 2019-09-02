@@ -320,6 +320,9 @@ namespace FintrakBanking.Repositories.Risk
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
             List<RacCategoryViewModel> productRacCategories = new List<RacCategoryViewModel>();
+            int? productClassId = null;
+            var product = context.TBL_PRODUCT.Find(productId);
+            if (product != null) productClassId = product.PRODUCTCLASSID;
 
             var categoryIds = context.TBL_RAC_DEFINITION.Join(context.TBL_RAC_DETAIL.Where(x => x.TARGETID == targetId), a => a.RACDEFINITIONID, b => b.RACDEFINITIONID, (a, b) => new { a, b })
                 .Select(x => x.a.RACCATEGORYID)
