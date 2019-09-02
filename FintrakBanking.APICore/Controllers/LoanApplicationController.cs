@@ -1350,6 +1350,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-detail-by-application-reference/{searchString}")]
+        public HttpResponseMessage LoanApplicationDetailByApplicationRef(string searchString)
+        {
+            var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, searchString);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        }
 
         [HttpGet]
         [ClaimsAuthorization]
