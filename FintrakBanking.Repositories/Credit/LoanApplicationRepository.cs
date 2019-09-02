@@ -1471,6 +1471,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
+               
+            //}
             ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
@@ -1552,6 +1556,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             return returndate;
+
         }
 
         private int? GetWorkflowProductId(short productId)
@@ -1588,12 +1593,13 @@ namespace FintrakBanking.Repositories.Credit
                     defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && ids.Contains(x.RACDEFINITIONID)
                                 ).Select(x => x).FirstOrDefault();
                 }
-
+                var definition = definitions.FirstOrDefault();
                 racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                && ((definitions.FirstOrDefault().PRODUCTID == productId && x.SEARCHPLACEHOLDER =="PRODUCT") 
-                        || (definitions.FirstOrDefault().PRODUCTCLASSID == productClassId) && x.SEARCHPLACEHOLDER == "PRODUCTCLASS")
-                && x.ISRACTIERCONTROLKEY == true
-             ).Select(x => x).ToList();
+                    && (
+                        (definition.PRODUCTID == productId && x.SEARCHPLACEHOLDER == "PRODUCT")
+                        || (definition.PRODUCTCLASSID == productClassId) && (x.SEARCHPLACEHOLDER == "PRODUCTCLASS"))
+                    && x.ISRACTIERCONTROLKEY == true
+                ).ToList();
 
                 definitions = racTiers.Count() > 0 ? racTiers.Where(o => o.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList() : definitions;
             }
@@ -2998,7 +3004,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery)
         {
-            searchQuery = searchQuery.Trim().ToLower();
+            searchQuery = searchQuery?.Trim()?.ToLower();
 
             var allApplicationDetails = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
@@ -3046,7 +3052,7 @@ namespace FintrakBanking.Repositories.Credit
                                              proposedInterestRate = d.PROPOSEDINTERESTRATE,
                                              proposedProductId = d.PROPOSEDPRODUCTID,
                                              proposedProductName = d.TBL_PRODUCT.PRODUCTNAME,
-                                         }).ToList();
+                                         })?.ToList();
             return allApplicationDetails;
 
         }
