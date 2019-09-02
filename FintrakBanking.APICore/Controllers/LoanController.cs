@@ -2434,13 +2434,14 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("multiple-disbursement")]
-        public HttpResponseMessage disburseMultipleLoans([FromBody] List<multipleDisbursementOutputViewModel> models, UserInfo user)
+        public HttpResponseMessage disburseMultipleLoans([FromBody] List<multipleDisbursementOutputViewModel> models)
         {
-
+            UserInfo user = new UserInfo();
             user.staffId = token.GetStaffId;
             user.BranchId = (short)token.GetBranchId;
             user.companyId = token.GetCompanyId;
-            
+            user.createdBy = token.GetStaffId;
+
             var data = repo.startBulkLoanDisbursement(models, user);
             //if (!data.Any())
             //{

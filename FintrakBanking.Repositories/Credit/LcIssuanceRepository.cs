@@ -344,7 +344,7 @@ namespace FintrakBanking.Repositories.credit
                                 currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                                 approvalTrailId = b == null ? 0 : b.APPROVALTRAILID, // for inner sequence ordering
                                 toStaffId = b.TOSTAFFID,
-                                approvalStatusId = (short)a.APPROVALSTATUSID,
+                                approvalStatusId = b.APPROVALSTATUSID,
                                 applicationStatusId = a.APPLICATIONSTATUSID,
                                 createdBy = (int)a.CREATEDBY,
                                 operationId = operationId,
@@ -786,7 +786,7 @@ namespace FintrakBanking.Repositories.credit
                              currentApprovalLevelTypeId = c.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                              approvalTrailId = c == null ? 0 : c.APPROVALTRAILID, // for inner sequence ordering
                              toStaffId = c.TOSTAFFID,
-                             approvalStatusId = (short)a.APPROVALSTATUSID,
+                             approvalStatusId = c.APPROVALSTATUSID,
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              createdBy = (int)a.CREATEDBY,
                              customerName = a.TBL_CUSTOMER.FIRSTNAME + a.TBL_CUSTOMER.MIDDLENAME + a.TBL_CUSTOMER.LASTNAME,
