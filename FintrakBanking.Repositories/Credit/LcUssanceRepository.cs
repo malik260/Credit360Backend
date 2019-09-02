@@ -394,7 +394,7 @@ namespace FintrakBanking.Repositories.credit
                              currentApprovalLevelTypeId = ut.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                              approvalTrailId = ut == null ? 0 : ut.APPROVALTRAILID, // for inner sequence ordering
                              toStaffId = ut.TOSTAFFID,
-                             approvalStatusId = (short)u.USANCEAPPROVALSTATUSID,
+                             approvalStatusId = ut.APPROVALSTATUSID,
                              applicationStatusId = u.USANCEAPPLICATIONSTATUSID,
                              createdBy = (int)a.CREATEDBY,
                              operationId = operationId,

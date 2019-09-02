@@ -24,6 +24,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string schemeName { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int interestFrequencyTypeId { get; set; }
+        public int principalFrequencyTypeId { get; set; }
         public int scheduleDayCountConventionId { get; set; }
         // public TBL_LOAN_APPLICATION_DETAIL LOANAPPLICATIONDETAIL { get; set; }
     }

@@ -36,6 +36,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATETIMEDELETED { get; set; }
         public int SCHEDULEDAYCOUNTCONVENTIONID { get; set; }
         public int INTERESTFREQUENCYTYPEID { get; set; }
+        public int PRINCIPALFREQUENCYTYPEID { get; set; }
 
     }
 }

@@ -70,6 +70,9 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         select new BulkDisbursementSetupSchemeViewModel
                         {
                             disburseSchemeId = a.DISBURSESCHEMEID,
+                            scheduleDayCountConventionId = a.SCHEDULEDAYCOUNTCONVENTIONID,
+                            interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID,
+                            principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID,
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             schemeCode = a.SCHEMECODE,
                             productId = a.PRODUCTID,
@@ -94,6 +97,9 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         select new BulkDisbursementSetupSchemeViewModel
                         {
                             disburseSchemeId = a.DISBURSESCHEMEID,
+                            scheduleDayCountConventionId = a.SCHEDULEDAYCOUNTCONVENTIONID,
+                            interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID,
+                            principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID,
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             schemeCode = a.SCHEMECODE,
                             productId = a.PRODUCTID,
@@ -118,6 +124,9 @@ namespace FintrakBanking.Repositories.Setups.Credit
                         select new BulkDisbursementSetupSchemeViewModel
                         {
                             disburseSchemeId = a.DISBURSESCHEMEID,
+                            scheduleDayCountConventionId = a.SCHEDULEDAYCOUNTCONVENTIONID,
+                            interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID,
+                            principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID,
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             schemeCode = a.SCHEMECODE,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
@@ -162,6 +171,9 @@ namespace FintrakBanking.Repositories.Setups.Credit
             var data = new TBL_LOAN_BULK_DISBURSE_SCHEME
             {
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountConventionId,
+                INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
+                PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
                 SCHEMECODE = schemeCode, //model.schemeCode,
                 PRODUCTID = model.productId,
                 TENOR = model.tenor,
@@ -232,6 +244,9 @@ namespace FintrakBanking.Repositories.Setups.Credit
             var data = this.context.TBL_LOAN_BULK_DISBURSE_SCHEME.Find(disbursementSchemeId);
             if (data == null) return false;
             data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+            data.SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountConventionId;
+            data.INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId;
+            data.PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId;
             data.SCHEMECODE = model.schemeCode;
             data.PRODUCTID = model.productId;
             data.TENOR = model.tenor;
