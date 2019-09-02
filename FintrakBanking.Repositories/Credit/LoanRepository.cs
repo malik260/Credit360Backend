@@ -13082,7 +13082,11 @@ namespace FintrakBanking.Repositories.Credit
                     var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x => x.SCHEMECODE == customerRequest.schemeCode).FirstOrDefault();
                     loan = buildLoanModel(customerRequest, scheme, user);
 
+                    var request = addBookingRequest(customerRequest, (short)ApprovalStatusEnum.Approved,user);
+                    loan.loanBookingRequestId = request.LOAN_BOOKING_REQUESTID;
+
                     var loanData = addLoan(loan);
+
                     try
                     {
                         loanTable.Add(loanData);
@@ -13099,7 +13103,26 @@ namespace FintrakBanking.Repositories.Credit
 
             return models;
         }
+        
+        private TBL_LOAN_BOOKING_REQUEST addBookingRequest(multipleDisbursementOutputViewModel entity, short? approvalStatusid, UserInfo user)
+        {
+            var request = new TBL_LOAN_BOOKING_REQUEST
+            {
+                AMOUNT_REQUESTED = entity.loanAmount,
+                APPROVALSTATUSID = approvalStatusid == null ? (short)ApprovalStatusEnum.Pending : (short)approvalStatusid,
+                LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
+                CASAACCOUNTID = 1, //entity.casaAccountId,
+                CASAACCOUNTID2 = entity.casaAccountId2,
+                ISUSED = approvalStatusid == (short)ApprovalStatusEnum.Approved ? true : false,
+                PRODUCTID = (short)entity.productId,
+                DATETIMECREATED = DateTime.Now,
+                CREATEDBY = user.createdBy,
 
+            };
+            context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+            context.SaveChanges();
+            return request;
+        }
         public Tuple<List<multipleDisbursementOutputViewModel>,bool> preBulkLoanDisbursement(byte[] file, UserInfo user, bool isFinal)
         {
             List<TBL_LOAN> loans = new List<TBL_LOAN>();
@@ -13157,7 +13180,7 @@ namespace FintrakBanking.Repositories.Credit
                 inputSchedule.principalAmount = (double)entry.loanAmount ;
                 inputSchedule.maturityDate = inputSchedule.effectiveDate.AddDays(entry.tenor);
 
-                ///entry.periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(inputSchedule);
+               // try { entry.periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(inputSchedule); } catch(Exception ex) { entry.errorMessages.Add(ex.Message); continue; }
                 //entry.loanChargeFee = 
 
                 //loanViewModels.Add(loan);
@@ -13167,12 +13190,12 @@ namespace FintrakBanking.Repositories.Credit
                // loans.Add(loanRecord);
                 // entry.loanScheduleInput = BuildScheduleModel(loanRecord.TERMLOANID, user.createdBy);
 
-                if (isFinal && loan.passed)
-                {
+                //if (isFinal && loan.passed)
+                //{
 
-                    var loanRecord = addLoan(loan);
-                    loans.Add(loanRecord);
-                }
+                //    var loanRecord = addLoan(loan);
+                //    loans.Add(loanRecord);
+                //}
             }
 
             if(isFinal) response = context.SaveChanges() > 0;
@@ -13207,9 +13230,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if(operationId == null) { model.passed = false; model.errorMessage.Add("The selected scheme facility is not a loan related"); }
 
-           // var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(scheme.LOANAPPLICATIONDETAILID);
+            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(scheme.LOANAPPLICATIONDETAILID);
 
-            model.loanApplicationId = scheme.LOANAPPLICATIONDETAILID;
+            model.loanApplicationDetailId = scheme.LOANAPPLICATIONDETAILID;
             model.customerId = customer.CUSTOMERID;
             model.customerCode = customer.CUSTOMERCODE;
             //model.currencyCode = scheme.currencyCode;
@@ -13319,7 +13342,11 @@ namespace FintrakBanking.Repositories.Credit
 
         private TBL_LOAN addLoan(LoanViewModel entity)
         {
+            var customer = context.TBL_CUSTOMER.Find(entity.customerId);
+            var creditLine = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             var loanReferenceNumber = GenerateLoanReferenceNumber(entity.branchId, entity.productId, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+            if(entity.loanScheduleInput.scheduleMethodId == 0) { entity.loanScheduleInput.scheduleMethodId = (short)LoanScheduleTypeEnum.Annuity; }
             var data = new TBL_LOAN
             {
                 LOAN_BOOKING_REQUESTID = entity.loanBookingRequestId,
@@ -13353,8 +13380,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
                 RELATIONSHIPMANAGERID = entity.relationshipManagerId,
-                MISCODE = entity.misCode,
-                TEAMMISCODE = entity.teamMiscode,
+                MISCODE = creditLine.TBL_LOAN_APPLICATION.MISCODE,
+                TEAMMISCODE = creditLine.TBL_LOAN_APPLICATION.TEAMMISCODE,
                 INTERESTRATE = entity.interestRate,
 
                 PRINCIPALINSTALLMENTLEFT = 0,
@@ -13373,7 +13400,7 @@ namespace FintrakBanking.Repositories.Credit
                 FIXEDPRINCIPAL = false,
                 PROFILELOAN = false,
 
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
 
                 BOOKINGDATE = generalSetup.GetApplicationDate(),
                 CREATEDBY = entity.createdBy,

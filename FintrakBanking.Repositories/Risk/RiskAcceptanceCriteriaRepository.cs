@@ -57,19 +57,19 @@ namespace FintrakBanking.Repositories.Risk
             if(model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS")
             {
                 var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
-                                                                   && ((x.EMPLOYMENTTYPE == null)
-                                                                            //|| (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true)
-                                                                            //|| (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false)
-                                                                            )
+                                                                   //&& ((x.EMPLOYMENTTYPE == null)
+                                                                   //         || (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true)
+                                                                   //         || (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false)
+                                                                   //         )
                                                                   //&& x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
                                                                   && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                   && x.ISACTIVE == true && x.DELETED == false).ToList();
 
                 var racDefinitionOnProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
-                                                                    && ((x.EMPLOYMENTTYPE == null) 
-                                                                            //|| (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true) 
-                                                                            //|| (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false) 
-                                                                            )
+                                                                    //&& ((x.EMPLOYMENTTYPE == null)
+                                                                    //        || (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true)
+                                                                    //        || (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false)
+                                                                    //        )
                                                                     //&& x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
                                                                     && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                     && x.ISACTIVE == true && x.DELETED == false).ToList();
