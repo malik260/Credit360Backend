@@ -1646,7 +1646,7 @@ namespace FintrakBanking.Repositories.Credit
                         CREATEDBY = staffId,
                         DATETIMECREATED = DateTime.Now,
                     });
-
+                    
                     continue;
                 }
                
@@ -1654,6 +1654,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             context.TBL_RAC_DETAIL.AddRange(details);
+            context.SaveChanges();
 
             return 1;
 
@@ -1695,7 +1696,8 @@ namespace FintrakBanking.Repositories.Credit
 
         private List<TBL_RAC_DETAIL> saveRacoptions(List<TBL_RAC_DEFINITION> definitions, RacInformationViewModel rac,int operationId, int targetId, int staffId)
         {
-            List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
+            //FinTrakBankingContext racContext = new FinTrakBankingContext();
+           List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
             foreach(var definition in definitions)
             {
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
@@ -1707,11 +1709,15 @@ namespace FintrakBanking.Repositories.Credit
                     ACTUALVALUE = submission.value,
                     CREATEDBY = staffId,
                     DATETIMECREATED = DateTime.Now,
+
+                    //CHECKLISTSTATUS = 0,
+                    //CHECKLISTSTATUS2 = 0,
+                    //CHECKLISTSTATUS3 = 0
                 };
                 details.Add(detail);
             }
-            
 
+            var result = context.SaveChanges();
             return details;
         }
         private bool ValidRacSubmission(TBL_RAC_DEFINITION definition, string value, int operationId, int targetId)
