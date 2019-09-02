@@ -149,7 +149,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool LoanApplicationFlowChange(int loanApplicationId);
 
-        bool DeleteLoanApplicationThatFailedRAC(int loanApplicationId, int deletedBy);
+        bool DeleteLoanApplicationThatFailedRAC(int loanApplicationDetailId, int deletedBy);
 
         LoanApplicationFlowChangeViewModel GetLoanAppicationFlowChange(int id);
 
