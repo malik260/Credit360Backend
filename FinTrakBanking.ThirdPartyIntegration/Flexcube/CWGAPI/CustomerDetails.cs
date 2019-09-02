@@ -64,7 +64,7 @@
                 handler.UseDefaultCredentials = true;
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                ResponseMessageViewModel res = null;
+               // ResponseMessageViewModel res = null;
                 string responseMessage = "";
                 string responseData = "";
                 HttpClient client = new HttpClient(handler);
@@ -147,7 +147,7 @@
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
                 CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
-                ResponseMessageViewModel res = null;
+               // ResponseMessageViewModel res = null;
                 string responseMessage  = "";
                 try
                 {
@@ -269,7 +269,7 @@
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                ResponseMessageViewModel res = null;
+                //ResponseMessageViewModel res = null;
                 string responseMessage = "";
                 try
 
@@ -363,7 +363,7 @@
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                ResponseMessageViewModel res = null;
+              //  ResponseMessageViewModel res = null;
                 string responseMessage = "";
                 try
                 {
@@ -435,7 +435,7 @@
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
-                ResponseMessageViewModel res = null;
+                //ResponseMessageViewModel res = null;
                 string responseMessage = "";
                 string result = string.Empty;
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -511,7 +511,7 @@
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
                 InterestRateInquiryIntegrationViewModel accountAPI = new InterestRateInquiryIntegrationViewModel();
-                ResponseMessageViewModel res = null;
+                //ResponseMessageViewModel res = null;
                 string responseMessage = "";
                 try
                 {
