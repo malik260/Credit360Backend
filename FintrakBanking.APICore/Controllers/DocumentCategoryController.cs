@@ -98,5 +98,6 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.DeleteDocumentCategory(id,user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
+
     }
 }
