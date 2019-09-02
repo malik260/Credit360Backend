@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         public string ERRORSOURCE { get; set; }
 
         [Required]
-        [StringLength(500)]
+
         public string ERRORMESSAGE { get; set; }
 
         [Required]

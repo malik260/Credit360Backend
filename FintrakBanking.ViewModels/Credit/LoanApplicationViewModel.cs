@@ -216,6 +216,11 @@ namespace FintrakBanking.ViewModels.Credit
         public bool jumpToDrawdown { get; set; }
     }
 
+    public class RacReturnInfoViewModel
+    {
+        public int? loanApplicationId { get; set; }
+        public int? loanApplicationDetailId { get; set; }
+    }
 
     public class RacInformationViewModel
     {

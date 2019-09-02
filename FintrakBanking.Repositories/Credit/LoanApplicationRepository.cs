@@ -1488,7 +1488,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) return loan;
 
-            loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
+            loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
 
             if (loan.productClassId == (short)ProductClassEnum.Creditcards)
             {
@@ -1516,12 +1516,13 @@ namespace FintrakBanking.Repositories.Credit
                 if (loan.LoanApplicationDetail.Count > 0)
                 {
 
-                    int racReponse = AddLoanApplicationDetail(loan);
-                    if (racReponse > 1)
+                    var racReponse = AddLoanApplicationDetail(loan);
+                    if (racReponse != null)
                     {
                         LoanApplicationViewModel model = new LoanApplicationViewModel();
-                        model.loanApplicationId = racReponse;
+                        model.loanApplicationId = (int)racReponse.loanApplicationId;
                         model.failedRacStartCam = true;
+                        model.loanApplicationDetailId = (int)racReponse.loanApplicationDetailId;
 
                         return model;
                     }
@@ -1562,11 +1563,11 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        private int SaveRac(RacInformationViewModel rac, int operationId, int productId, int productClassId, int targetId, int staffId, int applicationId)
+        private RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int operationId, int productId, int productClassId, int targetId, int staffId, int applicationId)
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
-
-            if (rac.form == null) return 0;
+            var msg = new RacReturnInfoViewModel();
+            if (rac.form == null) return null;
             var ids = rac.form.Select(x => x.criteriaId);
 
             definitions = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
@@ -1615,7 +1616,9 @@ namespace FintrakBanking.Repositories.Credit
                     if(racTiers.Count() <= 0)
                     {
                         saveRacoptions(definitions, rac, operationId, targetId, staffId);
-                        return applicationId;
+                        msg.loanApplicationDetailId = targetId;
+                        msg.loanApplicationId = applicationId;
+                        return msg;
                     }
 
                     if (ctr == 0)
@@ -1630,7 +1633,9 @@ namespace FintrakBanking.Repositories.Credit
                     if ( ctr > 0)
                     {
                         saveRacoptions(definitions, rac, operationId, targetId, staffId);
-                        return applicationId;
+                        msg.loanApplicationDetailId = targetId;
+                        msg.loanApplicationId = applicationId;
+                        return msg;
                     }
 
                     ctr = ctr + 1;
@@ -1646,7 +1651,7 @@ namespace FintrakBanking.Repositories.Credit
                         CREATEDBY = staffId,
                         DATETIMECREATED = DateTime.Now,
                     });
-
+                    
                     continue;
                 }
                
@@ -1654,8 +1659,9 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             context.TBL_RAC_DETAIL.AddRange(details);
+            context.SaveChanges();
 
-            return 1;
+            return null;
 
             //foreach (var definition in definitions)
             //{
@@ -1695,7 +1701,8 @@ namespace FintrakBanking.Repositories.Credit
 
         private List<TBL_RAC_DETAIL> saveRacoptions(List<TBL_RAC_DEFINITION> definitions, RacInformationViewModel rac,int operationId, int targetId, int staffId)
         {
-            List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
+            //FinTrakBankingContext racContext = new FinTrakBankingContext();
+           List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
             foreach(var definition in definitions)
             {
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
@@ -1707,11 +1714,16 @@ namespace FintrakBanking.Repositories.Credit
                     ACTUALVALUE = submission.value,
                     CREATEDBY = staffId,
                     DATETIMECREATED = DateTime.Now,
+
+                    //CHECKLISTSTATUS = 0,
+                    //CHECKLISTSTATUS2 = 0,
+                    //CHECKLISTSTATUS3 = 0
                 };
                 details.Add(detail);
             }
-            
 
+            context.TBL_RAC_DETAIL.AddRange(details);
+            var result = context.SaveChanges();
             return details;
         }
         private bool ValidRacSubmission(TBL_RAC_DEFINITION definition, string value, int operationId, int targetId)
@@ -2174,7 +2186,7 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETL_INV.AddRange(data);
         }
 
-        private int AddLoanApplicationDetail(LoanApplicationViewModel loan)//List<LoanApplicationDetailViewModel> entity, int createdBy)
+        private RacReturnInfoViewModel AddLoanApplicationDetail(LoanApplicationViewModel loan)//List<LoanApplicationDetailViewModel> entity, int createdBy)
         {
             var createdBy = loan.createdBy;
             //foreach (var a in entity)
@@ -2272,17 +2284,16 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("No fee is defined for this product(s)");
             }
             // }
-
             response = context.SaveChanges();
 
             if (response > 0)
             {
 
-                int recResponse = SaveRac(loan.rac, (int)loan.rac.operationId, (int)loan.rac.productId, (int)loan.rac.productClassId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
-                if (recResponse > 1) return recResponse;
+                var recResponse = SaveRac(loan.rac, (int)loan.rac.operationId, (int)loan.rac.productId, (int)loan.rac.productClassId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
+                if (recResponse != null) return recResponse;
             } // todo 99999
 
-            return 1;
+            return null;
         }
 
         public LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId)
@@ -2864,7 +2875,7 @@ namespace FintrakBanking.Repositories.Credit
                         && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                         && b.STATUSID == (short)LoanApplicationDetailsStatusEnum.Pending
                         // && b.HASDONECHECKLIST == false
-                        && a.COMPANYID == companyId && a.DELETED == false
+                        && a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
                         select new LoanApplicationDetailViewModel()
                         {
                             requireCollateral = a.REQUIRECOLLATERAL,
@@ -4891,10 +4902,14 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool DeleteLoanApplicationThatFailedRAC(int loanApplicationId, int deletedBy)
+        public bool DeleteLoanApplicationThatFailedRAC(int loanApplicationDetailId, int deletedBy)
         {
-            var detail = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == loanApplicationId).Select(o => o).FirstOrDefault();
-
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == loanApplicationDetailId).Select(o => o).FirstOrDefault();
+            //if (detail == null)
+            //{
+            //    return true;
+            //}
+            //context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
             detail.DELETED = true;
             detail.DATETIMEDELETED = genSetup.GetApplicationDate();
             detail.DELETEDBY = deletedBy;
