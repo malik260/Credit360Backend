@@ -61,7 +61,7 @@ namespace FintrakBanking.Repositories.Risk
                                                                    //         || (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true)
                                                                    //         || (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false)
                                                                    //         )
-                                                                  && x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
+                                                                  //&& x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
                                                                   && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                   && x.ISACTIVE == true && x.DELETED == false).ToList();
 
@@ -70,7 +70,7 @@ namespace FintrakBanking.Repositories.Risk
                                                                     //        || (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true)
                                                                     //        || (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false)
                                                                     //        )
-                                                                    && x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
+                                                                    //&& x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
                                                                     && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                     && x.ISACTIVE == true && x.DELETED == false).ToList();
 
