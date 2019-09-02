@@ -13180,7 +13180,7 @@ namespace FintrakBanking.Repositories.Credit
                 inputSchedule.principalAmount = (double)entry.loanAmount ;
                 inputSchedule.maturityDate = inputSchedule.effectiveDate.AddDays(entry.tenor);
 
-                try { entry.periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(inputSchedule); } catch(Exception ex) { entry.errorMessages.Add(ex.Message); continue; }
+               // try { entry.periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(inputSchedule); } catch(Exception ex) { entry.errorMessages.Add(ex.Message); continue; }
                 //entry.loanChargeFee = 
 
                 //loanViewModels.Add(loan);
