@@ -43,5 +43,6 @@ namespace FintrakBanking.Interfaces.credit
         bool DeleteAtcType(int id, UserInfo user);
         IEnumerable<AtcReleaseViewModel> GetAtcLodgmentForReleaseList(int staffId);
         bool atclodgmentApproval(AtcLodgmentViewModel model);
+        bool SaveEditedATCRelease(AtcReleaseViewModel model, int id);
     }
 }

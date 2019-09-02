@@ -355,6 +355,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("save-edited-atc-release/{id}")]
+        public HttpResponseMessage SaveEditedATCRelease([FromBody] AtcReleaseViewModel model, int id)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var response = repo.SaveEditedATCRelease(model, id);
+                if(response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record has been updated Successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         #endregion
 
     }

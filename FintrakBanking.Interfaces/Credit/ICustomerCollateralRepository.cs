@@ -155,7 +155,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model);
         string GetReferenceNumber();
-        IEnumerable<CollateralViewModel> GetInsuranceRequests();
+        IEnumerable<CollateralViewModel> GetInsuranceRequests(int staffId);
         bool InsuranceRequestGoForApproval(CollateralViewModel model);
         InsurancePolicies GetInsurancePolicy(int collateralId);
         bool DeleteInsuranceRequest(int insuranceRequestId);
