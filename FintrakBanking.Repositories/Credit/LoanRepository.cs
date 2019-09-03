@@ -13071,6 +13071,41 @@ namespace FintrakBanking.Repositories.Credit
             }).FirstOrDefault();
         }
 
+        public multipleDisbursementOutputViewModel GetpendingMultipleDisbursement()
+        {
+            var data = (from b in context.TBL_LOAN_BULK_DISBURSEMENT
+                        join d in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                        join s in context.TBL_LOAN_BULK_DISBURSE_SCHEME on b.SCHEMECODE equals s.SCHEMECODE
+                        join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
+                        join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
+
+                        where b.APPROVALSTATUS == (short)ApprovalStatusEnum.Pending
+                        select new multipleDisbursementOutputViewModel
+                        {
+                            currencyCode = b.CUSTOMERCODE,
+                            productName = p.PRODUCTNAME,
+                            productId = s.PRODUCTID,
+                            productTypeName = p.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            customerId = b.CUSTOMERID,
+                            customerCode = c.CUSTOMERCODE,
+                            tenor = s.TENOR,
+                            interestRate = s.INTERESTRATE,
+                            effectiveDate = b.EFFECTIVEDATE,
+                            maturityDate = b.MATURITYDATE,
+                            schemeId = s.DISBURSESCHEMEID,
+                            loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                            schemeName = s.SCHEMENAME,
+                            schemeCode = s.SCHEMECODE,
+                            interestRepaymentFrequencyName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == s.INTERESTFREQUENCYTYPEID).FirstOrDefault().MODE,
+                            principalRepaymentFrequencyName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == s.PRINCIPALFREQUENCYTYPEID).FirstOrDefault().MODE,
+                            repaymentScheduleMethodName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == s.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
+
+                        }).FirstOrDefault();
+
+            return data;
+        }
+
+
 
         public List<multipleDisbursementOutputViewModel> startBulkLoanDisbursement(List<multipleDisbursementOutputViewModel> models, UserInfo user)
         {
@@ -13117,8 +13152,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     bulkLoanTable.Add(loanData);
                 }
-            }
-            try { context.SaveChanges(); }catch(Exception e) { throw new ConditionNotMetException(e.Message); }
+            } 
+            
             return context.SaveChanges() > 0;
         }
 
