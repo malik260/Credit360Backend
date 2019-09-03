@@ -13071,6 +13071,7 @@ namespace FintrakBanking.Repositories.Credit
             }).FirstOrDefault();
         }
 
+
         public List<multipleDisbursementOutputViewModel> startBulkLoanDisbursement(List<multipleDisbursementOutputViewModel> models, UserInfo user)
         {
             List<TBL_LOAN> loanTable = new List<TBL_LOAN>();
@@ -13082,7 +13083,7 @@ namespace FintrakBanking.Repositories.Credit
                     var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x => x.SCHEMECODE == customerRequest.schemeCode).FirstOrDefault();
                     loan = buildLoanModel(customerRequest, scheme, user);
 
-                    var request = addBookingRequest(customerRequest, (short)ApprovalStatusEnum.Approved,user);
+                    var request = addBookingRequest(customerRequest, (short)ApprovalStatusEnum.Approved, user);
                     loan.loanBookingRequestId = request.LOAN_BOOKING_REQUESTID;
 
                     var loanData = addLoan(loan);
@@ -13091,7 +13092,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         loanTable.Add(loanData);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         customerRequest.passed = false;
                         customerRequest.errorMessages.Add("Error occured saving loan");
@@ -13103,7 +13104,24 @@ namespace FintrakBanking.Repositories.Credit
 
             return models;
         }
-        
+
+        public bool saveBulkLoanDisbursementEntries(List<multipleDisbursementOutputViewModel> models, UserInfo user)
+        {
+            List<TBL_LOAN_BULK_DISBURSEMENT> bulkLoanTable = new List<TBL_LOAN_BULK_DISBURSEMENT>();
+            foreach (var customerRequest in models)
+            {
+                if (customerRequest.passed == true && customerRequest.shouldDisburse == true)
+                {
+                    var scheme = context.TBL_LOAN_BULK_DISBURSE_SCHEME.Where(x => x.SCHEMECODE == customerRequest.schemeCode).FirstOrDefault();
+                    var loanData = addBulkLoan(customerRequest);
+
+                    bulkLoanTable.Add(loanData);
+                }
+            }
+            try { context.SaveChanges(); }catch(Exception e) { throw new ConditionNotMetException(e.Message); }
+            return context.SaveChanges() > 0;
+        }
+
         private TBL_LOAN_BOOKING_REQUEST addBookingRequest(multipleDisbursementOutputViewModel entity, short? approvalStatusid, UserInfo user)
         {
             var request = new TBL_LOAN_BOOKING_REQUEST
@@ -13130,8 +13148,10 @@ namespace FintrakBanking.Repositories.Credit
             var systemData = generalSetup.GetApplicationDate();
             bool response = true;
             List<LoanViewModel> loanViewModels = new List<LoanViewModel>();
+            int ctr = 0;
             foreach (var entry in loanInputs)
             {
+                ctr = ctr + 1;
                 LoanPaymentScheduleInputViewModel inputSchedule = new LoanPaymentScheduleInputViewModel();
                 LoanViewModel loan = new LoanViewModel();
                 if (entry.passed == false)
@@ -13170,8 +13190,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 inputSchedule.accrualBasis = (short)DayCountConventionEnum.Actual_Actual;
                 inputSchedule.effectiveDate = DateTime.Now;
-                inputSchedule.principalFirstpaymentDate = loan.firstPrincipalPaymentDate ?? DateTime.Now.AddDays(2);
-                inputSchedule.interestFirstpaymentDate = loan.firstInterestPaymentDate ?? DateTime.Now.AddDays(1);
+                inputSchedule.principalFirstpaymentDate = entry.firstPrincipalPaymentDate;
+                inputSchedule.interestFirstpaymentDate = entry.firstInterestPaymentDate;
                 inputSchedule.interestFrequencyTypeId = (short)FrequencyTypeEnum.Monthly;
                 inputSchedule.interestFrequency = (short)FrequencyTypeEnum.Monthly;
                 inputSchedule.principalFrequency = (short)FrequencyTypeEnum.Monthly;
@@ -13179,14 +13199,14 @@ namespace FintrakBanking.Repositories.Credit
                 inputSchedule.principalAmount = (double)entry.loanAmount ;
                 inputSchedule.maturityDate = inputSchedule.effectiveDate.AddDays(entry.tenor);
 
-               // try { entry.periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(inputSchedule); } catch(Exception ex) { entry.errorMessages.Add(ex.Message); continue; }
+                //try { entry.periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(inputSchedule); } catch (Exception ex) { throw new ConditionNotMetException( ex.Message + "@ row " + ctr);  }
                 //entry.loanChargeFee = 
 
                 //loanViewModels.Add(loan);
-               // var loanRecord = addLoan(loan);
+                // var loanRecord = addLoan(loan);
                 //context.SaveChanges();
 
-               // loans.Add(loanRecord);
+                // loans.Add(loanRecord);
                 // entry.loanScheduleInput = BuildScheduleModel(loanRecord.TERMLOANID, user.createdBy);
 
                 //if (isFinal && loan.passed)
@@ -13323,11 +13343,29 @@ namespace FintrakBanking.Repositories.Credit
                             break;
                         case "E":
                             currentLine.passed = true;
-                            try { currentLine.loanAmount = Convert.ToDecimal(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            try
+                            {
+                                string value = Convert.ToString(cell.Value);
+                                var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE.ToLower() == value.ToLower()).FirstOrDefault();
+                                currentLine.currencyId = currency == null ? 1 : currency.CURRENCYID;
+                            }
+                            catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
                             break;
                         case "F":
                             currentLine.passed = true;
+                            try { currentLine.loanAmount = Convert.ToDecimal(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            break;
+                        case "G":
+                            currentLine.passed = true;
                             try { currentLine.tenor = Convert.ToInt16(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            break;
+                        case "H":
+                            currentLine.passed = true;
+                            try { currentLine.firstPrincipalPaymentDate = Convert.ToDateTime(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
+                            break;
+                        case "I":
+                            currentLine.passed = true;
+                            try { currentLine.firstInterestPaymentDate = Convert.ToDateTime(cell.Value); } catch (Exception e) { currentLine.passed = false; currentLine.errorMessages.Add(e.Message); }
                             break;
                     }
                 }
@@ -13420,6 +13458,36 @@ namespace FintrakBanking.Repositories.Credit
 
             };
              return data; 
+        }
+
+        private TBL_LOAN_BULK_DISBURSEMENT addBulkLoan(multipleDisbursementOutputViewModel entity)
+        {
+            var customer = context.TBL_CUSTOMER.Find(entity.customerId);
+            var creditLine = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
+            //var loanReferenceNumber = GenerateLoanReferenceNumber(entity.branchId, entity.productId, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+            //if (entity.loanScheduleInput.scheduleMethodId == 0) { entity.loanScheduleInput.scheduleMethodId = (short)LoanScheduleTypeEnum.Annuity; }
+            var data = new TBL_LOAN_BULK_DISBURSEMENT
+            {
+                LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
+                CURRENCYID = (short)entity.currencyId,
+                CUSTOMERID = entity.customerId,
+                CASAACCOUNTID = entity.casaAccountId,
+                CASAACCOUNTID2 = entity.casaAccountId2,
+                INTERESTRATE = entity.interestRate,
+                EFFECTIVEDATE = entity.effectiveDate,
+                MATURITYDATE = entity.maturityDate,
+                CUSTOMERCODE = entity.customerCode,
+                INTERESTPAYMENTFREQUENCYID = entity.interestRepaymentFrequencyId,
+                PRINCIPALPAYMENTFREQUENCYID = entity.principalRepaymentFrequencyId,
+                LOANAMOUNT = (double)entity.loanAmount,
+                SCHEMEID = entity.schemeId,
+                SCHEMECODE = entity.schemeCode,
+                SHOULDDISBURSE = entity.shouldDisburse,
+                TENOR = entity.tenor,
+                APPROVALSTATUS = (short)ApprovalStatusEnum.Pending
+            };
+            return data;
         }
 
 
