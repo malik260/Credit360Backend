@@ -93,6 +93,6 @@ namespace FintrakBanking.Interfaces.Credit
         WorkflowResponse GetWorkflowNextStatusLms(ForwardReviewViewModel model);
 
         IEnumerable<MonitoringTriggersViewModel> GetApplicationMonitoringTriggersByOperationId(int operationId, int applicationDetailId);
-
+        LoanApplicationDetailsViewModel GetLoanApplicationDetailByRefNo(string applicationReferenceNumber);
     }
 }
