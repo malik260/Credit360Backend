@@ -129,7 +129,7 @@ namespace FintrakBanking.Repositories.Credit
                          join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
                          where dr.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                          && atrail.RESPONSESTAFFID == null
-                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                         && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                          && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
                          select new OriginalDocumentReleaseViewModel
                          {

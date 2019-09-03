@@ -44,5 +44,6 @@ namespace FintrakBanking.Interfaces.credit
         IEnumerable<AtcReleaseViewModel> GetAtcLodgmentForReleaseList(int staffId);
         bool atclodgmentApproval(AtcLodgmentViewModel model);
         bool SaveEditedATCRelease(AtcReleaseViewModel model, int id);
+        IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentsByCustomerId(int customerId);
     }
 }

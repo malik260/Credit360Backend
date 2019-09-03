@@ -1777,7 +1777,7 @@ namespace FintrakBanking.Repositories.Credit
                                    facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(o => o.APPROVEDAMOUNT).Sum(),
                                    approvalStatusId = x.APPROVALSTATUSID,
 
-                               }).ToList();
+                               })?.ToList();
 
 
             if (collaterals == null) return new List<CollateralCoverageViewModel>();
@@ -2408,7 +2408,7 @@ namespace FintrakBanking.Repositories.Credit
                              join b in context.TBL_COLLATERAL_TYPE_SUB on s.COLLATERALSUBTYPEID equals b.COLLATERALSUBTYPEID
                              where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                                      && atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
-                                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                                     && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                                      // && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                                      && atrail.RESPONSESTAFFID == null
                              select new InsurancePolicies
