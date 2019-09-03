@@ -118,6 +118,7 @@ namespace FintrakBanking.Repositories.Credit
                              dateTimeCreated = (DateTime)a.DATEACTEDON,
                              customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
                              requestRef = a.REQUESTREF,
+                             loanBalance = a.LOANBALANCE,
                              //accountNumber = context.TBL_CASA.Where(O => O.CUSTOMERID == a.CUSTOMERID).Select(O => O.OLDPRODUCTACCOUNTNUMBER1).FirstOrDefault(),
                          }).ToList();
 
@@ -144,6 +145,7 @@ namespace FintrakBanking.Repositories.Credit
                 comment = entity.COMMENTS,
                 customerName = entity.TBL_CUSTOMER.FIRSTNAME + entity.TBL_CUSTOMER.LASTNAME,
                 requestRef = entity.REQUESTREF,
+                loanBalance = entity.LOANBALANCE,
             };
         }
 
@@ -158,6 +160,7 @@ namespace FintrakBanking.Repositories.Credit
                 ASATDATE = model.asAtDate,
                 COMMENTS = model.comment,
                 REQUESTREF = referenceNumber,
+                LOANBALANCE = model.loanBalance,
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = DateTime.Now,
@@ -286,15 +289,16 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal debtAmount = 0;
             var reference = "ABP/ROG/OA/BO/03/2016/0061";
-            var asAtDate = model.asAtDate;
+            var asAtDate = model.asAtDate.ToString("dd MMM yyyy");
             var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault().ADDRESS;
             var customerCode = model.customerCode;
             var fullName = model.customerName;
             //var accountNumber = model.accountNumber;
             var accountNumber = "0";
+            debtAmount = model.loanBalance.Value;
 
             if (camsol != null) {
-                debtAmount = camsol.BALANCE;
+                //debtAmount = camsol.BALANCE;
                 accountNumber = camsol.ACCOUNTNUMBER;
             }
 
@@ -303,7 +307,7 @@ namespace FintrakBanking.Repositories.Credit
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +
                 $"<p><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
-                $"<p>We hereby confirm that <b>{fullName}</b>, with account number {accountNumber} is indebted to our Bank as at {asAtDate}, to the tune of N{debtAmount}.</p> " +
+                $"<p>We hereby confirm that <b>{fullName}</b>, with account number {accountNumber} is indebted to our Bank as at {asAtDate}, to the tune of N {debtAmount.ToString("#,##")}.</p> " +
                 $"<p>Please note that interest will continue to accrue on the above amount on a daily basis until the facility is fully liquidated.</p> " +
                 $"<p><b>This report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
                 $"<p>Thank you.</p> " +
@@ -323,7 +327,7 @@ namespace FintrakBanking.Repositories.Credit
             var camsol = context.TBL_LOAN_CAMSOL.Where(O => O.CUSTOMERNAME.Contains(model.customerName.ToUpper()) || model.customerName.ToUpper().Contains(O.CUSTOMERNAME)).FirstOrDefault();
 
             var reference = "ABP/ROG/OA/BO/03/2016/0061";
-            var asAtDate = model.asAtDate;
+            var asAtDate = model.asAtDate.ToString("dd MMM yyyy");
             var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault().ADDRESS;
             var fullName = model.customerName;
             var accountNumber = "0";

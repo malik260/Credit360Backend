@@ -1777,7 +1777,7 @@ namespace FintrakBanking.Repositories.Credit
                                    facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(o => o.APPROVEDAMOUNT).Sum(),
                                    approvalStatusId = x.APPROVALSTATUSID,
 
-                               }).ToList();
+                               })?.ToList();
 
 
             if (collaterals == null) return new List<CollateralCoverageViewModel>();
