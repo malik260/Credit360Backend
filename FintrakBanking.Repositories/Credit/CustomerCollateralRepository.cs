@@ -1770,7 +1770,7 @@ namespace FintrakBanking.Repositories.Credit
                 list.Add(cov);
 
             }
-            return list;
+            return list.GroupBy(x=>x.loanApplicationDetailId).Select(x => x.First());
 
         }
 
@@ -4220,7 +4220,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool IsCollateralMapped(ApplicationCollateralMapping entity)
         {
-            return context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.COLLATERALCUSTOMERID == entity.collateralId).Any();
+            return context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.COLLATERALCUSTOMERID == entity.collateralId && c.APPROVALSTATUSID==(int)ApprovalStatusEnum.Approved).Any();
         }
         public IEnumerable<LoanApplicationCollateralViewModel> UnmapApplicationCollateral(ApplicationCollateralMapping entity)
         {

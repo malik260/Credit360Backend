@@ -1936,6 +1936,20 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         }
 
+        [HttpGet]
+        [Route("loan-application-detail")]
+        public HttpResponseMessage GetApprovedLoanApplicationsDetail()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var response = repo.GetAvailedLoanApplicationsReadyForBooking(token.GetCompanyId, token.GetStaffId);
+            if (!response.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+
+        }
 
 
         [HttpGet]
@@ -2433,6 +2447,30 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("bulk-loan-entries")]
+        public HttpResponseMessage saveBulkLoanDisbursementEntries([FromBody] List<multipleDisbursementOutputViewModel> models)
+        {
+            UserInfo user = new UserInfo();
+            user.BranchId = (short)token.GetBranchId;
+            user.applicationUrl = HttpContext.Current.Request.Path;
+            user.createdBy = token.GetStaffId;
+            user.companyId = token.GetCompanyId;
+
+            var data = repo.saveBulkLoanDisbursementEntries(models,user);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Bulk loan was successfully submitted for disbursement approval" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving bulk loan for disbursement approval was unsuccessfully" });
+
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("multiple-disbursement")]
         public HttpResponseMessage disburseMultipleLoans([FromBody] List<multipleDisbursementOutputViewModel> models)
         {
@@ -2450,6 +2488,17 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
            
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("saved-multiple-disbursement")]
+        public HttpResponseMessage GetpendingMultipleDisbursement(int loanId)
+        {
+            var response = repo.GetpendingMultipleDisbursement();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+        
 
         [HttpPost]
         [ClaimsAuthorization]

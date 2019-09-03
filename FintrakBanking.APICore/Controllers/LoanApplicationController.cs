@@ -1285,7 +1285,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, model.searchString);
+                var response = repo.GetLoanApplicationDetailsByReference(model.searchString, token.GetCompanyId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
             }
@@ -1350,6 +1350,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("loan-detail-by-application-reference/{searchString}")]
+        //public HttpResponseMessage LoanApplicationDetailByApplicationRef(string searchString)
+        //{
+        //    var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, searchString);
+
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //}
 
         [HttpGet]
         [ClaimsAuthorization]

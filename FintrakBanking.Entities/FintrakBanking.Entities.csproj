@@ -131,6 +131,7 @@
     <Compile Include="Models\TBL_LC_USSANCE.cs" />
     <Compile Include="Models\TBL_LETTER_GENERATION_REQUEST.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATN_FLOW_CHANGE.cs" />
+    <Compile Include="Models\TBL_LOAN_BULK_DISBURSEMENT.cs" />
     <Compile Include="Models\TBL_LOAN_BULK_DISBURSE_SCHEME.cs" />
     <Compile Include="Models\TBL_LOAN_RECOVERY_PAYMENT.cs" />
     <Compile Include="Models\TBL_ORIGINAL_DOCUMENT_APPROVAL.cs" />
