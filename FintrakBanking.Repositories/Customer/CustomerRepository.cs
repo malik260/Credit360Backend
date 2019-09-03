@@ -2840,8 +2840,8 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
-                    DETAIL = "Updated TBL_CUSTOMER: " + entity.customerName + " with code: " + entity.customerCode +
-                             " on" + " (" + entity.customerId + ") ",
+                    DETAIL = "The Customer " + entity.customerName + " with code: " + entity.customerCode +
+                             " on" + " (" + entity.customerId + ")  Has Been Updated",
                     IPADDRESS = entity.userIPAddress,
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
