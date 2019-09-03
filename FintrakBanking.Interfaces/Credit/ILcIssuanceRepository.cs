@@ -17,11 +17,11 @@ namespace FintrakBanking.Interfaces.credit
 
         IEnumerable<LcIssuanceViewModel> GetLcIssuance(int id);
 
-        IEnumerable<LcIssuanceViewModel> GetLcIssuances();
+        IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuances(int staffId);
 
         IEnumerable<CamProcessedLoanViewModel> GetIFFLinesForLCByCustomerId(int CustomerId, int companyId, int staffId, int branchId);
 
-        IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForRelease();
+        IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForRelease(int staffId);
 
         LcReleaseAmountViewModel AddLCReleaseAmount(LcReleaseAmountViewModel entity);
 

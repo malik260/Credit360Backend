@@ -26,7 +26,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int? operationId { get; set; }
         public bool requireCollateral { get; set; }
         public DateTime? newApplicationDate { get; set; }
-        
+        public decimal? loansWithOthers { get; set; }
+        public string ownershipStructure { get; set; }
+
+
         public short? branchId { get; set; }
         public short? productClassId { get; set; }
         public string productClassName { get; set; }
@@ -213,6 +216,11 @@ namespace FintrakBanking.ViewModels.Credit
         public bool jumpToDrawdown { get; set; }
     }
 
+    public class RacReturnInfoViewModel
+    {
+        public int? loanApplicationId { get; set; }
+        public int? loanApplicationDetailId { get; set; }
+    }
 
     public class RacInformationViewModel
     {
@@ -221,6 +229,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? targetId { get; set; }
         public int? checklistStatus { get; set; }
         public int? productId { get; set; }
+        public int? productClassId { get; set; }
     }
     public class RacFormControlValue
     {
@@ -297,6 +306,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public string branchName { get; set; }
         public string customerGroupName { get; set; }
+        public bool? isTakeOverApplication { get; set; }
 
         public string customerType { get; set; }
         public string customerAccountNumber { get; set; }
@@ -513,6 +523,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
     }
+   
 
     public class CommitteFilterViewModel
     {

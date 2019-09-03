@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
@@ -196,7 +197,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         void DisburseLoan(LoanViewModel entity, TwoFactorAutheticationViewModel twoFactorAuthDetails = null);
 
-        IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId);
+        IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId, bool isInitiation);
 
         //int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
         WorkflowResponse GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
@@ -239,6 +240,9 @@ namespace FintrakBanking.Interfaces.Credit
 
         AccountBalanceViewModel GetLoanBalances(int loanId, int companyId);
 
+        Tuple<List<multipleDisbursementOutputViewModel>, bool> preBulkLoanDisbursement(byte[] file, UserInfo user, bool isFinal);
+
+        List<multipleDisbursementOutputViewModel> startBulkLoanDisbursement(List<multipleDisbursementOutputViewModel> models, UserInfo user);
 
     }
 }

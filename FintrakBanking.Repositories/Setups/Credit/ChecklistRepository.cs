@@ -1818,18 +1818,18 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.ExternalInitialization = true;
                         workflow.LogActivity();
                     }
-                    if (workflow.StatusId == (int)ApprovalStatusEnum.Pending)
-                    {
                         data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    if (workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                        {
+                            data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        }
+                        if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
+                        {
+                            data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                        }
                     }
-                    //if (workflow.NewState == (int)ApprovalState.Ended)
-                    //{
-                    //    if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
-                    //    {
-                    //        data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                    //    }
-                    //    data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                    //}
                     trans.Commit();
                 }
             }
@@ -2276,7 +2276,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
             if (data == null) return false;
-            data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+            data.APPROVALSTATUSID =  (short)ApprovalStatusEnum.Approved ; 
             if (data.CHECKLISTSTATUSID != null)
             {
                 data.CHECKLISTSTATUSID = (int)CheckListStatusEnum.Provided;

@@ -2116,7 +2116,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetInsuranceRequests();
+                var response = repo.GetInsuranceRequests(token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
@@ -2177,6 +2177,17 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage DeleteCollateralCoverage(int collateralCoverageId)
         {
             var response = repo.DeleteCollateralCoverage(collateralCoverageId, token.GetStaffId);
+            if (response)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpPost, Route("delete-proposed-collateral-coverage")]
+        public HttpResponseMessage DeleteProposedCollateral(CollateralCoverageViewModel model)
+        {
+            var response = repo.DeleteProposedCollateral(model);
             if (response)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });

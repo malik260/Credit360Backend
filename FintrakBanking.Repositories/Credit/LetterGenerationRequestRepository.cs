@@ -115,7 +115,11 @@ namespace FintrakBanking.Repositories.Credit
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              createdBy = (int)a.CREATEDBY,
                              operationId = operationId,
-                             dateTimeCreated = (DateTime)a.DATEACTEDON
+                             dateTimeCreated = (DateTime)a.DATEACTEDON,
+                             customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                             requestRef = a.REQUESTREF,
+                             loanBalance = a.LOANBALANCE,
+                             //accountNumber = context.TBL_CASA.Where(O => O.CUSTOMERID == a.CUSTOMERID).Select(O => O.OLDPRODUCTACCOUNTNUMBER1).FirstOrDefault(),
                          }).ToList();
 
             applications = query.AsQueryable()
@@ -139,7 +143,9 @@ namespace FintrakBanking.Repositories.Credit
                 requestType = entity.REQUESTTYPE,
                 asAtDate = entity.ASATDATE,
                 comment = entity.COMMENTS,
-                customerName = entity.TBL_CUSTOMER.FIRSTNAME + entity.TBL_CUSTOMER.LASTNAME
+                customerName = entity.TBL_CUSTOMER.FIRSTNAME + entity.TBL_CUSTOMER.LASTNAME,
+                requestRef = entity.REQUESTREF,
+                loanBalance = entity.LOANBALANCE,
             };
         }
 
@@ -154,6 +160,7 @@ namespace FintrakBanking.Repositories.Credit
                 ASATDATE = model.asAtDate,
                 COMMENTS = model.comment,
                 REQUESTREF = referenceNumber,
+                LOANBALANCE = model.loanBalance,
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = DateTime.Now,
@@ -239,8 +246,143 @@ namespace FintrakBanking.Repositories.Credit
             // Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
-        }        
+        }
 
+
+        public List<CamsolLoanDocumentViewModel> GetCamsolLoansByCustomerCode(string customerName, string customerCode)
+        {
+            var data = from O in context.TBL_LOAN_CAMSOL
+                       join C in context.TBL_LOAN_CAMSOL_TYPE on O.CAMSOLTYPEID equals C.CAMSOLTYPEID
+                       where O.CUSTOMERNAME.Contains(customerName.ToUpper()) || O.CUSTOMERCODE == customerCode
+                       orderby O.LOAN_CAMSOLID descending
+                       select new CamsolLoanDocumentViewModel
+                       {
+                           customerCode = O.CUSTOMERCODE,
+                           customerName = O.CUSTOMERNAME,
+                           accountNumber = O.ACCOUNTNUMBER,
+                           balance = O.BALANCE,
+                           camsolTypeName = C.CAMSOLTYPENAME
+                       };
+            return data.ToList();
+        }
+
+        public string GetCamsolLoanDocument(int typeId, LetterGenerationRequestViewModel model)
+        {
+            if (typeId == 1) {
+                return GetLetterOfIndebtedness(model);
+            }
+            else if (typeId == 2) {
+                return GetLetterOfNonIndebtedness(model);
+            }
+            else {
+                return GetAuditorEnquiryHtml(new List<CamsolLoanDocumentViewModel>());
+            }
+        }
+
+        public string GetLetterOfIndebtedness(LetterGenerationRequestViewModel model)
+        {
+            if (model == null) {
+                return "";
+            }
+
+            var camsol = context.TBL_LOAN_CAMSOL.Where(O => O.CUSTOMERNAME.Contains(model.customerName.ToUpper()) || model.customerName.ToUpper().Contains(O.CUSTOMERNAME)).FirstOrDefault();
+
+            decimal debtAmount = 0;
+            var reference = "ABP/ROG/OA/BO/03/2016/0061";
+            var asAtDate = model.asAtDate.ToString("dd MMM yyyy");
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault().ADDRESS;
+            var customerCode = model.customerCode;
+            var fullName = model.customerName;
+            //var accountNumber = model.accountNumber;
+            var accountNumber = "0";
+            debtAmount = model.loanBalance.Value;
+
+            if (camsol != null) {
+                //debtAmount = camsol.BALANCE;
+                accountNumber = camsol.ACCOUNTNUMBER;
+            }
+
+            string result = $"<p><b>REF: {model.requestRef}</b></p> " +
+                $"<p><b>{asAtDate}.</b></p> " +
+                $"<p><b>{fullName},</b> <br/> {address} </p> " +
+                $"<p><b>Dear Sir/Ma,</b></p> " +
+                $"<p><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
+                $"<p>We hereby confirm that <b>{fullName}</b>, with account number {accountNumber} is indebted to our Bank as at {asAtDate}, to the tune of N {debtAmount.ToString("#,##")}.</p> " +
+                $"<p>Please note that interest will continue to accrue on the above amount on a daily basis until the facility is fully liquidated.</p> " +
+                $"<p><b>This report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
+                $"<p>Thank you.</p> " +
+                $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
+                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
+                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p>";
+
+            return result;
+        }
+
+        public string GetLetterOfNonIndebtedness(LetterGenerationRequestViewModel model)
+        {
+            if (model == null) {
+                return "";
+            }
+
+            var camsol = context.TBL_LOAN_CAMSOL.Where(O => O.CUSTOMERNAME.Contains(model.customerName.ToUpper()) || model.customerName.ToUpper().Contains(O.CUSTOMERNAME)).FirstOrDefault();
+
+            var reference = "ABP/ROG/OA/BO/03/2016/0061";
+            var asAtDate = model.asAtDate.ToString("dd MMM yyyy");
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault().ADDRESS;
+            var fullName = model.customerName;
+            var accountNumber = "0";
+
+            if (camsol != null) {
+                accountNumber = camsol.ACCOUNTNUMBER;
+            }
+
+            string result = $"<p><b>REF: {model.requestRef}</b></p> " +
+                $"<p><b>{asAtDate}.</b></p> " +
+                $"<p><b>{fullName},</b> <br/> {address} </p> " +
+                $"<p><b>Dear Sir/Ma,</b></p> " +
+                $"<p><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
+                $"<p>We hereby confirm that {fullName}, is not indebted to our Bank as at {asAtDate}.</p> " +
+                $"<p><b>Please note that this report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
+                $"<p>Thank you.</p> " +
+                $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
+                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
+                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p>";
+
+            return result;
+        }
+
+        public string GetAuditorEnquiryHtml(List<CamsolLoanDocumentViewModel> list)
+        {
+            var n = 0;
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=750 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Loan Amount (N)</b></th>
+                        <th><b>Outstanding Amount (N)</b></th>
+                        <th><b>Rate</b></th>
+                        <th><b>Value Date</b></th>
+                        <th><b>Maturity Date</b></th>
+                    </tr>";
+
+            foreach (var item in list)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{item.accountNumber}</td>
+                        <td>{item.balance}</td>'
+                        <td>{item.camsolTypeName}</td>
+                        <td>{item.customerCode}</td>
+                        <td>{item.customerName}</td>
+                        <td>{item.customerName}</td>
+                    </tr>";
+            }
+
+            result = result + $"</table>";
+            return result;
+        }
     }
 }
 

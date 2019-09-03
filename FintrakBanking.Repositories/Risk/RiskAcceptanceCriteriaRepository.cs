@@ -48,6 +48,7 @@ namespace FintrakBanking.Repositories.Risk
             bool isSelfemployed = false;
             var employmentTypeRecord = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(x => x.CUSTOMERID == model.customerId && x.ACTIVE == true).FirstOrDefault();
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerId ).FirstOrDefault();
+            int? customerTypeId = customer != null ? customer.CUSTOMERTYPEID : null;
 
             if (employmentTypeRecord != null)
             {
@@ -58,19 +59,19 @@ namespace FintrakBanking.Repositories.Risk
             {
                 var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT"
                                                                    && ((x.EMPLOYMENTTYPE == null)
-                                                                            //|| (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true)
-                                                                            //|| (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false)
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true)
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false)
                                                                             )
-                                                                  //&& x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
+                                                                  && x.CUSTOMERTYPEID == customerTypeId
                                                                   && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                   && x.ISACTIVE == true && x.DELETED == false).ToList();
 
                 var racDefinitionOnProductClass = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"
-                                                                    && ((x.EMPLOYMENTTYPE == null) 
-                                                                            //|| (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true) 
-                                                                            //|| (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false) 
+                                                                    && ((x.EMPLOYMENTTYPE == null)
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYER" && isSelfemployed == true)
+                                                                            || (x.EMPLOYMENTTYPE == "EMPLOYEE" && isSelfemployed == false)
                                                                             )
-                                                                    //&& x.CUSTOMERTYPEID == customer.CUSTOMERTYPEID
+                                                                    && x.CUSTOMERTYPEID == customerTypeId
                                                                     && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                     && x.ISACTIVE == true && x.DELETED == false).ToList();
 
@@ -320,6 +321,9 @@ namespace FintrakBanking.Repositories.Risk
             RiskAcceptanceCriteriaViewModel rac = new RiskAcceptanceCriteriaViewModel();
             List<ProductRacCategory> productCategories = new List<ProductRacCategory>();
             List<RacCategoryViewModel> productRacCategories = new List<RacCategoryViewModel>();
+            int? productClassId = null;
+            var product = context.TBL_PRODUCT.Find(productId);
+            if (product != null) productClassId = product.PRODUCTCLASSID;
 
             var categoryIds = context.TBL_RAC_DEFINITION.Join(context.TBL_RAC_DETAIL.Where(x => x.TARGETID == targetId), a => a.RACDEFINITIONID, b => b.RACDEFINITIONID, (a, b) => new { a, b })
                 .Select(x => x.a.RACCATEGORYID)
@@ -594,7 +598,7 @@ namespace FintrakBanking.Repositories.Risk
                     approvalLevelId = x.APPROVALLEVELID,
                     roleId = x.ROLEID,
                     isRacTierControlKey= x.ISRACTIERCONTROLKEY,
-                    racCategoryType = context.TBL_RAC_CATEGORY_TYPE.Where(o => o.RACCATEGORYTYPEID == x.RACCATEGORYTYPEID).Select(o => o.RACCATEGORYTYPE).FirstOrDefault(),
+                    racCategoryType = context.TBL_RAC_CATEGORY_TYPE.Where(o => o.RACCATEGORYTYPEID == x.RACCATEGORYTYPEID).Select(o => o.RACCATEGORYTYPE).FirstOrDefault() ?? "N/A",
                     productName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == x.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault() ?? "N/A",
                     productClassName = context.TBL_PRODUCT_CLASS.Where(o => o.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(o => o.PRODUCTCLASSNAME).FirstOrDefault() ?? "N/A",
                     CategoryName = context.TBL_RAC_CATEGORY.Where(o => o.RACCATEGORYID == x.RACCATEGORYID).Select(o => o.CATEGORYNAME).FirstOrDefault(),

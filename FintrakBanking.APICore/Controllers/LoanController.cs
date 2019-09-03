@@ -19,6 +19,8 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Extensions;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
+using System.Text;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -91,28 +93,13 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [Route("current-camsol/customer")]
         public HttpResponseMessage GetCurrentCamsolByCustomer([FromBody] List<CustomerExposure> customer)
         {
-            try
-            {
-                var data = repo.GetCurrentCamsolByCustomer(customer, token.GetCompanyId);
-                //if (!data.Any())
-                //{
-                //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                //}
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
+            var data = repo.GetCurrentCamsolByCustomer(customer, token.GetCompanyId);
+            //if (!data.Any())
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            //}
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            
         }
         [HttpGet]
         [ClaimsAuthorization]
@@ -814,7 +801,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+                var data = repo.GetBookingRequestAwaitingApproval(token.GetStaffId, token.GetCompanyId, false);
 
                 if (data.Any() == false)
                 {
@@ -1949,6 +1936,20 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         }
 
+        [HttpGet]
+        [Route("loan-application-detail")]
+        public HttpResponseMessage GetApprovedLoanApplicationsDetail()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var response = repo.GetAvailedLoanApplicationsReadyForBooking(token.GetCompanyId, token.GetStaffId);
+            if (!response.Any())
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+
+        }
 
 
         [HttpGet]
@@ -2443,5 +2444,80 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("multiple-disbursement")]
+        public HttpResponseMessage disburseMultipleLoans([FromBody] List<multipleDisbursementOutputViewModel> models)
+        {
+            UserInfo user = new UserInfo();
+            user.staffId = token.GetStaffId;
+            user.BranchId = (short)token.GetBranchId;
+            user.companyId = token.GetCompanyId;
+            user.createdBy = token.GetStaffId;
+
+            var data = repo.startBulkLoanDisbursement(models, user);
+            //if (!data.Any())
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            //}
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+           
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("pre-multiple-disbursement")]  
+        public async Task<HttpResponseMessage> UploadBulkDisbursementData()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+
+                var isFinal = Convert.ToBoolean(provider.FormData["isFinal"]);
+
+                var entity = new UserInfo 
+                {
+                     BranchId = (short)token.GetBranchId,
+                     companyId = token.GetCompanyId,
+                     createdBy = token.GetStaffId,
+                     applicationUrl = HttpContext.Current.Request.Path,
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = repo.preBulkLoanDisbursement(buffer, entity, isFinal);
+                
+                if (buffer != null)
+                {
+                    bool success = true;
+                    if(data.Item2 == false && isFinal) { success = false; }
+                    if (!success) { return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Bulk loan disbursement failed to uploaded." }); }
+
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = success, result = data.Item1, message = "Bulk Disbursement data was successfully uploaded" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading Bulk Disbursement data" });
+            }
+            catch (SecureException ex)
+            {
+               // errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " + ex.Message });
+            }
+        }
+
     }
 }

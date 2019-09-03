@@ -879,7 +879,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                     if (branchId == null) branchId = appl.BRANCHID;
                     if (customerId == null) customerId = appl.CUSTOMERID;
                     if (customerGroupId == null) customerGroupId = appl.CUSTOMERGROUPID;
-                    if (sectorId == null) sectorId = appl.TBL_CUSTOMER.SUBSECTORID;
+                    if (sectorId == null) sectorId = appl.TBL_CUSTOMER?.SUBSECTORID;
                     if (staffId == null) staffId = appl.RELATIONSHIPOFFICERID;
                 }
             }

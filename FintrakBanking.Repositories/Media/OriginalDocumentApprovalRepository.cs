@@ -277,7 +277,38 @@ namespace FintrakBanking.Repositories.Media
 
                           }).OrderByDescending(o => o.originalDocumentApprovalId).ToList();
 
-            var model = model1.Union(model2).ToList();
+            var model3 = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+                          join cc in context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                          join c in context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
+                          join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+                          where oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
+                          && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
+                          && atrail.RESPONSESTAFFID == null
+                          select new OriginalDocumentApprovalViewModel
+                          {
+                              originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
+                              description = oda.DESCRIPTION,
+                              loanApplicationId = oda.LOANAPPLICATIONID,
+                              collateralType = context.TBL_COLLATERAL_TYPE.Where(a => a.COLLATERALTYPEID == cc.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
+                              collateralTypeId = cc.COLLATERALTYPEID,
+                              customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+                              collateralCode = cc.COLLATERALCODE,
+                              referenceNumber = oda.REFERENCENUMBER,
+                              applicationReferenceNumber = oda.APPLICATIONREFERNECENUMBER,
+                              dateTimeCreated = oda.DATETIMECREATED,
+                              collateralCustomerId = cc.COLLATERALCUSTOMERID,
+                              customerId = c.CUSTOMERID,
+                              branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                              operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                              approvalStatusId = atrail.APPROVALSTATUSID,
+                              approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
+                              //relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == c.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                             // atInitiator = staffId == context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID == oda.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
+
+
+                          }).OrderByDescending(o => o.originalDocumentApprovalId).ToList();
+
+            var model = (model1.Union(model2)).Union(model3).ToList();
 
             return model;
         }
@@ -539,7 +570,7 @@ namespace FintrakBanking.Repositories.Media
                         dateTimeCreated = x.DATETIMECREATED,
                         customerName = l.LASTNAME + " " + l.FIRSTNAME + " " + l.MIDDLENAME,
                         customerCode = l.CUSTOMERCODE,
-                        customerId = c.CUSTOMERID,
+                        customerId = c.CUSTOMERID.Value,
                         collateralValue = c.COLLATERALVALUE,
                         collateralType = context.TBL_COLLATERAL_TYPE.Where(o=>o.COLLATERALTYPEID==c.COLLATERALTYPEID).Select(o=>o.COLLATERALTYPENAME).FirstOrDefault(),
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == l.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),

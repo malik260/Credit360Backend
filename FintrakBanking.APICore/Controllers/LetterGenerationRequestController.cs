@@ -121,5 +121,37 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.DeleteLetterGenerationRequest(id,user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-camsol-loans-by-customer-code/{customerName}/customerName/{customerCode}/customerCode")]
+        public HttpResponseMessage GetCamsolLoansByCustomerCode(string customerName, string customerCode)
+        {
+            try
+            {
+                var camsolLoans = repo.GetCamsolLoansByCustomerCode(customerName, customerCode);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = camsolLoans });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the record. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("get-camsol-loan-document/{typeId}/typeId")]
+        public HttpResponseMessage GetCamsolLoanDocument(int typeId, [FromBody] LetterGenerationRequestViewModel model)
+        {
+            try
+            {
+                var docHtml = repo.GetCamsolLoanDocument(typeId, model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = docHtml });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the document. Error - {ex.Message}" });
+            }
+        }
     }
 }

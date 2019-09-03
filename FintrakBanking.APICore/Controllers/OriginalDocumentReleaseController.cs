@@ -2,6 +2,7 @@
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
@@ -57,6 +58,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("rejected-referred-security-release")]
+        public HttpResponseMessage GetRejectedAndReferredSecurityRelease()
+        {
+            try
+            {
+                var response = _repo.GetRejectedAndReferredSecurityRelease(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("security-release")]
@@ -66,6 +84,12 @@ namespace FintrakBanking.APICore.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    foreach (var x in model)
+                    {
+                        x.createdBy = token.GetStaffId;
+                        x.companyId = token.GetCompanyId;
+                    }
+
                     var response = _repo.AddOriginalDocumentRelease(model);
                     if (response)
                     {
@@ -119,7 +143,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                var response = _repo.SubmitApproval(model);
+                WorkflowResponse response = _repo.SubmitApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)

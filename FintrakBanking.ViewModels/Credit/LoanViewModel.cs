@@ -243,7 +243,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productName { get; set; }
         public string customerSensitivityLevelName { get; set; }
         public string customerName { get; set; }
-        public string pricipalFrequencyTypeName { get; set; }
+        public string principalFrequencyTypeName { get; set; }
         public string interestFrequencyTypeName { get; set; }
         public string comment { get; set; }
         public string relationshipManagerEmail { get; set; }
@@ -398,6 +398,8 @@ namespace FintrakBanking.ViewModels.Credit
         public object totalRepayment { get; set; }
         public string loanSystemTypeName { get; set; }
         public decimal writtenOffAmount { get; set; }
+        public bool passed { get; set; }
+        public List<string> errorMessage { get; set; }
 
 
 
@@ -1605,14 +1607,54 @@ namespace FintrakBanking.ViewModels.Credit
         public string cap { get; set; }
     }
 
-    public class bulkDisbursementInputViewModel
+    //public class bulkDisbursementInputViewModel
+    //{
+    //    public string applicationReferenceNumber { get; set; }
+    //    public string customerCode { get; set; }
+    //    public string schemeCode { get; set; }
+    //    public decimal LoanAmount { get; set; }
+    //    public int schemeId { get; set; }
+    //    public int tenor { get; set; }
+    //    public string accountnumber { get; set; }
+    //    public int loanApplicationDetailId { get; set; }
+    //    public bool passed { get; set; }
+    //    public List<string> errorMessage { get; set; }
+    //}
+
+    public class multipleDisbursementOutputViewModel : GeneralEntity
     {
-        public string customerCode { get; set; }
-        public decimal LoanAmount { get; set; }
-        public int PackageId { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int loanApplicationDetailId { get; set; }
         public int schemeId { get; set; }
-        public string accountnumber { get; set; }
+        public string schemeCode { get; set; }
+        public string schemeName { get; set; }
+        public string customerCode { get; set; }
+        public int customerId { get; set; }
+        public string currencyCode { get; set; }
+        public int productId { get; set; }
+        public string productName { get; set; }
+        public string productTypeName { get; set; }
+        public decimal loanAmount { get; set; }
+        public int tenor { get; set; }
+        public double interestRate { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime maturityDate { get; set; }
+        public string accountNumber { get; set; }
+        public int casaAccountId { get; set; }
+        public int? casaAccountId2 { get; set; }
+        public string repaymentScheduleMethodName { get; set; }
+        public string interestRepaymentFrequencyName { get; set; }
+        public string principalRepaymentFrequencyName { get; set; }
+        public List<LoanPaymentSchedulePeriodicViewModel> periodicSchedule { get; set; }
+        public List<LoanChargeFeeViewModel> loanChargeFee { get; set; }
+        public LoanPaymentScheduleInputViewModel loanScheduleInput { get; set; }
+        public bool shouldDisburse { get; set; }
+        public bool passed { get; set; }
+        public List<string> errorMessages { get; set; }
     }
+
+
+
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
     //    public int maturityInstructionId { get; set; }

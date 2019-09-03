@@ -57,5 +57,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int? forwardAction { get; set; }
 
         public short? vote { get; set; }
+        public string accountNumber { get; set; }
+        public string customerCode { get; set; }
+
+        public decimal? loanBalance { get; set; }
+        
+
     }
 }

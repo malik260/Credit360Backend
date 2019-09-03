@@ -43,8 +43,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PSR_PROJECT_FACILITIES> TBL_PSR_PROJECT_FACILITIES { get; set; }
         public virtual DbSet<TBL_INSURANCE_TYPE> TBL_INSURANCE_TYPE { get; set; }
         public virtual DbSet<TBL_INSURANCE_COMPANY> TBL_INSURANCE_COMPANY { get; set; }
-
-
+        public virtual DbSet<TBL_LOAN_BULK_DISBURSE_SCHEME> TBL_LOAN_BULK_DISBURSE_SCHEME { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL_STAFF> TBL_TEMP_APPROVAL_LEVEL_STAFF { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATE> TBL_APPROVAL_STATE { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATUS> TBL_APPROVAL_STATUS { get; set; }
@@ -146,11 +145,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_OVERDRAFTTOPUP> TBL_CUSTOM_OVERDRAFTTOPUP { get; set; }
         public virtual DbSet<TBL_CUSTOM_TEMPORARYOVERDRAFT> TBL_CUSTOM_TEMPORARYOVERDRAFT { get; set; }
         public virtual DbSet<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
-
-        public virtual DbSet<TBL_LOAN_BULK_DISBURSE_PACKAGE> TBL_LOAN_BULK_DISBURSE_PACKAGE { get; set; }
-        public virtual DbSet<TBL_LOAN_BULK_DISBURSE_SCHEME> TBL_LOAN_BULK_DISBURSE_SCHEME { get; set; }
-        public virtual DbSet<TBL_BULK_DISBURS_SCH_FEES> TBL_BULK_DISBURS_SCH_FEES { get; set; }
-
         public virtual DbSet<TBL_CUSTOMER_RATIOS> TBL_CUSTOMER_RATIOS { get; set; }
         
         public virtual DbSet<TBL_CUSTOMER_ACCOUNT_KYC_ITEM> TBL_CUSTOMER_ACCOUNT_KYC_ITEM { get; set; }
@@ -558,7 +552,10 @@ namespace FintrakBanking.Entities.Models
                                System.Configuration.ConfigurationManager.AppSettings["BankingOracleDatabaseUsername"];
                 modelBuilder.HasDefaultSchema(databaseUsername);
             }
-            
+
+            //var databaseUsername =
+            //    System.Configuration.ConfigurationManager.AppSettings["BankingOracleDatabaseUsername"];
+            //modelBuilder.HasDefaultSchema(databaseUsername);
 
             modelBuilder.Entity<TBL_LC_ISSUANCE>()
                 .HasMany(e => e.TBL_LC_DOCUMENT)
@@ -3212,9 +3209,9 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.PLACEOFBIRTH)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_CUSTOMER>()
-                .Property(e => e.NATIONALITY)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_CUSTOMER>()
+            //    .Property(e => e.NATIONALITYID)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<TBL_CUSTOMER>()
                 .Property(e => e.EMAILADDRESS)
@@ -8378,9 +8375,9 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.PLACEOFBIRTH)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_TEMP_CUSTOMER>()
-                .Property(e => e.NATIONALITY)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_TEMP_CUSTOMER>()
+            //    .Property(e => e.NATIONALITY)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<TBL_TEMP_CUSTOMER>()
                 .Property(e => e.EMAILADDRESS)
