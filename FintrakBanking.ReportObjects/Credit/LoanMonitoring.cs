@@ -10,7 +10,7 @@ namespace FintrakBanking.ReportObjects.Credit
 {
     public class LoanMonitoring
     {
-        public static IEnumerable<CollateralViewModel> CollateralPropertyRevaluation(int companyId, int value)
+        public IEnumerable<CollateralViewModel> CollateralPropertyRevaluation(int companyId, int value)
         {
             var context = new FinTrakBankingContext();
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
