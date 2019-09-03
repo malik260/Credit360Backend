@@ -13152,8 +13152,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     bulkLoanTable.Add(loanData);
                 }
-            } 
-            
+            }
+            context.TBL_LOAN_BULK_DISBURSEMENT.AddRange(bulkLoanTable);
             return context.SaveChanges() > 0;
         }
 
