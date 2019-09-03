@@ -245,7 +245,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("atc-lodgment-for-releaseList")]
         public HttpResponseMessage GetAtcLodgmentForRelaselist()
         {
-            IEnumerable<AtcReleaseViewModel> response = repo.GetAtcLodgmentForReleaseList();
+            IEnumerable<AtcReleaseViewModel> response = repo.GetAtcLodgmentForReleaseList(token.GetStaffId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
@@ -305,6 +305,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("atc-lodgment-release/{customerId}")]
+        public HttpResponseMessage GetAtcLodgmentsByCustomerId(int customerId)
+        {
+            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcLodgmentsByCustomerId(customerId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("atc-release/{id}")]
@@ -332,17 +341,44 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("atc-release-approval")]
-        public HttpResponseMessage SubmitApproval([FromBody] AtcReleaseViewModel model)
+        public HttpResponseMessage SubmitApproval([FromBody] IEnumerable<AtcReleaseViewModel>  model)
+        {
+            try
+            {
+                foreach(var mod in model)
+                {
+                    mod.userBranchId = (short)token.GetBranchId;
+                    mod.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                    mod.applicationUrl = HttpContext.Current.Request.Path;
+                    mod.createdBy = token.GetStaffId;
+                    mod.companyId = token.GetCompanyId;
+                }
+                
+                WorkflowResponse response = repo.SubmitApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("save-edited-atc-release/{id}")]
+        public HttpResponseMessage SaveEditedATCRelease([FromBody] AtcReleaseViewModel model, int id)
         {
             try
             {
                 model.userBranchId = (short)token.GetBranchId;
-                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-                WorkflowResponse response = repo.SubmitApproval(model);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+
+                var response = repo.SaveEditedATCRelease(model, id);
+                if(response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record has been updated Successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+
 
             }
             catch (SecureException ex)

@@ -301,6 +301,28 @@ namespace FintrakBanking.Repositories.Setups.Credit
         }
         #endregion
 
-        
+        public IEnumerable<BulkDisbursementSetupSchemeViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery)
+        {
+            searchQuery = searchQuery?.Trim()?.ToLower();
+
+            var allApplicationDetails = (from d in context.TBL_LOAN_APPLICATION_DETAIL
+                                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                         join c in context.TBL_LOAN_BULK_DISBURSE_SCHEME on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                                         where a.APPLICATIONREFERENCENUMBER.Trim().Contains(searchQuery.Trim())
+                                         //  || c.FIRSTNAME.ToLower().StartsWith(searchQuery)
+                                         //  || c.CUSTOMERCODE.ToLower().Contains(searchQuery)
+                                         //|| c.MIDDLENAME.ToLower().StartsWith(searchQuery)
+                                         //|| c.LASTNAME.ToLower().StartsWith(searchQuery)
+                                         || a.TBL_CASA.PRODUCTACCOUNTNUMBER == searchQuery
+                                         select new BulkDisbursementSetupSchemeViewModel
+                                         {   
+                                             
+                                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                             
+                                         })?.ToList();
+            return allApplicationDetails;
+
+        }
+
     }
 }

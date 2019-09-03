@@ -243,6 +243,8 @@ namespace FintrakBanking.Interfaces.Credit
         Tuple<List<multipleDisbursementOutputViewModel>, bool> preBulkLoanDisbursement(byte[] file, UserInfo user, bool isFinal);
 
         List<multipleDisbursementOutputViewModel> startBulkLoanDisbursement(List<multipleDisbursementOutputViewModel> models, UserInfo user);
+        bool saveBulkLoanDisbursementEntries(List<multipleDisbursementOutputViewModel> models, UserInfo user);
+        multipleDisbursementOutputViewModel GetpendingMultipleDisbursement();
 
     }
 }

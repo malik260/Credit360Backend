@@ -1386,10 +1386,15 @@ namespace FintrakBanking.Repositories.Credit
             return referenceNumber;
         }
 
-        public IEnumerable<CollateralViewModel> GetInsuranceRequests()
+        public IEnumerable<CollateralViewModel> GetInsuranceRequests(int staffId)
         {
-            var result = (from ir in context.TBL_INSURANCE_REQUEST
+            //var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IsurancePolicyApproval).ToList();
+
+            var initiator = context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+
+            var result1 = (from ir in context.TBL_INSURANCE_REQUEST
                           join cc in context.TBL_COLLATERAL_CUSTOMER on ir.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                          where ir.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                           orderby ir.INSURANCEREQUESTID descending
                           select new CollateralViewModel()
                           {
@@ -1413,6 +1418,72 @@ namespace FintrakBanking.Repositories.Credit
                               requestComment = ir.REQUESTCOMMENT,
 
                           }).ToList();
+
+            var result2 = (from ir in context.TBL_INSURANCE_REQUEST
+                           join cc in context.TBL_COLLATERAL_CUSTOMER on ir.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                           join atrail in context.TBL_APPROVAL_TRAIL on ir.INSURANCEREQUESTID equals atrail.TARGETID
+                           where atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
+                            && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
+                            && atrail.TARGETID == ir.INSURANCEREQUESTID
+                            && atrail.LOOPEDSTAFFID == initiator
+                            && atrail.RESPONSESTAFFID == null
+                           orderby ir.INSURANCEREQUESTID descending
+                           select new CollateralViewModel()
+                           {
+                               collateralId = cc.COLLATERALCUSTOMERID,
+                               collateralTypeId = cc.COLLATERALTYPEID,
+                               collateralSubTypeId = cc.COLLATERALSUBTYPEID,
+                               customerId = cc.CUSTOMERID.Value,
+                               collateralTypeName = context.TBL_COLLATERAL_TYPE.Where(ct => ct.COLLATERALTYPEID == cc.COLLATERALTYPEID).Select(s => s.COLLATERALTYPENAME).FirstOrDefault(),
+                               collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(cts => cts.COLLATERALSUBTYPEID == cc.COLLATERALSUBTYPEID).Select(s => s.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                               collateralCode = cc.COLLATERALCODE,
+                               collateralValue = cc.COLLATERALVALUE,
+                               approvalStatusId = atrail.APPROVALSTATUSID,
+                               statusName = context.TBL_APPROVAL_STATUS.Where(a => a.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
+                               collateralReleaseStatusId = cc.COLLATERALRELEASESTATUSID,
+                               collateralReleaseStatusName = cc.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == cc.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
+                               collateralUsageStatus = cc.COLLATERALUSAGESTATUSID,
+                               requestNumber = ir.REQUESTNUMBER,
+                               haircut = cc.HAIRCUT,
+                               insuranceRequestId = ir.INSURANCEREQUESTID,
+                               requestReason = ir.REQUESTREASON,
+                               requestComment = ir.REQUESTCOMMENT,
+
+                           }).ToList();
+
+            var result3 = (from ir in context.TBL_INSURANCE_REQUEST
+                           join cc in context.TBL_COLLATERAL_CUSTOMER on ir.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                           join atrail in context.TBL_APPROVAL_TRAIL on ir.INSURANCEREQUESTID equals atrail.TARGETID
+                           where atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
+                            && ir.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                            && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved 
+                                || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                            && atrail.TARGETID == ir.INSURANCEREQUESTID
+                           orderby ir.INSURANCEREQUESTID descending
+                           select new CollateralViewModel()
+                           {
+                               collateralId = cc.COLLATERALCUSTOMERID,
+                               collateralTypeId = cc.COLLATERALTYPEID,
+                               collateralSubTypeId = cc.COLLATERALSUBTYPEID,
+                               customerId = cc.CUSTOMERID.Value,
+                               collateralTypeName = context.TBL_COLLATERAL_TYPE.Where(ct => ct.COLLATERALTYPEID == cc.COLLATERALTYPEID).Select(s => s.COLLATERALTYPENAME).FirstOrDefault(),
+                               collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(cts => cts.COLLATERALSUBTYPEID == cc.COLLATERALSUBTYPEID).Select(s => s.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                               collateralCode = cc.COLLATERALCODE,
+                               collateralValue = cc.COLLATERALVALUE,
+                               approvalStatusId = atrail.APPROVALSTATUSID,
+                               statusName = context.TBL_APPROVAL_STATUS.Where(a => a.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
+                               collateralReleaseStatusId = cc.COLLATERALRELEASESTATUSID,
+                               collateralReleaseStatusName = cc.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == cc.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
+                               collateralUsageStatus = cc.COLLATERALUSAGESTATUSID,
+                               requestNumber = ir.REQUESTNUMBER,
+                               haircut = cc.HAIRCUT,
+                               insuranceRequestId = ir.INSURANCEREQUESTID,
+                               requestReason = ir.REQUESTREASON,
+                               requestComment = ir.REQUESTCOMMENT,
+
+                           }).ToList();
+
+            var result = (result1.Union(result2)).Union(result3).ToList();
 
             return result;
         }
@@ -1706,7 +1777,7 @@ namespace FintrakBanking.Repositories.Credit
                                    facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(o => o.APPROVEDAMOUNT).Sum(),
                                    approvalStatusId = x.APPROVALSTATUSID,
 
-                               }).ToList();
+                               })?.ToList();
 
 
             if (collaterals == null) return new List<CollateralCoverageViewModel>();
@@ -2337,7 +2408,7 @@ namespace FintrakBanking.Repositories.Credit
                              join b in context.TBL_COLLATERAL_TYPE_SUB on s.COLLATERALSUBTYPEID equals b.COLLATERALSUBTYPEID
                              where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                                      && atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
-                                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                                     && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                                      // && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                                      && atrail.RESPONSESTAFFID == null
                              select new InsurancePolicies

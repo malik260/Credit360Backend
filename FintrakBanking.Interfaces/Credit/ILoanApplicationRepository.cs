@@ -54,8 +54,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
 
-        IEnumerable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery);
-
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
         string GetRefrenceNumber();
 
