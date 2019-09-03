@@ -1258,6 +1258,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Sorry, Released Amount is now " + currCode + " " + availableAmount);
             }
             lc.RELEASEDAMOUNT = totalReleasedAmount;
+            context.SaveChanges();
             return true;
         }
 
@@ -1362,11 +1363,11 @@ namespace FintrakBanking.Repositories.Credit
             
             var allstaff = this.GetAllStaffNames();
 
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId).ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId && x.FROMAPPROVALLEVELID != null).ToList();
             }
 
             var data =  trail.Select(x => new ApprovalTrailViewModel

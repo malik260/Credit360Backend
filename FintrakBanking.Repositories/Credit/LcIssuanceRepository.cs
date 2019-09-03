@@ -344,7 +344,7 @@ namespace FintrakBanking.Repositories.credit
                                 currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                                 approvalTrailId = b == null ? 0 : b.APPROVALTRAILID, // for inner sequence ordering
                                 toStaffId = b.TOSTAFFID,
-                                approvalStatusId = (short)a.APPROVALSTATUSID,
+                                approvalStatusId = b.APPROVALSTATUSID,
                                 applicationStatusId = a.APPLICATIONSTATUSID,
                                 createdBy = (int)a.CREATEDBY,
                                 operationId = operationId,
@@ -620,6 +620,7 @@ namespace FintrakBanking.Repositories.credit
                            lcTolerancePercentage = i.LCTOLERANCEPERCENTAGE,
                            lcToleranceValue = i.LCTOLERANCEVALUE,
                            releaseAmount = r.RELEASEAMOUNT,
+                           releasedAmount = i.RELEASEDAMOUNT,
                            letterOfCreditTypeId = i.LETTEROFCREDITTYPEID,
                            isDraftRequired = i.ISDRAFTREQUIRED,
                            beneficiaryAddress = i.BENEFICIARYADDRESS,
@@ -671,6 +672,7 @@ namespace FintrakBanking.Repositories.credit
                                      lcTolerancePercentage = i.LCTOLERANCEPERCENTAGE,
                                      lcToleranceValue = i.LCTOLERANCEVALUE,
                                      releaseAmount = r.RELEASEAMOUNT,
+                                     releasedAmount = i.RELEASEDAMOUNT,
                                      letterOfCreditTypeId = i.LETTEROFCREDITTYPEID,
                                      isDraftRequired = i.ISDRAFTREQUIRED,
                                      beneficiaryAddress = i.BENEFICIARYADDRESS,
@@ -748,6 +750,7 @@ namespace FintrakBanking.Repositories.credit
                              lcIssuanceId = a.LCISSUANCEID,
                              lcReleaseAmountId = b.LCRELEASEAMOUNTID,
                              releaseAmount = (decimal)b.RELEASEAMOUNT,
+                             releasedAmount = a.RELEASEDAMOUNT,
                              isDraftRequired = a.ISDRAFTREQUIRED,
                              lcReferenceNumber = a.LCREFERENCENUMBER,
                              letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
@@ -783,7 +786,7 @@ namespace FintrakBanking.Repositories.credit
                              currentApprovalLevelTypeId = c.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                              approvalTrailId = c == null ? 0 : c.APPROVALTRAILID, // for inner sequence ordering
                              toStaffId = c.TOSTAFFID,
-                             approvalStatusId = (short)a.APPROVALSTATUSID,
+                             approvalStatusId = c.APPROVALSTATUSID,
                              applicationStatusId = a.APPLICATIONSTATUSID,
                              createdBy = (int)a.CREATEDBY,
                              customerName = a.TBL_CUSTOMER.FIRSTNAME + a.TBL_CUSTOMER.MIDDLENAME + a.TBL_CUSTOMER.LASTNAME,
@@ -883,6 +886,7 @@ namespace FintrakBanking.Repositories.credit
                 throw new SecureException("Release Amount cannot be greater than remainder tolerance amount " + currCode + " " + availableAmount);
             }
             lc.RELEASEDAMOUNT = totalReleasedAmount;
+            context.SaveChanges();
             return true;
         }
         #endregion RELEASEOFSHIPPINGDOCUMENTS

@@ -1350,6 +1350,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-detail-by-application-reference/{searchString}")]
+        public HttpResponseMessage LoanApplicationDetailByApplicationRef(string searchString)
+        {
+            var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, searchString);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        }
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -1787,10 +1796,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("delete-failedrac-loan-application/{loanApplicationId}")]
-        public HttpResponseMessage DeleteLoanApplicationThatFailedRAC(int loanApplicationId)
+        [Route("delete-failedrac-loan-application/{loanApplicationDetailId}")]
+        public HttpResponseMessage DeleteLoanApplicationThatFailedRAC(int loanApplicationDetailId)
         {
-            var response = repo.DeleteLoanApplicationThatFailedRAC(loanApplicationId, token.GetStaffId);
+            var response = repo.DeleteLoanApplicationThatFailedRAC(loanApplicationDetailId, token.GetStaffId);
             if (!response) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }

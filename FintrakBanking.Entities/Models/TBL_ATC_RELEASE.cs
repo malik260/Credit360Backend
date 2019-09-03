@@ -22,5 +22,7 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public int ATCLODGMENTID { get; set; }
         public DateTime? DATETIMEAPPROVED { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
     }
 }

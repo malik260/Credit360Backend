@@ -58,5 +58,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? APPROVEDDATE { get; set; }
 
+        public decimal? LOANBALANCE { get; set; }
+        
+
     }
 }

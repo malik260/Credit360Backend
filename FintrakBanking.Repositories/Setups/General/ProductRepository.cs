@@ -3354,7 +3354,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddProductDocumentMapping(ProductDocumentMappingViewModel model)
         {
-            var documentDef = context.TBL_DOCUMENT_DEFINITION.Find(model.documentDefinitionId); 
+            var documentDef = context.TBL_PRODUCT_DOCUMENT_MAPPING.Find(model.documentDefinitionId); 
 
             if (documentDef == null) 
             {
