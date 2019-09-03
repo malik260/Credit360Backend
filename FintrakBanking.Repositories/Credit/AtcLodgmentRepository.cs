@@ -141,6 +141,41 @@ namespace FintrakBanking.Repositories.credit
              .ToList();
         }
 
+        public IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentsByCustomerId(int customerId)
+        {
+            var result = (from atc in context.TBL_ATC_LODGMENT
+                          join c in context.TBL_CUSTOMER on atc.CUSTOMERID equals c.CUSTOMERID
+                          where atc.CUSTOMERID == customerId
+                            && atc.DELETED == false
+                            && atc.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                          orderby atc.ATCLODGMENTID descending
+                          select new AtcLodgmentViewModel
+                          {
+                              atcLodgmentId = atc.ATCLODGMENTID,
+                              customerId = atc.CUSTOMERID,
+                              atcTypeId = atc.ATCTYPEID,
+                              description = atc.DESCRIPTION,
+                              depot = atc.DEPOT,
+                              unitValue = atc.UNITVALUE,
+                              unitNumber = atc.UNITNUMBER,
+                              numberOfBags = atc.NUMBEROFBAGS,
+                              atcType = context.TBL_ATC_TYPE.Where(o => o.ATCTYPEID == atc.ATCTYPEID).Select(o => o.ACTTYPENAME).FirstOrDefault(),
+                              certificateNumber = atc.CERTIFICATENUMBER,
+                              statusId = atc.STATUSID,
+                              approvalStatusId = atc.APPROVALSTATUSID,
+                              dateCreated = atc.DATETIMECREATED,
+                              approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atc.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                              customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                              customerCode = c.CUSTOMERCODE,
+                              branchId = atc.BRANCHID,
+                              currencyId = atc.CURRENCYID,
+                              currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == atc.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
+                              branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == atc.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                          }).ToList();
+
+            return result;
+        }
+
         public IEnumerable<AtcLodgmentViewModel> GetAtcReleaseForApproval(int staffId)
         {
             var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.AtcReleaseApproval).ToList();
@@ -153,7 +188,7 @@ namespace FintrakBanking.Repositories.credit
                      && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                      && r.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
-                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                     && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
                     select new AtcLodgmentViewModel
                     {
@@ -395,6 +430,9 @@ namespace FintrakBanking.Repositories.credit
             //Doing a Check to confirm if none of the ATC in the incoming list is already being Processed 
             foreach(var atc in model)
             {
+
+                if (atc.unitToRelease <= 0 || atc.unitToRelease > atc.unitNumber) throw new SecureException("Invalid Input For Unit to Release");
+
                 var record = (from ar in context.TBL_ATC_RELEASE
                                where atc.atcLodgmentId == ar.ATCLODGMENTID
                                orderby ar.ATCLODGMENTID descending

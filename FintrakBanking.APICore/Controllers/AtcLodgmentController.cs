@@ -305,6 +305,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("atc-lodgment-release/{customerId}")]
+        public HttpResponseMessage GetAtcLodgmentsByCustomerId(int customerId)
+        {
+            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcLodgmentsByCustomerId(customerId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("atc-release/{id}")]
