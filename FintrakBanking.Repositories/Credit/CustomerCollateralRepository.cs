@@ -9077,6 +9077,10 @@ namespace FintrakBanking.Repositories.Credit
             return list;
         }
 
+        public IEnumerable<CollateralViewModel> GetInsuranceRequests(int staffId)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
