@@ -46,6 +46,8 @@ namespace FintrakBanking.Repositories.Media
                 {
                     documentTypeId = x.DOCUMENTTYPEID,
                     documentTypeName = x.DOCUMENTTYPENAME,
+                    documentCategoryName = x.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                    documentCategoryId = x.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYID
                 })
                 .ToList();
         }

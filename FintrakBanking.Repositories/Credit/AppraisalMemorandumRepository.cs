@@ -1367,7 +1367,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (getAll)
             {
-                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId).ToList();
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId ).ToList();
             }
 
             var data =  trail.Select(x => new ApprovalTrailViewModel

@@ -3367,7 +3367,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         productDocMapId = p.PRODUCTDOCMAPID,
                         productId = p.PRODUCTID,
-                        isRequired = p.ISREQUIRED,
+                        required = p.ISREQUIRED,
                         inUse = p.INUSE,
                         documentTitle = context.TBL_DOCUMENT_DEFINITION.Where(a => a.DOCUMENTDEFINITIONID == p.DOCUMENTDEFINITIONID).FirstOrDefault().DOCUMENTTITLE,
                         documentDefinitionId = p.DOCUMENTDEFINITIONID
@@ -3388,7 +3388,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 PRODUCTID = model.productId,
                 INUSE = model.inUse,
-                ISREQUIRED = model.isRequired,
+                ISREQUIRED = model.required,
                 DOCUMENTDEFINITIONID = model.documentDefinitionId
             };
 
