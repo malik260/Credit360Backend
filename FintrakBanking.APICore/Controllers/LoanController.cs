@@ -2492,7 +2492,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpGet]
         [ClaimsAuthorization]
         [Route("saved-multiple-disbursement")]
-        public HttpResponseMessage GetpendingMultipleDisbursement(int loanId)
+        public HttpResponseMessage GetpendingMultipleDisbursement()
         {
             var response = repo.GetpendingMultipleDisbursement();
 
