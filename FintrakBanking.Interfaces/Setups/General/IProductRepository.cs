@@ -56,9 +56,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductPriceIndexViewModel> GetProductPriceIndex(int companyId);
         IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobal();
         IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalAwaitingApproval(int staffId);
-
         ProductPriceIndexViewModel GetProductPriceIndexById(int productPriceIndexId, int companyId);
-
+        ProductPriceIndexViewModel GetAllProductPriceIndicesById(int priceIndexId);
         ProductPriceIndexViewModel AddProductPriceIndex(ProductPriceIndexViewModel prodPriceIndex);
         bool AddProductPriceIndexGlobal(ProductPriceIndexGlobalViewModel prodPriceIndexGlobal);
         bool UpdateProductPriceIndexGlobal(int prodPriceIndexGlobalId, ProductPriceIndexGlobalViewModel prodPriceIndexGlobal);
