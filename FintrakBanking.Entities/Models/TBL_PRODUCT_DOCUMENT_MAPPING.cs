@@ -20,6 +20,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISREQUIRED { get; set; }
 
         public bool INUSE { get; set; }
+        
 
     }
 }

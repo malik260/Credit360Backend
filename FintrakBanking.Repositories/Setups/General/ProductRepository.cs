@@ -3347,6 +3347,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         productId = p.PRODUCTID,
                         isRequired = p.ISREQUIRED,
                         inUse = p.INUSE,
+                        documentTitle = context.TBL_DOCUMENT_DEFINITION.Where(a => a.DOCUMENTDEFINITIONID == p.DOCUMENTDEFINITIONID).FirstOrDefault().DOCUMENTTITLE,
                         documentDefinitionId = p.DOCUMENTDEFINITIONID
                     });
         }
@@ -3354,7 +3355,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddProductDocumentMapping(ProductDocumentMappingViewModel model)
         {
-            var documentDef = context.TBL_PRODUCT_DOCUMENT_MAPPING.Find(model.documentDefinitionId); 
+            var documentDef = context.TBL_DOCUMENT_DEFINITION.Find(model.documentDefinitionId); 
 
             if (documentDef == null) 
             {
