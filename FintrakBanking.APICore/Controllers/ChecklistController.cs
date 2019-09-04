@@ -1082,7 +1082,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetConditionPrecedenceChecklistStatus(loanApplicationId, isAvailment);
+                var data = repo.GetConditionPrecedenceChecklistStatus(loanApplicationId, isAvailment, token.GetStaffId);
                 if (!data.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

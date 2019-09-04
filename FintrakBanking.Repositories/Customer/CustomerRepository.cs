@@ -371,7 +371,7 @@ namespace FintrakBanking.Repositories.Customer
                         AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added new TBL_CUSTOMER_ADDRESS for customer ID: + (" + entity.customerId + ") ",
+                        DETAIL = "Added new Customer Address for customer ID: + (" + entity.customerId + ") ",
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -456,7 +456,7 @@ namespace FintrakBanking.Repositories.Customer
                         AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added new TBL_CUSTOMER_BVN for customer ID: + (" + entity.customerId + ") ",
+                        DETAIL = "Added new Customer BVN for customer ID: + (" + entity.customerId + ") ",
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -858,7 +858,7 @@ namespace FintrakBanking.Repositories.Customer
                         AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added new TBL_CUSTOMER_NEXTOFKIN for customer ID: + (" + entity.customerId + ") ",
+                        DETAIL = "Added new Customers Next Of Kin for customer ID: + (" + entity.customerId + ") ",
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -1939,7 +1939,7 @@ namespace FintrakBanking.Repositories.Customer
                         AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added new TBL_CUSTOMER_EMPLOYMENTHISTORY for customer ID: + (" + entity.customerId +
+                        DETAIL = "Added new customer employment history for customer ID: + (" + entity.customerId +
                                  ") ",
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
@@ -2840,8 +2840,8 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
-                    DETAIL = "Updated TBL_CUSTOMER: " + entity.customerName + " with code: " + entity.customerCode +
-                             " on" + " (" + entity.customerId + ") ",
+                    DETAIL = "The Customer " + entity.customerName + " with code: " + entity.customerCode +
+                             " on" + " (" + entity.customerId + ")  Has Been Updated",
                     IPADDRESS = entity.userIPAddress,
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),

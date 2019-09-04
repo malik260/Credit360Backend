@@ -2116,7 +2116,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.GetInsuranceRequests();
+                var response = repo.GetInsuranceRequests(token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
