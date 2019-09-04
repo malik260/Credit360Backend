@@ -1246,6 +1246,27 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-price-index-by-id/{productPriceIndexId}")]
+        public HttpResponseMessage GetProductPriceIndicesById(int productPriceIndexId)
+        {
+            try
+            {
+                
+                var data = repo.GetAllProductPriceIndicesById(productPriceIndexId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
 
         [HttpPost] [ClaimsAuthorization]
         [Route("product-price-index")]
