@@ -3345,17 +3345,16 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         productDocMapId = p.PRODUCTDOCMAPID,
                         productId = p.PRODUCTID,
-                        required = p.ISREQUIRED,
-                        inUse = p.INUSE,
-                        documentTitle = context.TBL_DOCUMENT_DEFINITION.Where(a => a.DOCUMENTDEFINITIONID == p.DOCUMENTDEFINITIONID).FirstOrDefault().DOCUMENTTITLE,
-                        documentDefinitionId = p.DOCUMENTDEFINITIONID
+                        required = p.REQUIRED,
+                        documentTitle = context.TBL_DOCUMENT_DEFINITION.Where(a => a.DOCUMENTDEFINITIONID == p.DOCUMENTTYPEID).FirstOrDefault().DOCUMENTTITLE,
+                        documenttypeId = p.DOCUMENTTYPEID
                     });
         }
 
 
         public bool AddProductDocumentMapping(ProductDocumentMappingViewModel model)
         {
-            var documentDef = context.TBL_DOCUMENT_DEFINITION.Find(model.documentDefinitionId); 
+            var documentDef = context.TBL_PRODUCT_DOCUMENT_MAPPING.Find(model.documenttypeId); 
 
             if (documentDef == null) 
             {
@@ -3365,9 +3364,9 @@ namespace FintrakBanking.Repositories.Setups.General
            var data = new TBL_PRODUCT_DOCUMENT_MAPPING()
             {
                 PRODUCTID = model.productId,
-                INUSE = model.inUse,
-                ISREQUIRED = model.required,
-                DOCUMENTDEFINITIONID = model.documentDefinitionId
+                REQUIRED = model.required,
+                DOCUMENTTYPEID=model.documenttypeId
+               
             };
 
             this.context.TBL_PRODUCT_DOCUMENT_MAPPING.Add(data);
@@ -3449,6 +3448,64 @@ namespace FintrakBanking.Repositories.Setups.General
 
         return false;
     }
-     #endregion Product Document Definition    
+
+        public bool DeleteProductDocumentMapping(int id)
+        {
+            var entity = context.TBL_PRODUCT_DOCUMENT_MAPPING.Find(id);
+            if(entity != null)
+            {
+                entity.DELETED = true;
+            }
+
+            return context.SaveChanges() > 0;
+        }
+
+        public IEnumerable<ProductDocumentMappingViewModel> GetProductDocumentMapping()
+        {
+
+            var entity = (from pdm in context.TBL_PRODUCT_DOCUMENT_MAPPING
+                         where pdm.DELETED == false
+                         select new ProductDocumentMappingViewModel
+                         {
+                             required = pdm.REQUIRED,
+                             documentId = pdm.DOCUMENTID,
+                             productId = pdm.PRODUCTID,
+                             productDocMapId = pdm.PRODUCTDOCMAPID
+
+
+                         }).ToList();
+
+            return entity;
+        }
+
+        
+        public bool UpdateProductDocumentMapping(ProductDocumentMappingViewModel model)
+        {
+            var entity = context.TBL_PRODUCT_DOCUMENT_MAPPING.Find(model.productDocMapId);
+            entity.REQUIRED = model.required;
+            entity.DATETIMEUPDATED = DateTime.Now;
+            entity.PRODUCTID = model.productId;
+            entity.DOCUMENTTYPEID = model.documenttypeId;
+
+            return context.SaveChanges() != 0;
+        }
+
+        public ProductDocumentMappingViewModel GetProductDocumenetMapping(int Id)
+        {
+            var entity = context.TBL_PRODUCT_DOCUMENT_MAPPING.Where(x => x.DELETED == false && x.PRODUCTDOCMAPID == Id)
+                .Select(x => new ProductDocumentMappingViewModel
+                {
+                    required = x.REQUIRED,
+                    documentId =x.DOCUMENTID,
+                    productId = x.PRODUCTID,
+                    productDocMapId = x.PRODUCTDOCMAPID
+
+                }).FirstOrDefault();
+            
+            return entity;
+        }
+
+
+        #endregion Product Document Definition    
     }
 }
