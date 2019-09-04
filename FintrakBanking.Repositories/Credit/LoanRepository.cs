@@ -13071,25 +13071,27 @@ namespace FintrakBanking.Repositories.Credit
             }).FirstOrDefault();
         }
 
-        public multipleDisbursementOutputViewModel GetpendingMultipleDisbursement()
+        public IEnumerable<multipleDisbursementOutputViewModel> GetpendingMultipleDisbursement()
         {
             var data = (from b in context.TBL_LOAN_BULK_DISBURSEMENT
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                        join s in context.TBL_LOAN_BULK_DISBURSE_SCHEME on b.SCHEMECODE equals s.SCHEMECODE
+                        join s in context.TBL_LOAN_BULK_DISBURSE_SCHEME on b.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
                         join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
-                        join p in context.TBL_PRODUCT on s.PRODUCTID equals p.PRODUCTID
+                        join p in context.TBL_PRODUCT on s.PRODUCTID equals (int)p.PRODUCTID
 
                         where b.APPROVALSTATUS == (short)ApprovalStatusEnum.Pending
                         select new multipleDisbursementOutputViewModel
                         {
-                            currencyCode = b.CUSTOMERCODE,
+                            loanAmount = (int)b.LOANAMOUNT,
+                            applicationReferenceNumber = context.TBL_LOAN_APPLICATION.Where(l=>l.LOANAPPLICATIONID == d.LOANAPPLICATIONID).FirstOrDefault().APPLICATIONREFERENCENUMBER,
+                            accountNumber = context.TBL_CASA.Where(x=>x.CASAACCOUNTID == b.CASAACCOUNTID).FirstOrDefault().PRODUCTACCOUNTNUMBER,
                             productName = p.PRODUCTNAME,
                             productId = s.PRODUCTID,
                             productTypeName = p.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                             customerId = b.CUSTOMERID,
                             customerCode = c.CUSTOMERCODE,
                             tenor = s.TENOR,
-                            interestRate = s.INTERESTRATE,
+                            interestRate = (double)s.INTERESTRATE,
                             effectiveDate = b.EFFECTIVEDATE,
                             maturityDate = b.MATURITYDATE,
                             schemeId = s.DISBURSESCHEMEID,
@@ -13100,7 +13102,7 @@ namespace FintrakBanking.Repositories.Credit
                             principalRepaymentFrequencyName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == s.PRINCIPALFREQUENCYTYPEID).FirstOrDefault().MODE,
                             repaymentScheduleMethodName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == s.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
 
-                        }).FirstOrDefault();
+                        }).ToList();
 
             return data;
         }
