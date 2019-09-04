@@ -2610,7 +2610,29 @@ namespace FintrakBanking.Repositories.Setups.General
                             currencyId = data.CURRENCYID,
                         });
             }
-            private IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalApprovalList(int staffId)
+
+        public ProductPriceIndexViewModel GetAllProductPriceIndicesById(int priceIndexId)
+        {
+            return (from data in context.TBL_PRODUCT_PRICE_INDEX
+                    where data.PRODUCTPRICEINDEXID == priceIndexId && data.DELETED == false
+                    select new ProductPriceIndexViewModel()
+                    {
+                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
+                        priceIndexDescription = data.PRICEINDEXDESCRIPTION,
+                        priceIndexDuration = data.DURATION,
+                        allowAutomaticRepricing = data.ALLOWAUTOMATICREPRICING,
+                        companyId = data.COMPANYID,
+                        priceIndexName = data.PRICEINDEXNAME,
+                        priceIndexRate = data.PRICEINDEXRATE,
+                        dateTimeUpdated = data.DATETIMEUPDATED,
+                        deleted = data.DELETED,
+                        deletedBy = data.DELETEDBY,
+                        dateTimeDeleted = data.DATETIMEDELETED,
+                        currencyId = data.CURRENCYID,
+                    }).FirstOrDefault();
+        }
+
+        private IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalApprovalList(int staffId)
             {
 
                 var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.GlobalInterestRateChange).ToList();
