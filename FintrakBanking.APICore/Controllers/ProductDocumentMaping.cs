@@ -1,26 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web;
-using System.Web.Http;
-
-using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.APICore.core;
-using FintrakBanking.Common.CustomException;
-using FintrakBanking.Interfaces.Setups.Approval;
-using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.ViewModels.Setups.Approval;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.Interfaces.Media;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    [RoutePrefix("api/v1/credit")] // TODO: modify!
     public class ProductDocumentMapingController : ApiControllerBase
     {
         private IDocumentCategoryRepository repo;
@@ -78,7 +62,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.UpdateDocumentCategory(model,id,user);
+            bool response = repo.UpdateDocumentCategory(model, id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
@@ -95,7 +79,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
-            bool response = repo.DeleteDocumentCategory(id,user);
+            bool response = repo.DeleteDocumentCategory(id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
