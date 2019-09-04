@@ -2610,7 +2610,29 @@ namespace FintrakBanking.Repositories.Setups.General
                             currencyId = data.CURRENCYID,
                         });
             }
-            private IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalApprovalList(int staffId)
+
+        public ProductPriceIndexViewModel GetAllProductPriceIndicesById(int priceIndexId)
+        {
+            return (from data in context.TBL_PRODUCT_PRICE_INDEX
+                    where data.PRODUCTPRICEINDEXID == priceIndexId && data.DELETED == false
+                    select new ProductPriceIndexViewModel()
+                    {
+                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
+                        priceIndexDescription = data.PRICEINDEXDESCRIPTION,
+                        priceIndexDuration = data.DURATION,
+                        allowAutomaticRepricing = data.ALLOWAUTOMATICREPRICING,
+                        companyId = data.COMPANYID,
+                        priceIndexName = data.PRICEINDEXNAME,
+                        priceIndexRate = data.PRICEINDEXRATE,
+                        dateTimeUpdated = data.DATETIMEUPDATED,
+                        deleted = data.DELETED,
+                        deletedBy = data.DELETEDBY,
+                        dateTimeDeleted = data.DATETIMEDELETED,
+                        currencyId = data.CURRENCYID,
+                    }).FirstOrDefault();
+        }
+
+        private IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalApprovalList(int staffId)
             {
 
                 var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.GlobalInterestRateChange).ToList();
@@ -3345,8 +3367,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         productDocMapId = p.PRODUCTDOCMAPID,
                         productId = p.PRODUCTID,
-                        isRequired = p.ISREQUIRED,
+                        required = p.ISREQUIRED,
                         inUse = p.INUSE,
+                        documentTitle = context.TBL_DOCUMENT_DEFINITION.Where(a => a.DOCUMENTDEFINITIONID == p.DOCUMENTDEFINITIONID).FirstOrDefault().DOCUMENTTITLE,
                         documentDefinitionId = p.DOCUMENTDEFINITIONID
                     });
         }
@@ -3354,7 +3377,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddProductDocumentMapping(ProductDocumentMappingViewModel model)
         {
-            var documentDef = context.TBL_PRODUCT_DOCUMENT_MAPPING.Find(model.documentDefinitionId); 
+            var documentDef = context.TBL_DOCUMENT_DEFINITION.Find(model.documentDefinitionId); 
 
             if (documentDef == null) 
             {
@@ -3365,7 +3388,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 PRODUCTID = model.productId,
                 INUSE = model.inUse,
-                ISREQUIRED = model.isRequired,
+                ISREQUIRED = model.required,
                 DOCUMENTDEFINITIONID = model.documentDefinitionId
             };
 

@@ -255,8 +255,9 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public int productId { get; set; }
         public int documentDefinitionId { get; set; }
-        public bool isRequired { get; set; }
+        public bool required { get; set; }
         public bool inUse { get; set; }
+        public string documentTitle { get; set; }
     }
 
     public class DocumentDefinitionViewModel : GeneralEntity

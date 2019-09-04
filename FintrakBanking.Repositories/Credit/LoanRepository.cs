@@ -13075,7 +13075,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from b in context.TBL_LOAN_BULK_DISBURSEMENT
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                        join s in context.TBL_LOAN_BULK_DISBURSE_SCHEME on b.LOANAPPLICATIONDETAILID equals s.LOANAPPLICATIONDETAILID
+                        join s in context.TBL_LOAN_BULK_DISBURSE_SCHEME on b.SCHEMECODE equals s.SCHEMECODE
                         join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
                         join p in context.TBL_PRODUCT on s.PRODUCTID equals (int)p.PRODUCTID
 
@@ -13083,6 +13083,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new multipleDisbursementOutputViewModel
                         {
                             loanAmount = (int)b.LOANAMOUNT,
+                            multipleBulkDisbursementId = b.MULTIPLEBULKDISBURSEMENTID,
                             applicationReferenceNumber = context.TBL_LOAN_APPLICATION.Where(l=>l.LOANAPPLICATIONID == d.LOANAPPLICATIONID).FirstOrDefault().APPLICATIONREFERENCENUMBER,
                             accountNumber = context.TBL_CASA.Where(x=>x.CASAACCOUNTID == b.CASAACCOUNTID).FirstOrDefault().PRODUCTACCOUNTNUMBER,
                             productName = p.PRODUCTNAME,
