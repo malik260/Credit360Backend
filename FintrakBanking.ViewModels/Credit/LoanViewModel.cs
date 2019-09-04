@@ -1623,6 +1623,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class multipleDisbursementOutputViewModel : GeneralEntity
     {
+        public int multipleBulkDisbursementId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int loanApplicationDetailId { get; set; }
         public int schemeId { get; set; }
