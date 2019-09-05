@@ -1278,6 +1278,25 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        // search loan application by either reference number or name =======by benjamin
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-application-detail-operation/search")]
+        public HttpResponseMessage LoanApplicationSearchOperation([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.LoanSearch(model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application-details/search")]

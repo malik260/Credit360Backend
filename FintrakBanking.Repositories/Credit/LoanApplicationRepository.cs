@@ -3078,12 +3078,12 @@ namespace FintrakBanking.Repositories.Credit
                                 join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
                                 where y.RESPONSESTAFFID == null
                                 && operations.Contains(y.OPERATIONID)
-                           //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
-                           && (x.APPLICATIONREFERENCENUMBER == searchString
-                        || c.FIRSTNAME.ToLower().Contains(searchString)
-                        || c.LASTNAME.ToLower().Contains(searchString)
-                        || c.MIDDLENAME.ToLower().Contains(searchString)
-                        || a.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                                //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
+                                && (x.APPLICATIONREFERENCENUMBER == searchString
+                                || c.FIRSTNAME.ToLower().Contains(searchString)
+                                || c.LASTNAME.ToLower().Contains(searchString)
+                                || c.MIDDLENAME.ToLower().Contains(searchString)
+                                || a.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
                                 select new LoanApplicationViewModel
                                 {
                                     firstName = c.FIRSTNAME,
@@ -3201,6 +3201,47 @@ namespace FintrakBanking.Repositories.Credit
             //var filteredList = applications.ToList();
             return applications; */
 
+        }
+
+
+
+        //================================ by benjamin =======================
+        public IEnumerable<LoanApplicationViewModel> LoanSearch(string searchString)
+        {
+            searchString = searchString.Trim().ToLower();
+
+            var applications = (from x in context.TBL_LOAN_APPLICATION
+                                join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                where (x.APPLICATIONREFERENCENUMBER == searchString
+                                      || c.FIRSTNAME.ToLower().Contains(searchString)
+                                      || c.LASTNAME.ToLower().Contains(searchString)
+                                      || c.MIDDLENAME.ToLower().Contains(searchString)
+                                      || a.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                                select new LoanApplicationViewModel
+                                {
+                                    firstName = c.FIRSTNAME,
+                                    middleName = c.MIDDLENAME,
+                                    lastName = c.LASTNAME,
+                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                    customerCode = c.CUSTOMERCODE,
+                                    applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                    loanApplicationId = x.LOANAPPLICATIONID,
+                                    customerId = c.CUSTOMERID,
+                                    branchId = c.BRANCHID,
+                                    customerGroupId = x.CUSTOMERGROUPID,
+                                    loanTypeId = x.LOANAPPLICATIONTYPEID,
+                                    relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                    relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                    applicationDate = x.APPLICATIONDATE,
+                                    applicationAmount = x.APPLICATIONAMOUNT,
+                                    approvedAmount = x.APPROVEDAMOUNT,
+                                    interestRate = x.INTERESTRATE,
+                                    applicationTenor = x.APPLICATIONTENOR
+                                    }).ToList();
+
+            return applications;
+            
         }
 
         public IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationTypeId, int staffId)
