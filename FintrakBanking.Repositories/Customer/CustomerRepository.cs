@@ -767,7 +767,7 @@ namespace FintrakBanking.Repositories.Customer
                         context.TBL_CUSTOMER_NEXTOFKIN.Add(next);
 
                         auditDetail = "Added Customer's Next Of Kin for customer ID: + (" + entity.customerId + ") ";
-                        auditType = (short)AuditTypeEnum.CustomerAddressAdded;
+                        auditType = (short)AuditTypeEnum.CustomerDetailAdded;
 
                     }
 

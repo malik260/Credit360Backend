@@ -21,6 +21,8 @@
         public string VALUE { get; set; }
 
         public int CUSTOMERID { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
+        public int? CUSTOMERGROUPID { get; set; }
         public int CREATEDBY { get; set; }
         public int loanApplicationId { get; set; }
 
