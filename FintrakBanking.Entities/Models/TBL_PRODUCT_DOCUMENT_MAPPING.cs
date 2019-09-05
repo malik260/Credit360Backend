@@ -1,6 +1,7 @@
 ﻿
 namespace FintrakBanking.Entities.Models
 {
+    using FintrakBanking.Entities.DocumentModels;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -25,6 +26,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime DATETIMEDELETED { get; set; }
         public bool DELETED { get; set; }
+        public virtual TBL_DOCUMENT_TYPE TBL_DOCUMENT_TYPE { get; set; }
 
 
     }

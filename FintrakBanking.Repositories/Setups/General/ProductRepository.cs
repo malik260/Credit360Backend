@@ -3366,11 +3366,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     select new ProductDocumentMappingViewModel()
                     {
                         productDocMapId = p.PRODUCTDOCMAPID,
+                        documentCategoryId = p.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                        documentCategoryName = p.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
                         productId = p.PRODUCTID,
                         required = p.REQUIRED,
-                        documentTitle = context.TBL_DOCUMENT_DEFINITION.Where(a => a.DOCUMENTDEFINITIONID == p.DOCUMENTTYPEID).FirstOrDefault().DOCUMENTTITLE,
                         documenttypeId = p.DOCUMENTTYPEID
-                    });
+                    }).ToList();
         }
 
 

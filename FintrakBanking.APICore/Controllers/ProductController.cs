@@ -1918,7 +1918,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllProductDocumentMapping().ToList();
+                var data = repo.GetAllProductDocumentMapping();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
