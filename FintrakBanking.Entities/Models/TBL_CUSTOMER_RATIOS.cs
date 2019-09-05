@@ -22,6 +22,7 @@
 
         public int CUSTOMERID { get; set; }
         public int CREATEDBY { get; set; }
+        public int loanApplicationId { get; set; }
 
         // public int? LASTUPDATEDBY { get; set; }
 

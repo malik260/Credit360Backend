@@ -324,5 +324,34 @@ namespace FintrakBanking.Repositories.Setups.Credit
 
         }
 
+        public IEnumerable<BulkDisbursementSetupSchemeViewModel> SchemeSearch(string searchString)
+        {
+            var search = searchString.Trim().ToLower();
+
+            var applications = (from a in context.TBL_LOAN_BULK_DISBURSE_SCHEME
+                                where (a.SCHEMECODE.Contains(search)
+                                      || a.SCHEMENAME.ToLower().Contains(search))
+                                select new BulkDisbursementSetupSchemeViewModel
+                                {
+                                    disburseSchemeId = a.DISBURSESCHEMEID,
+                                    scheduleDayCountConventionId = a.SCHEDULEDAYCOUNTCONVENTIONID,
+                                    interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID,
+                                    principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID,
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    schemeCode = a.SCHEMECODE,
+                                    productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
+                                    scheduleMethodId = (int)a.SCHEDULEMETHODID,
+                                    productId = a.PRODUCTID,
+                                    facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
+                                    tenor = a.TENOR,
+                                    schemeName = a.SCHEMENAME,
+                                    interestRate = a.INTERESTRATE,
+                                    scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
+                                }).ToList();
+
+            return applications;
+
+        }
+
     }
 }
