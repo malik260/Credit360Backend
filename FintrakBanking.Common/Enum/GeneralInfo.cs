@@ -413,6 +413,12 @@ namespace FintrakBanking.Common.Enum
         BulkDisbursementPackageUpdated = 516,
         ProductDocumentMappingAdded = 517,
         DocumentDefinitionAdded = 518,
+
+        //isaac
+        CustomerContactAdded = 519,
+        CustomerContactUpdated = 520,
+        CustomerDetailAdded = 521,
+        CustomerDetailUpdated = 522,
     };
     public enum RegulatoryTypeEnum
     {

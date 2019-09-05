@@ -2481,10 +2481,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             user.createdBy = token.GetStaffId;
 
             var data = repo.startBulkLoanDisbursement(models, user);
-            //if (!data.Any())
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            //}
+
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
            
         }
