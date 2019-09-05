@@ -67,6 +67,7 @@ namespace FintrakBanking.Repositories.Media
         {
             var entity = new TBL_DOCUMENT_TYPE
             {
+                DOCUMENTCATEGORYID = model.documentCategoryId,
                 DOCUMENTTYPENAME = model.documentTypeName,
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
@@ -96,6 +97,8 @@ namespace FintrakBanking.Repositories.Media
         public bool UpdateDocumentType(DocumentTypeViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_DOCUMENT_TYPE.Find(id);
+            entity.DOCUMENTCATEGORYID = model.documentCategoryId;
+            entity.DOCUMENTTYPEID = model.documentTypeId;
             entity.DOCUMENTTYPENAME = model.documentTypeName;
 
             entity.LASTUPDATEDBY = user.createdBy;

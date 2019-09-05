@@ -123,7 +123,15 @@ namespace FintrakBanking.APICore.Controllers
                     x.companyId = token.GetCompanyId;
                 }
                 var response = _repo.GoForApproval(model);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message  = "One or More Document may currently be Undergoing Approval"});
+                }
+                
             }
             catch (SecureException ex)
             {

@@ -122,5 +122,9 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool AddDocumentDefinition(DocumentDefinitionViewModel model);
         bool AddProductDocumentMapping(ProductDocumentMappingViewModel model);
         IEnumerable<ProductDocumentMappingViewModel> GetAllProductDocumentMapping();
+        bool DeleteProductDocumentMapping(int id);  
+        bool UpdateProductDocumentMapping(ProductDocumentMappingViewModel model);
+
+        ProductDocumentMappingViewModel GetProductDocumenetMapping(int Id);
     }
 }
