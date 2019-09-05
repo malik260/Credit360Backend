@@ -227,10 +227,11 @@ namespace FintrakBanking.Repositories.Media
                         join c in context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
                         join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                         where oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
-                        && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                        && atrail.LOOPEDSTAFFID == initiator 
-                        && atrail.RESPONSESTAFFID == null
-                        //&& ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && atrail.TARGETID == oda.ORIGINALDOCUMENTAPPROVALID
+                            && ((atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                                    && atrail.LOOPEDSTAFFID == initiator) || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved)
+                            && atrail.RESPONSESTAFFID == null
+                        orderby atrail.APPROVALTRAILID descending
                         select new OriginalDocumentApprovalViewModel
                         {
                             originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
@@ -253,7 +254,9 @@ namespace FintrakBanking.Repositories.Media
                             atInitiator = staffId == context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID == oda.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
 
 
-                        }).OrderByDescending(o => o.originalDocumentApprovalId).ToList();
+                        }).ToList();
+
+            var modelGroup = model1.GroupBy(x => x.originalDocumentApprovalId).Select(x => x.FirstOrDefault()).ToList();
 
             var model2 = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
                           join cc in context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
@@ -277,38 +280,38 @@ namespace FintrakBanking.Repositories.Media
 
                           }).OrderByDescending(o => o.originalDocumentApprovalId).ToList();
 
-            var model3 = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
-                          join cc in context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
-                          join c in context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
-                          join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
-                          where oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
-                          && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
-                          && atrail.RESPONSESTAFFID == null
-                          select new OriginalDocumentApprovalViewModel
-                          {
-                              originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
-                              description = oda.DESCRIPTION,
-                              loanApplicationId = oda.LOANAPPLICATIONID,
-                              collateralType = context.TBL_COLLATERAL_TYPE.Where(a => a.COLLATERALTYPEID == cc.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
-                              collateralTypeId = cc.COLLATERALTYPEID,
-                              customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
-                              collateralCode = cc.COLLATERALCODE,
-                              referenceNumber = oda.REFERENCENUMBER,
-                              applicationReferenceNumber = oda.APPLICATIONREFERNECENUMBER,
-                              dateTimeCreated = oda.DATETIMECREATED,
-                              collateralCustomerId = cc.COLLATERALCUSTOMERID,
-                              customerId = c.CUSTOMERID,
-                              branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                              operationId = (int)OperationsEnum.OriginalDocumentApproval,
-                              approvalStatusId = atrail.APPROVALSTATUSID,
-                              approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
-                              //relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == c.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                             // atInitiator = staffId == context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID == oda.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
+            //var model3 = (from oda in context.TBL_ORIGINAL_DOCUMENT_APPROVAL
+            //              join cc in context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+            //              join c in context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
+            //              join atrail in context.TBL_APPROVAL_TRAIL on oda.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
+            //              where oda.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval
+            //              && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
+            //              && atrail.RESPONSESTAFFID == null
+            //              select new OriginalDocumentApprovalViewModel
+            //              {
+            //                  originalDocumentApprovalId = oda.ORIGINALDOCUMENTAPPROVALID,
+            //                  description = oda.DESCRIPTION,
+            //                  loanApplicationId = oda.LOANAPPLICATIONID,
+            //                  collateralType = context.TBL_COLLATERAL_TYPE.Where(a => a.COLLATERALTYPEID == cc.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
+            //                  collateralTypeId = cc.COLLATERALTYPEID,
+            //                  customerName = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
+            //                  collateralCode = cc.COLLATERALCODE,
+            //                  referenceNumber = oda.REFERENCENUMBER,
+            //                  applicationReferenceNumber = oda.APPLICATIONREFERNECENUMBER,
+            //                  dateTimeCreated = oda.DATETIMECREATED,
+            //                  collateralCustomerId = cc.COLLATERALCUSTOMERID,
+            //                  customerId = c.CUSTOMERID,
+            //                  branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+            //                  operationId = (int)OperationsEnum.OriginalDocumentApproval,
+            //                  approvalStatusId = atrail.APPROVALSTATUSID,
+            //                  approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
+            //                  //relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == c.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+            //                 // atInitiator = staffId == context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.OriginalDocumentApproval && o.TARGETID == oda.ORIGINALDOCUMENTAPPROVALID).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault(),
 
 
-                          }).OrderByDescending(o => o.originalDocumentApprovalId).ToList();
+            //              }).OrderByDescending(o => o.originalDocumentApprovalId).ToList();
 
-            var model = (model1.Union(model2)).Union(model3).ToList();
+            var model = model1.Union(modelGroup).ToList();
 
             return model;
         }
