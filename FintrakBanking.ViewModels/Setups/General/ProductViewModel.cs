@@ -248,4 +248,24 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int globalSla { get; set; }
         public int? businessUnitId { get; set; }
     }
+
+    public class ProductDocumentMappingViewModel : GeneralEntity
+    {
+        public int productDocMapId { get; set; }
+        public int documentId { get; set; }
+        public int documenttypeId { get; set; }
+
+        public int productId { get; set; }
+        public bool required { get; set; }
+        public string documentTitle { get; set; }
+       
+    }
+
+    public class DocumentDefinitionViewModel : GeneralEntity
+    {
+        public int documentDefinitionId { get; set; }
+
+        public string documentTitle { get; set; }
+        public bool inUse { get; set; }
+    }
 }

@@ -177,6 +177,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("loan-application-details/search")]
+        //public HttpResponseMessage SearchLoanApplicationDetails([FromBody] SearchViewModel model)
+        //{
+        //    try
+        //    {
+               
+        //       var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, model.searchString);
+
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+        //    }
+        //    catch (SecureException e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
+
     }
 }

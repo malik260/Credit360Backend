@@ -56,9 +56,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductPriceIndexViewModel> GetProductPriceIndex(int companyId);
         IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobal();
         IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalAwaitingApproval(int staffId);
-
         ProductPriceIndexViewModel GetProductPriceIndexById(int productPriceIndexId, int companyId);
-
+        ProductPriceIndexViewModel GetAllProductPriceIndicesById(int priceIndexId);
         ProductPriceIndexViewModel AddProductPriceIndex(ProductPriceIndexViewModel prodPriceIndex);
         bool AddProductPriceIndexGlobal(ProductPriceIndexGlobalViewModel prodPriceIndexGlobal);
         bool UpdateProductPriceIndexGlobal(int prodPriceIndexGlobalId, ProductPriceIndexGlobalViewModel prodPriceIndexGlobal);
@@ -119,5 +118,13 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool ValidateProductClassification(string productClassName);
         IEnumerable<ProductLiteViewModel> GetAllProductLite();
         #endregion Product Classification 
+        IEnumerable<DocumentDefinitionViewModel> GetAllDocumentDefinition();
+        bool AddDocumentDefinition(DocumentDefinitionViewModel model);
+        bool AddProductDocumentMapping(ProductDocumentMappingViewModel model);
+        IEnumerable<ProductDocumentMappingViewModel> GetAllProductDocumentMapping();
+        bool DeleteProductDocumentMapping(int id);  
+        bool UpdateProductDocumentMapping(ProductDocumentMappingViewModel model);
+
+        ProductDocumentMappingViewModel GetProductDocumenetMapping(int Id);
     }
 }

@@ -692,7 +692,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                               //from c in cc.DefaultIfEmpty()
                                               //join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
                                               //from d in cg.DefaultIfEmpty()
-                                              where c.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                              where c.APPLICATIONREFERENCENUMBER == applicationRefNumber && a.ISEXTERNAL == true
                                               && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                               && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                               && b.STATUSID == (int)ApprovalStatusEnum.Approved

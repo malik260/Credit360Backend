@@ -50,7 +50,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private bool SaveAll()
         {
-            return this.context.SaveChanges() > 0;
+           return this.context.SaveChanges() > 0;
         }
 
         //public  IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId)
@@ -2610,7 +2610,29 @@ namespace FintrakBanking.Repositories.Setups.General
                             currencyId = data.CURRENCYID,
                         });
             }
-            private IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalApprovalList(int staffId)
+
+        public ProductPriceIndexViewModel GetAllProductPriceIndicesById(int priceIndexId)
+        {
+            return (from data in context.TBL_PRODUCT_PRICE_INDEX
+                    where data.PRODUCTPRICEINDEXID == priceIndexId && data.DELETED == false
+                    select new ProductPriceIndexViewModel()
+                    {
+                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
+                        priceIndexDescription = data.PRICEINDEXDESCRIPTION,
+                        priceIndexDuration = data.DURATION,
+                        allowAutomaticRepricing = data.ALLOWAUTOMATICREPRICING,
+                        companyId = data.COMPANYID,
+                        priceIndexName = data.PRICEINDEXNAME,
+                        priceIndexRate = data.PRICEINDEXRATE,
+                        dateTimeUpdated = data.DATETIMEUPDATED,
+                        deleted = data.DELETED,
+                        deletedBy = data.DELETEDBY,
+                        dateTimeDeleted = data.DATETIMEDELETED,
+                        currencyId = data.CURRENCYID,
+                    }).FirstOrDefault();
+        }
+
+        private IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalApprovalList(int staffId)
             {
 
                 var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.GlobalInterestRateChange).ToList();
@@ -3335,6 +3357,177 @@ namespace FintrakBanking.Repositories.Setups.General
                 return context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCTCLASSNAME == productClassName).Any();
             }
 
-            #endregion
+        #endregion
+
+            #region Product Document Mapping
+        public IEnumerable<ProductDocumentMappingViewModel> GetAllProductDocumentMapping()
+        {
+            return (from p in context.TBL_PRODUCT_DOCUMENT_MAPPING
+                    select new ProductDocumentMappingViewModel()
+                    {
+                        productDocMapId = p.PRODUCTDOCMAPID,
+                        productId = p.PRODUCTID,
+                        required = p.REQUIRED,
+                        documentTitle = context.TBL_DOCUMENT_DEFINITION.Where(a => a.DOCUMENTDEFINITIONID == p.DOCUMENTTYPEID).FirstOrDefault().DOCUMENTTITLE,
+                        documenttypeId = p.DOCUMENTTYPEID
+                    });
         }
+
+
+        public bool AddProductDocumentMapping(ProductDocumentMappingViewModel model)
+        {
+            var documentDef = context.TBL_PRODUCT_DOCUMENT_MAPPING.Find(model.documenttypeId); 
+
+            if (documentDef == null) 
+            {
+                throw new SecureException("Document definition does not exist!");
+            }
+
+           var data = new TBL_PRODUCT_DOCUMENT_MAPPING()
+            {
+                PRODUCTID = model.productId,
+                REQUIRED = model.required,
+                DOCUMENTTYPEID=model.documenttypeId
+               
+            };
+
+            this.context.TBL_PRODUCT_DOCUMENT_MAPPING.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ProductDocumentMappingAdded,
+                STAFFID = (int)model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added : TBL_PRODUCT_DOCUMENT_MAPPING'{model.productId}' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            var status = this.SaveAll();
+
+            if (status)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        
+    #endregion Product Document Mapping
+
+    #region Product Document Definition
+    public IEnumerable<DocumentDefinitionViewModel> GetAllDocumentDefinition()
+    {
+        return (from p in context.TBL_DOCUMENT_DEFINITION
+                select new DocumentDefinitionViewModel()
+                {
+                    documentDefinitionId = p.DOCUMENTDEFINITIONID,
+                    documentTitle = p.DOCUMENTTITLE,
+                    inUse = p.INUSE
+                });
     }
+
+
+    public bool AddDocumentDefinition(DocumentDefinitionViewModel model)
+    {
+         var data = new TBL_DOCUMENT_DEFINITION()
+        {
+            DOCUMENTTITLE = model.documentTitle,
+            INUSE = model.inUse
+        };
+
+        this.context.TBL_DOCUMENT_DEFINITION.Add(data);
+
+        // Audit Section ---------------------------
+        var audit = new TBL_AUDIT
+        {
+            AUDITTYPEID = (short)AuditTypeEnum.DocumentDefinitionAdded,
+            STAFFID = (int)model.createdBy,
+            BRANCHID = (short)model.userBranchId,
+            DETAIL = $"Added : TBL_DOCUMENT_DEFINITION'{model.documentDefinitionId}' ",
+            IPADDRESS = model.userIPAddress,
+            URL = model.applicationUrl,
+            APPLICATIONDATE = genSetup.GetApplicationDate(),
+            SYSTEMDATETIME = DateTime.Now
+        };
+
+        this.auditTrail.AddAuditTrail(audit);
+        //end of Audit section -------------------------------
+
+        var status = this.SaveAll();
+
+        if (status)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+        public bool DeleteProductDocumentMapping(int id)
+        {
+            var entity = context.TBL_PRODUCT_DOCUMENT_MAPPING.Find(id);
+            if(entity != null)
+            {
+                entity.DELETED = true;
+            }
+
+            return context.SaveChanges() > 0;
+        }
+
+        public IEnumerable<ProductDocumentMappingViewModel> GetProductDocumentMapping()
+        {
+
+            var entity = (from pdm in context.TBL_PRODUCT_DOCUMENT_MAPPING
+                         where pdm.DELETED == false
+                         select new ProductDocumentMappingViewModel
+                         {
+                             required = pdm.REQUIRED,
+                             documentId = pdm.DOCUMENTID,
+                             productId = pdm.PRODUCTID,
+                             productDocMapId = pdm.PRODUCTDOCMAPID
+
+
+                         }).ToList();
+
+            return entity;
+        }
+
+        
+        public bool UpdateProductDocumentMapping(ProductDocumentMappingViewModel model)
+        {
+            var entity = context.TBL_PRODUCT_DOCUMENT_MAPPING.Find(model.productDocMapId);
+            entity.REQUIRED = model.required;
+            entity.DATETIMEUPDATED = DateTime.Now;
+            entity.PRODUCTID = model.productId;
+            entity.DOCUMENTTYPEID = model.documenttypeId;
+
+            return context.SaveChanges() != 0;
+        }
+
+        public ProductDocumentMappingViewModel GetProductDocumenetMapping(int Id)
+        {
+            var entity = context.TBL_PRODUCT_DOCUMENT_MAPPING.Where(x => x.DELETED == false && x.PRODUCTDOCMAPID == Id)
+                .Select(x => new ProductDocumentMappingViewModel
+                {
+                    required = x.REQUIRED,
+                    documentId =x.DOCUMENTID,
+                    productId = x.PRODUCTID,
+                    productDocMapId = x.PRODUCTDOCMAPID
+
+                }).FirstOrDefault();
+            
+            return entity;
+        }
+
+
+        #endregion Product Document Definition    
+    }
+}

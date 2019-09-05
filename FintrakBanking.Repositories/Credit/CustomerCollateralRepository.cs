@@ -1418,15 +1418,10 @@ namespace FintrakBanking.Repositories.Credit
             return referenceNumber;
         }
 
-        public IEnumerable<CollateralViewModel> GetInsuranceRequests(int staffId)
+        public IEnumerable<CollateralViewModel> GetInsuranceRequests()
         {
-            //var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.IsurancePolicyApproval).ToList();
-
-            var initiator = context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
-
-            var result1 = (from ir in context.TBL_INSURANCE_REQUEST
+            var result = (from ir in context.TBL_INSURANCE_REQUEST
                           join cc in context.TBL_COLLATERAL_CUSTOMER on ir.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
-                          where ir.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                           orderby ir.INSURANCEREQUESTID descending
                           select new CollateralViewModel()
                           {
@@ -1827,7 +1822,7 @@ namespace FintrakBanking.Repositories.Credit
                                    facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(o => o.APPROVEDAMOUNT).Sum(),
                                    approvalStatusId = x.APPROVALSTATUSID,
 
-                               })?.ToList();
+                               }).ToList();
 
 
             if (collaterals == null) return new List<CollateralCoverageViewModel>();
@@ -1891,7 +1886,7 @@ namespace FintrakBanking.Repositories.Credit
                 list.Add(cov);
 
             }
-            return list;
+            return list.GroupBy(x=>x.loanApplicationDetailId).Select(x => x.First());
 
         }
 
@@ -2458,7 +2453,7 @@ namespace FintrakBanking.Repositories.Credit
                              join b in context.TBL_COLLATERAL_TYPE_SUB on s.COLLATERALSUBTYPEID equals b.COLLATERALSUBTYPEID
                              where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                                      && atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
-                                     && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
+                                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                      // && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                                      && atrail.RESPONSESTAFFID == null
                              select new InsurancePolicies
@@ -4341,7 +4336,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool IsCollateralMapped(ApplicationCollateralMapping entity)
         {
-            return context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.COLLATERALCUSTOMERID == entity.collateralId).Any();
+            return context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.COLLATERALCUSTOMERID == entity.collateralId && c.APPROVALSTATUSID==(int)ApprovalStatusEnum.Approved).Any();
         }
         public IEnumerable<LoanApplicationCollateralViewModel> UnmapApplicationCollateral(ApplicationCollateralMapping entity)
         {
@@ -9198,6 +9193,10 @@ namespace FintrakBanking.Repositories.Credit
             return list;
         }
 
+        public IEnumerable<CollateralViewModel> GetInsuranceRequests(int staffId)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
