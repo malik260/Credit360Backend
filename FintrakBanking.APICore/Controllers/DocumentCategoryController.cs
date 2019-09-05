@@ -21,12 +21,12 @@ using FintrakBanking.Interfaces.Media;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/credit")] // TODO: modify!
-    public class DocumentCategoryController : ApiControllerBase
+    public class ProductDocumentMapingController : ApiControllerBase
     {
         private IDocumentCategoryRepository repo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public DocumentCategoryController(IDocumentCategoryRepository _repo)
+        public ProductDocumentMapingController(IDocumentCategoryRepository _repo)
         {
             this.repo = _repo;
         }
@@ -98,5 +98,6 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.DeleteDocumentCategory(id,user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
+
     }
 }
