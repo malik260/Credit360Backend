@@ -463,11 +463,6 @@
     <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx.designer.cs">
       <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportDataset\CollateralDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CollateralDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportDataset\FORM3800B.Designer.cs" />
     <Compile Include="Reports\ReportDataset\LoanDataSet.cs">
       <DependentUpon>LoanDataSet.xsd</DependentUpon>
@@ -759,13 +754,6 @@
     </Compile>
     <Compile Include="Reports\ReportViews\ProfileActivityReport.aspx.designer.cs">
       <DependentUpon>ProfileActivityReport.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportViews\PropertyRevaluation.aspx.cs">
-      <DependentUpon>PropertyRevaluation.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\ReportViews\PropertyRevaluation.aspx.designer.cs">
-      <DependentUpon>PropertyRevaluation.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\PSR.aspx.cs">
       <DependentUpon>PSR.aspx</DependentUpon>
@@ -1127,7 +1115,6 @@
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\ProfileActivityReport.aspx" />
-    <Content Include="Reports\ReportViews\PropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\PSR.aspx" />
     <Content Include="Reports\ReportViews\ReceivableInterest.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
@@ -1216,17 +1203,6 @@
     <Content Include="Reports\Report\Lein.rdlc" />
     <Content Include="Reports\ReportDataset\FORM3800B.xsc">
       <DependentUpon>FORM3800B.xsd</DependentUpon>
-    </Content>
-    <Content Include="Reports\ReportDataset\CollateralDataSet.xsc">
-      <DependentUpon>CollateralDataSet.xsd</DependentUpon>
-    </Content>
-    <None Include="Reports\ReportDataset\CollateralDataSet.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>CollateralDataSet.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Reports\ReportDataset\CollateralDataSet.xss">
-      <DependentUpon>CollateralDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\FORM3800B.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1418,7 +1394,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Reports\CollateralRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS12.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.rdlc" />

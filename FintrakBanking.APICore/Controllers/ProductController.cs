@@ -1935,7 +1935,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("add-product-document-mapping")]
+        [Route("product-document-mapping")]
         public HttpResponseMessage AddProductDocumentMapping([FromBody] ProductDocumentMappingViewModel model)
         {
             try
@@ -1961,6 +1961,50 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = ex.Message });
             }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("product-document-mappings/{id}")]
+        public HttpResponseMessage DeleteProductDocumentMapping(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteProductDocumentMapping (id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("product-document-mappings/{id}")]
+        public HttpResponseMessage UpdateProductDocumentMapping ([FromBody] ProductDocumentMappingViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdateProductDocumentMapping(model);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-document-mapping/{id}")]
+        public HttpResponseMessage GetProductDocumentCategory(int id)
+        {
+            ProductDocumentMappingViewModel response = repo.GetProductDocumenetMapping(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
     }
 }
