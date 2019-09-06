@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int PRODUCTID { get; set; }
         public short? SCHEDULEMETHODID { get; set; }
         public int LOANAPPLICATIONDETAILID { get; set; }
+        public int CURRENCYID { get; set; }
         public string SCHEMECODE { get; set; }
         public int TENOR { get; set; }
 

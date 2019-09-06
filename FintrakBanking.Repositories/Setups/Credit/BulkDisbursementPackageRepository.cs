@@ -48,6 +48,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             //}).FirstOrDefault(),
                             schemeCode = a.SCHEMECODE,
                             productId = a.PRODUCTID,
+                            currencyId = a.CURRENCYID,
+                            currencyName = context.TBL_CURRENCY.Where(r => r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
                             facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,               
                             tenor = a.TENOR,
                             scheduleMethodId = (int)a.SCHEDULEMETHODID,
@@ -76,6 +78,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             schemeCode = a.SCHEMECODE,
                             productId = a.PRODUCTID,
+                            currencyId = a.CURRENCYID,
+                            currencyName = context.TBL_CURRENCY.Where(r => r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
                             facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
                             tenor = a.TENOR,
                             scheduleMethodId = (int)a.SCHEDULEMETHODID,
@@ -109,6 +113,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             scheduleMethodId = (int)a.SCHEDULEMETHODID,
                             schemeName = a.SCHEMENAME,
                             interestRate = a.INTERESTRATE,
+                            currencyId = a.CURRENCYID,
+                            currencyName = context.TBL_CURRENCY.Where(r => r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
                             scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
                             //approvalStatusId = (int)a.APPROVALSTATUSID
@@ -142,6 +148,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                                     schemeName = a.SCHEMENAME,
                                     customerCode = c.CUSTOMERCODE,
                                     interestRate = a.INTERESTRATE,
+                                    currencyId = a.CURRENCYID,
+                                    currencyName = context.TBL_CURRENCY.Where(r => r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
                                     facilityName = context.TBL_PRODUCT.Where(d => d.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
                                     scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(l => l.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME
                                 }).ToList();
@@ -182,6 +190,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 DELETED = false,
                 COMPANYID = (short)model.companyId,
                 SCHEMENAME = model.schemeName,
+                CURRENCYID = model.currencyId
             };
 
             //Audit Section ---------------------------
@@ -253,6 +262,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
             data.APPROVALSTATUSID = (short)model.approvalStatusId;
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.CURRENCYID = model.currencyId;
 
             //Audit Section ---------------------------
 
@@ -347,8 +357,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
                                     productId = a.PRODUCTID,
                                     facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
                                     tenor = a.TENOR,
+                                    approvedAmount = x.APPROVEDAMOUNT,
                                     schemeName = a.SCHEMENAME,
                                     interestRate = a.INTERESTRATE,
+                                    currencyId = a.CURRENCYID,
+                                    currencyName = context.TBL_CURRENCY.Where(r=>r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
                                     scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
                                 }).ToList();
 
