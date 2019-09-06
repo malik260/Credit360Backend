@@ -10,6 +10,10 @@ namespace FintrakBanking.ViewModels.Setups.Credit
     
     public class BulkDisbursementSetupSchemeViewModel : GeneralEntity
     {
+        public string customerName;
+        public string customerCode;
+        public int loanApplicationId;
+
         public int disburseSchemeId { get; set; }
         public string facilityName { get; set; }
         public int loanApplicationDetailId { get; set; }

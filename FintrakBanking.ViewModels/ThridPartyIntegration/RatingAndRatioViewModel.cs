@@ -14,6 +14,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public bool inUse { get; set; }
         public string indicatorvalue { get; set; }
         public string indicatorname { get; set; }
+        public int loanApplicationId { get; set; }
     }
 
     public class CutomerRatingViewModel : GeneralEntity
