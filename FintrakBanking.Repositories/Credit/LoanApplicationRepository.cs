@@ -1528,7 +1528,7 @@ namespace FintrakBanking.Repositories.Credit
                             model.failedRacStartCam = true;
                             model.loanApplicationDetailId = (int)racReponse.loanApplicationDetailId;
 
-                            trans.Rollback();
+                            trans.Commit();
                             return model;
                         }
                         
