@@ -9,6 +9,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationViewModel : GeneralEntity
     {
+        public string approvedProductName;
 
         public LoanApplicationViewModel()
         {

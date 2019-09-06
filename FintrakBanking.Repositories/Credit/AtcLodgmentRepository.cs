@@ -38,9 +38,12 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<AtcLodgmentViewModel> GetAtcLodgments(int staffId)
         {
+
+            var initiator = context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+
             var data = (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
-                    where x.DELETED == false && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
+                    where x.DELETED == false && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
                     select new AtcLodgmentViewModel
                     {
                         atcLodgmentId = x.ATCLODGMENTID,
@@ -70,13 +73,13 @@ namespace FintrakBanking.Repositories.credit
             var data2 = (from x in context.TBL_ATC_LODGMENT
                          join trail in context.TBL_APPROVAL_TRAIL on x.ATCLODGMENTID equals trail.TARGETID
                          join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
-                         where  trail.OPERATIONID == (short)OperationsEnum.AtcLodgementApproval 
-                         && trail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred     //temporary Fix only!!! should be rejected
-                         && x.DELETED == false 
-                        // && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
-                       
-                        select new AtcLodgmentViewModel
+                         where  trail.OPERATIONID == (short)OperationsEnum.AtcLodgementApproval
+                             && x.DELETED == false
+                             && trail.TARGETID == x.ATCLODGMENTID
+                         orderby trail.APPROVALTRAILID descending
+                         select new AtcLodgmentViewModel
                         {
+                            loopedStaffId = trail.LOOPEDSTAFFID,
                             atcLodgmentId = x.ATCLODGMENTID,
                             customerId = x.CUSTOMERID,
                             atcTypeId = x.ATCTYPEID,
@@ -98,8 +101,12 @@ namespace FintrakBanking.Repositories.credit
                             currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
                             branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
 
-                        }).OrderByDescending(o => o.atcLodgmentId)
-             .ToList();
+                        }).ToList().GroupBy(x => x.atcLodgmentId).Select(x => x.FirstOrDefault()).Where((trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
+                                    && trail.loopedStaffId == initiator) || trail.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)).ToList();
+
+
+
+            //var dataGroup = data2.GroupBy(x => x.atcLodgmentId).Select(x => x.FirstOrDefault()).ToList();
 
             data = data.Union(data2).ToList();
 
@@ -116,7 +123,7 @@ namespace FintrakBanking.Repositories.credit
                     where x.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
                      || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                      && atrail.RESPONSESTAFFID == null
-                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                     && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval
                     select new AtcLodgmentViewModel
                     {
@@ -216,17 +223,32 @@ namespace FintrakBanking.Repositories.credit
         }
         
 
-        public WorkflowResponse SubmitApproval(IEnumerable<AtcReleaseViewModel> model)
+        public bool SubmitReferredAtcBackIntoWorkflow(AtcReleaseViewModel model)
+        {
+            workflow.StaffId = model.createdBy;
+            workflow.CompanyId = model.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = model.atcLodgmentId;
+            workflow.Comment = "Update has been Applied, Request for ATC approval";
+            workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            return context.SaveChanges() > 0;
+        }
+
+        public Tuple<WorkflowResponse, int> SubmitApproval(IEnumerable<AtcReleaseViewModel> model)
         {
             bool responce = false;
-
+            
             using (var transaction = context.Database.BeginTransaction())
             {
+                var ctr = 0;
                 foreach (var mod in model)
                 {
                     workflow.StaffId = mod.createdBy;
                     workflow.CompanyId = mod.companyId;
-                    workflow.StatusId = mod.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
+                    workflow.StatusId = mod.approvalStatusId == 2 ? (int)ApprovalStatusEnum.Processing : mod.approvalStatusId;
                     workflow.TargetId = mod.atcLodgmentId;
                     workflow.Comment = mod.comment;
                     workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
@@ -235,9 +257,10 @@ namespace FintrakBanking.Repositories.credit
 
                     try
                     {
+                        
                         if (workflow.NewState == (int)ApprovalState.Ended)
                         {
-
+                            ctr = ctr + 1;
                             var document = context.TBL_ATC_RELEASE.Where(o => o.ATCLODGMENTID == mod.atcLodgmentId &&
                                                                     (o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred))
                                                                     .FirstOrDefault();
@@ -249,7 +272,7 @@ namespace FintrakBanking.Repositories.credit
                             var doc = context.TBL_ATC_LODGMENT.Where(o => o.ATCLODGMENTID == mod.atcLodgmentId).FirstOrDefault();
                             if (document != null && doc != null)
                             {
-                                document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                document.APPROVALSTATUSID = mod.approvalStatusId;
                                 document.UNITNUMBER = document.UNITBALANCE;
                                 doc.UNITNUMBER = document.UNITBALANCE;
                                 document.DATETIMEAPPROVED = general.GetApplicationDate();
@@ -279,8 +302,6 @@ namespace FintrakBanking.Repositories.credit
                     {
 
                         transaction.Rollback();
-
-
                         throw ex;
                     }
                     //return false;
@@ -289,11 +310,11 @@ namespace FintrakBanking.Repositories.credit
                 responce = context.SaveChanges() > 0;
                 transaction.Commit();
 
-                return workflow.Response;
+                return new Tuple<WorkflowResponse, int>  (workflow.Response,ctr);
             }
         }
 
-        public bool SubmitLodgementApproval(AtcLodgmentViewModel model)
+        public WorkflowResponse SubmitLodgementApproval(AtcLodgmentViewModel model)
         {
             bool responce = false;
 
@@ -301,7 +322,7 @@ namespace FintrakBanking.Repositories.credit
                 {
                     workflow.StaffId = model.createdBy;
                     workflow.CompanyId = model.companyId;
-                    workflow.StatusId = model.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
+                    workflow.StatusId = model.approvalStatusId == (short)ApprovalStatusEnum.Approved ? (short)ApprovalStatusEnum.Processing : model.approvalStatusId;
                     workflow.TargetId = model.atcLodgmentId;
                     workflow.Comment = model.comment;
                     workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
@@ -315,7 +336,7 @@ namespace FintrakBanking.Repositories.credit
                         
                         if (document != null)
                             {
-                                document.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                document.APPROVALSTATUSID = model.approvalStatusId;
                                 document.DATETIMEAPPROVED = general.GetApplicationDate();
                             }
 
@@ -324,7 +345,7 @@ namespace FintrakBanking.Repositories.credit
                         responce = context.SaveChanges() > 0;
                         transaction.Commit();
 
-                        return responce;
+                        return workflow.Response;
                     }
                     catch (Exception ex)
                     {
@@ -498,6 +519,9 @@ namespace FintrakBanking.Repositories.credit
         }
         public bool AddAtcLodgment(AtcLodgmentViewModel model)
         {
+
+            bool response = false;
+
             var entity = new TBL_ATC_LODGMENT
             {
                 CUSTOMERID = model.customerId,
@@ -519,51 +543,97 @@ namespace FintrakBanking.Repositories.credit
 
             var id = context.TBL_ATC_LODGMENT.Add(entity);
 
+            response = context.SaveChanges() > 0; 
+
+            if (response)
+            {
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+                //// Audit Section ---------------------------
+                this.audit.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.AtcLodgmentAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"TBL_Atc Lodgment '{model.description}' created by {auditStaff}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                });
+                // Audit Section end ------------------------
+            }
+
+
+
             return context.SaveChanges() != 0;
         }
 
         public bool atclodgmentApproval(AtcLodgmentViewModel model)
         {
-            var data = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == model.atcLodgmentId && o.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval)
-                                                    .FirstOrDefault();
 
-
-            var entity = context.TBL_ATC_LODGMENT.Where(o => o.ATCLODGMENTID == model.atcLodgmentId)
-                        .FirstOrDefault();
-
-            if (data != null) return false;
-
-            workflow.StaffId = model.createdBy;
-            workflow.CompanyId = model.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.Comment = "Request for ATC Lodgement approval";
-            workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
-            workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-            workflow.ExternalInitialization = true;
-            workflow.TargetId = model.atcLodgmentId;
-            workflow.LogActivity();
-
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
-            //// Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
+            if(model.approvalStatusId == (short)ApprovalStatusEnum.Referred)
             {
-                AUDITTYPEID = (short)AuditTypeEnum.AtcLodgmentAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"TBL_Atc Lodgment '{model.description}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            });
-            // Audit Section end ------------------------
+                bool responce = false;
 
-            if(context.SaveChanges() != 0)
-            {
-                entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                using (var transaction = context.Database.BeginTransaction())
+                {
+                    workflow.StaffId = model.createdBy;
+                    workflow.CompanyId = model.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = model.atcLodgmentId;
+                    workflow.Comment = "Update has been applied, Request for ATC lodgment Approval";
+                    workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
+                    workflow.DeferredExecution = true;
+                    workflow.LogActivity();
+                    try
+                    {
+
+                        responce = context.SaveChanges() > 0;
+                        transaction.Commit();
+
+                        return responce;
+                    }
+                    catch (Exception ex)
+                    {
+
+                        transaction.Rollback();
+
+
+                        throw new SecureException(ex.Message);
+                    }
+                    //return false;
+                }
             }
 
-            return context.SaveChanges() != 0;
+            else
+            {
+                var data = context.TBL_APPROVAL_TRAIL.Where(o => o.TARGETID == model.atcLodgmentId && o.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval)
+                                                   .FirstOrDefault();
+
+
+                var entity = context.TBL_ATC_LODGMENT.Where(o => o.ATCLODGMENTID == model.atcLodgmentId)
+                            .FirstOrDefault();
+
+                if (data != null) return false;
+
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.Comment = "Request for ATC Lodgement approval";
+                workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.TargetId = model.atcLodgmentId;
+                workflow.LogActivity();
+                
+                if (context.SaveChanges() != 0)
+                {
+                    entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                }
+
+                return context.SaveChanges() != 0;
+            }
+            
         }
 
         public bool SaveEditedATCRelease(AtcReleaseViewModel model, int id)
@@ -593,6 +663,9 @@ namespace FintrakBanking.Repositories.credit
 
         public bool UpdateAtcLodgment(AtcLodgmentViewModel model, int id, UserInfo user)
         {
+
+            bool response = false; 
+
             var entity = this.context.TBL_ATC_LODGMENT.Find(id);
             entity.CUSTOMERID = model.customerId;
             entity.ATCTYPEID = model.atcTypeId;
@@ -602,7 +675,7 @@ namespace FintrakBanking.Repositories.credit
             entity.UNITNUMBER = model.unitNumber;
             //entity.CERTIFICATENUMBER = model.certificateNumber;
             entity.STATUSID = model.statusId;
-            entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+            entity.APPROVALSTATUSID = model.approvalStatusId;//(int)ApprovalStatusEnum.Pending;
             entity.BRANCHID = model.branchId;
             entity.CURRENCYID = model.currencyId;
             entity.NUMBEROFBAGS = model.numberOfBags;
@@ -610,21 +683,27 @@ namespace FintrakBanking.Repositories.credit
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
 
-            //var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            //// Audit Section ---------------------------
-            //this.audit.AddAuditTrail(new TBL_AUDIT
-            //{
-            //    AUDITTYPEID = (short)AuditTypeEnum.AtcLodgmentUpdated,
-            //    STAFFID = user.createdBy,
-            //    BRANCHID = (short)user.BranchId,
-            //    DETAIL = $"TBL_Atc Lodgment '{entity.DESCRIPTION}' was updated by {auditStaff}",
-            //    IPADDRESS = user.userIPAddress,
-            //    URL = user.applicationUrl,
-            //    APPLICATIONDATE = general.GetApplicationDate(),
-            //    SYSTEMDATETIME = DateTime.Now,
-            //    TARGETID = entity.ATCLODGMENTID
-            //});
-            //// Audit Section end ------------------------
+            response = context.SaveChanges() > 0;
+
+            if(response)
+            {
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+                // Audit Section ---------------------------
+                this.audit.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.AtcLodgmentUpdated,
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"TBL_Atc Lodgment '{entity.DESCRIPTION}' was updated by {auditStaff}",
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = entity.ATCLODGMENTID
+                });
+                // Audit Section end ------------------------
+            }
+
 
             return context.SaveChanges() != 0;
         }
@@ -681,31 +760,7 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForRelease()
         {
-            //return (from x in context.TBL_ATC_LODGMENT
-            //        join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
-            //        where x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.UNITNUMBER > 0
-            //        select new AtcLodgmentViewModel
-            //        {
-            //            atcLodgmentId = x.ATCLODGMENTID,
-            //            customerId = x.CUSTOMERID,
-            //            atcTypeId = x.ATCTYPEID,
-            //            description = x.DESCRIPTION,
-            //            depot = x.DEPOT,
-            //            unitValue = x.UNITVALUE,
-            //            unitNumber = x.UNITNUMBER,
-            //            numberOfBags = x.NUMBEROFBAGS,
-            //            certificateNumber = x.CERTIFICATENUMBER,
-            //            atcType = context.TBL_ATC_TYPE.Where(o => o.ATCTYPEID == x.ATCTYPEID).Select(o => o.ACTTYPENAME).FirstOrDefault(),
-            //            statusId = x.STATUSID,
-            //            approvalStatusId = x.APPROVALSTATUSID,
-            //            dateCreated = x.DATETIMECREATED,
-            //            approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
-            //            customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
-            //            customerCode = c.CUSTOMERCODE,
-            //            branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-
-            //        }).OrderByDescending(o=>o.atcLodgmentId)
-            // .ToList();
+            
             return (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                     where x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.UNITNUMBER > 0
@@ -733,7 +788,7 @@ namespace FintrakBanking.Repositories.credit
              .ToList();
         }
 
-        public IEnumerable<AtcReleaseViewModel>GetAtcLodgmentForReleaseList(int staffId)
+        public IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForReleaseList(int staffId)
         {
 
             //var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.AtcReleaseApproval).ToList();
@@ -744,7 +799,7 @@ namespace FintrakBanking.Repositories.credit
                     join c in context.TBL_CUSTOMER on al.CUSTOMERID equals c.CUSTOMERID
                     where ar.DELETED ==
                            false && (ar.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
-                    select new AtcReleaseViewModel
+                    select new AtcLodgmentViewModel
                     {
                         atcReleaseId = ar.ATCRELEASEID,
                         dateCreated = ar.DATETIMECREATED,
@@ -765,11 +820,14 @@ namespace FintrakBanking.Repositories.credit
                          join atrail in context.TBL_APPROVAL_TRAIL on ar.ATCLODGMENTID equals atrail.TARGETID
                          where ar.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
                             && atrail.TARGETID == ar.ATCLODGMENTID
-                            && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                            && atrail.LOOPEDSTAFFID == initiator
-                            && atrail.RESPONSESTAFFID == null
-                         select new AtcReleaseViewModel
+                            orderby atrail.APPROVALTRAILID descending
+                         select new AtcLodgmentViewModel
                          {
+                             loopedStaffId = atrail.LOOPEDSTAFFID,
+                             atcLodgmentId = ar.ATCLODGMENTID,
+                             atcType = context.TBL_ATC_TYPE.Where(o => o.ATCTYPEID == al.ATCTYPEID).Select(o => o.ACTTYPENAME).FirstOrDefault(),
+                             unitValue = al.UNITVALUE,
+                             numberOfBags = al.NUMBEROFBAGS,
                              approvalStatusId = atrail.APPROVALSTATUSID,
                              atcReleaseId = ar.ATCRELEASEID,
                              dateCreated = ar.DATETIMECREATED,
@@ -782,35 +840,11 @@ namespace FintrakBanking.Repositories.credit
                              customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                              approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
 
-                         }).OrderByDescending(o => o.atcReleaseId).ToList();
+                         }).ToList().GroupBy(x => x.atcLodgmentId).Select(x => x.FirstOrDefault()).Where((trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
+                                    && trail.loopedStaffId == initiator) || trail.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)).ToList();
+            
 
-            //check this guy in the union because processing will also come form model1
-            var model3 = (from ar in context.TBL_ATC_RELEASE
-                          join al in context.TBL_ATC_LODGMENT on ar.ATCLODGMENTID equals al.ATCLODGMENTID
-                          join c in context.TBL_CUSTOMER on al.CUSTOMERID equals c.CUSTOMERID
-                          join atrail in context.TBL_APPROVAL_TRAIL on ar.ATCLODGMENTID equals atrail.TARGETID
-                          where ar.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
-                            && atrail.TARGETID == ar.ATCLODGMENTID
-                            && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
-                            && atrail.RESPONSESTAFFID == null
-                         select new AtcReleaseViewModel
-                         {
-                             approvalStatusId = atrail.APPROVALSTATUSID,
-                             atcReleaseId = ar.ATCRELEASEID,
-                             dateCreated = ar.DATETIMECREATED,
-                             unitToRelease = ar.UNITTORELEASE,
-                             unitBalance = ar.UNITBALANCE,
-                             unitNumber = ar.UNITNUMBER,
-                             depot = al.DEPOT,
-                             description = al.DESCRIPTION,
-                             branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == al.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                             customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
-                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
-
-                         }).OrderByDescending(o => o.atcReleaseId).ToList();
-
-
-            var model = (model1.Union(model2)).Union(model3).ToList();
+            var model = model1.Union(model2).ToList();
 
             return model;
         }
