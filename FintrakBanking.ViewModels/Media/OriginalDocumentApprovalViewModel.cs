@@ -44,5 +44,6 @@ namespace FintrakBanking.ViewModels.Media
         public string responsiblePerson { get; set; }
         public int approvalTrailId { get; set; }
         public string currentApprovalLevel { get; set; }
+        public int? loopedStaffId { get; set; }
     }
 }
