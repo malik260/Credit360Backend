@@ -970,15 +970,15 @@ namespace FintrakBanking.Repositories.Credit
         public List<RatingAndRatioViewModel> GetCustomerRatios(int customerId, int applicationId, bool isLms = false)
         { 
 
-            var aa = context.TBL_CUSTOMER_RATIOS
-                .Select(o=> new RatingAndRatioViewModel {
-                    description = o.DESCRIPTION,
-                    value = o.VALUE,
-                }).ToList();
+            //var aa = context.TBL_CUSTOMER_RATIOS
+            //    .Select(o=> new RatingAndRatioViewModel {
+            //        description = o.DESCRIPTION,
+            //        value = o.VALUE,
+            //    }).ToList();
 
             var fields = (from a in context.TBL_CUSTOMER_RATIOS
-                         where a.CUSTOMERID == customerId && a.DELETED == false
-                         select new RatingAndRatioViewModel
+                         where a.CUSTOMERID == customerId && a.DELETED == false && a.loanApplicationId == applicationId
+                          select new RatingAndRatioViewModel
                          {
                              description = a.DESCRIPTION,
                              value = a.VALUE,
@@ -3084,12 +3084,12 @@ namespace FintrakBanking.Repositories.Credit
                                 join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
                                 where y.RESPONSESTAFFID == null
                                 && operations.Contains(y.OPERATIONID)
-                           //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
-                           && (x.APPLICATIONREFERENCENUMBER == searchString
-                        || c.FIRSTNAME.ToLower().Contains(searchString)
-                        || c.LASTNAME.ToLower().Contains(searchString)
-                        || c.MIDDLENAME.ToLower().Contains(searchString)
-                        || a.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                                //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
+                                && (x.APPLICATIONREFERENCENUMBER == searchString
+                                || c.FIRSTNAME.ToLower().Contains(searchString)
+                                || c.LASTNAME.ToLower().Contains(searchString)
+                                || c.MIDDLENAME.ToLower().Contains(searchString)
+                                || a.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
                                 select new LoanApplicationViewModel
                                 {
                                     firstName = c.FIRSTNAME,
@@ -3207,6 +3207,49 @@ namespace FintrakBanking.Repositories.Credit
             //var filteredList = applications.ToList();
             return applications; */
 
+        }
+
+
+
+        //================================ by benjamin =======================
+        public IEnumerable<LoanApplicationViewModel> LoanSearch(string searchString)
+        {
+            var search = searchString.Trim().ToLower();
+
+            var applications = (from x in context.TBL_LOAN_APPLICATION
+                                join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                where (x.APPLICATIONREFERENCENUMBER.Contains(search)
+                                      || c.FIRSTNAME.ToLower().Contains(search)
+                                      || c.LASTNAME.ToLower().Contains(search)
+                                      || c.MIDDLENAME.ToLower().Contains(search))
+                                    select new LoanApplicationViewModel
+                                    {
+                                    firstName = c.FIRSTNAME,
+                                    middleName = c.MIDDLENAME,
+                                    lastName = c.LASTNAME,
+                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                    customerCode = c.CUSTOMERCODE,
+                                    applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                    loanApplicationId = x.LOANAPPLICATIONID,
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    proposedAmount = a.PROPOSEDAMOUNT,
+                                    approvedProductName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                    customerId = c.CUSTOMERID,
+                                    branchId = c.BRANCHID,
+                                    customerGroupId = x.CUSTOMERGROUPID,
+                                    loanTypeId = x.LOANAPPLICATIONTYPEID,
+                                    relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                    relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                    applicationDate = x.APPLICATIONDATE,
+                                    applicationAmount = x.APPLICATIONAMOUNT,
+                                    approvedAmount = x.APPROVEDAMOUNT,
+                                    interestRate = x.INTERESTRATE,
+                                    applicationTenor = x.APPLICATIONTENOR                      
+                                    }).ToList();
+
+            return applications;
+            
         }
 
         public IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationTypeId, int staffId)
