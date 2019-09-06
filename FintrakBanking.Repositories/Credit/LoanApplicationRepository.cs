@@ -1473,92 +1473,95 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            //using (var trans = context.Database.BeginTransaction())
-            //{
-               
-            //}
-            ValidateLoanApplicationLimits(loan);
-            var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
-            var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
-
-            decimal cumulativeSum = 0;
-            foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
-
-            if (loan.relationshipOfficerId != 0)
+            using (var trans = context.Database.BeginTransaction())
             {
-                var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
-                if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
-            }
+                ValidateLoanApplicationLimits(loan);
+                var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
+                var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
 
-            loan.applicationAmount = cumulativeSum + additionalAmount;
+                decimal cumulativeSum = 0;
+                foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
 
-            if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) return loan;
-
-            loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
-
-            if (loan.productClassId == (short)ProductClassEnum.Creditcards)
-            {
-                validateNonComformingProduct(loan, loanData, savedDetails);
-            }
-
-            if (savedDetails.Count() == 0 || loan.isNewApplication)
-            {
-
-                if (loanData != null)
+                if (loan.relationshipOfficerId != 0)
                 {
-                    loanData.APPLICATIONAMOUNT = loan.applicationAmount;
-                    loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
-                    loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
-                    loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
-
+                    var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
+                    if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
                 }
 
-                if (loanData == null) // first time
+                loan.applicationAmount = cumulativeSum + additionalAmount;
+
+                if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) { trans.Commit(); return loan; }
+
+                loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+
+                if (loan.productClassId == (short)ProductClassEnum.Creditcards)
                 {
-                    if (string.IsNullOrEmpty(loan.applicationReferenceNumber)) loan.applicationReferenceNumber = GetRefrenceNumber();
-                    AddloanApplicationSub(loan);
+                    validateNonComformingProduct(loan, loanData, savedDetails);
                 }
 
-                if (loan.LoanApplicationDetail.Count > 0)
+                if (savedDetails.Count() == 0 || loan.isNewApplication)
                 {
 
-                    var racReponse = AddLoanApplicationDetail(loan);
-                    if (racReponse != null)
+                    if (loanData != null)
                     {
-                        LoanApplicationViewModel model = new LoanApplicationViewModel();
-                        model.loanApplicationId = (int)racReponse.loanApplicationId;
-                        model.failedRacStartCam = true;
-                        model.loanApplicationDetailId = (int)racReponse.loanApplicationDetailId;
+                        loanData.APPLICATIONAMOUNT = loan.applicationAmount;
+                        loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
+                        loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
+                        loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
 
-                        return model;
+                    }
+
+                    if (loanData == null) // first time
+                    {
+                        if (string.IsNullOrEmpty(loan.applicationReferenceNumber)) loan.applicationReferenceNumber = GetRefrenceNumber();
+                        AddloanApplicationSub(loan);
+                    }
+
+                    if (loan.LoanApplicationDetail.Count > 0)
+                    {
+
+                        var racReponse = AddLoanApplicationDetail(loan);
+                        if (racReponse != null)
+                        {
+                            LoanApplicationViewModel model = new LoanApplicationViewModel();
+                            model.loanApplicationId = (int)racReponse.loanApplicationId;
+                            model.failedRacStartCam = true;
+                            model.loanApplicationDetailId = (int)racReponse.loanApplicationDetailId;
+
+                            trans.Rollback();
+                            return model;
+                        }
+                        
                     }
                 }
+                else
+                {
+                    var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                    if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
+                    UpdateLoanApplication(loan);
+                }
+
+
+                // if (response == 0)
+                response = context.SaveChanges();
+
+
+                var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
+
+
+                if (response > 0 && !loan.isNewApplication)
+                {
+                    trans.Commit();
+                    returndate.closeApplication = true;
+
+                    //returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
+                }
+
+
+                trans.Commit();
+                return returndate;
             }
-            else
-            {
-                var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
-                UpdateLoanApplication(loan);
-            }
-
-
-            // if (response == 0)
-            response = context.SaveChanges();
-
-
-            var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
-
-
-            if (response > 0 && !loan.isNewApplication)
-            {
-                returndate.closeApplication = true;
-
-                //returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
-            }
-
-
-
-            return returndate;
+           
 
         }
 
@@ -1570,7 +1573,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        private RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int operationId, int productId, int productClassId, int targetId, int staffId, int applicationId)
+        private RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
             var msg = new RacReturnInfoViewModel();
@@ -1629,7 +1632,7 @@ namespace FintrakBanking.Repositories.Credit
                         return msg;
                     }
 
-                    if (ctr == 0)
+                    if (racTiers.Count() > 0 && ctr == 0)
                     {
                         definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
                         && ids.Contains(x.RACDEFINITIONID) && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
@@ -1638,7 +1641,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         continue;
                     }
-                    if ( ctr > 0)
+                    if (racTiers.Count() > 0 && ctr > 0)
                     {
                         saveRacoptions(definitions, rac, operationId, targetId, staffId);
                         msg.loanApplicationDetailId = targetId;
@@ -1647,6 +1650,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                     ctr = ctr + 1;
+                    continue;
                 }
                 else if(validation == true)
                 {
@@ -2297,7 +2301,7 @@ namespace FintrakBanking.Repositories.Credit
             if (response > 0)
             {
 
-                var recResponse = SaveRac(loan.rac, (int)loan.rac.operationId, (int)loan.rac.productId, (int)loan.rac.productClassId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
+                var recResponse = SaveRac(loan.rac, (int)loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId , data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
                 if (recResponse != null) return recResponse;
             } // todo 99999
 
