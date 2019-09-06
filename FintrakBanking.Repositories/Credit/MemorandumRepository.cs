@@ -2091,13 +2091,10 @@ namespace FintrakBanking.Repositories.Credit
         private string GetGroupExposureMarkup()
         {
             var result = String.Empty;
-            if (loanApplication != null && loanApplication.CUSTOMERID != null)
-            {
-                
-                var exposures = GetGroupExposurebyCustomerId((int)loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
-                var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerName);
-                var n = 0;
-                result = result + $@"
+            var exposures = GetGroupExposurebyCustomerId(this.customerId, this.loanApplication.COMPANYID);
+            var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerName);
+            var n = 0;
+            result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>Customer Name</b></th>
@@ -2108,14 +2105,14 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Maturity</b></th>
                     </tr>
                 ";
-                foreach (var customerGroups in exposureGroupsByCustomer)
+            foreach (var customerGroups in exposureGroupsByCustomer)
+            {
+                var customerName = customerGroups.Key;
+                var facilities = customerGroups.GroupBy(c => c.facilityType);
+                foreach (var facility in facilities)
                 {
-                    var customerName = customerGroups.Key;
-                    var facilities = customerGroups.GroupBy(c => c.facilityType);
-                    foreach (var facility in facilities)
-                    {
-                        ++n;
-                        result = result + $@"
+                    ++n;
+                    result = result + $@"
                      <tr>
                         <td>{customerName}</td>
                         <td>{facility.Key}</td>
@@ -2125,21 +2122,19 @@ namespace FintrakBanking.Repositories.Credit
                         <td>{facility.Max(f => f.maturityDate).ToShortDateString()}</td>
                     </tr>
                 ";
-                    }
                 }
-                result = result + $@"
+            }
+            result = result + $@"
                     {GetTotalGroupExposureMarkup()}
                 ";
-                result = result + $"</table>";
-            }
-            
+            result = result + $"</table>";
             return result;
         }
 
         private string GetTotalGroupExposureMarkup()
         {
             var result = String.Empty;
-            var exposures = GetGroupExposurebyCustomerId((int)loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
+            var exposures = GetGroupExposurebyCustomerId(this.customerId, this.loanApplication.COMPANYID);
             CurrentCustomerExposure totalExposure;
             
             totalExposure = new CurrentCustomerExposure()

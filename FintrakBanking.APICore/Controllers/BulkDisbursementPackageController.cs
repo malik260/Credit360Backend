@@ -177,6 +177,24 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("scheme-setup-search/search/{searchString}")]
+        public HttpResponseMessage GetLoanApplicationSearch([FromUri] string searchString)
+        {
+            try
+            {
+                var response = repo.SchemeSearch(searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         //[HttpPost]
         //[ClaimsAuthorization]
         //[Route("loan-application-details/search")]
@@ -184,7 +202,7 @@ namespace FintrakBanking.APICore.Controllers
         //{
         //    try
         //    {
-               
+
         //       var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, model.searchString);
 
         //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
