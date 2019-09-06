@@ -1473,8 +1473,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
+            //using (var trans = context.Database.BeginTransaction())
+            //{
                 ValidateLoanApplicationLimits(loan);
                 var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
                 var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
@@ -1490,7 +1490,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 loan.applicationAmount = cumulativeSum + additionalAmount;
 
-                if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) { trans.Commit(); return loan; }
+                if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) {  return loan; }
 
                 loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
 
@@ -1528,7 +1528,7 @@ namespace FintrakBanking.Repositories.Credit
                             model.failedRacStartCam = true;
                             model.loanApplicationDetailId = (int)racReponse.loanApplicationDetailId;
 
-                            trans.Rollback();
+                          //  trans.Commit();
                             return model;
                         }
                         
@@ -1551,16 +1551,16 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (response > 0 && !loan.isNewApplication)
                 {
-                    trans.Commit();
+                    //trans.Commit();
                     returndate.closeApplication = true;
 
                     //returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
                 }
 
 
-                trans.Commit();
+               // trans.Commit();
                 return returndate;
-            }
+          //  }
            
 
         }
