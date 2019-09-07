@@ -194,7 +194,7 @@ namespace FintrakBanking.Repositories.Media
 
         public List<OriginalDocumentApprovalViewModel> GetOriginalDocument(int id)
         {
-            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred))
+            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.ORIGINALDOCUMENTAPPROVALID == id && x.DELETED == false && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing))
                 .Select(x => new OriginalDocumentApprovalViewModel
                 {
                     originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,

@@ -1382,6 +1382,11 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
+                bool response = false;
+
+                var entity2 = context.TBL_INSURANCE_REQUEST.FirstOrDefault(ir => ir.INSURANCEREQUESTID == model.insuranceRequestId);
+                if (entity2 == null) return false;
+
                 var entity = (from ir in context.TBL_INSURANCE_REQUEST
                               join cip in context.TBL_COLLATERAL_ITEM_POLICY on ir.COLLATERALCUSTOMERID equals cip.COLLATERALCUSTOMERID
                               where model.collateralId == cip.COLLATERALCUSTOMERID &&
@@ -1390,22 +1395,26 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (entity.Count > 0) return false;
 
+                
+
+                
+
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = model.insuranceRequestId;
                 workflow.Comment = "Request for Insurance Policy approval";
                 workflow.OperationId = (int)OperationsEnum.IsurancePolicyApproval;
-                workflow.DeferredExecution = false; // false by default will call the internal SaveChanges()
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                 workflow.ExternalInitialization = true;
                 workflow.LogActivity();
+                
 
-                var entity2 = context.TBL_INSURANCE_REQUEST.FirstOrDefault(ir => ir.INSURANCEREQUESTID == model.insuranceRequestId);
-                if (entity2 == null) return false;
+                response = context.SaveChanges() != 0;
 
-                entity2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                if(response) entity2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
-                return context.SaveChanges() != 0;
+                return context.SaveChanges() > 0;
             }
             
             
@@ -1425,6 +1434,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var result1 = (from ir in context.TBL_INSURANCE_REQUEST
                           join cc in context.TBL_COLLATERAL_CUSTOMER on ir.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                          where ir.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                           orderby ir.INSURANCEREQUESTID descending
                           select new CollateralViewModel()
                           {
@@ -1454,14 +1464,10 @@ namespace FintrakBanking.Repositories.Credit
                            join atrail in context.TBL_APPROVAL_TRAIL on ir.INSURANCEREQUESTID equals atrail.TARGETID
                            where atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
                             && atrail.TARGETID == ir.INSURANCEREQUESTID
-                            && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
-                            && atrail.LOOPEDSTAFFID == initiator
-                            && atrail.RESPONSESTAFFID == null) 
-                            || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved 
-                            || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                            orderby atrail.APPROVALTRAILID descending
                            select new CollateralViewModel()
                            {
+                               loopedStaffId = atrail.LOOPEDSTAFFID,
                                collateralId = cc.COLLATERALCUSTOMERID,
                                collateralTypeId = cc.COLLATERALTYPEID,
                                collateralSubTypeId = cc.COLLATERALSUBTYPEID,
@@ -1481,11 +1487,11 @@ namespace FintrakBanking.Repositories.Credit
                                requestReason = ir.REQUESTREASON,
                                requestComment = ir.REQUESTCOMMENT,
 
-                           }).ToList();
+                           }).ToList().GroupBy(group => group.insuranceRequestId).Select(group => group.FirstOrDefault()).Where(first => (first.approvalStatusId == (short)ApprovalStatusEnum.Referred
+                                && first.loopedStaffId == initiator) || first.approvalStatusId == (short)ApprovalStatusEnum.Disapproved || first.approvalStatusId == (short)ApprovalStatusEnum.Processing).ToList();
+            
 
-            var resultGroup =  result2.GroupBy(x => x.insuranceRequestId).Select(x => x.FirstOrDefault()).ToList();
-
-            var result = result1.Union(resultGroup).ToList();
+            var result = result1.Union(result2).ToList();
 
             return result;
         }
@@ -2426,7 +2432,7 @@ namespace FintrakBanking.Repositories.Credit
                              where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                                      && atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                                     // && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                                     && atrail.LOOPEDSTAFFID == null
                                      && atrail.RESPONSESTAFFID == null
                              select new InsurancePolicies
                              {

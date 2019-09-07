@@ -195,7 +195,7 @@ namespace FintrakBanking.Repositories.credit
                      && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                      && r.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
-                     && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
+                     && ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
                     select new AtcLodgmentViewModel
                     {
@@ -840,8 +840,8 @@ namespace FintrakBanking.Repositories.credit
                              customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                              approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
 
-                         }).ToList().GroupBy(x => x.atcLodgmentId).Select(x => x.FirstOrDefault()).Where((trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
-                                    && trail.loopedStaffId == initiator) || trail.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)).ToList();
+                         }).ToList().GroupBy(x => x.atcLodgmentId).Select(x => x.FirstOrDefault()).Where(trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
+                                    && trail.loopedStaffId == initiator) || trail.approvalStatusId == (short)ApprovalStatusEnum.Disapproved).ToList();
             
 
             var model = model1.Union(model2).ToList();
