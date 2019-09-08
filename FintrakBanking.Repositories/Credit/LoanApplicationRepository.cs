@@ -977,7 +977,7 @@ namespace FintrakBanking.Repositories.Credit
             //    }).ToList();
 
             var fields = (from a in context.TBL_CUSTOMER_RATIOS
-                         where a.CUSTOMERID == customerId && a.DELETED == false && a.loanApplicationId == applicationId
+                         where a.CUSTOMERID == customerId && a.DELETED == false && a.LOANAPPLICATIONID == applicationId
                           select new RatingAndRatioViewModel
                          {
                              description = a.DESCRIPTION,
@@ -4724,6 +4724,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = b.EXCHANGERATE,
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                             customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
+                            approvedProductId = b.APPROVEDPRODUCTID,
                             proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,

@@ -162,7 +162,8 @@ namespace FintrakBanking.Repositories.credit
                                 (
                                 x.DELETED == false
                                 && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
-                                && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                                && (u.USANCEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceInProgress || u == null)
+                                && (u.USANCEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceCompleted || u == null)
                                 )
                                  select new LcIssuanceApprovalViewModel()
                                  {

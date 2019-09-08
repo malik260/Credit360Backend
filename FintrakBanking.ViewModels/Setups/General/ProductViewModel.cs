@@ -253,8 +253,10 @@ namespace FintrakBanking.ViewModels.Setups.General
     {
         public int productDocMapId { get; set; }
         public int documentId { get; set; }
-        public int documenttypeId { get; set; }
+        public int documentTypeId { get; set; }
         public string documentCategoryName { get; set; }
+        public string productName { get; set; }
+        public string documentType { get; set; }
         public int documentCategoryId { get; set; }
 
         public int productId { get; set; }
