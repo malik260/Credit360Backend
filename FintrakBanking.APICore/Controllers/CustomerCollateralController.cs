@@ -2131,7 +2131,7 @@ namespace FintrakBanking.APICore.Controllers
         [ClaimsAuthorization]
         [Route("get-insurance-requests")]
         public HttpResponseMessage GetInsuranceRequests()
-        {
+         {
             try
             {
                 var response = repo.GetInsuranceRequests(token.GetStaffId);

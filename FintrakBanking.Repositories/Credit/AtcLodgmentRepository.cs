@@ -195,7 +195,7 @@ namespace FintrakBanking.Repositories.credit
                      && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                      && r.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                      && atrail.RESPONSESTAFFID == null
-                     && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
+                     && ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
                     select new AtcLodgmentViewModel
                     {
@@ -222,6 +222,20 @@ namespace FintrakBanking.Repositories.credit
              .ToList();
         }
         
+
+        public bool SubmitReferredAtcBackIntoWorkflow(AtcReleaseViewModel model)
+        {
+            workflow.StaffId = model.createdBy;
+            workflow.CompanyId = model.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = model.atcLodgmentId;
+            workflow.Comment = "Update has been Applied, Request for ATC approval";
+            workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            return context.SaveChanges() > 0;
+        }
 
         public Tuple<WorkflowResponse, int> SubmitApproval(IEnumerable<AtcReleaseViewModel> model)
         {
@@ -746,31 +760,7 @@ namespace FintrakBanking.Repositories.credit
 
         public IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForRelease()
         {
-            //return (from x in context.TBL_ATC_LODGMENT
-            //        join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
-            //        where x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.UNITNUMBER > 0
-            //        select new AtcLodgmentViewModel
-            //        {
-            //            atcLodgmentId = x.ATCLODGMENTID,
-            //            customerId = x.CUSTOMERID,
-            //            atcTypeId = x.ATCTYPEID,
-            //            description = x.DESCRIPTION,
-            //            depot = x.DEPOT,
-            //            unitValue = x.UNITVALUE,
-            //            unitNumber = x.UNITNUMBER,
-            //            numberOfBags = x.NUMBEROFBAGS,
-            //            certificateNumber = x.CERTIFICATENUMBER,
-            //            atcType = context.TBL_ATC_TYPE.Where(o => o.ATCTYPEID == x.ATCTYPEID).Select(o => o.ACTTYPENAME).FirstOrDefault(),
-            //            statusId = x.STATUSID,
-            //            approvalStatusId = x.APPROVALSTATUSID,
-            //            dateCreated = x.DATETIMECREATED,
-            //            approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
-            //            customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
-            //            customerCode = c.CUSTOMERCODE,
-            //            branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-
-            //        }).OrderByDescending(o=>o.atcLodgmentId)
-            // .ToList();
+            
             return (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                     where x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.UNITNUMBER > 0
@@ -798,7 +788,7 @@ namespace FintrakBanking.Repositories.credit
              .ToList();
         }
 
-        public IEnumerable<AtcReleaseViewModel>GetAtcLodgmentForReleaseList(int staffId)
+        public IEnumerable<AtcLodgmentViewModel> GetAtcLodgmentForReleaseList(int staffId)
         {
 
             //var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.AtcReleaseApproval).ToList();
@@ -809,7 +799,7 @@ namespace FintrakBanking.Repositories.credit
                     join c in context.TBL_CUSTOMER on al.CUSTOMERID equals c.CUSTOMERID
                     where ar.DELETED ==
                            false && (ar.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
-                    select new AtcReleaseViewModel
+                    select new AtcLodgmentViewModel
                     {
                         atcReleaseId = ar.ATCRELEASEID,
                         dateCreated = ar.DATETIMECREATED,
@@ -830,11 +820,14 @@ namespace FintrakBanking.Repositories.credit
                          join atrail in context.TBL_APPROVAL_TRAIL on ar.ATCLODGMENTID equals atrail.TARGETID
                          where ar.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
                             && atrail.TARGETID == ar.ATCLODGMENTID
-                            && ((atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
-                            && atrail.LOOPEDSTAFFID == initiator) || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved)
-                            && atrail.RESPONSESTAFFID == null
-                         select new AtcReleaseViewModel
+                            orderby atrail.APPROVALTRAILID descending
+                         select new AtcLodgmentViewModel
                          {
+                             loopedStaffId = atrail.LOOPEDSTAFFID,
+                             atcLodgmentId = ar.ATCLODGMENTID,
+                             atcType = context.TBL_ATC_TYPE.Where(o => o.ATCTYPEID == al.ATCTYPEID).Select(o => o.ACTTYPENAME).FirstOrDefault(),
+                             unitValue = al.UNITVALUE,
+                             numberOfBags = al.NUMBEROFBAGS,
                              approvalStatusId = atrail.APPROVALSTATUSID,
                              atcReleaseId = ar.ATCRELEASEID,
                              dateCreated = ar.DATETIMECREATED,
@@ -847,34 +840,9 @@ namespace FintrakBanking.Repositories.credit
                              customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                              approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
 
-                         }).OrderByDescending(o => o.atcReleaseId).ToList();
-
-            //check this guy in the union because processing will also come form model1
-
-            //var model3 = (from ar in context.TBL_ATC_RELEASE
-            //              join al in context.TBL_ATC_LODGMENT on ar.ATCLODGMENTID equals al.ATCLODGMENTID
-            //              join c in context.TBL_CUSTOMER on al.CUSTOMERID equals c.CUSTOMERID
-            //              join atrail in context.TBL_APPROVAL_TRAIL on ar.ATCLODGMENTID equals atrail.TARGETID
-            //              where ar.DELETED == false && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
-            //                && atrail.TARGETID == ar.ATCLODGMENTID
-            //                && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
-            //                && atrail.RESPONSESTAFFID == null
-            //             select new AtcReleaseViewModel
-            //             {
-            //                 approvalStatusId = atrail.APPROVALSTATUSID,
-            //                 atcReleaseId = ar.ATCRELEASEID,
-            //                 dateCreated = ar.DATETIMECREATED,
-            //                 unitToRelease = ar.UNITTORELEASE,
-            //                 unitBalance = ar.UNITBALANCE,
-            //                 unitNumber = ar.UNITNUMBER,
-            //                 depot = al.DEPOT,
-            //                 description = al.DESCRIPTION,
-            //                 branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == al.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-            //                 customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
-            //                 approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
-
-            //             }).OrderByDescending(o => o.atcReleaseId).ToList();
-
+                         }).ToList().GroupBy(x => x.atcLodgmentId).Select(x => x.FirstOrDefault()).Where(trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
+                                    && trail.loopedStaffId == initiator) || trail.approvalStatusId == (short)ApprovalStatusEnum.Disapproved).ToList();
+            
 
             var model = model1.Union(model2).ToList();
 

@@ -245,7 +245,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("atc-lodgment-for-releaseList")]
         public HttpResponseMessage GetAtcLodgmentForRelaselist()
         {
-            IEnumerable<AtcReleaseViewModel> response = repo.GetAtcLodgmentForReleaseList(token.GetStaffId);
+            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcLodgmentForReleaseList(token.GetStaffId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
@@ -337,6 +337,37 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("atc-referred-approval")]
+        public HttpResponseMessage SubmitReferredAtcBackIntoWorkflow(AtcReleaseViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var response = repo.SubmitReferredAtcBackIntoWorkflow(model);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "An Error Occured, Please contact the System Administrator" });
+                }
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            
+        }
+
 
         [HttpPost]
         [ClaimsAuthorization]
