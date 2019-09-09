@@ -1918,7 +1918,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllProductDocumentMapping().ToList();
+                var data = repo.GetAllProductDocumentMapping();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1965,7 +1965,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("product-document-mappings/{id}")]
+        [Route("product-document-mapping/{id}")]
         public HttpResponseMessage DeleteProductDocumentMapping(int id)
         {
             UserInfo user = new UserInfo()
@@ -1982,7 +1982,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [ClaimsAuthorization]
-        [Route("product-document-mappings/{id}")]
+        [Route("product-document-mapping/{id}")]
         public HttpResponseMessage UpdateProductDocumentMapping ([FromBody] ProductDocumentMappingViewModel model, int id)
         {
             UserInfo user = new UserInfo()
@@ -1993,6 +1993,7 @@ namespace FintrakBanking.APICore.Controllers
                 applicationUrl = HttpContext.Current.Request.Path,
                 userIPAddress = HttpContext.Current.Request.UserHostAddress
             };
+            model.createdBy = token.GetStaffId;
             bool response = repo.UpdateProductDocumentMapping(model);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
