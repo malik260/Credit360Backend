@@ -791,9 +791,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 else
                 {
-                    this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
+                    if(this.statusId != (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
+                    }
+                    else { this.EndProcess(this.statusId); }
+                    
                 }
             }
+            
         }
 
         private bool IsPresetFinalLevel()

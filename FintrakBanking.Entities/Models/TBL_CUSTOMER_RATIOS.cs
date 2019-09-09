@@ -25,8 +25,6 @@
         public int? CUSTOMERGROUPID { get; set; }
         public int CREATEDBY { get; set; }
 
-        // public int? LASTUPDATEDBY { get; set; }
-
         public DateTime DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
