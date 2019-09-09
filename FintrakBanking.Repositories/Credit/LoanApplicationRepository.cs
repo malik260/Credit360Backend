@@ -977,7 +977,7 @@ namespace FintrakBanking.Repositories.Credit
             //    }).ToList();
 
             var fields = (from a in context.TBL_CUSTOMER_RATIOS
-                         where a.CUSTOMERID == customerId && a.DELETED == false && a.loanApplicationId == applicationId
+                         where a.CUSTOMERID == customerId && a.DELETED == false && a.LOANAPPLICATIONID == applicationId
                           select new RatingAndRatioViewModel
                          {
                              description = a.DESCRIPTION,
