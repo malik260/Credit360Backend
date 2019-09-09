@@ -44,6 +44,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_INSURANCE_TYPE> TBL_INSURANCE_TYPE { get; set; }
         public virtual DbSet<TBL_INSURANCE_COMPANY> TBL_INSURANCE_COMPANY { get; set; }
         public virtual DbSet<TBL_LOAN_BULK_DISBURSE_SCHEME> TBL_LOAN_BULK_DISBURSE_SCHEME { get; set; }
+        public virtual DbSet<TBL_LOAN_BULK_DISBURSEMENT> TBL_LOAN_BULK_DISBURSEMENT { get; set; }
+
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL_STAFF> TBL_TEMP_APPROVAL_LEVEL_STAFF { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATE> TBL_APPROVAL_STATE { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATUS> TBL_APPROVAL_STATUS { get; set; }
@@ -145,6 +147,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOM_OVERDRAFTTOPUP> TBL_CUSTOM_OVERDRAFTTOPUP { get; set; }
         public virtual DbSet<TBL_CUSTOM_TEMPORARYOVERDRAFT> TBL_CUSTOM_TEMPORARYOVERDRAFT { get; set; }
         public virtual DbSet<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
+        public virtual DbSet<TBL_DOCUMENT_DEFINITION> TBL_DOCUMENT_DEFINITION { get; set; }
+        
         public virtual DbSet<TBL_CUSTOMER_RATIOS> TBL_CUSTOMER_RATIOS { get; set; }
         
         public virtual DbSet<TBL_CUSTOMER_ACCOUNT_KYC_ITEM> TBL_CUSTOMER_ACCOUNT_KYC_ITEM { get; set; }

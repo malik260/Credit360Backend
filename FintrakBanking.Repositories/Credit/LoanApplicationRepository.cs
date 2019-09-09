@@ -970,15 +970,15 @@ namespace FintrakBanking.Repositories.Credit
         public List<RatingAndRatioViewModel> GetCustomerRatios(int customerId, int applicationId, bool isLms = false)
         { 
 
-            var aa = context.TBL_CUSTOMER_RATIOS
-                .Select(o=> new RatingAndRatioViewModel {
-                    description = o.DESCRIPTION,
-                    value = o.VALUE,
-                }).ToList();
+            //var aa = context.TBL_CUSTOMER_RATIOS
+            //    .Select(o=> new RatingAndRatioViewModel {
+            //        description = o.DESCRIPTION,
+            //        value = o.VALUE,
+            //    }).ToList();
 
             var fields = (from a in context.TBL_CUSTOMER_RATIOS
-                         where a.CUSTOMERID == customerId && a.DELETED == false
-                         select new RatingAndRatioViewModel
+                         where a.CUSTOMERID == customerId && a.DELETED == false && a.LOANAPPLICATIONID == applicationId
+                          select new RatingAndRatioViewModel
                          {
                              description = a.DESCRIPTION,
                              value = a.VALUE,
@@ -1163,17 +1163,19 @@ namespace FintrakBanking.Repositories.Credit
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
+                        creditCommon.LoadCustomerRatios(
+                               applicationId,
+                               loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                               staffId
+                           );
+
                         creditCommon.LoadCustomerTurnover(
                                 applicationId,
                                 loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                                 staffId
                             );
 
-                        creditCommon.LoadCustomerRatios(
-                                applicationId,
-                                loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                                staffId
-                            );
+                       
                         //if (casa != null)
                         //{
                         //    creditCommon.LoadCustomerTurnover(
@@ -1473,90 +1475,93 @@ namespace FintrakBanking.Repositories.Credit
         {
             //using (var trans = context.Database.BeginTransaction())
             //{
-               
-            //}
-            ValidateLoanApplicationLimits(loan);
-            var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
-            var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
+                ValidateLoanApplicationLimits(loan);
+                var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
+                var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
 
-            decimal cumulativeSum = 0;
-            foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
+                decimal cumulativeSum = 0;
+                foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
 
-            if (loan.relationshipOfficerId != 0)
-            {
-                var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
-                if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
-            }
-
-            loan.applicationAmount = cumulativeSum + additionalAmount;
-
-            if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) return loan;
-
-            loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
-
-            if (loan.productClassId == (short)ProductClassEnum.Creditcards)
-            {
-                validateNonComformingProduct(loan, loanData, savedDetails);
-            }
-
-            if (savedDetails.Count() == 0 || loan.isNewApplication)
-            {
-
-                if (loanData != null)
+                if (loan.relationshipOfficerId != 0)
                 {
-                    loanData.APPLICATIONAMOUNT = loan.applicationAmount;
-                    loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
-                    loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
-                    loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
-
+                    var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
+                    if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {validation.limit}");
                 }
 
-                if (loanData == null) // first time
+                loan.applicationAmount = cumulativeSum + additionalAmount;
+
+                if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) {  return loan; }
+
+                loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+
+                if (loan.productClassId == (short)ProductClassEnum.Creditcards)
                 {
-                    if (string.IsNullOrEmpty(loan.applicationReferenceNumber)) loan.applicationReferenceNumber = GetRefrenceNumber();
-                    AddloanApplicationSub(loan);
+                    validateNonComformingProduct(loan, loanData, savedDetails);
                 }
 
-                if (loan.LoanApplicationDetail.Count > 0)
+                if (savedDetails.Count() == 0 || loan.isNewApplication)
                 {
 
-                    var racReponse = AddLoanApplicationDetail(loan);
-                    if (racReponse != null)
+                    if (loanData != null)
                     {
-                        LoanApplicationViewModel model = new LoanApplicationViewModel();
-                        model.loanApplicationId = (int)racReponse.loanApplicationId;
-                        model.failedRacStartCam = true;
-                        model.loanApplicationDetailId = (int)racReponse.loanApplicationDetailId;
+                        loanData.APPLICATIONAMOUNT = loan.applicationAmount;
+                        loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
+                        loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
+                        loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
 
-                        return model;
+                    }
+
+                    if (loanData == null) // first time
+                    {
+                        if (string.IsNullOrEmpty(loan.applicationReferenceNumber)) loan.applicationReferenceNumber = GetRefrenceNumber();
+                        AddloanApplicationSub(loan);
+                    }
+
+                    if (loan.LoanApplicationDetail.Count > 0)
+                    {
+
+                        var racReponse = AddLoanApplicationDetail(loan);
+                        if (racReponse != null)
+                        {
+                            LoanApplicationViewModel model = new LoanApplicationViewModel();
+                            model.loanApplicationId = (int)racReponse.loanApplicationId;
+                            model.failedRacStartCam = true;
+                            model.loanApplicationDetailId = (int)racReponse.loanApplicationDetailId;
+
+                          //  trans.Commit();
+                            return model;
+                        }
+                        
                     }
                 }
-            }
-            else
-            {
-                var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
-                UpdateLoanApplication(loan);
-            }
+                else
+                {
+                    var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                    if ((limit != 0 && loan.applicationAmount != 0 && loan.applicationAmount > (decimal)limit)) throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
+                    UpdateLoanApplication(loan);
+                }
 
 
-            // if (response == 0)
-            response = context.SaveChanges();
+                // if (response == 0)
+                response = context.SaveChanges();
 
 
-            var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
+                var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
 
-            if (response > 0 && !loan.isNewApplication)
-            {
-                returndate.closeApplication = true;
+                if (response > 0 && !loan.isNewApplication)
+                {
+                    //trans.Commit();
+                    returndate.closeApplication = true;
 
-                //returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
-            }
+                    //returndate.jumpedDestination = PushApplicationToDrawdown(loan, loanData.APPLICATIONREFERENCENUMBER);
+                }
 
 
-
-            return returndate;
+               // trans.Commit();
+                return returndate;
+          //  }
+           
 
         }
 
@@ -1568,7 +1573,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        private RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int operationId, int productId, int productClassId, int targetId, int staffId, int applicationId)
+        private RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
             var msg = new RacReturnInfoViewModel();
@@ -1627,7 +1632,7 @@ namespace FintrakBanking.Repositories.Credit
                         return msg;
                     }
 
-                    if (ctr == 0)
+                    if (racTiers.Count() > 0 && ctr == 0)
                     {
                         definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
                         && ids.Contains(x.RACDEFINITIONID) && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
@@ -1636,7 +1641,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         continue;
                     }
-                    if ( ctr > 0)
+                    if (racTiers.Count() > 0 && ctr > 0)
                     {
                         saveRacoptions(definitions, rac, operationId, targetId, staffId);
                         msg.loanApplicationDetailId = targetId;
@@ -1645,6 +1650,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                     ctr = ctr + 1;
+                    continue;
                 }
                 else if(validation == true)
                 {
@@ -2295,7 +2301,7 @@ namespace FintrakBanking.Repositories.Credit
             if (response > 0)
             {
 
-                var recResponse = SaveRac(loan.rac, (int)loan.rac.operationId, (int)loan.rac.productId, (int)loan.rac.productClassId, data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
+                var recResponse = SaveRac(loan.rac, (int)loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId , data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
                 if (recResponse != null) return recResponse;
             } // todo 99999
 
@@ -3078,12 +3084,12 @@ namespace FintrakBanking.Repositories.Credit
                                 join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
                                 where y.RESPONSESTAFFID == null
                                 && operations.Contains(y.OPERATIONID)
-                           //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
-                           && (x.APPLICATIONREFERENCENUMBER == searchString
-                        || c.FIRSTNAME.ToLower().Contains(searchString)
-                        || c.LASTNAME.ToLower().Contains(searchString)
-                        || c.MIDDLENAME.ToLower().Contains(searchString)
-                        || a.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+                                //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
+                                && (x.APPLICATIONREFERENCENUMBER == searchString
+                                || c.FIRSTNAME.ToLower().Contains(searchString)
+                                || c.LASTNAME.ToLower().Contains(searchString)
+                                || c.MIDDLENAME.ToLower().Contains(searchString)
+                                || a.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
                                 select new LoanApplicationViewModel
                                 {
                                     firstName = c.FIRSTNAME,
@@ -3201,6 +3207,49 @@ namespace FintrakBanking.Repositories.Credit
             //var filteredList = applications.ToList();
             return applications; */
 
+        }
+
+
+
+        //================================ by benjamin =======================
+        public IEnumerable<LoanApplicationViewModel> LoanSearch(string searchString)
+        {
+            var search = searchString.Trim().ToLower();
+
+            var applications = (from x in context.TBL_LOAN_APPLICATION
+                                join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                where (x.APPLICATIONREFERENCENUMBER.Contains(search)
+                                      || c.FIRSTNAME.ToLower().Contains(search)
+                                      || c.LASTNAME.ToLower().Contains(search)
+                                      || c.MIDDLENAME.ToLower().Contains(search))
+                                    select new LoanApplicationViewModel
+                                    {
+                                    firstName = c.FIRSTNAME,
+                                    middleName = c.MIDDLENAME,
+                                    lastName = c.LASTNAME,
+                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                    customerCode = c.CUSTOMERCODE,
+                                    applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
+                                    loanApplicationId = x.LOANAPPLICATIONID,
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    proposedAmount = a.PROPOSEDAMOUNT,
+                                    approvedProductName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == a.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                                    customerId = c.CUSTOMERID,
+                                    branchId = c.BRANCHID,
+                                    customerGroupId = x.CUSTOMERGROUPID,
+                                    loanTypeId = x.LOANAPPLICATIONTYPEID,
+                                    relationshipOfficerId = x.RELATIONSHIPOFFICERID,
+                                    relationshipManagerId = x.RELATIONSHIPMANAGERID,
+                                    applicationDate = x.APPLICATIONDATE,
+                                    applicationAmount = x.APPLICATIONAMOUNT,
+                                    approvedAmount = x.APPROVEDAMOUNT,
+                                    interestRate = x.INTERESTRATE,
+                                    applicationTenor = x.APPLICATIONTENOR                      
+                                    }).ToList();
+
+            return applications;
+            
         }
 
         public IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationTypeId, int staffId)
@@ -4675,6 +4724,7 @@ namespace FintrakBanking.Repositories.Credit
                             exchangeRate = b.EXCHANGERATE,
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                             customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
+                            approvedProductId = b.APPROVEDPRODUCTID,
                             proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,

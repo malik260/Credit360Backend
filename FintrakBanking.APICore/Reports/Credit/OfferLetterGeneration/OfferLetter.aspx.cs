@@ -89,6 +89,11 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
             dsGetLeaseFacility.Value = getLeaseFacility;
             dsGetLeaseFacility.Name = "LeaseFacility";
 
+            var getDynamics = offerLetter.Los_ConditionDynamics(applicationRefNumber);
+            ReportDataSource dsGetDynamics = new ReportDataSource();
+            dsGetDynamics.Value = getDynamics;
+            dsGetDynamics.Name = "TrasactionDynamics";
+
             offerLetterReport.LocalReport.DataSources.Add(dsOfferLetterDetails);
             offerLetterReport.LocalReport.DataSources.Add(dsLoanApplicationDetail);
             offerLetterReport.LocalReport.DataSources.Add(dsConditionPrecident);
@@ -99,6 +104,7 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
             offerLetterReport.LocalReport.DataSources.Add(dsCollateral);
             offerLetterReport.LocalReport.DataSources.Add(dsGenerateOfferLetter);
             offerLetterReport.LocalReport.DataSources.Add(dsGetLeaseFacility);
+            offerLetterReport.LocalReport.DataSources.Add(dsGetDynamics);
 
             var reportLink = string.Empty;
 

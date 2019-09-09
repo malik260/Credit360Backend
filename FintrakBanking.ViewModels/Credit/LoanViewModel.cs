@@ -1623,6 +1623,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class multipleDisbursementOutputViewModel : GeneralEntity
     {
+        public int multipleBulkDisbursementId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int loanApplicationDetailId { get; set; }
         public int schemeId { get; set; }
@@ -1636,12 +1637,17 @@ namespace FintrakBanking.ViewModels.Credit
         public string productTypeName { get; set; }
         public decimal loanAmount { get; set; }
         public int tenor { get; set; }
+        public DateTime firstPrincipalPaymentDate { get; set; }
+        public DateTime firstInterestPaymentDate { get; set; }
         public double interestRate { get; set; }
         public DateTime effectiveDate { get; set; }
         public DateTime maturityDate { get; set; }
         public string accountNumber { get; set; }
         public int casaAccountId { get; set; }
         public int? casaAccountId2 { get; set; }
+        public int currencyId { get; set; }
+        public int interestRepaymentFrequencyId { get; set; }
+        public int principalRepaymentFrequencyId { get; set; }
         public string repaymentScheduleMethodName { get; set; }
         public string interestRepaymentFrequencyName { get; set; }
         public string principalRepaymentFrequencyName { get; set; }

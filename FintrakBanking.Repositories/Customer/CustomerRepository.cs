@@ -213,6 +213,8 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (entity != null)
             {
+                var auditDetail = string.Empty;
+                short auditType = 0;
                 try
                 {
                     TBL_CUSTOMER_ADDRESS address;
@@ -235,6 +237,9 @@ namespace FintrakBanking.Repositories.Customer
                         address.ELECTRICMETERNUMBER = entity.electricMeterNumber;
                         address.NEARESTLANDMARK = entity.nearestLandmark;
                         address.LOCALGOVERNMENTID = entity.localGovernmentId;
+
+                        auditDetail = "Updated new Customer Address for customer ID: + (" + entity.customerId + ") ";
+                        auditType = (short)AuditTypeEnum.CustomerAddressUpdated;
                     }
                     else if (address == null && accountCompleted == false)
                     {
@@ -253,6 +258,9 @@ namespace FintrakBanking.Repositories.Customer
                         address.LOCALGOVERNMENTID = entity.localGovernmentId;
 
                         context.TBL_CUSTOMER_ADDRESS.Add(address);
+
+                        auditDetail = "Added new Customer Address for customer ID: + (" + entity.customerId + ") ";
+                        auditType = (short)AuditTypeEnum.CustomerAddressAdded;
                     }
                     else //If customer main table AccountCreationCompleted equals true then save record in temp table
                     {
@@ -368,10 +376,10 @@ namespace FintrakBanking.Repositories.Customer
                     // Audit Section ----------------------------
                     var audit = new TBL_AUDIT
                     {
-                        AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                        AUDITTYPEID = auditType,
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added new TBL_CUSTOMER_ADDRESS for customer ID: + (" + entity.customerId + ") ",
+                        DETAIL = auditDetail,
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -456,7 +464,7 @@ namespace FintrakBanking.Repositories.Customer
                         AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added new TBL_CUSTOMER_BVN for customer ID: + (" + entity.customerId + ") ",
+                        DETAIL = "Added new Customer BVN for customer ID: + (" + entity.customerId + ") ",
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -554,6 +562,8 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (entity != null)
             {
+                var auditDetail = string.Empty;
+                short auditType = 0;
                 try
                 {
 
@@ -567,6 +577,9 @@ namespace FintrakBanking.Repositories.Customer
                         phone.ACTIVE = entity.active;
                         phone.PHONE = entity.phone;
                         phone.PHONENUMBER = entity.phoneNumber;
+
+                        auditDetail = "Updated Customer Phone Number for customer ID: + (" + entity.customerId + ") ";
+                        auditType = (short)AuditTypeEnum.CustomerContactUpdated;
                     }
                     else if (phone == null && accountCompleted == false)
                     {
@@ -578,6 +591,8 @@ namespace FintrakBanking.Repositories.Customer
                             PHONENUMBER = entity.phoneNumber
                         };
                         context.TBL_CUSTOMER_PHONECONTACT.Add(phone);
+                        auditDetail = "Added new Customer Phone Number for customer ID: + (" + entity.customerId + ") ";
+                        auditType = (short)AuditTypeEnum.CustomerContactAdded;
                     }
                     else //If customer main table AccountCreationCompleted equals true then save record in temp table
                     {
@@ -678,10 +693,10 @@ namespace FintrakBanking.Repositories.Customer
                     // Audit Section ----------------------------
                     var audit = new TBL_AUDIT
                     {
-                        AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                        AUDITTYPEID = auditType,
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added new phone contact for customer ID: + (" + entity.customerId + ") ",
+                        DETAIL = auditDetail,
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -706,6 +721,8 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (entity != null)
             {
+                var auditDetail = string.Empty;
+                short auditType = 0;
                 try
                 {
                     TBL_CUSTOMER_NEXTOFKIN next;
@@ -727,6 +744,10 @@ namespace FintrakBanking.Repositories.Customer
                         next.ADDRESS = entity.address;
                         next.CITYID = entity.cityId;
                         next.ACTIVE = entity.active;
+
+                        auditDetail = "Updated Customer's Next Of Kin for customer ID: + (" + entity.customerId + ") ";
+                        auditType = (short)AuditTypeEnum.CustomerDetailUpdated;
+
                     }
                     else if (next == null && accountCompleted == false)
                     {
@@ -744,6 +765,10 @@ namespace FintrakBanking.Repositories.Customer
                         next.CITYID = entity.cityId;
                         next.ACTIVE = entity.active;
                         context.TBL_CUSTOMER_NEXTOFKIN.Add(next);
+
+                        auditDetail = "Added Customer's Next Of Kin for customer ID: + (" + entity.customerId + ") ";
+                        auditType = (short)AuditTypeEnum.CustomerDetailAdded;
+
                     }
 
                     else //If customer main table AccountCreationCompleted equals true then save record in temp table
@@ -855,10 +880,10 @@ namespace FintrakBanking.Repositories.Customer
                     // Audit Section ----------------------------
                     var audit = new TBL_AUDIT
                     {
-                        AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                        AUDITTYPEID = auditType,
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added new TBL_CUSTOMER_NEXTOFKIN for customer ID: + (" + entity.customerId + ") ",
+                        DETAIL = auditDetail,
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -1751,6 +1776,8 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (entity != null)
             {
+                var auditDetail = string.Empty;
+                short auditType = 0;
                 try
                 {
                     TBL_CUSTOMER_EMPLOYMENTHISTORY history;
@@ -1777,6 +1804,9 @@ namespace FintrakBanking.Repositories.Customer
                         history.EMPLOYERNAME = entity.employerName;
                         history.OFFICEPHONE = entity.officePhone;
                         history.PREVIOUSEMPLOYER = entity.previousEmployer;
+
+                        auditDetail = "Updated Customer Employment History for customer ID: + (" + entity.customerId + ") ";
+                        auditType = (short)AuditTypeEnum.CustomerDetailUpdated;
                     }
                     else if (history == null && accountCompleted == false)
                     {
@@ -1807,6 +1837,9 @@ namespace FintrakBanking.Repositories.Customer
                         history.MONTHLYINCOME = entity.monthlyIncome;
                         history.EXPENDITURE = entity.expenditure;
                         context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Add(history);
+                        auditDetail = "Added Customer Employment History for customer ID: + (" + entity.customerId + ") ";
+                        auditType = (short)AuditTypeEnum.CustomerDetailAdded;
+
                     }
                     else //If customer main table AccountCreationCompleted equals true then save record in temp table
                     {
@@ -1936,11 +1969,10 @@ namespace FintrakBanking.Repositories.Customer
                     // Audit Section ----------------------------
                     var audit = new TBL_AUDIT
                     {
-                        AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                        AUDITTYPEID = auditType,
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
-                        DETAIL = "Added new TBL_CUSTOMER_EMPLOYMENTHISTORY for customer ID: + (" + entity.customerId +
-                                 ") ",
+                        DETAIL = auditDetail,
                         IPADDRESS = entity.userIPAddress,
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -2840,8 +2872,8 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
-                    DETAIL = "Updated TBL_CUSTOMER: " + entity.customerName + " with code: " + entity.customerCode +
-                             " on" + " (" + entity.customerId + ") ",
+                    DETAIL = "The Customer " + entity.customerName + " with code: " + entity.customerCode +
+                             " on" + " (" + entity.customerId + ")  Has Been Updated",
                     IPADDRESS = entity.userIPAddress,
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -5219,6 +5251,8 @@ namespace FintrakBanking.Repositories.Customer
         public bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity)
         {
             if (entity == null) return false;
+            var auditDetail = string.Empty;
+            short auditType = 0;
             try
             {
                 TBL_CUSTOMER_RELATED_PARTY relParty;
@@ -5232,6 +5266,9 @@ namespace FintrakBanking.Repositories.Customer
                         relParty.RELATIONSHIPTYPE = entity.relationshipType;
                         relParty.LASTUPDATEDBY = entity.createdBy;
                         relParty.DATETIMEUPDATED = DateTime.Now;
+
+                        auditDetail = "Updated Customer's Insider Related Party for customer ID: + (" + entity.customerId + ") ";
+                        auditType = (short)AuditTypeEnum.CustomerDetailUpdated;
                     }
                 }
                 else
@@ -5247,15 +5284,18 @@ namespace FintrakBanking.Repositories.Customer
                         DELETED = false
                     };
                     context.TBL_CUSTOMER_RELATED_PARTY.Add(relParty);
+
+                    auditDetail = "Added Customer's Insider Related Party for customer ID: + (" + entity.customerId + ") ";
+                    auditType = (short)AuditTypeEnum.CustomerDetailAdded;
                 }
 
                 // Audit Section ----------------------------
                 var audit = new TBL_AUDIT
                 {
-                    AUDITTYPEID = (short)AuditTypeEnum.CustomerRelatedPartyAddedUpdated,
+                    AUDITTYPEID = auditType,
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
-                    DETAIL = "Added/updated Customer Related Party Information",
+                    DETAIL = auditDetail,
                     IPADDRESS = entity.userIPAddress,
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),

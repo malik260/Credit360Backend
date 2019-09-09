@@ -2062,6 +2062,24 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("update-insurance-policy-request/{id}")]
+        public HttpResponseMessage UpdateInsurancePolicyRequest([FromBody] CollateralInsuranceRequestViewModel model, int id)
+        {
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                var response = repo.UpdateInsurancePolicyRequest(model, id);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost, Route("insurance-policy-request")]
         public HttpResponseMessage AddInsurancePolicyRequest([FromBody] CollateralInsuranceRequestViewModel model)
         {
@@ -2113,7 +2131,7 @@ namespace FintrakBanking.APICore.Controllers
         [ClaimsAuthorization]
         [Route("get-insurance-requests")]
         public HttpResponseMessage GetInsuranceRequests()
-        {
+         {
             try
             {
                 var response = repo.GetInsuranceRequests(token.GetStaffId);

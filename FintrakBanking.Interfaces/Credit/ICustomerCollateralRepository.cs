@@ -160,6 +160,7 @@ namespace FintrakBanking.Interfaces.Credit
         InsurancePolicies GetInsurancePolicy(int collateralId);
         bool DeleteInsuranceRequest(int insuranceRequestId);
         bool checkInsurancePolicy(InsurancePolicies model);
+        bool UpdateInsurancePolicyRequest(CollateralInsuranceRequestViewModel model, int id);
         #endregion
     }
 }
