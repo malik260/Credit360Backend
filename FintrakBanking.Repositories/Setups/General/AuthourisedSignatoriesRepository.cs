@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    class AuthourisedSignatoriesRepository
+    public class AuthourisedSignatoriesRepository
     {
+
     }
 }
