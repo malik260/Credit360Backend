@@ -24,5 +24,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteLetterGenerationRequest(int id, UserInfo user);
         List<CamsolLoanDocumentViewModel> GetCamsolLoansByCustomerCode(string customerName, string customerCode);
         string GetCamsolLoanDocument(int typeId, LetterGenerationRequestViewModel model);
+        IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationCompleted();
     }
 }
