@@ -4,6 +4,7 @@ namespace FintrakBanking.Entities.DocumentModels
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
+    using FintrakBanking.Entities.Models;
 
     [DbConfigurationType(typeof(OracleDatabaseConfiguration))]
     public partial class FinTrakBankingDocumentsContext : DbContext
@@ -41,6 +42,7 @@ namespace FintrakBanking.Entities.DocumentModels
         public virtual DbSet<TBL_DOCUMENT_CATEGORY_TYPE> TBL_DOCUMENT_CATEGORY_TYPE { get; set; }
         public virtual DbSet<TBL_DOCUMENT_CATEGORY> TBL_DOCUMENT_CATEGORY { get; set; }
         public virtual DbSet<TBL_DOCUMENT_TYPE> TBL_DOCUMENT_TYPE { get; set; }
+        public virtual DbSet<TBL_PRODUCT_DOCUMENT_MAPPING> TBL_PRODUCT_DOCUMENT_MAPPING { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -94,6 +96,11 @@ namespace FintrakBanking.Entities.DocumentModels
 
             modelBuilder.Entity<TBL_DOCUMENT_TYPE>()
                 .HasMany(e => e.TBL_DOCUMENT_UPLOAD)
+                .WithRequired(e => e.TBL_DOCUMENT_TYPE)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_DOCUMENT_TYPE>()
+                .HasMany(e => e.TBL_PRODUCT_DOCUMENT_MAPPING)
                 .WithRequired(e => e.TBL_DOCUMENT_TYPE)
                 .WillCascadeOnDelete(false);
         }
