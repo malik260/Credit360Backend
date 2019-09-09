@@ -188,7 +188,14 @@ namespace FintrakBanking.Repositories.Media
 
         public int AddDocumentUpload(DocumentUploadViewModel model, byte[] buffer)
         {
-            string customerCode = GetCustomerCode(model.customerId);
+            var customerCode = String.Empty;
+            if (model.customerId == 0)
+            {
+                customerCode = GetCustomerCode(model.customerId);
+            } else
+            {
+                customerCode = GetCustomerGroupCode(model.customerGroupId);
+            }
 
             var existing = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
                     && x.OPERATIONID == model.operationId
@@ -310,6 +317,13 @@ namespace FintrakBanking.Repositories.Media
             var customer = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == customerId);
             if (customer == null) throw new SecureException("Customer not found!");
             return customer.CUSTOMERCODE;
+        }
+
+        private string GetCustomerGroupCode(int customerGroupId)
+        {
+            var customerGroup = context.TBL_CUSTOMER_GROUP.FirstOrDefault(x => x.CUSTOMERGROUPID == customerGroupId);
+            if (customerGroup == null) throw new SecureException("Customer not found!");
+            return customerGroup.GROUPCODE;
         }
 
         public bool UpdateDocumentUpload(DocumentUploadViewModel model, int id, UserInfo user)
