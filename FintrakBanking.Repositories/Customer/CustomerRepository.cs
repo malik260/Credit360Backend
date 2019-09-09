@@ -19,6 +19,9 @@ using FinTrakBanking.ThirdPartyIntegration;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common;
 using FintrakBanking.ViewModels.Setups.Credit;
+using Newtonsoft.Json.Linq;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -155,7 +158,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerAdded,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Added Customer  {entity.customerName} with Code: {entity.customerCode} ",
+                DETAIL = $"Added Customer  '{entity.customerName}' with Code: {entity.customerCode}",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -221,7 +224,10 @@ namespace FintrakBanking.Repositories.Customer
                     // if (entity.addressId != 0 || entity.addressId < 0)  //Check if record is new or modified record
                     // {
                     address = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x=>x.ADDRESSID==entity.addressId);
-                    var accountCompleted = context.TBL_CUSTOMER.Find(entity.customerId).ACCOUNTCREATIONCOMPLETE;
+                    var customer = context.TBL_CUSTOMER.Find(entity.customerId);
+                    var accountCompleted = customer.ACCOUNTCREATIONCOMPLETE;
+                    var cityName = context.TBL_CITY.Where(c=>c.CITYID == address.CITYID).FirstOrDefault().CITYNAME;
+                    var existingAddrss = address?.ADDRESS + " " + cityName;
                     entity.homeTown = context.TBL_CITY.Where(x=>x.CITYID == entity.cityId).Select(m=>m.CITYNAME).FirstOrDefault();
                     //If Customer main table ACCOUNTCREATIONCOMPLETE column equal false and entity.canModified equal true, record insert directly to the main table 
                     if (address != null && accountCompleted == false)
@@ -238,7 +244,7 @@ namespace FintrakBanking.Repositories.Customer
                         address.NEARESTLANDMARK = entity.nearestLandmark;
                         address.LOCALGOVERNMENTID = entity.localGovernmentId;
 
-                        auditDetail = "Updated new Customer Address for customer ID: + (" + entity.customerId + ") ";
+                        auditDetail = $"Updated new Customer Address for customer: {customer.CUSTOMERCODE}. from {existingAddrss} to {entity.address}";
                         auditType = (short)AuditTypeEnum.CustomerAddressUpdated;
                     }
                     else if (address == null && accountCompleted == false)
@@ -2703,6 +2709,7 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdateCustomer(int customerId, CustomerViewModels entity)
         {
+            var detail = string.Empty;
             var customerMain = context.TBL_CUSTOMER.Find(customerId);
             if (customerMain != null && customerMain.ACCOUNTCREATIONCOMPLETE == false && entity.canModified == true)
             {
@@ -2739,6 +2746,8 @@ namespace FintrakBanking.Repositories.Customer
                 customerMain.CUSTOMERBVN = entity.customerBVN;
                 customerMain.DATETIMEUPDATED = DateTime.Now;
                 customerMain.LASTUPDATEDBY = entity.deletedBy;
+
+
                 return context.SaveChanges() != 0;
             }
             else
@@ -2802,6 +2811,8 @@ namespace FintrakBanking.Repositories.Customer
                     customer.CORR = entity.corr;
                     customer.BUSINESSUNTID = entity.businessUnitId;
                     customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
+
+
                 }
                 else
                 {
@@ -2854,7 +2865,10 @@ namespace FintrakBanking.Repositories.Customer
                     customer.CORR = entity.corr;
                     customer.BUSINESSUNTID = entity.businessUnitId;
                     customer.PASTDUEOBLIGATIONS = entity.pastDueObligations;
+
                     context.TBL_TEMP_CUSTOMER.Add(customer);
+
+           
                 }
 
                 var modified = new TBL_CUSTOMER_MODIFICATION
@@ -2872,8 +2886,8 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
-                    DETAIL = "The Customer " + entity.customerName + " with code: " + entity.customerCode +
-                             " on" + " (" + entity.customerId + ")  Has Been Updated",
+                    DETAIL = $"The Customer '{ entity.customerName }' with code: '{entity.customerCode}' " +
+                    $"on  ({ entity.customerId })  Has Been Updated",
                     IPADDRESS = entity.userIPAddress,
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -4414,6 +4428,8 @@ namespace FintrakBanking.Repositories.Customer
         private bool ApproveGeneralInformation(int modifiedId, int targetId, short approvalStatusId, UserInfo user)
         {
             TBL_CUSTOMER entity = null;
+            var detail = string.Empty;
+            var staff = context.TBL_STAFF.Find(user.staffId);
             //Check if Customer  exist in the temp table using the customerId
             var temp = context.TBL_TEMP_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == targetId);
             if (temp != null) //If temp record is not null select the information from the main table
@@ -4429,6 +4445,9 @@ namespace FintrakBanking.Repositories.Customer
 
             if (entity != null) //Update existing customer information with temp record
             {
+
+                detail = $"Approved General Customer Information for customer with code: {entity.CUSTOMERCODE} has been updated by {staff.FIRSTNAME} {staff.LASTNAME} ({staff.STAFFCODE})";
+
                 entity.CRMSCOMPANYSIZEID = temp.CRMSCOMPANYSIZEID;
                 entity.CRMSLEGALSTATUSID = temp.CRMSLEGALSTATUSID;
                 entity.CRMSRELATIONSHIPTYPEID = temp.CRMSRELATIONSHIPTYPEID;
@@ -4469,7 +4488,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = "Approved Customer Information for customer with code: " + entity.CUSTOMERCODE,
+                DETAIL = detail, //"Approved Customer Information for customer with code: " + entity.CUSTOMERCODE,
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -4483,6 +4502,8 @@ namespace FintrakBanking.Repositories.Customer
 
         private bool ApproveCompanyInformation(int modifiedId, int targetId, short approvalStatusId, UserInfo user)
         {
+            var detail = string.Empty;
+            var staff = context.TBL_STAFF.Find(user.staffId);
             TBL_CUSTOMER_COMPANYINFOMATION entity = null;
             //Check if Customer company information exist in the temp table using the customerId
             var temp = context.TBL_TEMP_CUSTOMER_COMPANYINFO.FirstOrDefault(x => x.CUSTOMERID == targetId);
@@ -4499,6 +4520,10 @@ namespace FintrakBanking.Repositories.Customer
 
             if (entity != null) //Update existing customer company information with temp record
             {
+
+
+                detail = $"Approved Company Information for customer with code: : {entity.TBL_CUSTOMER.CUSTOMERCODE} has been updated by {staff.FIRSTNAME} {staff.LASTNAME} ({staff.STAFFCODE})";
+
                 entity.ANNUALTURNOVER = temp.ANNUALTURNOVER;
                 entity.COMPANYEMAIL = temp.COMPANYEMAIL;
                 entity.COMPANYNAME = temp.COMPANYNAME;
@@ -4522,7 +4547,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = "Approved Customer Company Information:  with Id: " + entity.COMPANYINFOMATIONID,
+                DETAIL = detail, //"Approved Customer Company Information:  with Id: " + entity.COMPANYINFOMATIONID,
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -4538,7 +4563,8 @@ namespace FintrakBanking.Repositories.Customer
         {
             TBL_TEMP_CUSTOMER_ADDRESS temp = null;
             TBL_CUSTOMER_ADDRESS entity = null;
-
+            var detail = string.Empty;
+            var staff = context.TBL_STAFF.Find(user.staffId);
             var modified = context.TBL_CUSTOMER_MODIFICATION.Find(modifiedId);
             if (modified != null)
             {
@@ -4551,6 +4577,14 @@ namespace FintrakBanking.Repositories.Customer
                 temp = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.TEMPADDRESSID == targetId);
                 if (temp != null) //If temp record is not null select the information from the main table
                 {
+                    JObject currentDataStr = JObject.Parse(Convert.ToString(entity));
+                    var recentData = currentDataStr.ToString();
+
+                    JObject existingDataStr = JObject.Parse(Convert.ToString(temp));
+                    var existingData = existingDataStr["data"].ToString();
+
+                    detail = $"Customer address for customer with code: : {temp.TBL_CUSTOMER.CUSTOMERCODE} has been added. <br> New address: <br>{recentData}";
+
                     entity = new TBL_CUSTOMER_ADDRESS();
                     entity.ACTIVE = temp.ACTIVE;
                     entity.ADDRESS = temp.ADDRESS;
@@ -4572,6 +4606,14 @@ namespace FintrakBanking.Repositories.Customer
                 temp = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.TEMPADDRESSID == targetId);
                 if (temp != null) //If temp record is not null select the information from the main table
                 {
+                    JObject currentDataStr = JObject.Parse(Convert.ToString(entity));
+                    var recentData = currentDataStr.ToString();
+
+                    JObject existingDataStr = JObject.Parse(Convert.ToString(temp));
+                    var existingData = existingDataStr["data"].ToString();
+
+                    detail = $"Customer address for customer with code: : {temp.TBL_CUSTOMER.CUSTOMERCODE} has been updated. Existing data :<br> {existingData}. <br> New Data: <br>{recentData}";
+
                     entity = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x => x.ADDRESSID == temp.ADDRESSID);
                     entity.ACTIVE = temp.ACTIVE;
                     entity.ADDRESS = temp.ADDRESS;
@@ -4599,7 +4641,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = "Approved Customer Address Information:  with Id: " + entity.ADDRESSID,
+                DETAIL = detail, // "Approved Customer Address Information:  with Id: " + entity.ADDRESSID,
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -4677,6 +4719,9 @@ namespace FintrakBanking.Repositories.Customer
         {
             TBL_TEMP_CUSTOMEREMPLOYMENT temp = null;
             TBL_CUSTOMER_EMPLOYMENTHISTORY entity = null;
+
+            var detail = string.Empty;
+            var staff = context.TBL_STAFF.Find(user.staffId);
 
             var modified = context.TBL_CUSTOMER_MODIFICATION.Find(modifiedId);
             if (modified != null)
@@ -4771,6 +4816,9 @@ namespace FintrakBanking.Repositories.Customer
             TBL_TEMP_CUSTOMER_NEXTOFKIN temp = null;
             TBL_CUSTOMER_NEXTOFKIN entity = null;
 
+            var detail = string.Empty;
+            var staff = context.TBL_STAFF.Find(user.staffId);
+
             var modified = context.TBL_CUSTOMER_MODIFICATION.Find(modifiedId);
             if (modified != null)
             {
@@ -4850,6 +4898,9 @@ namespace FintrakBanking.Repositories.Customer
         {
             TBL_TEMP_CUST_CLIENT_SUPPLIER temp = null;
             TBL_CUSTOMER_CLIENT_SUPPLIER entity = null;
+
+            var detail = string.Empty;
+            var staff = context.TBL_STAFF.Find(user.staffId);
 
             var modified = context.TBL_CUSTOMER_MODIFICATION.Find(modifiedId);
             if (modified != null)
@@ -4944,6 +4995,10 @@ namespace FintrakBanking.Repositories.Customer
         {
             TBL_TEMP_CUSTOMER_DIRECTOR temp = null;
             TBL_CUSTOMER_COMPANY_DIRECTOR entity = null;
+
+            var detail = string.Empty;
+            var staff = context.TBL_STAFF.Find(user.staffId);
+
             List<TBL_CUSTOMER_COMPANY_BENEFICIA> beneficialList = new List<TBL_CUSTOMER_COMPANY_BENEFICIA>();
 
             var modified = context.TBL_CUSTOMER_MODIFICATION.Find(modifiedId);
