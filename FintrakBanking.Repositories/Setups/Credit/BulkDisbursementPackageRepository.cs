@@ -152,7 +152,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                                     currencyName = context.TBL_CURRENCY.Where(r => r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
                                     facilityName = context.TBL_PRODUCT.Where(d => d.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
                                     scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(l => l.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME
-                                }).ToList();
+                                })?.ToList();
 
                      return data;                         
 

@@ -60,6 +60,24 @@ namespace FintrakBanking.Repositories.Credit
                 .ToList().OrderByDescending(r => r.dateTimeCreated);
         }
 
+        public IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationCompleted()
+        {
+            return context.TBL_LETTER_GENERATION_REQUEST.Where(x => x.DELETED == false
+                                    && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LetterGenerationRequestCompleted)
+                .Select(x => new LetterGenerationRequestViewModel
+                {
+                    requestId = x.LETTERGENERATIONREQUESTID,
+                    customerId = x.CUSTOMERID,
+                    requestDate = x.REQUESTDATE,
+                    requestType = x.REQUESTTYPE,
+                    asAtDate = x.ASATDATE,
+                    comment = x.COMMENTS,
+                    customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.LASTNAME,
+                    dateTimeCreated = x.DATETIMECREATED
+                })
+                .ToList().OrderByDescending(r => r.dateTimeCreated);
+        }
+
         public IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequestsForApproval(int staffId)
         {
             var operationId = (int)OperationsEnum.LetterGenerationRequest;

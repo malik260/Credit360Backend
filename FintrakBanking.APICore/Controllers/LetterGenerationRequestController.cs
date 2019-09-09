@@ -41,6 +41,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("letter-generation-completed")]
+        public HttpResponseMessage GetLetterGenerationCompleted()
+        {
+            IEnumerable<LetterGenerationRequestViewModel> response = repo.GetLetterGenerationCompleted();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("letter-generation-request-approval")]
         public HttpResponseMessage GetLetterGenerationRequestsForApproval()
         {
