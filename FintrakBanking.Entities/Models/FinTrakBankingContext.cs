@@ -538,6 +538,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_REPAYMENT_TERM> TBL_REPAYMENT_TERM { get; set; }
         public virtual DbSet<TBL_INSURANCE_REQUEST> TBL_INSURANCE_REQUEST { get; set; }
         public virtual DbSet<TBL_CUSTOMER_GROUP_MAPPING_ARC> TBL_CUSTOMER_GROUP_MAPPING_ARC { get; set; }
+        public virtual DbSet<TBL_AUTHORISED_SIGNATORY> TBL_AUTHORISED_SIGNATORY { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 
