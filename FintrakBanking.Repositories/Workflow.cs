@@ -455,15 +455,17 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void ResolveReferred(int referrerId, int? fromId, int? toId)
         {
-            //if (toId == null) throw new SecureException("Unable to resolve destination level!");
-            //if (fromId == null) return;
-            //var referrerGroup = context.TBL_APPROVAL_LEVEL.Find(fromId);
-            //var recepientGroup = context.TBL_APPROVAL_LEVEL.Find(toId);
-            //if (referrerGroup.GROUPID != recepientGroup.GROUPID)
-            //{
-            //    this.toStaffId = referrerId;
-            //    this.nextLevelId = fromId;
-            //}
+            if(request.LOOPEDSTAFFID != null) { return; }
+
+            if (toId == null) throw new SecureException("Unable to resolve destination level!");
+            if (fromId == null) return;
+            var referrerGroup = context.TBL_APPROVAL_LEVEL.Find(fromId);
+            var recepientGroup = context.TBL_APPROVAL_LEVEL.Find(toId);
+            if (referrerGroup.GROUPID != recepientGroup.GROUPID)
+            {
+                this.toStaffId = referrerId;
+                this.nextLevelId = fromId;
+            }
         }
 
         private void ValidateDestinationConfiguration()
@@ -789,9 +791,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 else
                 {
-                    this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
+                    if(this.statusId != (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
+                    }
+                    else { this.EndProcess(this.statusId); }
+                    
                 }
             }
+            
         }
 
         private bool IsPresetFinalLevel()

@@ -48,6 +48,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             //}).FirstOrDefault(),
                             schemeCode = a.SCHEMECODE,
                             productId = a.PRODUCTID,
+                            currencyId = a.CURRENCYID,
+                            currencyName = context.TBL_CURRENCY.Where(r => r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
                             facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,               
                             tenor = a.TENOR,
                             scheduleMethodId = (int)a.SCHEDULEMETHODID,
@@ -76,6 +78,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                             schemeCode = a.SCHEMECODE,
                             productId = a.PRODUCTID,
+                            currencyId = a.CURRENCYID,
+                            currencyName = context.TBL_CURRENCY.Where(r => r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
                             facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
                             tenor = a.TENOR,
                             scheduleMethodId = (int)a.SCHEDULEMETHODID,
@@ -109,6 +113,8 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             scheduleMethodId = (int)a.SCHEDULEMETHODID,
                             schemeName = a.SCHEMENAME,
                             interestRate = a.INTERESTRATE,
+                            currencyId = a.CURRENCYID,
+                            currencyName = context.TBL_CURRENCY.Where(r => r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
                             productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
                             scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
                             //approvalStatusId = (int)a.APPROVALSTATUSID
@@ -119,37 +125,36 @@ namespace FintrakBanking.Repositories.Setups.Credit
 
         public IEnumerable<BulkDisbursementSetupSchemeViewModel> GetAllBulkDisbursementScheme()
         {
-
             var data = (from a in context.TBL_LOAN_BULK_DISBURSE_SCHEME
-                        select new BulkDisbursementSetupSchemeViewModel
-                        {
-                            disburseSchemeId = a.DISBURSESCHEMEID,
-                            scheduleDayCountConventionId = a.SCHEDULEDAYCOUNTCONVENTIONID,
-                            interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID,
-                            principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID,
-                            loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
-                            schemeCode = a.SCHEMECODE,
-                            productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
-                            scheduleMethodId = (int)a.SCHEDULEMETHODID,
-                            productId = a.PRODUCTID,
-                            facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
-                            tenor = a.TENOR,
-                            schemeName = a.SCHEMENAME,
-                            interestRate = a.INTERESTRATE,
-                            scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,                       
-                        }).ToList();
+                                join x in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals x.LOANAPPLICATIONDETAILID
+                                join b in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                                
+                                select new BulkDisbursementSetupSchemeViewModel
+                                {
+                                    disburseSchemeId = a.DISBURSESCHEMEID,
+                                    scheduleDayCountConventionId = a.SCHEDULEDAYCOUNTCONVENTIONID,
+                                    interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID,
+                                    principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID,
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    schemeCode = a.SCHEMECODE,
+                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                    applicationReferenceNumber = b.APPLICATIONREFERENCENUMBER,
+                                    loanApplicationId = b.LOANAPPLICATIONID,
+                                    productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
+                                    scheduleMethodId = (int)a.SCHEDULEMETHODID,
+                                    productId = a.PRODUCTID,
+                                    tenor = a.TENOR,
+                                    schemeName = a.SCHEMENAME,
+                                    customerCode = c.CUSTOMERCODE,
+                                    interestRate = a.INTERESTRATE,
+                                    currencyId = a.CURRENCYID,
+                                    currencyName = context.TBL_CURRENCY.Where(r => r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
+                                    facilityName = context.TBL_PRODUCT.Where(d => d.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
+                                    scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(l => l.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME
+                                }).ToList();
 
-            foreach(var i in data)
-            {
-                var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == i.loanApplicationDetailId).FirstOrDefault();
-                if(detail != null)
-                {
-                    var app = context.TBL_LOAN_APPLICATION.Find(detail.LOANAPPLICATIONID);
-                    i.applicationReferenceNumber = app.APPLICATIONREFERENCENUMBER;
-                }
-                
-            }
-            return data;
+                     return data;                         
 
         }
 
@@ -185,6 +190,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 DELETED = false,
                 COMPANYID = (short)model.companyId,
                 SCHEMENAME = model.schemeName,
+                CURRENCYID = model.currencyId
             };
 
             //Audit Section ---------------------------
@@ -256,6 +262,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
             data.APPROVALSTATUSID = (short)model.approvalStatusId;
             data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
             data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.CURRENCYID = model.currencyId;
 
             //Audit Section ---------------------------
 
@@ -321,6 +328,44 @@ namespace FintrakBanking.Repositories.Setups.Credit
                                              
                                          })?.ToList();
             return allApplicationDetails;
+
+        }
+
+        public IEnumerable<BulkDisbursementSetupSchemeViewModel> SchemeSearch(string searchString)
+        {
+            var search = searchString.Trim().ToLower();
+
+            var applications = (from a in context.TBL_LOAN_BULK_DISBURSE_SCHEME
+                                join x in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals x.LOANAPPLICATIONDETAILID
+                                join b in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
+                                where (a.SCHEMECODE.Contains(search)
+                                      || a.SCHEMENAME.ToLower().Contains(search))
+                                select new BulkDisbursementSetupSchemeViewModel
+                                {
+                                    disburseSchemeId = a.DISBURSESCHEMEID,
+                                    scheduleDayCountConventionId = a.SCHEDULEDAYCOUNTCONVENTIONID,
+                                    interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID,
+                                    principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID,
+                                    loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                    schemeCode = a.SCHEMECODE,
+                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                    applicationReferenceNumber = b.APPLICATIONREFERENCENUMBER,
+                                    loanApplicationId = b.LOANAPPLICATIONID,
+                                    productPriceIndexId = (int)a.PRODUCTPRICEINDEXID,
+                                    scheduleMethodId = (int)a.SCHEDULEMETHODID,
+                                    productId = a.PRODUCTID,
+                                    facilityName = context.TBL_PRODUCT.Where(c => c.PRODUCTID == a.PRODUCTID).FirstOrDefault().PRODUCTNAME,
+                                    tenor = a.TENOR,
+                                    approvedAmount = x.APPROVEDAMOUNT,
+                                    schemeName = a.SCHEMENAME,
+                                    interestRate = a.INTERESTRATE,
+                                    currencyId = a.CURRENCYID,
+                                    currencyName = context.TBL_CURRENCY.Where(r=>r.CURRENCYID == a.CURRENCYID).FirstOrDefault().CURRENCYNAME,
+                                    scheduleName = context.TBL_LOAN_SCHEDULE_TYPE.Where(c => c.SCHEDULETYPEID == a.SCHEDULEMETHODID).FirstOrDefault().SCHEDULETYPENAME,
+                                }).ToList();
+
+            return applications;
 
         }
 

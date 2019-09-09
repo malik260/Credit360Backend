@@ -163,7 +163,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (isGroup)
             {
-                context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == application.CUSTOMERGROUPID);
+                var ids = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == application.CUSTOMERGROUPID && x.DELETED == false).Select(x => x.CUSTOMERID).ToList();
+                customers = context.TBL_CUSTOMER.Where(x => ids.Contains(x.CUSTOMERID));
             }
             foreach (var customer in customers)
             {
@@ -177,6 +178,8 @@ namespace FintrakBanking.Repositories.Credit
                             DESCRIPTION = item.indicatorname,
                             VALUE = item.indicatorvalue,
                             CUSTOMERID = item.customerId,
+                            LOANAPPLICATIONID = application.LOANAPPLICATIONID,
+                            CUSTOMERGROUPID = application.CUSTOMERGROUPID,
                             DATETIMECREATED = DateTime.Now,
                             CREATEDBY = staffId,
                             DELETED = false,

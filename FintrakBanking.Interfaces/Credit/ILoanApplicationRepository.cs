@@ -161,5 +161,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<RatingAndRatioViewModel> GetCustomerRatios(int customerId, int applicationId, bool isLms = false);
         CustomerApplicationTransactionsViewModels GetCustomerTransactionsByFilterLogic(int customerId, int applicationId, int froma, int to, int fYear, int tYear, bool v);
         List<InvoiceDetailViewModel> GetBulkLoanInvoice(byte[] file, UserInfo user);
+        IEnumerable<LoanApplicationViewModel> LoanSearch(string searchString);
     }
 }
