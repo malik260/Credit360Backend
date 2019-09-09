@@ -576,7 +576,14 @@ namespace FintrakBanking.Repositories.Customer
                     TBL_CUSTOMER_PHONECONTACT phone;
 
                     phone = context.TBL_CUSTOMER_PHONECONTACT.Find(entity.phoneContactId);
+          
+                    //get customer record
+                    var customer = context.TBL_CUSTOMER.Find(entity.customerId);
                     var accountCompleted = context.TBL_CUSTOMER.Find(entity.customerId).ACCOUNTCREATIONCOMPLETE;
+
+                    //previous phone number
+                    var previousPhoneNumber = phone?.PHONENUMBER;
+
                     //If Customer main table ACCOUNTCREATIONCOMPLETE column equal false, record insert directly to the main table 
                     if (phone != null && accountCompleted == false)
                     {
@@ -584,7 +591,8 @@ namespace FintrakBanking.Repositories.Customer
                         phone.PHONE = entity.phone;
                         phone.PHONENUMBER = entity.phoneNumber;
 
-                        auditDetail = "Updated Customer Phone Number for customer ID: + (" + entity.customerId + ") ";
+                        //auditDetail = "Updated Customer Phone Number for customer ID: + (" + entity.customerId + ") ";
+                        auditDetail = $"Updated new Customer Phone Number for customer: {customer.CUSTOMERCODE}. from {previousPhoneNumber} to {entity.phoneNumber}";
                         auditType = (short)AuditTypeEnum.CustomerContactUpdated;
                     }
                     else if (phone == null && accountCompleted == false)
