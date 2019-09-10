@@ -136,6 +136,7 @@
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
     <Compile Include="Credit\LoanPreliminaryEvaluationViewModel.cs" />
     <Compile Include="Credit\LoanPrincipalViewModel.cs" />
+    <Compile Include="Credit\OperationSignatoryViewModel.cs" />
     <Compile Include="Credit\OriginalDocumentReleaseViewModel.cs" />
     <Compile Include="Credit\ProjectSiteReportViewModel.cs" />
     <Compile Include="Credit\PsrCommentViewModel.cs" />

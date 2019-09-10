@@ -62,6 +62,6 @@ namespace FintrakBanking.ViewModels.Credit
 
         public decimal? loanBalance { get; set; }
         
-
+        public List<OperationSignatoryViewModel> signatories { get; set; }
     }
 }

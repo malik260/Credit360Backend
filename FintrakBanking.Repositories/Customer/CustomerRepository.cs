@@ -2454,7 +2454,7 @@ namespace FintrakBanking.Repositories.Customer
                            nationalityId = a.NATIONALITYID,
                            occupation = a.OCCUPATION,
                            placeOfBirth = a.PLACEOFBIRTH,
-                           isPoliticallyExposed = a.ISPOLITICALLYEXPOSED == false
+                           isPoliticallyExposed = a.ISPOLITICALLYEXPOSED == false && (USE_THIRD_PARTY_INTEGRATION)
                                ? finacle.GetExposePersonStatus(a.CUSTOMERCODE)
                                : a.ISPOLITICALLYEXPOSED,
                            relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,

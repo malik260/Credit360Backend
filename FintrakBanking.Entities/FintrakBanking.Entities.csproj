@@ -90,6 +90,7 @@
     <Compile Include="Models\TBL_ATC_RELEASE.cs" />
     <Compile Include="Models\TBL_ATC_RELEASE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_ATC_TYPE.cs" />
+    <Compile Include="Models\TBL_OPERATION_SIGNATORY.cs" />
     <Compile Include="Models\TBL_AUTHORISED_SIGNATORY.cs" />
     <Compile Include="Models\TBL_COLLATERAL_COVERAGE.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
