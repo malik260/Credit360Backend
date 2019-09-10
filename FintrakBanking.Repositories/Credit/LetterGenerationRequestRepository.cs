@@ -405,6 +405,38 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             return result;
         }
+
+        public IEnumerable<LetterGenerationRequestViewModel> Search(string searchString)
+        {
+            var operationId = (int)OperationsEnum.LetterGenerationRequest;
+
+            searchString = searchString.Trim().ToLower();
+
+
+            var applications = (from lgr in context.TBL_LETTER_GENERATION_REQUEST
+                                join c in context.TBL_CUSTOMER on lgr.CUSTOMERID equals c.CUSTOMERID
+                                join atrail in context.TBL_APPROVAL_TRAIL on lgr.LETTERGENERATIONREQUESTID equals atrail.TARGETID
+                                where atrail.OPERATIONID == operationId && lgr.DELETED == false
+                                && atrail.TARGETID == lgr.LETTERGENERATIONREQUESTID
+                                && (lgr.REQUESTREF == searchString
+                                || c.FIRSTNAME.ToLower().Contains(searchString)
+                                || c.LASTNAME.ToLower().Contains(searchString)
+                                || c.MIDDLENAME.ToLower().Contains(searchString))
+                                select new LetterGenerationRequestViewModel
+                                {
+                                    approvalStatusId = lgr.APPLICATIONSTATUSID,
+                                    arrivalDate = atrail.ARRIVALDATE,
+                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                    customerCode = c.CUSTOMERCODE,
+                                    approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == lgr.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                    currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME : "n/a",
+                                    approvalTrailId = atrail.APPROVALTRAILID,
+                                    operationId = (int)OperationsEnum.LetterGenerationRequest,
+                                }).ToList();
+
+            return applications;
+
+        }
     }
 }
 
