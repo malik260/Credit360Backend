@@ -6,6 +6,7 @@
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
+    [Table("TBL_AUTHORISED_SIGNATORY")]
     public partial class TBL_AUTHORISED_SIGNATORY
     {
         [Key]
