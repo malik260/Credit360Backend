@@ -577,7 +577,7 @@ namespace FintrakBanking.Repositories.Customer
 
                     phone = context.TBL_CUSTOMER_PHONECONTACT.Find(entity.phoneContactId);
           
-                    //get customer record
+                    //get customer record by id
                     var customer = context.TBL_CUSTOMER.Find(entity.customerId);
                     var accountCompleted = context.TBL_CUSTOMER.Find(entity.customerId).ACCOUNTCREATIONCOMPLETE;
 
@@ -740,8 +740,15 @@ namespace FintrakBanking.Repositories.Customer
                 try
                 {
                     TBL_CUSTOMER_NEXTOFKIN next;
-
+                    //get next of kin primary key
                     next = context.TBL_CUSTOMER_NEXTOFKIN.Find(entity.nextOfKinId);
+
+                    //get customer record by id
+                    var customer = context.TBL_CUSTOMER.Find(entity.customerId);
+
+                    //get previous next of kin
+                    var previousNextOfKin = next?.FIRSTNAME; 
+
                     var accountCompleted = context.TBL_CUSTOMER.Find(entity.customerId).ACCOUNTCREATIONCOMPLETE;
                     //If Customer main table ACCOUNTCREATIONCOMPLETE column equal false, record insert directly to the main table 
                     if (next != null && accountCompleted == false)
@@ -759,7 +766,8 @@ namespace FintrakBanking.Repositories.Customer
                         next.CITYID = entity.cityId;
                         next.ACTIVE = entity.active;
 
-                        auditDetail = "Updated Customer's Next Of Kin for customer ID: + (" + entity.customerId + ") ";
+                        //auditDetail = "Updated Customer's Next Of Kin for customer ID: + (" + entity.customerId + ") ";
+                        auditDetail = $"Updated new Customer Next Of Kin for customer: {customer.CUSTOMERCODE}. from {previousNextOfKin} to {entity.firstName}";
                         auditType = (short)AuditTypeEnum.CustomerDetailUpdated;
 
                     }
