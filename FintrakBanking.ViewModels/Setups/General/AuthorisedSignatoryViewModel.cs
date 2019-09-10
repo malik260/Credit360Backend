@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
-    public  class AuthourisedSignatoryViewModel:GeneralEntity
+    public  class AuthorisedSignatoryViewModel:GeneralEntity
     {
         public int signatoryId { get; set; }
         public string signatoryName { get; set; }

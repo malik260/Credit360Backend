@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         LetterGenerationRequestViewModel GetLetterGenerationRequest(int id);
 
-        IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequests();
+        IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequests(int staffId);
 
         IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequestsForApproval(int staffId);
 

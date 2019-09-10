@@ -61,7 +61,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
 
         public decimal? loanBalance { get; set; }
-        
-        public List<OperationSignatoryViewModel> signatories { get; set; }
+        public int loopedStaffId { get; set; }
+
+        public List<OperationSignatoryViewModel> letterGenerationsignatories { get; set; }
     }
 }

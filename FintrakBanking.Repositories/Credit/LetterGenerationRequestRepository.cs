@@ -38,27 +38,78 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = _workflow;
         }
 
-        public IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequests()
+        public IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequests(int staffId)
         {
-            return context.TBL_LETTER_GENERATION_REQUEST.Where(x => x.DELETED == false
-                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.ApplicationRejected
-                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LetterGenerationRequestInProgress
-                                    && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LetterGenerationRequestCompleted)
-                .Select(x => new LetterGenerationRequestViewModel
-                {
-                    requestId = x.LETTERGENERATIONREQUESTID,
-                    customerId = x.CUSTOMERID,
-                    customerCode = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == x.CUSTOMERID).FirstOrDefault().CUSTOMERCODE,
-                    requestDate = x.REQUESTDATE,
-                    requestType = x.REQUESTTYPE,
-                    asAtDate = x.ASATDATE,
-                    comment = x.COMMENTS,
-                    customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.LASTNAME,
-                    dateTimeCreated = x.DATETIMECREATED
-                })
-                .ToList().OrderByDescending(r => r.dateTimeCreated);
+            var requestsInProgress = (from x in context.TBL_LETTER_GENERATION_REQUEST
+                                      join t in context.TBL_APPROVAL_TRAIL on x.LETTERGENERATIONREQUESTID equals t.TARGETID where 
+                                      (
+                                      x.DELETED == false 
+                                      && t.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
+                                      && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LetterGenerationRequestInProgress
+                                      )
+                                      select new LetterGenerationRequestViewModel()
+                                      {
+                                          requestId = x.LETTERGENERATIONREQUESTID,
+                                          customerId = x.CUSTOMERID,
+                                          customerCode = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == x.CUSTOMERID).FirstOrDefault().CUSTOMERCODE,
+                                          requestDate = x.REQUESTDATE,
+                                          requestType = x.REQUESTTYPE,
+                                          asAtDate = x.ASATDATE,
+                                          comment = x.COMMENTS,
+                                          customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.LASTNAME,
+                                          dateTimeCreated = x.DATETIMECREATED,
+                                          approvalStatus = t.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                          approvalStatusId = t.APPROVALSTATUSID,
+                                          approvalTrailId = t.APPROVALTRAILID,
+                                          loopedStaffId = (int)t.LOOPEDSTAFFID,
+                                          requestRef = x.REQUESTREF,
+                                          loanBalance = x.LOANBALANCE,
+                                          letterGenerationsignatories = (from x in context.TBL_LETTER_GENERATION_REQUEST
+                                                                        join y in context.TBL_OPERATION_SIGNATORY on x.LETTERGENERATIONREQUESTID equals y.TARGETID
+                                                                        where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
+                                                                        select new OperationSignatoryViewModel()
+                                                                        {
+                                                                            operationSignatoryId = y.OPERATIONSIGNATORYID,
+                                                                            targetId = y.TARGETID,
+                                                                            signatoryId = y.SIGNATORYID,
+                                                                            operationId = y.OPERATIONID
+                                                                        }).ToList(),
+                                      }).GroupBy(l => l.requestId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                                        .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                        || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                        && l.loopedStaffId == staffId)).ToList();
+
+            var requestsNotStarted = (from x in context.TBL_LETTER_GENERATION_REQUEST
+                                      where 
+                                      (
+                                      x.DELETED == false && x.APPLICATIONSTATUSID == null
+                                      )
+                                      select new LetterGenerationRequestViewModel()
+                                      {
+                                          requestId = x.LETTERGENERATIONREQUESTID,
+                                          customerId = x.CUSTOMERID,
+                                          customerCode = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == x.CUSTOMERID).FirstOrDefault().CUSTOMERCODE,
+                                          requestDate = x.REQUESTDATE,
+                                          requestType = x.REQUESTTYPE,
+                                          asAtDate = x.ASATDATE,
+                                          comment = x.COMMENTS,
+                                          customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.LASTNAME,
+                                          dateTimeCreated = x.DATETIMECREATED,
+                                          requestRef = x.REQUESTREF,
+                                          loanBalance = x.LOANBALANCE,
+                                          letterGenerationsignatories = (from l in context.TBL_LETTER_GENERATION_REQUEST
+                                                                         join y in context.TBL_OPERATION_SIGNATORY on l.LETTERGENERATIONREQUESTID equals y.TARGETID
+                                                                         where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
+                                                                         select new OperationSignatoryViewModel()
+                                                                         {
+                                                                             operationSignatoryId = y.OPERATIONSIGNATORYID,
+                                                                             targetId = y.TARGETID,
+                                                                             signatoryId = y.SIGNATORYID,
+                                                                             operationId = y.OPERATIONID
+                                                                         }).ToList(),
+                                      }).ToList().OrderByDescending(r => r.dateTimeCreated);
+            var requests = requestsNotStarted.Union(requestsInProgress);
+            return requests;
         }
 
         public IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationCompleted()
@@ -76,7 +127,18 @@ namespace FintrakBanking.Repositories.Credit
                     asAtDate = x.ASATDATE,
                     comment = x.COMMENTS,
                     customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.LASTNAME,
-                    dateTimeCreated = x.DATETIMECREATED
+                    dateTimeCreated = x.DATETIMECREATED,
+                    requestRef = x.REQUESTREF,
+                    letterGenerationsignatories = (from l in context.TBL_LETTER_GENERATION_REQUEST
+                                                   join y in context.TBL_OPERATION_SIGNATORY on l.LETTERGENERATIONREQUESTID equals y.TARGETID
+                                                   where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
+                                                   select new OperationSignatoryViewModel()
+                                                   {
+                                                       operationSignatoryId = y.OPERATIONSIGNATORYID,
+                                                       targetId = y.TARGETID,
+                                                       signatoryId = y.SIGNATORYID,
+                                                       operationId = y.OPERATIONID
+                                                   }).ToList(),
                 })
                 .ToList().OrderByDescending(r => r.dateTimeCreated);
         }
@@ -140,6 +202,16 @@ namespace FintrakBanking.Repositories.Credit
                              customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
                              requestRef = a.REQUESTREF,
                              loanBalance = a.LOANBALANCE,
+                             letterGenerationsignatories = (from l in context.TBL_LETTER_GENERATION_REQUEST
+                                                            join y in context.TBL_OPERATION_SIGNATORY on l.LETTERGENERATIONREQUESTID equals y.TARGETID
+                                                            where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
+                                                            select new OperationSignatoryViewModel()
+                                                            {
+                                                                operationSignatoryId = y.OPERATIONSIGNATORYID,
+                                                                targetId = y.TARGETID,
+                                                                signatoryId = y.SIGNATORYID,
+                                                                operationId = y.OPERATIONID
+                                                            }).ToList(),
                              //accountNumber = context.TBL_CASA.Where(O => O.CUSTOMERID == a.CUSTOMERID).Select(O => O.OLDPRODUCTACCOUNTNUMBER1).FirstOrDefault(),
                          }).ToList();
 
@@ -168,12 +240,23 @@ namespace FintrakBanking.Repositories.Credit
                 customerName = entity.TBL_CUSTOMER.FIRSTNAME + entity.TBL_CUSTOMER.LASTNAME,
                 requestRef = entity.REQUESTREF,
                 loanBalance = entity.LOANBALANCE,
+                letterGenerationsignatories = (from l in context.TBL_LETTER_GENERATION_REQUEST
+                                               join y in context.TBL_OPERATION_SIGNATORY on l.LETTERGENERATIONREQUESTID equals y.TARGETID
+                                               where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
+                                               select new OperationSignatoryViewModel()
+                                               {
+                                                   operationSignatoryId = y.OPERATIONSIGNATORYID,
+                                                   targetId = y.TARGETID,
+                                                   signatoryId = y.SIGNATORYID,
+                                                   operationId = y.OPERATIONID
+                                               }).ToList(),
             };
         }
 
         public LetterGenerationRequestViewModel AddLetterGenerationRequest(LetterGenerationRequestViewModel model)
         {
-            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            //var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            String referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             var entity = new TBL_LETTER_GENERATION_REQUEST
             {
                 CUSTOMERID = model.customerId,
@@ -189,6 +272,8 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             context.TBL_LETTER_GENERATION_REQUEST.Add(entity);
+            
+            
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -207,13 +292,56 @@ namespace FintrakBanking.Repositories.Credit
             // Audit Section end ------------------------
 
             context.SaveChanges();
-            model.requestId = context.TBL_LETTER_GENERATION_REQUEST.Where(r => r.REQUESTREF == referenceNumber).FirstOrDefault().LETTERGENERATIONREQUESTID;
+            var req = context.TBL_LETTER_GENERATION_REQUEST.Where(r => r.REQUESTREF == referenceNumber).FirstOrDefault();
+            model.requestId = req.LETTERGENERATIONREQUESTID;
+            var sig = new List<TBL_OPERATION_SIGNATORY>();
+            if (model.letterGenerationsignatories.Count() > 0)
+            {
+                int n = 0;
+                foreach (var s in model.letterGenerationsignatories)
+                {
+                    n++;
+                    sig.Add(new TBL_OPERATION_SIGNATORY
+                    {
+                        TARGETID = model.requestId,
+                        SIGNATORYID = s.signatoryId,
+                        OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
+                        POSITION = n,
+                    });
+                }
+                context.TBL_OPERATION_SIGNATORY.AddRange(sig);
+            }
+            referenceNumber = GenerateLetterGenRef(model.createdBy, sig, req);
+            req.REQUESTREF = referenceNumber;
+            model.requestRef = referenceNumber;
+            context.SaveChanges();
             return model;
+        }
+
+        public string GenerateLetterGenRef(int requestId, List<TBL_OPERATION_SIGNATORY> signatories, TBL_LETTER_GENERATION_REQUEST request)
+        {
+            var reference = String.Empty;
+            reference = $@"ABP/{context.TBL_STAFF.Find(requestId).TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITINITIALS}";
+            var sigs = signatories.OrderBy(s => s.POSITION);
+            foreach(var s in sigs)
+            {
+                reference += $@"/{s.TBL_AUTHORISED_SIGNATORY.SIGNATORYINITIALS}";
+            }
+            var date = DateTime.Now;
+            //var format = date.ToString("MM/dd/yy");
+            var month = date.ToString("MM");
+            var year = date.ToString("yy");
+            reference += $@"/{month}/{year}/{request.LETTERGENERATIONREQUESTID}";
+
+            return reference;
         }
 
         public LetterGenerationRequestViewModel UpdateLetterGenerationRequest(LetterGenerationRequestViewModel model, int id, UserInfo user)
         {
+            var sigs = new List<TBL_OPERATION_SIGNATORY>();
+            int n = 0;
             var entity = this.context.TBL_LETTER_GENERATION_REQUEST.Find(id);
+            var signatories = context.TBL_OPERATION_SIGNATORY.Where(s => s.DELETED == false && s.TARGETID == model.requestId && s.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest).ToList();
             entity.LETTERGENERATIONREQUESTID = model.requestId;
             entity.CUSTOMERID = model.customerId;
             entity.REQUESTDATE = model.requestDate;
@@ -223,6 +351,39 @@ namespace FintrakBanking.Repositories.Credit
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
+
+            foreach (var sig in signatories)
+            {
+                //if (!model.letterGenerationsignatories.Exists(s => s.signatoryId == sig.SIGNATORYID))
+                //{
+                //    context.TBL_OPERATION_SIGNATORY.Remove(sig);
+                //}
+                context.TBL_OPERATION_SIGNATORY.Remove(sig);
+            }
+            foreach (var s in model.letterGenerationsignatories)
+            {
+                n++;
+                sigs.Add(new TBL_OPERATION_SIGNATORY
+                {
+                    TARGETID = model.requestId,
+                    SIGNATORYID = s.signatoryId,
+                    OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
+                    POSITION = n,
+                });
+                //if (!signatories.Exists(sig => sig.SIGNATORYID == s.signatoryId))
+                //{
+                //    sigs.Add(new TBL_OPERATION_SIGNATORY
+                //    {
+                //        TARGETID = model.requestId,
+                //        SIGNATORYID = s.signatoryId,
+                //        OPERATIONID = (int)OperationsEnum.LetterGenerationRequest
+                //    });
+                //}
+            }
+            if (sigs.Count() > 0)
+            {
+                context.TBL_OPERATION_SIGNATORY.AddRange(sigs);
+            }
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -247,9 +408,16 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteLetterGenerationRequest(int id, UserInfo user)
         {
             var entity = this.context.TBL_LETTER_GENERATION_REQUEST.Find(id);
+            var signatories = context.TBL_OPERATION_SIGNATORY.Where(s => s.DELETED == false && s.TARGETID == entity.LETTERGENERATIONREQUESTID && s.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest).ToList();
             entity.DELETED = true;
             entity.DELETEDBY = user.createdBy;
             entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            foreach(var sig in signatories)
+            {
+                var s = context.TBL_OPERATION_SIGNATORY.Find(sig.OPERATIONSIGNATORYID);
+                s.DELETED = true;
+            }
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------

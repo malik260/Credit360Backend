@@ -35,7 +35,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("letter-generation-request")]
         public HttpResponseMessage GetLetterGenerationRequests()
         {
-            IEnumerable<LetterGenerationRequestViewModel> response = repo.GetLetterGenerationRequests();
+            IEnumerable<LetterGenerationRequestViewModel> response = repo.GetLetterGenerationRequests(token.GetStaffId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 

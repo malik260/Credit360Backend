@@ -14,6 +14,7 @@
         public int OPERATIONID { get; set; }
         public int? TARGETID { get; set; }
         public int SIGNATORYID { get; set; }
+        public int POSITION { get; set; }
 
 
         public bool DELETED { get; set; }
