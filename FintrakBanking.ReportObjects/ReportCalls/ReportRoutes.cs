@@ -569,6 +569,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string GetCollateralRevaluation( int companyId, int value)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/PropertyRevaluation.aspx?companyId=" + companyId.ToString() + "&value=" + value;
+            return path;
+        }
+
         public string AccountWithLein(ReportSearchEntity searchEntity)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);

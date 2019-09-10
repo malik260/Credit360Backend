@@ -1246,6 +1246,27 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-price-index-by-id/{productPriceIndexId}")]
+        public HttpResponseMessage GetProductPriceIndicesById(int productPriceIndexId)
+        {
+            try
+            {
+                
+                var data = repo.GetAllProductPriceIndicesById(productPriceIndexId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
 
         [HttpPost] [ClaimsAuthorization]
         [Route("product-price-index")]
@@ -1837,5 +1858,154 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #endregion Product Classification
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-document-definition")]
+        public HttpResponseMessage GetAllProductDocumentDefinition()
+        {
+            try
+            {
+                var data = repo.GetAllDocumentDefinition().ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-product-document-definition")]
+        public HttpResponseMessage AddProductDocumentDefinition([FromBody] DocumentDefinitionViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.AddDocumentDefinition(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "product document definition has been created successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "product document definition not created" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-document-mapping")]
+        public HttpResponseMessage GetAllProductDocumentMapping()
+        {
+            try
+            {
+                var data = repo.GetAllProductDocumentMapping();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  //Ok(accounts);
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("product-document-mapping")]
+        public HttpResponseMessage AddProductDocumentMapping([FromBody] ProductDocumentMappingViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.AddProductDocumentMapping(model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "product document mapping has been created successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "product document mapping not created" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("product-document-mapping/{id}")]
+        public HttpResponseMessage DeleteProductDocumentMapping(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteProductDocumentMapping (id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("product-document-mapping/{id}")]
+        public HttpResponseMessage UpdateProductDocumentMapping ([FromBody] ProductDocumentMappingViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            model.createdBy = token.GetStaffId;
+            bool response = repo.UpdateProductDocumentMapping(model);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-document-mapping/{id}")]
+        public HttpResponseMessage GetProductDocumentCategory(int id)
+        {
+            ProductDocumentMappingViewModel response = repo.GetProductDocumenetMapping(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
     }
 }

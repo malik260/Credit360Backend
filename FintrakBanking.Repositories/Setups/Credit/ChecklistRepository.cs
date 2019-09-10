@@ -1468,6 +1468,7 @@ namespace FintrakBanking.Repositories.Credit
                                      checkListStatusId = c.CHECKLISTSTATUSID,
                                      validationStatus = c.CHECKLISTVALIDATED,
                                      approvalStatusId = c.APPROVALSTATUSID,
+                                     approvalStatus = "New",
                                      operationId = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.OPERATIONID,
                                      customerId = c.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,
                                      loanApplicationReferenceNumber = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER
@@ -1481,9 +1482,7 @@ namespace FintrakBanking.Repositories.Credit
                                 //&& c.ISEXTERNAL == true 
                                  && c.ISSUBSEQUENT == false &&
                                   c.CHECKLISTSTATUSID == null
-                                  && (c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
-                                      && c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                      && c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                                  && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                                  select new ConditionPrecedentViewModel()
                                  {
                                      condition = c.CONDITION,
@@ -1495,12 +1494,13 @@ namespace FintrakBanking.Repositories.Credit
                                      checkListStatusId = c.CHECKLISTSTATUSID,
                                      checkListValidated = c.CHECKLISTVALIDATED,
                                      approvalStatusId = c.APPROVALSTATUSID,
+                                     approvalStatus = "New",
 
                                  }).ToList();
                 return condition;
             }
         }
-        public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklistStatus(int loanApplicationId, bool isAvailment)
+        public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklistStatus(int loanApplicationId, bool isAvailment, int staffId)
         {
             if (isAvailment)
             {
@@ -1530,12 +1530,10 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
+                var status1 = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
                               where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId &&
                                c.CHECKLISTSTATUSID != null
-                               && (c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing
-                                      //&& c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                      && c.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                               && (c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                               orderby c.ISEXTERNAL descending
                               select new ConditionPrecedentViewModel()
                               {
@@ -1549,6 +1547,38 @@ namespace FintrakBanking.Repositories.Credit
                                   isExternal = c.ISEXTERNAL,
                                   approvalStatusId = c.APPROVALSTATUSID,
                               }).ToList();
+
+                var status2 = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
+                               join t in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals t.TARGETID
+                               where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId 
+                               && c.CHECKLISTSTATUSID != null
+                               && t.LOOPEDSTAFFID == staffId
+                               && (t.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval || t.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval)
+                               orderby t.APPROVALTRAILID descending
+                               select new ConditionPrecedentViewModel()
+                               {
+                                   condition = c.CONDITION,
+                                   conditionId = c.LOANCONDITIONID,
+                                   status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                   checkListStatusId = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSID,
+                                   approvalStatus = t.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                   loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                   validationStatus = c.CHECKLISTVALIDATED,
+                                   isExternal = c.ISEXTERNAL,
+                                   approvalStatusId = t.APPROVALSTATUSID,
+                               }).GroupBy(c => c.conditionId).FirstOrDefault()?
+                               .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Referred)).ToList();
+
+                if (status1 == null)
+                {
+                    return status2;
+                }
+
+                if (status2 == null)
+                {
+                    return status1;
+                }
+                var status = status1.Union(status2);
                 return status;
             }
         }
@@ -2339,6 +2369,7 @@ namespace FintrakBanking.Repositories.Credit
                              //&& c.ISEXTERNAL == true 
                              && c.ISSUBSEQUENT == false &&
                               c.CHECKLISTSTATUSID == null
+                             //&& (() || ())
                              select new ConditionPrecedentViewModel()
                              {
                                  condition = c.CONDITION,

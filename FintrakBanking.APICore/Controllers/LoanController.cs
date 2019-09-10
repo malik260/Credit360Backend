@@ -2447,6 +2447,30 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("bulk-loan-entries")]
+        public HttpResponseMessage saveBulkLoanDisbursementEntries([FromBody] List<multipleDisbursementOutputViewModel> models)
+        {
+            UserInfo user = new UserInfo();
+            user.BranchId = (short)token.GetBranchId;
+            user.applicationUrl = HttpContext.Current.Request.Path;
+            user.createdBy = token.GetStaffId;
+            user.companyId = token.GetCompanyId;
+
+            var data = repo.saveBulkLoanDisbursementEntries(models,user);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, data = data, message = "Bulk loan was successfully submitted for disbursement approval" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK,
+
+                new { success = false, message = "saving bulk loan for disbursement approval was unsuccessfully" });
+
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("multiple-disbursement")]
         public HttpResponseMessage disburseMultipleLoans([FromBody] List<multipleDisbursementOutputViewModel> models)
         {
@@ -2457,13 +2481,21 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             user.createdBy = token.GetStaffId;
 
             var data = repo.startBulkLoanDisbursement(models, user);
-            //if (!data.Any())
-            //{
-            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-            //}
+
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
            
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("saved-multiple-disbursement")]
+        public HttpResponseMessage GetpendingMultipleDisbursement()
+        {
+            var response = repo.GetpendingMultipleDisbursement();
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+        
 
         [HttpPost]
         [ClaimsAuthorization]

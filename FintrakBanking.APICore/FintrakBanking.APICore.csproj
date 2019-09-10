@@ -344,6 +344,7 @@
     <Compile Include="Controllers\ApprovalLevelStaffController.cs" />
     <Compile Include="Controllers\AtcLodgmentController.cs" />
     <Compile Include="Controllers\AtcLodgmentDetailController.cs" />
+    <Compile Include="Controllers\AuthorisedSignatoryController.cs" />
     <Compile Include="Controllers\BulkDisbursementPackageController.cs" />
     <Compile Include="Controllers\BusinessRuleController.cs" />
     <Compile Include="Controllers\CollateralValuationController.cs" />
@@ -473,6 +474,9 @@
     </Compile>
     <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
       <DependentUpon>LoanDataSet.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportDataset\PSR.cs">
+      <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\PSR.Designer.cs">
       <AutoGen>True</AutoGen>

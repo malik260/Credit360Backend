@@ -19,5 +19,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
         bool AddMultipleBulkDisbursementScheme(List<BulkDisbursementSetupSchemeViewModel> models);
         bool UpdateBulkDisbursementScheme(int disbursementSchemeId, BulkDisbursementSetupSchemeViewModel model);
         bool DeleteBulkDisbursementScheme(int disbursementPackageId, UserInfo user);
+        IEnumerable<BulkDisbursementSetupSchemeViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery);
+        IEnumerable<BulkDisbursementSetupSchemeViewModel> SchemeSearch(string searchString);
     }
 }

@@ -1278,6 +1278,25 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        // search loan application by either reference number or name =======by benjamin
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application-search/search/{searchString}")]
+        public HttpResponseMessage GetLoanApplicationSearch([FromUri] string searchString)
+        {
+            try
+            {
+                var response = repo.LoanSearch(searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application-details/search")]
@@ -1285,7 +1304,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, model.searchString);
+                var response = repo.GetLoanApplicationDetailsByReference(model.searchString, token.GetCompanyId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
             }
@@ -1350,15 +1369,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("loan-detail-by-application-reference/{searchString}")]
-        public HttpResponseMessage LoanApplicationDetailByApplicationRef(string searchString)
-        {
-            var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, searchString);
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("loan-detail-by-application-reference/{searchString}")]
+        //public HttpResponseMessage LoanApplicationDetailByApplicationRef(string searchString)
+        //{
+        //    var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, searchString);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-        }
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //}
 
         [HttpGet]
         [ClaimsAuthorization]

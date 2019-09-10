@@ -2091,7 +2091,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetGroupExposureMarkup()
         {
             var result = String.Empty;
-            var exposures = GetGroupExposurebyCustomerId((int)loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
+            var exposures = GetGroupExposurebyCustomerId(this.customerId, this.loanApplication.COMPANYID);
             var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerName);
             var n = 0;
             result = result + $@"
@@ -2134,7 +2134,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetTotalGroupExposureMarkup()
         {
             var result = String.Empty;
-            var exposures = GetGroupExposurebyCustomerId((int)loanApplication.CUSTOMERID, this.loanApplication.COMPANYID);
+            var exposures = GetGroupExposurebyCustomerId(this.customerId, this.loanApplication.COMPANYID);
             CurrentCustomerExposure totalExposure;
             
             totalExposure = new CurrentCustomerExposure()

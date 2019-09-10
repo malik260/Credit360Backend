@@ -50,6 +50,27 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     requestId = x.LETTERGENERATIONREQUESTID,
                     customerId = x.CUSTOMERID,
+                    customerCode = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == x.CUSTOMERID).FirstOrDefault().CUSTOMERCODE,
+                    requestDate = x.REQUESTDATE,
+                    requestType = x.REQUESTTYPE,
+                    asAtDate = x.ASATDATE,
+                    comment = x.COMMENTS,
+                    customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.LASTNAME,
+                    dateTimeCreated = x.DATETIMECREATED
+                })
+                .ToList().OrderByDescending(r => r.dateTimeCreated);
+        }
+
+        public IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationCompleted()
+        {
+            return context.TBL_LETTER_GENERATION_REQUEST.Where(x => x.DELETED == false
+                                    && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LetterGenerationRequestCompleted)
+                .Select(x => new LetterGenerationRequestViewModel
+                {
+                    requestId = x.LETTERGENERATIONREQUESTID,
+                    customerCode = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == x.CUSTOMERID).FirstOrDefault().CUSTOMERCODE,
+                    customerId = x.CUSTOMERID,
+                    loanBalance = x.LOANBALANCE,
                     requestDate = x.REQUESTDATE,
                     requestType = x.REQUESTTYPE,
                     asAtDate = x.ASATDATE,
@@ -139,6 +160,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 requestId = entity.LETTERGENERATIONREQUESTID,
                 customerId = entity.CUSTOMERID,
+                customerCode = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == entity.CUSTOMERID).FirstOrDefault().CUSTOMERCODE,
                 requestDate = entity.REQUESTDATE,
                 requestType = entity.REQUESTTYPE,
                 asAtDate = entity.ASATDATE,
@@ -382,6 +404,43 @@ namespace FintrakBanking.Repositories.Credit
 
             result = result + $"</table>";
             return result;
+        }
+
+        public IEnumerable<LetterGenerationRequestViewModel> Search(string searchString)
+        {
+
+            var operationId = (int)OperationsEnum.LetterGenerationRequest;
+
+            searchString = searchString.Trim().ToLower();
+
+
+            var applications = (from lgr in context.TBL_LETTER_GENERATION_REQUEST
+                                join c in context.TBL_CUSTOMER on lgr.CUSTOMERID equals c.CUSTOMERID
+                                join atrail in context.TBL_APPROVAL_TRAIL on lgr.LETTERGENERATIONREQUESTID equals atrail.TARGETID
+                                where atrail.OPERATIONID == operationId && lgr.DELETED == false
+                                && atrail.TARGETID == lgr.LETTERGENERATIONREQUESTID
+                                && (lgr.REQUESTREF == searchString
+                                || c.FIRSTNAME.ToLower().Contains(searchString)
+                                || c.LASTNAME.ToLower().Contains(searchString)
+                                || c.MIDDLENAME.ToLower().Contains(searchString))
+                                select new LetterGenerationRequestViewModel
+                                {
+                                    requestRef = lgr.REQUESTREF,
+                                    requestId = lgr.LETTERGENERATIONREQUESTID,
+                                    approvalStatusId = lgr.APPLICATIONSTATUSID,
+                                    arrivalDate = atrail.ARRIVALDATE,
+                                    customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
+                                    customerCode = c.CUSTOMERCODE,
+                                    approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == lgr.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                    currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME : "n/a",
+                                    approvalTrailId = atrail.APPROVALTRAILID,
+                                    operationId = (int)OperationsEnum.LetterGenerationRequest,
+                                }).OrderByDescending(d => d.approvalTrailId).ToList();
+
+            var applicationGrouped = applications.GroupBy(e => e.requestId).Select(e => e.FirstOrDefault()).ToList();
+
+            return applicationGrouped;
+
         }
     }
 }

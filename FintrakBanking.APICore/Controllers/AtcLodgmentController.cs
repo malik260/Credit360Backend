@@ -126,9 +126,9 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-                var response = repo.SubmitLodgementApproval(model);
-                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                WorkflowResponse response = repo.SubmitLodgementApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
             catch (SecureException ex)
             {
@@ -245,7 +245,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("atc-lodgment-for-releaseList")]
         public HttpResponseMessage GetAtcLodgmentForRelaselist()
         {
-            IEnumerable<AtcReleaseViewModel> response = repo.GetAtcLodgmentForReleaseList(token.GetStaffId);
+            IEnumerable<AtcLodgmentViewModel> response = repo.GetAtcLodgmentForReleaseList(token.GetStaffId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
@@ -340,6 +340,37 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("atc-referred-approval")]
+        public HttpResponseMessage SubmitReferredAtcBackIntoWorkflow(AtcReleaseViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var response = repo.SubmitReferredAtcBackIntoWorkflow(model);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "An Error Occured, Please contact the System Administrator" });
+                }
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("atc-release-approval")]
         public HttpResponseMessage SubmitApproval([FromBody] IEnumerable<AtcReleaseViewModel>  model)
         {
@@ -353,9 +384,16 @@ namespace FintrakBanking.APICore.Controllers
                     mod.createdBy = token.GetStaffId;
                     mod.companyId = token.GetCompanyId;
                 }
-                
-                WorkflowResponse response = repo.SubmitApproval(model);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                var modelCount = model.Count();
+
+                var response = repo.SubmitApproval(model);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = modelCount });
+                //if ( response.Item2 == 0)
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = $"Application Status: <strong>{response.Item1.statusName}</strong>, Sent to: {response.Item1.nextLevelName} <i>{response.Item1.nextPersonName}</i>" });
+                //}
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = $"{response.Item2}  transaction(s) has been < strong >{ response.Item1.statusName}</ strong > Successfully and  {(modelCount- response.Item2)}  Application Status: < strong >{ response.Item1.statusName}</ strong >, Sent to: { response.Item1.nextLevelName} < i >{ response.Item1.nextPersonName}</ i > " });
 
             }
             catch (SecureException ex)

@@ -11,7 +11,6 @@ namespace FintrakBanking.Interfaces.Media
     public interface IDocumentCategoryRepository
     {
         DocumentCategoryViewModel GetDocumentCategory(int id);
-
         IEnumerable<DocumentCategoryViewModel> GetDocumentCategorys();
 
         bool AddDocumentCategory(DocumentCategoryViewModel model);

@@ -128,7 +128,7 @@ namespace FintrakBanking.Repositories.credit
                                 percentageToCover = x.PERCENTAGETOCOVER,
                                 lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
                                 lcToleranceValue = x.LCTOLERANCEVALUE,
-                                totalUsanceAmount = x.LETTEROFCREDITAMOUNT - ((decimal?)usances.Where(u => u.LCISSUANCEID == x.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT) ?? 0),
+                                totalUsanceAmount = x.LETTEROFCREDITAMOUNT - ((decimal?)context.TBL_LC_USSANCE.Where(u => u.LCISSUANCEID == x.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT) ?? 0),
                                 releaseAmount = x.RELEASEDAMOUNT,
                                 letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                                 isDraftRequired = x.ISDRAFTREQUIRED,
@@ -162,7 +162,8 @@ namespace FintrakBanking.Repositories.credit
                                 (
                                 x.DELETED == false
                                 && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
-                                && x.LCUSSANCESTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                                && (u.USANCEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceInProgress || u == null)
+                                && (u.USANCEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.lcUssanceCompleted || u == null)
                                 )
                                  select new LcIssuanceApprovalViewModel()
                                  {
@@ -178,7 +179,7 @@ namespace FintrakBanking.Repositories.credit
                                      percentageToCover = x.PERCENTAGETOCOVER,
                                      lcTolerancePercentage = x.LCTOLERANCEPERCENTAGE,
                                      lcToleranceValue = x.LCTOLERANCEVALUE,
-                                     totalUsanceAmount = x.LETTEROFCREDITAMOUNT - ((decimal?)usances.Where(u => u.LCISSUANCEID == x.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT) ?? 0),
+                                     totalUsanceAmount = x.LETTEROFCREDITAMOUNT - ((decimal?)context.TBL_LC_USSANCE.Where(u => u.LCISSUANCEID == x.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT) ?? 0),
                                      releaseAmount = x.RELEASEDAMOUNT,
                                      letterOfCreditTypeId = x.LETTEROFCREDITTYPEID,
                                      isDraftRequired = x.ISDRAFTREQUIRED,
