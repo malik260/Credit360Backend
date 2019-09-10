@@ -408,6 +408,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LetterGenerationRequestViewModel> Search(string searchString)
         {
+
             var operationId = (int)OperationsEnum.LetterGenerationRequest;
 
             searchString = searchString.Trim().ToLower();
@@ -424,6 +425,8 @@ namespace FintrakBanking.Repositories.Credit
                                 || c.MIDDLENAME.ToLower().Contains(searchString))
                                 select new LetterGenerationRequestViewModel
                                 {
+                                    requestRef = lgr.REQUESTREF,
+                                    requestId = lgr.LETTERGENERATIONREQUESTID,
                                     approvalStatusId = lgr.APPLICATIONSTATUSID,
                                     arrivalDate = atrail.ARRIVALDATE,
                                     customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
@@ -432,9 +435,11 @@ namespace FintrakBanking.Repositories.Credit
                                     currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME : "n/a",
                                     approvalTrailId = atrail.APPROVALTRAILID,
                                     operationId = (int)OperationsEnum.LetterGenerationRequest,
-                                }).ToList();
+                                }).OrderByDescending(d => d.approvalTrailId).ToList();
 
-            return applications;
+            var applicationGrouped = applications.GroupBy(e => e.requestId).Select(e => e.FirstOrDefault()).ToList();
+
+            return applicationGrouped;
 
         }
     }

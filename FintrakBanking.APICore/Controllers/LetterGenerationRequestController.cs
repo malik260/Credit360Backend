@@ -165,7 +165,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("letter-generation-status-search")]
+        [Route("letter-generation-search")]
         public HttpResponseMessage LetterGenerationStatusSearch([FromBody] SearchViewModel model)
         {
             try
