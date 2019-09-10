@@ -169,6 +169,7 @@
     <Compile Include="Setups\Credit\FXAccountCreationRepository.cs" />
     <Compile Include="Setups\Credit\RepaymentTermsRepository.cs" />
     <Compile Include="Setups\Finance\CustomChartOfAccountRepository.cs" />
+    <Compile Include="Setups\General\AuthourisedSignatoryRepository.cs" />
     <Compile Include="Setups\General\StaffRoleRepository.cs" />
     <Compile Include="ThirdPartyIntegration\FinacleIntegrationRepository.cs" />
     <Compile Include="Validetion\CreditLimitValidationsRepository.cs" />

@@ -50,6 +50,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     requestId = x.LETTERGENERATIONREQUESTID,
                     customerId = x.CUSTOMERID,
+                    customerCode = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == x.CUSTOMERID).FirstOrDefault().CUSTOMERCODE,
                     requestDate = x.REQUESTDATE,
                     requestType = x.REQUESTTYPE,
                     asAtDate = x.ASATDATE,
@@ -67,7 +68,9 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => new LetterGenerationRequestViewModel
                 {
                     requestId = x.LETTERGENERATIONREQUESTID,
+                    customerCode = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == x.CUSTOMERID).FirstOrDefault().CUSTOMERCODE,
                     customerId = x.CUSTOMERID,
+                    loanBalance = x.LOANBALANCE,
                     requestDate = x.REQUESTDATE,
                     requestType = x.REQUESTTYPE,
                     asAtDate = x.ASATDATE,
@@ -157,6 +160,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 requestId = entity.LETTERGENERATIONREQUESTID,
                 customerId = entity.CUSTOMERID,
+                customerCode = context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == entity.CUSTOMERID).FirstOrDefault().CUSTOMERCODE,
                 requestDate = entity.REQUESTDATE,
                 requestType = entity.REQUESTTYPE,
                 asAtDate = entity.ASATDATE,
