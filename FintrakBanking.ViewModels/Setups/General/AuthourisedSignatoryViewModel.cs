@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
-    public  class AuthourisedSignatoriesViewModel
+    public  class AuthourisedSignatoryViewModel:GeneralEntity
     {
         public int signatoryId { get; set; }
         public string signatoryName { get; set; }
-        public string signatoryLevel { get; set; }
-        public string signatoryInitial { get; set; }
-        
+        public string signatoryTitle { get; set; }
+        public string signatoryInitials { get; set; }
     }
 }

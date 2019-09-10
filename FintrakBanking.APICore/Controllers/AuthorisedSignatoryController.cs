@@ -13,40 +13,41 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
-    public class AuthorisedController : ApiControllerBase
+    [RoutePrefix("api/v1/setups")]
+    public class AuthorisedSignatoryController : ApiControllerBase
     {
 
-        private IAuthourisedSignatoriesRepository repo;
+        private IAuthourisedSignatoryRepository repo;
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public AuthorisedController(IAuthourisedSignatoriesRepository _repo)
+        public AuthorisedSignatoryController(IAuthourisedSignatoryRepository _repo)
         {
             this.repo = _repo;
         }
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("document-category")]
+        [Route("get-all-signatories")]
         public HttpResponseMessage GetSignatories()
         {
-            IEnumerable<AuthourisedSignatoriesViewModel> response = repo.GetSignatories();
+            IEnumerable<AuthourisedSignatoryViewModel> response = repo.GetSignatories();
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("document-category/{id}")]
+        [Route("get-signatory/{id}")]
         public HttpResponseMessage GetSignatory(int id)
         {
-            AuthourisedSignatoriesViewModel response = repo.GetSignatoryName(id);
+            AuthourisedSignatoryViewModel response = repo.GetSignatory(id);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("document-category")]
-        public HttpResponseMessage AddSignatory([FromBody] AuthourisedSignatoriesViewModel model)
+        [Route("save-signatory")]
+        public HttpResponseMessage AddSignatory([FromBody] AuthourisedSignatoryViewModel model)
         {
             model.userBranchId = (short)token.GetBranchId;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -60,8 +61,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [ClaimsAuthorization]
-        [Route("document-category/{id}")]
-        public HttpResponseMessage UpdateSignatory([FromBody] AuthourisedSignatoriesViewModel model, int id)
+        [Route("update-signatory/{id}")]
+        public HttpResponseMessage UpdateSignatory([FromBody] AuthourisedSignatoryViewModel model, int id)
         {
             UserInfo user = new UserInfo()
             {
@@ -77,7 +78,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("document-category/{id}")]
+        [Route("remove-signatory/{id}")]
         public HttpResponseMessage DeleteSignatory(int id)
         {
             UserInfo user = new UserInfo()

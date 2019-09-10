@@ -1,4 +1,7 @@
-﻿using FintrakBanking.ViewModels.Setups.General;
+﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,35 +10,50 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    public class AuthourisedSignatoriesRepository
+    public class AuthourisedSignatoryRepository : IAuthourisedSignatoryRepository
     {
-        public AuthourisedSignatoriesViewModel GetSignatoryName(int id)
+        private FinTrakBankingContext context;
+        private IGeneralSetupRepository general;
+        public AuthourisedSignatoryRepository(
+             FinTrakBankingContext context,
+           IGeneralSetupRepository general
+            )
+        {
+            this.context = context;
+            this.general = general;
+
+        }
+        public AuthourisedSignatoryViewModel GetSignatory(int id)
         {
             var entity = context.TBL_AUTHORISED_SIGNATORY.FirstOrDefault(x => x.SIGNATORYID == id && x.DELETED == false);
 
-            return new AuthourisedSignatoriesViewModel
+            return new AuthourisedSignatoryViewModel
             {
                 signatoryId = entity.SIGNATORYID,
                 signatoryName = entity.SIGNATORYNAME,
             };
         }
 
-        public IEnumerable<AuthourisedSignatoriesViewModel> GetDocumentCategorys()
+        public IEnumerable<AuthourisedSignatoryViewModel> GetSignatories()
         {
             return context.TBL_AUTHORISED_SIGNATORY.Where(x => x.DELETED == false)
-                .Select(x => new AuthourisedSignatoriesViewModel
+                .Select(x => new AuthourisedSignatoryViewModel
                 {
                     signatoryId = x.SIGNATORYID,
                     signatoryName = x.SIGNATORYNAME,
+                    signatoryInitials = x.SIGNATORYINITIALS,
+                    signatoryTitle = x.SIGNATORYTITLE,
                 })
                 .ToList();
         }
 
-        public bool AddSignatory(AuthourisedSignatoriesViewModel model)
+        public bool AddSignatory(AuthourisedSignatoryViewModel model)
         {
             var entity = new TBL_AUTHORISED_SIGNATORY
             {
-                SIGNATORYNAME = model.signatoryName
+                SIGNATORYNAME = model.signatoryName,
+                SIGNATORYINITIALS = model.signatoryInitials,
+                SIGNATORYTITLE = model.signatoryTitle,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
@@ -44,13 +62,15 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateSignatory(AuthourisedSignatoriesViewModel model, int id, UserInfo user)
+        public bool UpdateSignatory(AuthourisedSignatoryViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_AUTHORISED_SIGNATORY.Find(id);
-            entity.DOCUMENTCATEGORYNAME = model.signatoryName;
+            entity.SIGNATORYNAME = model.signatoryName;
+            entity.SIGNATORYTITLE = model.signatoryTitle;
+            entity.SIGNATORYINITIALS = model.signatoryInitials;
 
             entity.LASTUPDATEDBY = user.createdBy;
-            entity.DATETIMEUPDATED = DateTime.Now;
+            entity.DATETIMEUPDATED = general.GetApplicationDate();
             return context.SaveChanges() != 0;
         }
 
