@@ -5329,10 +5329,10 @@ namespace FintrakBanking.Repositories.Customer
                 TBL_CUSTOMER_RELATED_PARTY relParty;
                 if (entity.relatedPartyId > 0)
                 {
-                    relParty = context.TBL_CUSTOMER_RELATED_PARTY.Find();
+                    relParty = context.TBL_CUSTOMER_RELATED_PARTY.Where(c=>c.RELATEDPARTYID == entity.relatedPartyId).FirstOrDefault();
 
                     //get customer record by id
-                    var customer = context.TBL_CUSTOMER.Find(entity.customerId);
+                    var customer = context.TBL_CUSTOMER.Where(r=>r.CUSTOMERID == entity.customerId).FirstOrDefault();
                     var accountCompleted = customer.ACCOUNTCREATIONCOMPLETE;
 
                     //previous relationship type
