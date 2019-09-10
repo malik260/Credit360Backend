@@ -9,6 +9,12 @@
     [Table("TBL_AUTHORISED_SIGNATORY")]
     public partial class TBL_AUTHORISED_SIGNATORY
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TBL_AUTHORISED_SIGNATORY()
+        {
+            TBL_OPERATION_SIGNATORY = new HashSet<TBL_OPERATION_SIGNATORY>();
+        }
+
         [Key]
         public int SIGNATORYID { get; set; }
 

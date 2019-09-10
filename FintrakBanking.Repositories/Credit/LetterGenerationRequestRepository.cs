@@ -325,7 +325,7 @@ namespace FintrakBanking.Repositories.Credit
             var sigs = signatories.OrderBy(s => s.POSITION);
             foreach(var s in sigs)
             {
-                reference += $@"/{s.TBL_AUTHORISED_SIGNATORY.SIGNATORYINITIALS}";
+                reference += $@"/{context.TBL_AUTHORISED_SIGNATORY.Find(s.SIGNATORYID).SIGNATORYINITIALS}";
             }
             var date = DateTime.Now;
             //var format = date.ToString("MM/dd/yy");
@@ -480,7 +480,7 @@ namespace FintrakBanking.Repositories.Credit
             decimal debtAmount = 0;
             var reference = "ABP/ROG/OA/BO/03/2016/0061";
             var asAtDate = model.asAtDate.ToString("dd MMM yyyy");
-            var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault().ADDRESS;
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault()?.ADDRESS;
             var customerCode = model.customerCode;
             var fullName = model.customerName;
             //var accountNumber = model.accountNumber;
@@ -492,7 +492,7 @@ namespace FintrakBanking.Repositories.Credit
                 accountNumber = camsol.ACCOUNTNUMBER;
             }
 
-            string result = $"<font face=Arial size=12><p><b>REF: {model.requestRef}</b></p> " +
+            string result = $"<font face=Arial><p><b>REF: {model.requestRef}</b></p> " +
                 $"<p><b>{asAtDate}.</b></p> " +
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +
@@ -518,7 +518,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var reference = "ABP/ROG/OA/BO/03/2016/0061";
             var asAtDate = model.asAtDate.ToString("dd MMM yyyy");
-            var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault().ADDRESS;
+            var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault()?.ADDRESS;
             var fullName = model.customerName;
             var accountNumber = "0";
 
@@ -526,7 +526,7 @@ namespace FintrakBanking.Repositories.Credit
                 accountNumber = camsol.ACCOUNTNUMBER;
             }
 
-            string result = $"<font face=Arial size=12><p><b>REF: {model.requestRef}</b></p> " +
+            string result = $"<font face=Arial><p><b>REF: {model.requestRef}</b></p> " +
                 $"<p><b>{asAtDate}.</b></p> " +
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +
