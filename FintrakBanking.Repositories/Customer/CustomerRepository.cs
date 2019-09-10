@@ -5346,7 +5346,8 @@ namespace FintrakBanking.Repositories.Customer
                         relParty.LASTUPDATEDBY = entity.createdBy;
                         relParty.DATETIMEUPDATED = DateTime.Now;
 
-                        auditDetail = $"Updated new Customer's Insider Related Party Relationship Type for customer: {customer.CUSTOMERCODE}. from {previousRelationshipType} to {entity.relationshipType}"; auditType = (short)AuditTypeEnum.CustomerDetailUpdated;
+                        auditDetail = $"Updated new Customer's Insider Related Party Relationship Type for customer: {customer.CUSTOMERCODE}. from {previousRelationshipType} to {entity.relationshipType}";
+                        auditType = (short)AuditTypeEnum.CustomerDetailUpdated;
                     }
                 }
                 else
