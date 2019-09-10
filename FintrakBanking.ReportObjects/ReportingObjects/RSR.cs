@@ -40,6 +40,36 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 .ToList();
         }
 
+        public IEnumerable<PsrPerformanceEvaluationViewModel> GetProjectSiteReportsApg(int id)
+        {
+
+            return context.TBL_PSR_PERFORMANCE_EVALUATION.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrPerformanceEvaluationViewModel
+                {
+                    psrPerformanceEvaluationId = x.PSRPERFORMANCEEVALUATIONID,
+                    apgIssued = x.APGISSUED,
+                    disbursedTodate = x.DISBURSEDTODATE,
+                    initialProjectSum = x.INITIALPROJECTSUM,
+                    paymentToDate = x.PAYMENTTODATE,
+                    pmuAssessed = x.PMUASSESSED,
+                    projectSum = x.PROJECTSUM,
+                    progressPayment = x.PROGRESSPAYMENT,
+                    vowdToDate = x.VOWDTODATE,
+                    amortisedApg = x.AMORTISEDAPG,
+                    costVariation = x.COSTVARIATION,
+                    certifiedVowd = x.CERTIFIEDVOWD,
+                    timeVariation = x.TIMEVARIATION,
+                    consoltantVowd = x.CONSULTANTVOWD,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    amountReceived = x.AMOUNTRECEIVED,
+                    apgReceived = x.AMOUNTRECEIVED,
+                    psrReportTypeId = x.PSRREPORTTYPEID,
+                    approvalStatusId = x.APPROVALSTATUSID,
+                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o => o.PSRREPORTTYPEID == x.PROJECTSITEREPORTID).Select(o => o.REPORTTYPENAME).FirstOrDefault(),
+                }).OrderBy(o => o.psrPerformanceEvaluationId)
+                .ToList();
+        }
+
         public IEnumerable<PsrPerformanceEvaluationViewModel> GetPsrPerformanceEvaluations(int id)
         {
 
@@ -68,7 +98,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 }).OrderBy(o => o.psrPerformanceEvaluationId)
                 .ToList();
         }
-
         public IEnumerable<PsrObservationViewModel> GetPsrObservations(int id)
         {
 
