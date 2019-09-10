@@ -118,7 +118,7 @@
     <Compile Include="Setups\Credit\IFXAccountCreationRepository.cs" />
     <Compile Include="Setups\Credit\IRepaymentTermsRepository.cs" />
     <Compile Include="Setups\Finance\ICustomChartOfAccountRepository.cs" />
-    <Compile Include="Setups\General\IAuthourisedSignatoriesRepository.cs" />
+    <Compile Include="Setups\General\IAuthourisedSignatoryRepository.cs" />
     <Compile Include="Setups\General\IStaffMIS.cs" />
     <Compile Include="Setups\General\IStaffRoleRepository.cs" />
     <Compile Include="ThridPartyIntegration\IFinacleIntegrationRepository.cs" />
