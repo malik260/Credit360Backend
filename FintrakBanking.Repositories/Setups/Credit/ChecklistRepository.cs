@@ -1710,6 +1710,9 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model)
         {
             int loanConditionId = 0;
+            if (model.deferedDays != null)
+                model.deferedDate = DateTime.Now.AddDays((int) model.deferedDays);
+
             if (model.isLMSChecklist == true)
             {
                 var data = this.context.TBL_LMSR_CONDITION_PRECEDENT.Find(model.conditionId);
@@ -1738,7 +1741,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     //data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
                     data.DEFEREDDAYS = model.deferedDays;
-                    //data.DEFEREDDATE = model.deferedDate;
+                    data.DEFEREDDATE = model.deferedDate;
                 }
 
                 data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
@@ -1751,7 +1754,7 @@ namespace FintrakBanking.Repositories.Credit
                 deferral.LOANCONDITIONID = loanConditionId;
                 deferral.DEFERRALREASON = model.reason;
                 deferral.DEFEREDDAYS = model.deferedDays;
-                //deferral.DEFERREDDATE = model.deferedDate == null ? DateTime.Now : (DateTime)model.deferedDate;
+                deferral.DEFERREDDATE = model.deferedDate;
                 deferral.ISLMS = model.isLMSChecklist;
                 deferral.DATETIMECREATED = DateTime.Now;
                 deferral.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;

@@ -2246,7 +2246,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTPRICEINDEXRATE = a.productPriceIndexRate,
                 TENORFREQUENCYTYPEID = a.tenorModeId,
                 CRMSVALIDATED = false,
-                ISTAKEOVERAPPLICATION = a.isTakeOverApplication
+                ISTAKEOVERAPPLICATION = a.isTakeOverApplication,
+                //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
             };
 
             var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
@@ -2290,7 +2291,16 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("No fee is defined for this product(s)");
             }
             // }
-            response = context.SaveChanges();
+            try
+            {
+                response = context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception(ex.Message);
+            }
 
             if (response > 0)
             {
@@ -3802,16 +3812,19 @@ namespace FintrakBanking.Repositories.Credit
                 var conditions = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
                 foreach (var x in conditions)
                 {
-                    context.TBL_LOAN_CONDITION_PRECEDENT.Add(new TBL_LOAN_CONDITION_PRECEDENT
+                    var condition = new TBL_LOAN_CONDITION_PRECEDENT
                     {
                         CONDITION = x.CONDITION,
                         ISEXTERNAL = x.ISEXTERNAL,
                         ISSUBSEQUENT = x.ISSUBSEQUENT,
+                        RESPONSE_TYPEID = x.RESPONSE_TYPEID,
                         //LOANAPPLICATIONID = request.LOANAPPLICATIONID,
                         LOANAPPLICATIONDETAILID = rejectedDetails[i], // ?
-                        CREATEDBY = model.createdBy,
+                        CREATEDBY = model.createdBy, 
                         DATETIMECREATED = applicationDate,
-                    });
+                    };
+
+                    context.TBL_LOAN_CONDITION_PRECEDENT.Add(condition);
                 }
 
                 i = 0; // fees

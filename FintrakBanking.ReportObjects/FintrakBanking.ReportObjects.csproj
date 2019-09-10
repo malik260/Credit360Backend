@@ -102,7 +102,7 @@
       <Name>FintrakBanking.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.Repositories\FintrakBanking.Repositories.csproj">
-      <Project>{2853B1D8-AF5F-4691-A513-9EB63A45DD4D}</Project>
+      <Project>{2853b1d8-af5f-4691-a513-9eb63a45dd4d}</Project>
       <Name>FintrakBanking.Repositories</Name>
     </ProjectReference>
     <ProjectReference Include="..\FinTrakBanking.ThirdPartyIntegration\FinTrakBanking.ThirdPartyIntegration.csproj">

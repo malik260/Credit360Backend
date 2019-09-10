@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int CHECKLISTDEFERRALID { get; set; }
 
         //[Column(TypeName = "date")]
-        public DateTime DEFERREDDATE { get; set; }
+        public DateTime? DEFERREDDATE { get; set; }
 
         public int? DEFEREDDAYS { get; set; }
 

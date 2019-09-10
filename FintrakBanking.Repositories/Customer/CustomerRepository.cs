@@ -59,12 +59,13 @@ namespace FintrakBanking.Repositories.Customer
         public dynamic GetCustomerRating(int custormerId)
         {
 
-            var data = (from c in context.TBL_CUSTOMER
+            var data = (from c in context.TBL_CUSTOMER  
+                        join r in context.TBL_CUSTOMER_RISK_RATING on c.RISKRATINGID equals r.RISKRATINGID
                         where c.CUSTOMERID == custormerId
                         select new
                         {                           
-                            isInvestment = c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
-                            rating = c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                            isInvestment = r.ISINVESTMENTGRADE, // c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
+                            rating = r.RISKRATING // c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                         }).FirstOrDefault();
             return data;
         }
