@@ -471,6 +471,9 @@
     <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
       <DependentUpon>LoanDataSet.cs</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\PSR.cs">
+      <DependentUpon>PSR.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\PSR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
