@@ -31,6 +31,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 signatoryId = entity.SIGNATORYID,
                 signatoryName = entity.SIGNATORYNAME,
+
             };
         }
 
