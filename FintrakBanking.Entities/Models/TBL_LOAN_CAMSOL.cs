@@ -46,5 +46,6 @@ namespace FintrakBanking.Entities.Models
         public decimal? WRITTENOFFACCRUALAMOUNT { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+        public ICollection<TBL_OPERATION_CAMSOL_LIST> TBL_OPERATION_CAMSOL_LIST { get; set; }
     }
 }
