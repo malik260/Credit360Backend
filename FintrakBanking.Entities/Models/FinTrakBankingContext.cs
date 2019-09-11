@@ -539,6 +539,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_INSURANCE_REQUEST> TBL_INSURANCE_REQUEST { get; set; }
         public virtual DbSet<TBL_CUSTOMER_GROUP_MAPPING_ARC> TBL_CUSTOMER_GROUP_MAPPING_ARC { get; set; }
         public virtual DbSet<TBL_AUTHORISED_SIGNATORY> TBL_AUTHORISED_SIGNATORY { get; set; }
+        public virtual DbSet<TBL_OPERATION_SIGNATORY> TBL_OPERATION_SIGNATORY { get; set; }
+        public virtual DbSet<TBL_OPERATION_CAMSOL_LIST> TBL_OPERATION_CAMSOL_LIST { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 
@@ -587,10 +589,21 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_AUTHORISED_SIGNATORY>()
+                .HasMany(e => e.TBL_OPERATION_SIGNATORY)
+                .WithRequired(e => e.TBL_AUTHORISED_SIGNATORY)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<TBL_CUSTOMER>()
                 .HasMany(e => e.TBL_LC_ISSUANCE)
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_LOAN_CAMSOL>()
+                .HasMany(e => e.TBL_OPERATION_CAMSOL_LIST)
+                .WithRequired(e => e.TBL_LOAN_CAMSOL)
+                .WillCascadeOnDelete(false);
+
             //modelBuilder.Entity<ELMAH_ERROR>()
             //    .Property(e => e.ERRORID)
             //    .IsFixedLength()

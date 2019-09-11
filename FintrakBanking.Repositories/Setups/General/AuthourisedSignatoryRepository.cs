@@ -23,21 +23,23 @@ namespace FintrakBanking.Repositories.Setups.General
             this.general = general;
 
         }
-        public AuthourisedSignatoryViewModel GetSignatory(int id)
+        public AuthorisedSignatoryViewModel GetSignatory(int id)
         {
             var entity = context.TBL_AUTHORISED_SIGNATORY.FirstOrDefault(x => x.SIGNATORYID == id && x.DELETED == false);
 
-            return new AuthourisedSignatoryViewModel
+            return new AuthorisedSignatoryViewModel
             {
                 signatoryId = entity.SIGNATORYID,
                 signatoryName = entity.SIGNATORYNAME,
+                signatoryInitials = entity.SIGNATORYINITIALS,
+                signatoryTitle = entity.SIGNATORYTITLE,
             };
         }
 
-        public IEnumerable<AuthourisedSignatoryViewModel> GetSignatories()
+        public IEnumerable<AuthorisedSignatoryViewModel> GetSignatories()
         {
             return context.TBL_AUTHORISED_SIGNATORY.Where(x => x.DELETED == false)
-                .Select(x => new AuthourisedSignatoryViewModel
+                .Select(x => new AuthorisedSignatoryViewModel
                 {
                     signatoryId = x.SIGNATORYID,
                     signatoryName = x.SIGNATORYNAME,
@@ -47,7 +49,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 .ToList();
         }
 
-        public bool AddSignatory(AuthourisedSignatoryViewModel model)
+        public bool AddSignatory(AuthorisedSignatoryViewModel model)
         {
             var entity = new TBL_AUTHORISED_SIGNATORY
             {
@@ -62,7 +64,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateSignatory(AuthourisedSignatoryViewModel model, int id, UserInfo user)
+        public bool UpdateSignatory(AuthorisedSignatoryViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_AUTHORISED_SIGNATORY.Find(id);
             entity.SIGNATORYNAME = model.signatoryName;
