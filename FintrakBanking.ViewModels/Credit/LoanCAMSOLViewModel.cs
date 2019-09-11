@@ -77,6 +77,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerName { get; set; }
         public string accountNumber { get; set; }
         public decimal balance { get; set; }
+        public decimal loanPrincipalAmount { get; set; }
         public string camsolTypeName { get; set; }
 
     }
