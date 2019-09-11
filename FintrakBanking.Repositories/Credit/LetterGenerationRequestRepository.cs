@@ -12,6 +12,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -36,6 +37,25 @@ namespace FintrakBanking.Repositories.Credit
             this.audit = _audit;
             this.admin = _admin;
             this.workflow = _workflow;
+        }
+
+        public IEnumerable<AuthorisedSignatoryViewModel> GetLetterGenerationSignatory(int requestId)
+        {
+            var signatories = (from a in context.TBL_AUTHORISED_SIGNATORY
+                               join b in context.TBL_OPERATION_SIGNATORY on a.SIGNATORYID equals b.SIGNATORYID
+                               where
+                               (
+                               a.DELETED == false && b.DELETED == false
+                               && b.TARGETID == requestId && b.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
+                               )
+                               select new AuthorisedSignatoryViewModel
+                               {
+                                   signatoryId = a.SIGNATORYID,
+                                   signatoryName = a.SIGNATORYNAME,
+                                   signatoryInitials = a.SIGNATORYINITIALS,
+                                   signatoryTitle = a.SIGNATORYTITLE,
+                               }).ToList();
+            return signatories;
         }
 
         public IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequests(int staffId)
@@ -64,16 +84,29 @@ namespace FintrakBanking.Repositories.Credit
                                           loopedStaffId = (int)t.LOOPEDSTAFFID,
                                           requestRef = x.REQUESTREF,
                                           loanBalance = x.LOANBALANCE,
-                                          letterGenerationsignatories = (from x in context.TBL_LETTER_GENERATION_REQUEST
-                                                                        join y in context.TBL_OPERATION_SIGNATORY on x.LETTERGENERATIONREQUESTID equals y.TARGETID
-                                                                        where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
-                                                                        select new OperationSignatoryViewModel()
-                                                                        {
-                                                                            operationSignatoryId = y.OPERATIONSIGNATORYID,
-                                                                            targetId = y.TARGETID,
+                                          letterGenerationsignatories = (from a in context.TBL_AUTHORISED_SIGNATORY
+                                                                         join y in context.TBL_OPERATION_SIGNATORY on a.SIGNATORYID equals y.SIGNATORYID
+                                                                         where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && x.LETTERGENERATIONREQUESTID == y.TARGETID
+                                                                         select new AuthorisedSignatoryViewModel()
+                                                                         {
                                                                             signatoryId = y.SIGNATORYID,
-                                                                            operationId = y.OPERATIONID
-                                                                        }).ToList(),
+                                                                            signatoryName = a.SIGNATORYNAME,
+                                                                            signatoryInitials = a.SIGNATORYINITIALS,
+                                                                            signatoryTitle = a.SIGNATORYTITLE,
+                                                                         }).ToList(),
+                                          letterGenerationCamsolList = (from a in context.TBL_LOAN_CAMSOL
+                                                                    join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
+                                                                    join z in context.TBL_LOAN_CAMSOL_TYPE on a.LOANSYSTEMTYPEID equals z.CAMSOLTYPEID
+                                                                    where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && x.LETTERGENERATIONREQUESTID == y.TARGETID
+                                                                    select new CamsolLoanDocumentViewModel()
+                                                                    {
+                                                                        camsolId = a.LOAN_CAMSOLID,
+                                                                        customerCode = a.CUSTOMERCODE,
+                                                                        customerName = a.CUSTOMERNAME,
+                                                                        accountNumber = a.ACCOUNTNUMBER,
+                                                                        balance = a.BALANCE,
+                                                                        camsolTypeName = z.CAMSOLTYPENAME
+                                                                    }).ToList(),
                                       }).GroupBy(l => l.requestId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
                                         .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                                         || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
@@ -97,16 +130,29 @@ namespace FintrakBanking.Repositories.Credit
                                           dateTimeCreated = x.DATETIMECREATED,
                                           requestRef = x.REQUESTREF,
                                           loanBalance = x.LOANBALANCE,
-                                          letterGenerationsignatories = (from l in context.TBL_LETTER_GENERATION_REQUEST
-                                                                         join y in context.TBL_OPERATION_SIGNATORY on l.LETTERGENERATIONREQUESTID equals y.TARGETID
-                                                                         where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
-                                                                         select new OperationSignatoryViewModel()
+                                          letterGenerationsignatories = (from a in context.TBL_AUTHORISED_SIGNATORY
+                                                                         join y in context.TBL_OPERATION_SIGNATORY on a.SIGNATORYID equals y.SIGNATORYID
+                                                                         where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && x.LETTERGENERATIONREQUESTID == y.TARGETID
+                                                                         select new AuthorisedSignatoryViewModel()
                                                                          {
-                                                                             operationSignatoryId = y.OPERATIONSIGNATORYID,
-                                                                             targetId = y.TARGETID,
                                                                              signatoryId = y.SIGNATORYID,
-                                                                             operationId = y.OPERATIONID
+                                                                             signatoryName = a.SIGNATORYNAME,
+                                                                             signatoryInitials = a.SIGNATORYINITIALS,
+                                                                             signatoryTitle = a.SIGNATORYTITLE,
                                                                          }).ToList(),
+                                          letterGenerationCamsolList = (from a in context.TBL_LOAN_CAMSOL
+                                                                    join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
+                                                                    join z in context.TBL_LOAN_CAMSOL_TYPE on a.LOANSYSTEMTYPEID equals z.CAMSOLTYPEID
+                                                                    where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && x.LETTERGENERATIONREQUESTID == y.TARGETID
+                                                                    select new CamsolLoanDocumentViewModel()
+                                                                    {
+                                                                        camsolId = a.LOAN_CAMSOLID,
+                                                                        customerCode = a.CUSTOMERCODE,
+                                                                        customerName = a.CUSTOMERNAME,
+                                                                        accountNumber = a.ACCOUNTNUMBER,
+                                                                        balance = a.BALANCE,
+                                                                        camsolTypeName = z.CAMSOLTYPENAME
+                                                                    }).ToList(),
                                       }).ToList().OrderByDescending(r => r.dateTimeCreated);
             var requests = requestsNotStarted.Union(requestsInProgress);
             return requests;
@@ -129,16 +175,29 @@ namespace FintrakBanking.Repositories.Credit
                     customerName = x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.LASTNAME,
                     dateTimeCreated = x.DATETIMECREATED,
                     requestRef = x.REQUESTREF,
-                    letterGenerationsignatories = (from l in context.TBL_LETTER_GENERATION_REQUEST
-                                                   join y in context.TBL_OPERATION_SIGNATORY on l.LETTERGENERATIONREQUESTID equals y.TARGETID
-                                                   where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
-                                                   select new OperationSignatoryViewModel()
+                    letterGenerationsignatories = (from a in context.TBL_AUTHORISED_SIGNATORY
+                                                   join y in context.TBL_OPERATION_SIGNATORY on a.SIGNATORYID equals y.SIGNATORYID
+                                                   where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && x.LETTERGENERATIONREQUESTID == y.TARGETID
+                                                   select new AuthorisedSignatoryViewModel()
                                                    {
-                                                       operationSignatoryId = y.OPERATIONSIGNATORYID,
-                                                       targetId = y.TARGETID,
                                                        signatoryId = y.SIGNATORYID,
-                                                       operationId = y.OPERATIONID
+                                                       signatoryName = a.SIGNATORYNAME,
+                                                       signatoryInitials = a.SIGNATORYINITIALS,
+                                                       signatoryTitle = a.SIGNATORYTITLE,
                                                    }).ToList(),
+                    letterGenerationCamsolList = (from a in context.TBL_LOAN_CAMSOL
+                                              join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
+                                              join z in context.TBL_LOAN_CAMSOL_TYPE on a.LOANSYSTEMTYPEID equals z.CAMSOLTYPEID
+                                              where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && x.LETTERGENERATIONREQUESTID == y.TARGETID
+                                              select new CamsolLoanDocumentViewModel()
+                                              {
+                                                  camsolId = a.LOAN_CAMSOLID,
+                                                  customerCode = a.CUSTOMERCODE,
+                                                  customerName = a.CUSTOMERNAME,
+                                                  accountNumber = a.ACCOUNTNUMBER,
+                                                  balance = a.BALANCE,
+                                                  camsolTypeName = z.CAMSOLTYPENAME
+                                              }).ToList(),
                 })
                 .ToList().OrderByDescending(r => r.dateTimeCreated);
         }
@@ -164,12 +223,12 @@ namespace FintrakBanking.Repositories.Credit
             //                    && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
             //                  select b).ToList();
             // query
-            var query = (from a in context.TBL_LETTER_GENERATION_REQUEST
+            var query = (from l in context.TBL_LETTER_GENERATION_REQUEST
                          where
-                            (a.DELETED == false
-                            && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LetterGenerationRequestInProgress)
-                         orderby a.DATEACTEDON
-                         join b in context.TBL_APPROVAL_TRAIL on a.LETTERGENERATIONREQUESTID equals b.TARGETID
+                            (l.DELETED == false
+                            && l.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LetterGenerationRequestInProgress)
+                         orderby l.DATEACTEDON
+                         join b in context.TBL_APPROVAL_TRAIL on l.LETTERGENERATIONREQUESTID equals b.TARGETID
                          where
                             (
                             (b.OPERATIONID == operationId)
@@ -180,13 +239,13 @@ namespace FintrakBanking.Repositories.Credit
                             )
                          select new LetterGenerationRequestViewModel()
                          {
-                             requestId = a.LETTERGENERATIONREQUESTID,
-                             requestDate = a.REQUESTDATE,
-                             requestType = a.REQUESTTYPE,
-                             asAtDate = a.ASATDATE,
-                             comment = a.COMMENTS,
-                             customerId = a.CUSTOMERID,
-                             customerName = a.TBL_CUSTOMER.FIRSTNAME + a.TBL_CUSTOMER.LASTNAME,
+                             requestId = l.LETTERGENERATIONREQUESTID,
+                             requestDate = l.REQUESTDATE,
+                             requestType = l.REQUESTTYPE,
+                             asAtDate = l.ASATDATE,
+                             comment = l.COMMENTS,
+                             customerId = l.CUSTOMERID,
+                             customerName = l.TBL_CUSTOMER.FIRSTNAME + l.TBL_CUSTOMER.LASTNAME,
                              lastComment = b.COMMENT,
                              currentApprovalStateId = b.APPROVALSTATEID,
                              currentApprovalLevelId = b.TOAPPROVALLEVELID,
@@ -194,24 +253,37 @@ namespace FintrakBanking.Repositories.Credit
                              currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                              approvalTrailId = b == null ? 0 : b.APPROVALTRAILID, // for inner sequence ordering
                              toStaffId = b.TOSTAFFID,
-                             approvalStatusId = (short)a.APPROVALSTATUSID,
-                             applicationStatusId = a.APPLICATIONSTATUSID,
-                             createdBy = (int)a.CREATEDBY,
+                             approvalStatusId = (short)l.APPROVALSTATUSID,
+                             applicationStatusId = l.APPLICATIONSTATUSID,
+                             createdBy = (int)l.CREATEDBY,
                              operationId = operationId,
-                             dateTimeCreated = (DateTime)a.DATEACTEDON,
-                             customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
-                             requestRef = a.REQUESTREF,
-                             loanBalance = a.LOANBALANCE,
-                             letterGenerationsignatories = (from l in context.TBL_LETTER_GENERATION_REQUEST
-                                                            join y in context.TBL_OPERATION_SIGNATORY on l.LETTERGENERATIONREQUESTID equals y.TARGETID
-                                                            where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
-                                                            select new OperationSignatoryViewModel()
+                             dateTimeCreated = (DateTime)l.DATEACTEDON,
+                             customerCode = l.TBL_CUSTOMER.CUSTOMERCODE,
+                             requestRef = l.REQUESTREF,
+                             loanBalance = l.LOANBALANCE,
+                             letterGenerationsignatories = (from a in context.TBL_AUTHORISED_SIGNATORY
+                                                            join y in context.TBL_OPERATION_SIGNATORY on a.SIGNATORYID equals y.SIGNATORYID
+                                                            where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && l.LETTERGENERATIONREQUESTID == y.TARGETID
+                                                            select new AuthorisedSignatoryViewModel()
                                                             {
-                                                                operationSignatoryId = y.OPERATIONSIGNATORYID,
-                                                                targetId = y.TARGETID,
                                                                 signatoryId = y.SIGNATORYID,
-                                                                operationId = y.OPERATIONID
+                                                                signatoryName = a.SIGNATORYNAME,
+                                                                signatoryInitials = a.SIGNATORYINITIALS,
+                                                                signatoryTitle = a.SIGNATORYTITLE,
                                                             }).ToList(),
+                             letterGenerationCamsolList = (from a in context.TBL_LOAN_CAMSOL
+                                                       join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
+                                                       join z in context.TBL_LOAN_CAMSOL_TYPE on a.LOANSYSTEMTYPEID equals z.CAMSOLTYPEID
+                                                       where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && l.LETTERGENERATIONREQUESTID == y.TARGETID
+                                                       select new CamsolLoanDocumentViewModel()
+                                                       {
+                                                           camsolId = a.LOAN_CAMSOLID,
+                                                           customerCode = a.CUSTOMERCODE,
+                                                           customerName = a.CUSTOMERNAME,
+                                                           accountNumber = a.ACCOUNTNUMBER,
+                                                           balance = a.BALANCE,
+                                                           camsolTypeName = z.CAMSOLTYPENAME
+                                                       }).ToList(),
                              //accountNumber = context.TBL_CASA.Where(O => O.CUSTOMERID == a.CUSTOMERID).Select(O => O.OLDPRODUCTACCOUNTNUMBER1).FirstOrDefault(),
                          }).ToList();
 
@@ -240,16 +312,29 @@ namespace FintrakBanking.Repositories.Credit
                 customerName = entity.TBL_CUSTOMER.FIRSTNAME + entity.TBL_CUSTOMER.LASTNAME,
                 requestRef = entity.REQUESTREF,
                 loanBalance = entity.LOANBALANCE,
-                letterGenerationsignatories = (from l in context.TBL_LETTER_GENERATION_REQUEST
-                                               join y in context.TBL_OPERATION_SIGNATORY on l.LETTERGENERATIONREQUESTID equals y.TARGETID
-                                               where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest
-                                               select new OperationSignatoryViewModel()
+                letterGenerationsignatories = (from a in context.TBL_AUTHORISED_SIGNATORY
+                                               join y in context.TBL_OPERATION_SIGNATORY on a.SIGNATORYID equals y.SIGNATORYID
+                                               where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && entity.LETTERGENERATIONREQUESTID == y.TARGETID
+                                               select new AuthorisedSignatoryViewModel()
                                                {
-                                                   operationSignatoryId = y.OPERATIONSIGNATORYID,
-                                                   targetId = y.TARGETID,
                                                    signatoryId = y.SIGNATORYID,
-                                                   operationId = y.OPERATIONID
+                                                   signatoryName = a.SIGNATORYNAME,
+                                                   signatoryInitials = a.SIGNATORYINITIALS,
+                                                   signatoryTitle = a.SIGNATORYTITLE,
                                                }).ToList(),
+                letterGenerationCamsolList = (from a in context.TBL_LOAN_CAMSOL
+                                          join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
+                                          join z in context.TBL_LOAN_CAMSOL_TYPE on a.LOANSYSTEMTYPEID equals z.CAMSOLTYPEID
+                                          where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && entity.LETTERGENERATIONREQUESTID == y.TARGETID
+                                          select new CamsolLoanDocumentViewModel()
+                                          {
+                                              camsolId = a.LOAN_CAMSOLID,
+                                              customerCode = a.CUSTOMERCODE,
+                                              customerName = a.CUSTOMERNAME,
+                                              accountNumber = a.ACCOUNTNUMBER,
+                                              balance = a.BALANCE,
+                                              camsolTypeName = z.CAMSOLTYPENAME
+                                          }).ToList(),
             };
         }
 
@@ -295,6 +380,7 @@ namespace FintrakBanking.Repositories.Credit
             var req = context.TBL_LETTER_GENERATION_REQUEST.Where(r => r.REQUESTREF == referenceNumber).FirstOrDefault();
             model.requestId = req.LETTERGENERATIONREQUESTID;
             var sig = new List<TBL_OPERATION_SIGNATORY>();
+            var cam = new List<TBL_OPERATION_CAMSOL_LIST>();
             if (model.letterGenerationsignatories.Count() > 0)
             {
                 int n = 0;
@@ -311,6 +397,24 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 context.TBL_OPERATION_SIGNATORY.AddRange(sig);
             }
+
+            if (model.letterGenerationCamsolList.Count() > 0)
+            {
+                int n = 0;
+                foreach (var c in model.letterGenerationCamsolList)
+                {
+                    n++;
+                    cam.Add(new TBL_OPERATION_CAMSOL_LIST
+                    {
+                        TARGETID = model.requestId,
+                        LOAN_CAMSOLID = c.camsolId,
+                        OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
+                        POSITION = n,
+                    });
+                }
+                context.TBL_OPERATION_CAMSOL_LIST.AddRange(cam);
+            }
+
             referenceNumber = GenerateLetterGenRef(model.createdBy, sig, req);
             req.REQUESTREF = referenceNumber;
             model.requestRef = referenceNumber;
@@ -339,9 +443,11 @@ namespace FintrakBanking.Repositories.Credit
         public LetterGenerationRequestViewModel UpdateLetterGenerationRequest(LetterGenerationRequestViewModel model, int id, UserInfo user)
         {
             var sigs = new List<TBL_OPERATION_SIGNATORY>();
+            var cams = new List<TBL_OPERATION_CAMSOL_LIST>();
             int n = 0;
             var entity = this.context.TBL_LETTER_GENERATION_REQUEST.Find(id);
             var signatories = context.TBL_OPERATION_SIGNATORY.Where(s => s.DELETED == false && s.TARGETID == model.requestId && s.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest).ToList();
+            var camsols = context.TBL_OPERATION_CAMSOL_LIST.Where(s => s.DELETED == false && s.TARGETID == model.requestId && s.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest).ToList();
             entity.LETTERGENERATIONREQUESTID = model.requestId;
             entity.CUSTOMERID = model.customerId;
             entity.REQUESTDATE = model.requestDate;
@@ -383,6 +489,26 @@ namespace FintrakBanking.Repositories.Credit
             if (sigs.Count() > 0)
             {
                 context.TBL_OPERATION_SIGNATORY.AddRange(sigs);
+            }
+
+            foreach (var cam in camsols)
+            {
+                context.TBL_OPERATION_CAMSOL_LIST.Remove(cam);
+            }
+            foreach (var s in model.letterGenerationCamsolList)
+            {
+                n++;
+                cams.Add(new TBL_OPERATION_CAMSOL_LIST
+                {
+                    TARGETID = model.requestId,
+                    LOAN_CAMSOLID = s.camsolId,
+                    OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
+                    POSITION = n,
+                });
+            }
+            if (cams.Count() > 0)
+            {
+                context.TBL_OPERATION_CAMSOL_LIST.AddRange(cams);
             }
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
@@ -447,6 +573,7 @@ namespace FintrakBanking.Repositories.Credit
                        orderby O.LOAN_CAMSOLID descending
                        select new CamsolLoanDocumentViewModel
                        {
+                           camsolId = O.LOAN_CAMSOLID,
                            customerCode = O.CUSTOMERCODE,
                            customerName = O.CUSTOMERNAME,
                            accountNumber = O.ACCOUNTNUMBER,

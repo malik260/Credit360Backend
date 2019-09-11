@@ -13,6 +13,7 @@
         public int OPERATIONSIGNATORYID { get; set; }
         public int OPERATIONID { get; set; }
         public int? TARGETID { get; set; }
+        [ForeignKey("TBL_AUTHORISED_SIGNATORY")]
         public int SIGNATORYID { get; set; }
         public int POSITION { get; set; }
 
