@@ -223,15 +223,17 @@ namespace FintrakBanking.Repositories.Customer
                     TBL_CUSTOMER_ADDRESS address;
                     // if (entity.addressId != 0 || entity.addressId < 0)  //Check if record is new or modified record
                     // {
-                    address = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x=>x.ADDRESSID==entity.addressId);
+                    address = context.TBL_CUSTOMER_ADDRESS.Where(x=>x.ADDRESSID==entity.addressId).FirstOrDefault();
                     var customer = context.TBL_CUSTOMER.Find(entity.customerId);
                     var accountCompleted = customer.ACCOUNTCREATIONCOMPLETE;
-                    var cityName = context.TBL_CITY.Where(c=>c.CITYID == address.CITYID).FirstOrDefault().CITYNAME;
-                    var existingAddrss = address?.ADDRESS + " " + cityName;
-                    entity.homeTown = context.TBL_CITY.Where(x=>x.CITYID == entity.cityId).Select(m=>m.CITYNAME).FirstOrDefault();
+                    
                     //If Customer main table ACCOUNTCREATIONCOMPLETE column equal false and entity.canModified equal true, record insert directly to the main table 
                     if (address != null && accountCompleted == false)
                     {
+                        var cityName = context.TBL_CITY.Where(c => c.CITYID == address.CITYID).FirstOrDefault()?.CITYNAME;
+                        var existingAddrss = address?.ADDRESS + " " + cityName;
+                        entity.homeTown = context.TBL_CITY.Where(x => x.CITYID == entity.cityId).Select(m => m.CITYNAME).FirstOrDefault();
+
                         address.ACTIVE = entity.active;
                         address.ADDRESS = entity.address;
                         address.ADDRESSTYPEID = (short)entity.addressTypeId;
