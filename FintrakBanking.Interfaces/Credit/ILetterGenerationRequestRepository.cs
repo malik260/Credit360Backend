@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -13,7 +14,9 @@ namespace FintrakBanking.Interfaces.Credit
     {
         LetterGenerationRequestViewModel GetLetterGenerationRequest(int id);
 
-        IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequests();
+        IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequests(int staffId);
+
+        IEnumerable<AuthorisedSignatoryViewModel> GetLetterGenerationSignatory(int requestId);
 
         IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationRequestsForApproval(int staffId);
 

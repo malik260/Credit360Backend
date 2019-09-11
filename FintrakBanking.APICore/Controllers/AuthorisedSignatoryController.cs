@@ -27,27 +27,27 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-all-signatories")]
+        [Route("signatory")]
         public HttpResponseMessage GetSignatories()
         {
-            IEnumerable<AuthourisedSignatoryViewModel> response = repo.GetSignatories();
+            IEnumerable<AuthorisedSignatoryViewModel> response = repo.GetSignatories();
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-signatory/{id}")]
+        [Route("signatory/{id}")]
         public HttpResponseMessage GetSignatory(int id)
         {
-            AuthourisedSignatoryViewModel response = repo.GetSignatory(id);
+            AuthorisedSignatoryViewModel response = repo.GetSignatory(id);
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("save-signatory")]
-        public HttpResponseMessage AddSignatory([FromBody] AuthourisedSignatoryViewModel model)
+        [Route("signatory")]
+        public HttpResponseMessage AddSignatory([FromBody] AuthorisedSignatoryViewModel model)
         {
             model.userBranchId = (short)token.GetBranchId;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -61,8 +61,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPut]
         [ClaimsAuthorization]
-        [Route("update-signatory/{id}")]
-        public HttpResponseMessage UpdateSignatory([FromBody] AuthourisedSignatoryViewModel model, int id)
+        [Route("signatory/{id}")]
+        public HttpResponseMessage UpdateSignatory([FromBody] AuthorisedSignatoryViewModel model, int id)
         {
             UserInfo user = new UserInfo()
             {
@@ -78,7 +78,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("remove-signatory/{id}")]
+        [Route("signatory/{id}")]
         public HttpResponseMessage DeleteSignatory(int id)
         {
             UserInfo user = new UserInfo()

@@ -11,10 +11,10 @@ namespace FintrakBanking.Interfaces.Setups.General
    public interface IAuthourisedSignatoryRepository
     {
      
-        AuthourisedSignatoryViewModel GetSignatory(int id);
-        IEnumerable<AuthourisedSignatoryViewModel> GetSignatories();
-        bool AddSignatory(AuthourisedSignatoryViewModel model);
+        AuthorisedSignatoryViewModel GetSignatory(int id);
+        IEnumerable<AuthorisedSignatoryViewModel> GetSignatories();
+        bool AddSignatory(AuthorisedSignatoryViewModel model);
         bool DeleteSignatory(int id, UserInfo user);
-        bool UpdateSignatory(AuthourisedSignatoryViewModel model, int id, UserInfo user);
+        bool UpdateSignatory(AuthorisedSignatoryViewModel model, int id, UserInfo user);
     }
 }
