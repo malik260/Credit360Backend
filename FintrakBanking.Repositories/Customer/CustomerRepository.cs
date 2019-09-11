@@ -2725,8 +2725,15 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdateCustomer(int customerId, CustomerViewModels entity)
         {
+  
             var detail = string.Empty;
+
+            //get customer record by id
             var customerMain = context.TBL_CUSTOMER.Find(customerId);
+
+            //get previous customer name
+            var previousCustomerName = customerMain?.FIRSTNAME;
+
             if (customerMain != null && customerMain.ACCOUNTCREATIONCOMPLETE == false && entity.canModified == true)
             {
                 customerMain.CRMSCOMPANYSIZEID = entity.crmsCompanySizeId;
@@ -2902,9 +2909,8 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
-                    DETAIL = $"The Customer '{ entity.customerName }' with code: '{entity.customerCode}' " +
-                    $"on  ({ entity.customerId })  Has Been Updated",
-                    IPADDRESS = entity.userIPAddress,
+                    DETAIL = $"The Customer First Name for '{ entity.customerName }' with code: '{entity.customerCode}' " +
+                    $"on  ({ entity.customerId })  Has Been Updated from '{previousCustomerName}' to '{entity.firstName}' ",
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
