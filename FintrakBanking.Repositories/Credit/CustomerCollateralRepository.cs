@@ -1718,57 +1718,90 @@ namespace FintrakBanking.Repositories.Credit
                 isForiegnCurrencyFacility = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CURRENCYID != company.CURRENCYID).Any();
             }
 
-            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId)
-                .GroupJoin(
-                    context.TBL_LOAN_COLLATERAL_MAPPING,
-                    c => c.COLLATERALCUSTOMERID,
-                    lc => lc.COLLATERALCUSTOMERID,
-                    (c, lc) => new { c, m = lc }
-                )
-                .SelectMany
-                (
-                    x => x.m.DefaultIfEmpty(),
-                    (c, m) => new CollateralViewModel
-                    {
-                        collateralId = c.c.COLLATERALCUSTOMERID,
-                        collateralTypeId = c.c.COLLATERALTYPEID,
-                        collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
-                        customerId = c.c.CUSTOMERID.Value,
-                        currencyId = c.c.CURRENCYID,
-                        baseCurrencyId = company.CURRENCYID,
-                        currency = c.c.TBL_CURRENCY.CURRENCYNAME,
-                        disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
-                        collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                        collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == c.c.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
-                        collateralCode = c.c.COLLATERALCODE,
-                        collateralValue = c.c.COLLATERALVALUE,
-                        camRefNumber = c.c.CAMREFNUMBER,
-                        allowSharing = c.c.ALLOWSHARING,
-                        isLocationBased = (bool)c.c.ISLOCATIONBASED,
-                        valuationCycle = c.c.VALUATIONCYCLE,
-                        haircut = c.c.HAIRCUT,
-                        approvalStatusName = c.c.APPROVALSTATUS,
-                        allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
-                        requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
-                        exchangeRate = c.c.EXCHANGERATE,
-                        availableValue = 0,
-                        collateralReleaseStatusId = c.c.COLLATERALRELEASESTATUSID,
-                        collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == c.c.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
-                        accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
-                        collateralUsageStatus = c.c.COLLATERALUSAGESTATUSID,
-                        loanApplicationId = c.c.LOANAPPLICATIONID,
-                        collateralSummary = c.c.COLLATERALSUMMARY,
-                        isMapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID).Any(),                        //remark = c.c.
-                    })
-                    .ToList()
-                    .GroupBy(x => x.collateralId).Select(g => g.First())
-                    ;
+            var collaterals = (from c in context.TBL_COLLATERAL_CUSTOMER
+                               join a in context.TBL_LOAN_COLLATERAL_MAPPING on c.COLLATERALCUSTOMERID equals a.COLLATERALCUSTOMERID
+                               //join cus in context.TBL_CUSTOMER on c.CUSTOMERID equals cus.CUSTOMERID
+                               where (c.CUSTOMERID == customerId && c.DELETED == false)
+                               select new CollateralViewModel
+                               {
+                                   collateralId = c.COLLATERALCUSTOMERID,
+                                   collateralTypeId = c.COLLATERALTYPEID,
+                                   collateralSubTypeId = c.COLLATERALSUBTYPEID,
+                                   customerId = c.CUSTOMERID.Value,
+                                   currencyId = c.CURRENCYID,
+                                   baseCurrencyId = company.CURRENCYID,
+                                   currency = c.TBL_CURRENCY.CURRENCYNAME,
+                                   disAllowCollateral = disAllowCollateral && c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
+                                   collateralTypeName = c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                   collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == c.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                                   collateralCode = c.COLLATERALCODE,
+                                   collateralValue = c.COLLATERALVALUE,
+                                   camRefNumber = c.CAMREFNUMBER,
+                                   allowSharing = c.ALLOWSHARING,
+                                   isLocationBased = (bool)c.ISLOCATIONBASED,
+                                   valuationCycle = c.VALUATIONCYCLE,
+                                   haircut = c.HAIRCUT,
+                                   approvalStatusName = c.APPROVALSTATUS,
+                                   allowApplicationMapping = typeIds.Contains((short)c.COLLATERALTYPEID),
+                                   requireInsurancePolicy = c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
+                                   exchangeRate = c.EXCHANGERATE,
+                                   availableValue = 0,
+                                   collateralReleaseStatusId = c.COLLATERALRELEASESTATUSID,
+                                   collateralReleaseStatusName = c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == c.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
+                                   accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
+                                   collateralUsageStatus = c.COLLATERALUSAGESTATUSID,
+                                   loanApplicationId = c.LOANAPPLICATIONID,
+                                   collateralSummary = c.COLLATERALSUMMARY,
+                                   isMapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.COLLATERALCUSTOMERID).Any()
+                               }).ToList().GroupBy(x => x.collateralId).Select(g => g.First());
+
+
+            //var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId)
+            //    .GroupJoin(
+            //        context.TBL_LOAN_COLLATERAL_MAPPING,
+            //        c => c.COLLATERALCUSTOMERID,
+            //        lc => lc.COLLATERALCUSTOMERID,
+            //        (c, lc) => new { c, m = lc }
+            //    )
+            //    .SelectMany
+            //    (
+            //        x => x.m.DefaultIfEmpty(),
+            //        (c, m) => new CollateralViewModel
+            //        {
+            //            collateralId = c.c.COLLATERALCUSTOMERID,
+            //            collateralTypeId = c.c.COLLATERALTYPEID,
+            //            collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
+            //            customerId = (int)c.c.CUSTOMERID,
+            //            currencyId = c.c.CURRENCYID,
+            //            baseCurrencyId = company.CURRENCYID,
+            //            currency = c.c.TBL_CURRENCY.CURRENCYNAME,
+            //            disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
+            //            collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+            //            collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == c.c.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
+            //            collateralCode = c.c.COLLATERALCODE,
+            //            collateralValue = c.c.COLLATERALVALUE,
+            //            camRefNumber = c.c.CAMREFNUMBER,
+            //            allowSharing = c.c.ALLOWSHARING,
+            //            isLocationBased = (bool)c.c.ISLOCATIONBASED,
+            //            valuationCycle = c.c.VALUATIONCYCLE,
+            //            haircut = c.c.HAIRCUT,
+            //            approvalStatusName = c.c.APPROVALSTATUS,
+            //            allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
+            //            requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
+            //            exchangeRate = c.c.EXCHANGERATE,
+            //            availableValue = 0,
+            //            collateralReleaseStatusId = c.c.COLLATERALRELEASESTATUSID,
+            //            collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == c.c.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
+            //            accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
+            //            collateralUsageStatus = c.c.COLLATERALUSAGESTATUSID,
+            //            loanApplicationId = c.c.LOANAPPLICATIONID,
+            //            collateralSummary = c.c.COLLATERALSUMMARY,
+            //            isMapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID).Any(),                        //remark = c.c.
+            //        })
+            //        .ToList()
+            //        .GroupBy(x => x.collateralId).Select(g => g.First());
 
             collaterals = ResolveCollateralValues(collaterals.ToList());
-
-            //var count = collaterals.Count();
-            //var test = collaterals;
-
             return collaterals.OrderByDescending(x => x.collateralId);
         }
         public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral(int? loanApplicationId, int currencyId, int companyId)
@@ -6841,6 +6874,8 @@ namespace FintrakBanking.Repositories.Credit
                         mainCollateral.CUSTOMERID = model.customerId;
                     else if (model.loanTypeId == 2)
                         mainCollateral.CUSTOMERGROUPID = model.customerGroupId;
+                    else
+                        mainCollateral.CUSTOMERID = model.customerId;
 
                     mainCollateral.CUSTOMERID = model.customerId;
                     mainCollateral.CAMREFNUMBER = model.camRefNumber;
@@ -6884,6 +6919,8 @@ namespace FintrakBanking.Repositories.Credit
                         collateral.CUSTOMERID = model.customerId;
                     else if (model.loanTypeId == 2)
                         collateral.CUSTOMERGROUPID = model.customerGroupId;
+                    else
+                        collateral.CUSTOMERID = model.customerId;
 
                     if (context.SaveChanges() == 1)
                     {
@@ -6931,6 +6968,8 @@ namespace FintrakBanking.Repositories.Credit
                     collateral.CUSTOMERID = model.customerId;
                 else if (model.loanTypeId == 2)
                     collateral.CUSTOMERGROUPID = model.customerGroupId;
+                else
+                    collateral.CUSTOMERID = model.customerId;
 
                 try
                 {
