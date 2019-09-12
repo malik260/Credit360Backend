@@ -592,7 +592,20 @@ namespace FintrakBanking.Repositories.Credit
                 return GetLetterOfNonIndebtedness(model);
             }
             else {
-                return GetAuditorEnquiryHtml(new List<CamsolLoanDocumentViewModel>());
+                var camsolList = (from c in context.TBL_OPERATION_CAMSOL_LIST
+                                  join l in context.TBL_LOAN_CAMSOL on c.LOAN_CAMSOLID equals l.LOAN_CAMSOLID
+                                  join t in context.TBL_LOAN_CAMSOL_TYPE on l.CAMSOLTYPEID equals t.CAMSOLTYPEID
+                                  where c.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && c.TARGETID == model.requestId
+                                  select new CamsolLoanDocumentViewModel
+                                  {
+                                        accountNumber = l.ACCOUNTNUMBER,
+                                        balance = (decimal)l.WRITTENOFFACCRUALAMOUNT,
+                                        camsolTypeName = t.CAMSOLTYPENAME,
+                                        customerCode = "5",
+                                        customerName = l.CUSTOMERNAME,
+                                        loanPrincipalAmount = l.PRINCIPAL
+                                  }).ToList();
+                return GetAuditorEnquiryHtml(camsolList);
             }
         }
 
@@ -612,14 +625,14 @@ namespace FintrakBanking.Repositories.Credit
             var fullName = model.customerName;
             //var accountNumber = model.accountNumber;
             var accountNumber = "0";
-            debtAmount = model.loanBalance.Value;
+            debtAmount = model.loanBalance ?? 0;
 
             if (camsol != null) {
                 //debtAmount = camsol.BALANCE;
                 accountNumber = camsol.ACCOUNTNUMBER;
             }
 
-            string result = $"<font face=Arial><p><b>REF: {model.requestRef}</b></p> " +
+            string result = $"<font face=Arial><p><b> {model.requestRef}</b></p> " +
                 $"<p><b>{asAtDate}.</b></p> " +
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +
@@ -629,9 +642,22 @@ namespace FintrakBanking.Repositories.Credit
                 $"<p><b>This report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
                 $"<p>Thank you.</p> " +
                 $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
-                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
-                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p></font>";
+                //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
+                //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p></font>";
+                $"{GetLetterGenRequestSignatory(model.requestId)}";
 
+            return result;
+        }
+
+        public string GetLetterGenRequestSignatory(int requestId)
+        {
+            var result = String.Empty;
+            var signatories = context.TBL_OPERATION_SIGNATORY.Where(s => s.DELETED == false && s.TARGETID == requestId && s.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest)
+                .OrderBy(s => s.POSITION);
+            foreach(var s in signatories)
+            {
+                result += $@"<p></p><p><b>AUTHORISED SIGNATORY <br/> {s.TBL_AUTHORISED_SIGNATORY.SIGNATORYNAME} <br/> {s.TBL_AUTHORISED_SIGNATORY.SIGNATORYTITLE}</b></p>";
+            }
             return result;
         }
 
@@ -662,8 +688,9 @@ namespace FintrakBanking.Repositories.Credit
                 $"<p><b>Please note that this report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
                 $"<p>Thank you.</p> " +
                 $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
-                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
-                $"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p></font>";
+                //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
+                //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p></font>";
+                $"{GetLetterGenRequestSignatory(model.requestId)}";
 
             return result;
         }
@@ -689,10 +716,10 @@ namespace FintrakBanking.Repositories.Credit
                 result = result + $@"
                     <tr>
                         <td>{item.accountNumber}</td>
-                        <td>{item.balance}</td>'
-                        <td>{item.camsolTypeName}</td>
+                        <td>{item.loanPrincipalAmount}</td>'
+                        <td>{item.balance}</td>
                         <td>{item.customerCode}</td>
-                        <td>{item.customerName}</td>
+                        <td>{item.camsolTypeName}</td>
                         <td>{item.customerName}</td>
                     </tr>";
             }
