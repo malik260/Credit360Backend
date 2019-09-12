@@ -252,7 +252,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.StatusId == (int)ApprovalStatusEnum.Referred)
             {
-                if (this.nextLevelId == null || this.fromLevelId == null)
+                if (this.nextLevelId == null && this.fromLevelId == null)
                 {
                     this.fromLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID;
                     this.nextLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID; 
