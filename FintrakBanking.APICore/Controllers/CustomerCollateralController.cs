@@ -2145,6 +2145,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-insurance-last-comment/{operationId}/{targetId}")]
+        public HttpResponseMessage GetLastComment(int operationId, int targetId)
+        {
+            try
+            {
+                var response = repo.GetLastComment( targetId, operationId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpDelete, Route("delete-insurance-request/{insuranceRequestId}")]
         public HttpResponseMessage DeleteInsuranceRequest(int insuranceRequestId)
         {
@@ -2244,6 +2261,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("insurance/{id}")]
@@ -2253,6 +2271,7 @@ namespace FintrakBanking.APICore.Controllers
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
+
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -2268,6 +2287,7 @@ namespace FintrakBanking.APICore.Controllers
             if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
+
 
         [HttpPut]
         [ClaimsAuthorization]
@@ -2285,6 +2305,7 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.UpdateInsuranceCompany(model, id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, message = "The record has been updated successfully", count = 1 });
         }
+
 
         [HttpDelete]
         [ClaimsAuthorization]
@@ -2304,16 +2325,15 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-
-
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("insurance-type")]
+        [Route("insurance-type-all")]
         public HttpResponseMessage GetInsuranceTypes()
         {
             IEnumerable<InsuranceTypeViewModel> response = repo.GetInsuranceTypes();
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -2324,6 +2344,7 @@ namespace FintrakBanking.APICore.Controllers
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
+
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -2339,6 +2360,7 @@ namespace FintrakBanking.APICore.Controllers
             if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         }
+
 
         [HttpPut]
         [ClaimsAuthorization]
@@ -2356,6 +2378,7 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.UpdateInsuranceType(model, id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, message = "The record has been updated successfully", count = 1 });
         }
+
 
         [HttpDelete]
         [ClaimsAuthorization]
