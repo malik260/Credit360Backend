@@ -1060,4 +1060,20 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralStatusId { get; set; }
         public string collateralStatusName { get; set; }
     }
+
+    public class InsuranceCompanyViewModel:GeneralEntity
+    {
+        public int InsuranceCompanyId { get; set; }
+        public int CompanyId { get; set; }
+        public string  CompanyName { get; set; }
+        public string Address { get; set; }
+        public string ContactEmail { get; set; }
+        public string PhoneNumber { get; set; }
+    }
+
+    public class InsuranceTypeViewModel: GeneralEntity
+    {
+        public string InsuranceType { get; set; }
+        public int InsuranceTypeId { get; set; }
+    }
 }

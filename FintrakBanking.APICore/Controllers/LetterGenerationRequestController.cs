@@ -16,6 +16,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Approval;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -35,7 +36,25 @@ namespace FintrakBanking.APICore.Controllers
         [Route("letter-generation-request")]
         public HttpResponseMessage GetLetterGenerationRequests()
         {
-            IEnumerable<LetterGenerationRequestViewModel> response = repo.GetLetterGenerationRequests();
+            IEnumerable<LetterGenerationRequestViewModel> response = repo.GetLetterGenerationRequests(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("letter-generation-request/signatory/{requestId}")]
+        public HttpResponseMessage GetLetterGenerationSignatory(int requestId)
+        {
+            IEnumerable<AuthorisedSignatoryViewModel> response = repo.GetLetterGenerationSignatory(requestId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("letter-generation-completed")]
+        public HttpResponseMessage GetLetterGenerationCompleted()
+        {
+            IEnumerable<LetterGenerationRequestViewModel> response = repo.GetLetterGenerationCompleted();
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
@@ -151,6 +170,23 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the document. Error - {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("letter-generation-search")]
+        public HttpResponseMessage LetterGenerationStatusSearch([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.Search(model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
     }

@@ -38,7 +38,8 @@ namespace FintrakBanking.ViewModels.credit
         public int operationId { get; set; }
         public int? currencyId { get; set; }
         public string currency { get; set; }
-
-        public IEnumerable<LoanApplicationViewModel> loanApplicationViewModel { get; set; }
+        
+       public IEnumerable<LoanApplicationViewModel> loanApplicationViewModel { get; set; }
+        public int? loopedStaffId { get; set; }
     }
 }

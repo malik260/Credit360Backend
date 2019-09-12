@@ -32,6 +32,8 @@ namespace FintrakBanking.Repositories.Customer
         #region KYC Document Upload
         public bool KYCDocumentUpload(CustomerDocumentUploadViewModel model, byte[] file)
         {
+            var auditDetail = string.Empty;
+            short auditType = 0;
             try
             {
               
