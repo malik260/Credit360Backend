@@ -1169,13 +1169,14 @@ namespace FintrakBanking.Repositories.Credit
                                staffId
                            );
 
+
                         creditCommon.LoadCustomerTurnover(
                                 applicationId,
                                 loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                                 staffId
                             );
 
-                       
+                        
                         //if (casa != null)
                         //{
                         //    creditCommon.LoadCustomerTurnover(

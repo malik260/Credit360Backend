@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Common.CustomException;
+using FinTrakBanking.ThirdPartyIntegration;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -18,12 +19,14 @@ namespace FintrakBanking.Repositories.CASA
         private FinTrakBankingContext context;
         private ICreditLimitValidationsRepository creditLimitRepo;
         private IFinanceTransactionRepository transRepo;
+        private IntegrationWithFlexcube integration;
 
-        public CasaRepository(FinTrakBankingContext _context, ICreditLimitValidationsRepository _creditLimitRepo, IFinanceTransactionRepository _transRepo)
+        public CasaRepository(FinTrakBankingContext _context, ICreditLimitValidationsRepository _creditLimitRepo, IFinanceTransactionRepository _transRepo, IntegrationWithFlexcube _integration)
         {
             this.context = _context;
             this.creditLimitRepo = _creditLimitRepo;
             this.transRepo = _transRepo;
+            this.integration = _integration;
         }
 
         private bool SaveAll()
@@ -886,6 +889,16 @@ namespace FintrakBanking.Repositories.CASA
 
             return data.ToList();
         }
+
+        public void AddCustomerAccounts(string customerCode)
+        {
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (setup.USE_THIRD_PARTY_INTEGRATION)
+            {
+                integration.AddCustomerAccounts(customerCode);
+            }
+        }
+
     }
   
 }

@@ -1,3 +1,4 @@
+using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,7 +62,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
 
         public decimal? loanBalance { get; set; }
-        
+        public DateTime arrivalDate { get; set; }
+        public int loopedStaffId { get; set; }
 
+        public List<AuthorisedSignatoryViewModel> letterGenerationsignatories { get; set; }
+        public List<CamsolLoanDocumentViewModel> letterGenerationCamsolList { get; set; }
     }
 }

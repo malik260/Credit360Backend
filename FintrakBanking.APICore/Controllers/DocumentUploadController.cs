@@ -92,6 +92,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.targetReferenceNumber = provider.FormData["targetReferenceNumber"];
                 entity.operationId = Convert.ToInt32(provider.FormData["operationId"]);
                 entity.customerId = Convert.ToInt32(provider.FormData["customerId"]);
+                entity.customerGroupId = Convert.ToInt32(provider.FormData["customerGroupId"]);
                 entity.overwrite = provider.FormData["overwrite"] == "true";
             
                 var a = provider.FormData["targetId"];

@@ -252,13 +252,17 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.StatusId == (int)ApprovalStatusEnum.Referred)
             {
-                if (this.nextLevelId == null)
+                if (this.nextLevelId == null || this.fromLevelId == null)
                 {
                     this.fromLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID;
-                    this.nextLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID; ;
+                    this.nextLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID; 
                     this.loopedStaffId = (this.loopedStaffId != null && this.loopedStaffId > 0) ? this.loopedStaffId : initiatorRequest.REQUESTSTAFFID;
                     this.toStaffId = staffId;
                     this.initiatorOrLooped = true;
+                }
+                else
+                {
+                    //if(next)
                 }
 
                 //if(request.LOOPEDSTAFFID == null || request.LOOPEDSTAFFID <= 0) { this.toStaffId = request.REQUESTSTAFFID; }
@@ -791,9 +795,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 else
                 {
-                    this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
+                    if(this.statusId != (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        this.ContinueProcess((int)ApprovalStatusEnum.Authorised);
+                    }
+                    else { this.EndProcess(this.statusId); }
+                    
                 }
             }
+            
         }
 
         private bool IsPresetFinalLevel()
