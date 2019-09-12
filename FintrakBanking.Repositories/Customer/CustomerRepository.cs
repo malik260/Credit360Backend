@@ -158,7 +158,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerAdded,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Added Customer  '{entity.customerName}' with Code: {entity.customerCode}",
+                DETAIL = $"Added Customer  '{entity.customerName}' with Code: {entity.prospectCustomerCode}",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
