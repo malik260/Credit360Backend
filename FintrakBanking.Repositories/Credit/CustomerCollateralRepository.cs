@@ -1427,6 +1427,23 @@ namespace FintrakBanking.Repositories.Credit
             return referenceNumber;
         }
 
+        public string GetLastComment(int targetId, int operationId)
+        {
+            var result = (from ir in context.TBL_INSURANCE_REQUEST
+                          join trail in context.TBL_APPROVAL_TRAIL on ir.INSURANCEREQUESTID equals trail.TARGETID
+                          where targetId == trail.TARGETID && operationId == trail.OPERATIONID
+                             && ir.INSURANCEREQUESTID == targetId
+                          orderby trail.APPROVALTRAILID descending
+                          select new CollateralViewModel()
+                          {
+                              lastApprovalComment = trail.COMMENT,
+                          }).FirstOrDefault();
+
+            var comment = result.lastApprovalComment;
+
+            return comment;
+                        
+        }
         public IEnumerable<CollateralViewModel> GetInsuranceRequests(int staffId)
         {
 
@@ -1733,13 +1750,13 @@ namespace FintrakBanking.Repositories.Credit
                         collateralId = c.c.COLLATERALCUSTOMERID,
                         collateralTypeId = c.c.COLLATERALTYPEID,
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
-                        customerId = c.c.CUSTOMERID.Value,
+                        //customerId = c.c.CUSTOMERID.Value,
                         currencyId = c.c.CURRENCYID,
                         baseCurrencyId = company.CURRENCYID,
-                        currency = c.c.TBL_CURRENCY.CURRENCYNAME,
+                       // currency = c.c.TBL_CURRENCY.CURRENCYNAME,
                         disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
-                        collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                        collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == c.c.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
+                      //  collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                       // collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == c.c.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
                         collateralCode = c.c.COLLATERALCODE,
                         collateralValue = c.c.COLLATERALVALUE,
                         camRefNumber = c.c.CAMREFNUMBER,
@@ -1748,23 +1765,23 @@ namespace FintrakBanking.Repositories.Credit
                         valuationCycle = c.c.VALUATIONCYCLE,
                         haircut = c.c.HAIRCUT,
                         approvalStatusName = c.c.APPROVALSTATUS,
-                        allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
-                        requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
+                       // allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
+                      //  requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                         exchangeRate = c.c.EXCHANGERATE,
                         availableValue = 0,
                         collateralReleaseStatusId = c.c.COLLATERALRELEASESTATUSID,
-                        collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == c.c.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
-                        accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
+                        //collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == c.c.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
+                       // accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
                         collateralUsageStatus = c.c.COLLATERALUSAGESTATUSID,
                         loanApplicationId = c.c.LOANAPPLICATIONID,
                         collateralSummary = c.c.COLLATERALSUMMARY,
-                        isMapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID).Any(),                        //remark = c.c.
+                        //isMapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID).Any(),                        //remark = c.c.
                     })
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First())
                     ;
 
-            collaterals = ResolveCollateralValues(collaterals.ToList());
+            //collaterals = ResolveCollateralValues(collaterals.ToList());
 
             //var count = collaterals.Count();
             //var test = collaterals;
@@ -2078,7 +2095,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 usage = 0;
                 var mappings = context.TBL_LOAN_COLLATERAL_MAPPING.Where(m => m.COLLATERALCUSTOMERID == collateral.collateralId && m.DELETED == false && m.ISRELEASED == false).ToList();
-                foreach (var mapping in mappings) usage = usage + GetLoanOutstandingBalance(mapping.LOANID, mapping.LOANSYSTEMTYPEID);
+                foreach (var mapping in mappings) { usage = usage + GetLoanOutstandingBalance(mapping.LOANID, mapping.LOANSYSTEMTYPEID); }
                 collateral.availableValue = (decimal)collateral.collateralValue - usage;
                 list.Add(collateral);
             }
@@ -2091,13 +2108,13 @@ namespace FintrakBanking.Repositories.Credit
             switch (loanSystemTypeId)
             {
                 case (int)LoanSystemTypeEnum.TermDisbursedFacility:
-                    balance = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).Sum(x => x.OUTSTANDINGPRINCIPAL);
+                    balance = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId)?.Sum(x => x.OUTSTANDINGPRINCIPAL) ?? 0;
                     break;
                 case (int)LoanSystemTypeEnum.OverdraftFacility:
-                    balance = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId).Sum(x => x.OVERDRAFTLIMIT);
+                    balance = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId)?.Sum(x => x.OVERDRAFTLIMIT) ?? 0;
                     break;
                 case (int)LoanSystemTypeEnum.ContingentLiability:
-                    balance = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId).Sum(x => x.CONTINGENTAMOUNT);
+                    balance = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId)?.Sum(x => x.CONTINGENTAMOUNT) ?? 0;
                     break;
             }
             return balance;
@@ -9209,6 +9226,7 @@ namespace FintrakBanking.Repositories.Credit
                 ADDRESS = model.Address,
                 CONTACTEMAIL = model.ContactEmail,
                 CREATEDBY = model.createdBy,
+                PHONENUMBER = model.PhoneNumber,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
             };
 
@@ -9232,6 +9250,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.COMPANYNAME = model.CompanyName;
             entity.CONTACTEMAIL = model.ContactEmail;
             entity.ADDRESS = model.Address;
+            entity.PHONENUMBER = model.PhoneNumber;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
