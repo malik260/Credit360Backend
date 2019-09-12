@@ -79,40 +79,43 @@
 
 
 
-                CustomerTransactionViewModels customerViewModels = new CustomerTransactionViewModels();
+                //CustomerTransactionViewModels customerViewModels = new CustomerTransactionViewModels();
                 List<CustomerViewModels> customers = new List<CustomerViewModels>();
                 ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
                 requestDatetime = DateTime.Now;
                 //ServicePointManager.FindServicePoint(client.BaseAddress).ConnectionLeaseTimeout = 60 * 1000;
-                response = await client.GetAsync($"api/Customer/GetCustomerByAccountNumber/{customerAccount}");
+                response = await client.GetAsync($"GetCustomerByAccountNumber/{customerAccount}");
                 responseDateTime = DateTime.Now;
              
                 if (response.IsSuccessStatusCode)
                 {
-                    //customerViewModels = await response.Content.ReadAsAsync<CustomerTransactionViewModels>();
+                    var customerViewModels = await response.Content.ReadAsAsync<CustomerTransactionViewModels>();
 
                     responseData = await response.Content.ReadAsStringAsync();
                     JObject jsonString = JObject.Parse(responseData);
                     var data = jsonString["data"].ToString();
                     
-                    var objData = JsonConvert.DeserializeObject<CustomerViewModels>(data);
+                    var objData = JsonConvert.DeserializeObject<List<CustomerViewModels>>(data);
 
-
-
-                    if (objData.customerType == "C") { objData.customerTypeId = 2; }
-                    else { objData.customerTypeId = 1; }
-
-                    if (objData.gender == "M") { objData.gender = "Male"; }
-                    if (objData.gender == "F") { objData.gender = "Female"; }
-
-                    if (objData.customerTypeId == (short)CustomerTypeEnum.Corporate)
+                    foreach(var customerModel in objData)
                     {
-                        objData.firstName = objData.companyName == null ? objData.company_name  : objData.companyName;
-                        //objData.companyName = objData.company_name;
+                        if (customerModel.customerType == "C") { customerModel.customerTypeId = 2; }
+                        else { customerModel.customerTypeId = 1; }
+
+                        if (customerModel.gender == "M") { customerModel.gender = "Male"; }
+                        if (customerModel.gender == "F") { customerModel.gender = "Female"; }
+
+                        if (customerModel.customerTypeId == (short)CustomerTypeEnum.Corporate)
+                        {
+                            customerModel.firstName = customerModel.companyName == null ? customerModel.company_name  : customerModel.companyName;
+                            customerModel.companyName = customerModel.company_name;
+                        }
+
+                        customers.Add(customerModel);
                     }
-                   
-                    customers.Add(objData);
+
+
                 }
                 responseMessage = await response.Content.ReadAsStringAsync();
                 handler.Dispose();
@@ -120,7 +123,7 @@
 
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
-                    APIURL = $"api/Customer/GetCustomerByAccountNumber/{customerAccount}",
+                    APIURL = $"GetCustomerByAccountNumber/{customerAccount}",
                     LOGTYPEID = 4,
                     REFERENCENUMBER = customerAccount,
                     REQUESTDATETIME = requestDatetime,
@@ -169,7 +172,7 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
                     //response = await client.GetAsync($"api/Customer/GetCustomerAccountBalance?accountNumber={customerAccount}");
-                    response = await client.GetAsync($"api/Customer/getcustomeraccountbalance/{customerAccount}"); 
+                    response = await client.GetAsync($"GetCustomerAccountBalance/{customerAccount}"); 
 
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
@@ -179,16 +182,18 @@
                         //customerViewModels = JsonConvert.DeserializeObject<CustomerTransactionViewModels>(responseData);
                         
                         JObject responseDataJsonString = JObject.Parse(responseData);
-                        var data = responseDataJsonString["data"].ToString(); 
-                        accountAPI = JsonConvert.DeserializeObject<CasaIntegrationViewModel>(data);
+                        var data = responseDataJsonString["data"].ToString();
+                        accountOutput = JsonConvert.DeserializeObject<CasaBalanceViewModel>(data);
                   
-                        if(accountAPI != null)
+                        if(accountOutput != null)
                         {
-                            var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountAPI.currencyType).CURRENCYID;
-                            var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
+                            var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountOutput.currencyType).CURRENCYID;
+                            if (accountOutput.accountStatus.ToLower() == "open") accountOutput.accountStatus = "Active";
+
+                             var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountOutput.accountStatus.ToLower());
                             var accountStatusId = account != null ? account.ACCOUNTSTATUSID : 0;
 
-                            var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == accountAPI.product).FirstOrDefault();
+                            var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == accountOutput.product).FirstOrDefault();
 
                             accountOutput.accountName = accountAPI.accountName;
                             accountOutput.accountNo = accountAPI.accountNumber;
@@ -245,7 +250,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"api/Customer/GetCustomerAccountBalance/{customerAccount}",
+                        APIURL = $"GetCustomerAccountBalance/{customerAccount}",
                         LOGTYPEID = 1,
                         REFERENCENUMBER = customerAccount,
                         REQUESTDATETIME = requestDatetime,
@@ -290,7 +295,7 @@
                     CasaViewModel casaViewModels = new CasaViewModel();
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"api/Customer/GetCustomerAccountBalances/{customerCode}");
+                    response = await client.GetAsync($"GetCustomerAccountBalances/{customerCode}");
                     //response = await client.GetAsync($"api/Customer/GetCustomerAccountsBalance?customerCode={customerCode}");
 
                     List<CasaViewModel> casa = new List<CasaViewModel>();
@@ -339,7 +344,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"api/Customer/GetCustomerAccountsBalance/{customerCode}",
+                        APIURL = $"GetCustomerAccountsBalance/{customerCode}",
                         LOGTYPEID = 5,
                         REFERENCENUMBER = customerCode,
                         REQUESTDATETIME = requestDatetime,
@@ -383,7 +388,7 @@
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"api/ExposedPerson/Get/{customerCode}");
+                    response = await client.GetAsync($"ExposedPerson/{customerCode}");
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
@@ -410,7 +415,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"api/ExposePerson/Get?customerCode={customerCode}",
+                        APIURL = $"ExposePerson/Get?customerCode={customerCode}",
                         LOGTYPEID = 6,
                         REFERENCENUMBER = customerCode,
                         REQUESTDATETIME = requestDatetime,
@@ -453,7 +458,7 @@
 
                 ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                 requestDatetime = DateTime.Now;
-                response = await client.GetAsync($"api/OfficeAccount/GetGlAccountRecord?customerCode={customerCode}");
+                response = await client.GetAsync($"api/OfficeAccount/GetGeneralLedgerAccountRecord/{customerCode}");
 
                 responseDateTime = DateTime.Now;
                 BVNCustomerDetailsViewModel data = null;
@@ -533,7 +538,7 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
                     //response = await client.GetAsync($"api/InterestRateInquiry/GetInterestRateInquiry?model.accountNumber={accountNumber}&model.accountType={accountType}",
-                    response = await client.GetAsync($"api/InterestRate/GetInterestRateInquiry/{accountNumber}");
+                    response = await client.GetAsync($"GetInterestRateInquiry/{accountNumber}");
 
                    
                     responseDateTime = DateTime.Now;
@@ -730,7 +735,7 @@
 
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
-                var endpointUrl = $"api/Customer/GetCustomerTransactions/{accountNumber}/06-2019";
+                var endpointUrl = $"GetCustomerTransactions/{accountNumber}/06-2019";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -853,7 +858,7 @@
                 HttpClient httpClientInstance;
 
                 //var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails/{customerCode}/{durationInMonths}";
-                var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails/{customerCode}/{durationInMonths}";
+                var endpointUrl = $"GetCustomerLoanInterestDetails/{customerCode}/08-2019";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
