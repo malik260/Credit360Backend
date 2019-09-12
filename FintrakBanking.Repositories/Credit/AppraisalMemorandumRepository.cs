@@ -1363,6 +1363,8 @@ namespace FintrakBanking.Repositories.Credit
             
             var allstaff = this.GetAllStaffNames();
 
+           // List<TBL_APPROVAL_TRAIL> trail = new List<TBL_APPROVAL_TRAIL>();
+
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId).ToList();
 
             if (getAll)

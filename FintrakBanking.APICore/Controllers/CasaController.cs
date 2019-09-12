@@ -98,6 +98,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = ex.Message });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("customer-accounts/customer/{id}/currency/{currencyId}")]
@@ -363,6 +364,24 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("customer-account-pull/")]
+        public HttpResponseMessage AddCustomerAccounts(CasaViewModel model)
+        {
+            try
+            {
+                repo.AddCustomerAccounts(model.customerCode);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"Error: {ex.Message}" });
             }
         }
     }
