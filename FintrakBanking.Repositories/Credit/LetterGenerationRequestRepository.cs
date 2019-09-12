@@ -96,7 +96,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                          }).ToList(),
                                           letterGenerationCamsolList = (from a in context.TBL_LOAN_CAMSOL
                                                                     join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
-                                                                    join z in context.TBL_LOAN_CAMSOL_TYPE on a.LOANSYSTEMTYPEID equals z.CAMSOLTYPEID
+                                                                    join z in context.TBL_LOAN_CAMSOL_TYPE on a.CAMSOLTYPEID equals z.CAMSOLTYPEID
                                                                     where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && x.LETTERGENERATIONREQUESTID == y.TARGETID
                                                                     select new CamsolLoanDocumentViewModel()
                                                                     {
@@ -142,7 +142,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                          }).ToList(),
                                           letterGenerationCamsolList = (from a in context.TBL_LOAN_CAMSOL
                                                                     join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
-                                                                    join z in context.TBL_LOAN_CAMSOL_TYPE on a.LOANSYSTEMTYPEID equals z.CAMSOLTYPEID
+                                                                    join z in context.TBL_LOAN_CAMSOL_TYPE on a.CAMSOLTYPEID equals z.CAMSOLTYPEID
                                                                     where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && x.LETTERGENERATIONREQUESTID == y.TARGETID
                                                                     select new CamsolLoanDocumentViewModel()
                                                                     {
@@ -187,7 +187,7 @@ namespace FintrakBanking.Repositories.Credit
                                                    }).ToList(),
                     letterGenerationCamsolList = (from a in context.TBL_LOAN_CAMSOL
                                               join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
-                                              join z in context.TBL_LOAN_CAMSOL_TYPE on a.LOANSYSTEMTYPEID equals z.CAMSOLTYPEID
+                                              join z in context.TBL_LOAN_CAMSOL_TYPE on a.CAMSOLTYPEID equals z.CAMSOLTYPEID
                                               where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && x.LETTERGENERATIONREQUESTID == y.TARGETID
                                               select new CamsolLoanDocumentViewModel()
                                               {
@@ -272,18 +272,18 @@ namespace FintrakBanking.Repositories.Credit
                                                                 signatoryTitle = a.SIGNATORYTITLE,
                                                             }).ToList(),
                              letterGenerationCamsolList = (from a in context.TBL_LOAN_CAMSOL
-                                                       join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
-                                                       join z in context.TBL_LOAN_CAMSOL_TYPE on a.LOANSYSTEMTYPEID equals z.CAMSOLTYPEID
-                                                       where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && l.LETTERGENERATIONREQUESTID == y.TARGETID
-                                                       select new CamsolLoanDocumentViewModel()
-                                                       {
-                                                           camsolId = a.LOAN_CAMSOLID,
-                                                           customerCode = a.CUSTOMERCODE,
-                                                           customerName = a.CUSTOMERNAME,
-                                                           accountNumber = a.ACCOUNTNUMBER,
-                                                           balance = a.BALANCE,
-                                                           camsolTypeName = z.CAMSOLTYPENAME
-                                                       }).ToList(),
+                                                           join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
+                                                           join z in context.TBL_LOAN_CAMSOL_TYPE on a.CAMSOLTYPEID equals z.CAMSOLTYPEID
+                                                           where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && l.LETTERGENERATIONREQUESTID == y.TARGETID
+                                                           select new CamsolLoanDocumentViewModel()
+                                                           {
+                                                               camsolId = a.LOAN_CAMSOLID,
+                                                               customerCode = a.CUSTOMERCODE,
+                                                               customerName = a.CUSTOMERNAME,
+                                                               accountNumber = a.ACCOUNTNUMBER,
+                                                               balance = a.BALANCE,
+                                                               camsolTypeName = z.CAMSOLTYPENAME
+                                                           }).ToList(),
                              //accountNumber = context.TBL_CASA.Where(O => O.CUSTOMERID == a.CUSTOMERID).Select(O => O.OLDPRODUCTACCOUNTNUMBER1).FirstOrDefault(),
                          }).ToList();
 
@@ -324,7 +324,7 @@ namespace FintrakBanking.Repositories.Credit
                                                }).ToList(),
                 letterGenerationCamsolList = (from a in context.TBL_LOAN_CAMSOL
                                           join y in context.TBL_OPERATION_CAMSOL_LIST on a.LOAN_CAMSOLID equals y.LOAN_CAMSOLID
-                                          join z in context.TBL_LOAN_CAMSOL_TYPE on a.LOANSYSTEMTYPEID equals z.CAMSOLTYPEID
+                                          join z in context.TBL_LOAN_CAMSOL_TYPE on a.CAMSOLTYPEID equals z.CAMSOLTYPEID
                                           where y.OPERATIONID == (int)OperationsEnum.LetterGenerationRequest && entity.LETTERGENERATIONREQUESTID == y.TARGETID
                                           select new CamsolLoanDocumentViewModel()
                                           {
@@ -683,7 +683,7 @@ namespace FintrakBanking.Repositories.Credit
                 $"<p><b>{asAtDate}.</b></p> " +
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +
-                $"<p><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
+                $"<p><b>LETTER OF NON-INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
                 $"<p>We hereby confirm that {fullName}, is not indebted to our Bank as at {asAtDate}.</p> " +
                 $"<p><b>Please note that this report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
                 $"<p>Thank you.</p> " +
