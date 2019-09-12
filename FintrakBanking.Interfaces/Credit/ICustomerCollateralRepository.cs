@@ -178,6 +178,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteInsuranceRequest(int insuranceRequestId);
         bool checkInsurancePolicy(InsurancePolicies model);
         bool UpdateInsurancePolicyRequest(CollateralInsuranceRequestViewModel model, int id);
+        string GetLastComment(int targetId, int operationId);
         #endregion
     }
 }

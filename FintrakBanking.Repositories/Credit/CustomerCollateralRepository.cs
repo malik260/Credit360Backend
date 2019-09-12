@@ -1427,6 +1427,23 @@ namespace FintrakBanking.Repositories.Credit
             return referenceNumber;
         }
 
+        public string GetLastComment(int targetId, int operationId)
+        {
+            var result = (from ir in context.TBL_INSURANCE_REQUEST
+                          join trail in context.TBL_APPROVAL_TRAIL on ir.INSURANCEREQUESTID equals trail.TARGETID
+                          where targetId == trail.TARGETID && operationId == trail.OPERATIONID
+                             && ir.INSURANCEREQUESTID == targetId
+                          orderby trail.APPROVALTRAILID descending
+                          select new CollateralViewModel()
+                          {
+                              lastApprovalComment = trail.COMMENT,
+                          }).FirstOrDefault();
+
+            var comment = result.lastApprovalComment;
+
+            return comment;
+                        
+        }
         public IEnumerable<CollateralViewModel> GetInsuranceRequests(int staffId)
         {
 
@@ -9209,6 +9226,7 @@ namespace FintrakBanking.Repositories.Credit
                 ADDRESS = model.Address,
                 CONTACTEMAIL = model.ContactEmail,
                 CREATEDBY = model.createdBy,
+                PHONENUMBER = model.PhoneNumber,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
             };
 
@@ -9232,6 +9250,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.COMPANYNAME = model.CompanyName;
             entity.CONTACTEMAIL = model.ContactEmail;
             entity.ADDRESS = model.Address;
+            entity.PHONENUMBER = model.PhoneNumber;
 
             entity.LASTUPDATEDBY = user.createdBy;
             entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
