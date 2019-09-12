@@ -39,6 +39,7 @@ namespace FintrakBanking.APICore.Controllers
         private ICollateralDocumentRepository document;
         private ICollateralTypeRepository type;
         private ICasaRepository casa;
+        
 
         // private IGuaranteeCollateralRepository guaratee;
 
@@ -2233,6 +2234,147 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("insurance")]
+        public HttpResponseMessage GetInsuranceCompanies()
+        {
+            IEnumerable<InsuranceCompanyViewModel> response = repo.GetInsuranceCompanies();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("insurance/{id}")]
+        public HttpResponseMessage GetInsuranceCompany(int id)
+        {
+            InsuranceCompanyViewModel response = repo.GetInsuranceCompany(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("insurance")]
+        public HttpResponseMessage AddInsuranceCompany([FromBody] InsuranceCompanyViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddInsuranceCompany(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("insurance/{id}")]
+        public HttpResponseMessage UpdateInsuranceCompany([FromBody] InsuranceCompanyViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdateInsuranceCompany(model, id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, message = "The record has been updated successfully", count = 1 });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("insurance/{id}")]
+        public HttpResponseMessage DeleteInsuranceCompany(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteInsuranceCompany(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("insurance-type")]
+        public HttpResponseMessage GetInsuranceTypes()
+        {
+            IEnumerable<InsuranceTypeViewModel> response = repo.GetInsuranceTypes();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("insurance-type/{id}")]
+        public HttpResponseMessage GetInsuranceType(int id)
+        {
+            InsuranceTypeViewModel response = repo.GetInsuranceType(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("insurance-type")]
+        public HttpResponseMessage AddInsuranceType([FromBody] InsuranceTypeViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddInsuranceType(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("insurance-type/{id}")]
+        public HttpResponseMessage UpdateInsuranceType([FromBody] InsuranceTypeViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdateInsuranceType(model, id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, message = "The record has been updated successfully", count = 1 });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("insurance-type/{id}")]
+        public HttpResponseMessage DeleteInsuranceType(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteInsuranceType(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
     }
+   
 }
 

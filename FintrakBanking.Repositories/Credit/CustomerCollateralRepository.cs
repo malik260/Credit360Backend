@@ -9170,6 +9170,128 @@ namespace FintrakBanking.Repositories.Credit
 
             return list;
         }
+
+        public InsuranceCompanyViewModel GetInsuranceCompany(int id)
+        {
+            var entity = context.TBL_INSURANCE_COMPANY.FirstOrDefault(x => x.INSURANCECOMPANYID == id && x.DELETED == false);
+
+            return new InsuranceCompanyViewModel
+            {
+                InsuranceCompanyId = entity.INSURANCECOMPANYID,
+                CompanyId = entity.COMPANYID,
+                CompanyName = entity.COMPANYNAME,
+                Address = entity.ADDRESS,
+                ContactEmail = entity.CONTACTEMAIL,
+                PhoneNumber = entity.PHONENUMBER
+            };
+        }
+
+        public IEnumerable<InsuranceCompanyViewModel> GetInsuranceCompanies()
+        {
+            return context.TBL_INSURANCE_COMPANY.Where(x => x.DELETED == false)
+                 .Select(x => new InsuranceCompanyViewModel
+                 {
+                     InsuranceCompanyId = x.INSURANCECOMPANYID,
+                     CompanyId = x.COMPANYID,
+                     CompanyName = x.COMPANYNAME,
+                     Address = x.ADDRESS,
+                     ContactEmail = x.CONTACTEMAIL,
+                     PhoneNumber = x.PHONENUMBER
+                 })
+                 .ToList();
+        }
+
+        public bool AddInsuranceCompany(InsuranceCompanyViewModel model)
+        {
+            var entity = new TBL_INSURANCE_COMPANY
+            {
+                COMPANYNAME = model.CompanyName,
+                ADDRESS = model.Address,
+                CONTACTEMAIL = model.ContactEmail,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+            };
+
+            context.TBL_INSURANCE_COMPANY.Add(entity);
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteInsuranceCompany(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_INSURANCE_COMPANY.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = genSetup.GetApplicationDate();
+            return context.SaveChanges() != 0;
+
+        }
+
+        public bool UpdateInsuranceCompany(InsuranceCompanyViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_INSURANCE_COMPANY.Find(id);
+            entity.COMPANYNAME = model.CompanyName;
+            entity.CONTACTEMAIL = model.ContactEmail;
+            entity.ADDRESS = model.Address;
+
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
+            return context.SaveChanges() != 0;
+        }
+
+
+
+        public InsuranceTypeViewModel GetInsuranceType(int id)
+        {
+            var entity = context.TBL_INSURANCE_TYPE.FirstOrDefault(x => x.INSURANCETYPEID == id && x.DELETED == false);
+
+            return new InsuranceTypeViewModel
+            {
+                InsuranceType = entity.INSURANCETYPE,
+                InsuranceTypeId = entity.INSURANCETYPEID,              
+            };
+        }
+
+        public IEnumerable<InsuranceTypeViewModel> GetInsuranceTypes()
+        {
+            return context.TBL_INSURANCE_TYPE.Where(x => x.DELETED == false)
+                 .Select(x => new InsuranceTypeViewModel
+                 {
+                     InsuranceTypeId = x.INSURANCETYPEID,
+                     InsuranceType = x.INSURANCETYPE,
+                 })
+                 .ToList();
+        }
+
+        public bool AddInsuranceType(InsuranceTypeViewModel model)
+        {
+            var entity = new TBL_INSURANCE_TYPE
+            {
+                INSURANCETYPE = model.InsuranceType,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+            };
+
+            context.TBL_INSURANCE_TYPE.Add(entity);
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteInsuranceType(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_INSURANCE_TYPE.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = genSetup.GetApplicationDate();
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateInsuranceType(InsuranceTypeViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_INSURANCE_TYPE.Find(id);
+            entity.INSURANCETYPE = model.InsuranceType;
+            entity.LASTUPDATEDBY = user.createdBy;
+            entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
+            return context.SaveChanges() != 0;
+        }
     }
 
 }
