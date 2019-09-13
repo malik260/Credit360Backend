@@ -3369,8 +3369,9 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var products = context.TBL_PRODUCT.Where(p => p.DELETED == false).ToList();
             var productClasses = context.TBL_PRODUCT_CLASS.ToList();
+
             var mappings = (from p in docContext.TBL_DOC_MAPPING
-                    select new ProductDocumentMappingViewModel()
+                            select new ProductDocumentMappingViewModel()
                     {
                         productDocMapId = p.PRODUCTDOCMAPID,
                         documentCategoryId = p.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
