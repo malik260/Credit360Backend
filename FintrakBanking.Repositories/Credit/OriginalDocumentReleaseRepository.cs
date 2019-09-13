@@ -181,6 +181,7 @@ namespace FintrakBanking.Repositories.Credit
                           orderby atrail.APPROVALTRAILID descending
                           select new OriginalDocumentReleaseViewModel
                          {
+                             approvalStatusId = atrail.APPROVALSTATUSID,
                              approvalStatus = _context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                              customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                              //applicationReferenceNumber = l.APPLICATIONREFERENCENUMBER,
@@ -194,9 +195,10 @@ namespace FintrakBanking.Repositories.Credit
                              approvalDate = dr.APPROVALDATE,
                              collateralCode = cc.COLLATERALCODE,
                              collateralCustomerId = cc.COLLATERALCUSTOMERID,
-                             operationId = (int)OperationsEnum.SecurityRelease
+                             operationId = (int)OperationsEnum.SecurityRelease,
+                             collateralId = cc.COLLATERALCUSTOMERID,
 
-                         }).ToList();
+                          }).ToList();
 
             var result = record.GroupBy(r => r.originalDocumentApprovalId)
                                .Select(r => r.FirstOrDefault()).ToList();

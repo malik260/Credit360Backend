@@ -819,7 +819,8 @@ namespace FintrakBanking.Repositories.Credit
                              select new CustomerViewModels
                              {
                                  customerId = a.CUSTOMERID,
-                                 fullName = b.FIRSTNAME + " " + b.LASTNAME + "-" + b.CUSTOMERCODE
+                                 fullName = b.FIRSTNAME + " " + b.LASTNAME + "-" + b.CUSTOMERCODE,
+                                 customerCode = b.CUSTOMERCODE
                              }).Distinct().ToList();
 
             }
@@ -1163,11 +1164,11 @@ namespace FintrakBanking.Repositories.Credit
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
-                        creditCommon.LoadCustomerRatios(
-                               applicationId,
-                               loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                               staffId
-                           );
+                        //creditCommon.LoadCustomerRatios(
+                        //       applicationId,
+                        //       loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //       staffId
+                        //   );
 
 
                         creditCommon.LoadCustomerTurnover(
