@@ -100,7 +100,7 @@ namespace FintrakBanking.Entities.DocumentModels
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_DOCUMENT_TYPE>()
-                .HasMany(e => e.TBL_PRODUCT_DOCUMENT_MAPPING)
+                .HasMany(e => e.TBL_DOC_MAPPING)
                 .WithRequired(e => e.TBL_DOCUMENT_TYPE)
                 .WillCascadeOnDelete(false);
         }
