@@ -35,7 +35,7 @@ namespace FintrakBanking.Entities.DocumentModels
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public virtual ICollection<TBL_DOCUMENT_UPLOAD> TBL_DOCUMENT_UPLOAD { get; set; }
-        public virtual ICollection<TBL_PRODUCT_DOCUMENT_MAPPING> TBL_PRODUCT_DOCUMENT_MAPPING { get; set; }
+        public virtual ICollection<TBL_DOC_MAPPING> TBL_PRODUCT_DOCUMENT_MAPPING { get; set; }
 
         public virtual TBL_DOCUMENT_CATEGORY TBL_DOCUMENT_CATEGORY { get; set; }
 

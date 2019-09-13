@@ -140,7 +140,7 @@
     <Compile Include="Models\TBL_LOAN_RECOVERY_PAYMENT.cs" />
     <Compile Include="Models\TBL_ORIGINAL_DOCUMENT_APPROVAL.cs" />
     <Compile Include="Models\TBL_ORIGINAL_DOCUMENT_RELEASE.cs" />
-    <Compile Include="Models\TBL_PRODUCT_DOCUMENT_MAPPING.cs" />
+    <Compile Include="Models\TBL_DOC_MAPPING.cs" />
     <Compile Include="Models\TBL_PROFILE_BUSINESS_UNIT.cs" />
     <Compile Include="Models\TBL_PSR_COMMENT.cs" />
     <Compile Include="Models\TBL_PSR_NEXT_INSPECTION_TASK.cs" />
