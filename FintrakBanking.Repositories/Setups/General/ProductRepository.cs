@@ -3367,7 +3367,12 @@ namespace FintrakBanking.Repositories.Setups.General
             #region Product Document Mapping
         public IEnumerable<ProductDocumentMappingViewModel> GetAllProductDocumentMapping()
         {
+<<<<<<< HEAD
+            var products = context.TBL_PRODUCT.Where(p => p.DELETED == false).ToList();
+            var productClasses = context.TBL_PRODUCT_CLASS.ToList();
+=======
             var products = context.TBL_PRODUCT.Where(p => p.DELETED == false).Select(p => new {p.PRODUCTID, p.PRODUCTNAME}).ToList();
+>>>>>>> 8fa3ef1211e428a0776e6b1b3c09ab26990f4526
             var mappings = (from p in docContext.TBL_DOC_MAPPING
                     select new ProductDocumentMappingViewModel()
                     {
@@ -3382,12 +3387,15 @@ namespace FintrakBanking.Repositories.Setups.General
                         mapToOperation = p.MAPTOOPERATION,
                         required = p.ISREQUIRED,
                         documentTypeId = p.DOCUMENTTYPEID,
-                        documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME
+                        documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                        //productName = p.TBL_PRODUCT.PRODUCTNAME,
+                        //productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME
                     }).ToList();
 
-            foreach(var mapping in mappings)
+            foreach (var mapping in mappings)
             {
-                mapping.productName = products.FirstOrDefault(p => p.PRODUCTID == mapping.productId).PRODUCTNAME;
+                mapping.productName = products.FirstOrDefault(p => p.PRODUCTID == mapping?.productId)?.PRODUCTNAME;
+                mapping.productClassName = productClasses.FirstOrDefault(p => p.PRODUCTCLASSID == mapping?.productClassId)?.PRODUCTCLASSNAME;
             }
 
             return mappings;
@@ -3396,7 +3404,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddProductDocumentMapping(ProductDocumentMappingViewModel model)
         {
-            if (model.mapToProductClass == false && model.mapToProduct == false && model.mapToOperation == false)
+            if (model.mapToProductClass == false && model.mapToProduct == false)
             {
                 throw new SecureException("Please select an item to map to!");
             }

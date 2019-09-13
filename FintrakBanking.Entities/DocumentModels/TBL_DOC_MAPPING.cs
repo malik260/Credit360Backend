@@ -1,7 +1,8 @@
 ﻿
-namespace FintrakBanking.Entities.Models
+namespace FintrakBanking.Entities.DocumentModels
 {
-    using FintrakBanking.Entities.DocumentModels;
+    using FintrakBanking.Entities.Models;
+    //using FintrakBanking.Entities.DocumentModels;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -14,7 +15,9 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int PRODUCTDOCMAPID { get; set; }
 
+        //[ForeignKey("TBL_PRODUCT")]
         public int? PRODUCTID { get; set; }
+        //[ForeignKey("TBL_PRODUCT_CLASS")]
         public int? PRODUCTCLASSID { get; set; }
         public int? OPERATIONID { get; set; }
 
@@ -28,12 +31,14 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATETIMECREATED { get; set; }
 
         public DateTime DATETIMEUPDATED { get; set; }
-
+        [ForeignKey("TBL_DOCUMENT_TYPE")]
         public int DOCUMENTTYPEID { get; set; }
 
         public DateTime DATETIMEDELETED { get; set; }
         public bool DELETED { get; set; }
         public virtual TBL_DOCUMENT_TYPE TBL_DOCUMENT_TYPE { get; set; }
+        //public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
+        //public virtual TBL_PRODUCT_CLASS TBL_PRODUCT_CLASS { get; set; }
 
 
     }

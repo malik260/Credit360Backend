@@ -29,6 +29,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISSKIPPROCESSENABLED { get; set; }
 
         public  int OPERATIONID { get; set; }
+        public int INTERESTPAYMENT { get; set; }
 
         [StringLength(500)]
         public string DESTINATIONURL { get; set; }
