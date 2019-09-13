@@ -1391,7 +1391,7 @@ namespace FintrakBanking.Repositories.Credit
                               join cip in context.TBL_COLLATERAL_ITEM_POLICY on ir.COLLATERALCUSTOMERID equals cip.COLLATERALCUSTOMERID
                               where model.collateralId == cip.COLLATERALCUSTOMERID &&
                                  cip.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
-                              select ir).ToList();
+                              select cip).ToList();
 
                 if (entity.Count > 0) return false;
 
