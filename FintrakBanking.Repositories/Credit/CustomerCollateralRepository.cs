@@ -1322,7 +1322,8 @@ namespace FintrakBanking.Repositories.Credit
             var result = context.TBL_COLLATERAL_ITEM_POLICY.Where(ip => ip.COLLATERALCUSTOMERID == entity.collateraalId
                                                                     && ip.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                                                     && ip.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved).ToList();
-            if (result.Count > 0) return false;
+
+            if (result.Count > 0) throw new SecureException("An Insurance Request for this Collateral is currently Undergoing Approval");
 
             var policy = context.TBL_COLLATERAL_ITEM_POLICY.Add(new TBL_COLLATERAL_ITEM_POLICY
             {
@@ -7073,16 +7074,13 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
-                        if (model.approvalStatusId != (int)ApprovalStatusEnum.Disapproved)
-                        {
-                            var data = context.TBL_INSURANCE_REQUEST.Where(ir => ir.INSURANCEREQUESTID == model.targetId).FirstOrDefault();
-                            var data2 = context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID
-                                                                                    && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
-                                                                                    .FirstOrDefault();
+                        var data = context.TBL_INSURANCE_REQUEST.Where(ir => ir.INSURANCEREQUESTID == model.targetId).FirstOrDefault();
+                        var data2 = context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == data.COLLATERALCUSTOMERID
+                                                                                && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
+                                                                                .FirstOrDefault();
 
-                            data.APPROVALSTATUSID = model.approvalStatusId;
-                            data2.APPROVALSTATUSID = model.approvalStatusId;
-                        }
+                        data.APPROVALSTATUSID = model.approvalStatusId;
+                        data2.APPROVALSTATUSID = model.approvalStatusId;
                     }
 
                     responce = context.SaveChanges() > 0;
