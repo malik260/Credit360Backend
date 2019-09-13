@@ -3375,6 +3375,11 @@ namespace FintrakBanking.Repositories.Setups.General
                         documentCategoryId = p.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
                         documentCategoryName = p.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
                         productId = p.PRODUCTID,
+                        productClassId = p.PRODUCTCLASSID,
+                        operationId = p.OPERATIONID,
+                        mapToProductClass = p.MAPTOPRODUCTCLASS,
+                        mapToProduct = p.MAPTOPRODUCT,
+                        mapToOperation = p.MAPTOOPERATION,
                         required = p.ISREQUIRED,
                         documentTypeId = p.DOCUMENTTYPEID,
                         documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME
@@ -3391,16 +3396,20 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddProductDocumentMapping(ProductDocumentMappingViewModel model)
         {
-            var documentDef = docContext.TBL_PRODUCT_DOCUMENT_MAPPING.Find(model.documentTypeId); 
+            if (model.mapToProductClass == false && model.mapToProduct == false && model.mapToOperation == false)
+            {
+                throw new SecureException("Please select an item to map to!");
+            }
 
-            //if (documentDef == null) 
-            //{
-            //    throw new SecureException("Document definition does not exist!");
-            //}
 
-           var data = new TBL_PRODUCT_DOCUMENT_MAPPING()
+            var data = new TBL_PRODUCT_DOCUMENT_MAPPING()
             {
                 PRODUCTID = model.productId,
+                PRODUCTCLASSID = model.productClassId,
+                OPERATIONID = model.operationId,
+                MAPTOPRODUCTCLASS = model.mapToProductClass,
+                MAPTOPRODUCT = model.mapToProduct,
+                MAPTOOPERATION = model.mapToOperation,
                 ISREQUIRED = model.required,
                 DOCUMENTTYPEID=model.documentTypeId,
                 CREATEDBY = model.createdBy,
@@ -3435,6 +3444,11 @@ namespace FintrakBanking.Repositories.Setups.General
             entity.ISREQUIRED = model.required;
             entity.DATETIMEUPDATED = DateTime.Now;
             entity.PRODUCTID = model.productId;
+            entity.PRODUCTCLASSID = model.productClassId;
+            entity.OPERATIONID = model.operationId;
+            entity.MAPTOPRODUCTCLASS = model.mapToProductClass;
+            entity.MAPTOPRODUCT = model.mapToProduct;
+            entity.MAPTOOPERATION = model.mapToOperation;
             entity.DOCUMENTTYPEID = model.documentTypeId;
             entity.LASTUPDATEDBY = model.createdBy;
             docContext.Entry(entity).State = EntityState.Modified;
@@ -3448,6 +3462,11 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     required = x.ISREQUIRED,
                     productId = x.PRODUCTID,
+                    productClassId = x.PRODUCTCLASSID,
+                    operationId = x.OPERATIONID,
+                    mapToProductClass = x.MAPTOPRODUCTCLASS,
+                    mapToProduct = x.MAPTOPRODUCT,
+                    mapToOperation = x.MAPTOOPERATION,
                     productDocMapId = x.PRODUCTDOCMAPID,
                     documentCategoryId = x.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
                     documentCategoryName = x.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
