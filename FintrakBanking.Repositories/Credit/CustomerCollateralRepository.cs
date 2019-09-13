@@ -1756,7 +1756,7 @@ namespace FintrakBanking.Repositories.Credit
                         baseCurrencyId = company.CURRENCYID,
                        // currency = c.c.TBL_CURRENCY.CURRENCYNAME,
                         disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
-                      //  collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                        collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                        // collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == c.c.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
                         collateralCode = c.c.COLLATERALCODE,
                         collateralValue = c.c.COLLATERALVALUE,
@@ -1771,7 +1771,7 @@ namespace FintrakBanking.Repositories.Credit
                         exchangeRate = c.c.EXCHANGERATE,
                         availableValue = 0,
                         collateralReleaseStatusId = c.c.COLLATERALRELEASESTATUSID,
-                        //collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == c.c.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
+                        collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == c.c.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
                        // accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
                         collateralUsageStatus = c.c.COLLATERALUSAGESTATUSID,
                         loanApplicationId = c.c.LOANAPPLICATIONID,
@@ -2356,7 +2356,8 @@ namespace FintrakBanking.Repositories.Credit
                     insuranceType = context.TBL_INSURANCE_TYPE.Where(ins => ins.INSURANCETYPEID == i.INSURANCETYPEID).Select(ins => ins.INSURANCETYPE).FirstOrDefault()
 
                 }).ToList();
-            return insurance.GroupBy(o => o.insuranceCompanyId).Select(o => o.Last()).ToList();
+
+            return insurance;
         }
 
         public InsurancePolicies GetInsurancePolicy(int collateralId)
@@ -7080,7 +7081,11 @@ namespace FintrakBanking.Repositories.Credit
                                                                                 .FirstOrDefault();
 
                         data.APPROVALSTATUSID = model.approvalStatusId;
-                        data2.APPROVALSTATUSID = model.approvalStatusId;
+                        if(data2 != null)
+                        {
+                            data2.APPROVALSTATUSID = model.approvalStatusId;
+                        }
+                        
                     }
 
                     responce = context.SaveChanges() > 0;
