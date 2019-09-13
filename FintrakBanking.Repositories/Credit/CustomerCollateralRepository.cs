@@ -7063,7 +7063,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = model.approvalStatusId == 3 ? (int)ApprovalStatusEnum.Disapproved : (int)ApprovalStatusEnum.Processing;
+                workflow.StatusId = model.approvalStatusId == 2 ? (int)ApprovalStatusEnum.Processing : model.approvalStatusId;
                 workflow.TargetId = model.targetId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.IsurancePolicyApproval;
@@ -7080,8 +7080,8 @@ namespace FintrakBanking.Repositories.Credit
                                                                                     && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
                                                                                     .FirstOrDefault();
 
-                            data.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                            data2.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            data.APPROVALSTATUSID = model.approvalStatusId;
+                            data2.APPROVALSTATUSID = model.approvalStatusId;
                         }
                     }
 
