@@ -742,6 +742,7 @@ namespace FintrakBanking.Repositories.credit
                             && b.RELEASEAPPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.LcShippingReleaseCompleted
                             && b.RELEASEAPPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                             && c.RESPONSESTAFFID == null
+                            && c.LOOPEDSTAFFID == null
                             && levelIds.Contains((int)c.TOAPPROVALLEVELID)
                             && (c.TOSTAFFID == null || c.TOSTAFFID == staffId)
                             )
