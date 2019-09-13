@@ -3367,8 +3367,8 @@ namespace FintrakBanking.Repositories.Setups.General
             #region Product Document Mapping
         public IEnumerable<ProductDocumentMappingViewModel> GetAllProductDocumentMapping()
         {
-            var products = context.TBL_PRODUCT.Where(p => p.DELETED == false).Select(p => new {p.PRODUCTID, p.PRODUCTNAME}).ToList();
-            var mappings = (from p in docContext.TBL_PRODUCT_DOCUMENT_MAPPING
+            var products = context.TBL_PRODUCT.Where(p => p.DELETED == false).ToList();
+            var mappings = (from p in docContext.TBL_DOC_MAPPING
                     select new ProductDocumentMappingViewModel()
                     {
                         productDocMapId = p.PRODUCTDOCMAPID,
@@ -3382,13 +3382,16 @@ namespace FintrakBanking.Repositories.Setups.General
                         mapToOperation = p.MAPTOOPERATION,
                         required = p.ISREQUIRED,
                         documentTypeId = p.DOCUMENTTYPEID,
-                        documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME
+                        documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                        productName = p.TBL_PRODUCT.PRODUCTNAME,
+                        productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME
                     }).ToList();
 
-            foreach(var mapping in mappings)
-            {
-                mapping.productName = products.FirstOrDefault(p => p.PRODUCTID == mapping.productId).PRODUCTNAME;
-            }
+            //foreach(var mapping in mappings)
+            //{
+            //    mapping.productName = products.FirstOrDefault(p => p.PRODUCTID == mapping.productId).PRODUCTNAME;
+            //    mapping.productClassName = products.FirstOrDefault(p => p.PRODUCTID == mapping.productId).PRODUCTNAME;
+            //}
 
             return mappings;
         }
@@ -3417,7 +3420,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 DELETED = false
             };
 
-            this.docContext.TBL_PRODUCT_DOCUMENT_MAPPING.Add(data);
+            this.docContext.TBL_DOC_MAPPING.Add(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -3440,7 +3443,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool UpdateProductDocumentMapping(ProductDocumentMappingViewModel model)
         {
-            var entity = docContext.TBL_PRODUCT_DOCUMENT_MAPPING.Find(model.productDocMapId);
+            var entity = docContext.TBL_DOC_MAPPING.Find(model.productDocMapId);
             entity.ISREQUIRED = model.required;
             entity.DATETIMEUPDATED = DateTime.Now;
             entity.PRODUCTID = model.productId;
@@ -3457,7 +3460,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public ProductDocumentMappingViewModel GetProductDocumenetMapping(int Id)
         {
-            var entity = docContext.TBL_PRODUCT_DOCUMENT_MAPPING.Where(x => x.DELETED == false && x.PRODUCTDOCMAPID == Id)
+            var entity = docContext.TBL_DOC_MAPPING.Where(x => x.DELETED == false && x.PRODUCTDOCMAPID == Id)
                 .Select(x => new ProductDocumentMappingViewModel
                 {
                     required = x.ISREQUIRED,
@@ -3479,7 +3482,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool DeleteProductDocumentMapping(int id)
         {
-            var entity = docContext.TBL_PRODUCT_DOCUMENT_MAPPING.Find(id);
+            var entity = docContext.TBL_DOC_MAPPING.Find(id);
             if (entity != null)
             {
                 entity.DELETED = true;

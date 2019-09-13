@@ -1549,25 +1549,25 @@ namespace FintrakBanking.Repositories.Credit
                                           }).ToList();
 
                 var status2InProgress = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                                           join t in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals t.TARGETID
-                                           where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId 
-                                           && c.CHECKLISTSTATUSID != null
-                                           //&& t.LOOPEDSTAFFID == staffId
-                                           && (t.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval || t.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval)
-                                           select new ConditionPrecedentViewModel()
-                                           {
-                                               condition = c.CONDITION,
-                                               loopedStaffId = (int)t.LOOPEDSTAFFID,
-                                               conditionId = c.LOANCONDITIONID,
-                                               status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
-                                               checkListStatusId = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSID,
-                                               approvalStatus = t.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                                               loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-                                               validationStatus = c.CHECKLISTVALIDATED,
-                                               isExternal = c.ISEXTERNAL,
-                                               approvalStatusId = t.APPROVALSTATUSID,
-                                               approvalTrailId = t.APPROVALTRAILID,
-                                           }).GroupBy(c => c.conditionId).Select(c => c.OrderByDescending(l => l.approvalTrailId)).FirstOrDefault().ToList()
+                                         join t in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals t.TARGETID
+                                         where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId
+                                         && c.CHECKLISTSTATUSID != null
+                                         //&& t.LOOPEDSTAFFID == staffId
+                                         && (t.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval || t.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval)
+                                         select new ConditionPrecedentViewModel()
+                                         {
+                                             condition = c.CONDITION,
+                                             loopedStaffId = (int)t.LOOPEDSTAFFID,
+                                             conditionId = c.LOANCONDITIONID,
+                                             status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                             checkListStatusId = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSID,
+                                             approvalStatus = t.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                             loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                             validationStatus = c.CHECKLISTVALIDATED,
+                                             isExternal = c.ISEXTERNAL,
+                                             approvalStatusId = t.APPROVALSTATUSID,
+                                             approvalTrailId = t.APPROVALTRAILID,
+                                         }).GroupBy(c => c.conditionId).Select(c => c.OrderByDescending(l => l.approvalTrailId).FirstOrDefault())
                                            .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                                             || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
                                             && l.loopedStaffId == staffId)).ToList();
@@ -1882,6 +1882,7 @@ namespace FintrakBanking.Repositories.Credit
                         && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                             && atrail.RESPONSESTAFFID == null
+                            && atrail.LOOPEDSTAFFID == null
                         orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
@@ -1924,7 +1925,8 @@ namespace FintrakBanking.Repositories.Credit
                          && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                             && atrail.RESPONSESTAFFID == null
-                        orderby a.DATETIMECREATED descending
+                            && atrail.LOOPEDSTAFFID == null
+                           orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
                             customerName =  a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,

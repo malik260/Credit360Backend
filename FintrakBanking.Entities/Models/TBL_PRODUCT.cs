@@ -39,6 +39,7 @@ namespace FintrakBanking.Entities.Models
             TBL_RISK_RATING = new HashSet<TBL_RISK_RATING>();
             TBL_TEMP_OFFERLETTER = new HashSet<TBL_TEMP_OFFERLETTER>();
             TBL_TRANSACTION_DYNAMICS = new HashSet<TBL_TRANSACTION_DYNAMICS>();
+            TBL_DOC_MAPPING = new HashSet<TBL_DOC_MAPPING>();
         }
 
         [Key]
@@ -268,5 +269,7 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TRANSACTION_DYNAMICS> TBL_TRANSACTION_DYNAMICS { get; set; }
+        public virtual ICollection<TBL_DOC_MAPPING> TBL_DOC_MAPPING { get; set; }
+
     }
 }
