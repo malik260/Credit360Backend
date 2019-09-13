@@ -35,5 +35,6 @@ namespace FintrakBanking.ViewModels.Credit
         public string responsiblePerson { get; set; }
         public int approvalTrailId { get; set; }
         public string currentApprovalLevel { get; set; }
+        public int collateralId { get; set; }
     }
 }
