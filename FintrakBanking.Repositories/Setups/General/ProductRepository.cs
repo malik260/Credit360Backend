@@ -3402,7 +3402,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
 
 
-            var data = new TBL_PRODUCT_DOCUMENT_MAPPING()
+            var data = new TBL_DOC_MAPPING()
             {
                 PRODUCTID = model.productId,
                 PRODUCTCLASSID = model.productClassId,
