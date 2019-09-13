@@ -3367,12 +3367,8 @@ namespace FintrakBanking.Repositories.Setups.General
             #region Product Document Mapping
         public IEnumerable<ProductDocumentMappingViewModel> GetAllProductDocumentMapping()
         {
-<<<<<<< HEAD
             var products = context.TBL_PRODUCT.Where(p => p.DELETED == false).ToList();
             var productClasses = context.TBL_PRODUCT_CLASS.ToList();
-=======
-            var products = context.TBL_PRODUCT.Where(p => p.DELETED == false).Select(p => new {p.PRODUCTID, p.PRODUCTNAME}).ToList();
->>>>>>> 8fa3ef1211e428a0776e6b1b3c09ab26990f4526
             var mappings = (from p in docContext.TBL_DOC_MAPPING
                     select new ProductDocumentMappingViewModel()
                     {
