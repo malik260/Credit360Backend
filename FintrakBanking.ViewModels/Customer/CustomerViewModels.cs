@@ -123,6 +123,75 @@ namespace FintrakBanking.ViewModels.Customer
         public int? businessUnitId { get; set; }
         public decimal? pastDueObligations { get; set; }
     }
+
+    public class CustomerViewModels2 : GeneralEntity
+    {
+        public string branchCode { get; set; }
+        public string rcNumber { get; set; }
+        public string customerAccountNo { get; set; }
+
+        public string companyName { get; set; }
+        //public short companyDirectorTypeId { get; set; }
+        //public int? companyDirectorId { get; set; }
+        //public string companyDirectorTypeName { get; set; }
+        public string address { get; set; }
+        public string phoneNumber { get; set; }
+       
+
+        public int customerId { get; set; }
+        public string customerCode { get; set; }
+        public string branchName { get; set; }
+        //public string customerAccountNo { get; set; }
+        public string title { get; set; }
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string customerTypeName { get; set; }
+        public string customerType { get; set; }
+        public string customerName { get { return this.firstName + " " + this.middleName + " " + this.lastName; } }
+        public string fullName { get; set; }
+        public string searchItem { get { return this.firstName + " " + this.middleName + " " + this.lastName + " " + this.customerCode; } }
+        public string lastName { get; set; }
+        public string gender { get; set; }
+        public DateTime? dateOfBirth { get; set; }
+        public string placeOfBirth { get; set; }
+        public string nationality { get; set; }
+        public string maritalStatus { get; set; }
+        public string emailAddress { get; set; }
+        public string maidenName { get; set; }
+        public string spouse { get; set; }
+        //public string firstChildName { get; set; }
+        //public DateTime childDateOfBirth { get; set; }
+        public string occupation { get; set; }
+        public short? customerTypeId { get; set; }
+        //public int? relationshipOfficerId { get; set; }
+        //public string relationshipOfficerCode { get; set; }
+        //public string relationshipOfficerName { get; set; }
+        //public bool isPoliticallyExposed { get; set; }
+
+        //public string misCode { get; set; }
+        //public string misStaff { get; set; }
+        //public int approvalStatus { get; set; }
+        //public DateTime dateActedOn { get; set; }
+        //public string actedOnBy { get; set; }
+        //public bool accountCreationComplete { get; set; }
+        //public bool creationMailSent { get; set; }
+        //public short customerSensitivityLevelId { get; set; }
+        //public short subSectorId { get; set; }
+        //public string subSectorName { get; set; }
+        //public short sectorId { get; set; }
+        //public string sectorName { get; set; }
+        //public string taxNumber { get; set; }
+        //public string businessTaxIdNumber { get; set; }
+        //public bool isInvestmentGrade { get; set; }
+        //public bool isRealatedParty { get; set; }
+        //public string customerBVN { get; set; }
+        //public string bankVerificationNumber { get; set; }
+        //public short? riskRatingId { get; set; }
+        //public string riskRatingName { get; set; }
+        //public string prospectCustomerCode { get; set; }
+        //public bool isProspect { get; set; }
+
+    }
     public class CustomerInformationStagingViewModels
     {
         public string customerCode { get; set; }
