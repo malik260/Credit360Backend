@@ -940,6 +940,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationFlowChangeViewModel : GeneralEntity
     {
+        public string skipFlo { get; set; }
+
         public int FlowChangeId { get; set; }
         public string label { get; set; }
         public string placeHolder { get; set; }

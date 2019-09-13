@@ -23,6 +23,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short responseTypeId { get; set; }
         public short? checkListStatusId { get; set; }
         public bool? checkListValidated { get; set; }
+        public int approvalTrailId { get; set; }
+        public int? loopedStaffId { get; set; }
         public short? approvalStatusId { get; set; }
         public string approvalStatus { get; set; }
         public bool isAvailment { get; set; }

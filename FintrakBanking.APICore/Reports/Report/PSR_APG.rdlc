@@ -844,7 +844,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>6. TASK FOR NEXT INSECTION:</Value>
+                <Value>6. TASK FOR NEXT INSPECTION:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>

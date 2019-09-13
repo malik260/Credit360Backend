@@ -147,7 +147,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                             ).ToList();
 
             request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
-            var initiatingRequest = trailLog.OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
+
+            var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
 
             if (request == null)
             {
@@ -239,6 +240,16 @@ namespace FintrakBanking.Repositories.WorkFlow
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
         }
 
+        private List<TBL_APPROVAL_TRAIL> GetAllTrail()
+        {
+            return context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == this.companyId
+                                && x.OPERATIONID == this.operationId
+                                && x.TARGETID == this.targetId
+                                //&& x.RESPONSESTAFFID == null
+                                //&& (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                            ).ToList();
+        }
         private void MakerCheckerControl()
         {
             if (statusId == (int)ApprovalStatusEnum.Approved && newStateId == (int)ApprovalState.Ended)
@@ -252,10 +263,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.StatusId == (int)ApprovalStatusEnum.Referred)
             {
-                if (this.nextLevelId == null || this.fromLevelId == null)
+                if (this.nextLevelId == null )
                 {
-                    this.fromLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID;
-                    this.nextLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID; 
+                    this.fromLevelId = request.TOAPPROVALLEVELID;
+                    this.nextLevelId = request.TOAPPROVALLEVELID; 
                     this.loopedStaffId = (this.loopedStaffId != null && this.loopedStaffId > 0) ? this.loopedStaffId : initiatorRequest.REQUESTSTAFFID;
                     this.toStaffId = staffId;
                     this.initiatorOrLooped = true;
