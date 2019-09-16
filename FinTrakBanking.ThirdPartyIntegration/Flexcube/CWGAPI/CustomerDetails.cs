@@ -730,12 +730,17 @@
             {
                 //month = 48;
                 //cifid = "483008974";
+
+                var month = DateTime.Now.Month - 1;
+                var year = DateTime.Now.Year;
+                var searchDate = "0"+month + "-" + year;
+
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
-                var endpointUrl = $"GetCustomerTransactions/{accountNumber}/06-2019";
+                var endpointUrl = $"GetCustomerTransactions/{accountNumber}/{searchDate}";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -854,11 +859,16 @@
             {
                 //month = 48;
                 //cifid = "483008974";
+
+                var month = DateTime.Now.Month - 1;
+                var year = DateTime.Now.Year;
+                var searchDate = "0"+month + "-" + year;
+
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
                 //var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails/{customerCode}/{durationInMonths}";
-                var endpointUrl = $"GetCustomerLoanInterestDetails/{customerCode}/08-2019";
+                var endpointUrl = $"GetCustomerLoanInterestDetails/{customerCode}/{searchDate}";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
