@@ -189,6 +189,15 @@ namespace FintrakBanking.Repositories.Customer
             }
         }
 
+        public bool GetPoliticallyExposedPerson(string customerCode)
+        {
+            bool isPoliticallyExposed = false;
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                isPoliticallyExposed = finacle.GetExposePersonStatus(customerCode);
+            }
+            return isPoliticallyExposed;
+        }
 
         private void AddCustomerAddresses(List<CustomerAddressViewModels> entity,
             int status)
