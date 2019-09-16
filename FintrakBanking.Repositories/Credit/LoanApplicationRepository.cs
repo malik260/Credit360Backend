@@ -1050,7 +1050,7 @@ namespace FintrakBanking.Repositories.Credit
                                                         select r).ToList();
 
                             if (middleOfficeRequests.Count <= 0)
-                                throw new ConditionNotMetException($"Job Request to relationship team for product {product.PRODUCTNAME} is required!");
+                                throw new ConditionNotMetException($"Job Request to relationship team for product '{product.PRODUCTNAME.ToLower()}' is required!");
                         }
 
                         var checklistTypes = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
@@ -4988,7 +4988,7 @@ namespace FintrakBanking.Repositories.Credit
                 productClassId = entity.PRODUCTCLASSID,
                 productId = entity.PRODUCTID,
                 operationId = entity.OPERATIONID,
-                interestPayment = entity.INTERESTPAYMENT,
+                //interestPayment = entity.INTERESTPAYMENT,
                 destinationUrl = entity.DESTINATIONURL,
                 productTypeId = entity.PRODUCTTYPEID,
                 documentOperation= 0, //entity.DOCUMENTOPERATION,
@@ -5004,7 +5004,7 @@ namespace FintrakBanking.Repositories.Credit
                     documentOperation= 0, //x.DOCUMENTOPERATION,
                     label = x.LABEL,
                     placeHolder=x.PLACEHOLDER,
-                    interestPayment = x.INTERESTPAYMENT,
+                    //interestPayment = x.INTERESTPAYMENT,
                     operationId=x.OPERATIONID,
                     destinationUrl=x.DESTINATIONURL == null ? "N/A" : x.DESTINATIONURL,
                     productTypeId=x.PRODUCTTYPEID,
@@ -5031,7 +5031,7 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONID = model.operationId,
                 DESTINATIONURL = model.destinationUrl,
                 PRODUCTTYPEID = model.productTypeId,
-                INTERESTPAYMENT = (int)model.interestPayment,
+                //INTERESTPAYMENT = (int)model.interestPayment,
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = model.createdBy,
                 DELETED = false
@@ -5066,7 +5066,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.PRODUCTCLASSID = model.productClassId;
             entity.OPERATIONID = model.operationId;
             entity.DESTINATIONURL = model.destinationUrl;
-            entity.INTERESTPAYMENT = (int)model.interestPayment;
+            //entity.INTERESTPAYMENT = (int)model.interestPayment;
             //entity.DOCUMENTOPERATION = model.documentOperation;
             entity.PRODUCTTYPEID = model.productTypeId;
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));

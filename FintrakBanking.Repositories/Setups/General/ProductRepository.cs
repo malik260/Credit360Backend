@@ -3445,6 +3445,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool UpdateProductDocumentMapping(ProductDocumentMappingViewModel model)
         {
+
+            if (model.mapToProductClass == false && model.mapToProduct == false)
+            {
+                throw new SecureException("Please select an item to map to!");
+            }
+
             var entity = docContext.TBL_DOC_MAPPING.Find(model.productDocMapId);
             entity.ISREQUIRED = model.required;
             entity.DATETIMEUPDATED = DateTime.Now;
@@ -3457,7 +3463,7 @@ namespace FintrakBanking.Repositories.Setups.General
             entity.DOCUMENTTYPEID = model.documentTypeId;
             entity.LASTUPDATEDBY = model.createdBy;
             docContext.Entry(entity).State = EntityState.Modified;
-            return context.SaveChanges() > 0;
+            return docContext.SaveChanges() != 0;
         }
 
         public ProductDocumentMappingViewModel GetProductDocumenetMapping(int Id)
