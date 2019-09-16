@@ -1050,7 +1050,7 @@ namespace FintrakBanking.Repositories.Credit
                                                         select r).ToList();
 
                             if (middleOfficeRequests.Count <= 0)
-                                throw new ConditionNotMetException($"Job Request to relationship team for product {product.PRODUCTNAME} is required!");
+                                throw new ConditionNotMetException($"Job Request to relationship team for product '{product.PRODUCTNAME.ToLower()}' is required!");
                         }
 
                         var checklistTypes = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
