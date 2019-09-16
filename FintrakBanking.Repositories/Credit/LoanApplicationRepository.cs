@@ -761,7 +761,9 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         productClassId = data.PRODUCTCLASSID,
                         productClassName = data.PRODUCTCLASSNAME,
-                        productClassTypeId = data.PRODUCTCLASSTYPEID
+                        productClassTypeId = data.PRODUCTCLASSTYPEID,
+                        productTypeName = data.PRODUCTCLASSNAME,
+                        productTypeId = data.PRODUCTCLASSID
                     });
         }
 

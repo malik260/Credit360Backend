@@ -788,7 +788,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                select new ProductViewModel()
                                {
                                    productId = data.PRODUCTID,
-                                   productName = data.PRODUCTNAME
+                                   productName = data.PRODUCTNAME,
+                                   productTypeName = data.PRODUCTNAME,
+                                   productTypeId = data.PRODUCTID
 
                                }).ToList();
            
