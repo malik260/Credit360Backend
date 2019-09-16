@@ -949,6 +949,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string label { get; set; }
         public string placeHolder { get; set; }
         public bool skipflow { get; set; }
+        public int? interestPayment { get; set; }
         public short? productClassId { get; set; }
         public int? productId { get; set; }
         public int operationId { get; set; }

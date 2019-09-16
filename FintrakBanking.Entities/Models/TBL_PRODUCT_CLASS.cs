@@ -1,5 +1,6 @@
 namespace FintrakBanking.Entities.Models
 {
+    //using FintrakBanking.Entities.DocumentModels;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -18,6 +19,7 @@ namespace FintrakBanking.Entities.Models
             TBL_LOAN_APPLICATION = new HashSet<TBL_LOAN_APPLICATION>();
             TBL_LOAN_PRELIMINARY_EVALUATN = new HashSet<TBL_LOAN_PRELIMINARY_EVALUATN>();
             TBL_TEMP_PRODUCT = new HashSet<TBL_TEMP_PRODUCT>();
+            //TBL_DOC_MAPPING = new HashSet<TBL_DOC_MAPPING>();
         }
 
         [Key]
@@ -62,5 +64,7 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PRODUCT> TBL_TEMP_PRODUCT { get; set; }
+        //public virtual ICollection<TBL_DOC_MAPPING> TBL_DOC_MAPPING { get; set; }
+
     }
 }

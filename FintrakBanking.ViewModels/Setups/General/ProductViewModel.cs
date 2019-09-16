@@ -252,16 +252,22 @@ namespace FintrakBanking.ViewModels.Setups.General
     public class ProductDocumentMappingViewModel : GeneralEntity
     {
         public int productDocMapId { get; set; }
-        public int documentId { get; set; }
+        //public int documentId { get; set; }
         public int documentTypeId { get; set; }
         public string documentCategoryName { get; set; }
         public string productName { get; set; }
+        public string productClassName { get; set; }
         public string documentType { get; set; }
         public int documentCategoryId { get; set; }
 
-        public int productId { get; set; }
+        public int? productId { get; set; }
+        public int? productClassId { get; set; }
+        public int? operationId { get; set; }
+        public bool mapToProductClass { get; set; }
+        public bool mapToProduct { get; set; }
+        public bool mapToOperation { get; set; }
         public bool required { get; set; }
-        public string documentTitle { get; set; }
+        //public string documentTitle { get; set; }
        
     }
 

@@ -2,8 +2,8 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Finance;
 using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService;
-using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService;
-//using FinTrakBanking.ThirdPartyIntegration.ServiceReference1;
+//using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService;
+using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,15 +32,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                 var res = client.ResponseOnlyForGroup(staffCode, passCode, groupName);
                 var responseDateTime = DateTime.Now;
 
-                var status = int.Parse(res.Split('~')[0]);
-                var message = res.Split('~')[1];
+                //var status = int.Parse(res.Split('~')[0]);
+                var message = res;
 
                 var output = new TwoFactorAutheticationOutputViewModel()
                 {
                     message = message
                 };
 
-                if (status == 0)
+                if (res.ToLower().Contains("successful"))
                     output.authenticated = true;
                 else
                     output.authenticated = false;

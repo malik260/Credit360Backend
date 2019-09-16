@@ -1995,7 +1995,7 @@ namespace FintrakBanking.APICore.Controllers
             };
             model.createdBy = token.GetStaffId;
             bool response = repo.UpdateProductDocumentMapping(model);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1, message = "product document mapping has been edited successfully" });
         }
 
         [HttpGet]
