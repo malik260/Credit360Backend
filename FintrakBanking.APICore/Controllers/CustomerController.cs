@@ -142,6 +142,20 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("politically-exposed-person/{customerCode}")]
+        public HttpResponseMessage GetPoliticallyExposedPerson(string customerCode)
+        {
+            var data = repo.GetPoliticallyExposedPerson(customerCode);
+
+            if (!data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("crms-type-company-size")]
         public HttpResponseMessage GetAllCRMSCompanySize()
         {
