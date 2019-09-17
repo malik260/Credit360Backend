@@ -1044,16 +1044,16 @@ namespace FintrakBanking.Repositories.Credit
 
                         /* Middle office Job Request for IDF */
                         var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == detail.APPROVEDPRODUCTID);
-                        if (product.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
-                        {
-                            var middleOfficeRequests = (from r in context.TBL_JOB_REQUEST
-                                                        join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
-                                                        where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && r.TARGETID == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification
-                                                        select r).ToList();
+                        //if (product.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
+                        //{
+                        //    var middleOfficeRequests = (from r in context.TBL_JOB_REQUEST
+                        //                                join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
+                        //                                where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && r.TARGETID == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification
+                        //                                select r).ToList();
 
-                            if (middleOfficeRequests.Count <= 0)
-                                throw new ConditionNotMetException($"Job Request to relationship team for product '{product.PRODUCTNAME.ToLower()}' is required!");
-                        }
+                        //    if (middleOfficeRequests.Count <= 0)
+                        //        throw new ConditionNotMetException($"Job Request to relationship team for product '{product.PRODUCTNAME.ToLower()}' is required!");
+                        //}
 
                         var checklistTypes = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
                         foreach (var checklistType in checklistTypes) // through checklist types
