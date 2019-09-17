@@ -178,7 +178,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             DESCRIPTION = item.indicatorname,
                             VALUE = item.indicatorvalue,
-                            CUSTOMERID = item.customerId,
+                            CUSTOMERID = customer.CUSTOMERID,
                             LOANAPPLICATIONID = application.LOANAPPLICATIONID,
                             CUSTOMERGROUPID = application.CUSTOMERGROUPID,
                             DATETIMECREATED = DateTime.Now,
