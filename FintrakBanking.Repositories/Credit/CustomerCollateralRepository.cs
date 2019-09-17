@@ -1911,6 +1911,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                                        collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
                                        approvalStatusId = x.APPROVALSTATUSID,
+                                       collateralSummary = c.COLLATERALSUMMARY,
                                        facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
 
                                    }).ToList();
