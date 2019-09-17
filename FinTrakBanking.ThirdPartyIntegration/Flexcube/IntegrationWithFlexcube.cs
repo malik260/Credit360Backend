@@ -37,7 +37,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         bool USE_TWO_FACTOR_AUTHENTICATION = false;
 
         public IntegrationWithFlexcube(FinTrakBankingContext context, TransactionPosting transaction,
-            CustomerDetails customer, StaffDetails staff, OverDraft overDraft, ForeignCurrencyAccount account, AccountDetail accountDetail,
+            CustomerDetails customer, StaffDetails staff, OverDraft overDraft, ForeignCurrencyAccount account, AccountDetail accountDetail, BaselIntegration _basel,
             ITwoFactorAuthIntegrationService _twoFactorAuth)
         {
             this.context = context;
@@ -48,6 +48,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             this.account = account;
             this.accountDetail = accountDetail;
             this.twoFactorAuth = _twoFactorAuth;
+            this.basel = _basel;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_TWO_FACTOR_AUTHENTICATION = globalSetting.USE_TWO_FACTOR_AUTHENTICATION;

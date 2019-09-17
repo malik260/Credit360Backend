@@ -731,6 +731,9 @@
                 //month = 48;
                 //cifid = "483008974";
 
+                var currentDate = DateTime.Now;
+                var startDate = DateTime.Now.AddMonths( -durationInMonths);
+
                 var month = DateTime.Now.Month - 1;
                 var year = DateTime.Now.Year;
                 var searchDate = "0"+month + "-" + year;
@@ -740,6 +743,7 @@
 
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
+                //var endpointUrl = $"GetCustomerTransactions/{accountNumber}/0{startDate.Month}/0{currentDate.Month}/{startDate.Year}/{currentDate.Year}";
                 var endpointUrl = $"GetCustomerTransactions/{accountNumber}/{searchDate}";
 
                 httpClientInstance = new HttpClient();
