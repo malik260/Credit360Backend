@@ -16,7 +16,7 @@ namespace FintrakBanking.MonitoringMessagesSender
     {
         private Timer _syncTimer;
         private static object s_lock = new object();
-         EmailSender emailSender = new EmailSender();
+        EmailSender emailSender = new EmailSender();
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
         private string slaEscalationIntervalInHours = ConfigurationManager.AppSettings["SLAEscalationIntervalInHours"];
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
@@ -143,7 +143,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                 {
                     _log.ErrorFormat("");
                     _log.ErrorFormat("==================================================================");
-                    _log.ErrorFormat("Email Sender has failed with error : " + ex + " at : "  + DateTime.Now);
+                    _log.ErrorFormat("Email Sender has failed with error : " + ex.ToString() + " at : "  + DateTime.Now);
                     _log.ErrorFormat("");
                     _log.ErrorFormat("==================================================================");
                     if (ex.InnerException!=null)
