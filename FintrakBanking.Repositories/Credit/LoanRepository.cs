@@ -6770,10 +6770,41 @@ namespace FintrakBanking.Repositories.Credit
                         }
                     }
                     
+                    if (model.isLienPlacementForLoan) {
+                        var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                        {
+                            username = model.username,
+                            passcode = model.passCode
+                        };
+
+                        PlaceLienForLoan(model, twoFactorAuthDetails);
+                    }
                 }
                 trans.Commit();
                 return true;
             }
+        }
+
+        private void PlaceLienForLoan(LoanBookingRequestViewModel model, TwoFactorAutheticationViewModel twoFactorAuthDetails)
+        {
+            //TODO fetch the AccountBalance for account from the API
+            var casa = context.TBL_CASA.Find(model.casaAccountId2);
+
+            var lienModel = new CasaLienViewModel
+            {
+                productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+                sourceReferenceNumber = model.loanApplicationId.ToString(),
+                userBranchId = (short)model.userBranchId,
+                branchId = (short)model.sourceBranchId,
+                companyId = model.companyId,
+                lienAmount = model.approvedAmount, //loanRecord.PRINCIPALAMOUNT + loanRecord.OUTSTANDINGINTEREST,
+                description = "Lien for Fixed Deposit Collateral",
+                lienTypeId = (short)LienTypeEnum.IDFBooking,
+                createdBy = model.createdBy,
+                userIPAddress = model.userIPAddress,
+                applicationUrl = model.applicationUrl,
+            };
+            //casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
         }
 
         private bool UpdateLoanBookingRequests(int applicationStatusId, LoanBookingRequestViewModel model)

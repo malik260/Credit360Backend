@@ -390,7 +390,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("update-valuation-prerequisite-status/{valuationPrerequisiteId}/valuationPrerequisiteId")]
-        public HttpResponseMessage UpdateValuationPrerequisiteStatus(int valuationPrerequisiteId)
+        public HttpResponseMessage UpdateValuationPrerequisiteStatus(int valuationPrerequisiteId, [FromBody] ValuationPrerequisiteViewModel model)
         {
             try
             {

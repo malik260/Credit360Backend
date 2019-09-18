@@ -1756,7 +1756,7 @@ namespace FintrakBanking.Repositories.Credit
                         baseCurrencyId = company.CURRENCYID,
                         currency = c.c.TBL_CURRENCY.CURRENCYNAME,
                         disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
-                      //  collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                        collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                        // collateralSubTypeName = context.TBL_COLLATERAL_TYPE_SUB.Where(r => r.COLLATERALSUBTYPEID == c.c.COLLATERALSUBTYPEID).Select(q => q.COLLATERALSUBTYPENAME).FirstOrDefault(),
                         collateralCode = c.c.COLLATERALCODE,
                         collateralValue = c.c.COLLATERALVALUE,
