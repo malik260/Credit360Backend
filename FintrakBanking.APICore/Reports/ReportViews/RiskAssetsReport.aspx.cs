@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     reportParameter[5] = new ReportParameter("BranchName", "BBD Branch_Business Banking Team (Aba-Aziukwu)"); //BranchName
                     reportParameter[6] = new ReportParameter("SectorName", "General"); //SectorName
                     reportParameter[7] = new ReportParameter("RunDate", "06/30/2019"); //RunDate.ToString()
-                    reportParameter[8] = new ReportParameter("ZoneName", "BUSINESS BANKING Abia Zone"); //SectorName
+                    reportParameter[8] = new ReportParameter("RegionName", "BUSINESS BANKING Abia Zone"); //SectorName
 
                     //==== NOTE: for report on server, use the below ============
                     ReportViewer.ServerReport.SetParameters(reportParameter);
