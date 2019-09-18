@@ -1166,11 +1166,11 @@ namespace FintrakBanking.Repositories.Credit
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
-                        //creditCommon.LoadCustomerRatios(
-                        //       applicationId,
-                        //       loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                        //       staffId
-                        //   );
+                        creditCommon.LoadCustomerRatios(
+                               applicationId,
+                               loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                               staffId
+                           );
 
 
                         creditCommon.LoadCustomerTurnover(
