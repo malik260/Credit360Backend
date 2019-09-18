@@ -2287,6 +2287,7 @@ namespace FintrakBanking.Repositories.Credit
             if (collaterals.Count() < 1) return result;
             decimal totalCollateralValue = collaterals.Sum(c => c.collateralValue);
             var collateralGroup = collaterals.GroupBy(c => c.loanApplicationDetailId);
+            var collateralGroup2 = collaterals.GroupBy(c => c.collateralId);
             foreach (var g in collateralGroup)
             {
                 custFacilitiesAmount += context.TBL_LOAN_APPLICATION_DETAIL.Find(g.Key).APPROVEDAMOUNT;
@@ -2301,8 +2302,9 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     ";
 
-            foreach (var c in collaterals)
+            foreach (var d in collateralGroup2)
             { ++n;
+                var c = d.FirstOrDefault();
                 result = result + $@"
                     <tr>
                         <td>{n}</td>
