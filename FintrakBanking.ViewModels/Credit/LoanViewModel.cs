@@ -664,6 +664,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public int? operationId { get; set; }
 
+        public bool isLienPlacementForLoan { get; set; }
+
 
     }
 
