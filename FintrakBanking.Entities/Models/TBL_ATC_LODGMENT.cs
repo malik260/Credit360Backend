@@ -54,6 +54,8 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEAPPROVED { get; set; }
         public int? CURRENCYID { get; set; }
 
+        public DateTime? DATETIMERELEASED { get; set; }
+
 
         public virtual ICollection<TBL_ATC_LODGMENT_DETAIL> TBL_ATC_LODGMENT_DETAIL { get; set; }
 

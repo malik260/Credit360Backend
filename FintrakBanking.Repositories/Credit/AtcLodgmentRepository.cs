@@ -220,6 +220,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        dateReleased = x.DATETIMERELEASED
                     }).OrderByDescending(o => o.atcReleaseId)
              .ToList();
         }
@@ -270,6 +271,9 @@ namespace FintrakBanking.Repositories.credit
                             var doc = context.TBL_ATC_LODGMENT.Where(o => o.ATCLODGMENTID == mod.atcLodgmentId).FirstOrDefault();
                             if (document != null && doc != null)
                             {
+                                // Update the date released the Lodgement
+                                doc.DATETIMERELEASED = DateTime.Now;
+
                                 document.APPROVALSTATUSID = mod.approvalStatusId;
                                 if(mod.approvalStatusId == (short)ApprovalStatusEnum.Approved)
                                 {
@@ -783,8 +787,9 @@ namespace FintrakBanking.Repositories.credit
                         approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
-                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault()
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
 
+                        dateReleased = x.DATETIMEUPDATED,
                     }).OrderByDescending(o => o.atcLodgmentId)
              .ToList();
         }

@@ -253,7 +253,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"GetCustomerAccountBalance/{customerAccount}",
+                        APIURL = $"{API_URL}/GetCustomerAccountBalance/{customerAccount}",
                         LOGTYPEID = 1,
                         REFERENCENUMBER = customerAccount,
                         REQUESTDATETIME = requestDatetime,
@@ -391,7 +391,7 @@
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"ExposedPerson/{customerCode}");
+                    response = await client.GetAsync($"GetExposedPerson/{customerCode}");
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
@@ -591,7 +591,7 @@
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
                         //APIURL = $"api/InterestRateInquiry/GetInterestRateInquiry?model.accountNumber={accountNumber}&model.accountType={accountType}",
-                        APIURL = $"api / InterestRate / GetInterestRateInquiry /{ accountNumber }",
+                        APIURL = $"{API_URL}/GetInterestRateInquiry /{ accountNumber }",
                         LOGTYPEID = 18,
                         REFERENCENUMBER = accountNumber,
                         REQUESTDATETIME = requestDatetime,
@@ -737,17 +737,17 @@
                 var currentDate = DateTime.Now;
                 var startDate = DateTime.Now.AddMonths( -durationInMonths);
 
-                var month = DateTime.Now.Month - 1;
-                var year = DateTime.Now.Year;
-                var searchDate = "0"+month + "-" + year;
+                //var month = DateTime.Now.Month - 1;
+                //var year = DateTime.Now.Year;
+                //var searchDate = "0"+month + "-" + year;
 
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
                 //var endpointUrl = $"api/Customer/GetCustomerTransactions/{customerCode}/{durationInMonths}";
-                //var endpointUrl = $"GetCustomerTransactions/{accountNumber}/0{startDate.Month}/0{currentDate.Month}/{startDate.Year}/{currentDate.Year}";
-                var endpointUrl = $"GetCustomerTransactions/{accountNumber}/{searchDate}";
+                var endpointUrl = $"GetCustomerTransactions/{accountNumber}/0{startDate.Month}/0{currentDate.Month}/{startDate.Year}/{currentDate.Year}";
+                //var endpointUrl = $"GetCustomerTransactions/{accountNumber}/{searchDate}";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
