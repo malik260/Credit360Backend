@@ -110,5 +110,6 @@ namespace FintrakBanking.Interfaces.Reports
         string SubmissionOfOriginalDocument(DateRange dateRange);
 
         string PSR(int psrReportTypeId, int projectSiteReportId);
+       
     }
 }
