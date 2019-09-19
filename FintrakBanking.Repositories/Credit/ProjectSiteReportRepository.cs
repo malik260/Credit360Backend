@@ -109,6 +109,8 @@ namespace FintrakBanking.Repositories.credit
                         {
                             projectSiteReportId = x.PROJECTSITEREPORTID,
                             psrReportTypeId = x.PSRREPORTTYPEID,
+                            //psrRepeortType = context.TBL_PSR_REPORT_TYPE.Where(r => r.PSRREPORTTYPEID == x.PSRREPORTTYPEID).Select(r => r.REPORTTYPENAME).FirstOrDefault() == null ? "N/A" : context.TBL_PSR_REPORT_TYPE.Where(r => r.PSRREPORTTYPEID == x.PSRREPORTTYPEID).Select(r => r.REPORTTYPENAME).FirstOrDefault(),
+                            psrRepeortType = (from r in context.TBL_PSR_REPORT_TYPE where r.PSRREPORTTYPEID == x.PSRREPORTTYPEID select r.REPORTTYPENAME).FirstOrDefault(),
                             clientName = x.CLIENTNAME,
                             contractorName = x.CONTRACTORNAME,
                             consultantName = x.CONSULTANTNAME,
@@ -119,7 +121,7 @@ namespace FintrakBanking.Repositories.credit
                             nextVisitationDate = x.NEXTVISITATIONDATE,
                             loanApplicationId = x.LOANAPPLICATIONID,
                             projectLocation = x.PROJECTLOCATION,
-                            approvalStatusId = x.APPROVALSTATUSID,
+                            approvalStatusId = x.APPROVALSTATUSID,                          
                             currencyId = x.CURRENCYID,
                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                             currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
@@ -150,6 +152,7 @@ namespace FintrakBanking.Repositories.credit
                             projectLocation = x.PROJECTLOCATION,
                             approvalStatusId = trail.APPROVALSTATUSID,
                             currencyId = x.CURRENCYID,
+                            //psrRepeortType = (from r in context.TBL_PSR_REPORT_TYPE where r.PSRREPORTTYPEID == x.PSRREPORTTYPEID select r.REPORTTYPENAME).FirstOrDefault(),
                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                             currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
 
@@ -178,6 +181,7 @@ namespace FintrakBanking.Repositories.credit
                 projectLocation = x.PROJECTLOCATION,
                 approvalStatusId = x.APPROVALSTATUSID,
                 currencyId = x.CURRENCYID,
+                psrRepeortType = context.TBL_PSR_REPORT_TYPE.Where(a => a.PSRREPORTTYPEID == x.PSRREPORTTYPEID).FirstOrDefault().REPORTTYPENAME,
                 approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                 currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
 
@@ -265,6 +269,7 @@ namespace FintrakBanking.Repositories.credit
                        projectLocation = x.PROJECTLOCATION,
                        approvalStatusId = x.APPROVALSTATUSID,
                        operationId = atrail.OPERATIONID,
+                       psrRepeortType = context.TBL_PSR_REPORT_TYPE.Where(a => a.PSRREPORTTYPEID == x.PSRREPORTTYPEID).FirstOrDefault() == null ? "N/A" : context.TBL_PSR_REPORT_TYPE.Where(a => a.PSRREPORTTYPEID == x.PSRREPORTTYPEID).FirstOrDefault().REPORTTYPENAME,
                        currency = context.TBL_CURRENCY.Where(o=>o.CURRENCYID==x.CURRENCYID).Select(o=>o.CURRENCYNAME).FirstOrDefault(),
                        approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
 
