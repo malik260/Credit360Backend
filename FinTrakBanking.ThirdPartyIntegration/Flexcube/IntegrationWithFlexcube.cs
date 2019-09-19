@@ -715,6 +715,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
             Task.Run(async () => accountOutput = await customer.GetCustomerAccountBalance(customerAccount)).GetAwaiter()
                 .GetResult();
 
+          
+
+
             return accountOutput;
         }
 

@@ -3682,6 +3682,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationId = x.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                 relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
+                operationId = x.OPERATIONID,
                 customerId = x.CUSTOMERID,
                 branchId = x.BRANCHID,
                 branchName = x.TBL_BRANCH.BRANCHNAME,
