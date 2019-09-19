@@ -187,7 +187,7 @@ namespace FintrakBanking.Repositories.Credit
         private string currentAccountNo;
         //private string branchName;
         private string facilityType;
-        private decimal drawdownAmount;
+        private string drawdownAmount;
         private int tenor;
         private int? moratorium;
         private string principalRepayment;
@@ -200,8 +200,8 @@ namespace FintrakBanking.Repositories.Credit
         private string effectiveDate;
         //private string misCode;
 
-        private decimal approvedAmount;
-        private decimal amountUtilised;
+        private string approvedAmount;
+        private string amountUtilised;
         private string newRequest;
 
         private string requestType;
@@ -433,7 +433,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
                 this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault();
                 this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
-                this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT;
+                this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 this.tenor = loanApplicationDetail.APPROVEDTENOR;
                 this.moratorium = loanApplicationDetail.MORATORIUMDURATION;
                 this.principalRepayment = "";
@@ -446,9 +446,10 @@ namespace FintrakBanking.Repositories.Credit
                 this.effectiveDate = "";
                 this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
 
-                approvedAmount = 0;
-                amountUtilised = 0;
-                newRequest = "";
+                approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+                amountUtilised = "0.00";
+
+                newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault() == null ? "0.00" : context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00");
 
                 requestType = "";
 
