@@ -672,7 +672,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = from a in context.TBL_LOAN_APPLICATION
                        where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress
-                          && a.COMPANYID == companyId && a.DELETED == false
+                       && a.COMPANYID == companyId && a.DELETED == false
                           && (a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId)
                           && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                           && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
@@ -2021,15 +2021,15 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanData.CUSTOMERGROUPID = loan.customerGroupId;
                 loanData.CUSTOMERID = null;
-                loan.isRelatedParty = GetCustomerIsRelatedParty((int)loan.customerGroupId);
-                loan.isPoliticallyExposed = GetCustomerIsPoliticallyExposed((int)loan.customerGroupId);
+                loanData.ISRELATEDPARTY = GetCustomerIsRelatedParty((int)loan.customerGroupId);
+                loanData.ISPOLITICALLYEXPOSED = GetCustomerIsPoliticallyExposed((int)loan.customerGroupId);
             }
             else
             {
                 loanData.CUSTOMERID = loan.customerId;
                 loanData.CUSTOMERGROUPID = null;
-                loan.isRelatedParty = GetCustomerIsRelatedParty((int)loan.customerGroupId);
-                loan.isPoliticallyExposed = GetCustomerIsPoliticallyExposed((int)loan.customerGroupId);
+                loanData.ISRELATEDPARTY = GetCustomerIsRelatedParty((int)loan.customerId);
+                loanData.ISPOLITICALLYEXPOSED = GetCustomerIsPoliticallyExposed((int)loan.customerId);
             }
 
             if (loan.loanPreliminaryEvaluationId != null && loan.loanPreliminaryEvaluationId != 0)
@@ -3744,7 +3744,6 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationId = x.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                 relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
-                operationId = x.OPERATIONID,
                 customerId = x.CUSTOMERID,
                 branchId = x.BRANCHID,
                 branchName = x.TBL_BRANCH.BRANCHNAME,
