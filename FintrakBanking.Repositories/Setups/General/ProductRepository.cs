@@ -3496,7 +3496,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 entity.DELETED = true;
             }
 
-            return context.SaveChanges() > 0;
+            return docContext.SaveChanges() > 0;
         }
 
         #endregion Product Document Mapping
