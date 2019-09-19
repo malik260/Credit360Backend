@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     //DateTime RunDate = DateTime.ParseExact(Request.QueryString["runDate"], "dd-MM-yyyy", null);
                     //string Level = Request.QueryString["level"];
                     //string MisCode = Request.QueryString["misCode"];
-                    //string ExposureType = Request.QueryString["ExposureType"];
+                    //string ExposureType = Request.QueryString["exposureType"];
                     //string DivisionName = Request.QueryString["divisionName"];
                     //string GroupName = Request.QueryString["groupName"];
                     //string BranchName = Request.QueryString["branchName"];
