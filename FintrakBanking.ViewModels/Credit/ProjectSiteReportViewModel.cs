@@ -9,6 +9,8 @@ namespace FintrakBanking.ViewModels.credit
 {
     public class ProjectSiteReportViewModel : GeneralEntity
     {
+        public string psrRepeortType { get; set; }
+
         public int projectSiteReportId { get; set; }
 
         public int psrReportTypeId { get; set; }

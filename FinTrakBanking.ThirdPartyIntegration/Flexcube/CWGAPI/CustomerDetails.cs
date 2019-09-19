@@ -183,9 +183,11 @@
                         
                         JObject responseDataJsonString = JObject.Parse(responseData);
                         var data = responseDataJsonString["data"].ToString();
-                        accountOutput = JsonConvert.DeserializeObject<CasaBalanceViewModel>(data);
-                  
-                        if(accountOutput != null)
+                        if(data != "{}") { accountOutput = JsonConvert.DeserializeObject<CasaBalanceViewModel>(data); }
+                        if (data == "{}") { accountOutput = null; }
+
+
+                        if (accountOutput != null)
                         {
                             var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountOutput.currencyType).CURRENCYID;
                             if (accountOutput.accountStatus.ToLower() == "open") accountOutput.accountStatus = "Active";
@@ -217,6 +219,7 @@
 
 
                         }
+                        else { accountOutput = new CasaBalanceViewModel(); }
                     }
 
                     //responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();

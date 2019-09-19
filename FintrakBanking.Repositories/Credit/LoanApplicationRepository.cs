@@ -672,7 +672,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = from a in context.TBL_LOAN_APPLICATION
                        where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress
-                       && a.COMPANYID == companyId && a.DELETED == false
+                          && a.COMPANYID == companyId && a.DELETED == false
                           && (a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId)
                           && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                           && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
@@ -3744,6 +3744,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanApplicationId = x.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                 relatedReferenceNumber = x.RELATEDREFERENCENUMBER,
+                operationId = x.OPERATIONID,
                 customerId = x.CUSTOMERID,
                 branchId = x.BRANCHID,
                 branchName = x.TBL_BRANCH.BRANCHNAME,

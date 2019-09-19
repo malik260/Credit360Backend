@@ -64,7 +64,7 @@ namespace FintrakBanking.MonitoringMessagesSender
         {
 
             Console.WriteLine("");
-            Console.WriteLine("Send Excetion Email");
+            Console.WriteLine("Send Exception Email");
             Console.WriteLine("");
             
 

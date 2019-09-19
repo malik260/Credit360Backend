@@ -1551,7 +1551,7 @@ namespace FintrakBanking.Repositories.Credit
                 var status2InProgress = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
                                          join t in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals t.TARGETID
                                          where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId
-                                           && (c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
+                                           && (c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                                          && c.CHECKLISTSTATUSID != null
                                          //&& t.LOOPEDSTAFFID == staffId
                                          && (t.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval || t.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval)
