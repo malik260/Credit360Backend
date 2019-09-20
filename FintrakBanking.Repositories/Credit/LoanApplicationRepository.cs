@@ -1861,6 +1861,64 @@ namespace FintrakBanking.Repositories.Credit
                                                             && x.OPERATIONID == (short)OperationsEnum.CreditAppraisal
                                                             && x.DELETED == false).Any()) isProductClassBasedWorkflowApplicable = true;
         }
+
+        private bool GetCustomerIsRelatedParty(int customerId)
+        {
+            var customer = context.TBL_CUSTOMER.Find(customerId);
+            var customerGroup = new TBL_CUSTOMER_GROUP();
+            if (customer == null)
+            {
+                customerGroup = context.TBL_CUSTOMER_GROUP.Find(customerId);
+                if (customerGroup != null)
+                {
+                    var mappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(m => m.DELETED != true && m.CUSTOMERGROUPID == customerGroup.CUSTOMERGROUPID);
+                    var customers = new List<TBL_CUSTOMER>();
+                    foreach (var map in mappings)
+                    {
+                        customers.Add(map.TBL_CUSTOMER);
+                    }
+
+                    if (customers.Exists(c => c.ISREALATEDPARTY == true))
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return customer.ISREALATEDPARTY;
+        }
+
+        private bool GetCustomerIsPoliticallyExposed(int customerId)
+        {
+            var customer = context.TBL_CUSTOMER.Find(customerId);
+            var customerGroup = new TBL_CUSTOMER_GROUP();
+            if (customer == null)
+            {
+                customerGroup = context.TBL_CUSTOMER_GROUP.Find(customerId);
+                if (customerGroup != null)
+                {
+                    var mappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(m => m.DELETED != true && m.CUSTOMERGROUPID == customerGroup.CUSTOMERGROUPID);
+                    var customers = new List<TBL_CUSTOMER>();
+                    foreach (var map in mappings)
+                    {
+                        customers.Add(map.TBL_CUSTOMER);
+                    }
+
+                    if (customers.Exists(c => c.ISPOLITICALLYEXPOSED == true))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return customer.ISPOLITICALLYEXPOSED;
+        }
+
         private void AddloanApplicationSub(LoanApplicationViewModel loan)
         {
             short productClassProcessId = 0;
@@ -1915,7 +1973,7 @@ namespace FintrakBanking.Repositories.Credit
                     loan.exclusiveOperationId = newWorkflowBaseRecord.OPERATIONID;
                 }
             }
-
+            
             loanData = new TBL_LOAN_APPLICATION
             {
                 REQUIRECOLLATERAL = loan.requireCollateral,
@@ -1965,11 +2023,15 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanData.CUSTOMERGROUPID = loan.customerGroupId;
                 loanData.CUSTOMERID = null;
+                loanData.ISRELATEDPARTY = GetCustomerIsRelatedParty((int)loan.customerGroupId);
+                loanData.ISPOLITICALLYEXPOSED = GetCustomerIsPoliticallyExposed((int)loan.customerGroupId);
             }
             else
             {
                 loanData.CUSTOMERID = loan.customerId;
                 loanData.CUSTOMERGROUPID = null;
+                loanData.ISRELATEDPARTY = GetCustomerIsRelatedParty((int)loan.customerId);
+                loanData.ISPOLITICALLYEXPOSED = GetCustomerIsPoliticallyExposed((int)loan.customerId);
             }
 
             if (loan.loanPreliminaryEvaluationId != null && loan.loanPreliminaryEvaluationId != 0)

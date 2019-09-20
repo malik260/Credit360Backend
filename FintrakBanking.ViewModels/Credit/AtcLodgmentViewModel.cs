@@ -52,6 +52,8 @@ namespace FintrakBanking.ViewModels.credit
         public DateTime? dateApproved { get; set; }
         public int? loopedStaffId { get; set; }
         public int unitBalance { get; set; }
+
+        public DateTime? dateReleased { get; set; }
     }
 
 

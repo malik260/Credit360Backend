@@ -979,6 +979,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/PSR.aspx?psrReportTypeId=" + psrReportTypeId + "&projectSiteReportId="+ projectSiteReportId;
             return path;
         }
+
+       public string RiskAssets(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetsReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName+ "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
     }
 
 }

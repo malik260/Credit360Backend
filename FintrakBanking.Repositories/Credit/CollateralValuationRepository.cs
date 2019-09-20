@@ -386,18 +386,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool GoForCollateralValuationApproval(ValuationPrerequisiteViewModel entity)
         {
-            //var valuations = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.COLLATERALVALUATIONID == entity.collateralValuationId && O.APPROVALSTATUSID == (int) ApprovalStatusEnum.Pending).Select(O => O).ToList();
-            var prerequisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.VALUATIONPREREQUISITEID == entity.valuationPrerequisiteId && O.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).Select(O => O).FirstOrDefault();
-        
+            var prerequisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.COLLATERALVALUATIONID == entity.collateralValuationId && O.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).Select(O => O).FirstOrDefault();
+            //var prerequisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.VALUATIONPREREQUISITEID == entity.valuationPrerequisiteId && (O.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || O.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)).Select(O => O).FirstOrDefault();
+
             try
             {
-                //foreach (var valuation in valuations)
-                //{
-                prerequisite.APPROVALSTATUSID = (int) ApprovalStatusEnum.Processing;
-                //}
 
                 if (prerequisite != null)
                 {
+                    //prerequisite.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+
                     _workflow.StaffId = entity.createdBy;
                     _workflow.CompanyId = entity.companyId;
                     _workflow.StatusId = (int) ApprovalStatusEnum.Processing;
@@ -591,5 +589,37 @@ namespace FintrakBanking.Repositories.Credit
 
             return false;
         }
+
+        public bool UpdateValuationPrerequisiteStatus(int valuationPrerequisiteId, UserInfo user)
+        {
+            var prerequisite = _context.TBL_COLLATERAL_VALUATION_PRE.Where(O => O.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                        && O.VALUATIONPREREQUISITEID == valuationPrerequisiteId).FirstOrDefault();
+
+            if (prerequisite != null)
+            {
+                prerequisite.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ValuationPrerequisiteUpdated,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = "Updated Valuation Prerequisite with code: " + prerequisite.VALUATIONPREREQUISITEID,
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = _general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                _audit.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+
+                return _context.SaveChanges() > 0;
+            }
+
+            return false;
+        }
+
     }
 }

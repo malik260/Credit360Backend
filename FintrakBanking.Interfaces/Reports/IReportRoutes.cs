@@ -42,6 +42,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetLoanCommercialReport(DateRange dateRange, int companyId, int staffId);
         string GetTeamAndRevolving(DateRange dateRange, int companyId, int staffId);
         string GetEarnedUnearnedInterest(DateRange dateRange, int companyId, int staffId);
+        string RiskAssets(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string GetCollateralRevaluation(int companyId, int value);
         string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
         string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId, int staffId);
@@ -110,5 +111,6 @@ namespace FintrakBanking.Interfaces.Reports
         string SubmissionOfOriginalDocument(DateRange dateRange);
 
         string PSR(int psrReportTypeId, int projectSiteReportId);
+       
     }
 }
