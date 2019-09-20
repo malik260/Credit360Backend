@@ -8,18 +8,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server" >
     <title></title>
-    
-   <%-- <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />--%>
 </head>
 <body>
     <form id="form1" runat="server">
         <div>
             <asp:ScriptManager ID="ScriptManager1" runat="server">
             </asp:ScriptManager>
-            <rsweb:ReportViewer ID="ReportViewer" runat="server" Width="100%" Height="100%" ShowParameterPrompts="false" AsyncRendering="false" SizeToReportContent="true" ShowPageNavigationControls="true" KeepSessionAlive="true">
+            <rsweb:ReportViewer ID="ReportViewer" runat="server" Width="100%" Height="100%" ShowParameterPrompts="false" SizeToReportContent="true" ShowPageNavigationControls="true" KeepSessionAlive="true">
             </rsweb:ReportViewer>
         </div>
     </form>
-</body>
+   </body>
 </html>

@@ -183,9 +183,11 @@
                         
                         JObject responseDataJsonString = JObject.Parse(responseData);
                         var data = responseDataJsonString["data"].ToString();
-                        accountOutput = JsonConvert.DeserializeObject<CasaBalanceViewModel>(data);
-                  
-                        if(accountOutput != null)
+                        if(data != "{}") { accountOutput = JsonConvert.DeserializeObject<CasaBalanceViewModel>(data); }
+                        if (data == "{}") { accountOutput = null; }
+
+
+                        if (accountOutput != null)
                         {
                             var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountOutput.currencyType).CURRENCYID;
                             if (accountOutput.accountStatus.ToLower() == "open") accountOutput.accountStatus = "Active";
@@ -217,6 +219,7 @@
 
 
                         }
+                        else { accountOutput = new CasaBalanceViewModel(); }
                     }
 
                     //responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
@@ -250,7 +253,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"GetCustomerAccountBalance/{customerAccount}",
+                        APIURL = $"{API_URL}/GetCustomerAccountBalance/{customerAccount}",
                         LOGTYPEID = 1,
                         REFERENCENUMBER = customerAccount,
                         REQUESTDATETIME = requestDatetime,
@@ -388,7 +391,7 @@
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"ExposedPerson/{customerCode}");
+                    response = await client.GetAsync($"GetExposedPerson/{customerCode}");
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
@@ -588,7 +591,7 @@
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
                         //APIURL = $"api/InterestRateInquiry/GetInterestRateInquiry?model.accountNumber={accountNumber}&model.accountType={accountType}",
-                        APIURL = $"api / InterestRate / GetInterestRateInquiry /{ accountNumber }",
+                        APIURL = $"{API_URL}/GetInterestRateInquiry /{ accountNumber }",
                         LOGTYPEID = 18,
                         REFERENCENUMBER = accountNumber,
                         REQUESTDATETIME = requestDatetime,
@@ -736,7 +739,7 @@
 
                 var month = DateTime.Now.Month - 1;
                 var year = DateTime.Now.Year;
-                var searchDate = "0"+month + "-" + year;
+                var searchDate = "0" + month + "-" + year;
 
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;

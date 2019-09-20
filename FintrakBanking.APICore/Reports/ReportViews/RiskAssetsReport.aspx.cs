@@ -24,7 +24,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     //DateTime RunDate = DateTime.ParseExact(Request.QueryString["runDate"], "dd-MM-yyyy", null);
                     //string Level = Request.QueryString["level"];
                     //string MisCode = Request.QueryString["misCode"];
-                    //string ExposureType = Request.QueryString["ExposureType"];
+                    //string ExposureType = Request.QueryString["exposureType"];
                     //string DivisionName = Request.QueryString["divisionName"];
                     //string GroupName = Request.QueryString["groupName"];
                     //string BranchName = Request.QueryString["branchName"];
@@ -74,16 +74,15 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     ReportViewer.ProcessingMode = ProcessingMode.Remote;
                     ReportViewer.ShowCredentialPrompts = false;
 
-                    ReportParameter[] reportParameter = new ReportParameter[9];
-                    reportParameter[0] = new ReportParameter("MisCode", "bnk"); //MisCode
-                    reportParameter[1] = new ReportParameter("Level", "0"); //Level
-                    reportParameter[2] = new ReportParameter("ExposureType",  "Direct" );  //ExposureType
+                    ReportParameter[] reportParameter = new ReportParameter[8];
+                    reportParameter[0] = new ReportParameter("MisCode", "BAC800"); //MisCode
+                    reportParameter[1] = new ReportParameter("Level", "4"); //Level
+                    reportParameter[2] = new ReportParameter("ExposureType", "DIRECT");  //ExposureType
                     reportParameter[3] = new ReportParameter("DivisionName", "BUSINESS BANKING DIVISION"); //DivisionName
-                    reportParameter[4] = new ReportParameter("GroupName", "BUSINESS BANKING East"); //GroupName
-                    reportParameter[5] = new ReportParameter("BranchName", "BBD Branch_Business Banking Team (Aba-Aziukwu)"); //BranchName
-                    reportParameter[6] = new ReportParameter("SectorName", "General"); //SectorName
-                    reportParameter[7] = new ReportParameter("RunDate", "06/30/2019"); //RunDate.ToString()
-                    reportParameter[8] = new ReportParameter("RegionName", "BUSINESS BANKING Abia Zone"); //SectorName
+                    reportParameter[4] = new ReportParameter("GroupName", "Business Banking Abuja & North"); //GroupName
+                    reportParameter[5] = new ReportParameter("BranchName", "BBD Branch_Business Banking Team (Garki)"); //BranchName
+                    reportParameter[6] = new ReportParameter("RunDate", "06/30/2019"); //RunDate.ToString()
+                    reportParameter[7] = new ReportParameter("RegionName", "Business Banking Abuja Cadastral Zone"); //SectorName
 
                     //==== NOTE: for report on server, use the below ============
                     ReportViewer.ServerReport.SetParameters(reportParameter);

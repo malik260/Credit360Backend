@@ -65,7 +65,8 @@
                     requestDatetime = DateTime.Now;
                     //HttpResponseMessage response = await client.GetAsync($"api/ExchangeRate/GetExchangeRateProduct?rateProduct.fromCurrencyCode={fromCurrencyCode}&rateProduct.toCurrencyCode={toCurrencyCode}&rateProduct.rateCode={rateCode}");
                     response = await client.GetAsync(
-                        $"api/ExchangeRate/GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}");
+                    $"GetExchangeRateWithDate/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}/{DateTime.Now.Date}");
+                    //$"api/ExchangeRate/GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}"); GetExchangeRateWithDate
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
@@ -109,7 +110,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = $"api/ExchangeRate/GetExchangeRateProduct/{fromCurrencyCode}/{toCurrencyCode}/{rateCode}",
+                        APIURL = $"{API_URL}GetExchangeRateProduct /{fromCurrencyCode}/{toCurrencyCode}/{rateCode}/{DateTime.Now.Date}",
                         LOGTYPEID = 3,
                         REFERENCENUMBER = fromCurrencyCode + "--" +   toCurrencyCode + "--" + rateCode,
                         REQUESTDATETIME = requestDatetime,
