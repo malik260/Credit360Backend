@@ -285,8 +285,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.staffId = request.REQUESTSTAFFID;
                 this.toStaffId = staffId;
                 this.isLoopResponse = true;
-                this.fromLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID;
-                this.nextLevelId = request.FROMAPPROVALLEVELID != null ? request.FROMAPPROVALLEVELID : request.TOAPPROVALLEVELID;
+                this.fromLevelId = request.TOAPPROVALLEVELID;
+                this.nextLevelId = request.TOAPPROVALLEVELID;
             }
 
             //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0)
