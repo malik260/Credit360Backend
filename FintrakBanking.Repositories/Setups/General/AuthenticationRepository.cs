@@ -830,7 +830,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     context.TBL_PROFILE_SETTING.AsNoTracking();
 
-                    int count = profile.FAILEDLOGONATTEMPT ?? 0;
+                    //int count = profile.FAILEDLOGONATTEMPT ?? 0;
+                    int count = profile.FAILEDLOGONATTEMPT == 0 ? 1 : profile.FAILEDLOGONATTEMPT.Value + 1;
 
                     TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
                     prosett = context.TBL_PROFILE_SETTING.FirstOrDefault();

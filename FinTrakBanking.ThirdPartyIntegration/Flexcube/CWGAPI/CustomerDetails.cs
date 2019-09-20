@@ -737,9 +737,9 @@
                 var currentDate = DateTime.Now;
                 var startDate = DateTime.Now.AddMonths( -durationInMonths);
 
-                //var month = DateTime.Now.Month - 1;
-                //var year = DateTime.Now.Year;
-                //var searchDate = "0"+month + "-" + year;
+                var month = DateTime.Now.Month - 1;
+                var year = DateTime.Now.Year;
+                var searchDate = "0" + month + "-" + year;
 
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
