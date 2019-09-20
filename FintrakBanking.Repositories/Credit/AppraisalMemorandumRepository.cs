@@ -2433,7 +2433,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel model)
+        public IEnumerable<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel model)
         {
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.applicationDetailId);
             detail.REPAYMENTTERMS = model.terms;
