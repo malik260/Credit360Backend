@@ -2173,17 +2173,16 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("risk-assets-report")]
-        public HttpResponseMessage GetRiskAssets()
+        public HttpResponseMessage GetRiskAssets([FromBody] RiskAssets obj)
         {
-            //[FromBody] RiskAssets obj
+           
             var token = new TokenDecryptionHelper();
             try
             {
-               //var data = repo.RiskAssets(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.sectorName);
-                var data = repo.RiskAssets();
+               var data = repo.RiskAssets(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

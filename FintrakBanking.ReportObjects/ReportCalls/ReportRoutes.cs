@@ -980,23 +980,14 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string RiskAssets()
+       public string RiskAssets(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/RiskAssetsReport.aspx?key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            path = reportPath + "ReportViews/RiskAssetsReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName+ "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
-
-        //public string RiskAssets(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string sectorName)
-        //{
-        //    HashProperty hashValue = GetHashedDateValue(dateInfor);
-
-        //    string path = string.Empty;
-        //    path = reportPath + "ReportViews/RiskAssetsReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&sectorName=" + sectorName;
-        //    return path;
-        //}
     }
 
 }
