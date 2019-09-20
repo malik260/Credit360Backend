@@ -51,6 +51,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime COMPLETIONDATE { get; set; }
 
         public DateTime NEXTVISITATIONDATE { get; set; }
+        public DateTime? INSPECTIONDATE { get; set; }
 
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }

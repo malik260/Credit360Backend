@@ -26,6 +26,7 @@ namespace FintrakBanking.ViewModels.credit
         public string projectDescription { get; set; }
 
         public DateTime commencementDate { get; set; }
+        public DateTime? inspectionDate { get; set; }
 
         public DateTime completionDate { get; set; }
 
