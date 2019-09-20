@@ -1025,6 +1025,13 @@
     <Compile Include="Reports\ReportViews\UserGroupChangeReport.aspx.designer.cs">
       <DependentUpon>UserGroupChangeReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\WebForm1.aspx.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\WebForm1.aspx.designer.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx.cs">
       <DependentUpon>WeeklyRecoveryReportForFINCON.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1157,6 +1164,7 @@
     <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
     <Content Include="Reports\ReportViews\UnutilizedFacilityReport.aspx" />
     <Content Include="Reports\ReportViews\UserGroupChangeReport.aspx" />
+    <Content Include="Reports\ReportViews\WebForm1.aspx" />
     <Content Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
