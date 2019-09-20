@@ -736,6 +736,7 @@ namespace FintrakBanking.Repositories.Credit
             searchString = searchString.Trim().ToLower();
 
 
+
             var applications = (from lgr in context.TBL_LETTER_GENERATION_REQUEST
                                 join c in context.TBL_CUSTOMER on lgr.CUSTOMERID equals c.CUSTOMERID
                                 join atrail in context.TBL_APPROVAL_TRAIL on lgr.LETTERGENERATIONREQUESTID equals atrail.TARGETID
@@ -764,6 +765,8 @@ namespace FintrakBanking.Repositories.Credit
             return applicationGrouped;
 
         }
+
+        
     }
 }
 

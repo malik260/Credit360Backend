@@ -2477,6 +2477,44 @@ namespace FintrakBanking.Repositories.Credit
 
             return insurance;
         }
+
+
+        public IEnumerable<InsurancePolicies> Explore(string searchString)
+        {
+            var operationId = (int)OperationsEnum.IsurancePolicyApproval;
+
+            searchString = searchString.Trim().ToLower();
+
+
+        var operations = (from x in context.TBL_INSURANCE_REQUEST
+                                join s in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals s.COLLATERALCUSTOMERID
+                                join atrail in context.TBL_APPROVAL_TRAIL on x.INSURANCEREQUESTID equals atrail.TARGETID
+                                join c in context.TBL_CUSTOMER on s.CUSTOMERID equals c.CUSTOMERID
+                            
+                          where
+                            (atrail.OPERATIONID == operationId
+                                && (x.REQUESTNUMBER.ToString().Trim().ToLower().Contains(searchString)
+                                || c.FIRSTNAME.ToLower().Contains(searchString)
+                                || c.LASTNAME.ToLower().Contains(searchString)
+                                || c.MIDDLENAME.ToLower().Contains(searchString)
+                                )
+                            )
+                          select new InsurancePolicies
+                             {
+                                 insuranceRequestId = x.INSURANCEREQUESTID,
+                                 requestNumber = x.REQUESTNUMBER,
+                                 collateralCode = s.COLLATERALCODE,                                                        
+                                 collateralSubTypeId = s.COLLATERALSUBTYPEID,
+                                 startDate = s.DATETIMEUPDATED,                           
+                                 currentApprovalLevel = atrail.TOAPPROVALLEVELID != null ? context.TBL_APPROVAL_LEVEL.FirstOrDefault(l => l.APPROVALLEVELID == atrail.TOAPPROVALLEVELID).LEVELNAME : "n/a",
+                                 customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,                                                                      
+                                 approvalStatusId = atrail.APPROVALSTATUSID,
+                                 approvalStatusName = context.TBL_APPROVAL_STATUS.Where(a => a.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(a => a.APPROVALSTATUSNAME).FirstOrDefault(),
+
+                             }).ToList();
+
+            return operations;
+        }
         // stock collateral
 
         private void AddTempStockCollateral(int collateralId, CollateralViewModel entity)
@@ -9325,6 +9363,8 @@ namespace FintrakBanking.Repositories.Credit
             entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
             return context.SaveChanges() != 0;
         }
+
+        
     }
 
 }

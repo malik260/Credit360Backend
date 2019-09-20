@@ -2396,8 +2396,19 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.DeleteInsuranceType(id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
+     
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("insurance-search/{searchString}")]
+        public HttpResponseMessage GetInsuranceSearch(string searchString)
+        {
+            IEnumerable<InsurancePolicies> response = repo.Explore(searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
 
     }
-   
+
 }
 

@@ -142,6 +142,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddInsurancePolicy(InsurancePolicies entity);
 
         List<InsurancePolicies> GetCollateralInsurancePoliciesWaitingForApproval(int staffId);
+        IEnumerable<InsurancePolicies> Explore(string searchString);
 
         WorkflowResponse GoForInsurancePolicyApproval(ApprovalViewModel model);
         IEnumerable<CollateralCoverageViewModel> GetCollateralCoverage(int collateralSubTypeId);
