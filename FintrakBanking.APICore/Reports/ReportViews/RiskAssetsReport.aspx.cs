@@ -21,45 +21,45 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 try
                 {
-                    //DateTime RunDate = DateTime.ParseExact(Request.QueryString["runDate"], "dd-MM-yyyy", null);
-                    //string Level = Request.QueryString["level"];
-                    //string MisCode = Request.QueryString["misCode"];
-                    //string ExposureType = Request.QueryString["exposureType"];
-                    //string DivisionName = Request.QueryString["divisionName"];
-                    //string GroupName = Request.QueryString["groupName"];
-                    //string BranchName = Request.QueryString["branchName"];
-                    //string SectorName = Request.QueryString["sectorName"];
+                    DateTime RunDate = DateTime.ParseExact(Request.QueryString["runDate"], "dd/MM/yyyy", null);
+                    string Level = Request.QueryString["level"];
+                    string MisCode = Request.QueryString["misCode"];
+                    string ExposureType = Request.QueryString["exposureType"];
+                    string DivisionName = Request.QueryString["divisionName"];
+                    string GroupName = Request.QueryString["groupName"];
+                    string BranchName = Request.QueryString["branchName"];
+                    string RegionName = Request.QueryString["regionName"];
 
-                    //string inputDateInfo = Request.QueryString["key1"];
-                    //string inputHashValue = Request.QueryString["key2"];
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
 
                     HashHelper hash = new HashHelper();
 
-                    //DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                    //var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
 
-                    //if (inputHashValue != incomingDateHash)
-                    //{
-                    //    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    //    this.ReportViewer.LocalReport.Refresh();
-                    //    return;
-                    //}
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
 
                     var currentDate = DateTime.Now;
 
-                    //var dateDifference = currentDate - incomingDate;
+                    var dateDifference = currentDate - incomingDate;
 
-                    //if (dateDifference.Seconds > 30)
-                    //{
-                    //    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    //    this.ReportViewer.LocalReport.Refresh();
-                    //    return;
-                    //}
+                    if (dateDifference.Seconds > 30)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
 
-                    
-                   
-                    
+
+
+
                     string reportServerUrl = ConfigurationManager.AppSettings["ReportServerURL"];
                     string domain = ConfigurationManager.AppSettings["rsDomain"];
                     string userName = ConfigurationManager.AppSettings["rsUserName"]; 
@@ -75,14 +75,14 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     ReportViewer.ShowCredentialPrompts = false;
 
                     ReportParameter[] reportParameter = new ReportParameter[8];
-                    reportParameter[0] = new ReportParameter("MisCode", "BAC800"); //MisCode
-                    reportParameter[1] = new ReportParameter("Level", "4"); //Level
-                    reportParameter[2] = new ReportParameter("ExposureType", "DIRECT");  //ExposureType
-                    reportParameter[3] = new ReportParameter("DivisionName", "BUSINESS BANKING DIVISION"); //DivisionName
-                    reportParameter[4] = new ReportParameter("GroupName", "Business Banking Abuja & North"); //GroupName
-                    reportParameter[5] = new ReportParameter("BranchName", "BBD Branch_Business Banking Team (Garki)"); //BranchName
-                    reportParameter[6] = new ReportParameter("RunDate", "06/30/2019"); //RunDate.ToString()
-                    reportParameter[7] = new ReportParameter("RegionName", "Business Banking Abuja Cadastral Zone"); //SectorName
+                    reportParameter[0] = new ReportParameter("MisCode", MisCode);
+                    reportParameter[1] = new ReportParameter("Level", Level);
+                    reportParameter[2] = new ReportParameter("ExposureType", ExposureType); 
+                    reportParameter[3] = new ReportParameter("DivisionName", DivisionName); 
+                    reportParameter[4] = new ReportParameter("GroupName", GroupName); 
+                    reportParameter[5] = new ReportParameter("BranchName", BranchName); 
+                    reportParameter[6] = new ReportParameter("RunDate", RunDate.ToString());
+                    reportParameter[7] = new ReportParameter("RegionName", RegionName); 
 
                     //==== NOTE: for report on server, use the below ============
                     ReportViewer.ServerReport.SetParameters(reportParameter);

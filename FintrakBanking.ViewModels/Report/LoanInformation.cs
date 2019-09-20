@@ -333,7 +333,7 @@ namespace FintrakBanking.ViewModels.Reports
         public string divisionName { get; set; }
         public string groupName { get; set; }
         public string branchName { get; set; }
-        public string sectorName { get; set; }
+        public string regionName { get; set; }
     }
 
 }
