@@ -210,7 +210,9 @@ namespace FintrakBanking.ViewModels.credit
 
         public string lastComment { get; set; }
 
-        public int approvalTrailId { get; set; }
+        public int lcApprovalTrailId { get; set; }
+        public int? releaseApprovalTrailId { get; set; }
+        public int? usanceApprovalTrailId { get; set; }
 
         public int? toStaffId { get; set; }
 
