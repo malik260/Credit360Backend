@@ -32,6 +32,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime LASTVALUATIONDATE { get; set; }
 
+        public DateTime? NEXTVALUATIONDATE { get; set; }
+
         public short? VALUERID { get; set; }
 
         [StringLength(100)]
@@ -94,6 +96,10 @@ namespace FintrakBanking.Entities.Models
         public int? STATEID { get; set; }
 
         public decimal? BANKSHAREOFCOLLATERAL { get; set; }
+
+        public string VALUERNAME { get; set; }
+
+        public string VALUERACCOUNTNUMBER { get; set; }
 
         public virtual TBL_CITY TBL_CITY { get; set; }
 
