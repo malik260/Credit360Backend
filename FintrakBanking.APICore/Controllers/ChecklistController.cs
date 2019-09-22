@@ -1173,6 +1173,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("validate-checklist/{applicationId}")]
+        public HttpResponseMessage ValidateChecklist(int applicationId)
+        {
+                var data = repo.ValidateChecklist(applicationId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred" });
+           
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("deferred-checklist-byContionId/")]

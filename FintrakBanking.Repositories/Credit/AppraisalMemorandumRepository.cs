@@ -1666,7 +1666,8 @@ namespace FintrakBanking.Repositories.Credit
                         statusId = x.d.STATUSID,
                         exchangeRate = x.d.EXCHANGERATE,
                         terms = x.d.REPAYMENTTERMS,
-                        schedule = x.d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
+                        repaymentScheduleId = (int)x.d.REPAYMENTSCHEDULEID,
+                        //schedule = x.d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                         crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
                         crmsRepaymentTypeId = x.d.CRMSREPAYMENTAGREEMENTID,
@@ -2433,7 +2434,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel model)
+        public IEnumerable<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel model)
         {
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.applicationDetailId);
             detail.REPAYMENTTERMS = model.terms;
