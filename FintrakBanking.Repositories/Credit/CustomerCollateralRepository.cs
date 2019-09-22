@@ -3843,6 +3843,7 @@ namespace FintrakBanking.Repositories.Credit
                 propertyAddress = x.PROPERTYADDRESS,
                 dateOfAcquisition = x.DATEOFACQUISITION,
                 lastValuationDate = x.LASTVALUATIONDATE,
+                //nextValuationDate = x.NEXTVALUATIONDATE,
                 valuerId = x.VALUERID,
                 collateralValuer = context.TBL_COLLATERAL_VALUER.Where(t => t.COLLATERALVALUERID == x.VALUERID).Select(q => q.NAME).FirstOrDefault(),
                 valuerReferenceNumber = x.VALUERREFERENCENUMBER,
@@ -3888,6 +3889,9 @@ namespace FintrakBanking.Repositories.Credit
                 referenceNumber = x.VALUERREFERENCENUMBER,
                 marketPrice = (decimal) x.OPENMARKETVALUE,
                 perfectionStatusReason = x.PERFECTIONSTATUSID.ToString(),
+
+                valuerName = x.VALUERNAME,
+                valuerAccountNumber = x.VALUERACCOUNTNUMBER,
 
             }).FirstOrDefault();
             details = GetCollateralInsurancePolicy(details);
@@ -6376,6 +6380,7 @@ namespace FintrakBanking.Repositories.Credit
                     property.DATEOFACQUISITION = entity.dateOfAcquisition;
                     property.FORCEDSALEVALUE = entity.forcedSaleValue;
                     property.LASTVALUATIONDATE = entity.lastValuationDate;
+                    //property.NEXTVALUATIONDATE = entity.nextValuationDate;
                     property.LATITUDE = entity.latitude;
                     property.LONGITUDE = entity.longitude;
                     property.NEARESTBUSSTOP = entity.nearestBusStop;
@@ -6404,6 +6409,11 @@ namespace FintrakBanking.Repositories.Credit
                     property.ESTIMATEDVALUE = entity.estimatedValue;
                     comment = $"Prperty collateral type has been update through loan application by {entity.createdBy} staffid";
 
+                    property.VALUERNAME = entity.valuerName;
+                    property.VALUERACCOUNTNUMBER = entity.valuerAccountNumber;
+                    //if (entity.valuerId == 72) {
+                    //}
+
                     return;
                 }
                 else
@@ -6419,6 +6429,7 @@ namespace FintrakBanking.Repositories.Credit
                         DATEOFACQUISITION = entity.dateOfAcquisition,
                         FORCEDSALEVALUE = entity.forcedSaleValue,
                         LASTVALUATIONDATE = entity.lastValuationDate,
+                        //NEXTVALUATIONDATE = entity.nextValuationDate,
                         LATITUDE = entity.latitude,
                         LONGITUDE = entity.longitude,
                         NEARESTBUSSTOP = entity.nearestBusStop,
@@ -6446,7 +6457,10 @@ namespace FintrakBanking.Repositories.Credit
                         BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral,
                         ESTIMATEDVALUE = entity.estimatedValue,
 
-                    });
+                        VALUERNAME = entity.valuerName,
+                        VALUERACCOUNTNUMBER = entity.valuerAccountNumber,
+
+                });
                     comment = $"New property collateral type has been created through loan application by {entity.createdBy} staffid";
                 }
             }
@@ -6462,6 +6476,7 @@ namespace FintrakBanking.Repositories.Credit
                     PROPERTYADDRESS = entity.propertyAddress,
                     DATEOFACQUISITION = entity.dateOfAcquisition,
                     LASTVALUATIONDATE = entity.lastValuationDate,
+                    //NEXTVALUATIONDATE = entity.nextValuationDate,
                     VALUERID = entity.valuerId,
                     VALUERREFERENCENUMBER = entity.valuerReferenceNumber,
                     PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId,
@@ -6487,7 +6502,10 @@ namespace FintrakBanking.Repositories.Credit
                     STATEID = entity.stateId,
                     LOCALGOVERNMENTID = entity.localGovernmentId,
                     BANKSHAREOFCOLLATERAL = entity.bankShareOfCollateral,
-                    ESTIMATEDVALUE = entity.estimatedValue
+                    ESTIMATEDVALUE = entity.estimatedValue,
+
+                    VALUERNAME = entity.valuerName,
+                    VALUERACCOUNTNUMBER = entity.valuerAccountNumber,
 
 
                 });

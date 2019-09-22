@@ -135,6 +135,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string propertyAddress { get; set; }
         public DateTime dateOfAcquisition { get; set; }
         public DateTime lastValuationDate { get; set; }
+        public DateTime? nextValuationDate { get; set; }
         public short? valuerId { get; set; }
         public string valuerReferenceNumber { get; set; }
         public short propertyValueBaseTypeId { get; set; }
@@ -170,6 +171,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string perfectionStatusReason { get; set; }
         public bool? isOwnerOccupied { get; set; }
         public bool? isResidential { get; set; }
+
+        public string valuerName { get; set; }
+        public string valuerAccountNumber { get; set; }
 
         //public string thirdPartyName { get; set; }
 

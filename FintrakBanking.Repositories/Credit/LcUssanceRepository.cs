@@ -115,7 +115,7 @@ namespace FintrakBanking.Repositories.credit
                             {
                                 lcIssuanceId = x.LCISSUANCEID,
                                 lcUssanceId = u.LCUSSANCEID,
-                                approvalTrailId = utrail.APPROVALTRAILID,
+                                lcApprovalTrailId = utrail.APPROVALTRAILID,
                                 approvalStatusId = utrail.APPROVALSTATUSID,
                                 loopedStaffId = utrail.LOOPEDSTAFFID,
                                 beneficiaryName = x.BENEFICIARYNAME,
@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.credit
                                 invoiceDueDate = x.INVOICEDUEDATE,
                                 lcReferenceNumber = x.LCREFERENCENUMBER,
                                 dateTimeCreated = (DateTime)x.DATETIMECREATED
-                                }).GroupBy(l => l.lcUssanceId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                                }).GroupBy(l => l.lcUssanceId).Select(l => l.OrderByDescending(t => t.lcApprovalTrailId).FirstOrDefault())
                                 .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                                 || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
                                 && l.loopedStaffId == staffId)).ToList();
@@ -393,7 +393,7 @@ namespace FintrakBanking.Repositories.credit
                              currentApprovalLevelId = ut.TOAPPROVALLEVELID,
                              currentApprovalLevel = ut.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                              currentApprovalLevelTypeId = ut.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
-                             approvalTrailId = ut == null ? 0 : ut.APPROVALTRAILID, // for inner sequence ordering
+                             lcApprovalTrailId = ut == null ? 0 : ut.APPROVALTRAILID, // for inner sequence ordering
                              toStaffId = ut.TOSTAFFID,
                              approvalStatusId = ut.APPROVALSTATUSID,
                              applicationStatusId = u.USANCEAPPLICATIONSTATUSID,
@@ -410,7 +410,7 @@ namespace FintrakBanking.Repositories.credit
             applications = query.AsQueryable()
                 .Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.lcIssuanceId)
-                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault());
+                .Select(g => g.OrderByDescending(b => b.lcApprovalTrailId).FirstOrDefault());
 
             return applications.ToList();
         }

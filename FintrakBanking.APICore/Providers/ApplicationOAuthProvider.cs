@@ -366,7 +366,6 @@ namespace FintrakBanking.APICore.Providers
                             profile.LOGINCODE = null;
                             //int count = profile.FAILEDLOGONATTEMPT ?? 0;
                             int count = profile.FAILEDLOGONATTEMPT == 0 ? 1 : profile.FAILEDLOGONATTEMPT.Value + 1;
-
                             profile.FAILEDLOGONATTEMPT += 1;
 
                             TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
