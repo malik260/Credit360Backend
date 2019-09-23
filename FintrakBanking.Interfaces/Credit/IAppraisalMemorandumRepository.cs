@@ -68,7 +68,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool WorkflowTest();
 
-        List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity);
+        IEnumerable<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity);
         IEnumerable<RepaymentScheduleTermSetupViewModel> GetAllSetupRepaymentTerms();
         List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity);
         List<ProductLimitValidationViewModel> GetProductLimitValidation(int applicationId, int classId);
