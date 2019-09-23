@@ -24,7 +24,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
         {
             _context = context;
             API_KEY = "WzKQBRQXboWsIVI";
-            API_URL = "http://10.1.9.197:94/";
+            API_URL = "http://10.1.9.197:94/api/Credit360API/";
             //var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
             //if (configdata != null)
             //{
@@ -46,7 +46,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"api/Credit360API/GetCorporateRatioPDCosolidatedByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"GetCorporateRatioPDConsolidatedByCustomerID/{customerNumber}?key={API_KEY}";
             try
             { 
                 handler.UseDefaultCredentials = true;
@@ -77,13 +77,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 List<RatingAndRatioViewModel> customerRatios = new List<RatingAndRatioViewModel>();
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
-
+                    var result = await response.Content.ReadAsAsync<List<RatingAndRatioViewModel>>();
+                    
                     var responseData = await response.Content.ReadAsStringAsync();
-                    JObject responseDataJsonString = JObject.Parse(responseData);
+                    //JObject responseDataJsonString = JObject.Parse(responseData);
 
-                    var data = responseDataJsonString["data"].ToString();
-                    customerRatios = JsonConvert.DeserializeObject<List<RatingAndRatioViewModel>>(data);
+                    //var data = responseDataJsonString["data"].ToString();
+                    customerRatios = result;// JsonConvert.DeserializeObject<List<RatingAndRatioViewModel>>(data);
 
                 }
               
@@ -132,7 +132,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"api/Credit360API/GetCorporatePDByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"GetCorporatePDByCustomerID/{customerNumber}?key={API_KEY}";
             try 
             {
                 handler.UseDefaultCredentials = true;

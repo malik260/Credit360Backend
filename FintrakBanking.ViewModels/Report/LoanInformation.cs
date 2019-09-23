@@ -322,15 +322,18 @@ namespace FintrakBanking.ViewModels.Reports
         public string applicationRefrenceNumber { get; set; }
         public decimal loanFigure { get; set; }
      
+    }
 
-
-
-
-
-
-
-
-
+    public class RiskAssets
+    {
+        public DateTime runDate { get; set; }
+        public string level { get; set; }
+        public string misCode { get; set; }
+        public string exposureType { get; set; }
+        public string divisionName { get; set; }
+        public string groupName { get; set; }
+        public string branchName { get; set; }
+        public string regionName { get; set; }
     }
 
 }

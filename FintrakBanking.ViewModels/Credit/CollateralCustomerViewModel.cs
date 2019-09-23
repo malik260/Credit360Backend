@@ -135,6 +135,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string propertyAddress { get; set; }
         public DateTime dateOfAcquisition { get; set; }
         public DateTime lastValuationDate { get; set; }
+        public DateTime? nextValuationDate { get; set; }
         public short? valuerId { get; set; }
         public string valuerReferenceNumber { get; set; }
         public short propertyValueBaseTypeId { get; set; }
@@ -170,6 +171,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string perfectionStatusReason { get; set; }
         public bool? isOwnerOccupied { get; set; }
         public bool? isResidential { get; set; }
+
+        public string valuerName { get; set; }
+        public string valuerAccountNumber { get; set; }
 
         //public string thirdPartyName { get; set; }
 
@@ -399,6 +403,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isMapped { get; set; }
         public string collateralSummary { get; set; }
         public int? loopedStaffId { get; set; }
+        public string lastApprovalComment { get; set; }
     }
 
     public class crossGarantee
@@ -1059,5 +1064,21 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int collateralStatusId { get; set; }
         public string collateralStatusName { get; set; }
+    }
+
+    public class InsuranceCompanyViewModel:GeneralEntity
+    {
+        public int InsuranceCompanyId { get; set; }
+        public int CompanyId { get; set; }
+        public string  CompanyName { get; set; }
+        public string Address { get; set; }
+        public string ContactEmail { get; set; }
+        public string PhoneNumber { get; set; }
+    }
+
+    public class InsuranceTypeViewModel: GeneralEntity
+    {
+        public string InsuranceType { get; set; }
+        public int InsuranceTypeId { get; set; }
     }
 }

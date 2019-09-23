@@ -159,7 +159,7 @@ namespace FintrakBanking.Repositories.Customer
                 AUDITTYPEID = (short)AuditTypeEnum.CustomerAdded,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Added Customer  '{entity.customerName}' with Code: {entity.customerCode}",
+                DETAIL = $"Added Customer  '{entity.customerName}' with Code: {entity.prospectCustomerCode}",
                 IPADDRESS = entity.userIPAddress,
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -190,6 +190,15 @@ namespace FintrakBanking.Repositories.Customer
             }
         }
 
+        public bool GetPoliticallyExposedPerson(string customerCode)
+        {
+            bool isPoliticallyExposed = false;
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                isPoliticallyExposed = finacle.GetExposePersonStatus(customerCode);
+            }
+            return isPoliticallyExposed;
+        }
 
         private void AddCustomerAddresses(List<CustomerAddressViewModels> entity,
             int status)
@@ -224,15 +233,17 @@ namespace FintrakBanking.Repositories.Customer
                     TBL_CUSTOMER_ADDRESS address;
                     // if (entity.addressId != 0 || entity.addressId < 0)  //Check if record is new or modified record
                     // {
-                    address = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x=>x.ADDRESSID==entity.addressId);
+                    address = context.TBL_CUSTOMER_ADDRESS.Where(x=>x.ADDRESSID==entity.addressId).FirstOrDefault();
                     var customer = context.TBL_CUSTOMER.Find(entity.customerId);
                     var accountCompleted = customer.ACCOUNTCREATIONCOMPLETE;
-                    var cityName = context.TBL_CITY.Where(c=>c.CITYID == address.CITYID).FirstOrDefault().CITYNAME;
-                    var existingAddrss = address?.ADDRESS + " " + cityName;
-                    entity.homeTown = context.TBL_CITY.Where(x=>x.CITYID == entity.cityId).Select(m=>m.CITYNAME).FirstOrDefault();
+                    
                     //If Customer main table ACCOUNTCREATIONCOMPLETE column equal false and entity.canModified equal true, record insert directly to the main table 
                     if (address != null && accountCompleted == false)
                     {
+                        var cityName = context.TBL_CITY.Where(c => c.CITYID == address.CITYID).FirstOrDefault()?.CITYNAME;
+                        var existingAddrss = address?.ADDRESS + " " + cityName;
+                        entity.homeTown = context.TBL_CITY.Where(x => x.CITYID == entity.cityId).Select(m => m.CITYNAME).FirstOrDefault();
+
                         address.ACTIVE = entity.active;
                         address.ADDRESS = entity.address;
                         address.ADDRESSTYPEID = (short)entity.addressTypeId;
@@ -2455,7 +2466,7 @@ namespace FintrakBanking.Repositories.Customer
                            nationalityId = a.NATIONALITYID,
                            occupation = a.OCCUPATION,
                            placeOfBirth = a.PLACEOFBIRTH,
-                           isPoliticallyExposed = a.ISPOLITICALLYEXPOSED == false
+                           isPoliticallyExposed = a.ISPOLITICALLYEXPOSED == false && (USE_THIRD_PARTY_INTEGRATION)
                                ? finacle.GetExposePersonStatus(a.CUSTOMERCODE)
                                : a.ISPOLITICALLYEXPOSED,
                            relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
@@ -2726,8 +2737,15 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool UpdateCustomer(int customerId, CustomerViewModels entity)
         {
+  
             var detail = string.Empty;
+
+            //get customer record by id
             var customerMain = context.TBL_CUSTOMER.Find(customerId);
+
+            //get previous customer name
+            var previousCustomerName = customerMain?.FIRSTNAME;
+
             if (customerMain != null && customerMain.ACCOUNTCREATIONCOMPLETE == false && entity.canModified == true)
             {
                 customerMain.CRMSCOMPANYSIZEID = entity.crmsCompanySizeId;
@@ -2903,9 +2921,8 @@ namespace FintrakBanking.Repositories.Customer
                     AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
-                    DETAIL = $"The Customer '{ entity.customerName }' with code: '{entity.customerCode}' " +
-                    $"on  ({ entity.customerId })  Has Been Updated",
-                    IPADDRESS = entity.userIPAddress,
+                    DETAIL = $"The Customer First Name for '{ entity.customerName }' with code: '{entity.customerCode}' " +
+                    $"on  ({ entity.customerId })  Has Been Updated from '{previousCustomerName}' to '{entity.firstName}' ",
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
@@ -5347,7 +5364,8 @@ namespace FintrakBanking.Repositories.Customer
                         relParty.LASTUPDATEDBY = entity.createdBy;
                         relParty.DATETIMEUPDATED = DateTime.Now;
 
-                        auditDetail = $"Updated new Customer's Insider Related Party Relationship Type for customer: {customer.CUSTOMERCODE}. from {previousRelationshipType} to {entity.relationshipType}"; auditType = (short)AuditTypeEnum.CustomerDetailUpdated;
+                        auditDetail = $"Updated new Customer's Insider Related Party Relationship Type for customer: {customer.CUSTOMERCODE}. from {previousRelationshipType} to {entity.relationshipType}";
+                        auditType = (short)AuditTypeEnum.CustomerDetailUpdated;
                     }
                 }
                 else

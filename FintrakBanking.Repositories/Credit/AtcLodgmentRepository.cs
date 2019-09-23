@@ -127,6 +127,7 @@ namespace FintrakBanking.Repositories.credit
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval
                     select new AtcLodgmentViewModel
                     {
+                        numberOfBags = x.NUMBEROFBAGS,
                         atcLodgmentId = x.ATCLODGMENTID,
                         customerId = x.CUSTOMERID,
                         atcTypeId = x.ATCTYPEID,
@@ -199,6 +200,7 @@ namespace FintrakBanking.Repositories.credit
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval
                     select new AtcLodgmentViewModel
                     {
+                        numberOfBags = x.NUMBEROFBAGS,
                         atcReleaseId = r.ATCRELEASEID,
                         atcLodgmentId = r.ATCLODGMENTID,
                         customerId = x.CUSTOMERID,
@@ -218,6 +220,7 @@ namespace FintrakBanking.Repositories.credit
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                        dateReleased = x.DATETIMERELEASED
                     }).OrderByDescending(o => o.atcReleaseId)
              .ToList();
         }
@@ -264,34 +267,36 @@ namespace FintrakBanking.Repositories.credit
                             var document = context.TBL_ATC_RELEASE.Where(o => o.ATCLODGMENTID == mod.atcLodgmentId &&
                                                                     (o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred))
                                                                     .FirstOrDefault();
-                            //var doc = (from ar in context.TBL_ATC_RELEASE
-                            //           join al in context.TBL_ATC_LODGMENT on ar.ATCLODGMENTID equals al.ATCLODGMENTID
-                            //           where ar.ATCLODGMENTID == model.atcLodgmentId && 
-                            //           (ar.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || ar.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                            //           select al).FirstOrDefault();
+
                             var doc = context.TBL_ATC_LODGMENT.Where(o => o.ATCLODGMENTID == mod.atcLodgmentId).FirstOrDefault();
                             if (document != null && doc != null)
                             {
+                                // Update the date released the Lodgement
+                                doc.DATETIMERELEASED = DateTime.Now;
+
                                 document.APPROVALSTATUSID = mod.approvalStatusId;
-                                document.UNITNUMBER = document.UNITBALANCE;
-                                doc.UNITNUMBER = document.UNITBALANCE;
-                                document.DATETIMEAPPROVED = general.GetApplicationDate();
-
-                                //Adding Data to TBL_RELEASE_ARCHIVE
-                                var entity = new TBL_ATC_RELEASE_ARCHIVE
+                                if(mod.approvalStatusId == (short)ApprovalStatusEnum.Approved)
                                 {
-                                    UNITNUMBER = document.UNITBALANCE,
-                                    ATCRELEASEID = document.ATCRELEASEID,
-                                    UNITTORELEASE = document.UNITTORELEASE,
-                                    UNITBALANCE = document.UNITBALANCE,
-                                    DATETIMECREATED = document.DATETIMECREATED,
-                                    APPROVALSTATUSID = document.APPROVALSTATUSID,
-                                    CREATEDBY = document.CREATEDBY,
-                                    ATCLODGMENTID = mod.atcLodgmentId
+                                    document.UNITNUMBER = document.UNITBALANCE;
+                                    doc.UNITNUMBER = document.UNITBALANCE;
+                                    document.DATETIMEAPPROVED = general.GetApplicationDate();
 
-                                };
+                                    //Adding Data to TBL_RELEASE_ARCHIVE
+                                    var entity = new TBL_ATC_RELEASE_ARCHIVE
+                                    {
+                                        UNITNUMBER = document.UNITBALANCE,
+                                        ATCRELEASEID = document.ATCRELEASEID,
+                                        UNITTORELEASE = document.UNITTORELEASE,
+                                        UNITBALANCE = document.UNITBALANCE,
+                                        DATETIMECREATED = document.DATETIMECREATED,
+                                        APPROVALSTATUSID = document.APPROVALSTATUSID,
+                                        CREATEDBY = document.CREATEDBY,
+                                        ATCLODGMENTID = mod.atcLodgmentId
 
-                                context.TBL_ATC_RELEASE_ARCHIVE.Add(entity);
+                                    };
+
+                                    context.TBL_ATC_RELEASE_ARCHIVE.Add(entity);
+                                }
                             }
 
                             
@@ -782,8 +787,9 @@ namespace FintrakBanking.Repositories.credit
                         approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                         customerCode = c.CUSTOMERCODE,
-                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault()
+                        branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == x.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
 
+                        dateReleased = x.DATETIMEUPDATED,
                     }).OrderByDescending(o => o.atcLodgmentId)
              .ToList();
         }

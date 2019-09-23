@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.ViewModels.CASA;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -47,9 +48,9 @@ namespace FintrakBanking.Repositories.Credit
 
 
             int turnoverDuration = newDuration;
-            var apiTransactions = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
-            var apiCustomerAccounts = new List<ViewModels.CASA.CasaViewModel>();
-            var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
+            var apiTransactions = new List<CustomerTurnoverViewModel>();
+            var apiCustomerAccounts = new List<CasaViewModel>();
+            var apiTransactionsOthers = new List<CustomerTurnoverViewModel>();
 
             //var customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL 
             //            join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -177,7 +178,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             DESCRIPTION = item.indicatorname,
                             VALUE = item.indicatorvalue,
-                            CUSTOMERID = item.customerId,
+                            CUSTOMERID = customer.CUSTOMERID,
                             LOANAPPLICATIONID = application.LOANAPPLICATIONID,
                             CUSTOMERGROUPID = application.CUSTOMERGROUPID,
                             DATETIMECREATED = DateTime.Now,

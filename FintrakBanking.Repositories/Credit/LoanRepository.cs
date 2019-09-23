@@ -3714,7 +3714,7 @@ namespace FintrakBanking.Repositories.Credit
                             userIPAddress = user.userIPAddress,
                             applicationUrl = user.applicationUrl,
                         };
-                        casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
+                        //casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
                         twoFactorAuthDetails.skipAuthentication = true;
                     }
 
@@ -3780,7 +3780,7 @@ namespace FintrakBanking.Repositories.Credit
                 /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                 var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
               
-                DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
+                //DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
             
             }
         }
@@ -3811,87 +3811,87 @@ namespace FintrakBanking.Repositories.Credit
                     var acctType = "DR";
                     if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
                     {
-                        var model = new OverDraftNormalViewModel
-                        {
-                            accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                            applicationDate = systemDate.ToString("dd-MMM-yyyy", null), //revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                            documentDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                            expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                            reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
-                            sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                            sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
-                            sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
-                            sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
-                            interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
-                            sanctionLevel = "003",
-                            sanctionAuthorizer = "999"
-                        };
-                        InterestRateInquiryViewModel accountOutput = finacle.GetInterestRateInquiry(model.accountNumber, acctType);
+                        //var model = new OverDraftNormalViewModel
+                        //{
+                        //    accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                        //    applicationDate = systemDate.ToString("dd-MMM-yyyy", null), //revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                        //    documentDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                        //    expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                        //    reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                        //    sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                        //    sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                        //    sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
+                        //    sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
+                        //    interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                        //    sanctionLevel = "003",
+                        //    sanctionAuthorizer = "999"
+                        //};
+                        //InterestRateInquiryViewModel accountOutput = finacle.GetInterestRateInquiry(model.accountNumber, acctType);
                         
-                        if (accountOutput.interestRateAmount == model.interestRateAmount)
-                        {
-                            ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
-                            revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
-                            twoFactorAuthDetails.skipAuthentication = true;
-                        }
-                        else
-                        {
-                            var data = new InterestRateInquiryViewModel
-                            {
-                                interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
-                                interestTableCode = accountOutput.interestTableCode,
-                                accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                endDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                                accountType = acctType,
-                                startDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                            };
+                        //if (accountOutput.interestRateAmount == model.interestRateAmount)
+                        //{
+                        //    ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
+                        //    revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                        //    twoFactorAuthDetails.skipAuthentication = true;
+                        //}
+                        //else
+                        //{
+                        //    var data = new InterestRateInquiryViewModel
+                        //    {
+                        //        interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                        //        interestTableCode = accountOutput.interestTableCode,
+                        //        accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                        //        endDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                        //        accountType = acctType,
+                        //        startDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                        //    };
 
-                            var result = finacle.ChangeOverDraftInterestRate(data, data.accountType, twoFactorAuthDetails);
-                            twoFactorAuthDetails.skipAuthentication = true;
-                            if (result == true)
-                            {
-                                twoFactorAuthDetails.skipAuthentication = true;
-                                ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
-                                revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
-                                twoFactorAuthDetails.skipAuthentication = true;
-                            }
-                            else
-                            {
-                                throw new SecureException("OD Operation Not Completed because interest rate cannot be set");
-                            }
-                        }
+                        //    var result = finacle.ChangeOverDraftInterestRate(data, data.accountType, twoFactorAuthDetails);
+                        //    twoFactorAuthDetails.skipAuthentication = true;
+                        //    if (result == true)
+                        //    {
+                        //        twoFactorAuthDetails.skipAuthentication = true;
+                        //        ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
+                        //        revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                        //        twoFactorAuthDetails.skipAuthentication = true;
+                        //    }
+                        //    else
+                        //    {
+                        //        throw new SecureException("OD Operation Not Completed because interest rate cannot be set");
+                        //    }
+                        //}
                     }
                     if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalTemporaryOverdraft)
                     {
-                        var model = new TemporaryOverDraftViewModel
-                        {
-                            AccountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                            TemporaryOverDraftFlag = "true",
-                            TemporaryOverDraftAmount = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
-                            TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
-                            TemporaryOverDraftNaration = "Normal Temporary Overdraft",
-                            TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
-                            sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
-                        };
-                        ResponseMessageViewModel res = finacle.TemporaryOverDraftNormal(model, twoFactorAuthDetails);
-                        twoFactorAuthDetails.skipAuthentication = true;
-                        revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                        //var model = new TemporaryOverDraftViewModel
+                        //{
+                        //    AccountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                        //    TemporaryOverDraftFlag = "true",
+                        //    TemporaryOverDraftAmount = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                        //    TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                        //    TemporaryOverDraftNaration = "Normal Temporary Overdraft",
+                        //    TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                        //    sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
+                        //};
+                        //ResponseMessageViewModel res = finacle.TemporaryOverDraftNormal(model, twoFactorAuthDetails);
+                        //twoFactorAuthDetails.skipAuthentication = true;
+                        //revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                     }
                     if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.SingleLimitTemporaryOverdraft)
                     {
-                        var model = new TemporaryOverDraftViewModel
-                        {
-                            AccountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                            TemporaryOverDraftFlag = "true",
-                            TemporaryOverDraftAmount = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
-                            TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
-                            TemporaryOverDraftNaration = "Single Limit Temporary Overdraft",
-                            TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
-                            sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
-                        };
-                        ResponseMessageViewModel res = finacle.TemporaryOverDraftSingle(model, twoFactorAuthDetails);
-                        revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
-                        twoFactorAuthDetails.skipAuthentication = true;
+                        //var model = new TemporaryOverDraftViewModel
+                        //{
+                        //    AccountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                        //    TemporaryOverDraftFlag = "true",
+                        //    TemporaryOverDraftAmount = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                        //    TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                        //    TemporaryOverDraftNaration = "Single Limit Temporary Overdraft",
+                        //    TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                        //    sourceReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER,
+                        //};
+                        //ResponseMessageViewModel res = finacle.TemporaryOverDraftSingle(model, twoFactorAuthDetails);
+                        //revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                        //twoFactorAuthDetails.skipAuthentication = true;
                     }
                 }
 
@@ -3908,8 +3908,8 @@ namespace FintrakBanking.Repositories.Credit
                 loanScheduleModel.branchId = revolvingLoanRecord.BRANCHID;
                 var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
 
-                if (feePostings.Count() > 0)
-                    financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails);
+                //if (feePostings.Count() > 0)
+                //    financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails);
 
                 revolvingLoanRecord.DATEAPPROVED = DateTime.Now;
                 revolvingLoanRecord.DISBURSEDATE = DateTime.Now;
@@ -3951,7 +3951,7 @@ namespace FintrakBanking.Repositories.Credit
                 loanScheduleModel.branchId = contingentLoanRecord.BRANCHID;
 
                 var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
-                if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
+                //if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
                 twoFactorAuthDetails.skipAuthentication = true;
 
                 var loanProductInfo = context.TBL_PRODUCT.Find(contingentLoanRecord.PRODUCTID);
@@ -3975,7 +3975,7 @@ namespace FintrakBanking.Repositories.Credit
                         userIPAddress = user.userIPAddress,
                         applicationUrl = user.applicationUrl,
                     };
-                    casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
+                    //casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
                     twoFactorAuthDetails.skipAuthentication = true;
                 }
 
@@ -3991,7 +3991,7 @@ namespace FintrakBanking.Repositories.Credit
                     userBranchId = (short)user.BranchId,
                     userIPAddress = user.userIPAddress
                 };
-                PostContingentLiabilityPrincipalEntry((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, contingentLoanRecord, contingentLoanRecord.CONTINGENTAMOUNT, basicPostInputs, twoFactorAuthDetails);
+               // PostContingentLiabilityPrincipalEntry((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, contingentLoanRecord, contingentLoanRecord.CONTINGENTAMOUNT, basicPostInputs, twoFactorAuthDetails);
                 twoFactorAuthDetails.skipAuthentication = true;
 
                 /*UPDATING STAFF MIS */
@@ -6770,10 +6770,41 @@ namespace FintrakBanking.Repositories.Credit
                         }
                     }
                     
+                    if (model.isLienPlacementForLoan) {
+                        var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                        {
+                            username = model.username,
+                            passcode = model.passCode
+                        };
+
+                        PlaceLienForLoan(model, twoFactorAuthDetails);
+                    }
                 }
                 trans.Commit();
                 return true;
             }
+        }
+
+        private void PlaceLienForLoan(LoanBookingRequestViewModel model, TwoFactorAutheticationViewModel twoFactorAuthDetails)
+        {
+            //TODO fetch the AccountBalance for account from the API
+            var casa = context.TBL_CASA.Find(model.casaAccountId2);
+
+            var lienModel = new CasaLienViewModel
+            {
+                productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+                sourceReferenceNumber = model.loanApplicationId.ToString(),
+                userBranchId = (short)model.userBranchId,
+                branchId = (short)model.sourceBranchId,
+                companyId = model.companyId,
+                lienAmount = model.approvedAmount, //loanRecord.PRINCIPALAMOUNT + loanRecord.OUTSTANDINGINTEREST,
+                description = "Lien for Fixed Deposit Collateral",
+                lienTypeId = (short)LienTypeEnum.IDFBooking,
+                createdBy = model.createdBy,
+                userIPAddress = model.userIPAddress,
+                applicationUrl = model.applicationUrl,
+            };
+            //casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
         }
 
         private bool UpdateLoanBookingRequests(int applicationStatusId, LoanBookingRequestViewModel model)

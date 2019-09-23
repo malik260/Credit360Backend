@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(200)]
         public string BUSINESSUNITNAME { get; set; }
+        public string BUSINESSUNITINITIALS { get; set; }
 
 
     }

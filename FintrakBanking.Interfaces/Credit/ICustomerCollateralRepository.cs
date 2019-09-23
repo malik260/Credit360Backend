@@ -151,6 +151,23 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool DeleteProposedCollateral(CollateralCoverageViewModel model);
 
+        InsuranceCompanyViewModel GetInsuranceCompany(int id);
+        IEnumerable<InsuranceCompanyViewModel> GetInsuranceCompanies();
+        bool AddInsuranceCompany(InsuranceCompanyViewModel model);
+        bool DeleteInsuranceCompany(int id, UserInfo user);
+        bool UpdateInsuranceCompany(InsuranceCompanyViewModel model, int id, UserInfo user);
+
+
+        InsuranceTypeViewModel GetInsuranceType(int id);
+        IEnumerable<InsuranceTypeViewModel> GetInsuranceTypes();
+        bool AddInsuranceType(InsuranceTypeViewModel model);
+        bool DeleteInsuranceType(int id, UserInfo user);
+        bool UpdateInsuranceType(InsuranceTypeViewModel model, int id, UserInfo user);
+
+
+
+
+
         #region collateralInsuranceRequest
 
         bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model);
@@ -161,6 +178,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteInsuranceRequest(int insuranceRequestId);
         bool checkInsurancePolicy(InsurancePolicies model);
         bool UpdateInsurancePolicyRequest(CollateralInsuranceRequestViewModel model, int id);
+        string GetLastComment(int targetId, int operationId);
         #endregion
     }
 }

@@ -9,6 +9,8 @@ namespace FintrakBanking.ViewModels.credit
 {
     public class ProjectSiteReportViewModel : GeneralEntity
     {
+        public string psrRepeortType { get; set; }
+
         public int projectSiteReportId { get; set; }
 
         public int psrReportTypeId { get; set; }
@@ -24,6 +26,7 @@ namespace FintrakBanking.ViewModels.credit
         public string projectDescription { get; set; }
 
         public DateTime commencementDate { get; set; }
+        public DateTime? inspectionDate { get; set; }
 
         public DateTime completionDate { get; set; }
 
@@ -40,5 +43,6 @@ namespace FintrakBanking.ViewModels.credit
         public string currency { get; set; }
         
        public IEnumerable<LoanApplicationViewModel> loanApplicationViewModel { get; set; }
+        public int? loopedStaffId { get; set; }
     }
 }

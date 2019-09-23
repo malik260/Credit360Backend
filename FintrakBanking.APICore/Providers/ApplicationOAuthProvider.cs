@@ -364,8 +364,10 @@ namespace FintrakBanking.APICore.Providers
                         if (profile != null)
                         {
                             profile.LOGINCODE = null;
+                            //int count = profile.FAILEDLOGONATTEMPT ?? 0;
+                            int count = profile.FAILEDLOGONATTEMPT == 0 ? 1 : profile.FAILEDLOGONATTEMPT.Value + 1;
                             profile.FAILEDLOGONATTEMPT += 1;
-                            int count = profile.FAILEDLOGONATTEMPT ?? 0;
+
                             TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
                             prosett = _bankingContext.TBL_PROFILE_SETTING.FirstOrDefault();
                             //if (count == CommonHelpers.MaxInvalidPasswordAttempts)

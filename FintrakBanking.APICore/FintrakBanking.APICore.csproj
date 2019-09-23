@@ -444,6 +444,7 @@
     <Compile Include="Filters\AdministratorLockoutFilter.cs" />
     <Compile Include="Filters\AuthorizeActivity.cs" />
     <Compile Include="Filters\SecureExceptionFilterAttribute.cs" />
+    <Compile Include="Providers\ReportServerCredentials.cs" />
     <Compile Include="Providers\SimpleRefreshTokenProvider.cs" />
     <Compile Include="Reports\Credit\Credit1.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -481,10 +482,8 @@
     <Compile Include="Reports\ReportDataset\PSR.cs">
       <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportDataset\PSR.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PSR.xsd</DependentUpon>
+    <Compile Include="Reports\ReportDataset\PSR.designer.cs">
+      <DependentUpon>PSR.cs</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.cs">
       <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>
@@ -786,6 +785,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\Repayment.aspx.designer.cs">
       <DependentUpon>Repayment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetsReport.aspx.cs">
+      <DependentUpon>RiskAssetsReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetsReport.aspx.designer.cs">
+      <DependentUpon>RiskAssetsReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\RunningLoanReport.aspx.cs">
       <DependentUpon>RunningLoanReport.aspx</DependentUpon>
@@ -1129,6 +1135,7 @@
     <Content Include="Reports\ReportViews\PSR.aspx" />
     <Content Include="Reports\ReportViews\ReceivableInterest.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
+    <Content Include="Reports\ReportViews\RiskAssetsReport.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
     <Content Include="Reports\ReportViews\FacilityApprovedNotUntilized.aspx" />
@@ -1264,7 +1271,7 @@
     </Content>
     <None Include="Reports\ReportDataset\PSR.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>PSR.Designer.cs</LastGenOutput>
+      <LastGenOutput>PSR1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\PSR.xss">

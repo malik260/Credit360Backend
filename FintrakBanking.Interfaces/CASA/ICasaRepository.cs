@@ -40,6 +40,8 @@ namespace FintrakBanking.Interfaces.CASA
         CasaCustomerSearchViewModel GetCustomerAccountDetailsById(int customerId);
 
         IEnumerable<CustomerCasaAcountsViewModel> GetAllCustomerAccount(int customerId, int applicationTypeId, int companyId);
-         
+        void AddCustomerAccounts(string customerCode);
+
+
     }
 }

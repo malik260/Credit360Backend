@@ -387,5 +387,40 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("update-valuation-prerequisite-status/{valuationPrerequisiteId}/valuationPrerequisiteId")]
+        public HttpResponseMessage UpdateValuationPrerequisiteStatus(int valuationPrerequisiteId, [FromBody] ValuationPrerequisiteViewModel model)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
+
+                var data = _colValuationRepo.UpdateValuationPrerequisiteStatus(valuationPrerequisiteId, user);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                          new { success = true, message = "The valuation prerequisite has been deleted successfully" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = $"There was an error updating this valuation prerequisite" });
+                }
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updating this valuation prerequisite {e.Message}" });
+            }
+        }
     }
 }

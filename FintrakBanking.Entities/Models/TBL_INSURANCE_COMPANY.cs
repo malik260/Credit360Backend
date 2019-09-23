@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
 
         public int COMPANYID { get; set; }
 
-        public int? CREATEDBY { get; set; }
+        public int CREATEDBY { get; set; }
 
         public DateTime? DATETIMECREATED { get; set; }
 
@@ -41,6 +41,8 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
     }
 }

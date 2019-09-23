@@ -79,6 +79,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\TwoFactorAuthSoapService1\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\TwoFactorAuthSoapService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -195,6 +200,10 @@
     <None Include="Connected Services\TwoFactorAuthService\FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService.UserCheckResponseModel.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Connected Services\TwoFactorAuthSoapService1\Service.wsdl" />
+    <None Include="Connected Services\TwoFactorAuthSoapService1\Service.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\TwoFactorAuthSoapService\Service.wsdl" />
     <None Include="Connected Services\TwoFactorAuthSoapService\Service.xsd">
       <SubType>Designer</SubType>
@@ -259,6 +268,7 @@
     <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
     <WCFMetadataStorage Include="Connected Services\TestService\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthService\" />
+    <WCFMetadataStorage Include="Connected Services\TwoFactorAuthSoapService1\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthSoapService\" />
     <WCFMetadataStorage Include="Connected Services\XDSWebService\" />
   </ItemGroup>
@@ -327,6 +337,12 @@
     <None Include="Connected Services\TestService\configuration91.svcinfo" />
     <None Include="Connected Services\TestService\configuration.svcinfo" />
     <None Include="Connected Services\TestService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\TwoFactorAuthSoapService1\configuration91.svcinfo" />
+    <None Include="Connected Services\TwoFactorAuthSoapService1\configuration.svcinfo" />
+    <None Include="Connected Services\TwoFactorAuthSoapService1\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

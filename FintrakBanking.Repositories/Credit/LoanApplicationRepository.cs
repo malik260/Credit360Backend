@@ -819,7 +819,8 @@ namespace FintrakBanking.Repositories.Credit
                              select new CustomerViewModels
                              {
                                  customerId = a.CUSTOMERID,
-                                 fullName = b.FIRSTNAME + " " + b.LASTNAME + "-" + b.CUSTOMERCODE
+                                 fullName = b.FIRSTNAME + " " + b.LASTNAME + "-" + b.CUSTOMERCODE,
+                                 customerCode = b.CUSTOMERCODE
                              }).Distinct().ToList();
 
             }
@@ -1041,16 +1042,16 @@ namespace FintrakBanking.Repositories.Credit
 
                         /* Middle office Job Request for IDF */
                         var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == detail.APPROVEDPRODUCTID);
-                        if (product.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
-                        {
-                            var middleOfficeRequests = (from r in context.TBL_JOB_REQUEST
-                                                        join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
-                                                        where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && r.TARGETID == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification
-                                                        select r).ToList();
+                        //if (product.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
+                        //{
+                        //    var middleOfficeRequests = (from r in context.TBL_JOB_REQUEST
+                        //                                join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
+                        //                                where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && r.TARGETID == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification
+                        //                                select r).ToList();
 
-                            if (middleOfficeRequests.Count <= 0)
-                                throw new ConditionNotMetException($"Job Request to relationship team for product {product.PRODUCTNAME} is required!");
-                        }
+                        //    if (middleOfficeRequests.Count <= 0)
+                        //        throw new ConditionNotMetException($"Job Request to relationship team for product '{product.PRODUCTNAME.ToLower()}' is required!");
+                        //}
 
                         var checklistTypes = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
                         foreach (var checklistType in checklistTypes) // through checklist types
@@ -1169,13 +1170,14 @@ namespace FintrakBanking.Repositories.Credit
                                staffId
                            );
 
+
                         creditCommon.LoadCustomerTurnover(
                                 applicationId,
                                 loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                                 staffId
                             );
 
-                       
+                        
                         //if (casa != null)
                         //{
                         //    creditCommon.LoadCustomerTurnover(
@@ -1857,6 +1859,64 @@ namespace FintrakBanking.Repositories.Credit
                                                             && x.OPERATIONID == (short)OperationsEnum.CreditAppraisal
                                                             && x.DELETED == false).Any()) isProductClassBasedWorkflowApplicable = true;
         }
+
+        private bool GetCustomerIsRelatedParty(int customerId)
+        {
+            var customer = context.TBL_CUSTOMER.Find(customerId);
+            var customerGroup = new TBL_CUSTOMER_GROUP();
+            if (customer == null)
+            {
+                customerGroup = context.TBL_CUSTOMER_GROUP.Find(customerId);
+                if (customerGroup != null)
+                {
+                    var mappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(m => m.DELETED != true && m.CUSTOMERGROUPID == customerGroup.CUSTOMERGROUPID);
+                    var customers = new List<TBL_CUSTOMER>();
+                    foreach (var map in mappings)
+                    {
+                        customers.Add(map.TBL_CUSTOMER);
+                    }
+
+                    if (customers.Exists(c => c.ISREALATEDPARTY == true))
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return customer.ISREALATEDPARTY;
+        }
+
+        private bool GetCustomerIsPoliticallyExposed(int customerId)
+        {
+            var customer = context.TBL_CUSTOMER.Find(customerId);
+            var customerGroup = new TBL_CUSTOMER_GROUP();
+            if (customer == null)
+            {
+                customerGroup = context.TBL_CUSTOMER_GROUP.Find(customerId);
+                if (customerGroup != null)
+                {
+                    var mappings = context.TBL_CUSTOMER_GROUP_MAPPING.Where(m => m.DELETED != true && m.CUSTOMERGROUPID == customerGroup.CUSTOMERGROUPID);
+                    var customers = new List<TBL_CUSTOMER>();
+                    foreach (var map in mappings)
+                    {
+                        customers.Add(map.TBL_CUSTOMER);
+                    }
+
+                    if (customers.Exists(c => c.ISPOLITICALLYEXPOSED == true))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            return customer.ISPOLITICALLYEXPOSED;
+        }
+
         private void AddloanApplicationSub(LoanApplicationViewModel loan)
         {
             short productClassProcessId = 0;
@@ -1911,7 +1971,7 @@ namespace FintrakBanking.Repositories.Credit
                     loan.exclusiveOperationId = newWorkflowBaseRecord.OPERATIONID;
                 }
             }
-
+            
             loanData = new TBL_LOAN_APPLICATION
             {
                 REQUIRECOLLATERAL = loan.requireCollateral,
@@ -1961,11 +2021,15 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loanData.CUSTOMERGROUPID = loan.customerGroupId;
                 loanData.CUSTOMERID = null;
+                loanData.ISRELATEDPARTY = GetCustomerIsRelatedParty((int)loan.customerGroupId);
+                loanData.ISPOLITICALLYEXPOSED = GetCustomerIsPoliticallyExposed((int)loan.customerGroupId);
             }
             else
             {
                 loanData.CUSTOMERID = loan.customerId;
                 loanData.CUSTOMERGROUPID = null;
+                loanData.ISRELATEDPARTY = GetCustomerIsRelatedParty((int)loan.customerId);
+                loanData.ISPOLITICALLYEXPOSED = GetCustomerIsPoliticallyExposed((int)loan.customerId);
             }
 
             if (loan.loanPreliminaryEvaluationId != null && loan.loanPreliminaryEvaluationId != 0)
@@ -2001,6 +2065,12 @@ namespace FintrakBanking.Repositories.Credit
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
             var update = loan.LoanApplicationDetail.SingleOrDefault();
             if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
+
+
+            if (update.repaymentScheduleId <= 0)
+            {
+                throw new SecureException("Please select a repayment pattern for the product "+update.productName);
+            }
 
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
@@ -2204,6 +2274,12 @@ namespace FintrakBanking.Repositories.Credit
             //foreach (var a in entity)
             //{
             var a = loan.LoanApplicationDetail.FirstOrDefault();
+
+            if (a.repaymentScheduleId <= 0)
+            {
+                throw new SecureException("Please select a repayment pattern");
+            }
+
             if (a.proposedTenor == 0)
             {
                 throw new SecureException("Tenor can not be ZERO (0)");
@@ -4999,6 +5075,7 @@ namespace FintrakBanking.Repositories.Credit
                 productClassId = entity.PRODUCTCLASSID,
                 productId = entity.PRODUCTID,
                 operationId = entity.OPERATIONID,
+                //interestPayment = entity.INTERESTPAYMENT,
                 destinationUrl = entity.DESTINATIONURL,
                 productTypeId = entity.PRODUCTTYPEID,
                 documentOperation= 0, //entity.DOCUMENTOPERATION,
@@ -5014,14 +5091,16 @@ namespace FintrakBanking.Repositories.Credit
                     documentOperation= 0, //x.DOCUMENTOPERATION,
                     label = x.LABEL,
                     placeHolder=x.PLACEHOLDER,
+                    //interestPayment = x.INTERESTPAYMENT,
                     operationId=x.OPERATIONID,
-                    destinationUrl=x.DESTINATIONURL,
+                    destinationUrl=x.DESTINATIONURL == null ? "N/A" : x.DESTINATIONURL,
                     productTypeId=x.PRODUCTTYPEID,
-                    productType = context.TBL_PRODUCT_TYPE.Where(pt => pt.PRODUCTTYPEID == x.PRODUCTTYPEID).Select( s => s.PRODUCTTYPENAME).FirstOrDefault(),
-                    productClass = context.TBL_PRODUCT_CLASS.Where(pc => pc.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(s => s.PRODUCTCLASSNAME).FirstOrDefault(),
+                    productType = context.TBL_PRODUCT_TYPE.Where(pt => pt.PRODUCTTYPEID == x.PRODUCTTYPEID).Select( s => s.PRODUCTTYPENAME).FirstOrDefault() == null ? "N/A" : context.TBL_PRODUCT_TYPE.Where(pt => pt.PRODUCTTYPEID == x.PRODUCTTYPEID).Select(s => s.PRODUCTTYPENAME).FirstOrDefault(),
+                    productClass = context.TBL_PRODUCT_CLASS.Where(pc => pc.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(s => s.PRODUCTCLASSNAME).FirstOrDefault() == null ? "N/A" : context.TBL_PRODUCT_CLASS.Where(pc => pc.PRODUCTCLASSID == x.PRODUCTCLASSID).Select(s => s.PRODUCTCLASSNAME).FirstOrDefault(),
                     productClassId =x.PRODUCTCLASSID,
                     skipflow=x.ISSKIPPROCESSENABLED,
-                    operation=context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==o.OPERATIONID).Select(s=>s.OPERATIONNAME).FirstOrDefault(),
+                    skipFlo = x.ISSKIPPROCESSENABLED == true ? "YES" : "NO",
+                    operation =context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==o.OPERATIONID).Select(s=>s.OPERATIONNAME).FirstOrDefault(),
                     
                 })
                 .ToList();
@@ -5039,6 +5118,7 @@ namespace FintrakBanking.Repositories.Credit
                 OPERATIONID = model.operationId,
                 DESTINATIONURL = model.destinationUrl,
                 PRODUCTTYPEID = model.productTypeId,
+                //INTERESTPAYMENT = (int)model.interestPayment,
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = model.createdBy,
                 DELETED = false
@@ -5073,6 +5153,7 @@ namespace FintrakBanking.Repositories.Credit
             entity.PRODUCTCLASSID = model.productClassId;
             entity.OPERATIONID = model.operationId;
             entity.DESTINATIONURL = model.destinationUrl;
+            //entity.INTERESTPAYMENT = (int)model.interestPayment;
             //entity.DOCUMENTOPERATION = model.documentOperation;
             entity.PRODUCTTYPEID = model.productTypeId;
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));

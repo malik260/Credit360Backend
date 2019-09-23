@@ -10,6 +10,10 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanApplicationViewModel : GeneralEntity
     {
         public string approvedProductName;
+        public decimal? equityControl;
+        public int? moratrium;
+        public string pledgeCollateral;
+        public decimal valueOfCollateral;
 
         public LoanApplicationViewModel()
         {
@@ -940,10 +944,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationFlowChangeViewModel : GeneralEntity
     {
+        public string skipFlo { get; set; }
+
         public int FlowChangeId { get; set; }
         public string label { get; set; }
         public string placeHolder { get; set; }
         public bool skipflow { get; set; }
+        public int? interestPayment { get; set; }
         public short? productClassId { get; set; }
         public int? productId { get; set; }
         public int operationId { get; set; }

@@ -679,7 +679,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             //try
             //{
-                List<RepaymentScheduleTermsViewModel> response = repo.SaveRepaymentScheduleAndTerms(entity);
+                IEnumerable<RepaymentScheduleTermsViewModel> response = repo.SaveRepaymentScheduleAndTerms(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             //}
             //catch (SecureException ex)
