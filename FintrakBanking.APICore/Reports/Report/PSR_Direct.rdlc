@@ -676,7 +676,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>4.6025in</Top>
+        <Top>4.4775in</Top>
         <Left>0.26333in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -724,7 +724,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>5.64in</Top>
+        <Top>5.765in</Top>
         <Left>0.26333in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1439,7 +1439,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>facilities</DataSetName>
-        <Top>4.92194in</Top>
+        <Top>4.79694in</Top>
         <Left>0.26333in</Left>
         <Height>0.62917in</Height>
         <Width>10.81833in</Width>
@@ -1500,7 +1500,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>9.09416in</Top>
+        <Top>8.96916in</Top>
         <Left>0.23167in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1533,7 +1533,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>10.34292in</Top>
+        <Top>9.96792in</Top>
         <Left>0.22583in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1566,7 +1566,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>12.18875in</Top>
+        <Top>11.68875in</Top>
         <Left>0.22583in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1598,8 +1598,8 @@
         <rd:DefaultName>Textbox91</rd:DefaultName>
         <Top>13.85667in</Top>
         <Left>0.22583in</Left>
-        <Height>0.25in</Height>
-        <Width>6.695in</Width>
+        <Height>0.26042in</Height>
+        <Width>6.85583in</Width>
         <ZIndex>11</ZIndex>
         <Style>
           <Border>
@@ -1628,8 +1628,8 @@
         <rd:DefaultName>Textbox92</rd:DefaultName>
         <Top>14.265in</Top>
         <Left>0.22583in</Left>
-        <Height>0.25in</Height>
-        <Width>6.695in</Width>
+        <Height>0.23958in</Height>
+        <Width>6.85583in</Width>
         <ZIndex>12</ZIndex>
         <Style>
           <Border>
@@ -1645,7 +1645,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.73251in</Width>
+              <Width>6.85583in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1700,10 +1700,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>observation</DataSetName>
-        <Top>9.67625in</Top>
+        <Top>9.42625in</Top>
         <Left>0.22583in</Left>
         <Height>0.25in</Height>
-        <Width>6.73251in</Width>
+        <Width>6.85583in</Width>
         <ZIndex>13</ZIndex>
         <Style>
           <Border>
@@ -1715,7 +1715,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.73251in</Width>
+              <Width>6.84999in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1770,10 +1770,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>10.83in</Top>
-        <Left>0.205in</Left>
+        <Top>10.52348in</Top>
+        <Left>0.23167in</Left>
         <Height>0.25in</Height>
-        <Width>6.73251in</Width>
+        <Width>6.84999in</Width>
         <ZIndex>14</ZIndex>
         <Style>
           <Border>
@@ -1785,12 +1785,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.7325in</Width>
+              <Width>6.85583in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.25in</Height>
+              <Height>0.27083in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1840,10 +1840,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>nextInspection</DataSetName>
-        <Top>12.55681in</Top>
+        <Top>12.05681in</Top>
         <Left>0.22583in</Left>
-        <Height>0.25in</Height>
-        <Width>6.7325in</Width>
+        <Height>0.27083in</Height>
+        <Width>6.85583in</Width>
         <ZIndex>15</ZIndex>
         <Style>
           <Border>
@@ -1855,10 +1855,10 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>4.26056in</Width>
+              <Width>4.34097in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.39694in</Width>
+              <Width>2.47735in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -2360,10 +2360,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>evaluation</DataSetName>
-        <Top>6.03444in</Top>
+        <Top>6.15944in</Top>
         <Left>0.26333in</Left>
         <Height>1.96001in</Height>
-        <Width>6.6575in</Width>
+        <Width>6.81832in</Width>
         <ZIndex>16</ZIndex>
         <Style>
           <Border>
@@ -2535,7 +2535,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>11.57834in</Top>
+        <Top>11.07834in</Top>
         <Left>0.21292in</Left>
         <Height>0.25in</Height>
         <Width>6.86874in</Width>
@@ -2916,6 +2916,58 @@
         <rd:DataSetName>PSR</rd:DataSetName>
         <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>EVALUATION</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="direct_analysis">
+      <Query>
+        <DataSourceName>PSR</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="valueOfCollateral">
+          <DataField>valueOfCollateral</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ipc">
+          <DataField>ipc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="pmu">
+          <DataField>pmu</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="aTotal">
+          <DataField>aTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="bTotal">
+          <DataField>bTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="less">
+          <DataField>less</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="amountRequested">
+          <DataField>amountRequested</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="amountDisbursed">
+          <DataField>amountDisbursed</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="netPerformance">
+          <DataField>netPerformance</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>PSR</rd:DataSetName>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:TableName>ANALYSIS</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />

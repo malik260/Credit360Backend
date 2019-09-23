@@ -478,6 +478,11 @@
     <Compile Include="Reports\ReportDataset\PSR.designer.cs">
       <DependentUpon>PSR.cs</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\PSR1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PSR.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.cs">
       <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

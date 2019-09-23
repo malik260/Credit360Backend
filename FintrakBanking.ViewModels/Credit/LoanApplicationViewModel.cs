@@ -14,6 +14,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? moratrium;
         public string pledgeCollateral;
         public decimal valueOfCollateral;
+        public string reportTypeName;
+        public int psrReportTypeId;
 
         public LoanApplicationViewModel()
         {
