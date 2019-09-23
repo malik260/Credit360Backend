@@ -125,7 +125,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
         private WorkflowSetup next;
-        private List<TBL_APPROVAL_TRAIL> trailLog;
+        private List<TBL_APPROVAL_TRAIL> trailLog; 
+        private List<TBL_APPROVAL_TRAIL> referredLog;
         private TBL_APPROVAL_TRAIL request;
         private bool skipLimitsCheck = false;
         private IEnumerable<WorkflowSetup> approvalGrid;
@@ -144,6 +145,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 && x.TARGETID == this.targetId
                                 && x.RESPONSESTAFFID == null
                                 && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.RESPONSEDATE == null)
+                            ).ToList();
+
+
+            var referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == this.companyId
+                                && x.OPERATIONID == this.operationId
+                                && x.TARGETID == this.targetId
+                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                             ).ToList();
 
             request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
