@@ -45,4 +45,5 @@ namespace FintrakBanking.ViewModels.credit
        public IEnumerable<LoanApplicationViewModel> loanApplicationViewModel { get; set; }
         public int? loopedStaffId { get; set; }
     }
+    
 }
