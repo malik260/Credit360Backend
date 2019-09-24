@@ -2068,6 +2068,12 @@ namespace FintrakBanking.Repositories.Credit
             var update = loan.LoanApplicationDetail.SingleOrDefault();
             if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
 
+
+            if (update.repaymentScheduleId <= 0)
+            {
+                throw new SecureException("Please select a repayment pattern for the product "+update.productName);
+            }
+
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
@@ -2270,6 +2276,12 @@ namespace FintrakBanking.Repositories.Credit
             //foreach (var a in entity)
             //{
             var a = loan.LoanApplicationDetail.FirstOrDefault();
+
+            if (a.repaymentScheduleId <= 0)
+            {
+                throw new SecureException("Please select a repayment pattern");
+            }
+
             if (a.proposedTenor == 0)
             {
                 throw new SecureException("Tenor can not be ZERO (0)");

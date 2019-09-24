@@ -292,7 +292,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>d. CONTRACT AMOUNT :</Value>
+                              <Value>d. PROJECT COST :</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -564,7 +564,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>h. PROJECT COMPLETION DATE (INITIAL) :</Value>
+                              <Value>h. PROJECT COMPLETION DATE :</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -676,7 +676,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>4.6025in</Top>
+        <Top>4.4775in</Top>
         <Left>0.26333in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -724,7 +724,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>5.64in</Top>
+        <Top>5.765in</Top>
         <Left>0.26333in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -746,18 +746,36 @@
               <Width>1.06042in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.99375in</Width>
+              <Width>1.59624in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.58042in</Width>
+              <Width>1.18459in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.06042in</Width>
+              <Width>0.71667in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.08333in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.17708in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.24167in</Height>
+              <Height>0.3875in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -874,6 +892,204 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox16</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox6">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>EQUITY CONTR.</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox6</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox25">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>PLEDGE COLLATERAL</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox25</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox27">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>VALUE OF COLLATERAL</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox27</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox30">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>PERFECTION STATUS</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox30</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox32">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>NATURE</Value>
+                              <Style>
+                                <FontStyle>Normal</FontStyle>
+                                <FontWeight>Bold</FontWeight>
+                                <TextDecoration>None</TextDecoration>
+                                <Color>#000000</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox32</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox35">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>MORATORIUM</Value>
+                              <Style>
+                                <FontStyle>Normal</FontStyle>
+                                <FontWeight>Bold</FontWeight>
+                                <TextDecoration>None</TextDecoration>
+                                <Color>#000000</Color>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox35</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -1014,12 +1230,198 @@
                     </Textbox>
                   </CellContents>
                 </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="equityControl">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!equityControl.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>equityControl</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="pledgeCollateral">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!pledgeCollateral.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>pledgeCollateral</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="valueOfCollateral">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!valueOfCollateral.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>valueOfCollateral</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="perfectionStatus">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!perfectionStatus.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>perfectionStatus</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="nature">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!nature.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>nature</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="moratrium">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!moratrium.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>moratrium</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
               </TablixCells>
             </TablixRow>
           </TablixRows>
         </TablixBody>
         <TablixColumnHierarchy>
           <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
+            <TablixMember />
             <TablixMember />
             <TablixMember />
             <TablixMember />
@@ -1037,10 +1439,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>facilities</DataSetName>
-        <Top>4.92194in</Top>
+        <Top>4.79694in</Top>
         <Left>0.26333in</Left>
-        <Height>0.48334in</Height>
-        <Width>6.69501in</Width>
+        <Height>0.62917in</Height>
+        <Width>10.81833in</Width>
         <ZIndex>6</ZIndex>
         <Style>
           <Border>
@@ -1065,10 +1467,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>9.14416in</Top>
-        <Left>0.26333in</Left>
+        <Top>8.51916in</Top>
+        <Left>0.23167in</Left>
         <Height>0.25in</Height>
-        <Width>3.58333in</Width>
+        <Width>2.375in</Width>
         <ZIndex>7</ZIndex>
         <Style>
           <Border>
@@ -1098,7 +1500,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>9.59416in</Top>
+        <Top>8.96916in</Top>
         <Left>0.23167in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1131,7 +1533,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>10.46792in</Top>
+        <Top>9.96792in</Top>
         <Left>0.22583in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1164,7 +1566,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>11.93875in</Top>
+        <Top>11.68875in</Top>
         <Left>0.22583in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1196,8 +1598,8 @@
         <rd:DefaultName>Textbox91</rd:DefaultName>
         <Top>13.85667in</Top>
         <Left>0.22583in</Left>
-        <Height>0.25in</Height>
-        <Width>6.695in</Width>
+        <Height>0.26042in</Height>
+        <Width>6.85583in</Width>
         <ZIndex>11</ZIndex>
         <Style>
           <Border>
@@ -1226,8 +1628,8 @@
         <rd:DefaultName>Textbox92</rd:DefaultName>
         <Top>14.265in</Top>
         <Left>0.22583in</Left>
-        <Height>0.25in</Height>
-        <Width>6.695in</Width>
+        <Height>0.23958in</Height>
+        <Width>6.85583in</Width>
         <ZIndex>12</ZIndex>
         <Style>
           <Border>
@@ -1243,7 +1645,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.73251in</Width>
+              <Width>6.85583in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1298,10 +1700,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>observation</DataSetName>
-        <Top>9.92625in</Top>
-        <Left>0.205in</Left>
+        <Top>9.42625in</Top>
+        <Left>0.22583in</Left>
         <Height>0.25in</Height>
-        <Width>6.73251in</Width>
+        <Width>6.85583in</Width>
         <ZIndex>13</ZIndex>
         <Style>
           <Border>
@@ -1313,7 +1715,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.73251in</Width>
+              <Width>6.84999in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1368,10 +1770,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>10.83in</Top>
-        <Left>0.205in</Left>
+        <Top>10.52348in</Top>
+        <Left>0.23167in</Left>
         <Height>0.25in</Height>
-        <Width>6.73251in</Width>
+        <Width>6.84999in</Width>
         <ZIndex>14</ZIndex>
         <Style>
           <Border>
@@ -1383,12 +1785,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.7325in</Width>
+              <Width>6.85583in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.25in</Height>
+              <Height>0.27083in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1438,10 +1840,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>nextInspection</DataSetName>
-        <Top>12.30681in</Top>
+        <Top>12.05681in</Top>
         <Left>0.22583in</Left>
-        <Height>0.25in</Height>
-        <Width>6.7325in</Width>
+        <Height>0.27083in</Height>
+        <Width>6.85583in</Width>
         <ZIndex>15</ZIndex>
         <Style>
           <Border>
@@ -1449,117 +1851,14 @@
           </Border>
         </Style>
       </Tablix>
-      <Tablix Name="Tablix6">
-        <TablixBody>
-          <TablixColumns>
-            <TablixColumn>
-              <Width>6.745in</Width>
-            </TablixColumn>
-          </TablixColumns>
-          <TablixRows>
-            <TablixRow>
-              <Height>0.25in</Height>
-              <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="comment3">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Label>COMMENT</Label>
-                              <Value>=Fields!comment.Value</Value>
-                              <MarkupType>HTML</MarkupType>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>comment3</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-              </TablixCells>
-            </TablixRow>
-          </TablixRows>
-        </TablixBody>
-        <TablixColumnHierarchy>
-          <TablixMembers>
-            <TablixMember />
-          </TablixMembers>
-        </TablixColumnHierarchy>
-        <TablixRowHierarchy>
-          <TablixMembers>
-            <TablixMember>
-              <Group Name="Details6" />
-            </TablixMember>
-          </TablixMembers>
-        </TablixRowHierarchy>
-        <DataSetName>comment</DataSetName>
-        <Top>13.21333in</Top>
-        <Left>0.21333in</Left>
-        <Height>0.25in</Height>
-        <Width>6.745in</Width>
-        <ZIndex>16</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-        </Style>
-      </Tablix>
-      <Textbox Name="Textbox22">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>7. COMMENT:</Value>
-                <Style>
-                  <FontSize>12pt</FontSize>
-                  <FontWeight>Bold</FontWeight>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style />
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>12.845in</Top>
-        <Left>0.205in</Left>
-        <Height>0.25in</Height>
-        <Width>3.58333in</Width>
-        <ZIndex>17</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
       <Tablix Name="Tablix7">
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>4.26056in</Width>
+              <Width>4.34097in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.39694in</Width>
+              <Width>2.47735in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -1575,7 +1874,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>a. PROJECT SUM :</Value>
+                              <Value>a. PROJECT COST:</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1629,18 +1928,18 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.32593in</Height>
+              <Height>0.25in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox29">
+                    <Textbox Name="Textbox28">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>b. PROGRESS PAYMENT TO DATE :</Value>
+                              <Value>b. LOAN AMOUNT:</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1649,7 +1948,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox29</rd:DefaultName>
+                      <rd:DefaultName>Textbox28</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1664,137 +1963,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="progressPayment">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!progressPayment.Value</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>progressPayment</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-              </TablixCells>
-            </TablixRow>
-            <TablixRow>
-              <Height>0.32593in</Height>
-              <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox33">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>c. AMOUNT DISBURSED TO DATE :</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox33</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="disbursedTodate">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Fields!disbursedTodate.Value</Value>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>disbursedTodate</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-              </TablixCells>
-            </TablixRow>
-            <TablixRow>
-              <Height>0.32593in</Height>
-              <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox37">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>d. % OF (INITIAL COMPLETION ESTIMATE) PROJECT SUM :</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox37</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="initialProjectSum">
+                    <Textbox Name="initialProjectSum1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1808,7 +1977,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>initialProjectSum</rd:DefaultName>
+                      <rd:DefaultName>initialProjectSum1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1824,18 +1993,24 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.32593in</Height>
+              <Height>0.25in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox40">
+                    <Textbox Name="Textbox34">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>e. CERTIFIED VOWD TO DATE BY CLIENT :</Value>
+                              <Value>c. </Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>AMOUNT DISBURSED TO DATE: % OF PROJECT COST</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1844,7 +2019,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox40</rd:DefaultName>
+                      <rd:DefaultName>Textbox34</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1859,21 +2034,21 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="certifiedVowd">
+                    <Textbox Name="initialProjectSum2">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!certifiedVowd.Value</Value>
+                              <Value>=Fields!initialProjectSum.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>certifiedVowd</rd:DefaultName>
+                      <rd:DefaultName>initialProjectSum2</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1889,18 +2064,24 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.32593in</Height>
+              <Height>0.25in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox43">
+                    <Textbox Name="Textbox38">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>f. PMU ASSESSED VOWD TO DATE :</Value>
+                              <Value>d. </Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>PMU ASSESSED VOWD TO DATE: % OF PROJECT COST</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1909,7 +2090,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox43</rd:DefaultName>
+                      <rd:DefaultName>Textbox38</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1924,7 +2105,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="pmuAssessed">
+                    <Textbox Name="pmuAssessed1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1938,7 +2119,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>pmuAssessed</rd:DefaultName>
+                      <rd:DefaultName>pmuAssessed1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1954,18 +2135,24 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.32593in</Height>
+              <Height>0.25in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox45">
+                    <Textbox Name="Textbox41">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>g. INDEPENDENT CONSULTANT VOWD TO DATE :</Value>
+                              <Value>e. </Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                            <TextRun>
+                              <Value>INDEPENDENT CONSULTANT VOWD TO DATE:</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1974,7 +2161,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox45</rd:DefaultName>
+                      <rd:DefaultName>Textbox41</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -1989,7 +2176,7 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="consoltantVowd">
+                    <Textbox Name="consoltantVowd1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -2003,7 +2190,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>consoltantVowd</rd:DefaultName>
+                      <rd:DefaultName>consoltantVowd1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>None</Style>
@@ -2030,7 +2217,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>H. COST VARIATION :</Value>
+                              <Value>f. COST VARIATION :</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -2095,7 +2282,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>I. TIME VARIATION :</Value>
+                              <Value>i. TIME VARIATION :</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -2168,18 +2355,16 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
-                <TablixMember />
               </TablixMembers>
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>evaluation</DataSetName>
-        <Top>6.03444in</Top>
+        <Top>6.15944in</Top>
         <Left>0.26333in</Left>
-        <Height>2.91559in</Height>
-        <Width>6.6575in</Width>
-        <ZIndex>18</ZIndex>
+        <Height>1.96001in</Height>
+        <Width>6.81832in</Width>
+        <ZIndex>16</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2190,7 +2375,7 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1.70833in</Width>
+              <Width>1.84456in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.71667in</Width>
@@ -2216,7 +2401,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Overall project risk rating:</Value>
-                              <Style />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2276,7 +2463,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>Customer's Tiering :</Value>
-                              <Style />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2346,11 +2535,11 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>11.32834in</Top>
+        <Top>11.07834in</Top>
         <Left>0.21292in</Left>
         <Height>0.25in</Height>
-        <Width>6.73251in</Width>
-        <ZIndex>19</ZIndex>
+        <Width>6.86874in</Width>
+        <ZIndex>17</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2361,7 +2550,7 @@
     <Height>14.65667in</Height>
     <Style />
   </Body>
-  <Width>6.97042in</Width>
+  <Width>11.08167in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -2513,7 +2702,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\Access Bank Projects\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>PSR</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -2550,10 +2739,34 @@
           <DataField>collateral</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="equityControl">
+          <DataField>equityControl</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="pledgeCollateral">
+          <DataField>pledgeCollateral</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="valueOfCollateral">
+          <DataField>valueOfCollateral</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="perfectionStatus">
+          <DataField>perfectionStatus</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="nature">
+          <DataField>nature</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="moratrium">
+          <DataField>moratrium</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\AccessCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>FACILITIES</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -2573,7 +2786,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\AccessCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>OBSERVATION</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -2601,7 +2814,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\AccessCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>RECOMENDATIONS</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -2625,8 +2838,8 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\AccessCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
-        <rd:TableName>NEXTINPECTION</rd:TableName>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:TableName>NEXTINSPECTION</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />
@@ -2645,7 +2858,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\AccessCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>COMMENT</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -2701,8 +2914,60 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\AccessCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>EVALUATION</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="direct_analysis">
+      <Query>
+        <DataSourceName>PSR</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="valueOfCollateral">
+          <DataField>valueOfCollateral</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ipc">
+          <DataField>ipc</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="pmu">
+          <DataField>pmu</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="aTotal">
+          <DataField>aTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="bTotal">
+          <DataField>bTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="less">
+          <DataField>less</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="amountRequested">
+          <DataField>amountRequested</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="amountDisbursed">
+          <DataField>amountDisbursed</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="netPerformance">
+          <DataField>netPerformance</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>PSR</rd:DataSetName>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:TableName>ANALYSIS</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />

@@ -265,12 +265,15 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (data == null)
                 {
                     user.LOGINCODE = null;
+                    //int count = user.FAILEDLOGONATTEMPT ?? 0;
+                    int count = user.FAILEDLOGONATTEMPT == 0 ? 1 : user.FAILEDLOGONATTEMPT.Value + 1;
                     user.FAILEDLOGONATTEMPT += 1;
-                    int count = user.FAILEDLOGONATTEMPT ?? 0;
+
                     TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
                     prosett = db.TBL_PROFILE_SETTING.FirstOrDefault();
                     //if (count == CommonHelpers.MaxInvalidPasswordAttempts)
-                    if (count > prosett.MAXINVALIDPASSWORDATTEMPTS)
+                    //if (count > prosett.MAXINVALIDPASSWORDATTEMPTS)
+                    if (count == prosett.MAXINVALIDPASSWORDATTEMPTS)
                     {
                         user.ISLOCKED = true;
                         user.LASTLOCKOUTDATE = DateTime.Now;

@@ -2239,6 +2239,24 @@ namespace FintrakBanking.Repositories.Credit
             return condition.ToList();
         }
 
+        public bool ValidateChecklist(int applicationId)
+        {
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == applicationId && d.DELETED == false).ToList();
+            foreach (var id in details)
+            {
+                var checklists = context.TBL_ESG_CHECKLIST_DETAIL.Where(c => c.DELETED != true && c.LOANAPPLICATIONDETAILID == id.LOANAPPLICATIONDETAILID).ToList();
+                if (checklists.Count() > 0)
+                {
+                    continue;
+                } else
+                {
+                    throw new SecureException("Checklist items for "+id.TBL_PRODUCT1.PRODUCTNAME+" still pending");
+                }
+
+            }
+            return true;
+        }
+
         public bool ExtendChecklistDeferralDate(ConditionPrecedentViewModel model)
         {
             var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);

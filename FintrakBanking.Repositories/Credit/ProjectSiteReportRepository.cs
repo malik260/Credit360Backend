@@ -41,13 +41,12 @@ namespace FintrakBanking.Repositories.credit
         {
             return (from x in context.TBL_LOAN_APPLICATION
                     join a in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
-                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID               
                     where x.ISPROJECTRELATED == true && (x.APPLICATIONREFERENCENUMBER == searchString
-                 || c.FIRSTNAME.ToLower().Contains(searchString.Trim())
-                 || c.LASTNAME.ToLower().Contains(searchString.Trim())
-                 || c.MIDDLENAME.ToLower().Contains(searchString.Trim()))
-                 
-
+                    || c.FIRSTNAME.ToLower().Contains(searchString.Trim())
+                    || c.LASTNAME.ToLower().Contains(searchString.Trim())
+                    || c.MIDDLENAME.ToLower().Contains(searchString.Trim()))
+                    let projectSiteReport = context.TBL_PSR_PROJECT_SITE_REPORT.Where(p=>p.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(p => p).FirstOrDefault()
                     select new LoanApplicationViewModel
                     {
                         customerName = c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
@@ -55,6 +54,8 @@ namespace FintrakBanking.Repositories.credit
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                         loanApplicationId = x.LOANAPPLICATIONID,
                         customerId = c.CUSTOMERID,
+                        psrReportTypeId = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.PSRREPORTTYPEID).FirstOrDefault(),
+                        reportTypeName = context.TBL_PSR_REPORT_TYPE.Where(b => b.PSRREPORTTYPEID == projectSiteReport.PSRREPORTTYPEID).Select(b => b.REPORTTYPENAME).FirstOrDefault(),
                         branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                         applicationDate = x.APPLICATIONDATE,
                         applicationAmount = x.APPLICATIONAMOUNT,
@@ -81,10 +82,10 @@ namespace FintrakBanking.Repositories.credit
                     select new LoanApplicationViewModel
                     {
                         customerName = context.TBL_CUSTOMER.Where(o=>o.CUSTOMERID== loan_application_detail.CUSTOMERID).Select(o=>o.LASTNAME + " " + o.FIRSTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
-                       // customerCode = c.CUSTOMERCODE,
+                       //customerCode = c.CUSTOMERCODE,
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                         loanApplicationId = x.LOANAPPLICATIONID,
-                      //  customerId = c.CUSTOMERID,
+                        customerId = x.CUSTOMERID,
                         //branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                         applicationDate = x.APPLICATIONDATE,
                         applicationAmount = x.APPLICATIONAMOUNT,
@@ -478,6 +479,17 @@ namespace FintrakBanking.Repositories.credit
                     reportTypeName = x.REPORTTYPENAME,
                 })
                 .ToList();
+        }
+
+        public PsrReportTypeViewModel GetPsrReportTypesById(int id)
+        {
+            return context.TBL_PSR_REPORT_TYPE.Where(x => x.DELETED == false && x.PSRREPORTTYPEID == id)
+                .Select(x => new PsrReportTypeViewModel
+                {
+                    psrReportTypeId = x.PSRREPORTTYPEID,
+                    reportTypeName = x.REPORTTYPENAME,
+                })
+                .FirstOrDefault();
         }
 
         #region

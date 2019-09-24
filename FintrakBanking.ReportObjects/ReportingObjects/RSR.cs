@@ -158,7 +158,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
                     // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                     let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-
+                    
                     where p.PROJECTSITEREPORTID == id
 
                     select new LoanApplicationViewModel
@@ -167,6 +167,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         // customerCode = c.CUSTOMERCODE,
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                         loanApplicationId = x.LOANAPPLICATIONID,
+                        moratrium = loan_Application_detail.MORATORIUMDURATION,
+                        equityControl = loan_Application_detail.EQUITYAMOUNT,
+                        pledgeCollateral = x.COLLATERALDETAIL,
+                        valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
                         //  customerId = c.CUSTOMERID,
                         //branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                         applicationDate = x.APPLICATIONDATE,
