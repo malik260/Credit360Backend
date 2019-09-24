@@ -1882,7 +1882,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("loan-application-flow-change/{id}")]
-        public HttpResponseMessage UpdateLoanApplicationFlowChange([FromBody] LoanApplicationFlowChangeViewModel model, int id)
+        public HttpResponseMessage UpdateLoanApplicationFlowChange([FromUri] int id, [FromBody] LoanApplicationFlowChangeViewModel model)
         {
             UserInfo user = new UserInfo()
             {
