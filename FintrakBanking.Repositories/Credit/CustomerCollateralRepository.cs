@@ -1907,6 +1907,7 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        collateralId = x.COLLATERALCUSTOMERID,
                                        collateralCode = c.COLLATERALCODE,
+                                       currencyId = c.CURRENCYID,
                                        collateralValue = c.COLLATERALVALUE,
                                        loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                                        collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
@@ -1965,6 +1966,7 @@ namespace FintrakBanking.Repositories.Credit
                         collateralId = collateral.collateralId,
                         collateralCode = collateral.collateralCode,
                         collateralValue = collateralValue,
+                        currencyId = collateral.currencyId,
                         facilityAmount = facilityAmount,
                         expectedCollateralCoverage = expectedCollateralCoverage,
                         availableCollateralValue = availableCollateralValue,

@@ -351,6 +351,7 @@ namespace FintrakBanking.Repositories.credit
                             && ut.APPROVALSTATEID != (int)ApprovalState.Ended
                             && ut.RESPONSESTAFFID == null
                             && levelIds.Contains((int)ut.TOAPPROVALLEVELID)
+                            && ut.LOOPEDSTAFFID == null
                             && (ut.TOSTAFFID == null || ut.TOSTAFFID == staffId)
                             )
                          select new LcIssuanceApprovalViewModel()
@@ -361,7 +362,7 @@ namespace FintrakBanking.Repositories.credit
                              lcReferenceNumber = a.LCREFERENCENUMBER,
                              letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
                              beneficiaryName = a.BENEFICIARYNAME,
-                             totalUsanceAmount = context.TBL_LC_USSANCE.Where(u => u.LCISSUANCEID == a.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT),
+                             totalUsanceAmount = a.LETTEROFCREDITAMOUNT - ((decimal?)context.TBL_LC_USSANCE.Where(u => u.LCISSUANCEID == a.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT) ?? 0),
                              totalApprovedAmount = a.TOTALAPPROVEDAMOUNT,
                              totalApprovedAmountCurrencyId = a.TOTALAPPROVEDAMOUNTCURRENCYID,
                              availableAmountCurrencyId = a.AVAILABLEAMOUNTCURRENCYID,

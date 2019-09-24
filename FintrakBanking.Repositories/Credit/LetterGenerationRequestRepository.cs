@@ -234,6 +234,7 @@ namespace FintrakBanking.Repositories.Credit
                             (b.OPERATIONID == operationId)
                             && b.APPROVALSTATEID != (int)ApprovalState.Ended
                             && b.RESPONSESTAFFID == null
+                            && b.LOOPEDSTAFFID == null
                             && levelIds.Contains((int)b.TOAPPROVALLEVELID)
                             && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
                             )
@@ -253,7 +254,7 @@ namespace FintrakBanking.Repositories.Credit
                              currentApprovalLevelTypeId = b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                              approvalTrailId = b == null ? 0 : b.APPROVALTRAILID, // for inner sequence ordering
                              toStaffId = b.TOSTAFFID,
-                             approvalStatusId = (short)l.APPROVALSTATUSID,
+                             approvalStatusId = b.APPROVALSTATUSID,
                              applicationStatusId = l.APPLICATIONSTATUSID,
                              createdBy = (int)l.CREATEDBY,
                              operationId = operationId,

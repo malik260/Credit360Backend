@@ -113,6 +113,7 @@ namespace FintrakBanking.Repositories.credit
                                         usanceApprovalStatus = (u.USANCEAPPROVALSTATUSID == null || u == null) ? "n/a" : context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == u.USANCEAPPROVALSTATUSID).APPROVALSTATUSNAME,
                                         UsanceCurrentApprovalLevel = (usstrail.TOAPPROVALLEVELID != null) ? ((usstrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && usstrail.LOOPEDSTAFFID != null) ? context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == usstrail.LOOPEDSTAFFID).TBL_STAFF_ROLE.STAFFROLENAME : context.TBL_APPROVAL_LEVEL.FirstOrDefault(s => s.APPROVALLEVELID == usstrail.TOAPPROVALLEVELID).LEVELNAME) : "n/a",
                                         usanceApprovalTrailId = usstrail.APPROVALTRAILID,
+                                        totalUsanceAmount = x.LETTEROFCREDITAMOUNT - ((decimal?)context.TBL_LC_USSANCE.Where(u => u.LCISSUANCEID == x.LCISSUANCEID && u.USANCEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.lcUssanceCompleted).Sum(u => u.USSANCEAMOUNT) ?? 0),
                                         createdBy = (int)x.CREATEDBY,
                                         //operationId = x.OPERATIONID,
                                     })
@@ -304,6 +305,7 @@ namespace FintrakBanking.Repositories.credit
                         (b.OPERATIONID == operationId)
                         && b.APPROVALSTATEID != (int)ApprovalState.Ended
                         && b.RESPONSESTAFFID == null
+                        && b.LOOPEDSTAFFID == null
                         && levelIds.Contains((int)b.TOAPPROVALLEVELID)
                         && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
                         )
