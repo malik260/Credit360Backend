@@ -98,6 +98,26 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 }).OrderBy(o => o.psrPerformanceEvaluationId)
                 .ToList();
         }
+
+        public IEnumerable<PsrPerformanceAnalysisViewModel> GetPsrPerformanceAnalysis(int id)
+        {
+
+            return context.TBL_PSR_ANALYSIS.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrPerformanceAnalysisViewModel
+                {
+                    psrAnalysisId = x.PSRANALYSISID,
+                    ipc = x.IPC,
+                    pmu = x.PMU,
+                    less = x.LESS,
+                    aTotal = (x.IPC+x.PMU+x.VALUEOFCOLLATERAL),
+                    bTotal = (x.LESS+x.AMOUNTDISBURSED+x.AMOUNTREQUESTED),
+                    netPerformance = (x.IPC + x.PMU + x.VALUEOFCOLLATERAL) - (x.LESS + x.AMOUNTDISBURSED + x.AMOUNTREQUESTED),
+                    amountDisbursed = x.AMOUNTDISBURSED,
+                    amountRequested = x.AMOUNTREQUESTED,
+                    valueOfCollateral = x.VALUEOFCOLLATERAL,
+                    projectSiteReportId = x.PROJECTSITEREPORTID
+                }).ToList(); 
+        }
         public IEnumerable<PsrObservationViewModel> GetPsrObservations(int id)
         {
 
