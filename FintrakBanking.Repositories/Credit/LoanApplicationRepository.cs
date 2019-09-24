@@ -761,7 +761,9 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         productClassId = data.PRODUCTCLASSID,
                         productClassName = data.PRODUCTCLASSNAME,
-                        productClassTypeId = data.PRODUCTCLASSTYPEID
+                        productClassTypeId = data.PRODUCTCLASSTYPEID,
+                        productTypeName = data.PRODUCTCLASSNAME,
+                        productTypeId = data.PRODUCTCLASSID
                     });
         }
 
@@ -2067,7 +2069,7 @@ namespace FintrakBanking.Repositories.Credit
             if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
 
 
-            if (update.repaymentScheduleId <= 0)
+            if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTCLASSID != (int)ProductClassEnum.BondAndGuarantees))
             {
                 throw new SecureException("Please select a repayment pattern for the product "+update.productName);
             }
@@ -5135,7 +5137,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var entity = this.context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Find(id);
             entity.LABEL = model.label;
-            entity.PLACEHOLDER = model.placeHolder;
+           // entity.PLACEHOLDER = model.placeHolder;
             entity.ISSKIPPROCESSENABLED = model.skipflow;
             entity.PRODUCTCLASSID = model.productClassId;
             entity.OPERATIONID = model.operationId;
@@ -5143,7 +5145,7 @@ namespace FintrakBanking.Repositories.Credit
             //entity.INTERESTPAYMENT = (int)model.interestPayment;
             //entity.DOCUMENTOPERATION = model.documentOperation;
             entity.PRODUCTTYPEID = model.productTypeId;
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            var auditStaff = context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE).FirstOrDefault();
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
             {

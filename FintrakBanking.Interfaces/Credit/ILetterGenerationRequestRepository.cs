@@ -29,5 +29,6 @@ namespace FintrakBanking.Interfaces.Credit
         string GetCamsolLoanDocument(int typeId, LetterGenerationRequestViewModel model);
         IEnumerable<LetterGenerationRequestViewModel> GetLetterGenerationCompleted();
         IEnumerable<LetterGenerationRequestViewModel> Search(string searchString);
+    
     }
 }
