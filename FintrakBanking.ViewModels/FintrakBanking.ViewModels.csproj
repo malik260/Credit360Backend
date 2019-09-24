@@ -142,6 +142,7 @@
     <Compile Include="Credit\PsrCommentViewModel.cs" />
     <Compile Include="Credit\PsrNextInspectionTaskViewModel.cs" />
     <Compile Include="Credit\PsrObservationViewModel.cs" />
+    <Compile Include="Credit\PsrPerformanceAnalysisViewModel.cs" />
     <Compile Include="Credit\PsrPerformanceEvaluationViewModel.cs" />
     <Compile Include="Credit\PsrRecommendationViewModel.cs" />
     <Compile Include="Credit\PsrReportTypeViewModel.cs" />

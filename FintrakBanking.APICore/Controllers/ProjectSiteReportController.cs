@@ -560,5 +560,72 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
         #endregion
+
+        #region
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-performance-analysis/{id}")]
+        public HttpResponseMessage GetPsrPerformanceAnalysis(int id)
+        {
+            IEnumerable<PsrPerformanceAnalysisViewModel> response = repo.GetPsrPerformanceAnalysis(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("psr-performance-analysis/{id}")]
+        public HttpResponseMessage GetPsrPerformanceAnalysis(int id, [FromBody] PsrPerformanceAnalysisViewModel model)
+        {
+            model.BranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+
+            var response = repo.UpdatePsrPerformanceAnalysis(model, id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("psr-performance-analysis")]
+        public HttpResponseMessage AddPsrPerformanceAnalysis([FromBody] PsrPerformanceAnalysisViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var response = repo.AddPsrPerformanceAnalysis(model);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "There was an error creating this record" });
+            }
+        }
+
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("psr-performance-analysis/{id}")]
+        public HttpResponseMessage DeletePsrPerformanceAnalysis(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeletePsrPerformanceAnalysis(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+        #endregion
+
     }
 }
