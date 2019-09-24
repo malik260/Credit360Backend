@@ -60,6 +60,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     dsAnalysis.Name = "analysis";
                     ReportViewer.LocalReport.DataSources.Add(dsAnalysis);
 
+                    var direct_analysis = psr.GetProjectSiteReports(projectSiteReportId);
+                    ReportDataSource dssAnalysis = new ReportDataSource();
+                    dssAnalysis.Value = direct_analysis;
+                    dssAnalysis.Name = "direct_analysis";
+                    ReportViewer.LocalReport.DataSources.Add(dssAnalysis);
+
                     var facilities = psr.GetFacilities(projectSiteReportId);
                     ReportDataSource dsfacilities = new ReportDataSource();
                     dsfacilities.Value = facilities;

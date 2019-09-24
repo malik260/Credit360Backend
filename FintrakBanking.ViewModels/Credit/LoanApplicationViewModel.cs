@@ -10,6 +10,12 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanApplicationViewModel : GeneralEntity
     {
         public string approvedProductName;
+        public decimal? equityControl;
+        public int? moratrium;
+        public string pledgeCollateral;
+        public decimal valueOfCollateral;
+        public string reportTypeName;
+        public int psrReportTypeId;
 
         public LoanApplicationViewModel()
         {

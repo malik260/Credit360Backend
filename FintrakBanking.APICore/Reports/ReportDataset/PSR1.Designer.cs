@@ -10,7 +10,7 @@
 
 #pragma warning disable 1591
 
-namespace ReportDeveloper.ReportDataset {
+namespace FintrakBanking.APICore.Reports.ReportDataset {
     
     
     /// <summary>

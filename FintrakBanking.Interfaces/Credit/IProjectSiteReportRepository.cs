@@ -29,6 +29,7 @@ namespace FintrakBanking.Interfaces.credit
         IEnumerable<LoanApplicationViewModel> GetFacilities(int id);
 
         bool ProjectSiteReportGoForApproval(ProjectSiteReportViewModel model);
+        PsrReportTypeViewModel GetPsrReportTypesById(int id);
 
 
         #region

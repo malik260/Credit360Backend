@@ -475,7 +475,10 @@
     <Compile Include="Reports\ReportDataset\PSR.cs">
       <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportDataset\PSR.Designer.cs">
+    <Compile Include="Reports\ReportDataset\PSR.designer.cs">
+      <DependentUpon>PSR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportDataset\PSR1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>PSR.xsd</DependentUpon>
@@ -1266,7 +1269,7 @@
     </Content>
     <None Include="Reports\ReportDataset\PSR.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>PSR.Designer.cs</LastGenOutput>
+      <LastGenOutput>PSR1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\PSR.xss">

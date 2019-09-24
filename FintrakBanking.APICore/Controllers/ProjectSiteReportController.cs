@@ -75,6 +75,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex) { return Request.CreateResponse(HttpStatusCode.InternalServerError, new { success = false, message = "No record found" }); }
         }
 
+        
         [HttpPost]
         [ClaimsAuthorization]
         [Route("project-site-gofor-approval")]
@@ -189,6 +190,7 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.DeleteProjectSiteReport(id, user);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("psr-report-type")]
@@ -198,9 +200,16 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("psr-report-type-by-id/{id}")]
+        public HttpResponseMessage GetPsrReportTypesById(int id)
+        {
+            PsrReportTypeViewModel response = repo.GetPsrReportTypesById(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response });
+        }
 
 
-       
 
         #region
         [HttpGet]
