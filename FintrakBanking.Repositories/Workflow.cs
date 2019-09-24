@@ -148,14 +148,16 @@ namespace FintrakBanking.Repositories.WorkFlow
                             ).ToList();
 
 
-            var referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
-                                x.COMPANYID == this.companyId
-                                && x.OPERATIONID == this.operationId
-                                && x.TARGETID == this.targetId
-                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
-                            ).ToList();
-
             request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
+
+            //var referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
+            //                    x.COMPANYID == this.companyId
+            //                    && x.OPERATIONID == this.operationId
+            //                    && x.TARGETID == this.targetId
+            //                    && x.RESPONSESTAFFID != null
+            //                    && x.TOAPPROVALLEVELID == request.FROMAPPROVALLEVELID
+            //                    && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+            //                ).ToList();
 
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
 
@@ -270,7 +272,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public void ResolveExternalFlowLoop(TBL_APPROVAL_TRAIL request, TBL_APPROVAL_TRAIL initiatorRequest)
         {
-            if (this.StatusId == (int)ApprovalStatusEnum.Referred)
+            if (this.StatusId == (int)ApprovalStatusEnum.Referred )
             {
                 if (this.nextLevelId == null )
                 {
@@ -280,12 +282,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.toStaffId = staffId;
                     this.initiatorOrLooped = true;
                 }
-                else
-                {
-                    //if(next)
-                }
+            }
 
-                //if(request.LOOPEDSTAFFID == null || request.LOOPEDSTAFFID <= 0) { this.toStaffId = request.REQUESTSTAFFID; }
+            if (this.request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && this.StatusId != (int)ApprovalStatusEnum.Referred)
+            {
+                this.nextLevelId = request.TOAPPROVALLEVELID;
+                this.toStaffId = request.TOSTAFFID;
             }
 
             if (request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && this.StatusId != (int)ApprovalStatusEnum.Referred)
@@ -297,14 +299,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.fromLevelId = request.TOAPPROVALLEVELID;
                 this.nextLevelId = request.TOAPPROVALLEVELID;
             }
-
-            //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0)
-            //{
-            //    this.fromLevelId = request.FROMAPPROVALLEVELID;
-            //    this.toStaffId = request.REQUESTSTAFFID;
-            //    this.staffId = request.REQUESTSTAFFID;
-            //}
-
         }
         /*
                 private void SkipLevelByAmount()
@@ -529,6 +523,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 throw new SecureException("Unable to resolve initiating level or there is no setup for the specified operation!");
             }
+
+            //if (this.fromLevelId == null && this.StatusId == (short)ApprovalStatusEnum.Referred) 
+            //{
+            //    var user = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == this.staffId);
+            //    this.fromLevelId = approvalLevels.Where(x => x.DefaultRoleId == user.STAFFROLEID).FirstOrDefault()?.ApprovalLevelId;
+            //}
 
             if (this.fromLevelId != null) // check if staff in level
             {
