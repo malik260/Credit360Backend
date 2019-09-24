@@ -2069,7 +2069,7 @@ namespace FintrakBanking.Repositories.Credit
             if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
 
 
-            if (update.repaymentScheduleId <= 0)
+            if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTCLASSID != (int)ProductClassEnum.BondAndGuarantees))
             {
                 throw new SecureException("Please select a repayment pattern for the product "+update.productName);
             }

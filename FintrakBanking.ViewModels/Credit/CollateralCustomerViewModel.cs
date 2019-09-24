@@ -1043,6 +1043,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool coverAll { get; set; }
         public int currencyId { get; set; }
         public string currencyCode { get; set; }
+        public string baseCurrencyCode { get; set; }
         public int coverage { get; set; }
         public int collateralSubTypeId { get; set; }
         public string currencyName { get; set; }
@@ -1052,9 +1053,11 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public int customerId { get; set; }
         public decimal facilityAmount { get; set; }
+        public string facilityCurrencyCode { get; set; }
         public int loanApplicationId { get; set; }
         public int? loanApplicationDetailId { get; set; }
         public decimal availableCollateralValue { get; set; }
+        public decimal availableCollateralValueBaseAmount { get; set; }
         public decimal expectedCollateralCoverage { get; set; }
         public decimal actualCollateralCoverage { get; set; }
         public string ReferenceNumber { get; set; }

@@ -1790,7 +1790,9 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             var list = new List<CollateralCoverageViewModel>();
-
+            var currencies = context.TBL_CURRENCY.ToList();
+            var baseCurrency = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
+            var baseCurrencyCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == baseCurrency).CURRENCYCODE;
             int coveragePercentage = 0;
             decimal collateralValue = 0;
             decimal facilityAmount = 0;
@@ -1824,7 +1826,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var collateral in collaterals)
             {
                 var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateral.collateralSubTypeId && o.CURRENCYID == currencyId).Select(o => o).FirstOrDefault();
-
+                var exchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, companyId);
                 if (data == null) continue;
 
                 coveragePercentage = data.COVERAGE;
@@ -1872,6 +1874,8 @@ namespace FintrakBanking.Repositories.Credit
                     facilityAmount = facilityAmount,
                     expectedCollateralCoverage = expectedCollateralCoverage,
                     availableCollateralValue = availableCollateralValue,
+                    availableCollateralValueBaseAmount = availableCollateralValue * (decimal)exchangeRate.sellingRate,
+                    baseCurrencyCode = baseCurrencyCode,
                     actualCollateralCoverage = actualCollateralCoverage,
                     approvalStatusId = collateral.approvalStatusId,
                     ReferenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
