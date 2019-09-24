@@ -250,10 +250,10 @@ namespace FintrakBanking.Repositories.credit
         {
             var lc = context.TBL_LC_ISSUANCE.Find(model.lcIssuanceId);
             var totalReleasedAmount = context.TBL_LCRELEASE_AMOUNT.Where(r => r.LCISSUANCEID == model.lcIssuanceId).Sum(r => r.RELEASEAMOUNT);
-            var availableAmount = lc.LCTOLERANCEVALUE - totalReleasedAmount;
+            var availableAmount = lc.LCTOLERANCEVALUE;
             if (model.ussanceAmount > availableAmount)
             {
-                throw new SecureException("Usance Amount cannot be greater than remainder tolerance amount" + availableAmount);
+                throw new SecureException("Usance Amount cannot be greater than tolerance amount" + availableAmount);
             }
             return true;
         }

@@ -2289,7 +2289,7 @@ namespace FintrakBanking.Repositories.Credit
             var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId);
             var result = String.Empty;
             if (collaterals.Count() < 1) return result;
-            decimal totalCollateralValue = collaterals.Sum(c => c.collateralValue);
+            decimal totalCollateralValue = 0;
             var currencies = context.TBL_CURRENCY.ToList();
             var baseCurrency = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanApplication.COMPANYID).CURRENCYID;
             var baseCurrencyCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == baseCurrency).CURRENCYCODE;
@@ -2297,7 +2297,8 @@ namespace FintrakBanking.Repositories.Credit
             var collateralGroup2 = collaterals.GroupBy(c => c.collateralId);
             foreach (var g in collateralGroup)
             {
-                custFacilitiesAmount += context.TBL_LOAN_APPLICATION_DETAIL.Find(g.Key).APPROVEDAMOUNT;
+                var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(g.Key);
+                custFacilitiesAmount += facility.APPROVEDAMOUNT * (decimal)facility.EXCHANGERATE;
             }
             int n = 0;
             result = result + $@"
@@ -2315,13 +2316,14 @@ namespace FintrakBanking.Repositories.Credit
                 var c = d.FirstOrDefault();
                 var currCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == c.currencyId).CURRENCYCODE;
                 var rate = financeTransaction.GetExchangeRate(DateTime.Now, (short)c.currencyId, loanApplication.COMPANYID);
-
+                var baseCollateralValue = c.collateralValue * (decimal)rate.sellingRate;
+                totalCollateralValue += baseCollateralValue;
                 result = result + $@"
                     <tr>
                         <td>{n}</td>
                         <td>{c.collateralSummary}</td>
                         <td>{currCode + " " + String.Format("{0:0,0.00}", c.collateralValue)}</td>
-                        <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", c.collateralValue * (decimal)rate.sellingRate)}</td>
+                        <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", baseCollateralValue)}</td>
                     </tr>
                 ";
             }
@@ -2329,16 +2331,19 @@ namespace FintrakBanking.Repositories.Credit
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>TOTAL</b></td>
-                    <td>{String.Format("{0:0,0.00}", totalCollateralValue)}</td>
+                    <td>&nbsp;</td>
+                    <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", totalCollateralValue)}</td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>TOTAL FACILITY AMOUNT</b></td>
-                    <td>{String.Format("{0:0,0.00}", (custFacilitiesAmount))}</td>
+                    <td>&nbsp;</td>
+                    <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", (custFacilitiesAmount))}</td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td><b>NET COVERAGE</b></td>
+                    <td>&nbsp;</td>
                     <td>{String.Format("{0:0,0.00}", (totalCollateralValue/custFacilitiesAmount) * 100)} %</td>
                 </tr>
             ";
