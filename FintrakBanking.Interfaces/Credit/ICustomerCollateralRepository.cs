@@ -166,6 +166,11 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateInsuranceType(InsuranceTypeViewModel model, int id, UserInfo user);
 
 
+        bool AddInsurancePolicyFile(InsurancePolicies model);
+        bool DeleteInsurancePolicy(int id, UserInfo user);
+        bool UpdateInsurancePolicy(InsurancePolicies model);
+
+
 
 
 
