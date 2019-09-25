@@ -713,7 +713,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>4. PERFORMANCE EVALUATION:</Value>
+                <Value>3. PERFORMANCE EVALUATION:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -1489,7 +1489,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>5. OBSERVATIONS AND IMPACT:</Value>
+                <Value>4. OBSERVATIONS AND IMPACT:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -1522,7 +1522,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>6. RECOMMENDATIONS:</Value>
+                <Value>5. RECOMMENDATIONS:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -1555,7 +1555,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>7. TASK FOR NEXT INSPECTION:</Value>
+                <Value>6. TASK FOR NEXT INSPECTION:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -1906,7 +1906,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!projectSum.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1971,7 +1973,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!initialProjectSum.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2042,7 +2046,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!initialProjectSum.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2113,7 +2119,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!pmuAssessed.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2249,7 +2257,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!costVariation.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2623,7 +2633,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
