@@ -20,7 +20,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralTypeId { get; set; }
         public string collateralTypeName { get; set; }
         public short collateralSubTypeId { get; set; }
-        public int customerId { get; set; }
+        public int? customerId { get; set; }
         public string customerCode { get; set; }
         public short currencyId { get; set; }
         public string currencyCode { get; set; }
@@ -57,6 +57,7 @@ namespace FintrakBanking.ViewModels.Credit
         public InsurancePolicies insurancePolicies { get; set; }
         public int policyId { get; set; }
         public int approvalStatusName { get; set; }
+        public string approvalStatus { get; set; }
         public List<InsurancePolicies> insurancePolicy { get; set; }
         public List<CollateralDocumentViewModel> documents { get; set; }
 
@@ -505,6 +506,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string requestComment { get; set; }
         public short approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
+        public string currentApprovalLevel { get; set; }
+        public int customerId { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -1039,6 +1042,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public bool coverAll { get; set; }
         public int currencyId { get; set; }
+        public string collateralCurrencyCode { get; set; }
+        public string baseCurrencyCode { get; set; }
         public int coverage { get; set; }
         public int collateralSubTypeId { get; set; }
         public string currencyName { get; set; }
@@ -1048,9 +1053,11 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public int customerId { get; set; }
         public decimal facilityAmount { get; set; }
+        public string facilityCurrencyCode { get; set; }
         public int loanApplicationId { get; set; }
         public int? loanApplicationDetailId { get; set; }
         public decimal availableCollateralValue { get; set; }
+        public decimal availableCollateralValueBaseAmount { get; set; }
         public decimal expectedCollateralCoverage { get; set; }
         public decimal actualCollateralCoverage { get; set; }
         public string ReferenceNumber { get; set; }

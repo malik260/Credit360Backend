@@ -546,7 +546,10 @@ namespace FintrakBanking.Repositories.Finance
 
                     // integration.
                     var rate = integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
-
+                    if (rate.sellingRate <= 0)
+                    {
+                        return GetExchangeRateStaging(date, currencyId, baseCurrency);
+                    }
                     return rate;
                 }
 
@@ -558,36 +561,63 @@ namespace FintrakBanking.Repositories.Finance
                 //var baseCurrency = this.context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
 
                 //CurrencyExchangeRateViewModel rateInfo = new CurrencyExchangeRateViewModel();
+                return GetExchangeRateStaging(date, currencyId, baseCurrency);
+                //if (currencyId == baseCurrency)
+                //{
+                //    return new CurrencyExchangeRateViewModel { baseCurrencyId = baseCurrency, currencyId = currencyId, buyingRate = 1, sellingRate = 1, date = date, isBaseCurrency = true };
+                //}
+                //else
+                //{
+                //    //DateTime systemDate = generalSetup.GetApplicationDate();
+                //    //DateTime date = generalSetup.GetApplicationDate().Date;
+                //    var rateInfo = (from x in this.context.TBL_CURRENCY_EXCHANGERATE
+                //                    where x.CURRENCYID == currencyId && x.DATE == systemDate && x.RATECODEID == 1
+                //                    select x).FirstOrDefault();
 
-                if (currencyId == baseCurrency)
-                {
-                    return new CurrencyExchangeRateViewModel { baseCurrencyId = baseCurrency, currencyId = currencyId, buyingRate = 1, sellingRate = 1, date = date, isBaseCurrency = true };
-                }
-                else
-                {
-                    //DateTime systemDate = generalSetup.GetApplicationDate();
-                    //DateTime date = generalSetup.GetApplicationDate().Date;
-                    var rateInfo = (from x in this.context.TBL_CURRENCY_EXCHANGERATE
-                                    where x.CURRENCYID == currencyId && x.DATE == systemDate && x.RATECODEID == 1
-                                    select x).FirstOrDefault();
+                //    if (rateInfo == null)
+                //        throw new ConditionNotMetException($"Exchange rate for {generalSetup.GetApplicationDate()} is not defined. Define the exchange rate and try again");
 
-                    if (rateInfo == null)
-                        throw new ConditionNotMetException($"Exchange rate for {generalSetup.GetApplicationDate()} is not defined. Define the exchange rate and try again");
-
-                    return new CurrencyExchangeRateViewModel
-                    {
-                        baseCurrencyId = rateInfo.BASECURRENCYID,
-                        currencyId = rateInfo.CURRENCYID,
-                        buyingRate = rateInfo.EXCHANGERATE,
-                        sellingRate = rateInfo.EXCHANGERATE,
-                        date = rateInfo.DATE,
-                        isBaseCurrency = false
-                    };
-                }
+                //    return new CurrencyExchangeRateViewModel
+                //    {
+                //        baseCurrencyId = rateInfo.BASECURRENCYID,
+                //        currencyId = rateInfo.CURRENCYID,
+                //        buyingRate = rateInfo.EXCHANGERATE,
+                //        sellingRate = rateInfo.EXCHANGERATE,
+                //        date = rateInfo.DATE,
+                //        isBaseCurrency = false
+                //    };
+                //}
             }
+        }
 
+        private CurrencyExchangeRateViewModel GetExchangeRateStaging(DateTime date, short currencyId, short baseCurrency)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+            if (currencyId == baseCurrency)
+            {
+                return new CurrencyExchangeRateViewModel { baseCurrencyId = baseCurrency, currencyId = currencyId, buyingRate = 1, sellingRate = 1, date = date, isBaseCurrency = true };
+            }
+            else
+            {
+                //DateTime systemDate = generalSetup.GetApplicationDate();
+                //DateTime date = generalSetup.GetApplicationDate().Date;
+                var rateInfo = (from x in this.context.TBL_CURRENCY_EXCHANGERATE
+                                where x.CURRENCYID == currencyId && x.DATE == systemDate && x.RATECODEID == 1
+                                select x).FirstOrDefault();
 
+                if (rateInfo == null)
+                    throw new ConditionNotMetException($"Exchange rate for {generalSetup.GetApplicationDate()} is not defined. Define the exchange rate and try again");
 
+                return new CurrencyExchangeRateViewModel
+                {
+                    baseCurrencyId = rateInfo.BASECURRENCYID,
+                    currencyId = rateInfo.CURRENCYID,
+                    buyingRate = rateInfo.EXCHANGERATE,
+                    sellingRate = rateInfo.EXCHANGERATE,
+                    date = rateInfo.DATE,
+                    isBaseCurrency = false
+                };
+            }
         }
 
 

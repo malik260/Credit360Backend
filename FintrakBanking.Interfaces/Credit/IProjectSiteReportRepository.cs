@@ -29,6 +29,7 @@ namespace FintrakBanking.Interfaces.credit
         IEnumerable<LoanApplicationViewModel> GetFacilities(int id);
 
         bool ProjectSiteReportGoForApproval(ProjectSiteReportViewModel model);
+        PsrReportTypeViewModel GetPsrReportTypesById(int id);
 
 
         #region
@@ -97,7 +98,9 @@ namespace FintrakBanking.Interfaces.credit
         bool UpdatePsrObservation(PsrObservationViewModel model, int id, UserInfo user);
 
         IEnumerable<ProjectSiteReportViewModel> GetProjectSiteReports(int projectSiteReportId);
-
-
+        bool DeletePsrPerformanceAnalysis(int id, UserInfo user);
+        bool AddPsrPerformanceAnalysis(PsrPerformanceAnalysisViewModel model);
+        bool UpdatePsrPerformanceAnalysis(PsrPerformanceAnalysisViewModel model, int id);
+        IEnumerable<PsrPerformanceAnalysisViewModel> GetPsrPerformanceAnalysis(int id);
     }
 }
