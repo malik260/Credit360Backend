@@ -1639,77 +1639,86 @@ namespace FintrakBanking.Repositories.Credit
         public LoanApplicationDetailsViewModel GetLoanApplicationDetail(int applicationId)
         {
             var details = new LoanApplicationDetailsViewModel();
+
+            try
+            {
                 var facilities = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
-                    .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.DELETED == false),
-                    a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
-                    .Select(x => new ApprovedLoanDetailViewModel
-                    {
-                        loanApplicationDetailId = x.d.LOANAPPLICATIONDETAILID,
-                        applicationId = x.d.LOANAPPLICATIONID,
-                        customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
-                        obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
-                        currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
-                        loanPurpose = x.d.LOANPURPOSE,
-                        proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
-                        proposedTenor = x.d.PROPOSEDTENOR,
-                        proposedRate = x.d.PROPOSEDINTERESTRATE,
-                        proposedAmount = x.d.PROPOSEDAMOUNT,
-                        proposedProductId = x.d.PROPOSEDPRODUCTID,
-                        proposedProductClassId = x.d.TBL_PRODUCT.PRODUCTCLASSID,
-
-                        approvedProductName = (x.a.FLOWCHANGEID == null || x.a.FLOWCHANGEID <= 0 || x.a.FLOWCHANGEID == (short)FlowChangeEnum.FAM) ? x.d.TBL_PRODUCT.PRODUCTNAME : x.d.TBL_PRODUCT.PRODUCTNAME + "(" + context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(c => c.FLOWCHANGEID == x.a.FLOWCHANGEID).PLACEHOLDER + ")", //x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
-                        approvedTenor = x.d.APPROVEDTENOR,
-                        approvedRate = x.d.APPROVEDINTERESTRATE,
-                        approvedAmount = x.d.APPROVEDAMOUNT,
-                        approvedProductId = x.d.APPROVEDPRODUCTID,
-
-                        statusId = x.d.STATUSID,
-                        exchangeRate = x.d.EXCHANGERATE,
-                        terms = x.d.REPAYMENTTERMS,
-                        repaymentScheduleId = (int)x.d.REPAYMENTSCHEDULEID,
-                        //schedule = x.d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
-                        securedByCollateral = x.d.SECUREDBYCOLLATERAL,
-                        crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
-                        crmsRepaymentTypeId = x.d.CRMSREPAYMENTAGREEMENTID,
-                        isSpecialised = (bool)x.d.ISSPECIALISED,
-
-                        priceIndexId = x.d.PRODUCTPRICEINDEXID,
-                        priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
-                        productRiskRating = x.d.TBL_PRODUCT.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                        syndicationName = x.d.FIELD2,
-                        syndicationRefNo = x.d.FIELD1,
-                        syndicationAmount = x.d.FIELD3,
-                        conditionPrecedent = x.d.CONDITIONPRECIDENT,
-                        conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
-                        transactionDynamics = x.d.TRANSACTIONDYNAMICS,
-
-                    })
-                    .ToList();
-
-                var customerIds = facilities.Select(x => x.customerId).ToList();
-                var duplications = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => customerIds.Contains(x.CUSTOMERID)
-                    && x.DELETED == false
-                    && x.LOANAPPLICATIONID != applicationId
-                    && x.STATUSID == (int)ApprovalStatusEnum.Approved
-                )
-                .Join(context.TBL_LOAN_APPLICATION.Where(x => x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved), 
-                        d => d.LOANAPPLICATIONID, a => a.LOANAPPLICATIONID, (d, a) => new { d, a })
-                .Select(x => new DedupeApplicationViewModel
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.DELETED == false),
+                a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
+                .Select(x => new ApprovedLoanDetailViewModel
                 {
-                    applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
-                    applicationDate = x.a.APPLICATIONDATE,
-                    applicationAmount = x.a.APPLICATIONAMOUNT,
-                    interestRate = x.a.INTERESTRATE,
-                    applicationTenor = x.a.APPLICATIONTENOR,
-                    branchName = x.a.TBL_BRANCH.BRANCHNAME,
-                    productName = x.d.TBL_PRODUCT.PRODUCTNAME,
+                    loanApplicationDetailId = x.d.LOANAPPLICATIONDETAILID,
+                    applicationId = x.d.LOANAPPLICATIONID,
+                    customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
+                    obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
+                    currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
+                    loanPurpose = x.d.LOANPURPOSE,
+                    proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
+                    proposedTenor = x.d.PROPOSEDTENOR,
+                    proposedRate = x.d.PROPOSEDINTERESTRATE,
+                    proposedAmount = x.d.PROPOSEDAMOUNT,
+                    proposedProductId = x.d.PROPOSEDPRODUCTID,
+                    proposedProductClassId = x.d.TBL_PRODUCT.PRODUCTCLASSID,
+
+                    approvedProductName = (x.a.FLOWCHANGEID == null || x.a.FLOWCHANGEID <= 0 || x.a.FLOWCHANGEID == (short)FlowChangeEnum.FAM) ? x.d.TBL_PRODUCT.PRODUCTNAME : x.d.TBL_PRODUCT.PRODUCTNAME + "(" + context.TBL_LOAN_APPLICATN_FLOW_CHANGE.FirstOrDefault(c => c.FLOWCHANGEID == x.a.FLOWCHANGEID).PLACEHOLDER + ")", //x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
+                    approvedTenor = x.d.APPROVEDTENOR,
+                    approvedRate = x.d.APPROVEDINTERESTRATE,
+                    approvedAmount = x.d.APPROVEDAMOUNT,
+                    approvedProductId = x.d.APPROVEDPRODUCTID,
+
+                    statusId = x.d.STATUSID,
+                    exchangeRate = x.d.EXCHANGERATE,
+                    terms = x.d.REPAYMENTTERMS,
+                    repaymentScheduleId = x.d.REPAYMENTSCHEDULEID.Value,
+                    //schedule = x.d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
+                    securedByCollateral = x.d.SECUREDBYCOLLATERAL,
+                    crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
+                    crmsRepaymentTypeId = x.d.CRMSREPAYMENTAGREEMENTID,
+                    isSpecialised = (bool)x.d.ISSPECIALISED,
+
+                    priceIndexId = x.d.PRODUCTPRICEINDEXID,
+                    priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                    productRiskRating = x.d.TBL_PRODUCT.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                    syndicationName = x.d.FIELD2,
+                    syndicationRefNo = x.d.FIELD1,
+                    syndicationAmount = x.d.FIELD3,
+                    conditionPrecedent = x.d.CONDITIONPRECIDENT,
+                    conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
+                    transactionDynamics = x.d.TRANSACTIONDYNAMICS,
+
                 })
                 .ToList();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            
 
-            details.duplications = duplications;
-            details.facilities = facilities;
-            details.application = GetLoanApplicationInformation(applicationId);
+                //var customerIds = facilities.Select(x => x.customerId).ToList();
+                //var duplications = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => customerIds.Contains(x.CUSTOMERID)
+                //    && x.DELETED == false
+                //    && x.LOANAPPLICATIONID != applicationId
+                //    && x.STATUSID == (int)ApprovalStatusEnum.Approved
+                //)
+                //.Join(context.TBL_LOAN_APPLICATION.Where(x => x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                //        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved), 
+                //        d => d.LOANAPPLICATIONID, a => a.LOANAPPLICATIONID, (d, a) => new { d, a })
+                //.Select(x => new DedupeApplicationViewModel
+                //{
+                //    applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                //    applicationDate = x.a.APPLICATIONDATE,
+                //    applicationAmount = x.a.APPLICATIONAMOUNT,
+                //    interestRate = x.a.INTERESTRATE,
+                //    applicationTenor = x.a.APPLICATIONTENOR,
+                //    branchName = x.a.TBL_BRANCH.BRANCHNAME,
+                //    productName = x.d.TBL_PRODUCT.PRODUCTNAME,
+                //})
+                //.ToList();
+
+            //details.duplications = duplications;
+            //details.facilities = facilities;
+            //details.application = GetLoanApplicationInformation(applicationId);
 
             return details;
         }

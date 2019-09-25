@@ -1672,8 +1672,16 @@ namespace FintrakBanking.Repositories.Credit
                 break;
             }
 
-            context.TBL_RAC_DETAIL.AddRange(details);
-            context.SaveChanges();
+            try
+            {
+                context.TBL_RAC_DETAIL.AddRange(details);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
 
             return null;
 
