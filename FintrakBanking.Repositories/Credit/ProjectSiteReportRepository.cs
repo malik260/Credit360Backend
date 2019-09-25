@@ -618,8 +618,8 @@ namespace FintrakBanking.Repositories.credit
                     amountReceived = x.AMOUNTRECEIVED,
                     psrReportTypeId = x.PSRREPORTTYPEID,
                     approvalStatusId = x.APPROVALSTATUSID,
-                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o=>o.PSRREPORTTYPEID== x.PROJECTSITEREPORTID).Select(o=>o.REPORTTYPENAME).FirstOrDefault(),
-                }).OrderByDescending(o => o.psrPerformanceEvaluationId)
+                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o=>o.PSRREPORTTYPEID== x.PSRREPORTTYPEID).Select(o=>o.REPORTTYPENAME).FirstOrDefault(),
+                }).OrderByDescending(x => x.psrPerformanceEvaluationId)
                 .ToList();
         }
         public bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id)
