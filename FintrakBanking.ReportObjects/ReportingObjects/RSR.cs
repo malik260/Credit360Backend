@@ -32,6 +32,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 loanApplicationId = x.LOANAPPLICATIONID,
                 projectLocation = x.PROJECTLOCATION,
                 approvalStatusId = x.APPROVALSTATUSID,
+                inspectionDate = x.INSPECTIONDATE,
                 currencyId = x.CURRENCYID,
                 approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                 currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
@@ -98,6 +99,26 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 }).OrderBy(o => o.psrPerformanceEvaluationId)
                 .ToList();
         }
+
+        public IEnumerable<PsrPerformanceAnalysisViewModel> GetPsrPerformanceAnalysis(int id)
+        {
+
+            return context.TBL_PSR_ANALYSIS.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrPerformanceAnalysisViewModel
+                {
+                    psrAnalysisId = x.PSRANALYSISID,
+                    ipc = x.IPC,
+                    pmu = x.PMU,
+                    less = x.LESS,
+                    aTotal = (x.IPC+x.PMU+x.VALUEOFCOLLATERAL),
+                    bTotal = (x.LESS+x.AMOUNTDISBURSED+x.AMOUNTREQUESTED),
+                    netPerformance = (x.IPC + x.PMU + x.VALUEOFCOLLATERAL) - (x.LESS + x.AMOUNTDISBURSED + x.AMOUNTREQUESTED),
+                    amountDisbursed = x.AMOUNTDISBURSED,
+                    amountRequested = x.AMOUNTREQUESTED,
+                    valueOfCollateral = x.VALUEOFCOLLATERAL,
+                    projectSiteReportId = x.PROJECTSITEREPORTID
+                }).ToList(); 
+        }
         public IEnumerable<PsrObservationViewModel> GetPsrObservations(int id)
         {
 
@@ -134,6 +155,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     psrNextInspectionTaskId = x.PSRNEXTINSPECTIONTASKID,
                     comment = x.COMMENTS,
                     isDone = x.ISDONE,
+                    inspectionDate = context.TBL_PSR_PROJECT_SITE_REPORT.Where(i => i.PROJECTSITEREPORTID == x.PROJECTSITEREPORTID).Select(i => i.INSPECTIONDATE).FirstOrDefault(),
                     nextInspectionDate = x.NEXTINSPECTIONDATE,
                     projectSiteReportId = x.PROJECTSITEREPORTID,
                 })
@@ -158,7 +180,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     join x in context.TBL_LOAN_APPLICATION on p.LOANAPPLICATIONID equals x.LOANAPPLICATIONID
                     // join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                     let loan_Application_detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == p.LOANAPPLICATIONID).Select(o => o).FirstOrDefault()
-
+                    
                     where p.PROJECTSITEREPORTID == id
 
                     select new LoanApplicationViewModel
@@ -167,6 +189,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         // customerCode = c.CUSTOMERCODE,
                         applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                         loanApplicationId = x.LOANAPPLICATIONID,
+                        moratrium = loan_Application_detail.MORATORIUMDURATION,
+                        equityControl = loan_Application_detail.EQUITYAMOUNT,
+                        pledgeCollateral = x.COLLATERALDETAIL,
+                        valueOfCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(t => t.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.COLLATERALVALUE).FirstOrDefault(),
                         //  customerId = c.CUSTOMERID,
                         //branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == c.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
                         applicationDate = x.APPLICATIONDATE,

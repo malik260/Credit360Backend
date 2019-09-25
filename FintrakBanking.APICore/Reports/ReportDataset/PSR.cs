@@ -1,4 +1,4 @@
-﻿namespace FintrakBanking.APICore.Reports.ReportDataset
+﻿namespace ReportDeveloper.ReportDataset
 {
 }
 

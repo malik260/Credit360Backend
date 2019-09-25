@@ -109,7 +109,7 @@ namespace FintrakBanking.Repositories.Media
                 dateTimeCreated = up.dateTimeCreated,
                 dateTimeUpdated = up.dateTimeUpdated,
                 createdBy = up.createdBy,
-                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME).FirstOrDefault(),
+                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
 
             })
             .OrderBy(x => x.dateTimeCreated)

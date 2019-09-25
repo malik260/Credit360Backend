@@ -6919,7 +6919,11 @@ namespace FintrakBanking.Repositories.Credit
             }
             else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
             {
-                LogApproval(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                if(requestedFacility.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                {
+                    LogApproval(approvalModel, (short)OperationsEnum.CorporateDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
+                }
+                else LogApproval(approvalModel, (short)OperationsEnum.IndividualDrawdownRequest, true, (int)ApprovalStatusEnum.Pending);
             }
             else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
             {
