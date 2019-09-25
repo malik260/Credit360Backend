@@ -242,6 +242,7 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                         revaluationDuration = m.REVALUATIONDURATION,
                         isLocationBased = m.ISLOCATIONBASED,
                         allowSharing = m.ALLOWSHARING,
+                        visitationCycle = m.VISITATIONCYCLE
 
                     }).FirstOrDefault();
         }

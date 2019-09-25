@@ -486,40 +486,91 @@ namespace FintrakBanking.Repositories.Media
             if (customer == null) throw new SecureException("Customer not found!");
 
             CustomerDocumentSearchViewModel result = new CustomerDocumentSearchViewModel();
-
             result.customerName = customer.FIRSTNAME + " " + customer.MIDDLENAME + " " + customer.LASTNAME;
 
-            var usageQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.CUSTOMERCODE == customer.CUSTOMERCODE)
-                            .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
-                            , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) => new { us, up }
-                        )
-                            .Select(x => new DocumentUploadViewModel
-                            {
-                                documentUploadId = x.up.DOCUMENTUPLOADID,
-                                fileName = x.up.FILENAME,
-                                fileExtension = x.up.FILEEXTENSION,
-                                fileSize = x.up.FILESIZE,
-                                fileSizeUnit = x.up.FILESIZEUNIT,
-                                // fileData = x.up.FILEDATA,
-                                companyId = x.up.COMPANYID,
-                                issueDate = x.up.ISSUEDATE,
-                                expiryDate = x.up.EXPIRYDATE,
-                                physicalFilenumber = x.up.PHYSICALFILENUMBER,
-                                physicalLocation = x.up.PHYSICALLOCATION,
-                                documentTypeId = x.up.DOCUMENTTYPEID,
-                                documentTypeName = x.up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
-                                documentCategoryId = x.up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
-                                documentCategoryName = x.up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                                owner = x.us.CREATEDBY == model.createdBy
-                            });
+            //var usageQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.CUSTOMERCODE == customer.CUSTOMERCODE)
+            //                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
+            //                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) => new { us, up }
+            //            )
+            //                .Select(x => new DocumentUploadViewModel
+            //                {
+            //                    documentUploadId = x.up.DOCUMENTUPLOADID,
+            //                    fileName = x.up.FILENAME,
+            //                    fileExtension = x.up.FILEEXTENSION,
+            //                    fileSize = x.up.FILESIZE,
+            //                    fileSizeUnit = x.up.FILESIZEUNIT,
+            //                    // fileData = x.up.FILEDATA,
+            //                    companyId = x.up.COMPANYID,
+            //                    issueDate = x.up.ISSUEDATE,
+            //                    expiryDate = x.up.EXPIRYDATE,
+            //                    physicalFilenumber = x.up.PHYSICALFILENUMBER,
+            //                    physicalLocation = x.up.PHYSICALLOCATION,
+            //                    documentTypeId = x.up.DOCUMENTTYPEID,
+            //                    documentTypeName = x.up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+            //                    documentCategoryId = x.up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+            //                    documentCategoryName = x.up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+            //                    owner = x.us.CREATEDBY == model.createdBy
+            //                });
 
+            var usageQuery = docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false && x.CUSTOMERCODE == customer.CUSTOMERCODE)
+                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == false)
+                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
+                    new
+                    {
+                        documentUploadId = up.DOCUMENTUPLOADID,
+                        fileName = up.FILENAME,
+                        fileExtension = up.FILEEXTENSION,
+                        fileSize = up.FILESIZE,
+                        fileSizeUnit = up.FILESIZEUNIT,
+                        fileData = up.FILEDATA,
+                        companyId = up.COMPANYID,
+                        issueDate = up.ISSUEDATE,
+                        expiryDate = up.EXPIRYDATE,
+                        physicalFilenumber = up.PHYSICALFILENUMBER,
+                        physicalLocation = up.PHYSICALLOCATION,
+                        documentTypeId = up.DOCUMENTTYPEID,
+                        documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                        documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                        documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                        owner = us.CREATEDBY == model.createdBy,
+                        dateTimeCreated = us.DATETIMECREATED,
+                        dateTimeUpdated = us.DATETIMEUPDATED,
+                        createdBy = us.CREATEDBY.Value,
+                    }
+            ).AsEnumerable()
+            .Select(up => new DocumentUploadViewModel
+            {
+                documentUploadId = up.documentUploadId,
+                fileName = up.fileName,
+                fileExtension = up.fileExtension,
+                fileSize = up.fileSize,
+                fileSizeUnit = up.fileSizeUnit,
+                fileData = up.fileData,
+                companyId = up.companyId,
+                issueDate = up.issueDate,
+                expiryDate = up.expiryDate,
+                physicalFilenumber = up.physicalFilenumber,
+                physicalLocation = up.physicalLocation,
+                documentTypeId = up.documentTypeId,
+                documentTypeName = up.documentTypeName,
+                documentCategoryId = up.documentCategoryId,
+                documentCategoryName = up.documentCategoryName,
+                owner = up.owner,
+                dateTimeCreated = up.dateTimeCreated,
+                dateTimeUpdated = up.dateTimeUpdated,
+                createdBy = up.createdBy,
+                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.createdBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
+
+            });
+           
             int documentCategoryId = model.documentCategoryId;
             int documentTypeId = model.documentTypeId;
 
             if (documentCategoryId > 0) usageQuery = usageQuery.Where(x => x.documentCategoryId == documentCategoryId);
             if (documentTypeId > 0) usageQuery = usageQuery.Where(x => x.documentCategoryId == documentCategoryId && x.documentTypeId == documentTypeId);
 
-            result.documents = usageQuery.OrderBy(x => x.documentCategoryId)
+            result.documents = usageQuery.OrderBy(x => x.dateTimeCreated)
+                                            .ThenBy(x => x.documentCategoryId)
                                             .ThenBy(x => x.documentTypeId)
                                             .ToList();
 
