@@ -1677,7 +1677,7 @@ namespace FintrakBanking.Repositories.Credit
                         statusId = x.d.STATUSID,
                         exchangeRate = x.d.EXCHANGERATE,
                         terms = x.d.REPAYMENTTERMS,
-                        repaymentScheduleId = (int)x.d.REPAYMENTSCHEDULEID,
+                        repaymentScheduleId = x.d.REPAYMENTSCHEDULEID,
                         //schedule = x.d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                         crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,

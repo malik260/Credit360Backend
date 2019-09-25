@@ -32,6 +32,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 loanApplicationId = x.LOANAPPLICATIONID,
                 projectLocation = x.PROJECTLOCATION,
                 approvalStatusId = x.APPROVALSTATUSID,
+                inspectionDate = x.INSPECTIONDATE,
                 currencyId = x.CURRENCYID,
                 approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                 currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
@@ -154,6 +155,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     psrNextInspectionTaskId = x.PSRNEXTINSPECTIONTASKID,
                     comment = x.COMMENTS,
                     isDone = x.ISDONE,
+                    inspectionDate = context.TBL_PSR_PROJECT_SITE_REPORT.Where(i => i.PROJECTSITEREPORTID == x.PROJECTSITEREPORTID).Select(i => i.INSPECTIONDATE).FirstOrDefault(),
                     nextInspectionDate = x.NEXTINSPECTIONDATE,
                     projectSiteReportId = x.PROJECTSITEREPORTID,
                 })
