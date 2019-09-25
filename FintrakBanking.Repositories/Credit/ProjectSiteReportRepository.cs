@@ -618,8 +618,8 @@ namespace FintrakBanking.Repositories.credit
                     amountReceived = x.AMOUNTRECEIVED,
                     psrReportTypeId = x.PSRREPORTTYPEID,
                     approvalStatusId = x.APPROVALSTATUSID,
-                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o=>o.PSRREPORTTYPEID== x.PROJECTSITEREPORTID).Select(o=>o.REPORTTYPENAME).FirstOrDefault(),
-                }).OrderByDescending(o => o.psrPerformanceEvaluationId)
+                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o=>o.PSRREPORTTYPEID== x.PSRREPORTTYPEID).Select(o=>o.REPORTTYPENAME).FirstOrDefault(),
+                }).OrderByDescending(x => x.psrPerformanceEvaluationId)
                 .ToList();
         }
         public bool UpdatePsrPerformanceEvaluation(PsrPerformanceEvaluationViewModel model, int id)
@@ -1049,12 +1049,121 @@ namespace FintrakBanking.Repositories.credit
             return report;
         }
 
+        #region
+
+        public IEnumerable<PsrPerformanceAnalysisViewModel> GetPsrPerformanceAnalysis(int id)
+        {
+            return context.TBL_PSR_ANALYSIS.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrPerformanceAnalysisViewModel
+                {
+                    psrAnalysisId = x.PSRANALYSISID,
+                    valueOfCollateral = x.VALUEOFCOLLATERAL,
+                    ipc = x.IPC,
+                    pmu = x.PMU,
+                    less = x.LESS,
+                    amountDisbursed = x.AMOUNTDISBURSED,
+                    amountRequested = x.AMOUNTREQUESTED,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o => o.PSRREPORTTYPEID == x.PROJECTSITEREPORTID).Select(o => o.REPORTTYPENAME).FirstOrDefault(),
+                }).OrderByDescending(o => o.psrAnalysisId)
+                .ToList();
+        }
+        public bool UpdatePsrPerformanceAnalysis(PsrPerformanceAnalysisViewModel model, int id)
+        {
+            var entity = this.context.TBL_PSR_ANALYSIS.Find(id);
+            entity.VALUEOFCOLLATERAL = model.valueOfCollateral;
+            entity.IPC = model.ipc;
+            entity.PMU = model.pmu;
+            entity.AMOUNTDISBURSED = model.amountDisbursed;
+            entity.AMOUNTREQUESTED = model.amountRequested;
+            entity.DELETED = false;
+         
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrPerformanceAnalysisUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.BranchId,
+                DETAIL = $"TBL_Psr Performance Analysis '{entity.PSRANALYSISID}' was updated by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRANALYSISID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddPsrPerformanceAnalysis(PsrPerformanceAnalysisViewModel model)
+        {
+            var entity = new TBL_PSR_ANALYSIS
+            {
+                VALUEOFCOLLATERAL = model.valueOfCollateral,
+                IPC = model.ipc,
+                PMU = model.pmu,
+                LESS = model.less,
+                AMOUNTDISBURSED = model.amountDisbursed,
+                AMOUNTREQUESTED = model.amountRequested,
+                PROJECTSITEREPORTID = model.projectSiteReportId,
+            };
+
+            context.TBL_PSR_ANALYSIS.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrPerformanceAnalysisAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_Psr Performance Analysis '{entity.PSRANALYSISID}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            // Audit Section end ------------------------
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeletePsrPerformanceAnalysis(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_PSR_ANALYSIS.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = general.GetApplicationDate();
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.PsrPerformanceAnalysisDeleted,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_Psr Performance Analysis '{entity.PSRANALYSISID}' was deleted by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.PSRANALYSISID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion
+
+
 
     }
 
 
-    
+
 }
+
 
 // kernel.Bind<IProjectSiteReportRepository>().To<ProjectSiteReportRepository>();
 // ProjectSiteReportAdded = ???, ProjectSiteReportUpdated = ???, ProjectSiteReportDeleted = ???,

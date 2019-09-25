@@ -8,6 +8,8 @@ namespace FintrakBanking.ViewModels.credit
 {
     public class PsrNextInspectionTaskViewModel : GeneralEntity
     {
+        public DateTime? inspectionDate;
+
         public int psrNextInspectionTaskId { get; set; }
 
         public string comment { get; set; }

@@ -53,7 +53,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>1.125in</Top>
+        <Top>1.25in</Top>
         <Left>0.28in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -724,7 +724,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>8.0675in</Top>
+        <Top>7.9425in</Top>
         <Left>0.21333in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1140,76 +1140,6 @@
           </Border>
         </Style>
       </Tablix>
-      <Tablix Name="Tablix6">
-        <TablixBody>
-          <TablixColumns>
-            <TablixColumn>
-              <Width>6.745in</Width>
-            </TablixColumn>
-          </TablixColumns>
-          <TablixRows>
-            <TablixRow>
-              <Height>0.25in</Height>
-              <TablixCells>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="comment3">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Label>COMMENT</Label>
-                              <Value>=Fields!comment.Value</Value>
-                              <MarkupType>HTML</MarkupType>
-                              <Style />
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>comment3</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>None</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-              </TablixCells>
-            </TablixRow>
-          </TablixRows>
-        </TablixBody>
-        <TablixColumnHierarchy>
-          <TablixMembers>
-            <TablixMember />
-          </TablixMembers>
-        </TablixColumnHierarchy>
-        <TablixRowHierarchy>
-          <TablixMembers>
-            <TablixMember>
-              <Group Name="Details6" />
-            </TablixMember>
-          </TablixMembers>
-        </TablixRowHierarchy>
-        <DataSetName>comment</DataSetName>
-        <Top>15.51583in</Top>
-        <Left>0.16333in</Left>
-        <Height>0.25in</Height>
-        <Width>6.745in</Width>
-        <ZIndex>15</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-        </Style>
-      </Tablix>
       <Tablix Name="Tablix9">
         <TablixBody>
           <TablixColumns>
@@ -1332,7 +1262,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!apgReceived.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1919,11 +1851,11 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>apg</DataSetName>
-        <Top>8.4475in</Top>
+        <Top>8.3225in</Top>
         <Left>0.21333in</Left>
         <Height>2.975in</Height>
         <Width>6.6575in</Width>
-        <ZIndex>16</ZIndex>
+        <ZIndex>15</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1934,15 +1866,15 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>4.21708in</Width>
+              <Width>4.26083in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.37375in</Width>
+              <Width>2.4175in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2011,7 +1943,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2052,7 +1984,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!valueOfCollateral.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2074,7 +2008,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2115,7 +2049,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!ipc.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2137,7 +2073,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2178,7 +2114,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!pmu.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2200,7 +2138,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2247,6 +2185,7 @@
                               <Value>=Fields!aTotal.Value</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -2269,7 +2208,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2332,7 +2271,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2375,7 +2314,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!less.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2397,7 +2338,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2438,7 +2379,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!amountDisbursed.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2460,7 +2403,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2501,7 +2444,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!amountRequested.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2523,7 +2468,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2570,6 +2515,7 @@
                               <Value>=Fields!bTotal.Value</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -2592,7 +2538,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.26705in</Height>
+              <Height>0.26452in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2639,6 +2585,7 @@
                               <Value>=Fields!netPerformance.Value</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -2693,9 +2640,9 @@
         <DataSetName>analysis</DataSetName>
         <Top>5.005in</Top>
         <Left>0.28in</Left>
-        <Height>2.9375in</Height>
-        <Width>6.59083in</Width>
-        <ZIndex>17</ZIndex>
+        <Height>2.90972in</Height>
+        <Width>6.67833in</Width>
+        <ZIndex>16</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2866,6 +2813,114 @@
         <Left>0.155in</Left>
         <Height>0.25in</Height>
         <Width>6.73251in</Width>
+        <ZIndex>17</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Tablix>
+      <Tablix Name="Tablix10">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>0.69271in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.25521in</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.32764in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox55">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>DATE:</Value>
+                              <Style>
+                                <FontSize>12pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox55</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="inspectionDate">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!inspectionDate.Value</Value>
+                              <Style>
+                                <Format>M/d/yyyy</Format>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>inspectionDate</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Group Name="Details6" />
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>detail</DataSetName>
+        <Top>0.85292in</Top>
+        <Left>0.28in</Left>
+        <Height>0.32764in</Height>
+        <Width>1.94792in</Width>
         <ZIndex>18</ZIndex>
         <Style>
           <Border>
@@ -3026,10 +3081,14 @@
           <DataField>currency</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="inspectionDate">
+          <DataField>inspectionDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\Access Bank Projects\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>PSR</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -3138,11 +3197,15 @@
           <DataField>nextInspectionDate</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="inspectionDate">
+          <DataField>inspectionDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>PSR</rd:DataSetName>
-        <rd:SchemaPath>C:\AccessCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
-        <rd:TableName>NEXTINPECTION</rd:TableName>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:TableName>NEXTINSPECTION</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />

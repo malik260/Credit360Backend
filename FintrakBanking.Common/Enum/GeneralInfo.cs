@@ -419,6 +419,9 @@ namespace FintrakBanking.Common.Enum
         CustomerContactUpdated = 520,
         CustomerDetailAdded = 521,
         CustomerDetailUpdated = 522,
+        PsrPerformanceAnalysisUpdated = 523,
+        PsrPerformanceAnalysisAdded = 524,
+        PsrPerformanceAnalysisDeleted = 525,
     };
     public enum RegulatoryTypeEnum
     {

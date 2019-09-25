@@ -1815,6 +1815,7 @@ namespace FintrakBanking.Repositories.Credit
                                    loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                                    collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
                                    facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(o => o.APPROVEDAMOUNT).Sum(),
+                                   facilityCurrencyCode = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).TBL_CURRENCY.CURRENCYCODE,
                                    approvalStatusId = x.APPROVALSTATUSID,
                                    currencyId = c.CURRENCYID,
                                }).ToList();
@@ -1870,8 +1871,9 @@ namespace FintrakBanking.Repositories.Credit
                     collateralCode = collateral.collateralCode,
                     collateralValue = collateralValue,
                     currencyId = collateral.currencyId,
-                    currencyCode = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == collateral.currencyId).CURRENCYCODE,
+                    collateralCurrencyCode = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == collateral.currencyId).CURRENCYCODE,
                     facilityAmount = facilityAmount,
+                    facilityCurrencyCode = collateral.facilityCurrencyCode,
                     expectedCollateralCoverage = expectedCollateralCoverage,
                     availableCollateralValue = availableCollateralValue,
                     availableCollateralValueBaseAmount = availableCollateralValue * (decimal)exchangeRate.sellingRate,
@@ -1895,8 +1897,8 @@ namespace FintrakBanking.Repositories.Credit
             var list = new List<CollateralCoverageViewModel>();
             var customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == customerId).ToList();
 
-            foreach (var f in customerFacilities)
-            {
+            //foreach (var f in customerFacilities)
+            //{
                 int coveragePercentage = 0;
                 decimal collateralValue = 0;
                 decimal facilityAmount = 0;
@@ -1909,7 +1911,9 @@ namespace FintrakBanking.Repositories.Credit
                                    join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                    join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
                                    join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
-                                   where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
+                                   join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
+                                   //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
+                                   where x.CUSTOMERID == customerId && f.CUSTOMERID == customerId
 
                                    select new CollateralCoverageViewModel
                                    {
@@ -1921,8 +1925,9 @@ namespace FintrakBanking.Repositories.Credit
                                        collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
                                        approvalStatusId = x.APPROVALSTATUSID,
                                        collateralSummary = c.COLLATERALSUMMARY,
-                                       facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
-
+                                       facilityAmount = f.APPROVEDAMOUNT,
+                                       //facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
+                                       facilityCurrencyId = f.CURRENCYID,
                                    }).ToList();
 
 
@@ -1931,7 +1936,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (var collateral in collaterals)
                 {
-                    var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateral.collateralSubTypeId && o.CURRENCYID == f.CURRENCYID).Select(o => o).FirstOrDefault();
+                    var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateral.collateralSubTypeId && o.CURRENCYID == collateral.facilityCurrencyId).Select(o => o).FirstOrDefault();
 
                     if (data == null) continue;
 
@@ -1986,7 +1991,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     list.Add(cov);
                 }
-            }
+            //}
             return list;
 
         }
@@ -6325,10 +6330,11 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(o => new CollateralHistoryList
                 {
                     customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
-                    loanRef = o.l.LOANREFERENCENUMBER,
+                    loanRef = o.l.LOANREFERENCENUMBER + o.l.TBL_PRODUCT.PRODUCTNAME,
                     expirationDate = o.l.MATURITYDATE,
                     collateralValue = o.clc.c.COLLATERALVALUE,
                     outstandingPrincipal = o.l.OUTSTANDINGPRINCIPAL,
+                    totalOutstanding = o.l.OUTSTANDINGPRINCIPAL + o.l.OUTSTANDINGINTEREST,
                     runningPrincipal = o.l.PRINCIPALAMOUNT,
                     dateUsed = o.clc.lc.DATETIMECREATED,
                     haircut = o.clc.c.HAIRCUT,
@@ -6343,10 +6349,11 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(o => new CollateralHistoryList
                 {
                     customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
-                    loanRef = o.l.LOANREFERENCENUMBER,
+                    loanRef = o.l.LOANREFERENCENUMBER + o.l.TBL_PRODUCT.PRODUCTNAME,
                     expirationDate = o.l.MATURITYDATE,
                     collateralValue = o.clc.c.COLLATERALVALUE,
                     outstandingPrincipal = o.l.OVERDRAFTLIMIT,
+                    totalOutstanding = o.l.OVERDRAFTLIMIT,
                     runningPrincipal = o.l.OVERDRAFTLIMIT,
                     dateUsed = o.clc.lc.DATETIMECREATED,
                     haircut = o.clc.c.HAIRCUT,
@@ -6984,9 +6991,7 @@ namespace FintrakBanking.Repositories.Credit
                     catch (Exception ex)
                     {
                         throw;
-                    }
-
-                    
+                    }                    
 
                 }
 

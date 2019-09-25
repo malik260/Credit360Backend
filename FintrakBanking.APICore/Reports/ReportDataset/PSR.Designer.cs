@@ -44,6 +44,8 @@ namespace ReportDeveloper.ReportDataset {
         
         private ANALYSISDataTable tableANALYSIS;
         
+        private INSPECTIONDATEDataTable tableINSPECTIONDATE;
+        
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -101,6 +103,9 @@ namespace ReportDeveloper.ReportDataset {
                 }
                 if ((ds.Tables["ANALYSIS"] != null)) {
                     base.Tables.Add(new ANALYSISDataTable(ds.Tables["ANALYSIS"]));
+                }
+                if ((ds.Tables["INSPECTIONDATE"] != null)) {
+                    base.Tables.Add(new INSPECTIONDATEDataTable(ds.Tables["INSPECTIONDATE"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -222,6 +227,16 @@ namespace ReportDeveloper.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public INSPECTIONDATEDataTable INSPECTIONDATE {
+            get {
+                return this.tableINSPECTIONDATE;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.BrowsableAttribute(true)]
         [global::System.ComponentModel.DesignerSerializationVisibilityAttribute(global::System.ComponentModel.DesignerSerializationVisibility.Visible)]
         public override global::System.Data.SchemaSerializationMode SchemaSerializationMode {
@@ -317,6 +332,9 @@ namespace ReportDeveloper.ReportDataset {
                 if ((ds.Tables["ANALYSIS"] != null)) {
                     base.Tables.Add(new ANALYSISDataTable(ds.Tables["ANALYSIS"]));
                 }
+                if ((ds.Tables["INSPECTIONDATE"] != null)) {
+                    base.Tables.Add(new INSPECTIONDATEDataTable(ds.Tables["INSPECTIONDATE"]));
+                }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
                 this.Namespace = ds.Namespace;
@@ -410,6 +428,12 @@ namespace ReportDeveloper.ReportDataset {
                     this.tableANALYSIS.InitVars();
                 }
             }
+            this.tableINSPECTIONDATE = ((INSPECTIONDATEDataTable)(base.Tables["INSPECTIONDATE"]));
+            if ((initTable == true)) {
+                if ((this.tableINSPECTIONDATE != null)) {
+                    this.tableINSPECTIONDATE.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -440,6 +464,8 @@ namespace ReportDeveloper.ReportDataset {
             base.Tables.Add(this.tableAPG);
             this.tableANALYSIS = new ANALYSISDataTable();
             base.Tables.Add(this.tableANALYSIS);
+            this.tableINSPECTIONDATE = new INSPECTIONDATEDataTable();
+            base.Tables.Add(this.tableINSPECTIONDATE);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -499,6 +525,12 @@ namespace ReportDeveloper.ReportDataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         private bool ShouldSerializeANALYSIS() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        private bool ShouldSerializeINSPECTIONDATE() {
             return false;
         }
         
@@ -587,6 +619,9 @@ namespace ReportDeveloper.ReportDataset {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         public delegate void ANALYSISRowChangeEventHandler(object sender, ANALYSISRowChangeEvent e);
         
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        public delegate void INSPECTIONDATERowChangeEventHandler(object sender, INSPECTIONDATERowChangeEvent e);
+        
         /// <summary>
         ///Represents the strongly named DataTable class.
         ///</summary>
@@ -655,6 +690,8 @@ namespace ReportDeveloper.ReportDataset {
             private global::System.Data.DataColumn columncustomerName;
             
             private global::System.Data.DataColumn columncurrency;
+            
+            private global::System.Data.DataColumn columninspectionDate;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
@@ -939,6 +976,14 @@ namespace ReportDeveloper.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn inspectionDateColumn {
+                get {
+                    return this.columninspectionDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1005,7 +1050,8 @@ namespace ReportDeveloper.ReportDataset {
                         string appplicationReferenceNumber, 
                         string projectLocation, 
                         string customerName, 
-                        string currency) {
+                        string currency, 
+                        string inspectionDate) {
                 PSRRow rowPSRRow = ((PSRRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         comment,
@@ -1038,7 +1084,8 @@ namespace ReportDeveloper.ReportDataset {
                         appplicationReferenceNumber,
                         projectLocation,
                         customerName,
-                        currency};
+                        currency,
+                        inspectionDate};
                 rowPSRRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowPSRRow);
                 return rowPSRRow;
@@ -1092,6 +1139,7 @@ namespace ReportDeveloper.ReportDataset {
                 this.columnprojectLocation = base.Columns["projectLocation"];
                 this.columncustomerName = base.Columns["customerName"];
                 this.columncurrency = base.Columns["currency"];
+                this.columninspectionDate = base.Columns["inspectionDate"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1159,6 +1207,8 @@ namespace ReportDeveloper.ReportDataset {
                 base.Columns.Add(this.columncustomerName);
                 this.columncurrency = new global::System.Data.DataColumn("currency", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncurrency);
+                this.columninspectionDate = new global::System.Data.DataColumn("inspectionDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columninspectionDate);
                 this.ExtendedProperties.Add("Generator_TablePropName", "_PSR");
                 this.ExtendedProperties.Add("Generator_UserTableName", "PSR");
             }
@@ -2067,6 +2117,8 @@ namespace ReportDeveloper.ReportDataset {
             
             private global::System.Data.DataColumn columnnextInspectionDate;
             
+            private global::System.Data.DataColumn columninspectionDate;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public NEXTINSPECTIONDataTable() {
@@ -2118,6 +2170,14 @@ namespace ReportDeveloper.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn inspectionDateColumn {
+                get {
+                    return this.columninspectionDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -2153,11 +2213,12 @@ namespace ReportDeveloper.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public NEXTINSPECTIONRow AddNEXTINSPECTIONRow(string comment, string nextInspectionDate) {
+            public NEXTINSPECTIONRow AddNEXTINSPECTIONRow(string comment, string nextInspectionDate, string inspectionDate) {
                 NEXTINSPECTIONRow rowNEXTINSPECTIONRow = ((NEXTINSPECTIONRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         comment,
-                        nextInspectionDate};
+                        nextInspectionDate,
+                        inspectionDate};
                 rowNEXTINSPECTIONRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowNEXTINSPECTIONRow);
                 return rowNEXTINSPECTIONRow;
@@ -2182,6 +2243,7 @@ namespace ReportDeveloper.ReportDataset {
             internal void InitVars() {
                 this.columncomment = base.Columns["comment"];
                 this.columnnextInspectionDate = base.Columns["nextInspectionDate"];
+                this.columninspectionDate = base.Columns["inspectionDate"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2191,6 +2253,8 @@ namespace ReportDeveloper.ReportDataset {
                 base.Columns.Add(this.columncomment);
                 this.columnnextInspectionDate = new global::System.Data.DataColumn("nextInspectionDate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnnextInspectionDate);
+                this.columninspectionDate = new global::System.Data.DataColumn("inspectionDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columninspectionDate);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4071,6 +4135,253 @@ namespace ReportDeveloper.ReportDataset {
         }
         
         /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class INSPECTIONDATEDataTable : global::System.Data.TypedTableBase<INSPECTIONDATERow> {
+            
+            private global::System.Data.DataColumn columninspectionDate;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public INSPECTIONDATEDataTable() {
+                this.TableName = "INSPECTIONDATE";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal INSPECTIONDATEDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected INSPECTIONDATEDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn inspectionDateColumn {
+                get {
+                    return this.columninspectionDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public INSPECTIONDATERow this[int index] {
+                get {
+                    return ((INSPECTIONDATERow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event INSPECTIONDATERowChangeEventHandler INSPECTIONDATERowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event INSPECTIONDATERowChangeEventHandler INSPECTIONDATERowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event INSPECTIONDATERowChangeEventHandler INSPECTIONDATERowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event INSPECTIONDATERowChangeEventHandler INSPECTIONDATERowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void AddINSPECTIONDATERow(INSPECTIONDATERow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public INSPECTIONDATERow AddINSPECTIONDATERow(string inspectionDate) {
+                INSPECTIONDATERow rowINSPECTIONDATERow = ((INSPECTIONDATERow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        inspectionDate};
+                rowINSPECTIONDATERow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowINSPECTIONDATERow);
+                return rowINSPECTIONDATERow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                INSPECTIONDATEDataTable cln = ((INSPECTIONDATEDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new INSPECTIONDATEDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal void InitVars() {
+                this.columninspectionDate = base.Columns["inspectionDate"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            private void InitClass() {
+                this.columninspectionDate = new global::System.Data.DataColumn("inspectionDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columninspectionDate);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public INSPECTIONDATERow NewINSPECTIONDATERow() {
+                return ((INSPECTIONDATERow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new INSPECTIONDATERow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(INSPECTIONDATERow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.INSPECTIONDATERowChanged != null)) {
+                    this.INSPECTIONDATERowChanged(this, new INSPECTIONDATERowChangeEvent(((INSPECTIONDATERow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.INSPECTIONDATERowChanging != null)) {
+                    this.INSPECTIONDATERowChanging(this, new INSPECTIONDATERowChangeEvent(((INSPECTIONDATERow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.INSPECTIONDATERowDeleted != null)) {
+                    this.INSPECTIONDATERowDeleted(this, new INSPECTIONDATERowChangeEvent(((INSPECTIONDATERow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.INSPECTIONDATERowDeleting != null)) {
+                    this.INSPECTIONDATERowDeleting(this, new INSPECTIONDATERowChangeEvent(((INSPECTIONDATERow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void RemoveINSPECTIONDATERow(INSPECTIONDATERow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                PSR ds = new PSR();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "INSPECTIONDATEDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
         public partial class PSRRow : global::System.Data.DataRow {
@@ -4582,6 +4893,22 @@ namespace ReportDeveloper.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string inspectionDate {
+                get {
+                    try {
+                        return ((string)(this[this.tablePSR.inspectionDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'inspectionDate\' in table \'PSR\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablePSR.inspectionDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscommentNull() {
                 return this.IsNull(this.tablePSR.commentColumn);
             }
@@ -4951,6 +5278,18 @@ namespace ReportDeveloper.ReportDataset {
             public void SetcurrencyNull() {
                 this[this.tablePSR.currencyColumn] = global::System.Convert.DBNull;
             }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsinspectionDateNull() {
+                return this.IsNull(this.tablePSR.inspectionDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetinspectionDateNull() {
+                this[this.tablePSR.inspectionDateColumn] = global::System.Convert.DBNull;
+            }
         }
         
         /// <summary>
@@ -5186,6 +5525,22 @@ namespace ReportDeveloper.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string inspectionDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableNEXTINSPECTION.inspectionDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'inspectionDate\' in table \'NEXTINSPECTION\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableNEXTINSPECTION.inspectionDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscommentNull() {
                 return this.IsNull(this.tableNEXTINSPECTION.commentColumn);
             }
@@ -5206,6 +5561,18 @@ namespace ReportDeveloper.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetnextInspectionDateNull() {
                 this[this.tableNEXTINSPECTION.nextInspectionDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsinspectionDateNull() {
+                return this.IsNull(this.tableNEXTINSPECTION.inspectionDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetinspectionDateNull() {
+                this[this.tableNEXTINSPECTION.inspectionDateColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -6462,6 +6829,49 @@ namespace ReportDeveloper.ReportDataset {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class INSPECTIONDATERow : global::System.Data.DataRow {
+            
+            private INSPECTIONDATEDataTable tableINSPECTIONDATE;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal INSPECTIONDATERow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableINSPECTIONDATE = ((INSPECTIONDATEDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string inspectionDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableINSPECTIONDATE.inspectionDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'inspectionDate\' in table \'INSPECTIONDATE\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableINSPECTIONDATE.inspectionDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsinspectionDateNull() {
+                return this.IsNull(this.tableINSPECTIONDATE.inspectionDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetinspectionDateNull() {
+                this[this.tableINSPECTIONDATE.inspectionDateColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
@@ -6787,6 +7197,40 @@ namespace ReportDeveloper.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public ANALYSISRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        public class INSPECTIONDATERowChangeEvent : global::System.EventArgs {
+            
+            private INSPECTIONDATERow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public INSPECTIONDATERowChangeEvent(INSPECTIONDATERow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public INSPECTIONDATERow Row {
                 get {
                     return this.eventRow;
                 }
