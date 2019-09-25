@@ -9431,10 +9431,63 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
+        public bool AddInsurancePolicyFile(InsurancePolicies model)
+        {
+            var entity = new TBL_COLLATERAL_ITEM_POLICY
+            {
+
+                POLICYREFERENCENUMBER = model.referenceNumber,
+                INSURANCETYPE = model.insuranceType,
+                INSURANCETYPEID =model.insuranceTypeId,
+                SUMINSURED = model.sumInsured,
+                DATETIMECREATED = model.dateTimeCreated,
+                HASEXPIRED = model.hasExpired,
+                CREATEDBY = model.createdBy,
+                DELETED = false
+
+            };
+            context.TBL_COLLATERAL_ITEM_POLICY.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            this.auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralReleaseApproval,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_INSURANCE_TYPE '{entity.ToString()}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateInsurancePolicy(InsurancePolicies model)
+        {
+            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find();
+            entity.POLICYREFERENCENUMBER = model.referenceNumber;
+            entity.INSURANCETYPE = model.insuranceType;
+            entity.SUMINSURED = model.sumInsured;
+            entity.HASEXPIRED = model.hasExpired;
+            entity.LASTUPDATEDBY = model.createdBy;
+            entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteInsurancePolicy(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = genSetup.GetApplicationDate();
+            return context.SaveChanges() != 0;
+        }
 
        
 
-
+       
     }
 
 }
