@@ -6986,9 +6986,7 @@ namespace FintrakBanking.Repositories.Credit
                     catch (Exception ex)
                     {
                         throw;
-                    }
-
-                    
+                    }                    
 
                 }
 
