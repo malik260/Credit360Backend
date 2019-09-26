@@ -583,6 +583,13 @@
     <Compile Include="Reports\ReportViews\ContigentLiabilityInformation.aspx.designer.cs">
       <DependentUpon>ContigentLiabilityInformation.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ContigentReport.aspx.cs">
+      <DependentUpon>ContigentReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ContigentReport.aspx.designer.cs">
+      <DependentUpon>ContigentReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx.cs">
       <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1099,6 +1106,7 @@
     <Content Include="Reports\ReportViews\CollateralValuationReport.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
     <Content Include="Reports\ReportViews\ContigentLiabilityInformation.aspx" />
+    <Content Include="Reports\ReportViews\ContigentReport.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />

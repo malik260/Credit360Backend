@@ -487,6 +487,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet, Route("collateral/application/{customerId}/{getAll}")]
+        public HttpResponseMessage GetProposedCustomerCollateralByCustomerId(int customerId, bool getAll)
+        {
+            try
+            {
+                var response = repo.GetProposedCustomerCollateralByCustomerId(customerId, getAll);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
+
         [HttpGet, Route("customer-collateral/searchParam/{searchParam}")]
         public HttpResponseMessage GetCustomerCollateralReport(string searchParam)
         {
@@ -2407,8 +2421,54 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("policy-insurance-doc")]
+        public HttpResponseMessage SaveInsurancePolicy([FromBody]   InsurancePolicies model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddInsurancePolicyFile(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
 
-      
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("policy-insurance-doc/{id}")]
+        public HttpResponseMessage UpdateInsurancePolicy(InsurancePolicies model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            bool response = repo.UpdateInsurancePolicy(model);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("loan-application-flow-change/{id}")]
+        public HttpResponseMessage DeleteInsurancePolicy(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteInsurancePolicy(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+
+
 
     }
 

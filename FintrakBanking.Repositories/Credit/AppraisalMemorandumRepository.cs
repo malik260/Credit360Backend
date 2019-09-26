@@ -1395,7 +1395,18 @@ namespace FintrakBanking.Repositories.Credit
                     toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                     fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
                 })?.OrderByDescending(x => x.approvalTrailId).ToList();
+            //var data2 = data;
+            var testData = data;
+            foreach (var t in data.ToList())
+            {
+                if (data.FindAll(d => d.fromApprovalLevelId == t.fromApprovalLevelId).Count() > 1)
+                {
+                    var tr = data.FirstOrDefault(d => d.approvalTrailId == t.approvalTrailId);
+                    data.Remove(tr);
+                }
+            }
 
+            data.OrderBy(d => d.approvalTrailId);
             return data;
         }
 
@@ -1666,7 +1677,7 @@ namespace FintrakBanking.Repositories.Credit
                         statusId = x.d.STATUSID,
                         exchangeRate = x.d.EXCHANGERATE,
                         terms = x.d.REPAYMENTTERMS,
-                        repaymentScheduleId = (int)x.d.REPAYMENTSCHEDULEID,
+                        repaymentScheduleId = x.d.REPAYMENTSCHEDULEID,
                         //schedule = x.d.TBL_REPAYMENT_TERM.REPAYMENTTERMDETAIL,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                         crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,

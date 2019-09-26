@@ -1891,41 +1891,74 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId)
+        public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId, bool getAll = false)
         {
 
             var list = new List<CollateralCoverageViewModel>();
             var customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == customerId).ToList();
 
-            foreach (var f in customerFacilities)
-            {
+            //foreach (var f in customerFacilities)
+            //{
                 int coveragePercentage = 0;
                 decimal collateralValue = 0;
                 decimal facilityAmount = 0;
                 decimal availableCollateralValue = 0;
                 decimal expectedCollateralCoverage = 0;
                 decimal actualCollateralCoverage = 0;
+                var collaterals = new List<CollateralCoverageViewModel>();
                 //  decimal sumOfMultipleCollateralValues = 0;
 
-                var collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
-                                   join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
-                                   join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
-                                   join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
-                                   where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
+                if (getAll)
+                {
+                     collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
+                                       join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                                       join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
+                                       join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
+                                       join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
+                                       //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
+                                       where x.CUSTOMERID == customerId
 
-                                   select new CollateralCoverageViewModel
-                                   {
-                                       collateralId = x.COLLATERALCUSTOMERID,
-                                       collateralCode = c.COLLATERALCODE,
-                                       currencyId = c.CURRENCYID,
-                                       collateralValue = c.COLLATERALVALUE,
-                                       loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
-                                       collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
-                                       approvalStatusId = x.APPROVALSTATUSID,
-                                       collateralSummary = c.COLLATERALSUMMARY,
-                                       facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
+                                       select new CollateralCoverageViewModel
+                                       {
+                                           collateralId = x.COLLATERALCUSTOMERID,
+                                           collateralCode = c.COLLATERALCODE,
+                                           currencyId = c.CURRENCYID,
+                                           collateralValue = c.COLLATERALVALUE,
+                                           loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                                           collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
+                                           approvalStatusId = x.APPROVALSTATUSID,
+                                           collateralSummary = c.COLLATERALSUMMARY,
+                                           facilityAmount = f.APPROVEDAMOUNT,
+                                           //facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
+                                           facilityCurrencyId = f.CURRENCYID,
+                                       }).ToList();
+                } else
+                {
+                     collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
+                                       join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                                       join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
+                                       join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
+                                       join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
+                                       //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
+                                       where x.CUSTOMERID == customerId && f.CUSTOMERID == customerId
 
-                                   }).ToList();
+                                       select new CollateralCoverageViewModel
+                                       {
+                                           collateralId = x.COLLATERALCUSTOMERID,
+                                           collateralCode = c.COLLATERALCODE,
+                                           currencyId = c.CURRENCYID,
+                                           collateralValue = c.COLLATERALVALUE,
+                                           loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                                           collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
+                                           approvalStatusId = x.APPROVALSTATUSID,
+                                           collateralSummary = c.COLLATERALSUMMARY,
+                                           facilityAmount = f.APPROVEDAMOUNT,
+                                           //facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
+                                           facilityCurrencyId = f.CURRENCYID,
+                                       }).ToList();
+                }
+                
+
 
 
                 if (collaterals == null) return new List<CollateralCoverageViewModel>();
@@ -1933,7 +1966,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (var collateral in collaterals)
                 {
-                    var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateral.collateralSubTypeId && o.CURRENCYID == f.CURRENCYID).Select(o => o).FirstOrDefault();
+                    var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateral.collateralSubTypeId && o.CURRENCYID == collateral.facilityCurrencyId).Select(o => o).FirstOrDefault();
 
                     if (data == null) continue;
 
@@ -1988,7 +2021,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     list.Add(cov);
                 }
-            }
+            //}
             return list;
 
         }
@@ -6327,10 +6360,11 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(o => new CollateralHistoryList
                 {
                     customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
-                    loanRef = o.l.LOANREFERENCENUMBER,
+                    loanRef = o.l.LOANREFERENCENUMBER + o.l.TBL_PRODUCT.PRODUCTNAME,
                     expirationDate = o.l.MATURITYDATE,
                     collateralValue = o.clc.c.COLLATERALVALUE,
                     outstandingPrincipal = o.l.OUTSTANDINGPRINCIPAL,
+                    totalOutstanding = o.l.OUTSTANDINGPRINCIPAL + o.l.OUTSTANDINGINTEREST,
                     runningPrincipal = o.l.PRINCIPALAMOUNT,
                     dateUsed = o.clc.lc.DATETIMECREATED,
                     haircut = o.clc.c.HAIRCUT,
@@ -6345,10 +6379,11 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(o => new CollateralHistoryList
                 {
                     customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
-                    loanRef = o.l.LOANREFERENCENUMBER,
+                    loanRef = o.l.LOANREFERENCENUMBER + o.l.TBL_PRODUCT.PRODUCTNAME,
                     expirationDate = o.l.MATURITYDATE,
                     collateralValue = o.clc.c.COLLATERALVALUE,
                     outstandingPrincipal = o.l.OVERDRAFTLIMIT,
+                    totalOutstanding = o.l.OVERDRAFTLIMIT,
                     runningPrincipal = o.l.OVERDRAFTLIMIT,
                     dateUsed = o.clc.lc.DATETIMECREATED,
                     haircut = o.clc.c.HAIRCUT,
@@ -6986,9 +7021,7 @@ namespace FintrakBanking.Repositories.Credit
                     catch (Exception ex)
                     {
                         throw;
-                    }
-
-                    
+                    }                    
 
                 }
 
@@ -9398,10 +9431,63 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
+        public bool AddInsurancePolicyFile(InsurancePolicies model)
+        {
+            var entity = new TBL_COLLATERAL_ITEM_POLICY
+            {
+
+                POLICYREFERENCENUMBER = model.referenceNumber,
+                INSURANCETYPE = model.insuranceType,
+                INSURANCETYPEID =model.insuranceTypeId,
+                SUMINSURED = model.sumInsured,
+                DATETIMECREATED = model.dateTimeCreated,
+                HASEXPIRED = model.hasExpired,
+                CREATEDBY = model.createdBy,
+                DELETED = false
+
+            };
+            context.TBL_COLLATERAL_ITEM_POLICY.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            this.auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralReleaseApproval,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_INSURANCE_TYPE '{entity.ToString()}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateInsurancePolicy(InsurancePolicies model)
+        {
+            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find();
+            entity.POLICYREFERENCENUMBER = model.referenceNumber;
+            entity.INSURANCETYPE = model.insuranceType;
+            entity.SUMINSURED = model.sumInsured;
+            entity.HASEXPIRED = model.hasExpired;
+            entity.LASTUPDATEDBY = model.createdBy;
+            entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteInsurancePolicy(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find(id);
+            entity.DELETED = true;
+            entity.DELETEDBY = user.createdBy;
+            entity.DATETIMEDELETED = genSetup.GetApplicationDate();
+            return context.SaveChanges() != 0;
+        }
 
        
 
-
+       
     }
 
 }

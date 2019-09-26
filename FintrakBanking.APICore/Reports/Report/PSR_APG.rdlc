@@ -844,7 +844,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>7. TASK FOR NEXT INSPECTION:</Value>
+                <Value>6. TASK FOR NEXT INSPECTION:</Value>
                 <Style>
                   <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
@@ -1262,7 +1262,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!apgReceived.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
@@ -1982,7 +1984,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!valueOfCollateral.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2045,7 +2049,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!ipc.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2108,7 +2114,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!pmu.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2175,7 +2183,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!aTotal.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2303,7 +2314,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!less.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2366,7 +2379,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!amountDisbursed.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2429,7 +2444,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!amountRequested.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2496,7 +2513,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!bTotal.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2563,7 +2583,10 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!netPerformance.Value</Value>
-                              <Style />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2801,15 +2824,15 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>1in</Width>
+              <Width>0.69271in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1in</Width>
+              <Width>1.25521in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.25in</Height>
+              <Height>0.32764in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2874,7 +2897,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -2897,8 +2919,8 @@
         <DataSetName>detail</DataSetName>
         <Top>0.85292in</Top>
         <Left>0.28in</Left>
-        <Height>0.25in</Height>
-        <Width>2in</Width>
+        <Height>0.32764in</Height>
+        <Width>1.94792in</Width>
         <ZIndex>18</ZIndex>
         <Style>
           <Border>
