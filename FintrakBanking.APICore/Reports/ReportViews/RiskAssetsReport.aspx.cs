@@ -24,7 +24,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     CultureInfo provider = CultureInfo.InvariantCulture;
                     string postedDate = Request.QueryString["runDate"];
                     DateTime RunDate = Convert.ToDateTime(postedDate);               
-                    //string rDate = RunDate.Day+"/"+RunDate.Month+"/"+RunDate.Year;
                     string rDate = RunDate.Year + "-" + RunDate.Month + "-" + RunDate.Day;
                     string Level = Request.QueryString["level"];
                     string MisCode = Request.QueryString["misCode"];
@@ -33,7 +32,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     string GroupName = Request.QueryString["groupName"];
                     string BranchName = Request.QueryString["branchName"];
                     string RegionName = Request.QueryString["regionName"];
-
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -85,7 +83,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     reportParameter[3] = new ReportParameter("DivisionName", DivisionName); 
                     reportParameter[4] = new ReportParameter("GroupName", GroupName); 
                     reportParameter[5] = new ReportParameter("BranchName", BranchName); 
-                    reportParameter[6] = new ReportParameter("RunDate", rDate);//yyyy-mm-dd
+                    reportParameter[6] = new ReportParameter("RunDate", rDate); // yyyy-mm-dd
                     reportParameter[7] = new ReportParameter("RegionName", RegionName); 
 
                     //==== NOTE: for report on server, use the below ============
