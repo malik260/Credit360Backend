@@ -33,7 +33,7 @@ namespace FintrakBanking.Interfaces.Credit
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
         IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral( int? applicationDetailId, int currencyId, int companyId);
-        IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId);
+        IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId, bool getAll);
         CollateralViewModel GetCustomerCollateralInformation(int collateralCustomerId, int companyId);
         List<CollateralViewModel> GetCustomerPropertyCollaterals(int? customerId, int companyId);
 
@@ -164,6 +164,11 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddInsuranceType(InsuranceTypeViewModel model);
         bool DeleteInsuranceType(int id, UserInfo user);
         bool UpdateInsuranceType(InsuranceTypeViewModel model, int id, UserInfo user);
+
+
+        bool AddInsurancePolicyFile(InsurancePolicies model);
+        bool DeleteInsurancePolicy(int id, UserInfo user);
+        bool UpdateInsurancePolicy(InsurancePolicies model);
 
 
 

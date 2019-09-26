@@ -4,7 +4,7 @@ using Topshelf.Ninject;
 
 namespace FintrakBanking.MonitoringMessagesSender
 {
-    class Program
+   public class Program
     {
         static void Main(string[] args)
         {

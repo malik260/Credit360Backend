@@ -2244,7 +2244,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool ValidateChecklist(int applicationId)
         {
-            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == applicationId && d.DELETED == false).ToList();
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(d => d.LOANAPPLICATIONID == applicationId && d.DELETED == false && d.TBL_LOAN_APPLICATION.TBL_PRODUCT_CLASS_PROCESS.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.CAMBased).ToList();
             foreach (var id in details)
             {
                 var checklists = context.TBL_ESG_CHECKLIST_DETAIL.Where(c => c.DELETED != true && c.LOANAPPLICATIONDETAILID == id.LOANAPPLICATIONDETAILID).ToList();
@@ -2253,7 +2253,7 @@ namespace FintrakBanking.Repositories.Credit
                     continue;
                 } else
                 {
-                    throw new SecureException("Checklist items for "+id.TBL_PRODUCT1.PRODUCTNAME+" still pending");
+                    throw new SecureException("ESRM Checklist items for "+id.TBL_PRODUCT1.PRODUCTNAME+" product still pending");
                 }
 
             }

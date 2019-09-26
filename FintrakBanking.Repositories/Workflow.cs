@@ -67,6 +67,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? toStaffId = null;
         private int? loopedRoleId = null;
         private int? loopedStaffId = null;
+        private short? referBackStateId = null;
         private bool initiatorOrLooped = false;
         public int actualRequestStaffId = 0;
         public bool isLoopResponse = false;
@@ -150,14 +151,14 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             request = trailLog.OrderByDescending(x => x.APPROVALTRAILID).FirstOrDefault();
 
-            //var referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
-            //                    x.COMPANYID == this.companyId
-            //                    && x.OPERATIONID == this.operationId
-            //                    && x.TARGETID == this.targetId
-            //                    && x.RESPONSESTAFFID != null
-            //                    && x.TOAPPROVALLEVELID == request.FROMAPPROVALLEVELID
-            //                    && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
-            //                ).ToList();
+            this.referredLog = context.TBL_APPROVAL_TRAIL.Where(x =>
+                                x.COMPANYID == this.companyId
+                                && x.OPERATIONID == this.operationId
+                                && x.TARGETID == this.targetId
+                               // && x.RESPONSESTAFFID != null
+                                && x.REFEREBACKSTATEID != (int)ApprovalState.Ended
+                                && (x.APPROVALSTATEID != (int)ApprovalState.Ended && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
+                            ).ToList();
 
             var initiatingRequest = GetAllTrail().OrderByDescending(x => x.APPROVALTRAILID).LastOrDefault();
 
@@ -241,7 +242,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 TOSTAFFID = this.toStaffId,
                 LOOPEDROLEID = this.loopedRoleId,
                 LOOPEDSTAFFID = this.loopedStaffId,
-                
+                REFEREBACKSTATEID = this.referBackStateId,
+
             });
 
             if (this.deferredExecution) { return true; }
@@ -274,6 +276,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.StatusId == (int)ApprovalStatusEnum.Referred )
             {
+                this.referBackStateId = (short)ApprovalState.Initiation;
+
                 if (this.nextLevelId == null )
                 {
                     this.fromLevelId = request.TOAPPROVALLEVELID;
@@ -284,10 +288,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
             }
 
-            if (this.request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && this.StatusId != (int)ApprovalStatusEnum.Referred)
+            if (this.request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && this.StatusId == (int)ApprovalStatusEnum.Referred)
             {
-                this.nextLevelId = request.TOAPPROVALLEVELID;
-                this.toStaffId = request.TOSTAFFID;
+                request.REFEREBACKSTATEID = (short)ApprovalState.Processing;
+               
             }
 
             if (request.LOOPEDSTAFFID != null && request.LOOPEDSTAFFID > 0 && this.StatusId != (int)ApprovalStatusEnum.Referred)
@@ -297,7 +301,25 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.toStaffId = staffId;
                 this.isLoopResponse = true;
                 this.fromLevelId = request.TOAPPROVALLEVELID;
-                this.nextLevelId = request.TOAPPROVALLEVELID;
+                this.nextLevelId = this.nextLevelId != null ? this.nextLevelId : request.TOAPPROVALLEVELID;
+            }
+
+            if (this.request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && this.StatusId != (int)ApprovalStatusEnum.Referred)
+            {
+               if(this.referredLog.Count <= 0) request.REFEREBACKSTATEID = (short)ApprovalState.Ended;
+
+                this.nextLevelId = request.FROMAPPROVALLEVELID;
+                if(this.referredLog.Count <= 0)this.toStaffId = request.REQUESTSTAFFID;
+            }
+
+            if (this.referredLog.Count > 0 && this.StatusId != (int)ApprovalStatusEnum.Referred )
+            {
+                var initialReferrer = this.referredLog.Where(x => x.REFEREBACKSTATEID == (short)ApprovalState.Initiation).FirstOrDefault();
+                var referrer = initialReferrer == null ? this.referredLog.FirstOrDefault() : initialReferrer;
+
+                this.nextLevelId = referrer.FROMAPPROVALLEVELID;
+                //this.toStaffId = referrer.REQUESTSTAFFID;
+                referrer.REFEREBACKSTATEID = (short)ApprovalState.Ended;
             }
         }
         /*
@@ -479,7 +501,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (fromId == null) return;
             var referrerGroup = context.TBL_APPROVAL_LEVEL.Find(fromId);
             var recepientGroup = context.TBL_APPROVAL_LEVEL.Find(toId);
-            if (referrerGroup.GROUPID != recepientGroup.GROUPID)
+            if (referrerGroup.GROUPID != recepientGroup.GROUPID && request.APPROVALSTATUSID != (short)ApprovalStatusEnum.Referred && this.referredLog.Count <= 0)
             {
                 this.toStaffId = referrerId;
                 this.nextLevelId = fromId;
