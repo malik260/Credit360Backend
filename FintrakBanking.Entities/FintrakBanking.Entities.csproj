@@ -142,6 +142,7 @@
     <Compile Include="Models\TBL_ORIGINAL_DOCUMENT_RELEASE.cs" />
     <Compile Include="DocumentModels\TBL_DOC_MAPPING.cs" />
     <Compile Include="Models\TBL_PROFILE_BUSINESS_UNIT.cs" />
+    <Compile Include="Models\TBL_PSR_ANALYSIS.cs" />
     <Compile Include="Models\TBL_PSR_COMMENT.cs" />
     <Compile Include="Models\TBL_PSR_NEXT_INSPECTION_TASK.cs" />
     <Compile Include="Models\TBL_PSR_OBSERVATION.cs" />

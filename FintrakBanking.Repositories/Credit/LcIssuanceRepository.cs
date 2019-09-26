@@ -72,13 +72,13 @@ namespace FintrakBanking.Repositories.credit
                                      && (usstrail.OPERATIONID == (int)OperationsEnum.lcUssance || usstrail == null)))
                                      &&
                                     (
-                                    (x.LCREFERENCENUMBER.Contains(searchString))
+                                    (x.LCREFERENCENUMBER.Trim().ToLower().Contains(searchString))
                                     || c.FIRSTNAME.ToLower().Contains(searchString)
                                     || c.LASTNAME.ToLower().Contains(searchString)
                                     || c.MIDDLENAME.ToLower().Contains(searchString)
                                     || c.CUSTOMERCODE.Contains(searchString)
-                                    || x.FORMMNUMBER.ToString().Contains(searchString)
-                                    || x.LCISSUANCEID.ToString().Contains(searchString)
+                                    || x.FORMMNUMBER.ToString().Trim().ToLower().Contains(searchString)
+                                    || x.LCISSUANCEID.ToString().Trim().ToLower().Contains(searchString)
                                     )
                                     )
                                     select new LcIssuanceApprovalViewModel

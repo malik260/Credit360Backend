@@ -1815,6 +1815,7 @@ namespace FintrakBanking.Repositories.Credit
                                    loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                                    collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
                                    facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(o => o.APPROVEDAMOUNT).Sum(),
+                                   facilityCurrencyCode = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).TBL_CURRENCY.CURRENCYCODE,
                                    approvalStatusId = x.APPROVALSTATUSID,
                                    currencyId = c.CURRENCYID,
                                }).ToList();
@@ -1870,8 +1871,9 @@ namespace FintrakBanking.Repositories.Credit
                     collateralCode = collateral.collateralCode,
                     collateralValue = collateralValue,
                     currencyId = collateral.currencyId,
-                    currencyCode = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == collateral.currencyId).CURRENCYCODE,
+                    collateralCurrencyCode = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == collateral.currencyId).CURRENCYCODE,
                     facilityAmount = facilityAmount,
+                    facilityCurrencyCode = collateral.facilityCurrencyCode,
                     expectedCollateralCoverage = expectedCollateralCoverage,
                     availableCollateralValue = availableCollateralValue,
                     availableCollateralValueBaseAmount = availableCollateralValue * (decimal)exchangeRate.sellingRate,
