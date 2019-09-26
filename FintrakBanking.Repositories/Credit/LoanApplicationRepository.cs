@@ -838,6 +838,27 @@ namespace FintrakBanking.Repositories.Credit
             return customers;
         }
 
+
+        public List<accountsViewModels> GetCustomerTransactionsAccounts(int customerId, int applicationId, bool isLms = false)
+        {
+            var first = (from a in context.TBL_LOAN_APPLICATION_TRANS
+                         where a.CUSTOMERID == customerId
+                         select new accountsViewModels
+                         {
+                             accountNumber = a.ACCOUNTNUMBER,
+                         }).Distinct().ToList();
+
+            var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
+                          where a.CUSTOMERID == customerId
+                          select new accountsViewModels
+                          {
+                              accountNumber = a.ACCOUNTNUMBER,
+                          }).Distinct().ToList();
+            first = first.Union(second).ToList();
+
+            return first;
+        }
+
         public CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId, bool isLms = false)
         {
             var fields = new CustomerApplicationTransactionsViewModels();
@@ -891,6 +912,156 @@ namespace FintrakBanking.Repositories.Credit
             second.Add(new CustomerTransactionsViewModels
             {
                 cust_Id = "TOTAL",
+                interest = second.Sum(t => t.interest),
+                float_Charge = second.Sum(t => t.float_Charge),
+            });
+
+
+            fields.firstTransaction = first;
+            fields.secondTransaction = second;
+
+            return fields;
+        }
+
+        public CustomerApplicationTransactionsViewModels GetCustomerTransactionsFiltered(int customerId, int applicationId, string accountnumber, int? fromYear, int fromMonth, int? toYear, int toMonth, bool isLms = false)
+        {
+            DateTime filterFromdate = new DateTime(); // = DateTime.Parse("1-" + fromMonth + "-" + fromYear);
+            DateTime filterTodate = new DateTime();// = DateTime.Parse("1-" + toMonth + "-" + toYear);
+
+            bool dateSelected = false;
+
+            if (fromYear.HasValue)
+            {
+                dateSelected = true;
+
+                try
+                {
+                    filterFromdate = new DateTime(fromYear.Value, fromMonth, 1);
+                    filterTodate = new DateTime(toYear.Value, toMonth, 1);
+                }
+                catch (Exception)
+                {
+                    throw new ConditionNotMetException("Specify all date values to filter by date");
+                }
+            }
+
+            var fields = new CustomerApplicationTransactionsViewModels();
+            var first = new List<CustomerTransactionsViewModels>();
+            var second = new List<CustomerTransactionsViewModels>();
+            var firstRecord = new List<CustomerTransactionsViewModels>();
+            var secondRecord = new List<CustomerTransactionsViewModels>();
+            firstRecord = (from a in context.TBL_LOAN_APPLICATION_TRANS
+                           where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.ISLMS == isLms
+                           //&& a.ACCOUNTNUMBER == accountnumber
+                           //&& (a.YEAR >= fromYear && a.MONTH >= fromMonth)
+                           //&& (a.YEAR <= toYear && a.MONTH <= toMonth)
+                           select new CustomerTransactionsViewModels
+                           {
+                               cust_Id = a.CUSTOMERTRANSACTIONID.ToString(),
+                               period = a.PERIOD,
+                               //periodDate  = DateTime.ParseExact("1-"+a.PERIOD,"dd-MM-yyyy",CultureInfo.InvariantCulture),
+                               productName = a.PRODUCTNAME,
+                               accountNumber = a.ACCOUNTNUMBER,
+                               casaAccountId = context.TBL_CASA.Where(p => p.PRODUCTACCOUNTNUMBER == a.ACCOUNTNUMBER).Any() ? context.TBL_CASA.Where(p => p.PRODUCTACCOUNTNUMBER == a.ACCOUNTNUMBER).Select(o => o.CASAACCOUNTID).FirstOrDefault() : 0,
+                               max_Credit_Balance = a.MAXIMUMCREDITBALANCE,
+                               max_Debit_Balance = a.MAXIMUMDEBITBALANCE,
+                               min_Credit_Balance = a.MINIMUMCREDITBALANCE,
+                               min_Debit_Balance = a.MINIMUMDEBITBALANCE,
+                               credit_Turnover = a.CREDITTURNOVER,
+                               debit_Turnover = a.DEBITTURNOVER,
+                               month = a.MONTH,
+                               year = a.YEAR,
+                           }).OrderBy(p => p.accountNumber).OrderBy(l => l.year).OrderBy(q => q.month).ToList();
+
+            foreach (var rec in firstRecord)
+            {
+                rec.periodDate = new DateTime(rec.year.Value, rec.month.Value, 1); // DateTime.Parse(rec.period);// "1-" +a.PERIOD,
+            }
+
+
+            secondRecord = (from a in context.TBL_LOAN_APPLICATION_TRANS2
+                            where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.ISLMS == isLms
+                            //&& a.ACCOUNTNUMBER == accountnumber
+                            //&& (a.YEAR >= fromYear && a.MONTH >= fromMonth)
+                            //&& (a.YEAR <= toYear && a.MONTH <= toMonth)
+                            select new CustomerTransactionsViewModels
+                            {
+                                // periodDate = DateTime.ParseExact("1-" + a.PERIOD, "dd-MM-yyyy", CultureInfo.InvariantCulture),
+                                cust_Id = a.CUSTOMERTRANSACTIONID2.ToString(),
+                                period = a.PERIOD,
+                                productName = a.PRODUCTNAME,
+                                accountNumber = a.ACCOUNTNUMBER,
+                                interest = a.INTEREST,
+                                float_Charge = a.FLOATCHARGE,
+                                month = a.MONTH,
+                                year = a.YEAR,
+                            }).OrderBy(p => p.accountNumber).OrderBy(l => l.year).OrderBy(q => q.month).ToList();
+            foreach (var rec in secondRecord)
+            {
+                rec.periodDate = new DateTime(rec.year.Value, rec.month.Value, 1); //DateTime.Parse(rec.period);// "1-" +a.PERIOD,
+            }
+
+            first = (from a in firstRecord
+                     where a.accountNumber == (accountnumber == "0" ? a.accountNumber : accountnumber)
+                     && (a.periodDate >= (dateSelected == false ? a.periodDate : filterFromdate) && a.periodDate <= (dateSelected == false ? a.periodDate : filterTodate))
+
+                     select new CustomerTransactionsViewModels
+                     {
+                         cust_Id = a.cust_Id,
+                         period = a.period,
+                         productName = a.productName,
+                         accountNumber = a.accountNumber,
+                         casaAccountId = a.casaAccountId,
+                         max_Credit_Balance = a.max_Credit_Balance,
+                         max_Debit_Balance = a.max_Debit_Balance,
+                         min_Credit_Balance = a.min_Credit_Balance,
+                         min_Debit_Balance = a.min_Debit_Balance,
+                         credit_Turnover = a.credit_Turnover,
+                         debit_Turnover = a.debit_Turnover,
+                         month = a.month,
+                         year = a.year,
+                     }).ToList();
+
+            second = (from a in secondRecord
+                      where a.accountNumber == (accountnumber == "0" ? a.accountNumber : accountnumber)
+                     && (a.periodDate >= (dateSelected == false ? a.periodDate : filterFromdate) && a.periodDate <= (dateSelected == false ? a.periodDate : filterTodate))
+
+                      select new CustomerTransactionsViewModels
+                      {
+                          cust_Id = a.cust_Id,
+                          period = a.period,
+                          productName = a.productName,
+                          accountNumber = a.accountNumber,
+                          interest = a.interest,
+                          float_Charge = a.float_Charge,
+                          month = a.month,
+                          year = a.year,
+                      }).ToList();
+
+
+
+
+
+            //foreach (var rec in second)
+            //{
+            //    rec.periodDate = DateTime.Parse("1-" + rec.period);// "1-" +a.PERIOD,
+            //}
+            //second = second.Where(op => op.periodDate >= filterFromdate && op.periodDate >= filterTodate).ToList();
+
+
+            first.Add(new CustomerTransactionsViewModels
+            {
+                accountNumber = "TOTAL",
+                //max_Credit_Balance = first.Sum(t => t.max_Credit_Balance),
+                //max_Debit_Balance = first.Sum(t => t.max_Debit_Balance),
+                //min_Credit_Balance = first.Sum(t => t.min_Credit_Balance),
+                //min_Debit_Balance = first.Sum(t => t.min_Debit_Balance),
+                credit_Turnover = first.Sum(t => t.credit_Turnover),
+                debit_Turnover = first.Sum(t => t.debit_Turnover),
+            });
+            second.Add(new CustomerTransactionsViewModels
+            {
+                accountNumber = "TOTAL",
                 interest = second.Sum(t => t.interest),
                 float_Charge = second.Sum(t => t.float_Charge),
             });

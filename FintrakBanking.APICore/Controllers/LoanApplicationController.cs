@@ -425,6 +425,37 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
+        [Route("customer-transactions-accounts/{customerId}/{applicationId}")]
+        public HttpResponseMessage GetCustomerTransactionsAccounts(int customerId, int applicationId)
+        {
+            try
+            {
+                var status = repo.GetCustomerTransactionsAccounts(customerId, applicationId, false);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("lms-customer-transactions-filtered/{customerId}/{applicationId}/{accountnumber}/{fromYear}/{fromMonth}/{toYear}/{toMonth}")]
+        public HttpResponseMessage GetLmsCustomerTransactions(int customerId, int applicationId, string accountnumber, int? fromYear, int fromMonth, int? toYear, int toMonth)
+        {
+            try
+            {
+                var status = repo.GetCustomerTransactionsFiltered(customerId, applicationId, accountnumber, fromYear, fromMonth, toYear, toMonth, true);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("customer-transactions-filter/{customerId}/{applicationId}/{froma}/{to}/{fYear}/{tYear}")]
         public HttpResponseMessage GetCustomerTransactionsByFilter(int customerId, int applicationId, int froma, int to, int fYear, int tYear)
         {

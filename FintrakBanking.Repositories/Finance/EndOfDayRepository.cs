@@ -163,14 +163,18 @@ namespace FintrakBanking.Repositories.Finance
             return financeEod;
         }
 
-        [OperationBehavior(TransactionScopeRequired = true)]
+
         public void ProcessEndOfDay(DateTime date, int companyId, int staffId)
         {
+
+
 
             //if (date.Day == 1)
             //{
             //    loanOperation.UpdateLoanClassification(date);
             //}
+
+            //var stringData = "";
 
             TBL_FINANCE_ENDOFDAY endOfDay = new TBL_FINANCE_ENDOFDAY();
 
@@ -242,7 +246,7 @@ namespace FintrakBanking.Repositories.Finance
 
                     transactionScope.Dispose();
                 }
-                catch (TransactionException ex)
+                catch (Exception ex)
                 {
                     transactionScope.Dispose();
                     throw ex;
@@ -292,234 +296,454 @@ namespace FintrakBanking.Repositories.Finance
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
                         {
 
-                            try
+                            loanOperation.ProcessAutomaticInterestRepricing(date, staffId, companyId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanOperation.ProcessAutomaticInterestRepricing(date, staffId);
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
+                                innerException = ex.InnerException.InnerException.Message;
                             }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
 
-                            }
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+
+                            //throw ex;
 
                         }
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        context.SaveChanges();
+                        // }
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.ProcessAutomaticInterestRepricing && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
+
+
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessReleaseLien)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
                         {
 
-                            try
+                            loanOperation.ProcessReleaseLien(date, companyId, staffId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanOperation.ProcessReleaseLien(date);
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
-                            }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
+                                innerException = ex.InnerException.InnerException.Message;
                             }
 
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+
+                            //throw ex;
                         }
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        context.SaveChanges();
+                        //}
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.ProcessReleaseLien && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyTermLoansInterestAccrual)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
                         {
 
-                            try
+                            loanOperation.ProcessDailyTermLoansInterestAccrual(date, companyId, staffId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex) //TransactionException
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanOperation.ProcessDailyTermLoansInterestAccrual(date);
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
-                            }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
+                                innerException = ex.InnerException.InnerException.Message;
                             }
 
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+
+                            //throw ex;
                         }
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        context.SaveChanges();
+                        //}
+
+
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyTermLoansInterestAccrual && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyInterestOnPastDueInterestAccrual)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
                         {
 
-                            try
+                            loanOperation.ProcessDailyInterestOnPastDueInterestAccrual(date, companyId, staffId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanOperation.ProcessDailyInterestOnPastDueInterestAccrual(date);
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
-                            }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
+                                innerException = ex.InnerException.InnerException.Message;
                             }
 
+
+
+
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+
+                            //throw ex;
                         }
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        context.SaveChanges();
+                        //}
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyInterestOnPastDueInterestAccrual && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyInterestOnPastDuePrincipalAccrual)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
                         {
 
-                            try
+                            loanOperation.ProcessDailyInterestOnPastDuePrincipalAccrual(date, companyId, staffId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanOperation.ProcessDailyInterestOnPastDuePrincipalAccrual(date);
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
-                            }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
+                                innerException = ex.InnerException.InnerException.Message;
                             }
 
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+
+                            //throw ex;
                         }
 
+                        //}
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        context.SaveChanges();
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyInterestOnPastDuePrincipalAccrual && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.UpdateLoanClassification)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
                         {
 
-                            try
+                            loanOperation.UpdateLoanClassification(date, companyId, staffId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanOperation.UpdateLoanClassification(date);
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
-                            }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
+                                innerException = ex.InnerException.InnerException.Message;
                             }
 
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+
+                            //throw ex;
                         }
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        context.SaveChanges();
+                        //}
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanClassification && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.UpdateLoanApplicationCovenant)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        string transactionReferenceNo = "";
+
+                        try
                         {
+                            loanCovenantRepository.UpdateLoanApplicationCovenant(date, companyId, staffId, out transactionReferenceNo);
 
-                            try
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanCovenantRepository.UpdateLoanApplicationCovenant(date);
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
+                                innerException = ex.InnerException.InnerException.Message;
                             }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
-                            }
+
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+                            //throw ex;
 
                         }
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        context.SaveChanges();
+                        //}
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.DailyWrittenOffFacilityAccrual)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
                         {
 
-                            try
+                            loanOperation.DailyWrittenOffFacilityAccrual(date, companyId, staffId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanOperation.DailyWrittenOffFacilityAccrual(date);
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
-                            }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
+                                innerException = ex.InnerException.InnerException.Message;
                             }
 
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+
+                            //throw ex;
                         }
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                        //}
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.DailyWrittenOffFacilityAccrual && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
+
+                    }
+                    else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyFeeAccrual)
+                    {
+                        eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
+
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
+                        {
+
+                            //loanOperation.DailyWrittenOffFacilityAccrual(date, companyId);
+
+                            loanOperation.ProcessDailyFeeAccrual(date, companyId, staffId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
+                            {
+                                innerException = ex.InnerException.InnerException.Message;
+                            }
+
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+
+                            //throw ex;
+                        }
+
+                        //}
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.ProcessDailyFeeAccrual && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
+
                     }
 
                 }
@@ -589,9 +813,572 @@ namespace FintrakBanking.Repositories.Finance
         }
 
 
-        [OperationBehavior(TransactionScopeRequired = true)]
+        //[OperationBehavior(TransactionScopeRequired = true)]
+        //public void ProcessEndOfDay(DateTime date, int companyId, int staffId)
+        //{
+
+        //    //if (date.Day == 1)
+        //    //{
+        //    //    loanOperation.UpdateLoanClassification(date);
+        //    //}
+
+        //    TBL_FINANCE_ENDOFDAY endOfDay = new TBL_FINANCE_ENDOFDAY();
+
+        //    var eod = context.TBL_FINANCE_ENDOFDAY.Where(x => x.DATE == date && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).FirstOrDefault();
+
+        //    if (eod == null)
+        //    {
+        //        endOfDay.COMPANYID = companyId;
+        //        endOfDay.DATE = date;
+        //        endOfDay.CREATEDBY = staffId;
+        //        endOfDay.STARTDATETIME = DateTime.Now;
+        //        endOfDay.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
+        //    }
+
+
+        //    if (endOfDay.COMPANYID != 0)
+        //    {
+        //        context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
+        //        context.SaveChanges();
+        //    }
+
+        //    using (TransactionScope transactionScope = new TransactionScope())
+        //    {
+
+        //        try
+        //        {
+        //            var eodOperationProcess = context.TBL_EOD_OPERATION_LOG.Where(x => x.EODDATE == date && x.COMPANYID == companyId).FirstOrDefault();
+
+
+        //            List<TBL_EOD_OPERATION_LOG> eod_Operation_Log_List = new List<TBL_EOD_OPERATION_LOG>();
+
+        //            if (eodOperationProcess == null)
+        //            {
+        //                var eodOperations = context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION).ToList();
+
+        //                foreach (TBL_EOD_OPERATION eodOperation in eodOperations)
+        //                {
+        //                    TBL_EOD_OPERATION_LOG eod_Operation_Log = new TBL_EOD_OPERATION_LOG();
+
+        //                    if (eodOperation.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanClassification)
+        //                    {
+        //                        if (date.Day == 1)
+        //                        {
+        //                            eod_Operation_Log.EODOPERATIONID = eodOperation.EODOPERATIONID;
+        //                            eod_Operation_Log.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
+        //                            eod_Operation_Log.EODDATE = date;
+        //                            eod_Operation_Log.COMPANYID = companyId;
+        //                            eod_Operation_Log_List.Add(eod_Operation_Log);
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        eod_Operation_Log.EODOPERATIONID = eodOperation.EODOPERATIONID;
+        //                        eod_Operation_Log.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
+        //                        eod_Operation_Log.EODDATE = date;
+        //                        eod_Operation_Log.COMPANYID = companyId;
+        //                        eod_Operation_Log_List.Add(eod_Operation_Log);
+        //                    }
+
+        //                }
+
+        //                context.TBL_EOD_OPERATION_LOG.AddRange(eod_Operation_Log_List);
+
+        //                context.SaveChanges();
+
+        //            }
+
+        //            transactionScope.Complete();
+
+        //            transactionScope.Dispose();
+        //        }
+        //        catch (TransactionException ex)
+        //        {
+        //            transactionScope.Dispose();
+        //            throw ex;
+        //        }
+
+        //    }
+
+        //    //var eodOperationProcesses = context.TBL_EOD_OPERATION_LOG.Where(x => x.EODDATE == date && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).ToList();
+
+        //    //var eodOperationProcesses = (from e in context.TBL_EOD_OPERATION_LOG
+        //    //                             join f in context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION) on e.EODOPERATIONID equals f.EODOPERATIONID
+        //    //                             where e.COMPANYID == companyId && e.EODDATE == date && e.EODSTATUSID == (int)EodOperationStatusEnum.Processing
+        //    //                             select new FinanceEndofdayViewModel()
+        //    //                             {
+        //    //                                 eodOperationLogId = e.EODOPERATIONLOGID,
+        //    //                                 eodOperationId = e.EODOPERATIONID,
+        //    //                                 eodDate = e.EODDATE,
+        //    //                                 eodStatusId = e.EODSTATUSID,
+        //    //                                 companyId = e.COMPANYID
+        //    //                             }).ToList();
+
+        //    var eodOperationProcesses = (from e in context.TBL_EOD_OPERATION_LOG
+        //                                 join f in context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION) on e.EODOPERATIONID equals f.EODOPERATIONID
+        //                                 where e.COMPANYID == companyId && e.EODDATE == date && (e.EODSTATUSID == (int)EodOperationStatusEnum.Processing
+        //                                 && e.EODOPERATIONID != (int)EodOperationEnum.ProcessLoanRepaymentPostingForceDebit && e.EODOPERATIONID != (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue && e.EODOPERATIONID != (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover)
+        //                                 select new FinanceEndofdayViewModel()
+        //                                 {
+        //                                     eodOperationLogId = e.EODOPERATIONLOGID,
+        //                                     eodOperationId = e.EODOPERATIONID,
+        //                                     eodDate = e.EODDATE,
+        //                                     eodStatusId = e.EODSTATUSID,
+        //                                     companyId = e.COMPANYID
+        //                                 }).ToList();
+
+
+
+        //    if (eodOperationProcesses != null)
+        //    {
+
+
+        //        foreach (FinanceEndofdayViewModel eodOperationProc in eodOperationProcesses)
+        //        {
+        //            var eodOperationProcessesUpdate = context.TBL_EOD_OPERATION_LOG.Where(x => x.EODOPERATIONLOGID == eodOperationProc.eodOperationLogId).FirstOrDefault();
+
+        //            if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessAutomaticInterestRepricing)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanOperation.ProcessAutomaticInterestRepricing(date, staffId, companyId);
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+
+        //                    }
+
+        //                }
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+        //            else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessReleaseLien)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanOperation.ProcessReleaseLien(date, companyId, staffId);
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+        //                    }
+
+        //                }
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+        //            else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyTermLoansInterestAccrual)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanOperation.ProcessDailyTermLoansInterestAccrual(date, companyId, staffId);
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+        //                    }
+
+        //                }
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+        //            else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyInterestOnPastDueInterestAccrual)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanOperation.ProcessDailyInterestOnPastDueInterestAccrual(date, companyId, staffId);
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+        //                    }
+
+        //                }
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+        //            else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessDailyInterestOnPastDuePrincipalAccrual)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanOperation.ProcessDailyInterestOnPastDuePrincipalAccrual(date, companyId, staffId);
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+        //                    }
+
+        //                }
+
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+        //            else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.UpdateLoanClassification)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanOperation.UpdateLoanClassification(date, companyId, staffId);
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+        //                    }
+
+        //                }
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+        //            else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.UpdateLoanApplicationCovenant)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanCovenantRepository.UpdateLoanApplicationCovenant(date);
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+        //                    }
+
+        //                }
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+        //            else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.DailyWrittenOffFacilityAccrual)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanOperation.DailyWrittenOffFacilityAccrual(date, companyId, staffId);
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+        //                    }
+
+        //                }
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+
+        //        }
+
+
+
+        //    }
+
+
+
+        //    //loanOperation.ProcessAutomaticInterestRepricing(date, staffId);
+
+        //    //loanOperation.ProcessReleaseLien(date);
+
+        //    //loanOperation.ProcessDailyTermLoansInterestAccrual(date);
+
+        //    ////loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
+
+        //    ////loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
+
+        //    //loanOperation.ProcessDailyInterestOnPastDueInterestAccrual(date);
+
+        //    //loanOperation.ProcessDailyInterestOnPastDuePrincipalAccrual(date);
+
+
+        //    ////loanOperation.ProcessDailyFeeAccrual(date);//TODO use batch posting and ensure the right accounting entries are passed
+
+        //    ////loanOperation.ProcessDailyTaxAccrual(date); //TODO use batch posting and ensure the right accounting entries are passed
+
+
+        //    ////loanOperation.ProcessIntervalFeeandCommissionPosting(date); //TODO use batch posting and ensure the right accounting entries are passed
+
+        //    //loanOperation.ProcessLoanRepaymentPostingForceDebit(date);
+
+        //    //loanOperation.ProcessLoanRepaymentPostingPastDue(date);
+
+        //    //loanOperation.ProcessAutomaticCommercialLoanRollover(date);
+
+        //    ////loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(date);
+        //    ////loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue(date);
+
+        //    //// loanOperation.ProcessIDFExpiryAndlocking(date);            
+        //    ////loanOperation.ProcessCFFExpiryAndlocking(date);
+        //    ////loanOperation.ProcessLPOExpiryAndlocking(date);
+
+        //    ////loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
+        //    ////loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
+
+
+
+        //    ////collateralItemPolicy.CheckForExpiredItemPolicies(date);
+
+        //    //loanOperation.ProcessContingentLiabilityTerminationAtMaturity(date);
+
+        //    //loanOperation.CalculateLoanClassification(date);
+
+        //    //loanCovenantRepository.UpdateLoanApplicationCovenant(date);
+
+        //    ////loanOperation.GetRepaymentFromStaging();
+
+        //    //////var eodNew = context.TBL_FINANCE_ENDOFDAY.Where(x => x.DATE == date && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).FirstOrDefault();
+
+        //    //////eodNew.ENDDATETIME = DateTime.Now;
+        //    //////eodNew.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //    ////////context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
+        //    //////context.SaveChanges();
+        //}
+
+
+        //[OperationBehavior(TransactionScopeRequired = true)]
+        //public void ProcessBeginOfDay(DateTime date, int companyId, int staffId)
+        //{
+
+        //    DateTime dateChange = date;
+
+        //    dateChange = dateChange.AddDays(-1);
+
+        //    var eodOperationProcesses = (from e in context.TBL_EOD_OPERATION_LOG
+        //                                 join f in context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION) on e.EODOPERATIONID equals f.EODOPERATIONID
+        //                                 where e.COMPANYID == companyId && e.EODDATE == dateChange && (e.EODSTATUSID == (int)EodOperationStatusEnum.Processing
+        //                                 && e.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingForceDebit || e.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue || e.EODOPERATIONID == (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover)
+        //                                 select new FinanceEndofdayViewModel()
+        //                                 {
+        //                                     eodOperationLogId = e.EODOPERATIONLOGID,
+        //                                     eodOperationId = e.EODOPERATIONID,
+        //                                     eodDate = e.EODDATE,
+        //                                     eodStatusId = e.EODSTATUSID,
+        //                                     companyId = e.COMPANYID
+        //                                 }).ToList();
+
+
+        //    if (eodOperationProcesses != null)
+        //    {
+
+
+        //        foreach (FinanceEndofdayViewModel eodOperationProc in eodOperationProcesses)
+        //        {
+        //            var eodOperationProcessesUpdate = context.TBL_EOD_OPERATION_LOG.Where(x => x.EODOPERATIONLOGID == eodOperationProc.eodOperationLogId).FirstOrDefault();
+
+
+        //            if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessLoanRepaymentPostingForceDebit)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanOperation.ProcessLoanRepaymentPostingForceDebit(date, companyId, staffId);
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+        //                    }
+
+        //                }
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+        //            else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanOperation.ProcessLoanRepaymentPostingPastDue(date, companyId, staffId);
+
+
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+        //                    }
+
+        //                }
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+        //            else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover)
+        //            {
+        //                eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
+        //                context.SaveChanges();
+
+        //                using (TransactionScope transactionScope = new TransactionScope())
+        //                {
+
+        //                    try
+        //                    {
+
+        //                        loanOperation.ProcessAutomaticCommercialLoanRollover(date, companyId, staffId);
+
+
+
+        //                        transactionScope.Complete();
+
+        //                        transactionScope.Dispose();
+        //                    }
+        //                    catch (TransactionException ex)
+        //                    {
+        //                        transactionScope.Dispose();
+        //                        throw ex;
+        //                    }
+
+        //                }
+
+        //                eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+        //                eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //                context.SaveChanges();
+        //            }
+
+        //        }
+
+        //    }
+
+        //    var eodNew = context.TBL_FINANCE_ENDOFDAY.Where(x => x.DATE == dateChange && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).FirstOrDefault();
+
+        //    eodNew.ENDDATETIME = DateTime.Now;
+        //    eodNew.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+        //    //context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
+        //    context.SaveChanges();
+
+        //}
+
         public void ProcessBeginOfDay(DateTime date, int companyId, int staffId)
         {
+
+            string stringData = "";
 
             DateTime dateChange = date;
 
@@ -625,111 +1412,175 @@ namespace FintrakBanking.Repositories.Finance
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
                         {
 
-                            try
+                            loanOperation.ProcessLoanRepaymentPostingForceDebit(date, companyId, staffId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanOperation.ProcessLoanRepaymentPostingForceDebit(date);
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
+                                innerException = ex.InnerException.InnerException.Message;
                             }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
-                            }
+
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+                            //throw ex;
 
                         }
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        context.SaveChanges();
+                        //}
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == dateChange && c.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingForceDebit && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
                         {
 
-                            try
+                            loanOperation.ProcessLoanRepaymentPostingPastDue(date, companyId, staffId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanOperation.ProcessLoanRepaymentPostingPastDue(date);
-
-
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
-                            }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
+                                innerException = ex.InnerException.InnerException.Message;
                             }
 
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+
+                            //throw ex;
                         }
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        context.SaveChanges();
+                        //}
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == dateChange && c.EODOPERATIONID == (int)EodOperationEnum.ProcessLoanRepaymentPostingPastDue && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
                     }
                     else if (eodOperationProc.eodOperationId == (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover)
                     {
                         eodOperationProcessesUpdate.STARTDATETIME = DateTime.Now;
                         context.SaveChanges();
 
-                        using (TransactionScope transactionScope = new TransactionScope())
+                        //using (TransactionScope transactionScope = new TransactionScope())
+                        //{
+
+                        try
                         {
 
-                            try
+                            loanOperation.ProcessAutomaticCommercialLoanRollover(date, companyId, staffId);
+
+                            //transactionScope.Complete();
+
+                            //transactionScope.Dispose();
+                        }
+                        catch (Exception ex)
+                        {
+                            //transactionScope.Dispose();
+
+                            var innerException = "";
+                            if (ex.InnerException != null)
                             {
-
-                                loanOperation.ProcessAutomaticCommercialLoanRollover(date);
-
-
-
-                                transactionScope.Complete();
-
-                                transactionScope.Dispose();
+                                innerException = ex.InnerException.InnerException.Message;
                             }
-                            catch (TransactionException ex)
-                            {
-                                transactionScope.Dispose();
-                                throw ex;
-                            }
+
+                            //stringData = $"Ref No - {loanOperation.GetTransactionReferenceNo()} Exception - {ex.Message}  - inner exception -  {innerException}";
+
+                            eodOperationProcessesUpdate.ERRORINFORMATION = innerException;
+                            context.SaveChanges();
+
+                            //throw ex;
 
                         }
 
-                        eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
-                        eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-                        context.SaveChanges();
+                        //}
+
+
+
+                        var validateTransactionCompleted = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == dateChange && c.EODOPERATIONID == (int)EodOperationEnum.ProcessAutomaticCommercialLoanRollover && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+                        if (validateTransactionCompleted == null)
+                        {
+                            eodOperationProcessesUpdate.ERRORINFORMATION = "No Error";
+                            eodOperationProcessesUpdate.ENDDATETIME = DateTime.Now;
+                            eodOperationProcessesUpdate.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                            context.SaveChanges();
+                        }
                     }
 
                 }
 
             }
 
-            var eodNew = context.TBL_FINANCE_ENDOFDAY.Where(x => x.DATE == dateChange && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).FirstOrDefault();
 
-            eodNew.ENDDATETIME = DateTime.Now;
-            eodNew.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
-            //context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
-            context.SaveChanges();
+            var validateTotalCompletion = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.EODDATE == dateChange && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed).FirstOrDefault();
+
+            if (validateTotalCompletion == null)
+            {
+                var eodNew = context.TBL_FINANCE_ENDOFDAY.Where(x => x.DATE == dateChange && x.COMPANYID == companyId && x.EODSTATUSID == (int)EodOperationStatusEnum.Processing).FirstOrDefault();
+
+                eodNew.ENDDATETIME = DateTime.Now;
+                eodNew.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                //context.TBL_FINANCE_ENDOFDAY.Add(endOfDay);
+                context.SaveChanges();
+            }
 
         }
 
+
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool RefreshLoanClassification()
+        public bool RefreshLoanClassification(int companyId)
         {
             var applicationDate = generalSetup.GetApplicationDate();
-            var result = loanOperation.UpdateLoanClassification(applicationDate);
+            var result = loanOperation.UpdateLoanClassification(applicationDate, companyId);
             return result;
         }
 

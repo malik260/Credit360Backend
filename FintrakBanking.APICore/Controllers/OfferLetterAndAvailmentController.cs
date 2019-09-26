@@ -114,6 +114,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application/credit-assessment-memorandum/due-for-availment-route")]
+        public HttpResponseMessage GetApplicationsDueForAvailmentRoute()
+        {
+            try
+            {
+                var response = repo.GetApplicationsDueForAvailmentRoute(token.GetStaffId, token.GetCompanyId).ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("availment-due-for-checklist")]

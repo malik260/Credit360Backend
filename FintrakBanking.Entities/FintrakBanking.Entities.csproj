@@ -90,6 +90,11 @@
     <Compile Include="Models\TBL_ATC_RELEASE.cs" />
     <Compile Include="Models\TBL_ATC_RELEASE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_ATC_TYPE.cs" />
+    <Compile Include="Models\TBL_DAILY_ACCRUAL_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_DAILY_ACCRUAL_TEMP.cs" />
+    <Compile Include="Models\TBL_EOD_OPERATION_LOG_DETAIL.cs" />
+    <Compile Include="Models\TBL_LOAN_CAMSOL_ARCHIVE.cs" />
+    <Compile Include="Models\TBL_LOAN_FULLANDFINAL_STATUS.cs" />
     <Compile Include="Models\TBL_OPERATION_CAMSOL_LIST.cs" />
     <Compile Include="Models\TBL_OPERATION_SIGNATORY.cs" />
     <Compile Include="Models\TBL_AUTHORISED_SIGNATORY.cs" />

@@ -2636,14 +2636,14 @@ namespace FintrakBanking.Repositories.Credit
         {
             var detail = context.TBL_LMSR_APPLICATION_DETAIL.Find(entity.applicationDetailId);
             detail.REPAYMENTTERMS = entity.terms;
-            detail.REPAYMENTSCHEDULEID = entity.repaymentScheduleId.ToString();
+            detail.REPAYMENTSCHEDULE = entity.repaymentScheduleId.ToString();
             context.SaveChanges();
             return context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID)
                 .Select(x => new RepaymentScheduleTermsViewModel
                 {
                     applicationDetailId = x.LOANREVIEWAPPLICATIONID,
                     terms = x.REPAYMENTTERMS,
-                    repaymentScheduleId = int.Parse(x.REPAYMENTSCHEDULEID),
+                    repaymentScheduleId = int.Parse(x.REPAYMENTSCHEDULE),
                     productCustomerName = x.TBL_OPERATIONS.OPERATIONNAME
                 }).ToList();
         }
@@ -2747,7 +2747,7 @@ namespace FintrakBanking.Repositories.Credit
                   //  statusId = x.d.STATUSID,
                    // exchangeRate = x.d.EXCHANGERATE,
                     terms = x.d.REPAYMENTTERMS,
-                    schedule = x.d.REPAYMENTSCHEDULEID,
+                    schedule = x.d.REPAYMENTSCHEDULE,
                    // securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                   //  crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
                  //   isSpecialised = x.d.ISSPECIALISED

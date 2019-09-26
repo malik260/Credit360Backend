@@ -77,7 +77,7 @@ namespace FintrakBanking.APICore.Controllers
         {
 
 
-            var data = repoEOD.RefreshLoanClassification();
+            var data = repoEOD.RefreshLoanClassification(token.GetCompanyId);
 
             if (data)
             {

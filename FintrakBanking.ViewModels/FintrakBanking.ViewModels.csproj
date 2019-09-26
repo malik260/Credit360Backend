@@ -136,6 +136,7 @@
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
     <Compile Include="Credit\LoanPreliminaryEvaluationViewModel.cs" />
     <Compile Include="Credit\LoanPrincipalViewModel.cs" />
+    <Compile Include="Credit\LoanRecoveryPaymentViewModel.cs" />
     <Compile Include="Credit\OperationSignatoryViewModel.cs" />
     <Compile Include="Credit\OriginalDocumentReleaseViewModel.cs" />
     <Compile Include="Credit\ProjectSiteReportViewModel.cs" />
@@ -254,6 +255,7 @@
     <Compile Include="Setups\General\DocumentUploadViewModel.cs" />
     <Compile Include="Setups\General\EmployerType.cs" />
     <Compile Include="Setups\General\EmployerViewModel.cs" />
+    <Compile Include="Setups\General\LoanCamsolViewModel.cs" />
     <Compile Include="Setups\General\LoanRecoverySetupViewModel.cs" />
     <Compile Include="Setups\General\LocalGovtViewModel.cs" />
     <Compile Include="Setups\General\MonitoringSetupViewModel.cs" />
