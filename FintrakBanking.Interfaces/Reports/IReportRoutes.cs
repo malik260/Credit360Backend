@@ -111,6 +111,9 @@ namespace FintrakBanking.Interfaces.Reports
         string SubmissionOfOriginalDocument(DateRange dateRange);
 
         string PSR(int psrReportTypeId, int projectSiteReportId);
-       
+
+        string Overline(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+
+
     }
 }
