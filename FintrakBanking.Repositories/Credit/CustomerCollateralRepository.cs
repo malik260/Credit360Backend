@@ -1891,7 +1891,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId)
+        public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId, bool getAll = false)
         {
 
             var list = new List<CollateralCoverageViewModel>();
@@ -1905,30 +1905,60 @@ namespace FintrakBanking.Repositories.Credit
                 decimal availableCollateralValue = 0;
                 decimal expectedCollateralCoverage = 0;
                 decimal actualCollateralCoverage = 0;
+                var collaterals = new List<CollateralCoverageViewModel>();
                 //  decimal sumOfMultipleCollateralValues = 0;
 
-                var collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
-                                   join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
-                                   join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
-                                   join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
-                                   join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
-                                   //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                                   where x.CUSTOMERID == customerId && f.CUSTOMERID == customerId
+                if (getAll)
+                {
+                     collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
+                                       join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                                       join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
+                                       join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
+                                       join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
+                                       //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
+                                       where x.CUSTOMERID == customerId
 
-                                   select new CollateralCoverageViewModel
-                                   {
-                                       collateralId = x.COLLATERALCUSTOMERID,
-                                       collateralCode = c.COLLATERALCODE,
-                                       currencyId = c.CURRENCYID,
-                                       collateralValue = c.COLLATERALVALUE,
-                                       loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
-                                       collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
-                                       approvalStatusId = x.APPROVALSTATUSID,
-                                       collateralSummary = c.COLLATERALSUMMARY,
-                                       facilityAmount = f.APPROVEDAMOUNT,
-                                       //facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
-                                       facilityCurrencyId = f.CURRENCYID,
-                                   }).ToList();
+                                       select new CollateralCoverageViewModel
+                                       {
+                                           collateralId = x.COLLATERALCUSTOMERID,
+                                           collateralCode = c.COLLATERALCODE,
+                                           currencyId = c.CURRENCYID,
+                                           collateralValue = c.COLLATERALVALUE,
+                                           loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                                           collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
+                                           approvalStatusId = x.APPROVALSTATUSID,
+                                           collateralSummary = c.COLLATERALSUMMARY,
+                                           facilityAmount = f.APPROVEDAMOUNT,
+                                           //facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
+                                           facilityCurrencyId = f.CURRENCYID,
+                                       }).ToList();
+                } else
+                {
+                     collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
+                                       join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                                       join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
+                                       join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
+                                       join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
+                                       //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
+                                       where x.CUSTOMERID == customerId && f.CUSTOMERID == customerId
+
+                                       select new CollateralCoverageViewModel
+                                       {
+                                           collateralId = x.COLLATERALCUSTOMERID,
+                                           collateralCode = c.COLLATERALCODE,
+                                           currencyId = c.CURRENCYID,
+                                           collateralValue = c.COLLATERALVALUE,
+                                           loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                                           collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
+                                           approvalStatusId = x.APPROVALSTATUSID,
+                                           collateralSummary = c.COLLATERALSUMMARY,
+                                           facilityAmount = f.APPROVEDAMOUNT,
+                                           //facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
+                                           facilityCurrencyId = f.CURRENCYID,
+                                       }).ToList();
+                }
+                
+
 
 
                 if (collaterals == null) return new List<CollateralCoverageViewModel>();
