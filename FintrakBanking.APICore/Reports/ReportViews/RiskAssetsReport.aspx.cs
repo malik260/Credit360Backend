@@ -24,7 +24,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     CultureInfo provider = CultureInfo.InvariantCulture;
                     string postedDate = Request.QueryString["runDate"];
                     DateTime RunDate = Convert.ToDateTime(postedDate);               
-                    string rDate = RunDate.Year+"-"+RunDate.Month +"-"+RunDate.Day;
+                    string rDate = RunDate.Day+"/"+RunDate.Month+"/"+RunDate.Year;
+                    //string rDate = RunDate.Year + "-" + RunDate.Month + "-" + RunDate.Day;
                     string Level = Request.QueryString["level"];
                     string MisCode = Request.QueryString["misCode"];
                     string ExposureType = Request.QueryString["exposureType"];
