@@ -2286,7 +2286,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetCollateralCoverageMarkupLOS()
         {
             var custFacilitiesAmount = new decimal();
-            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId);
+            var collaterals = collateralRepo.GetProposedCustomerCollateralByCustomerId(customerId, false);
             var result = String.Empty;
             if (collaterals.Count() < 1) return result;
             decimal totalCollateralValue = 0;

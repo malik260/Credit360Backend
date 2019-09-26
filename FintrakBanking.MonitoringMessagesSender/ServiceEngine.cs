@@ -43,7 +43,7 @@ namespace FintrakBanking.MonitoringMessagesSender
 
         protected override void OnStart(string[] args)
         {
-            //System.Diagnostics.Debugger.Launch();
+            System.Diagnostics.Debugger.Launch();
 
             if (Monitor.TryEnter(s_lock))
             {

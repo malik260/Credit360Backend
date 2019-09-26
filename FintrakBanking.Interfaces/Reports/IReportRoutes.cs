@@ -112,8 +112,9 @@ namespace FintrakBanking.Interfaces.Reports
 
         string PSR(int psrReportTypeId, int projectSiteReportId);
 
-        string Overline(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string ContigentReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
 
+        string Overline(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
 
     }
 }
