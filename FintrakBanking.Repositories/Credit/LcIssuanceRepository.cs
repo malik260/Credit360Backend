@@ -714,7 +714,6 @@ namespace FintrakBanking.Repositories.credit
         public IEnumerable<LcIssuanceApprovalViewModel> GetLcIssuancesForReleaseApproval(int staffId)
         {
             var operationId = (int)OperationsEnum.lcReleaseOfShippingDocuments;
-            IQueryable<LcIssuanceApprovalViewModel> applications = null;
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
             //var querytest1 = (from a in context.TBL_LC_ISSUANCE
@@ -732,7 +731,7 @@ namespace FintrakBanking.Repositories.credit
             //                    && (b.TOSTAFFID == null || b.TOSTAFFID == staffId)
             //                  select b).ToList();
             // query
-            var query = (from a in context.TBL_LC_ISSUANCE
+            var releasesForApproval = (from a in context.TBL_LC_ISSUANCE
                          where
                             (a.DELETED == false
                             && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
@@ -798,13 +797,78 @@ namespace FintrakBanking.Repositories.credit
                              customerName = a.TBL_CUSTOMER.FIRSTNAME + a.TBL_CUSTOMER.MIDDLENAME + a.TBL_CUSTOMER.LASTNAME,
                              operationId = operationId,
                              dateTimeCreated = (DateTime)a.DATETIMECREATED
-                         }).ToList();
-
-            applications = query.AsQueryable()
-                .Where(x => x.currentApprovalLevelTypeId != 2)
+                         }).Where(x => x.currentApprovalLevelTypeId != 2)
                 .GroupBy(d => d.lcIssuanceId)
-                .Select(g => g.OrderByDescending(b => b.lcApprovalTrailId).FirstOrDefault());
+                .Select(g => g.OrderByDescending(b => b.lcApprovalTrailId).FirstOrDefault()).ToList();
 
+            var referredReleases = (from a in context.TBL_LC_ISSUANCE
+                                    where
+                                       (a.DELETED == false
+                                       && a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcIssuanceCompleted
+                                       && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                                    orderby a.LCISSUANCEID
+                                    join b in context.TBL_LCRELEASE_AMOUNT on a.LCISSUANCEID equals b.LCISSUANCEID
+                                    join c in context.TBL_APPROVAL_TRAIL on b.LCRELEASEAMOUNTID equals c.TARGETID
+                                    where
+                                       (
+                                       (c.OPERATIONID == operationId)
+                                       //&& c.APPROVALSTATEID != (int)ApprovalState.Ended
+                                       && b.RELEASEAPPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LcShippingReleaseInProgress
+                                       //&& c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                                       && c.RESPONSESTAFFID == null
+                                       //&& c.LOOPEDSTAFFID == staffId
+                                       )
+                                    select new LcIssuanceApprovalViewModel()
+                                    {
+                                        lcIssuanceId = a.LCISSUANCEID,
+                                        lcReleaseAmountId = b.LCRELEASEAMOUNTID,
+                                        releaseAmount = (decimal)b.RELEASEAMOUNT,
+                                        releasedAmount = a.RELEASEDAMOUNT,
+                                        isDraftRequired = a.ISDRAFTREQUIRED,
+                                        lcReferenceNumber = a.LCREFERENCENUMBER,
+                                        letterOfCreditTypeId = a.LETTEROFCREDITTYPEID,
+                                        beneficiaryName = a.BENEFICIARYNAME,
+                                        totalApprovedAmount = a.TOTALAPPROVEDAMOUNT,
+                                        totalApprovedAmountCurrencyId = a.TOTALAPPROVEDAMOUNTCURRENCYID,
+                                        availableAmountCurrencyId = a.AVAILABLEAMOUNTCURRENCYID,
+                                        cashBuildUpAvailable = a.CASHBUILDUPAVAILABLE,
+                                        cashBuildUpReferenceNumber = a.CASHBUILDUPREFERENCETYPE,
+                                        cashBuildUpReferenceType = a.CASHBUILDUPREFERENCENUMBER,
+                                        percentageToCover = a.PERCENTAGETOCOVER,
+                                        lcTolerancePercentage = a.LCTOLERANCEPERCENTAGE,
+                                        lcToleranceValue = a.LCTOLERANCEVALUE,
+                                        beneficiaryAddress = a.BENEFICIARYADDRESS,
+                                        beneficiaryEmail = a.BENEFICIARYEMAIL,
+                                        customerId = a.CUSTOMERID,
+                                        fundSourceId = a.FUNDSOURCEID,
+                                        fundSourceDetails = a.FUNDSOURCEDETAILS,
+                                        formMNumber = a.FORMMNUMBER,
+                                        beneficiaryPhoneNumber = a.BENEFICIARYPHONENUMBER,
+                                        beneficiaryBank = a.BENEFICIARYBANK,
+                                        currencyId = a.CURRENCYID,
+                                        proformaInvoiceId = a.PROFORMAINVOICEID,
+                                        availableAmount = a.AVAILABLEAMOUNT,
+                                        letterOfCreditAmount = a.LETTEROFCREDITAMOUNT,
+                                        letterOfcreditExpirydate = a.LETTEROFCREDITEXPIRYDATE,
+                                        invoiceDate = a.INVOICEDATE,
+                                        invoiceDueDate = a.INVOICEDUEDATE,
+                                        lastComment = c.COMMENT,
+                                        currentApprovalStateId = c.APPROVALSTATEID,
+                                        currentApprovalLevelId = c.TOAPPROVALLEVELID,
+                                        currentApprovalLevel = c.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                                        //currentApprovalLevelTypeId = c.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
+                                        lcApprovalTrailId = c == null ? 0 : c.APPROVALTRAILID, // for inner sequence ordering
+                                        toStaffId = c.TOSTAFFID,
+                                        approvalStatusId = c.APPROVALSTATUSID,
+                                        loopedStaffId = c.LOOPEDSTAFFID,
+                                        applicationStatusId = a.APPLICATIONSTATUSID,
+                                        createdBy = (int)a.CREATEDBY,
+                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + a.TBL_CUSTOMER.MIDDLENAME + a.TBL_CUSTOMER.LASTNAME,
+                                        operationId = operationId,
+                                        dateTimeCreated = (DateTime)a.DATETIMECREATED
+                                    }).GroupBy(d => d.lcIssuanceId).Select(g => g.OrderByDescending(b => b.lcApprovalTrailId).FirstOrDefault())
+                                    .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Referred && l.loopedStaffId == staffId)).ToList();
+            var applications = releasesForApproval.Union(referredReleases);
             return applications.ToList();
         }
 

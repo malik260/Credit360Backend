@@ -1395,7 +1395,18 @@ namespace FintrakBanking.Repositories.Credit
                     toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
                     fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
                 })?.OrderByDescending(x => x.approvalTrailId).ToList();
+            //var data2 = data;
+            var testData = data;
+            foreach (var t in data.ToList())
+            {
+                if (data.FindAll(d => d.fromApprovalLevelId == t.fromApprovalLevelId).Count() > 1)
+                {
+                    var tr = data.FirstOrDefault(d => d.approvalTrailId == t.approvalTrailId);
+                    data.Remove(tr);
+                }
+            }
 
+            data.OrderBy(d => d.approvalTrailId);
             return data;
         }
 

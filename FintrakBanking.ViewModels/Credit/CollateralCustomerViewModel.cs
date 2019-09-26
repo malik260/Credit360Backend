@@ -997,6 +997,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal runningPrincipal { get; set; }
         public decimal principalAmount { get; set; }
         public decimal outstandingPrincipal { get; set; }
+        public decimal totalOutstanding { get; set; }
     }
 
     public class CollateralHistory
@@ -1054,6 +1055,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public decimal facilityAmount { get; set; }
         public string facilityCurrencyCode { get; set; }
+        public int facilityCurrencyId { get; set; }
         public int loanApplicationId { get; set; }
         public int? loanApplicationDetailId { get; set; }
         public decimal availableCollateralValue { get; set; }
