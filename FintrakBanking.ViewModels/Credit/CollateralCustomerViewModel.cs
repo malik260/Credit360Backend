@@ -989,7 +989,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public decimal amountInUse { get; set; }
         public decimal collateralBalance { get; set; }
-        public DateTime dateUsed { get; set; }
+        public DateTime? dateUsed { get; set; }
+        public DateTime dateProposed { get; set; }
         public double haircut { get; set; }
         public double exchangeRate { get; set; }
         public decimal approvedLoanAmount { get; set; }
