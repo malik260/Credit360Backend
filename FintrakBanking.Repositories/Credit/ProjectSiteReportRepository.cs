@@ -132,13 +132,11 @@ namespace FintrakBanking.Repositories.credit
                         }).OrderByDescending(x => x.projectSiteReportId)
                 .ToList();
 
-            var psr2 = (from x in context.TBL_PSR_PROJECT_SITE_REPORT
+                 var psr2 = (from x in context.TBL_PSR_PROJECT_SITE_REPORT
                         join trail in context.TBL_APPROVAL_TRAIL on x.PROJECTSITEREPORTID equals trail.TARGETID
                         where trail.OPERATIONID == (short)OperationsEnum.ProjectSiteReportApproval
                             && x.DELETED == false
-                            && trail.TARGETID == x.PROJECTSITEREPORTID
-                            //&& ((trail.RESPONSESTAFFID == null && trail.APPROVALSTATEID != (short)ApprovalState.Ended)
-                            //    || (trail.RESPONSESTAFFID != null && trail.APPROVALSTATEID == (short)ApprovalState.Ended))
+                            && trail.TARGETID == x.PROJECTSITEREPORTID                    
                         orderby trail.APPROVALTRAILID descending
                         select new ProjectSiteReportViewModel
                         {
