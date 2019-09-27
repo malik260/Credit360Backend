@@ -22,6 +22,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using FintrakBanking.ViewModels.Admin;
     using FinTrakBanking.ThirdPartyIntegration.StaffInfo;
     using FinTrakBanking.ThirdPartyIntegration.Basel;
+    using FintrakBanking.ViewModels.Credit;
 
     public class IntegrationWithFlexcube : IIntegrationWithFinacle
     {
@@ -53,6 +54,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_TWO_FACTOR_AUTHENTICATION = globalSetting.USE_TWO_FACTOR_AUTHENTICATION;
         }
+
 
         #region Overdraft
 
@@ -496,50 +498,97 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
-        //{
-        //    ResponseMessage result = null;
-        //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
+        public PostingResult PostLoanCreationInputs(List<LoanCreationViewModel> model)
+        {
+            {
+                ResponseMessage result = null;
 
-        //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
+                //List<TransactionPostingViewModel> transactionList = TransactionData(model);
+
+                //var curencyTypeCount = model.Select(x => x.currencyId).Distinct().Count();
+
+                Task.Run(async () => result = await transaction.ApiTransactionLoanCreationPosting(model)).GetAwaiter().GetResult();
+
+                if (result.APIResponse != null)
+                {
+                    if (result.APIResponse.responseCode == "0")
+                    {
+                        // AddCustomTransactions(transactionList);
+
+                        string str = result.APIResponse.webRequestStatus;
+                        str = str.Replace(":", "");
+                        str = str.Replace("FAILURE", "");
+                        str = str.Replace("SUCCESS+", "");
+
+                        return new PostingResult { posted = true, responseCode = str.Trim() };
+                    }
+                    //if (result.APIResponse.webRequestStatus == "SUCCESS+      M18")
+                    //{
+                    //    AddCustomTransactions(transactionList);
+                    //    return true;
+                    //}
+                    else
+                    {
+                        var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
+                    }
+                }
+                else
+                {
+                    var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    //throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
+                    throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+                }
+
+                //return result.APIStatus;
+
+            }
+        }
+            //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
+            //{
+            //    ResponseMessage result = null;
+            //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
+
+            //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
 
 
-        //    if (result.APIResponse.responseCode == "0")
-        //    {
-        //        AddCustomTransactions(transactionLst);
-        //    }
+            //    if (result.APIResponse.responseCode == "0")
+            //    {
+            //        AddCustomTransactions(transactionLst);
+            //    }
 
-        //    return result.APIStatus;
-        //}
+            //    return result.APIStatus;
+            //}
 
-        //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
-        //{
-        //    ResponseMessage result = null;
+            //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
+            //{
+            //    ResponseMessage result = null;
 
-        //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
+            //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
 
-        //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
+            //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
 
-        //    if (result.APIResponse != null)
-        //    {
-        //        if (result.APIResponse.responseCode == "0")
-        //        {
-        //            AddCustomTransactions(transactionLst);
-        //            return true;
-        //        }
-        //        else
-        //        {
-        //            throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
-        //    }
+            //    if (result.APIResponse != null)
+            //    {
+            //        if (result.APIResponse.responseCode == "0")
+            //        {
+            //            AddCustomTransactions(transactionLst);
+            //            return true;
+            //        }
+            //        else
+            //        {
+            //            throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
+            //    }
 
-        //    //return result.APIStatus;
+            //    //return result.APIStatus;
 
-        //}
+            //}
 
         public bool AddCustomerAccounts(int customerId,string customerCode)
         {

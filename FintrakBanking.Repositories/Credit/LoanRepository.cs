@@ -1391,6 +1391,7 @@ namespace FintrakBanking.Repositories.Credit
                         AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                         entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
+
                         //if (!entity.feeOverride) PostLoanFees(entity);
                         context.SaveChanges();
 
@@ -1407,6 +1408,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        
         private string EditCommercialLoan(LoanViewModel entity)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
@@ -2036,6 +2038,47 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
 
             return context.SaveChanges() > 0;
+        }
+
+        private void createLoanOnThirdParty(List<TBL_LOAN> loans, UserInfo user)
+        {
+
+            List<LoanCreationViewModel> loanCreationInputs = new List<LoanCreationViewModel>();
+            LoanCreationViewModel loanCreationModel = new LoanCreationViewModel();
+            foreach(var loan in loans)
+            {
+                var product = loan.TBL_PRODUCT;
+                var productClass = product.TBL_PRODUCT_CLASS;
+                var staff = context.TBL_STAFF.Find(user.createdBy);
+                var systemDate = generalSetup.GetApplicationDate();
+
+                loanCreationModel.account_no = loan.TBL_CASA.PRODUCTACCOUNTNUMBER;
+                loanCreationModel.amount_financed = loan.PRINCIPALAMOUNT.ToString();
+                loanCreationModel.interest_rate = loan.INTERESTRATE.ToString();
+                loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME;
+                loanCreationModel.operationId = (int)loan.OPERATIONID;
+                loanCreationModel.product_code = product.PRODUCTCODE;
+                loanCreationModel.product_desc = product.TBL_PRODUCT_TYPE.PRODUCTTYPENAME;
+                loanCreationModel.source = "CREDIT360";
+                loanCreationModel.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
+                loanCreationModel.tax_rate = "";
+                loanCreationModel.user_refno = loan.LOANREFERENCENUMBER;
+                loanCreationModel.app_branch_code = loan.TBL_BRANCH.BRANCHCODE;
+                loanCreationModel.app_user_id = staff.STAFFCODE;
+                loanCreationModel.book_date = loan.BOOKINGDATE.ToShortDateString();
+                loanCreationModel.effective_date = loan.EFFECTIVEDATE.ToShortDateString();
+                loanCreationModel.value_date = systemDate.ToShortDateString();
+                loanCreationModel.maturity_date = loan.MATURITYDATE.ToShortDateString();
+                loanCreationModel.mgt_rate = "";
+                loanCreationModel.creditlife_rate = "";
+                loanCreationModel.creditlife_rate = "";
+                loanCreationModel.first_repayment_date = loan.FIRSTPRINCIPALPAYMENTDATE.ToString();
+
+                loanCreationInputs.Add(loanCreationModel);
+
+            }
+
+            integration.PostLoanCreationInputs(loanCreationInputs);
         }
 
         public void DisburseLoan(LoanViewModel entity, TwoFactorAutheticationViewModel twoFactorAuthDetails = null)
@@ -3779,9 +3822,20 @@ namespace FintrakBanking.Repositories.Credit
 
                 /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                 var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-              
+
+                if (USE_THIRD_PARTY_INTEGRATION)
+                {
+                    var userDetail = new UserInfo();
+                    List<TBL_LOAN> loanRecords = new List<TBL_LOAN>();
+                    userDetail.createdBy = loanRecord.CREATEDBY;
+                    userDetail.staffId = loanRecord.CREATEDBY;
+                    userDetail.companyId = loanRecord.COMPANYID;
+
+                    loanRecords.Add(loanRecord);
+                    createLoanOnThirdParty(loanRecords, userDetail);
+                }
                 //DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
-            
+
             }
         }
 
