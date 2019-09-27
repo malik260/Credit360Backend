@@ -127,7 +127,7 @@ namespace FintrakBanking.Repositories.credit
                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                             currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
 
-                        }).OrderByDescending(o => o.projectSiteReportId)
+                        }).OrderByDescending(x => x.projectSiteReportId)
                 .ToList();
 
             var psr2 = (from x in context.TBL_PSR_PROJECT_SITE_REPORT
@@ -156,7 +156,6 @@ namespace FintrakBanking.Repositories.credit
                             currencyId = x.CURRENCYID,
                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                             currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
-
                         }).GroupBy(x => x.projectSiteReportId).Select(x => x.FirstOrDefault()).Where((trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
                                     && trail.loopedStaffId == initiator) || trail.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)).ToList();
             var psr = psr1.Union(psr2).ToList();
