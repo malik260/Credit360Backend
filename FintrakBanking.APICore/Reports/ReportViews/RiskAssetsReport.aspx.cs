@@ -59,15 +59,11 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
 
-
-
-
                     string reportServerUrl = ConfigurationManager.AppSettings["ReportServerURL"];
                     string domain = ConfigurationManager.AppSettings["rsDomain"];
                     string userName = ConfigurationManager.AppSettings["rsUserName"]; 
                     string password = ConfigurationManager.AppSettings["rsPassword"];  
                     string reportPath = ConfigurationManager.AppSettings["ServerReportPath"];
-
 
                     ReportViewer.ServerReport.ReportServerUrl = new Uri(reportServerUrl);
                     ReportViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials(userName, password, domain);

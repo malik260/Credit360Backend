@@ -13,7 +13,7 @@ namespace FintrakBanking.Entities.Models
         public int PSRCOMMENTID { get; set; }
 
         [Required]
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string COMMENTS { get; set; }
 
         public int CREATEDBY { get; set; }
