@@ -137,6 +137,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;

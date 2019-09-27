@@ -466,11 +466,10 @@
       <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\FORM3800B.Designer.cs" />
-    <Compile Include="Reports\ReportDataset\LoanDataSet.cs">
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
-      <DependentUpon>LoanDataSet.cs</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\PSR.cs">
       <DependentUpon>PSR.xsd</DependentUpon>
@@ -1239,19 +1238,19 @@
     <Content Include="Reports\ReportDataset\FORM3800B.xss">
       <DependentUpon>FORM3800B.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\ReportDataset\MiddleOffice.xsc">
+      <DependentUpon>MiddleOffice.xsd</DependentUpon>
+    </Content>
     <Content Include="Reports\ReportDataset\LoanDataSet.xsc">
       <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\LoanDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>LoanDataSet1.Designer.cs</LastGenOutput>
+      <LastGenOutput>LoanDataSet.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\LoanDataSet.xss">
       <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Content>
-    <Content Include="Reports\ReportDataset\MiddleOffice.xsc">
-      <DependentUpon>MiddleOffice.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\MiddleOffice.xsd">
       <Generator>MSDataSetGenerator</Generator>
