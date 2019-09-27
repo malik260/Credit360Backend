@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.credit;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 
+
 namespace FintrakBanking.Repositories.credit
 {
     public class ProjectSiteReportRepository : IProjectSiteReportRepository
@@ -22,6 +23,7 @@ namespace FintrakBanking.Repositories.credit
         private IAuditTrailRepository audit;
         private IAdminRepository admin;
         private IWorkflow workflow;
+      
 
         public ProjectSiteReportRepository(
                 FinTrakBankingContext _context,
@@ -31,6 +33,7 @@ namespace FintrakBanking.Repositories.credit
                 IWorkflow _workflow
             )
         {
+            
             this.context = _context;
             this.general = _general;
             this.audit = _audit;
@@ -125,8 +128,7 @@ namespace FintrakBanking.Repositories.credit
                             approvalStatusId = x.APPROVALSTATUSID,                          
                             currencyId = x.CURRENCYID,
                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
-                            currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
-
+                            currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),                  
                         }).OrderByDescending(x => x.projectSiteReportId)
                 .ToList();
 
@@ -135,6 +137,8 @@ namespace FintrakBanking.Repositories.credit
                         where trail.OPERATIONID == (short)OperationsEnum.ProjectSiteReportApproval
                             && x.DELETED == false
                             && trail.TARGETID == x.PROJECTSITEREPORTID
+                            //&& ((trail.RESPONSESTAFFID == null && trail.APPROVALSTATEID != (short)ApprovalState.Ended)
+                            //    || (trail.RESPONSESTAFFID != null && trail.APPROVALSTATEID == (short)ApprovalState.Ended))
                         orderby trail.APPROVALTRAILID descending
                         select new ProjectSiteReportViewModel
                         {
@@ -152,11 +156,12 @@ namespace FintrakBanking.Repositories.credit
                             loanApplicationId = x.LOANAPPLICATIONID,
                             projectLocation = x.PROJECTLOCATION,
                             approvalStatusId = trail.APPROVALSTATUSID,
+                            approvalTrailId = trail.APPROVALTRAILID,
                             inspectionDate = x.INSPECTIONDATE,
                             currencyId = x.CURRENCYID,
                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == trail.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                             currency = context.TBL_CURRENCY.Where(o => o.CURRENCYID == x.CURRENCYID).Select(o => o.CURRENCYNAME).FirstOrDefault(),
-                        }).GroupBy(x => x.projectSiteReportId).Select(x => x.FirstOrDefault()).Where((trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
+                        }).GroupBy(x => x.projectSiteReportId).Select(x => x.OrderByDescending(p => p.approvalTrailId).FirstOrDefault()).Where((trail => (trail.approvalStatusId == (short)ApprovalStatusEnum.Referred
                                     && trail.loopedStaffId == initiator) || trail.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)).ToList();
             var psr = psr1.Union(psr2).ToList();
             return psr;
@@ -279,6 +284,7 @@ namespace FintrakBanking.Repositories.credit
                 .ToList();
         }
 
+       
         public int AddProjectSiteReport(ProjectSiteReportViewModel model)
         {
             if (model.approvalStatusId == (short)ApprovalStatusEnum.Referred)
@@ -367,6 +373,7 @@ namespace FintrakBanking.Repositories.credit
                     context.SaveChanges();
                 }
 
+               
                 var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
                 // Audit Section ---------------------------
                 this.audit.AddAuditTrail(new TBL_AUDIT

@@ -1,6 +1,5 @@
-﻿        <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="PSR.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.RACaspx" %>
-
- <%@ Register assembly="Microsoft.ReportViewer.WebForms" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb"%>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="PSR.aspx.cs" Inherits="FintrakBanking.APICore.Reports.ReportViews.RACaspx" %>
+<%@ Register assembly="Microsoft.ReportViewer.WebForms" namespace="Microsoft.Reporting.WebForms" tagprefix="rsweb"%>
 
 <!DOCTYPE html>
 
