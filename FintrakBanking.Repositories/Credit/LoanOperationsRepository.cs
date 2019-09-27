@@ -351,7 +351,7 @@ namespace FintrakBanking.Repositories.Credit
                              join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
                              join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan && a.COMPANYID == companyId
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID, a.EXCHANGERATE, a.REFERENCENUMBER } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID, a.EXCHANGERATE, a.REFERENCENUMBER,  } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
@@ -364,7 +364,7 @@ namespace FintrakBanking.Repositories.Credit
                                  branchCode = groupedQ.Key.BRANCHCODE,
                                  exchangeRate = groupedQ.Key.EXCHANGERATE,
                                  referenceNumber = groupedQ.Key.REFERENCENUMBER,
-
+                                 createdBy = staffId,
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => (double)i.DAILYACCURALAMOUNT * i.EXCHANGERATE),
 
                              }).ToList();
@@ -17273,7 +17273,6 @@ namespace FintrakBanking.Repositories.Credit
                             //from e in grpApp.DefaultIfEmpty()
 
                             join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
-                            //join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWAPPLICATIONID equals atrail.TARGETID
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
@@ -25243,7 +25242,6 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
-
 
         public bool AddOperationReviewContingent(LoanReviewOperationViewModel model)
         {

@@ -90,6 +90,30 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+
+
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("change-application-date")]
+        //public HttpResponseMessage ChangeApplicationDate([FromBody] EndOfDayViewModel model)
+        //{
+
+        //    model.companyId = token.GetCompanyId;
+        //    model.createdBy = token.GetStaffId;
+        //    model.userBranchId = (short)token.GetBranchId;
+        //    var data = repoEOD.ChangeApplicationDate(model);
+        //    if (data)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //                   new { success = true, message = "Application Date Change has been completed successfully" });
+        //    }
+        //    else
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //                   new { success = false, message = "Application Date Change failed" });
+
+        //}
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("process-repayment-from-staging")]
@@ -172,7 +196,7 @@ namespace FintrakBanking.APICore.Controllers
                new { success = false, message = "An unknown error has occured" });
 
         }
-        
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("get_endofday_operation_log_monitoring")]

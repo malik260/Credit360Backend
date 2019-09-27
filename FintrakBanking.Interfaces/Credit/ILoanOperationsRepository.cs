@@ -15,35 +15,42 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanOperationsRepository
     {
+        string GetTransactionReferenceNo();
+
+        bool UpdateLoanClassification(DateTime applicationDate, int companyId);
         bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId);
         bool DoesOperationExist(int loanId, int operationTypeId, short loanSystemTypeId);
         int GoForApproval(ApprovalViewModel entity);
         bool AddCollateralSearchLien(CasaLienViewModel model);
         string GetCollateralLoanNewRefernceNumber(ApprovalViewModel model);
 
-        //bool DailyWrittenOffFacilityAccrual(DateTime applicationDate);
+        LoanViewModel getPrincipalAndInterestDate(int companyId, string refNo, DateTime effectiveDate);
+
         bool DailyWrittenOffFacilityAccrual(DateTime applicationDate, int companyId, int staffId);
 
+        TBL_LOAN GetLoanInformation(int loanid);
+
         bool GetRepaymentDate(int loanId);
+
+        bool FullAndFinalCompleteWriteOff(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId);
 
         decimal GetCollateralSearchChargeAmount(int stateId);
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
 
-        bool UpdateLoanClassification(DateTime applicationDate, int companyId);
         bool UpdateLoanClassification(DateTime applicationDate, int companyId, int staffId);
 
         void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId);
 
         bool ProcessReleaseLien(DateTime applicationDate, int companyId, int staffId);
-        //bool ProcessReleaseLien(DateTime applicationDate);
 
         bool ProcessContingentLiabilityTerminationAtMaturity(DateTime date);
 
         void ProcessAutomaticInterestRepricing(DateTime applicationDate, int staffId, int companyId);
-        //void ProcessAutomaticInterestRepricing(DateTime applicationDate, int staffId);
 
-        LoanViewModel GetRunningLoanOpeningBalance(int companyId, string refNo,DateTime effectiveDate);
+        bool LoanRecoveryCompletion(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId);
+
+        LoanViewModel GetRunningLoanOpeningBalance(int companyId, string refNo, DateTime effectiveDate);
 
         bool ContingentLiabilityTenorExtension(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment);
 
@@ -52,15 +59,12 @@ namespace FintrakBanking.Interfaces.Credit
         bool LoanRecoveryPayment(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId);
 
         List<LoanPaymentSchedulePeriodicViewModel> GeneratePrepaymentSchedule(LoanPaymentScheduleInputViewModel loanInput);
-        //IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTermLoansInterestAccrual(DateTime applicationDate);
+        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTermLoansInterestAccrual(DateTime applicationDate, int companyId, int staffId);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyAuthorisedOverdraftInterestAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyUnauthorisedOverdraftInterestAccrual(DateTime applicationDate);
-        //IEnumerable<DailyInterestAccrualViewModel> ProcessDailyInterestOnPastDueInterestAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyInterestOnPastDueInterestAccrual(DateTime applicationDate, int companyId, int staffId);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyInterestOnPastDuePrincipalAccrual(DateTime applicationDate, int companyId, int staffId);
-        //IEnumerable<DailyInterestAccrualViewModel> ProcessDailyInterestOnPastDuePrincipalAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTaxAccrual(DateTime applicationDate);
-        //IEnumerable<DailyInterestAccrualViewModel> ProcessDailyFeeAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyFeeAccrual(DateTime applicationDate, int companyId, int staffId);
 
         IEnumerable<LoanPastDueViewModel> ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(DateTime applicationDate);
@@ -80,9 +84,7 @@ namespace FintrakBanking.Interfaces.Credit
         //bool OverdraftTopUp(int loanId, decimal amount);
         IEnumerable<LimitSuspensionViewModel> ProcessNPLByBranchSuspension();
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate, int companyId, int staffId);
-        //IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate, int companyId, int staffId);
-        //IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> InterestSuspension(int loanId, DateTime applicationDate, int staffId);
         LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode, string changeReason);
         IEnumerable<LoanViewModel> BulkArchiveLoan();
@@ -123,6 +125,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         LoanViewModel GetWriteOffLoans(int companyId, string refNo);
 
+
+
         #region COMMERCIAL PAPER LOANS
         bool SubAllocateCommercialLoanPrincipal(subAllocationViewModel models);
         IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
@@ -161,13 +165,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByContingent();
 
         IEnumerable<LoanRepaymentViewModel> ProcessLoanDisbursmentRollOver(DateTime applicationDate, int companyId);
-        //IEnumerable<LoanRepaymentViewModel> ProcessLoanDisbursmentRollOver(DateTime applicationDate);
 
         void ProcessAutomaticCommercialLoanRollover(DateTime applicationDate, int companyId, int staffId);
-        //void ProcessAutomaticCommercialLoanRollover(DateTime applicationDate);
-        TBL_LOAN GetLoanInformation(int loanid);
-        LoanViewModel getPrincipalAndInterestDate(int companyId, string refNo, DateTime effectiveDate);
-        IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTermLoansInterestAccrual(DateTime applicationDate, int companyId, int staffId);
 
         #endregion
 

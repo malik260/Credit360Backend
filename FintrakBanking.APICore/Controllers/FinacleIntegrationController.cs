@@ -3,6 +3,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.CRMS;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.ThridPartyIntegration;
+using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.Reports;
 using System;
 using System.Collections.Generic;
@@ -169,6 +170,36 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
             }
+
+        }
+
+
+        [HttpPost]
+        [Route("batch-posting/errorLog")]
+        [ClaimsAuthorization]
+        public HttpResponseMessage GetEODErrorLogDetail(FinanceEndofdayViewModel model)
+        {
+
+            try
+            {
+                var fileBytes = _repo.GetEODErrorLogDetail(model);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { data = "no-record", success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
+            }
+
+
 
         }
 

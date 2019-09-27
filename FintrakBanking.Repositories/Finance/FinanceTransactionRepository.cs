@@ -838,6 +838,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.creditAmount = 0;
             debit.sourceBranchId = model.branchId;
             debit.destinationBranchId = model.branchId;
+            debit.createdBy = model.createdBy;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.DailyInterestAccural;
@@ -861,6 +862,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.creditAmount = (decimal)model.dailyAccuralAmount;
             credit.sourceBranchId = model.branchId;
             credit.destinationBranchId = model.branchId;
+            credit.createdBy = model.createdBy;
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
             inputTransactions.Add(debit);
