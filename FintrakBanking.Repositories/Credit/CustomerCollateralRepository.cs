@@ -1672,7 +1672,7 @@ namespace FintrakBanking.Repositories.Credit
                         //allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
                         requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                         exchangeRate = c.c.EXCHANGERATE,
-                        availableValue = 0,
+                        availableCollateralValue = 0,
                         collateralSummary = c.c.COLLATERALSUMMARY,
                         accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == c.c.CUSTOMERID).ACCOUNTNUMBER,
                     }).FirstOrDefault()
@@ -1683,7 +1683,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 usage = usage + GetLoanOutstandingBalance(mapping.LOANID, mapping.LOANSYSTEMTYPEID);
             }
-            collaterals.availableValue = (decimal)collaterals.collateralValue - usage;
+            collaterals.availableCollateralValue = (decimal)collaterals.collateralValue - usage;
 
 
             //collaterals = ResolveCollateralValues(collaterals);
@@ -1771,14 +1771,14 @@ namespace FintrakBanking.Repositories.Credit
                         allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
                         requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                         exchangeRate = c.c.EXCHANGERATE,
-                        availableValue = 0,
+                        availableCollateralValue = c.c.COLLATERALVALUE - (decimal?)(context.TBL_LOAN_APPLICATION_COLLATERL.Where(pc => pc.DELETED == false && pc.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID).Sum(pc => pc.COLLATERALCOVERAGE)) ?? 0,
                         collateralReleaseStatusId = c.c.COLLATERALRELEASESTATUSID,
                         collateralReleaseStatusName = c.c.COLLATERALRELEASESTATUSID == null ? context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == (int)CollateralReleaseStatus.InVault).FirstOrDefault().COLLATERALRELEASESTATUSNAME : context.TBL_COLLATERAL_RELEASE_STATUS.Where(q => q.COLLATERALRELEASESTATUSID == c.c.COLLATERALRELEASESTATUSID).FirstOrDefault().COLLATERALRELEASESTATUSNAME,
                         accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
                         collateralUsageStatus = c.c.COLLATERALUSAGESTATUSID,
                         loanApplicationId = c.c.LOANAPPLICATIONID,
                         collateralSummary = c.c.COLLATERALSUMMARY,
-                        isMapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID).Any(),                        //remark = c.c.
+                        isMapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),                        //remark = c.c.
                     })
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First());
@@ -1799,13 +1799,14 @@ namespace FintrakBanking.Repositories.Credit
             decimal availableCollateralValue = 0;
             decimal expectedCollateralCoverage = 0;
             decimal actualCollateralCoverage = 0;
+            decimal totalCoverage = 0;
             //  decimal sumOfMultipleCollateralValues = 0;
 
             var collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
                                join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
-                               join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
-                               where x.LOANAPPLICATIONID == loanApplicationId && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                               join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
+                               where x.LOANAPPLICATIONID == loanApplicationId && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing && x.DELETED == false
 
                                select new CollateralCoverageViewModel
                                {
@@ -1835,8 +1836,8 @@ namespace FintrakBanking.Repositories.Credit
                 collateralValue = collateral.collateralValue;
                 facilityAmount = collateral.facilityAmount;
 
-                var alreadyProposedFacilitiesForThisCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == collateral.collateralId).Select(o => o).ToList();
-
+                var alreadyProposedFacilitiesForThisCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == collateral.collateralId && o.DELETED == false).Select(o => o).ToList();
+                var alreadyProposedCollateralsForThisFacility = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId && o.DELETED == false).Select(o => o).ToList();
                 if (alreadyProposedFacilitiesForThisCollateral.Count != 0)
                 {
                     decimal facilityValue = 0;
@@ -1861,11 +1862,12 @@ namespace FintrakBanking.Repositories.Credit
                     actualCollateralCoverage = availableCollateralValue;
 
                 }
-
+                totalCoverage = ((alreadyProposedCollateralsForThisFacility.Sum(c => c.COLLATERALCOVERAGE)) / expectedCollateralCoverage) * 100;
                 var cov = new CollateralCoverageViewModel
                 {
                     collateralSummary = collateral.collateralSummary,
-                    coveragePercentage = coveragePercentage,
+                    expectedCoveragePercentage = coveragePercentage,
+                    actualCoveragePercentage = ((actualCollateralCoverage / expectedCollateralCoverage) * 100),
                     loanApplicationDetailId = collateral.loanApplicationDetailId,
                     collateralId = collateral.collateralId,
                     collateralCode = collateral.collateralCode,
@@ -1878,6 +1880,7 @@ namespace FintrakBanking.Repositories.Credit
                     availableCollateralValue = availableCollateralValue,
                     availableCollateralValueBaseAmount = availableCollateralValue * (decimal)exchangeRate.sellingRate,
                     baseCurrencyCode = baseCurrencyCode,
+                    totalCoverage = totalCoverage,
                     actualCollateralCoverage = actualCollateralCoverage,
                     approvalStatusId = collateral.approvalStatusId,
                     ReferenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
@@ -1887,7 +1890,8 @@ namespace FintrakBanking.Repositories.Credit
                 list.Add(cov);
 
             }
-            return list.GroupBy(x=>x.loanApplicationDetailId).Select(x => x.First());
+            return list.OrderByDescending(l => l.productName);
+            //return list.GroupBy(x=>x.loanApplicationDetailId).Select(x => x.First());
 
         }
 
@@ -1913,10 +1917,10 @@ namespace FintrakBanking.Repositories.Credit
                      collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
                                        join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                        join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
-                                       join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
+                                       join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
                                        join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                        //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                                       where x.CUSTOMERID == customerId
+                                       where c.CUSTOMERID == customerId && x.DELETED == false
 
                                        select new CollateralCoverageViewModel
                                        {
@@ -1937,7 +1941,7 @@ namespace FintrakBanking.Repositories.Credit
                      collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
                                        join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                        join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
-                                       join s in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALTYPEID equals s.COLLATERALTYPEID
+                                       join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
                                        join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                        //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
                                        where x.CUSTOMERID == customerId && f.CUSTOMERID == customerId
@@ -2073,7 +2077,7 @@ namespace FintrakBanking.Repositories.Credit
                                    requireInsurancePolicy = d.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                                    exchangeRate = d.EXCHANGERATE,
                                    collateralSummary = d.COLLATERALSUMMARY,
-                                   availableValue = 0,
+                                   availableCollateralValue = 0,
                                    // accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
 
 
@@ -2138,7 +2142,7 @@ namespace FintrakBanking.Repositories.Credit
                 usage = 0;
                 var mappings = context.TBL_LOAN_COLLATERAL_MAPPING.Where(m => m.COLLATERALCUSTOMERID == collateral.collateralId && m.DELETED == false && m.ISRELEASED == false).ToList();
                 foreach (var mapping in mappings) { usage = usage + GetLoanOutstandingBalance(mapping.LOANID, mapping.LOANSYSTEMTYPEID); }
-                collateral.availableValue = (decimal)collateral.collateralValue - usage;
+                collateral.availableCollateralValue = (decimal)collateral.collateralValue - usage;
                 list.Add(collateral);
             }
             return list;
@@ -4424,17 +4428,21 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<LoanApplicationCollateralViewModel> UnmapApplicationCollateral(ApplicationCollateralMapping entity)
         {
-            var proposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == entity.collateralId && o.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).FirstOrDefault();
-
-            if (proposed!=null)
-            {
-                proposed.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                context.SaveChanges();
-            }
+            //var proposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPCOLLATERALID == entity.loanAppCollateralId && o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved).FirstOrDefault();
+            //var mapped = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.LOANAPPCOLLATERALID == entity.loanAppCollateralId).FirstOrDefault();
+            //if (proposed != null && mapped != null)
+            //{
+            //    proposed.DELETED = true;
+            //    mapped.ISRELEASED = true;
+            //    context.Entry(proposed).State = EntityState.Modified;
+            //    context.Entry(mapped).State = EntityState.Modified;
+            //    //proposed.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            //    context.SaveChanges();
+            //}
 
            
 
-            var mapped = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId).Select(c => new LoanApplicationCollateralViewModel
+            var mapped2 = context.TBL_LOAN_APPLICATION_COLLATERL.Where(c => c.LOANAPPLICATIONID == entity.applicationId).Select(c => new LoanApplicationCollateralViewModel
             {
                 loanAppCollateralId = c.LOANAPPCOLLATERALID,
                 applicationReferenceNumber = c.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -4448,7 +4456,7 @@ namespace FintrakBanking.Repositories.Credit
                 haircut = c.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
                 customerId = c.TBL_COLLATERAL_CUSTOMER.CUSTOMERID.Value
             }).OrderByDescending(x => x.loanAppCollateralId);
-            return mapped;
+            return mapped2;
         }
 
         #endregion New 
@@ -6022,7 +6030,15 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteProposedCollateral(CollateralCoverageViewModel model)
         {
             var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && o.COLLATERALCUSTOMERID==model.collateralId).Select(o => o).FirstOrDefault();
-            context.TBL_LOAN_APPLICATION_COLLATERL.Remove(data);
+            if (data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
+            {
+                throw new Exception("Cannot Delete Approved Already Mapped Collateral");
+            }
+            data.DELETED = true;
+            data.DELETEDBY = model.createdBy;
+            data.DATETIMEDELETED = genSetup.GetApplicationDate();
+            context.Entry(data).State = EntityState.Modified;
+            //context.TBL_LOAN_APPLICATION_COLLATERL.Remove(data);
             return context.SaveChanges() > 0;
 
         }
@@ -6366,7 +6382,8 @@ namespace FintrakBanking.Repositories.Credit
                     outstandingPrincipal = o.l.OUTSTANDINGPRINCIPAL,
                     totalOutstanding = o.l.OUTSTANDINGPRINCIPAL + o.l.OUTSTANDINGINTEREST,
                     runningPrincipal = o.l.PRINCIPALAMOUNT,
-                    dateUsed = o.clc.lc.DATETIMECREATED,
+                    dateProposed = o.clc.lc.DATETIMECREATED,
+                    dateUsed = o.l.DISBURSEDATE,
                     haircut = o.clc.c.HAIRCUT,
                     exchangeRate = o.l.EXCHANGERATE,
                     approvedLoanAmount = o.l.PRINCIPALAMOUNT,
@@ -6385,7 +6402,8 @@ namespace FintrakBanking.Repositories.Credit
                     outstandingPrincipal = o.l.OVERDRAFTLIMIT,
                     totalOutstanding = o.l.OVERDRAFTLIMIT,
                     runningPrincipal = o.l.OVERDRAFTLIMIT,
-                    dateUsed = o.clc.lc.DATETIMECREATED,
+                    dateProposed = o.clc.lc.DATETIMECREATED,
+                    dateUsed = o.l.DISBURSEDATE,
                     haircut = o.clc.c.HAIRCUT,
                     exchangeRate = o.l.EXCHANGERATE,
                     approvedLoanAmount = o.l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
@@ -9067,8 +9085,8 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal coverage = decimal.Divide(collateralCoverage, 100);
 
-            var newCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Any(o => o.COLLATERALCUSTOMERID == model.collateralId);
-            var newFacility = context.TBL_LOAN_APPLICATION_COLLATERL.Any(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId);
+            var newCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Any(o => o.COLLATERALCUSTOMERID == model.collateralId && o.DELETED == false);
+            var newFacility = context.TBL_LOAN_APPLICATION_COLLATERL.Any(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && o.DELETED == false);
             if (newCollateral == false && newFacility == false)
             {
 
@@ -9078,6 +9096,8 @@ namespace FintrakBanking.Repositories.Credit
                     LOANAPPLICATIONID = model.loanApplicationId,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                     LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                    COLLATERALCOVERAGE = model.actualCollateralCoverage,
+                    BALANCEAVAILABLE = model.availableCollateralValue - model.actualCollateralCoverage,
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     CUSTOMERID = model.customerId,
@@ -9091,30 +9111,38 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-
-                var collateralMappedToFacilities = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == model.collateralId && o.LOANAPPLICATIONDETAILID != model.loanApplicationDetailId).Select(o => o).ToList();
-
-                var facilityMappedToCollaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && o.COLLATERALCUSTOMERID != model.collateralId).Select(o => o).ToList();
-
-                if (collateralMappedToFacilities.Count != 0)
-                {
-                    foreach (var x in collateralMappedToFacilities)
-                    {
-                        facilitiesValue = facilitiesValue + context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.APPROVEDAMOUNT).FirstOrDefault();
-                    }
-                }
-                facilitiesValue = decimal.Multiply((facilitiesValue + facilityValue.APPROVEDAMOUNT), coverage);
+                //o.LOANAPPLICATIONDETAILID != model.loanApplicationDetailId
+                var collateralMappedToFacilities = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == model.collateralId && o.DELETED == false).Select(o => o).ToList();
+                // o.COLLATERALCUSTOMERID != model.collateralId
+                var facilityMappedToCollaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && o.DELETED == false).Select(o => o).ToList();
+                availableCollateralValues = collateral.COLLATERALVALUE;
+                //facilitiesValue = decimal.Multiply((facilitiesValue + facilityValue.APPROVEDAMOUNT), coverage);
 
                 if (facilityMappedToCollaterals.Count != 0)
                 {
-                    foreach (var x in facilityMappedToCollaterals)
+                    if (facilityMappedToCollaterals.Sum(f => f.COLLATERALCOVERAGE) >= decimal.Multiply(facilityValue.APPROVEDAMOUNT, coverage))
                     {
-                        availableCollateralValues = availableCollateralValues + context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).Select(o => o.COLLATERALVALUE).FirstOrDefault();
+                        throw new Exception("Facility is already fully covered");
                     }
+                    
+                    //foreach (var x in facilityMappedToCollaterals)
+                    //{
+                    //    availableCollateralValues = availableCollateralValues + context.TBL_COLLATERAL_CUSTOMER.Where(o => o.COLLATERALCUSTOMERID == x.COLLATERALCUSTOMERID).Select(o => o.COLLATERALVALUE).FirstOrDefault();
+                    //}
                 }
-                availableCollateralValues = availableCollateralValues + collateral.COLLATERALVALUE;
 
-                availableCollateralValues = decimal.Subtract(availableCollateralValues, facilitiesValue);
+                if (collateralMappedToFacilities.Count != 0)
+                {
+                    availableCollateralValues = availableCollateralValues - collateralMappedToFacilities.Sum(c => c.COLLATERALCOVERAGE);
+                    //foreach (var x in collateralMappedToFacilities)
+                    //{
+                    //    facilitiesValue = facilitiesValue + context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(o => o.APPROVEDAMOUNT).FirstOrDefault();
+                    //}
+                }
+
+                //availableCollateralValues = availableCollateralValues + collateral.COLLATERALVALUE;
+
+                //availableCollateralValues = decimal.Subtract(availableCollateralValues, facilitiesValue);
 
 
                 if (availableCollateralValues > 0)
@@ -9125,6 +9153,8 @@ namespace FintrakBanking.Repositories.Credit
                         LOANAPPLICATIONID = model.loanApplicationId,
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                         LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
+                        COLLATERALCOVERAGE = model.actualCollateralCoverage,
+                        BALANCEAVAILABLE = model.availableCollateralValue - model.actualCollateralCoverage,
                         CREATEDBY = model.createdBy,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
                         CUSTOMERID = model.customerId,
@@ -9250,7 +9280,7 @@ namespace FintrakBanking.Repositories.Credit
             collateralValue = model.collateralValue;
             facilityAmount = model.facilityAmount;
 
-            var alreadyProposedFacilitiesForThisCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == model.collateralId).Select(o => o).ToList();
+            var alreadyProposedFacilitiesForThisCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.DELETED == false && o.COLLATERALCUSTOMERID == model.collateralId).Select(o => o).ToList();
 
             //  var multipleCollateralOneFacility = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).Select(o => o.COLLATERALCUSTOMERID).ToList();
 
@@ -9262,18 +9292,22 @@ namespace FintrakBanking.Repositories.Credit
 
             //    }
             //}
+            
+            availableCollateralValue = collateralValue;
 
             if (alreadyProposedFacilitiesForThisCollateral.Count != 0)
             {
-                decimal facilityValue = 0;
-                foreach (var facility in alreadyProposedFacilitiesForThisCollateral)
-                {
-                    facilityValue = facilityValue + context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == facility.LOANAPPLICATIONID).Select(o => o.APPROVEDAMOUNT).FirstOrDefault();
-                }
-                availableCollateralValue = availableCollateralValue - decimal.Multiply(coverage, facilityValue);
-            }
+                // decimal facilityValue = 0;
+                //foreach (var facility in alreadyProposedFacilitiesForThisCollateral)
+                //{
+                //    facilityValue = facilityValue + context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONID == facility.LOANAPPLICATIONID).Select(o => o.APPROVEDAMOUNT).FirstOrDefault();
+                //}
+                //availableCollateralValue = availableCollateralValue - decimal.Multiply(coverage, facilityValue);
 
-            availableCollateralValue = collateralValue;
+                decimal collateralCoverages = 0;
+                collateralCoverages = alreadyProposedFacilitiesForThisCollateral.Sum(p => p.COLLATERALCOVERAGE);
+                availableCollateralValue = availableCollateralValue - collateralCoverages;
+            }
 
             expectedCollateralCoverage = decimal.Multiply(coverage, facilityAmount);
 
