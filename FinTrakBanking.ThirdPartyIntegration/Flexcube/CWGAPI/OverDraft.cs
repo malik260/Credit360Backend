@@ -20,16 +20,34 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
         {
             private FinTrakBankingContext _context;
             private string API_KEY, API_URL = string.Empty;
+            private List<TBL_API_URL> APIUrlConfig;
 
             public OverDraft(FinTrakBankingContext context)
             {
                 _context = context;
 
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
+                APIUrlConfig = context.TBL_API_URL.ToList();
                 if (configdata != null)
                 {
                     API_KEY = configdata.APIKEY;
                     API_URL = configdata.APIURL;
+                }
+            }
+
+            private void getAPIURLSettings(string typeName = null)
+            {
+                var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
+                if (apiConfig != null)
+                {
+                    API_URL = apiConfig.URL;
+                    API_KEY = apiConfig.KEY;
+                }
+                if (apiConfig == null)
+                {
+                    apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
+                    API_URL = apiConfig.URL;
+                    API_KEY = apiConfig.KEY;
                 }
             }
 
@@ -55,6 +73,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
+                getAPIURLSettings("OverDraft");
 
                 try
                 {
@@ -159,7 +178,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
-
+                getAPIURLSettings("OverDraftTopUp");
                 model.sanctionLevel = "003";
                 model.sanctionAuthorizer = "999";
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -251,8 +270,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
-                
 
+                getAPIURLSettings("OverDraftRenew");
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
@@ -339,6 +358,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 string responseMessage = "";
                 model.sanctionLevel = "003";
                 model.sanctionAuthorizer = "999";
+                getAPIURLSettings("OverDraftExtend");
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
@@ -428,7 +448,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
-               
+                getAPIURLSettings("TempOverDraft");
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
@@ -516,7 +536,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
-
+                getAPIURLSettings("TempOverDraftRunning");
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
 
                 _handler.UseDefaultCredentials = true;
@@ -602,8 +622,9 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
+                getAPIURLSettings("TempOverDraftSingle");
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-                ;
+
                 _handler.UseDefaultCredentials = true;
                 //HttpClient client = new HttpClient(_handler);
 
@@ -693,6 +714,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
                 string responseJson = "";
+                getAPIURLSettings("OverDraftInterestRate");
                 try
                 {
                     InterestRateDetails apiModel = new InterestRateDetails
