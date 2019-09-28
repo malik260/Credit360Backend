@@ -11,10 +11,10 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int LOANAPPCOLLATERALID { get; set; }
-
+        [ForeignKey("TBL_COLLATERAL_CUSTOMER")]
         public int COLLATERALCUSTOMERID { get; set; }
-
-        public int? LOANAPPLICATIONID { get; set; }
+        [ForeignKey("TBL_LOAN_APPLICATION")]
+        public int LOANAPPLICATIONID { get; set; }
 
         public bool? LEGAL_FEE_TAKEN { get; set; }
 
@@ -41,6 +41,9 @@ namespace FintrakBanking.Entities.Models
         public int? CUSTOMERID { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
+
+        public decimal COLLATERALCOVERAGE { get; set; }
+        public decimal BALANCEAVAILABLE { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
 

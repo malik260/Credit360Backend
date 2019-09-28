@@ -114,5 +114,7 @@ namespace FintrakBanking.Interfaces.Reports
 
         string ContigentReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
 
+        string Overline(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+
     }
 }

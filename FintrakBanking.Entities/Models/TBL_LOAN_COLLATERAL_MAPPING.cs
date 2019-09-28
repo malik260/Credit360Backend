@@ -11,7 +11,9 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int LOANCOLLATERALMAPPINGID { get; set; }
-
+        [ForeignKey("TBL_LOAN_APPLICATION_COLLATERL")]
+        public int LOANAPPCOLLATERALID { get; set; }
+        [ForeignKey("TBL_COLLATERAL_CUSTOMER")]
         public int COLLATERALCUSTOMERID { get; set; }
 
         public int LOANID { get; set; }
@@ -39,6 +41,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+        public virtual TBL_LOAN_APPLICATION_COLLATERL TBL_LOAN_APPLICATION_COLLATERL { get; set; }
 
         public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
     }

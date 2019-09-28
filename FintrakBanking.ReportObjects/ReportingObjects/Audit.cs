@@ -73,7 +73,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                               deactivatedDate = lg.DEACTIVATEDDATE,
                               failedLoggingAttempts = lg.FAILEDLOGONATTEMPT,
                               isUserActive = lg.ISACTIVE,
-                               isUserLocked = lg.ISLOCKED,
+                              isUserLocked = lg.ISLOCKED,
                               lastLogginDate = lg.LASTLOGINDATE,
                               lastLogOutDate = lg.LASTLOCKOUTDATE,
                               names = st.FIRSTNAME + " " + st.LASTNAME + " " + st.MIDDLENAME,
