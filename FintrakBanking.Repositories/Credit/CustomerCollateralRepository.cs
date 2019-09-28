@@ -9082,6 +9082,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     CUSTOMERID = model.customerId,
                     DELETED = false,
+                    SYSTEMDATETIME = DateTime.Now,
 
                 };
                 context.TBL_LOAN_APPLICATION_COLLATERL.Add(data);
