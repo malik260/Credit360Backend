@@ -83,7 +83,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string relationshipOfficerCode { get; set; }
         public string relationshipOfficerName { get; set; }
         public bool isPoliticallyExposed { get; set; }
-
+        public short politicallyExposedPerson { get; set; }
+        
         public string misCode { get; set; }
         public string misStaff { get; set; }
         public int approvalStatus { get; set; }
