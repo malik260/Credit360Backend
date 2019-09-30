@@ -91,8 +91,8 @@ namespace FintrakBanking.Repositories.Customer
             }
             else
             {
-                if (USE_THIRD_PARTY_INTEGRATION)
-                    entity.isPoliticallyExposed = finacle.GetExposePersonStatus(entity.customerCode);
+                //if (USE_THIRD_PARTY_INTEGRATION)
+                //    entity.isPoliticallyExposed = finacle.GetExposePersonStatus(entity.customerCode);
             }
 
             int? maritalStatus = null;

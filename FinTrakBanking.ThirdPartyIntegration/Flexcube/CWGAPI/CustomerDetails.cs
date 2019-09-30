@@ -25,7 +25,7 @@
         {
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
-            //private IStaffRepository staffRepo;
+            private List<TBL_API_URL> APIUrlConfig;
 
             //private static HttpClient httpClientInstance;
             //private HttpClientHandler handler = new HttpClientHandler();
@@ -34,28 +34,28 @@
             {
                 this.context = _context;
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
+                APIUrlConfig = context.TBL_API_URL.ToList();
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
                 //staffRepo = _staffRepo;
-            } 
-
-            public void Run()
-            {
-                //httpClientInstance = new HttpClient();
-                //httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-
-                //client.BaseAddress = new Uri("https://172.16.249.195/FbnFintrak.Api.Test/");
-                //client.DefaultRequestHeaders.Accept.Clear();
-                //client.DefaultRequestHeaders.Accept.Add(
-                //new MediaTypeWithQualityHeaderValue("application/json"));
-
-
-                //ServicePointManager.FindServicePoint(client.BaseAddress)
-                //.ConnectionLeaseTimeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
-                //ServicePointManager.DnsRefreshTimeout = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
-                //ServicePointManager.FindServicePoint(client.BaseAddress).ConnectionLeaseTimeout = 60 * 1000;
             }
- 
+
+            private void getAPIURLSettings(string typeName = null)
+            {
+                var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
+                if (apiConfig != null)
+                {
+                    API_URL = apiConfig.URL;
+                    API_KEY = apiConfig.KEY;
+                }
+                if (apiConfig == null)
+                {
+                    apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
+                    API_URL = apiConfig.URL;
+                    API_KEY = apiConfig.KEY;
+                }
+            }
+
             public async Task<List<CustomerViewModels>> GetCustomerByAccountsNumber(string customerAccount)
             {
                 HttpClientHandler handler = new HttpClientHandler();
@@ -67,6 +67,8 @@
                // ResponseMessageViewModel res = null;
                 string responseMessage = "";
                 string responseData = "";
+                getAPIURLSettings("Customer");
+
                 HttpClient client = new HttpClient(handler);
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 httpClientInstance = new HttpClient();
@@ -111,6 +113,7 @@
                             customerModel.firstName = customerModel.companyName == null ? customerModel.company_name  : customerModel.companyName;
                             customerModel.companyName = customerModel.company_name;
                         }
+                        customerModel.isPoliticallyExposed = customerModel.politicallyExposedPerson > 0;
 
                         customers.Add(customerModel);
                     }
@@ -140,7 +143,6 @@
                 return customers;
             }
 
-
             public async Task<CasaBalanceViewModel> GetCustomerAccountBalance(string customerAccount)
             {
                 HttpClientHandler handler = new HttpClientHandler();
@@ -152,6 +154,7 @@
                 CasaIntegrationViewModel accountAPI = new CasaIntegrationViewModel();
                // ResponseMessageViewModel res = null;
                 string responseMessage  = "";
+                getAPIURLSettings("CustomerAccountBalance");
                 try
                 {
                     handler.UseDefaultCredentials = true;
@@ -279,6 +282,7 @@
                 HttpResponseMessage response = null;
                 //ResponseMessageViewModel res = null;
                 string responseMessage = "";
+                getAPIURLSettings("CustomerAccountBalance");
                 try
 
                 {
@@ -373,6 +377,7 @@
                 HttpResponseMessage response = null;
               //  ResponseMessageViewModel res = null;
                 string responseMessage = "";
+                getAPIURLSettings("ExposedPerson");
                 try
                 {
                     string result = string.Empty;
@@ -391,14 +396,14 @@
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = await client.GetAsync($"GetExposedPerson/{customerCode}");
+                    try { response = await client.GetAsync($"GetExposedPerson/{customerCode}"); } catch (Exception ex) { }
                     responseDateTime = DateTime.Now;
                     if (response.IsSuccessStatusCode)
                     {
                         var responseData = await response.Content.ReadAsStringAsync();
                         JObject responseDataJsonString = JObject.Parse(responseData);
                         
-                        result = responseDataJsonString["responseMessage"].ToString();
+                        //result = responseDataJsonString["responseMessage"].ToString();
                         //result = JsonConvert.DeserializeObject<string>(responseMessageString);
                     }
                     responseMessage = await response.Content.ReadAsStringAsync();
@@ -445,6 +450,8 @@
                 HttpResponseMessage response = null;
                 //ResponseMessageViewModel res = null;
                 string responseMessage = "";
+                getAPIURLSettings("BVN");
+
                 string result = string.Empty;
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 handler.UseDefaultCredentials = true;
@@ -521,6 +528,7 @@
                 InterestRateInquiryIntegrationViewModel accountAPI = new InterestRateInquiryIntegrationViewModel();
                 //ResponseMessageViewModel res = null;
                 string responseMessage = "";
+                getAPIURLSettings("RateEnquiry");
                 try
                 {
                     handler.UseDefaultCredentials = true;
@@ -740,6 +748,7 @@
                 var month = DateTime.Now.Month - 1;
                 var year = DateTime.Now.Year;
                 var searchDate = "0" + month + "-" + year;
+                getAPIURLSettings("CustomerTransactions");
 
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
@@ -870,6 +879,7 @@
                 var month = DateTime.Now.Month - 1;
                 var year = DateTime.Now.Year;
                 var searchDate = "0"+month + "-" + year;
+                getAPIURLSettings("CustomerLoanInterestDetails");
 
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
@@ -952,9 +962,6 @@
 
                 return accounts;
             }
-
-
-
 
             private void FintrakBankingDatabaseCustomerTurnoverOperations(
                 string endpointUrl,

@@ -14,6 +14,7 @@ using FintrakBanking.Interfaces.Setups.Credit;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common;
 
+
 namespace FintrakBanking.Repositories.Setups.Credit
 {
 
@@ -22,7 +23,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         private FinTrakBankingContext context;
         private IGeneralSetupRepository _genSetup;
         private IAuditTrailRepository auditTrail;
-
+       
         public BulkDisbursementPackageRepository(FinTrakBankingContext _context,
                                                     IGeneralSetupRepository genSetup,
                                                     IAuditTrailRepository _auditTrail)
@@ -264,8 +265,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.CURRENCYID = model.currencyId;
 
-            //Audit Section ---------------------------
-
+            //Audit Section -------------------------
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.BulkDisbursementSchemeUpdated,
@@ -276,6 +276,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
+               
             };
             this.auditTrail.AddAuditTrail(audit);
             // end of Audit section -------------------------------

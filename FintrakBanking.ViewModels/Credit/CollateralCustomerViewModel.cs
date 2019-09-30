@@ -148,7 +148,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string stampToCover { get; set; }
         public string valuationSource { get; set; }
         public decimal originalValue { get; set; }
-        public decimal availableValue { get; set; }
+        public decimal availableCollateralValue { get; set; }
         public decimal? collateralUsableAmount { get; set; }
         public string nearestLandMark { get; set; }
         public string nearestBusStop { get; set; }
@@ -357,7 +357,7 @@ namespace FintrakBanking.ViewModels.Credit
         {
             get
             {
-                return availableValue > 0 ? true : false;
+                return availableCollateralValue > 0 ? true : false;
             }
         }
 
@@ -978,6 +978,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class ApplicationCollateralMapping
     {
         public int? collateralId { get; set; }
+        public int loanAppCollateralId { get; set; }
         public int applicationId { get; set; }
         public int? loanApplicationDetailId { get; set; }
         public int staffId { get; set; }
@@ -993,7 +994,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public decimal amountInUse { get; set; }
         public decimal collateralBalance { get; set; }
-        public DateTime dateUsed { get; set; }
+        public DateTime? dateUsed { get; set; }
+        public DateTime dateProposed { get; set; }
         public double haircut { get; set; }
         public double exchangeRate { get; set; }
         public decimal approvedLoanAmount { get; set; }
@@ -1066,11 +1068,13 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal availableCollateralValueBaseAmount { get; set; }
         public decimal expectedCollateralCoverage { get; set; }
         public decimal actualCollateralCoverage { get; set; }
+        public decimal totalCoverage { get; set; }
         public string ReferenceNumber { get; set; }
         public string productName { get; set; }
         public string collateralSummary { get; set; }
         public string collateralCode { get; set; }
-        public int coveragePercentage { get; set; }
+        public int expectedCoveragePercentage { get; set; }
+        public decimal actualCoveragePercentage { get; set; }
         public int approvalStatusId { get; set; }
     }
     public class CollateralUsageStatus
