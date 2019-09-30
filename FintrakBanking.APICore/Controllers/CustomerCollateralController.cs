@@ -2446,7 +2446,7 @@ namespace FintrakBanking.APICore.Controllers
             model.applicationUrl = HttpContext.Current.Request.Path;
             model.createdBy = token.GetStaffId;
             model.companyId = token.GetCompanyId;
-            bool response = repo.UpdateInsurancePolicy(id, model);
+            bool response = repo.UpdateInsurancePolicy( model);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
