@@ -22,6 +22,7 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(100)]
         public string INSURANCETYPE { get; set; }
+        public int INSURANCETYPEID { get; set; }
 
         //[Column(TypeName = "money")]
         public decimal PREMIUMAMOUNT { get; set; }

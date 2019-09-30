@@ -704,20 +704,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet, Route("customer-collateral/type/collateral/{collateralId}/type/{typeId}")]
-        public HttpResponseMessage GetCollateralTypeByCollateralId(int collateralId, int typeId)
-        {
-            try
-            {
-                var response = repo.GetCollateralTypeByCollateralId(collateralId, typeId);
+        //[HttpGet, Route("customer-collateral/type/collateral/{collateralId}/type/{typeId}")]
+        //public HttpResponseMessage GetCollateralTypeByCollateralId(int collateralId, int typeId)
+        //{
+        //    try
+        //    {
+        //        var response = repo.GetCollateralTypeByCollateralId(collateralId, typeId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+        //    }
+        //}
 
         [HttpGet, Route("customer-collateral/{collateralId}/collateral/{typeId}/type")]
         public HttpResponseMessage GetCollateralTypeByCollateral(int collateralId, int typeId)
@@ -773,7 +773,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         [HttpPost, Route("add-insurance-policy")]
-        public HttpResponseMessage AddNewInsurancePolicy(InsurancePolicies insurancePolicies)
+        public HttpResponseMessage AddNewInsurancePolicy(InsurancePolicy insurancePolicies)
         {
             try
             {
@@ -1999,7 +1999,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("check-insurance-policy")]
-        public HttpResponseMessage checkInsurancePolicy([FromBody] InsurancePolicies model)
+        public HttpResponseMessage checkInsurancePolicy([FromBody] InsurancePolicy model)
         {
             try
             {
@@ -2019,7 +2019,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("insurance-policy")]
-        public HttpResponseMessage AddInsurancePolicy([FromBody] InsurancePolicies entity)
+        public HttpResponseMessage AddInsurancePolicy([FromBody] InsurancePolicy entity)
         {
             try
             {
@@ -2417,14 +2417,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("insurance-search/{searchString}")]
         public HttpResponseMessage GetInsuranceSearch(string searchString)
         {
-            IEnumerable<InsurancePolicies> response = repo.Explore(searchString);
+            IEnumerable<InsurancePolicy> response = repo.Explore(searchString);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
         [HttpPost]
         [ClaimsAuthorization]
         [Route("policy-insurance-doc")]
-        public HttpResponseMessage SaveInsurancePolicy([FromBody]   InsurancePolicies model)
+        public HttpResponseMessage SaveInsurancePolicy([FromBody]   InsurancePolicy model)
         {
             model.userBranchId = (short)token.GetBranchId;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
@@ -2439,7 +2439,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("policy-insurance-doc/{id}")]
-        public HttpResponseMessage UpdateInsurancePolicy([FromUri] int id, [FromBody] InsurancePolicies model)
+        public HttpResponseMessage UpdateInsurancePolicy(InsurancePolicy model)
         {
             model.userBranchId = (short)token.GetBranchId;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
