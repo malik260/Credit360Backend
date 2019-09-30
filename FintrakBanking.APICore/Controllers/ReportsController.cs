@@ -2223,6 +2223,78 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("expired-facility-report")]
+        public HttpResponseMessage GetExpiredFacilityReport([FromBody] RiskAssets obj)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.ExpiredFacilityReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("over-line-report")]
+        public HttpResponseMessage GetOverLineReport([FromBody] RiskAssets obj)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.OverLineReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("large-exposure-report")]
+        public HttpResponseMessage GetLargeExposureReport([FromBody] RiskAssets obj)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.LargeExposureReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
     }
 }
 

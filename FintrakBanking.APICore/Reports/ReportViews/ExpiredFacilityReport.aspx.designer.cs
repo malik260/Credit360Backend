@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class ContigentReport {
+    public partial class ExpiredFacilityReport {
         
         /// <summary>
         /// form1 control.
@@ -31,12 +31,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// ReportViewer08 control.
+        /// ReportViewer09 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer08; 
+        protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer09;
     }
 }

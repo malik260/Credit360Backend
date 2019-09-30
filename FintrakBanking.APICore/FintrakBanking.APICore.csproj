@@ -632,6 +632,13 @@
     <Compile Include="Reports\ReportViews\ExcessReport.aspx.designer.cs">
       <DependentUpon>ExcessReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ExpiredFacilityReport.aspx.cs">
+      <DependentUpon>ExpiredFacilityReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ExpiredFacilityReport.aspx.designer.cs">
+      <DependentUpon>ExpiredFacilityReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx.cs">
       <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -750,6 +757,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\OverDraft.aspx.designer.cs">
       <DependentUpon>OverDraft.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OverLineReport.aspx.cs">
+      <DependentUpon>OverLineReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\OverLineReport.aspx.designer.cs">
+      <DependentUpon>OverLineReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\PostedTransactions.aspx.cs">
       <DependentUpon>PostedTransactions.aspx</DependentUpon>
@@ -1113,6 +1127,7 @@
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
     <Content Include="Reports\ReportViews\DisbursalCreditTurnover.aspx" />
     <Content Include="Reports\ReportViews\ExcessReport.aspx" />
+    <Content Include="Reports\ReportViews\ExpiredFacilityReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\ReportViews\ExpiredReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
@@ -1131,6 +1146,7 @@
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OutPutTemplate.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
+    <Content Include="Reports\ReportViews\OverLineReport.aspx" />
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\ProfileActivityReport.aspx" />
     <Content Include="Reports\ReportViews\PSR.aspx" />

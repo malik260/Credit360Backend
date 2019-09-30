@@ -2422,6 +2422,7 @@ namespace FintrakBanking.Repositories.Credit
                     premiumPercent = i.PREMIUMPERCENT,
                     insuranceType = context.TBL_INSURANCE_TYPE.Where(ins => ins.INSURANCETYPEID == i.INSURANCETYPEID).Select(ins => ins.INSURANCETYPE).FirstOrDefault(),
                     customerId = (int)i.TBL_COLLATERAL_CUSTOMER.CUSTOMERID,
+
                     
 
                 }).OrderByDescending(ip => ip.policyId).FirstOrDefault();
@@ -9436,8 +9437,7 @@ namespace FintrakBanking.Repositories.Credit
             var entity = new TBL_COLLATERAL_ITEM_POLICY
             {
 
-                POLICYREFERENCENUMBER = model.referenceNumber,
-                INSURANCETYPE = model.insuranceType,
+                POLICYREFERENCENUMBER = model.referenceNumber,          
                 INSURANCETYPEID =model.insuranceTypeId,
                 SUMINSURED = model.sumInsured,
                 DATETIMECREATED = model.dateTimeCreated,
@@ -9464,11 +9464,11 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateInsurancePolicy(InsurancePolicies model)
+        public bool UpdateInsurancePolicy(int id, InsurancePolicies model)
         {
-            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find();
+            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find(id);
             entity.POLICYREFERENCENUMBER = model.referenceNumber;
-            entity.INSURANCETYPE = model.insuranceType;
+            entity.INSURANCETYPEID = model.insuranceTypeId;
             entity.SUMINSURED = model.sumInsured;
             entity.HASEXPIRED = model.hasExpired;
             entity.LASTUPDATEDBY = model.createdBy;
