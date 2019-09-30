@@ -28,6 +28,7 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(100)]
         public string INSURANCETYPE { get; set; }
+        public int INSURANCETYPEID { get; set; }
 
         [Required]
         [StringLength(300)]

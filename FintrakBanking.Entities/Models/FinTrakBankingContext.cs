@@ -2151,9 +2151,9 @@ namespace FintrakBanking.Entities.Models
                 .Property(e => e.INSURANCECOMPANYNAME)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<TBL_COLLATERAL_POLICY>()
-                .Property(e => e.INSURANCETYPE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<TBL_COLLATERAL_POLICY>()
+            //    .Property(e => e.INSURANCETYPE)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<TBL_COLLATERAL_POLICY>()
                 .Property(e => e.INSURERADDRESS)

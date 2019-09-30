@@ -51,7 +51,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool ReleaseCollateral(int collateralMappingId, int staffId, GeneralEntity model);
         bool ApproveCollateralRelease(ApprovalViewModel entity, int staffId, GeneralEntity model);
         IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease(int staffId);
-        List<InsurancePolicies> GetCollateralInsurancePolicy(int collateralId);
+        List<InsurancePolicy> GetCollateralInsurancePolicy(int collateralId);
         IQueryable<CollateralSearchViewModel> SearchCollateral(string searchString, int companyId);
         //bool AssignCollateral(ActiveCustomerCollateralViewModel entity);
 
@@ -105,21 +105,21 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<CollateralViewModel> AddGuaranteeJoinCollateral(CollateralViewModel entity, byte[] bufer);
 
-        List<InsurancePolicies> GetCollateralInsurancePolicies(int collateralId);
+        List<InsurancePolicy> GetCollateralInsurancePolicies(int collateralId);
 
         void AddTempItemInsurancePolicy(int collateralId, CollateralViewModel entity);
 
-        bool AddNewItemInsurancePolicy(InsurancePolicies entity);
+        bool AddNewItemInsurancePolicy(InsurancePolicy entity);
 
         int GoForApproval(ApprovalViewModel model);
 
-        List<InsurancePolicies> GetTempCollateralInsurancePoliciesWaitingForApproval(int staffId);
+        List<InsurancePolicy> GetTempCollateralInsurancePoliciesWaitingForApproval(int staffId);
 
         int GoForPolicyApproval(ApprovalViewModel model);
 
         List<CollateralDocumentViewModel> GetPropertyVistation(int collateralId);
         List<CollateralDocumentViewModel> GetTempPropertyVistation(int collateralId);
-        List<InsurancePolicies> GetTempCollateralInsurancePolicy(int collateralId);
+        List<InsurancePolicy> GetTempCollateralInsurancePolicy(int collateralId);
 
         CasaLienViewModel GetAccountLienDetail(string AccountNumber);
 
@@ -135,14 +135,14 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CollateralUsageStatus> GetCollateralUsageStatus();
 
-        IEnumerable<InsurancePolicies> GetInsuranceCompany();
+        IEnumerable<InsurancePolicy> GetInsuranceCompany();
 
-        IEnumerable<InsurancePolicies> GetInsuranceType();
+        IEnumerable<InsurancePolicy> GetInsuranceType();
 
-        bool AddInsurancePolicy(InsurancePolicies entity);
+        bool AddInsurancePolicy(InsurancePolicy entity);
 
-        List<InsurancePolicies> GetCollateralInsurancePoliciesWaitingForApproval(int staffId);
-        IEnumerable<InsurancePolicies> Explore(string searchString);
+        List<InsurancePolicy> GetCollateralInsurancePoliciesWaitingForApproval(int staffId);
+        IEnumerable<InsurancePolicy> Explore(string searchString);
 
         WorkflowResponse GoForInsurancePolicyApproval(ApprovalViewModel model);
         IEnumerable<CollateralCoverageViewModel> GetCollateralCoverage(int collateralSubTypeId);
@@ -166,9 +166,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool UpdateInsuranceType(InsuranceTypeViewModel model, int id, UserInfo user);
 
 
-        bool AddInsurancePolicyFile(InsurancePolicies model);
+        bool AddInsurancePolicyFile(InsurancePolicy model);
         bool DeleteInsurancePolicy(int id, UserInfo user);
-        bool UpdateInsurancePolicy(InsurancePolicies model);
+        bool UpdateInsurancePolicy(InsurancePolicy model);
 
 
 
@@ -180,9 +180,9 @@ namespace FintrakBanking.Interfaces.Credit
         string GetReferenceNumber();
         IEnumerable<CollateralViewModel> GetInsuranceRequests(int staffId);
         bool InsuranceRequestGoForApproval(CollateralViewModel model);
-        InsurancePolicies GetInsurancePolicy(int collateralId);
+        InsurancePolicy GetInsurancePolicy(int collateralId);
         bool DeleteInsuranceRequest(int insuranceRequestId);
-        bool checkInsurancePolicy(InsurancePolicies model);
+        bool checkInsurancePolicy(InsurancePolicy model);
         bool UpdateInsurancePolicyRequest(CollateralInsuranceRequestViewModel model, int id);
         string GetLastComment(int targetId, int operationId);
         #endregion
