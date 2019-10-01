@@ -2394,7 +2394,7 @@ namespace FintrakBanking.Repositories.Credit
                 details.insurancePolicy.premiumPercent = insurance.PREMIUMPERCENT;
                 details.insurancePolicy.approvalStatusId = insurance.APPROVALSTATUSID;
                 details.insurancePolicy.differInsurancePolicy = insurance.DIFFERPOLICY;
-                details.insurancePolicy.insurerAddress = insurance.INSURERADDRESS;
+                details.insurancePolicy.companyAddress = insurance.COMPANYADDRESS;
 
             }
             return details;
