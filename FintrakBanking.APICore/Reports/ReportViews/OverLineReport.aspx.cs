@@ -11,10 +11,11 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class ContigentReport : System.Web.UI.Page
+    public partial class OverLineReport : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
             if (!IsPostBack)
             {
                 try
@@ -22,7 +23,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     CultureInfo provider = CultureInfo.InvariantCulture;
                     string postedDate = Request.QueryString["runDate"];
                     DateTime RunDate = Convert.ToDateTime(postedDate);
-                    string rDate = RunDate.Day + "/" + RunDate.Month + "/" + RunDate.Year;
+                    string rDate = RunDate.Year + "-" + RunDate.Month + "-" + RunDate.Day;
                     string Level = Request.QueryString["level"];
                     string MisCode = Request.QueryString["misCode"];
                     string ExposureType = Request.QueryString["exposureType"];
@@ -42,8 +43,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     if (inputHashValue != incomingDateHash)
                     {
-                        this.ReportViewer08.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                        this.ReportViewer08.LocalReport.Refresh();
+                        this.ReportViewer05.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer05.LocalReport.Refresh();
                         return;
                     }
 
@@ -53,8 +54,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     if (dateDifference.Seconds > 30)
                     {
-                        this.ReportViewer08.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                        this.ReportViewer08.LocalReport.Refresh();
+                        this.ReportViewer05.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer05.LocalReport.Refresh();
                         return;
                     }
 
@@ -68,12 +69,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     string reportPath = ConfigurationManager.AppSettings["ServerReportPath"];
 
 
-                    ReportViewer08.ServerReport.ReportServerUrl = new Uri(reportServerUrl);
-                    ReportViewer08.ServerReport.ReportServerCredentials = new ReportServerCredentials(userName, password, domain);
-                    ReportViewer08.ServerReport.ReportPath = reportPath + "Contigent"; // string.Format(reportPath, "Risk Asset");
+                    ReportViewer05.ServerReport.ReportServerUrl = new Uri(reportServerUrl);
+                    ReportViewer05.ServerReport.ReportServerCredentials = new ReportServerCredentials(userName, password, domain);
+                    ReportViewer05.ServerReport.ReportPath = reportPath + "Overline Report"; // string.Format(reportPath, "Risk Asset");
 
-                    ReportViewer08.ProcessingMode = ProcessingMode.Remote;
-                    ReportViewer08.ShowCredentialPrompts = false;
+                    ReportViewer05.ProcessingMode = ProcessingMode.Remote;
+                    ReportViewer05.ShowCredentialPrompts = false;
 
                     ReportParameter[] reportParameter = new ReportParameter[8];
                     reportParameter[0] = new ReportParameter("MisCode", MisCode);
@@ -86,15 +87,15 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     reportParameter[7] = new ReportParameter("RegionName", RegionName);
 
                     //==== NOTE: for report on server, use the below ============
-                    ReportViewer08.ServerReport.SetParameters(reportParameter);
-                    ReportViewer08.ServerReport.Refresh();
+                    ReportViewer05.ServerReport.SetParameters(reportParameter);
+                    ReportViewer05.ServerReport.Refresh();
 
 
                 }
                 catch (Exception ex)
                 {
-                    this.ReportViewer08.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc"); 
-                    this.ReportViewer08.LocalReport.Refresh();
+                    this.ReportViewer05.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer05.LocalReport.Refresh();
                     return;
                 }
             }
