@@ -2378,7 +2378,9 @@ namespace FintrakBanking.Repositories.Credit
         }
         private CollateralViewModel GetCollateralInsurancePolicy(CollateralViewModel details)
         {
-            var insurance = context.TBL_COLLATERAL_ITEM_POLICY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == details.collateralId);
+
+
+            var insurance = context.TBL_COLLATERAL_ITEM_POLICY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == details.collateralId && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
             if (insurance != null)
             {
                 details.insurancePolicy = new InsurancePolicy();
@@ -2404,7 +2406,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<InsurancePolicy> GetCollateralInsurancePolicies(int collateralId)
         {
             var insurance = context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == collateralId
-                                                                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED==false)
+                                                                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED == false)
                 .Select(i => new InsurancePolicy
                 {
                     referenceNumber = i.POLICYREFERENCENUMBER,
@@ -2419,7 +2421,9 @@ namespace FintrakBanking.Repositories.Credit
                     inSurPremiumAmount = i.PREMIUMAMOUNT,
                     description = i.DESCRIPTION,
                     premiumPercent = i.PREMIUMPERCENT,
-                    insuranceType = context.TBL_INSURANCE_TYPE.Where(ins => ins.INSURANCETYPEID == i.INSURANCETYPEID).Select(ins => ins.INSURANCETYPE).FirstOrDefault()
+                    differInsurancePolicy = i.DIFFERPOLICY,
+                    companyAddress = i.COMPANYADDRESS,
+                    //insuranceType = context.TBL_INSURANCE_TYPE.Where(ins => ins.INSURANCETYPEID == i.INSURANCETYPEID).Select(ins => ins.INSURANCETYPE).FirstOrDefault()
 
                 }).ToList();
 

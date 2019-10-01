@@ -393,7 +393,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string repaymentTerm { get; set; }
 
-        public int repaymentScheduleId { get; set; }
+        public int? repaymentScheduleId { get; set; }
 
         public int?  crmsFundingSourceId { get; set; }
 
