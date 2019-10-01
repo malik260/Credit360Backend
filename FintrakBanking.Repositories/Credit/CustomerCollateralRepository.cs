@@ -4140,7 +4140,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralId = specifics.COLLATERALCUSTOMERID,
                 collateralMarketableSecurityId = specifics.COLLATERALMARKETABLESECURITYID,
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
-                securityType = specifics.SECURITYTYPE,
+                securityType = specifics..SECURITYTYPE,
                 //   dealReferenceNumber = specifics.DEALREFERENCENUMBER,
                 effectiveDate = specifics.EFFECTIVEDATE,
                 maturityDate = specifics.MATURITYDATE,
