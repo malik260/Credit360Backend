@@ -434,9 +434,6 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-
-
-
         private IAuthenticationManager Authentication => Request.GetOwinContext().Authentication;
 
     }
