@@ -278,6 +278,116 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public List<CamProcessedLoanViewModel> GetApplicationsDueForAvailmentRoute(int staffId, int companyId)
+        {
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanAvailment).ToList();
+
+            var dueForAvailmentDate = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
+                    a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
+                .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.LoanAvailment
+                    && x.RESPONSESTAFFID == null
+                    && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
+                        x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised ||
+                        x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                    && (ids.Contains((int)x.TOAPPROVALLEVELID) || x.REQUESTSTAFFID == staffId || ((x.TOSTAFFID != null && x.TOSTAFFID == staffId) || (x.TOSTAFFID == null)))
+                    //&& ids.Contains((int)x.TOAPPROVALLEVELID)
+                    && x.APPROVALSTATEID != (int)ApprovalState.Ended
+                ),
+                    c => c.b.LOANAPPLICATIONID, d => d.TARGETID, (c, d) => new { c, d })
+
+
+                .Select(x => new CamProcessedLoanViewModel
+                {
+                    loanApplicationId = x.c.a.LOANAPPLICATIONID,
+                    applicationReferenceNumber = x.c.a.APPLICATIONREFERENCENUMBER,
+                    customerCode = x.c.a.TBL_CUSTOMER.CUSTOMERCODE,
+                    customerName = x.c.a.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? x.c.a.TBL_CUSTOMER_GROUP.GROUPNAME : x.c.a.TBL_CUSTOMER.FIRSTNAME + " " + x.c.a.TBL_CUSTOMER.MIDDLENAME + " " + x.c.a.TBL_CUSTOMER.LASTNAME,
+                    customerId = x.c.a.CUSTOMERID,
+                    customerGroupName = x.c.a.TBL_CUSTOMER_GROUP.GROUPNAME,
+                    customerGroupCode = x.c.a.TBL_CUSTOMER_GROUP.GROUPCODE,
+                    relationshipOfficerId = x.c.a.RELATIONSHIPOFFICERID,
+                    relationshipManagerId = x.c.a.RELATIONSHIPMANAGERID,
+                    capRegionId = x.c.a.CAPREGIONID,
+                    regionId = context.TBL_BRANCH_REGION.FirstOrDefault(c => c.REGIONID == x.c.a.CAPREGIONID).REGIONID2.Value,
+                    timeIn = x.d.SYSTEMARRIVALDATETIME,
+                    toStaffId = x.d.TOSTAFFID,
+
+                    applicationDate = x.c.a.APPLICATIONDATE,
+                    newApplicationDate = x.c.a.APPLICATIONDATE,
+                    applicationAmount = x.c.a.APPLICATIONAMOUNT,
+                    approvedAmount = x.c.b.APPROVEDAMOUNT,
+                    interestRate = x.c.a.INTERESTRATE,
+                    applicationTenor = x.c.a.APPLICATIONTENOR,
+                    relationshipOfficerName = x.c.a.TBL_STAFF.FIRSTNAME + " " + x.c.a.TBL_STAFF.MIDDLENAME + " " + x.c.a.TBL_STAFF.LASTNAME,
+                    relationshipManagerName = x.c.a.TBL_STAFF1.FIRSTNAME + " " + x.c.a.TBL_STAFF1.MIDDLENAME + " " + x.c.a.TBL_STAFF1.LASTNAME,
+
+                    loanTypeId = x.c.a.LOANAPPLICATIONTYPEID,
+                    productTypeId = x.c.b.TBL_PRODUCT.PRODUCTTYPEID,
+                    productTypeName = x.c.b.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                    productId = x.c.b.APPROVEDPRODUCTID,
+                    productName = x.c.b.TBL_PRODUCT.PRODUCTNAME,
+                    loanTypeName = x.c.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                    //camReference = c.CAMREF != null ? c.CAMREF : "N/A",
+                    //camDocumentation = d.CAMDOCUMENTATION,
+                    approvalDate = x.c.a.APPROVEDDATE,
+                    applicationStatusId = x.c.a.APPLICATIONSTATUSID,
+                    isInvestmentGrade = x.c.a.ISINVESTMENTGRADE,
+                    isPoliticallyExposed = x.c.a.ISPOLITICALLYEXPOSED,
+                    isRelatedParty = x.c.a.ISRELATEDPARTY,
+                    submittedForAppraisal = x.c.a.SUBMITTEDFORAPPRAISAL,
+                    loanInformation = x.c.a.LOANINFORMATION,
+                    approvalStatusId = x.d.APPROVALSTATUSID,
+                    subSectorId = x.c.b.TBL_SUB_SECTOR.SUBSECTORID,
+                    //approvalLevelId = staffApprovalLevelId,
+                    operationId = (short)OperationsEnum.LoanAvailment,
+
+                    currentApprovalStateId = x.d.APPROVALSTATEID,
+                    approvalTrailId = x.d.APPROVALTRAILID,
+                    currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
+                    currentApprovalLevel = x.d.TBL_APPROVAL_LEVEL1.LEVELNAME,
+
+                    responsiblePerson = context.TBL_STAFF
+                                            .Where(s => s.STAFFID == x.d.TOSTAFFID)
+                                            .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
+                                            .FirstOrDefault().name ?? "",
+                    requestStaffId = x.d.REQUESTSTAFFID,
+                    toApprovalLevelId = x.d.TOAPPROVALLEVELID,
+
+                    productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
+                    isFirstApprover = false,
+                    atInitiator = x.c.a.CREATEDBY == staffId,
+                    productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
+                    loanApplicationCollateral = (from r in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID)
+                                                 select new LoanApplicationCollateralViewModel
+                                                 {
+                                                     collateralValue = r.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
+                                                     collateralType = r.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                                     collateralCustomerId = r.COLLATERALCUSTOMERID,
+                                                     collateralSubtype = r.TBL_COLLATERAL_CUSTOMER.TBL_COLLATERAL_TYPE.TBL_COLLATERAL_TYPE_SUB
+                                                     .Where(p => p.COLLATERALSUBTYPEID == r.TBL_COLLATERAL_CUSTOMER.COLLATERALSUBTYPEID).FirstOrDefault().COLLATERALSUBTYPENAME,
+                                                     collateralReferenceNumber = r.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
+                                                     haircut = r.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
+                                                     valuationCycle = r.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
+                                                     allowSharing = r.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
+                                                     currencyCode = r.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE
+                                                 }).ToList()
+                })
+                .OrderByDescending(c => c.loanApplicationId);
+
+
+            var branchRegionStaff = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId && x.DELETED == false).ToList();
+            List<int> staffRegionIds = new List<int>();
+            foreach (var item in branchRegionStaff)
+            {
+                staffRegionIds.Add(item.REGIONID);
+            }
+
+            var data = (from b in dueForAvailmentDate where staffRegionIds.Contains((int)b.regionId) select b);
+
+            return data.ToList();
+        }
+
         public IQueryable<CamProcessedLoanViewModel> GetApplicationsDueForAvailment(int staffId, int companyId)
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanAvailment).ToList();

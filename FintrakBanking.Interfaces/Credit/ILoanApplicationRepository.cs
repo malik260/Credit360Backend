@@ -162,5 +162,7 @@ namespace FintrakBanking.Interfaces.Credit
         CustomerApplicationTransactionsViewModels GetCustomerTransactionsByFilterLogic(int customerId, int applicationId, int froma, int to, int fYear, int tYear, bool v);
         List<InvoiceDetailViewModel> GetBulkLoanInvoice(byte[] file, UserInfo user);
         IEnumerable<LoanApplicationViewModel> LoanSearch(string searchString);
+        List<accountsViewModels> GetCustomerTransactionsAccounts(int customerId, int applicationId, bool isLms = false);
+        CustomerApplicationTransactionsViewModels GetCustomerTransactionsFiltered(int customerId, int applicationId, string accountnumber, int? fromYear, int fromMonth, int? toYear, int toMonth, bool isLms = false);
     }
 }

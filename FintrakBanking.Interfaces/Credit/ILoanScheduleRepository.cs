@@ -14,9 +14,19 @@ namespace FintrakBanking.Interfaces.Credit
     {
         int CalculateNumberOfInstallments(TenorModeEnum tenorModeId, short frequencyTypeId, int tenor);
 
+        List<LoanPaymentSchedulePeriodicViewModel> AnnuityFrequencyChange(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate, DateTime maturityDate);
         List<LoanPaymentSchedulePeriodicViewModel> BallonInterestRateChangePrepayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate, double prepaymentAmount);
 
+
+        List<LoanIrregularScheduleViewModel> GetIrregularSchedule(int loanApplicationDetailId);
+
+        List<LoanPaymentSchedulePeriodicViewModel> GenerateIrregularPeriodicScheduleForPrepayment(LoanPaymentScheduleInputViewModel loanInput, bool isArmotisedSchedule);
+
+        List<LoanPaymentSchedulePeriodicViewModel> GenerateIrregularPeriodicScheduleForInterestRateChange(LoanPaymentScheduleInputViewModel loanInput, bool isArmotisedSchedule);
+
         List<LoanPaymentSchedulePeriodicViewModel> BallonInterestRateChange(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate, DateTime maturityDate);
+
+        List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuityNew(int loanID, DateTime effectiveDate, double interestRate, int frequencyId, DateTime maturityDate);
 
         int GetDaysInAYear(DayCountConventionEnum dayCountId);
 
@@ -45,6 +55,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LookupViewModel> GetAllLoanScheduleType(short? productTypeId);
 
         List<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanSchedule(LoanPaymentScheduleInputViewModel loanInput);
+
+        //List<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanSchedule(LoanPaymentRestructureScheduleInputViewModel loanInput);
 
         List<LoanPaymentScheduleDailyViewModel> GenerateDailyLoanSchedule(LoanPaymentScheduleInputViewModel loanInput);
 

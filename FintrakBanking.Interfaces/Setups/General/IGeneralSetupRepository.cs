@@ -30,6 +30,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<LookupViewModel> GetSubsector();
 
+        DateTime GetApplicationEODLastRefreshedDate();
+
         int GetLoanApplicationRef(); 
 
         IEnumerable<LookupViewModel> GetAllFrequencyTypes();

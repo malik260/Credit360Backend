@@ -245,6 +245,11 @@ namespace FintrakBanking.Interfaces.Credit
         List<multipleDisbursementOutputViewModel> startBulkLoanDisbursement(List<multipleDisbursementOutputViewModel> models, UserInfo user);
         bool saveBulkLoanDisbursementEntries(List<multipleDisbursementOutputViewModel> models, UserInfo user);
         IEnumerable<multipleDisbursementOutputViewModel> GetpendingMultipleDisbursement();
+        List<LoanViewModel> GetApprovedLoanReviewAwaitingRoute(int staffId, int companyId);
+        List<LoanViewModel> GetLoanReviewApplicationOverDraftRouteAndOperations(int staffId, int companyId);
+        IEnumerable<LookupViewModel> GetFullAndFinalStatus();
+        bool CancelFullAndFinal(int loanId, int statusId);
+        List<LoanViewModel> GetApprovedLoanReviewAwaitingOperation(int staffId, int companyId);
 
     }
 }

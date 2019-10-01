@@ -77,7 +77,7 @@ namespace FintrakBanking.APICore.Controllers
         {
 
 
-            var data = repoEOD.RefreshLoanClassification();
+            var data = repoEOD.RefreshLoanClassification(token.GetCompanyId);
 
             if (data)
             {
@@ -89,6 +89,30 @@ namespace FintrakBanking.APICore.Controllers
                            new { success = false, message = "Refresh Finacle Bulk Posting Transaction Failed" });
 
         }
+
+
+
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("change-application-date")]
+        //public HttpResponseMessage ChangeApplicationDate([FromBody] EndOfDayViewModel model)
+        //{
+
+        //    model.companyId = token.GetCompanyId;
+        //    model.createdBy = token.GetStaffId;
+        //    model.userBranchId = (short)token.GetBranchId;
+        //    var data = repoEOD.ChangeApplicationDate(model);
+        //    if (data)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //                   new { success = true, message = "Application Date Change has been completed successfully" });
+        //    }
+        //    else
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //                   new { success = false, message = "Application Date Change failed" });
+
+        //}
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -172,7 +196,7 @@ namespace FintrakBanking.APICore.Controllers
                new { success = false, message = "An unknown error has occured" });
 
         }
-        
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("get_endofday_operation_log_monitoring")]
