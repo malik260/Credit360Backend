@@ -1943,9 +1943,9 @@ namespace FintrakBanking.Repositories.Credit
                                        join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
                                        join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                        //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                                       where x.CUSTOMERID == customerId && f.CUSTOMERID == customerId
+                                       where x.CUSTOMERID == customerId && f.CUSTOMERID == customerId && x.DELETED == false
 
-                                       select new CollateralCoverageViewModel
+                                    select new CollateralCoverageViewModel
                                        {
                                            collateralId = x.COLLATERALCUSTOMERID,
                                            collateralCode = c.COLLATERALCODE,
@@ -2354,6 +2354,10 @@ namespace FintrakBanking.Repositories.Credit
         private CollateralViewModel GetCollateralDeposit(int collateralId)
         {
             var specifics = context.TBL_COLLATERAL_DEPOSIT.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
+            if (specifics == null)
+            {
+                return null;
+            }
             var details = new CollateralViewModel
             {
                 collateralId = specifics.COLLATERALCUSTOMERID,
@@ -2377,6 +2381,7 @@ namespace FintrakBanking.Repositories.Credit
             var insurance = context.TBL_COLLATERAL_ITEM_POLICY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == details.collateralId);
             if (insurance != null)
             {
+                details.insurancePolicy = new InsurancePolicy();
                 details.insurancePolicy.referenceNumber = insurance.POLICYREFERENCENUMBER;
                 details.insurancePolicy.insuranceCompanyId = insurance.INSURANCECOMPANYID;
                 details.insurancePolicy.sumInsured = insurance.SUMINSURED;
@@ -2388,6 +2393,8 @@ namespace FintrakBanking.Repositories.Credit
                 details.insurancePolicy.description = insurance.DESCRIPTION;
                 details.insurancePolicy.premiumPercent = insurance.PREMIUMPERCENT;
                 details.insurancePolicy.approvalStatusId = insurance.APPROVALSTATUSID;
+                details.insurancePolicy.differInsurancePolicy = insurance.DIFFERPOLICY;
+                details.insurancePolicy.insurerAddress = insurance.INSURERADDRESS;
 
             }
             return details;
@@ -4127,6 +4134,7 @@ namespace FintrakBanking.Repositories.Credit
         private CollateralViewModel GetCollateralMarketableSecurities(int collateralId)
         {
             var specifics = context.TBL_COLLATERAL_MKT_SECURITY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
+            if (specifics == null) return null;
             var details = new CollateralViewModel
             {
                 collateralId = specifics.COLLATERALCUSTOMERID,

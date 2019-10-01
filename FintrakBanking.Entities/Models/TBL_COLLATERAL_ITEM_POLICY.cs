@@ -23,6 +23,7 @@ namespace FintrakBanking.Entities.Models
 
         public int INSURANCETYPEID { get; set; }
         public int? POLICYSTATEID { get; set; }
+        public bool DIFFERPOLICY { get; set; }
 
         //public string INSURANCETYPE { get; set; }
 
@@ -54,6 +55,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public String DESCRIPTION { get; set; }
+        public String INSURERADDRESS { get; set; }
 
         public int? PREMIUMPERCENT { get; set; }
 

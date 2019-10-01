@@ -507,7 +507,9 @@ namespace FintrakBanking.ViewModels.Credit
         public short? approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
         public string currentApprovalLevel { get; set; }
+        public string insurerAddress { get; set; }
         public int customerId { get; set; }
+        public bool differInsurancePolicy { get; set; }
     }
 
     public class NewCollateralViewModel
