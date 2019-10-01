@@ -57,7 +57,7 @@ namespace FintrakBanking.Repositories.Credit
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
         int customerId;
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
-        private long legalLendingLimit = 100000000000;
+        private long legalLendingLimit = 200000000000;
 
         // place holders
         private readonly string customerNameHolder = "@{{CustomerName}}";
