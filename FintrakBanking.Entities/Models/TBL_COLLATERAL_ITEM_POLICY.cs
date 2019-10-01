@@ -22,8 +22,10 @@ namespace FintrakBanking.Entities.Models
         public int INSURANCECOMPANYID { get; set; }
 
         public int INSURANCETYPEID { get; set; }
+        public int? POLICYSTATEID { get; set; }
+        public bool DIFFERPOLICY { get; set; }
 
-        public string INSURANCETYPE { get; set; }
+        //public string INSURANCETYPE { get; set; }
 
         //[Column(TypeName = "money")]
         public decimal SUMINSURED { get; set; }
@@ -56,7 +58,11 @@ namespace FintrakBanking.Entities.Models
 
         public int? PREMIUMPERCENT { get; set; }
 
-        public int? APPROVALSTATUSID { get; set; }
+        public short? APPROVALSTATUSID { get; set; }
+
+        public  string POLICYSTATE { get; set; }
+        public string COMPANYADDRESS { get; set; }
+        public int?  PREVIOUSINSURANCEID { get; set; }
 
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
