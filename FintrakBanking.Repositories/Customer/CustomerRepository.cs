@@ -5344,13 +5344,13 @@ namespace FintrakBanking.Repositories.Customer
             short auditType = 0;
             try
             {
+                var customer = context.TBL_CUSTOMER.Where(r => r.CUSTOMERID == entity.customerId).FirstOrDefault();
                 TBL_CUSTOMER_RELATED_PARTY relParty;
                 if (entity.relatedPartyId > 0)
                 {
                     relParty = context.TBL_CUSTOMER_RELATED_PARTY.Where(c=>c.RELATEDPARTYID == entity.relatedPartyId).FirstOrDefault();
 
                     //get customer record by id
-                    var customer = context.TBL_CUSTOMER.Where(r=>r.CUSTOMERID == entity.customerId).FirstOrDefault();
                     var accountCompleted = customer.ACCOUNTCREATIONCOMPLETE;
 
                     //previous relationship type
@@ -5366,7 +5366,9 @@ namespace FintrakBanking.Repositories.Customer
 
                         auditDetail = $"Updated new Customer's Insider Related Party Relationship Type for customer: {customer.CUSTOMERCODE}. from {previousRelationshipType} to {entity.relationshipType}";
                         auditType = (short)AuditTypeEnum.CustomerDetailUpdated;
+                        customer.ISREALATEDPARTY = true;
                     }
+                    else { customer.ISREALATEDPARTY = false; }
                 }
                 else
                 {
@@ -5381,6 +5383,8 @@ namespace FintrakBanking.Repositories.Customer
                         DELETED = false
                     };
                     context.TBL_CUSTOMER_RELATED_PARTY.Add(relParty);
+                    
+                    customer.ISREALATEDPARTY = true;
 
                     auditDetail = "Added Customer's Insider Related Party for customer ID: + (" + entity.customerId + ") ";
                     auditType = (short)AuditTypeEnum.CustomerDetailAdded;

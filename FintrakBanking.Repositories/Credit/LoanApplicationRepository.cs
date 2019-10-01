@@ -1895,7 +1895,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-            return customer.ISREALATEDPARTY;
+            return customer.ISREALATEDPARTY ;
         }
 
         private bool GetCustomerIsPoliticallyExposed(int customerId)

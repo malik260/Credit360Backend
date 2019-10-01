@@ -57,7 +57,7 @@ namespace FintrakBanking.Repositories.Credit
         List<TBL_LOAN_APPLICATION_DETAIL> customerFacilities = null;
         int customerId;
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
-        private long legalLendingLimit = 100000000000;
+        private long legalLendingLimit = 200000000000;
 
         // place holders
         private readonly string customerNameHolder = "@{{CustomerName}}";
@@ -122,6 +122,9 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string amountProposedHolder = "@{{AmountProposed}}";
 
         private readonly string customerTurnoverHolder = "@{{CustomerTurnover}}";
+
+        // for output document
+        private readonly string memoHolder = "@{{memoData}}";
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -3097,8 +3100,2395 @@ namespace FintrakBanking.Repositories.Credit
             //result = result + $"</table>";
             return result;
         }
+
+        private string MemoMarkupHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h3><b>MEMO</b></h3>
+                <table border=1 width=700 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <td><b>Date</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>To:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>From:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Location:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>Subject:</b></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><b>No. Of Pages:</b></td>
+                        <td></td>
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            result = result + $@" 
+                    <p></p>
+                    <p><b>1. BACKGROUND</b></p>
+                    <p></p>
+                    <p><b>2. COLLATERAL</b></p>
+                    <p></p>
+                    <p><b>3. ACCOUNT STATUS/ANALYSIS</b></p>
+                    <p></p>
+                    <p><b>4. ISSUES</b></p>
+                    <p></p>
+                    <p><b>5. CURRENT UPDATES</b></p>
+                    <p></p>
+                    <p><b>6. REQUEST/RECOMMENDATION</b></p>
+                    <p></p>
+                    <p><b>7. JUSTIFICATION</b></p>";
+            return result;
+        }
+
+        private string FacilityUpgradeSupportSchemeHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h3><b>CREDIT PROGRAM SHEET (FACILITY UPGRADE SUPPORT SCHEME)</b></h3>
+                <br />
+                <h4><b>Customer Information</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Borrower</td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Location</td>
+                        <td>------------------------------------------</td>
+                        <td>Customer Risk Rating</td>
+                        <td>-------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>Business</td>
+                        <td>------------------------------------------</td>
+                        <td>Classification</td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Account Number</td>
+                        <td>------------------------------------------</td>
+                        <td>Account Opening Date</td>
+                        <td>-------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>Incorporation Date</td>
+                        <td>------------------------------------------</td>
+                        <td>Biz Commencement Date</td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Principal Promoters</td>
+                        <td colspane='3'>------------------------------------------</td>
+                        
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>School Fees Information</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <td>Total No of Pupils</td>
+                        <td>----------------------</td>
+                        <td>No of Staff</td>
+                        <td>-------------------</td>
+                    </tr> 
+                   <tr>
+                        <td>Next School Reopening Date </td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr> 
+                      <tr>
+                        <td>Proposed Facility Repayment Date </td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Expected Amount Collectible before next Maturing Loan Obligation  </td>
+                        <td colspan='3'>-------------</td>
+                    </tr>
+                     <tr>
+                        <td>Maturity Amount at Due Date </td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Monthly Salary Payments and Other Expenses </td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr>
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility</b></th>
+                        <th><b>Amount (‘000)</b></th>
+                        <th><b>Maturity</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Performing</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Account Activity with Current (Major) Banker per period of 6 months</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th colspan='2'><b>Period (e.g. Jan 08 to Mar 09)</b></th>
+                        <th><b>Debits</b></th>
+                        <th><b>Credits</b></th>
+                        <th><b>Returned Cheque</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                       <td colspan='2'>Current Book Balance</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Average Monthly Credit Turnover</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'><b>Other Bankers/Age</b></td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Existing Facility Type/Maturity</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Security/Support</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Cash flow Analysis/Projections</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     
+                   <tr>
+                        <td></td>
+                        <td colspan='5'>Year 1(indicate year)-Most Recent</td>
+                        <td colspan='5'>Year 2 (indicate year)-Projections</td>
+                       
+                    </tr> 
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>1st Term </td>
+                        <td>2nd Term </td>
+                        <td>3rd Term</td>
+                        <td></td>
+                        <td></td>
+                        <td>1st Term </td>
+                        <td>2nd Term </td>
+                        <td>3rd Term</td>
+                    </tr> 
+                     <tr>
+                        <td>INFLOWS(A)</td>
+                        <td>Amount per student</td>
+                        <td>Total amount paid per term</td>
+                        <td>(‘000) </td>
+                        <td>(‘000)</td>
+                        <td>(‘000)</td>
+                        <td>Amount per student</td>
+                        <td>Total amount paid per term</td>
+                        <td>(‘000) </td>
+                        <td>(‘000)</td>
+                        <td>(‘000)</td>
+                    </tr> 
+                     <tr>
+                        <td>Crèche (no of students)</td>
+                        <td>xx</td>
+                        <td>No of students * Amt per student(xx)</td>
+                        <td>xxx</td>
+                        <td>xxx</td>
+                        <td>xx</td>
+                        <td>xx</td>
+                        <td>No of students * Amt per student(xx)</td>
+                        <td>xxx</td>
+                        <td>xxx</td>
+                        <td>xx</td>
+                    </tr> 
+                    <tr>
+                        <td>Nursery (no of students)</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                    <tr>
+                        <td>Primary (no of students)</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                     <tr>
+                        <td>JSS (no of students)</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                     <tr>
+                        <td>SSS (no of students)</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                     <tr>
+                        <td>Sub total </td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                      <tr>
+                        <td>OUTFLOWS(B)</td>
+                        <td>No of months</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>No of months</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Salaries(Nxx/month)</td>
+                        <td>4</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                        <td>4</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                        <td>4*Nxx/month</td>
+                    </tr> 
+                     <tr>
+                        <td>stationeries (Nxx/month)</td>
+                        <td>3</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>3</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr>  
+                      <tr>
+                        <td>Loan repayment (principal & interest)</td>
+                        <td></td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td></td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                    <tr>
+                        <td>Miscellaneous expense (Nxx/month)</td>
+                        <td>3</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>3</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                        <td>√</td>
+                    </tr> 
+                    <tr>
+                        <td>Sub total </td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                        <td>xxxx</td>
+                    </tr> 
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Net Cashflow(A-B)</td>
+                        <td></td>
+                        <td></td>
+                        <td>xxxxxx</td>
+                        <td>xxxxxx</td>
+                        <td>xxxxxx</td>
+                        <td></td>
+                        <td></td>
+                        <td>xxxxxx</td>
+                        <td>xxxxxx</td>
+                        <td>xxxxxx</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + "<br/>";
+            result = result + "<em>(Net cash flow is the amount available for repayment of loan obligation)</em>";
+            result = result + $@"
+                <br />
+                <h4><b>Summary Net Cash Flow </b></h4>
+                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Year</b></th>
+                        <th><b></b></th>
+                        <th><b>Net Cash Flow</b></th>        
+                    </tr> 
+                   <tr>
+                        <td rolspan='3'>Year 1 (indicate year)</td>
+                        <td>1st Term</td>
+                        <td></td>
+                   </tr> 
+                   <tr>
+                        <td></td>
+                        <td>2nd Term</td>
+                        <td></td>
+                   </tr>  
+                  <tr>
+                        <td></td>
+                        <td>3rd Term </td>
+                        <td></td>
+                   </tr>
+                   <tr>
+                        <td rolspan='3'>Year 1 (indicate year)</td>
+                        <td>1st Term</td>
+                        <td></td>
+                   </tr>
+                   <tr>
+                        <td></td>
+                        <td>2nd Term</td>
+                        <td></td>
+                   </tr>  
+                  <tr>
+                        <td></td>
+                        <td>3rd Term </td>
+                        <td></td>
+                   </tr>
+                   <tr>
+                        <td colspan='2'>Total</td>
+                        <td></td>                     
+                   </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CURRENT REQUEST:</b></h4>
+                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
+                    </tr> 
+                     <tr>
+                        <td>
+                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Facility Type:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Facility Amount:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Purpose:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Tenor:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Repayment Plan</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Price:</strong></td>
+                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Interest Rate:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Management Fees:</strong></td>
+                        <td></td>
+                        </tr>
+                         <tr>
+                        <td><strong>COT</strong></td>
+                        <td></td>
+                        </tr>
+                        </table></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Security/Support:</strong> </td>
+                        <td><ul><li>Legal mortgage on school property or any other property acceptable to Access Bank (FSV must be at least 120% of total loan amount),</li> 
+                                <li>Letter of undertaking to lodge all school fees with Access Bank (supported by customized deposit slips), </li>
+                                <li>Letter of authority permitting Access Bank to offset loan repayments from accounts with good funds. </li>
+                                <li>Personal Guarantee of key promoter(s). </li>
+                                </ul>
+                        </td>
+                        </tr>
+                        </table>
+                        </td>
+                    </tr> 
+
+                     <tr>
+                        <td><strong>BACKGROUND INFORMATION ON THE OBLIGOR</strong> (including the mitigation of all risks analyzed in the credit program as well as any identified risk peculiar to the obligor).</td>
+                    </tr>
+                     <tr>
+                        <td><strong>ATTESTATION:</strong><br/> 
+                            I, ……………………………...attest to the integrity of the Promoter................................having known him/her for at least ........years. 
+	
+                            <br/><strong>Signature & Date</strong>	
+                        </td>
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CONCURRENCES:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th><b>NAME</b></th>
+                        <th><b>SIGNATURE & DATE</b></th>
+                    </tr> 
+                   <tr>
+                        <td>ACCOUNT OFFICER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>TEAM LEAD /REL. MANAGER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>RETAIL SALES MANAGER</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>ZONAL HEAD</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>PRODUCT MGT (HEAD)</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                  <tr>
+                        <td>GH, PRODUCT & CHANNELS MGT</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>CREDIT RISK MANAGEMENT </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td><strong>APPROVAL:</strong></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     
+                   <tr>
+                        <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
+                    </tr> 
+                    <tr>
+                        <td></td>
+                        <td><strong>Required</strong></td>
+                        <td><strong>Actual</strong></td>
+                        <td><strong>Exception (Y/N)</strong></td>
+                    </tr> 
+                   <tr>
+                        <td>Minimum years in business</td>
+                        <td>5</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Obligor Risk Rating</td>
+                        <td>3</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Minimum number of years of relationship with Access Bank </td>
+                        <td>1 year;</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>School is approved by ministry of education</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td>No deviation allowed</td>
+                    </tr>  
+                    <tr>
+                        <td>Minimum annual profitability from relationship</td>
+                        <td>N250,000</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                      <tr>
+                        <td>School is located in approved cities</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>School is not a startup</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td colspan='4'><strong>RISK ACCEPTANCE CRITERIA</strong></td>
+                    </tr> 
+                <tr>
+                        <td>Tenor of short-term booking</td>
+                        <td><=120 days</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Facility Maximum Amount</td>
+                        <td>N50m</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Personal Guarantee of key promoter</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Written domiciliation of school fees</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>No of Staff</td>
+                        <td>>30</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>No of Student Enrollment</td>
+                        <td>>250</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Good CBN checking</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                      <tr>
+                        <td>*Monthly collections must be thrice the monthly loan obligation</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td colspan='4'>*Quarterly profit must cover full year loan obligation *Yearly profit must cover the entire facility amount and interest
+                       </td>
+                     </tr> 
+                     <tr>
+                        <td colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Loan Application Form</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Approved Credit Program Memo</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Offer Letter</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Letter of Domiciliation</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Operating License</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Credit Checks Reports</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Statements of accounts </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                      <tr>
+                        <td>Financial Statements / Annual Reports</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Other Documents:</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CONCURRENCES:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th><b>NAME</b></th>
+                        <th><b>SIGNATURE & DATE</b></th>
+                    </tr> 
+                   <tr>
+                        <td>ACCOUNT OFFICER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>TEAM LEAD /REL. MANAGER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>PRODUCT MGT GROUP</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>CORPORATE COUNSEL</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   
+                    <tr>
+                        <td>CREDIT RISK MANAGEMENT </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
+        private string InvoiceDiscountingHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
+                <br />
+                <h4><b>Customer Information</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Borrower</td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Location</td>
+                        <td>------------------------------------------</td>
+                        <td>Customer Risk Rating</td>
+                        <td>-------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>Business</td>
+                        <td>------------------------------------------</td>
+                        <td>Classification</td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Account Number</td>
+                        <td>------------------------------------------</td>
+                        <td>Account Opening Date</td>
+                        <td>-------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>Incorporation Date</td>
+                        <td>------------------------------------------</td>
+                        <td>Biz Commencement Date</td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Principal Promoters</td>
+                        <td colspane='3'>------------------------------------------</td>
+                        
+                    </tr> 
+
+                    <tr>
+                        <td>Contract Employer</td>
+                        <td colspane='3'>------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>------------------------------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Alternate Contract Employer</td>
+                       <td colspane='3'>------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>No of Payments from Principal in the last 3 months</td>
+                        <td colspane='3'>------------------------------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Discount Value (50%)</td>
+                        <td colspane='3'>------------------------------------------</td>
+                        
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility</b></th>
+                        <th><b>Amount (‘000)</b></th>
+                        <th><b>Maturity</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Performing</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>6 Months Activity with Current (Major) Banker</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th colspan='2'><b>Month</b></th>
+                        <th><b>Debits</b></th>
+                        <th><b>Credits</b></th>
+                        <th><b>Returned Cheque</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                       <td colspan='2'>Current Book Balance</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Average Monthly Credit Turnover</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'><b>Other Bankers/Age</b></td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Existing Facility Type/Maturity</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Security/Support</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CURRENT REQUEST:</b></h4>
+                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
+                    </tr> 
+                     <tr>
+                        <td>
+                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Facility Type:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Facility Amount:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Purpose:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Tenor:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Repayment Plan</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Price:</strong></td>
+                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Interest Rate:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Management Fees:</strong></td>
+                        <td></td>
+                        </tr>
+                         <tr>
+                        <td><strong>COT</strong></td>
+                        <td></td>
+                        </tr>
+                        </table></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Security/Support:</strong> </td>
+                        <td><ul><li>Deed of assignment of receivables. </li> 
+                                <li>Domiciliation of Payment Mandate.</li>
+                                <li>Letter of authority permitting Access Bank to offset loan repayments from accounts with good funds.</li>
+                                <li>Personal Guarantee of key promoter(s).</li>
+                                <li>Execution of All Asset Debentures. </li>
+                                <li>Other  form of security acceptable to Access Bank Plc.</li>
+                                </ul>
+                        </td>
+                        </tr>
+                        </table>
+                        </td>
+                    </tr> 
+
+                     <tr>
+                        <td><strong>BACKGROUND INFORMATION ON THE OBLIGOR</strong> (including the mitigation of all risks analyzed in the credit program as well as any identified risk peculiar to the obligor).</td>
+                    </tr>
+                     <tr>
+                        <td><strong>ATTESTATION:</strong><br/> 
+                            I, ……………………………...attest to the integrity of the Promoter................................having known him/her for at least ........years. 
+	
+                            <br/><strong>Signature & Date</strong>	
+                        </td>
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CONCURRENCES:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th><b>NAME</b></th>
+                        <th><b>SIGNATURE & DATE</b></th>
+                    </tr> 
+                   <tr>
+                        <td>ACCOUNT OFFICER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>TEAM LEAD /REL. MANAGER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>RETAIL SALES MANAGER</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>ZONAL HEAD</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>PRODUCT MGT (HEAD)</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                  <tr>
+                        <td>GH, PRODUCT & CHANNELS MGT</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>CREDIT RISK MANAGEMENT </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td><strong>APPROVAL:</strong></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     
+                   <tr>
+                        <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
+                    </tr> 
+                    <tr>
+                        <td></td>
+                        <td><strong>Required</strong></td>
+                        <td><strong>Actual</strong></td>
+                        <td><strong>Exception (Y/N)</strong></td>
+                    </tr> 
+                   <tr>
+                        <td>Minimum years in business</td>
+                        <td>5</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Obligor Risk Rating</td>
+                        <td>2</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Minimum number of years of relationship with Access Bank </td>
+                        <td>2 year</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Minimum Asset Base </td>
+                        <td>N10bn</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>History of honoring obligation when due</td>
+                        <td>Favorable/Unfavorable</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Industry</td>
+                        <td>Oil & Gas; Telecoms; </td>
+                        <td></td>
+                        <td></td>
+                    </tr>                       
+                     <tr>
+                        <td colspan='4'><strong>RISK ACCEPTANCE CRITERIA</strong></td>
+                    </tr> 
+                    <tr>
+                        <td>Minimum years in business</td>
+                        <td>5</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Obligor Risk Rating</td>
+                        <td>3</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Customer’s minimum annual sales</td>
+                        <td>N300m</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Minimum number of years of relationship with Access Bank OR Principal</td>
+                        <td>Access Bank: 1 year; Principal: 2 years
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Satisfactory Trade or Bank Checking</td>
+                        <td>>yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Principal is Bank’s customer</td>
+                        <td>>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Principal is on Approved List</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                                     
+                     <tr>
+                        <td colspan='4'></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Acceptance of Domiciliation Agreements</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Principal  minimum annual sales</td>
+                        <td>N5bn</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td colspan='4'><strong>Risk Acceptance Criteria (Obligor)</strong></td>             
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><strong>Required</strong></td>
+                        <td><strong>Actual</strong></td>
+                        <td><strong>Exception (Y/N)</strong></td>
+                    </tr> 
+                    <tr>
+                        <td>Minimum years in business</td>
+                        <td>5</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Obligor Risk Rating</td>
+                        <td>3</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Customer’s minimum annual sales</td>
+                        <td>N300m</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Minimum number of years of relationship with Access Bank OR Principal</td>
+                        <td>Access Bank: 1 year; Principal: 2 years
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Satisfactory Trade or Bank Checking</td>
+                        <td>>yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Principal is Bank’s customer</td>
+                        <td>>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Principal is on Approved List</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                     <tr>
+                        <td colspan='4'></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Facility Maximum Tenor</td>
+                        <td>365 days</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                     <tr>
+                        <td>Cumulative tenor of booking</td>
+                        <td><=135 days</td>
+                        <td></td>
+                        <td>No Deviation Allowed</td>
+                    </tr>
+                     <tr>
+                        <td>Facility Maximum Amount</td>
+                        <td>N50m</td>
+                        <td></td>
+                        <td>No Deviation Allowed</td>
+                    </tr>
+                     <tr>
+                        <td>Personal Guarantee of key promoter</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                     <tr>
+                        <td>Deed of Assignment of receivables </td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                     <tr>
+                        <td>Invoice Discounting Facility Agreement</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Written domiciliation</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                   ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <table border=1 width=500 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th colspan='4'><strong>Documentation Checklist</strong></th>                     
+                    </tr> 
+                   <tr>
+                        <td>Deed of assignment for 100% contracts proceeds to Access Bank (where obtainable)</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Approved contract OR purchase order, stating bank A/C details.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   <tr>
+                        <td>Vendor’s letter to Principal requesting domiciliation of contract proceeds to Access Bank, stating that the instruction cannot be varied without the express consent of Access Bank.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Domiciliation letter OR Proof that domiciliation has worked in the past (in cases where the principal is unwilling to accept domiciliation)</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   
+                    <tr>
+                        <td>A copy of the final invoice(s) and/or an original waybill, stamped ‘received’ by the Principal indicating the bank details. </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>A formal client’s request for draw-down, stating relevant account details.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Evidence of other receivables domiciled to us other the one being discounted</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Concurrences:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th><b>NAME</b></th>
+                        <th><b>SIGNATURE & DATE</b></th>
+                    </tr> 
+                   <tr>
+                        <td>ACCOUNT OFFICER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>TEAM LEAD /REL. MANAGER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>PRODUCT MGT GROUP</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>CORPORATE COUNSEL</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   
+                    <tr>
+                        <td>CREDIT RISK MANAGEMENT </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
+        private string CashCollaterizedHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
+                <br />
+                <h4><b>Customer Information</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Borrower</td>
+                        <td colspan='3'>------------------------------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Location</td>
+                        <td>------------------------------------------</td>
+                        <td>Customer Risk Rating</td>
+                        <td>-------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>Business</td>
+                        <td>------------------------------------------</td>
+                        <td>Classification</td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Account Number</td>
+                        <td>------------------------------------------</td>
+                        <td>Account Opening Date</td>
+                        <td>-------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>Incorporation Date</td>
+                        <td>------------------------------------------</td>
+                        <td>Biz Commencement Date</td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Principal Promoters</td>
+                        <td colspane='3'>------------------------------------------</td>
+                        
+                    </tr>    
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility</b></th>
+                        <th><b>Amount (‘000)</b></th>
+                        <th><b>Maturity</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Performing</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>12 Months Activity with Current (Major) Banker</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th colspan='2'><b>Month</b></th>
+                        <th><b>Debits</b></th>
+                        <th><b>Credits</b></th>
+                        <th><b>Returned Cheque</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                       <td colspan='2'>Current Book Balance</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Average Monthly Credit Turnover</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'><b>Other Bankers/Age</b></td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Existing Facility Type/Maturity</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Security/Support</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CURRENT REQUEST:</b></h4>
+                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
+                    </tr> 
+                     <tr>
+                        <td>
+                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Facility Type:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Facility Amount:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Purpose:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Tenor:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Repayment Plan</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Price:</strong></td>
+                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Interest Rate:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Management Fees:</strong></td>
+                        <td></td>
+                        </tr>
+                         <tr>
+                        <td><strong>COT</strong></td>
+                        <td></td>
+                        </tr>
+                        </table></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Security/Support:</strong> </td>
+                        <td><ul><li>Cash Collateral in the currency of obligation. In cases where cash collateral is in a currency other than obligation currency, facility shall not exceed 90% of cash collateral. </li> 
+                                <li>At maturity of facility, cash collateral should be liquidated into the account to clean up any shortfall in account position.</li>           
+                                </ul>
+                        </td>
+                        </tr>
+                        </table>
+                        </td>
+                    </tr> 
+
+                     <tr>
+                        <td><strong>BACKGROUND INFORMATION ON THE OBLIGOR</strong> (including the mitigation of all risks analyzed in the credit program as well as any identified risk peculiar to the obligor).</td>
+                    </tr>
+                     <tr>
+                        <td><strong>ATTESTATION:</strong><br/> 
+                            I, ……………………………...attest to the integrity of the Promoter................................having known him/her for at least ........years. 
+	
+                            <br/><strong>Signature & Date</strong>	
+                        </td>
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CONCURRENCES:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th><b>NAME</b></th>
+                        <th><b>SIGNATURE & DATE</b></th>
+                    </tr> 
+                   <tr>
+                        <td>ACCOUNT OFFICER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>TEAM LEAD /REL. MANAGER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>RETAIL SALES MANAGER</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>ZONAL HEAD</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>PRODUCT MGT (HEAD)</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                  <tr>
+                        <td>GH, PRODUCT & CHANNELS MGT</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>CREDIT RISK MANAGEMENT </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td><strong>APPROVAL:</strong></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     
+                   <tr>
+                        <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
+                    </tr> 
+                    <tr>
+                        <td></td>
+                        <td><strong>Required</strong></td>
+                        <td><strong>Actual</strong></td>
+                        <td><strong>Exception (Y/N)</strong></td>
+                    </tr> 
+                   <tr>
+                        <td>Minimum years in business</td>
+                        <td>5</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Current KYC doc</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>100% cash collateral or </td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Satisfactory Trade or Bank Checking/CBN CRMS system</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>                                      
+                     <tr>
+                        <td colspan='4'><strong>RISK ACCEPTANCE CRITERIA</strong></td>
+                    </tr> 
+                    <tr>
+                        <td>Facility Maximum Tenor</td>
+                        <td>5 Years</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Facility tenor not longer than cash collateral tenor</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td>No Deviation Allowed</td>
+                    </tr>                                                   
+                     <tr>
+                        <td colspan='4'><strong>RECOMMENDATION:</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td colspan='4'>Based on the foregoing, we hereby recommend………………………..</td>                   
+                    </tr>                                    
+                   ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <table border=1 width=500 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></th>                     
+                    </tr> 
+                   <tr>
+                        <td>Offer Letter</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Board Resolution accepting offer by persons authorized by the Board of Directors</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   <tr>
+                        <td>Letter of Lien/Set Off</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Other Documents as may be required for each product</td>
+                        <td>In Place</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   
+                    <tr>
+                        <td>Overdrafts: 90% of cash collateral (where interest and fees are paid upfront), otherwise 80%</td>
+                        <td>90%</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Bonds & Guarantees: 100% of cash collateral provided all fees are paid.</td>
+                        <td>100%</td>
+                        <td></td>
+                        <td></td>
+                    </tr>                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>APPROVALS:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th><b>NAME</b></th>
+                        <th><b>SIGNATURE & DATE</b></th>
+                    </tr> 
+                   <tr>
+                        <td>RELATIONSHIP OFFICER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>RELATIONSHIP MANAGER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>GROUP HEAD</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>CREDIT RISK MANAGEMENT </td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   
+                    <tr>
+                        <td>APPROVAL </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
+        private string TemporaryOverdraftHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <h3><b>MEMO</b></h3>
+                <br />
+                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td colspan=2><strong>TEMPORARY OVERDRAFT (TOD)</strong></td>
+                        <td></td>
+                        <td><strong>Date:</strong></td>
+                        <td>Request Date</td>                
+                    </tr>
+                     <tr>
+                        <td><strong>Unit:</strong></td>
+                        <td>Originating Unit</td>
+                        <td><strong>Prepared By:</strong></td>
+                        <td>Account Officer</td>                
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+               
+                <table border=0 width=900 cellpadding=10 cellspacing=0>        
+                   <tr>
+                        <td>Name of Customer:</td>
+                        <td>XXXXXXXX</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>12 Months Activity with Current (Major) Banker</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th colspan='2'><b>Month</b></th>
+                        <th><b>Debits</b></th>
+                        <th><b>Credits</b></th>
+                        <th><b>Returned Cheque</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                       <td colspan='2'>Current Book Balance</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Average Monthly Credit Turnover</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'><b>Other Bankers/Age</b></td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Existing Facility Type/Maturity</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                     <tr>
+                       <td colspan='2'>Security/Support</td>
+                        <td colspan='3'>------------------------------------------------------</td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CURRENT REQUEST:</b></h4>
+                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
+                    </tr> 
+                     <tr>
+                        <td>
+                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Facility Type:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Facility Amount:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Purpose:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Tenor:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Repayment Plan</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Price:</strong></td>
+                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Interest Rate:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Management Fees:</strong></td>
+                        <td></td>
+                        </tr>
+                         <tr>
+                        <td><strong>COT</strong></td>
+                        <td></td>
+                        </tr>
+                        </table></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Security/Support:</strong> </td>
+                        <td><ul><li>Cash Collateral in the currency of obligation. In cases where cash collateral is in a currency other than obligation currency, facility shall not exceed 90% of cash collateral. </li> 
+                                <li>At maturity of facility, cash collateral should be liquidated into the account to clean up any shortfall in account position.</li>           
+                                </ul>
+                        </td>
+                        </tr>
+                        </table>
+                        </td>
+                    </tr> 
+
+                     <tr>
+                        <td><strong>BACKGROUND INFORMATION ON THE OBLIGOR</strong> (including the mitigation of all risks analyzed in the credit program as well as any identified risk peculiar to the obligor).</td>
+                    </tr>
+                     <tr>
+                        <td><strong>ATTESTATION:</strong><br/> 
+                            I, ……………………………...attest to the integrity of the Promoter................................having known him/her for at least ........years. 
+	
+                            <br/><strong>Signature & Date</strong>	
+                        </td>
+                    </tr> 
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CONCURRENCES:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th><b>NAME</b></th>
+                        <th><b>SIGNATURE & DATE</b></th>
+                    </tr> 
+                   <tr>
+                        <td>ACCOUNT OFFICER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>TEAM LEAD /REL. MANAGER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>RETAIL SALES MANAGER</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>ZONAL HEAD</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>PRODUCT MGT (HEAD)</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                  <tr>
+                        <td>GH, PRODUCT & CHANNELS MGT</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>CREDIT RISK MANAGEMENT </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td><strong>APPROVAL:</strong></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     
+                   <tr>
+                        <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
+                    </tr> 
+                    <tr>
+                        <td></td>
+                        <td><strong>Required</strong></td>
+                        <td><strong>Actual</strong></td>
+                        <td><strong>Exception (Y/N)</strong></td>
+                    </tr> 
+                   <tr>
+                        <td>Minimum years in business</td>
+                        <td>5</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Current KYC doc</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>100% cash collateral or </td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Satisfactory Trade or Bank Checking/CBN CRMS system</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>                                      
+                     <tr>
+                        <td colspan='4'><strong>RISK ACCEPTANCE CRITERIA</strong></td>
+                    </tr> 
+                    <tr>
+                        <td>Facility Maximum Tenor</td>
+                        <td>5 Years</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Facility tenor not longer than cash collateral tenor</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td>No Deviation Allowed</td>
+                    </tr>                                                   
+                     <tr>
+                        <td colspan='4'><strong>RECOMMENDATION:</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td colspan='4'>Based on the foregoing, we hereby recommend………………………..</td>                   
+                    </tr>                                    
+                   ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <table border=1 width=500 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></th>                     
+                    </tr> 
+                   <tr>
+                        <td>Offer Letter</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Board Resolution accepting offer by persons authorized by the Board of Directors</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   <tr>
+                        <td>Letter of Lien/Set Off</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Other Documents as may be required for each product</td>
+                        <td>In Place</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   
+                    <tr>
+                        <td>Overdrafts: 90% of cash collateral (where interest and fees are paid upfront), otherwise 80%</td>
+                        <td>90%</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Bonds & Guarantees: 100% of cash collateral provided all fees are paid.</td>
+                        <td>100%</td>
+                        <td></td>
+                        <td></td>
+                    </tr>                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>APPROVALS:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th><b>NAME</b></th>
+                        <th><b>SIGNATURE & DATE</b></th>
+                    </tr> 
+                   <tr>
+                        <td>RELATIONSHIP OFFICER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>RELATIONSHIP MANAGER </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>GROUP HEAD</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>CREDIT RISK MANAGEMENT </td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   
+                    <tr>
+                        <td>APPROVAL </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
     }
 }
+
+
+
 
 /*
     Obligor Risk Rating:
