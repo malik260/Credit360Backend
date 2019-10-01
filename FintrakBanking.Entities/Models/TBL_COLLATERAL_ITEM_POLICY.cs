@@ -55,7 +55,6 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public String DESCRIPTION { get; set; }
-        public String INSURERADDRESS { get; set; }
 
         public int? PREMIUMPERCENT { get; set; }
 
