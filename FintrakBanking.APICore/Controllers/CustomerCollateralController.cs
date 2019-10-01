@@ -2439,21 +2439,21 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("policy-insurance-doc/{id}")]
-        public HttpResponseMessage UpdateInsurancePolicy(InsurancePolicy model)
+        public HttpResponseMessage UpdateInsurancePolicy([FromUri] int id, [FromBody] InsurancePolicy model)
         {
             model.userBranchId = (short)token.GetBranchId;
             model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
             model.applicationUrl = HttpContext.Current.Request.Path;
             model.createdBy = token.GetStaffId;
             model.companyId = token.GetCompanyId;
-            bool response = repo.UpdateInsurancePolicy(model);
+            bool response = repo.UpdateInsurancePolicy(id, model);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("loan-application-flow-change/{id}")]
-        public HttpResponseMessage DeleteInsurancePolicy(int id)
+        [Route("policy-insurance-doc/{id}")]
+        public HttpResponseMessage DeleteInsurancePolicy([FromUri] int id)
         {
             UserInfo user = new UserInfo()
             {

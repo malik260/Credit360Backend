@@ -2404,7 +2404,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<InsurancePolicy> GetCollateralInsurancePolicies(int collateralId)
         {
             var insurance = context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == collateralId
-                                                                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
+                                                                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED==false)
                 .Select(i => new InsurancePolicy
                 {
                     referenceNumber = i.POLICYREFERENCENUMBER,
@@ -2447,6 +2447,7 @@ namespace FintrakBanking.Repositories.Credit
                     premiumPercent = i.PREMIUMPERCENT,
                     insuranceType = context.TBL_INSURANCE_TYPE.Where(ins => ins.INSURANCETYPEID == i.INSURANCETYPEID).Select(ins => ins.INSURANCETYPE).FirstOrDefault(),
                     customerId = (int)i.TBL_COLLATERAL_CUSTOMER.CUSTOMERID,
+
                     
 
                 }).OrderByDescending(ip => ip.policyId).FirstOrDefault();
@@ -4140,7 +4141,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateralId = specifics.COLLATERALCUSTOMERID,
                 collateralMarketableSecurityId = specifics.COLLATERALMARKETABLESECURITYID,
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
-                securityType = specifics..SECURITYTYPE,
+                securityType = specifics.SECURITYTYPE,
                 //   dealReferenceNumber = specifics.DEALREFERENCENUMBER,
                 effectiveDate = specifics.EFFECTIVEDATE,
                 maturityDate = specifics.MATURITYDATE,
@@ -9526,11 +9527,12 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateInsurancePolicy(InsurancePolicy model)
+        public bool UpdateInsurancePolicy(int id,InsurancePolicy model)
         {
-            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find();
+            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find(id);
             entity.POLICYREFERENCENUMBER = model.referenceNumber;
             //entity.INSURANCETYPE = model.insuranceType;
+            entity.INSURANCETYPEID = model.insuranceTypeId;
             entity.SUMINSURED = model.sumInsured;
             entity.HASEXPIRED = model.hasExpired;
             entity.LASTUPDATEDBY = model.createdBy;
