@@ -2397,7 +2397,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<InsurancePolicy> GetCollateralInsurancePolicies(int collateralId)
         {
             var insurance = context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == collateralId
-                                                                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
+                                                                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.DELETED==false)
                 .Select(i => new InsurancePolicy
                 {
                     referenceNumber = i.POLICYREFERENCENUMBER,
@@ -9519,9 +9519,9 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateInsurancePolicy(InsurancePolicy model)
+        public bool UpdateInsurancePolicy(int id,InsurancePolicy model)
         {
-            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find();
+            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find(id);
             entity.POLICYREFERENCENUMBER = model.referenceNumber;
             //entity.INSURANCETYPE = model.insuranceType;
             entity.INSURANCETYPEID = model.insuranceTypeId;
