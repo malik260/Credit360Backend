@@ -6438,6 +6438,8 @@ namespace FintrakBanking.Repositories.Credit
 
                             approvalStatusId = (short)a.APPROVALSTATUSID,
                             approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME.ToUpper()).FirstOrDefault(),
+
+                            //availableAmount = 
                         };
 
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
