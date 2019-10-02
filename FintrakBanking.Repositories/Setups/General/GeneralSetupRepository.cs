@@ -29,6 +29,12 @@ namespace FintrakBanking.Repositories.Setups.General
             return this.context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;            
         }
 
+
+        public DateTime GetApplicationEODLastRefreshedDate()
+        {
+            return this.context.TBL_FINANCECURRENTDATE.FirstOrDefault().LASTEODREFRESHDATETIME;
+        }
+
         public DateTime CalculateMaturityDate(DateTime effectiveDate, TenorModeEnum tenorModeId, int tenor)
         {
             DateTime output = DateTime.Now;

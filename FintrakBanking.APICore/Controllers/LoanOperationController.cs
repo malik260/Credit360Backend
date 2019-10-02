@@ -82,6 +82,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("getPrincipalAndInterestDate/{refNo}/{effectiveDate}")]
+        public HttpResponseMessage getPrincipalAndInterestDate(string refNo, DateTime effectiveDate)
+        {
+            try
+            {
+                var data = repo.getPrincipalAndInterestDate(token.GetCompanyId, refNo, effectiveDate);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("getrunningloanopeningbalance/{refNo}/{effectiveDate}")]
         public HttpResponseMessage getRunningLoanOpeningBalance(string refNo, DateTime effectiveDate)
         {

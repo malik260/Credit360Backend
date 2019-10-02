@@ -10,6 +10,7 @@ namespace FintrakBanking.Common.Enum
     {
         Processing = 1,
         Completed = 2,
+        Error = 3,
     }
 }
 

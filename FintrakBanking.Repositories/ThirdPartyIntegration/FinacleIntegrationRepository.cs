@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Finance;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
@@ -286,6 +287,76 @@ namespace FintrakBanking.Repositories.ThirdPartyIntegration
             }
 
             return outPut;
+        }
+
+
+        public CRMSRecord GetEODErrorLogDetail(FinanceEndofdayViewModel model)
+        {
+            var loanInput = (from a in _context.TBL_EOD_OPERATION_LOG_DETAIL
+                             join b in _context.TBL_EOD_OPERATION_LOG on a.EODOPERATIONID equals b.EODOPERATIONID
+                             join c in _context.TBL_EOD_STATUS on a.EODSTATUSID equals c.EODSTATUSID
+                             join d in _context.TBL_EOD_OPERATION on b.EODOPERATIONID equals d.EODOPERATIONID
+                             where a.EODDATE == b.EODDATE && a.EODOPERATIONLOGID == b.EODOPERATIONLOGID && a.EODDATE == model.eodDate && a.EODOPERATIONID == model.eodOperationId && b.COMPANYID == model.companyId
+                             select new EODErrorLogDetailsViewModel
+                             {
+                                 eodOperationLogDetailId = a.EODOPERATIONLOGDETAILID,
+                                 eodOperationLogId = b.EODOPERATIONLOGID,
+                                 eodOperationName = d.EODOPERATIONNAME,
+                                 startDateTime = (DateTime)a.STARTDATETIME,
+                                 endDateTime = (DateTime)a.ENDDATETIME,
+                                 eodStatusName = c.EODSTATUSNAME,
+                                 errorInformation = a.ERRORINFORMATION,
+                                 referenceNumber = a.REFERENCENUMBER,
+                                 eodDate = (DateTime)a.EODDATE,
+                                 eodUserName = _context.TBL_STAFF.Where(x => x.STAFFID == a.EODUSERID).Select(x => x.LASTNAME + " " + x.FIRSTNAME + " " + x.MIDDLENAME + "  (" + x.STAFFCODE + ")").FirstOrDefault(),
+
+                             }).OrderBy(x => x.eodOperationLogDetailId).ToList();
+
+
+            Byte[] fileBytes = null;
+            CRMSRecord excel = new CRMSRecord();
+            if (loanInput != null)
+            {
+                using (ExcelPackage pck = new ExcelPackage())
+                {
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Batch Posting Data");
+
+
+                    ws.Cells[1, 1].Value = "EODOPERATIONLOGDETAILID";
+                    ws.Cells[1, 2].Value = "EODOPERATIONLOGID";
+                    ws.Cells[1, 8].Value = "EODOPERATIONNAME";
+                    ws.Cells[1, 3].Value = "STARTDATETIME";
+                    ws.Cells[1, 4].Value = "ENDDATETIME";
+                    ws.Cells[1, 5].Value = "EODSTATUSNAME";
+                    ws.Cells[1, 6].Value = "ERRORINFORMATION";
+                    ws.Cells[1, 7].Value = "REFERENCENUMBER";
+                    ws.Cells[1, 9].Value = "EODDATE";
+                    ws.Cells[1, 10].Value = "EODUSERCODE";
+
+
+                    for (int i = 2; i <= loanInput.Count + 1; i++)
+                    {
+                        var record = loanInput[i - 2];
+
+                        ws.Cells[i, 1].Value = record.eodOperationLogDetailId;
+                        ws.Cells[i, 2].Value = record.eodOperationLogId;
+                        ws.Cells[i, 8].Value = record.eodOperationName;
+                        ws.Cells[i, 3].Value = record.startDateTime;
+                        ws.Cells[i, 4].Value = record.endDateTime;
+                        ws.Cells[i, 5].Value = record.eodStatusName;
+                        ws.Cells[i, 6].Value = record.errorInformation;
+                        ws.Cells[i, 7].Value = record.referenceNumber;
+                        ws.Cells[i, 9].Value = record.eodDate;
+                        ws.Cells[i, 10].Value = record.eodUserName;
+
+                    }
+                    fileBytes = pck.GetAsByteArray();
+                    excel.reportData = fileBytes;
+                    excel.templateTypeName = "EOD Error Log Details";
+                }
+            }
+
+            return excel;
         }
 
 

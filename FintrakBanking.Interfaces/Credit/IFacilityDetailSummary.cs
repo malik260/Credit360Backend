@@ -42,5 +42,6 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CamProcessedLoanViewModel> GetLoanFacilityUtilization(int companyId, int staffId, int branchId, string searchValue = null);
         List<LoanViewModel> GetLoanFacilityDetail(int loanApplicationDetilId);
         List<ProductFeeViewModel> GetLoanProductFeesByFacilityId(int loanApplicationDetailId);
+        List<LoanReviewIrregularScheduleViewModel> GetLoanIregularInput(int loanReviewOperationId);
     }
 }

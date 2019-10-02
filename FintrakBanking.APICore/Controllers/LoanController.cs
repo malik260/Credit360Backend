@@ -1039,7 +1039,21 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
-        
+
+        [HttpGet]
+        [Route("full-and-final-status")]
+        public HttpResponseMessage GetFullAndFinalStatus()
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            var data = repo.GetFullAndFinalStatus();
+
+            if (data.Any() == false)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data.ToList(), message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        }
+
 
         [HttpPost]
         [ClaimsAuthorization]

@@ -11,6 +11,14 @@ namespace FintrakBanking.Common.Enum
         Interest = 1,
         Fee = 2
     }
+
+    public enum FeeAmortizationTypeEnum
+    {
+        EffectiveInterestRate = 2,
+        StraightLine = 1,
+        None = 3,
+    }
+
     public enum FeeTypeEnum
     {
         Rate = 1,
