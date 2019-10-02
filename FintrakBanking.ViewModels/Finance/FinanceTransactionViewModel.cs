@@ -173,9 +173,7 @@ namespace FintrakBanking.ViewModels.Finance
         public int? creditCasaAccountId { get; set; }
         public int? debitCasaAccountId{ get; set; }
         public int? loanId { get; set; }
-
-
-
+        public decimal lienAmount { get; set; }
     }
 
 

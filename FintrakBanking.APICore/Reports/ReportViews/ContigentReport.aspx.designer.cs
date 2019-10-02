@@ -37,6 +37,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer08;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer08; 
     }
 }

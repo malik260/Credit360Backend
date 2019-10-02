@@ -19,9 +19,9 @@ namespace FintrakBanking.Common.Enum
         MarketableSecurities_Shares = 14,
         Promissory = 18,
         ISPO = 19,
-        DomiciliationContract =20,
-        DomiciliationSalary =21,
-        Indemity=22
+        DomiciliationContract = 20,
+        DomiciliationSalary = 21,
+        Indemity = 22
 
     }
 }

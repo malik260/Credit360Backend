@@ -400,6 +400,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal writtenOffAmount { get; set; }
         public bool passed { get; set; }
         public List<string> errorMessage { get; set; }
+        public string pricipalFrequencyTypeName { get; set; }
+        public string responsiblePerson { get; set; }
 
 
 
@@ -828,6 +830,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string interestRateAndFees { get; set; }
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
+        public int? capRegionId { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
@@ -1080,6 +1083,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string currencyCode { get; set; }
 
         public string branchCode { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int loanApplicationDetailId { get; set; }
 
         //public string currencyCode { get; set; }
         //referenceNumber = groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString(),
@@ -1611,6 +1616,30 @@ namespace FintrakBanking.ViewModels.Credit
         public string cap { get; set; }
     }
 
+    public class LoanCreationViewModel
+    {
+        public string source                {get; set;}
+        public string app_user_id           {get; set;}
+        public string app_branch_code       {get; set;}
+        public string product_code          {get; set;}
+        public string product_cat           {get; set;}
+        public string user_refno            {get; set;}
+        public string book_date             {get; set;}
+        public string value_date            {get; set;}
+        public string maturity_date         {get; set;}
+        public string amount_financed       {get; set;}
+        public string account_no            {get; set;}
+        public string product_desc          {get; set;}
+        public string effective_date        {get; set;}
+        public string creditlife_rate       {get; set;}
+        public string interest_rate         {get; set;}
+        public string mgt_rate              {get; set;}
+        public string tax_rate              {get; set;}
+        public string first_repayment_date { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public int operationId             { get; set; }
+
+    }
     //public class bulkDisbursementInputViewModel
     //{
     //    public string applicationReferenceNumber { get; set; }

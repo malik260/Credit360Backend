@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Setups.General;
+﻿using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,5 +31,11 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LoanRecoverySetupViewModel> GetDistinctLoanRecoveryPaymentPlan();
 
         IEnumerable<LoanRecoverySetupViewModel> GetAllLoanRecoveryPaymentPlan();
+        List<LoanRecoveryPaymentViewModel> LoanRecoveryPaymentWaitingForApproval(int staffId, int companyId);
+        bool RecoveryPaymentGoForApproval(LoanRecoveryPaymentViewModel entity);
+        IEnumerable<LoanRecoveryPaymentViewModel> GetLoanRecoveryPayment(string searchQuery);
+        IEnumerable<LoanRecoveryPaymentViewModel> GetRecoveryPaymentSchedule(int loanReviewOperationId);
+        LoanRecoveryPaymentViewModel GetTotalRecoveryPayments(int loanReviewOperationId);
+        bool AddLaonRecoveryPayment(LoanRecoveryPaymentViewModel model);
     }
 }

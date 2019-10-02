@@ -24,14 +24,31 @@
 
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
+            private List<TBL_API_URL> APIUrlConfig;
           //  private IIntegrationWithFinacle finacle;
 
             public TransactionPosting(FinTrakBankingContext _context)
             {
                 this.context = _context;
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
+                APIUrlConfig = context.TBL_API_URL.ToList();
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
+            }
+            private void getAPIURLSettings(string typeName = null)
+            {
+                var apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToLower() == typeName.ToLower()).FirstOrDefault();
+                if(apiConfig != null)
+                {
+                    API_URL = apiConfig.URL;
+                    API_KEY = apiConfig.KEY;
+                }
+                if (apiConfig == null)
+                {
+                    apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
+                    API_URL = apiConfig.URL;
+                    API_KEY = apiConfig.KEY;
+                }
             }
 
             public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
@@ -44,6 +61,8 @@
                 HttpResponseMessage response = null;
                 ResponseMessageViewModel res = null;
                 string responseMessage = "";
+
+                getAPIURLSettings("EXCHANGERATE");
                 try
                 {
                     handler.UseDefaultCredentials = true;
@@ -246,6 +265,8 @@
                 ResponseMessageViewModel responseApi = new ResponseMessageViewModel();
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
+
+                getAPIURLSettings();
                 try
                 {
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -354,6 +375,8 @@
                 TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
+
+                getAPIURLSettings("PostTransactions");
                 string apiUrl = "api/Transactions/PostTransactions";
                 try
                 {
@@ -476,6 +499,7 @@
                 string responseMessage = "";
                 string responseJson = "";
                 string serialiseModel = "";
+                getAPIURLSettings("ProcessLien");
 
                 try
                 {
@@ -723,6 +747,122 @@
 
             }
 
+            public async Task<ResponseMessage> ApiTransactionLoanCreationPosting(List<LoanCreationViewModel> model)
+            {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+
+                HttpClient client = new HttpClient(handler);
+                var inputJson = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
+                ResponseMessage responseMsg = null;
+                string responseJson = "";
+                getAPIURLSettings("LoanCreation");
+                string apiUrl = "FCUBSCreateLoanAccount";
+                try
+                {
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                    var dta = context.TBL_SETUP_GLOBAL.ToList();
+                    handler.UseDefaultCredentials = true;
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(180);
+                    client.DefaultRequestHeaders.Authorization = token;
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+
+
+                    //if (isCrossCurrency == true)
+                    //{
+                    //    apiUrl = "FCUBSCreateLoanAccount";
+                    //}
+
+                    response = client.PostAsync(apiUrl, new StringContent(
+                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    responseDateTime = DateTime.Now;
+
+
+                    if (response.IsSuccessStatusCode)
+                    {
+
+                        responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+
+                        var res = new ResponseMessageViewModel
+                        {
+                            responseCode = responseApi.responseCode,
+                            webRequestDate = responseApi.webRequestDate,
+                            webRequestStatus = responseApi.webRequestStatus,
+
+                        };
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = res,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+
+                    responseJson = await response.Content.ReadAsStringAsync();
+
+                    responseMsg.responseMessage = responseJson;
+                    //handler.Dispose();
+                    //client.Dispose();
+
+                    return responseMsg;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+                    //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = apiUrl,
+                        LOGTYPEID = model.FirstOrDefault().operationId,
+                        REFERENCENUMBER = model.FirstOrDefault().sourceReferenceNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = inputJson,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseJson,
+                    };
+
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
+                }
+
+
+                //context.SaveChanges();
+            }
         }
     }
 }

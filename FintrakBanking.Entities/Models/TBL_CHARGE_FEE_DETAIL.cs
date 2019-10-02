@@ -20,6 +20,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? GLACCOUNTID1 { get; set; }
 
+        public int? GLACCOUNTID3 { get; set; }
+
         public int? GLACCOUNTID2 { get; set; }
 
         public short DETAILTYPEID { get; set; }

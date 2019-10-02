@@ -34,7 +34,8 @@ namespace FintrakBanking.Entities.Models
         public string URL { get; set; }
 
         public int TARGETID { get; set; }
-
+        public string DEVICENAME { get; set; }
+        public string OSNAME { get; set; }
         public virtual TBL_AUDIT_TYPE TBL_AUDIT_TYPE { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }

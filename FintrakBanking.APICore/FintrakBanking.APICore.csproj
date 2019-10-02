@@ -466,11 +466,10 @@
       <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\FORM3800B.Designer.cs" />
-    <Compile Include="Reports\ReportDataset\LoanDataSet.cs">
-      <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
-      <DependentUpon>LoanDataSet.cs</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\PSR.cs">
       <DependentUpon>PSR.xsd</DependentUpon>
@@ -631,6 +630,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\ExcessReport.aspx.designer.cs">
       <DependentUpon>ExcessReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ExpiredFacilityReport.aspx.cs">
+      <DependentUpon>ExpiredFacilityReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ExpiredFacilityReport.aspx.designer.cs">
+      <DependentUpon>ExpiredFacilityReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx.cs">
       <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
@@ -1120,6 +1126,7 @@
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
     <Content Include="Reports\ReportViews\DisbursalCreditTurnover.aspx" />
     <Content Include="Reports\ReportViews\ExcessReport.aspx" />
+    <Content Include="Reports\ReportViews\ExpiredFacilityReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\ReportViews\ExpiredReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
@@ -1239,19 +1246,19 @@
     <Content Include="Reports\ReportDataset\FORM3800B.xss">
       <DependentUpon>FORM3800B.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\ReportDataset\MiddleOffice.xsc">
+      <DependentUpon>MiddleOffice.xsd</DependentUpon>
+    </Content>
     <Content Include="Reports\ReportDataset\LoanDataSet.xsc">
       <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\LoanDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>LoanDataSet1.Designer.cs</LastGenOutput>
+      <LastGenOutput>LoanDataSet.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\LoanDataSet.xss">
       <DependentUpon>LoanDataSet.xsd</DependentUpon>
-    </Content>
-    <Content Include="Reports\ReportDataset\MiddleOffice.xsc">
-      <DependentUpon>MiddleOffice.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\MiddleOffice.xsd">
       <Generator>MSDataSetGenerator</Generator>

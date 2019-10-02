@@ -54,11 +54,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceCompany { get; set; }
         public DateTime? startDate { get; set; }
         public DateTime? expiryDate { get; set; }
-        public InsurancePolicies insurancePolicies { get; set; }
+        public InsurancePolicy insurancePolicy { get; set; }
         public int policyId { get; set; }
         public int approvalStatusName { get; set; }
         public string approvalStatus { get; set; }
-        public List<InsurancePolicies> insurancePolicy { get; set; }
+        public List<InsurancePolicy> insurancePolicies { get; set; }
         public List<CollateralDocumentViewModel> documents { get; set; }
 
         public List<CollateralDocumentViewModel> collateralVisitation { get; set; }
@@ -148,7 +148,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string stampToCover { get; set; }
         public string valuationSource { get; set; }
         public decimal originalValue { get; set; }
-        public decimal availableValue { get; set; }
+        public decimal availableCollateralValue { get; set; }
         public decimal? collateralUsableAmount { get; set; }
         public string nearestLandMark { get; set; }
         public string nearestBusStop { get; set; }
@@ -357,7 +357,7 @@ namespace FintrakBanking.ViewModels.Credit
         {
             get
             {
-                return availableValue > 0 ? true : false;
+                return availableCollateralValue > 0 ? true : false;
             }
         }
 
@@ -469,7 +469,7 @@ namespace FintrakBanking.ViewModels.Credit
     //    public CollateralCustomerPolicyViewModel collateralCustomerPolicy { get; set; }
     //}
 
-    public class InsurancePolicies : GeneralEntity
+    public class InsurancePolicy : GeneralEntity
         {
         public string referenceNumber { get; set; }
         public decimal sumInsured { get; set; }
@@ -504,10 +504,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int? collateralUsageStatus { get; set; }
         public string requestReason { get; set; }
         public string requestComment { get; set; }
-        public short approvalStatusId { get; set; }
+        public short? approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
         public string currentApprovalLevel { get; set; }
         public int customerId { get; set; }
+        public bool differInsurancePolicy { get; set; }
+        public string policyState { get; set; }
+        public string companyAddress { get; set; }
+        public int? prevoiusInsuranceId { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -974,6 +978,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class ApplicationCollateralMapping
     {
         public int? collateralId { get; set; }
+        public int loanAppCollateralId { get; set; }
         public int applicationId { get; set; }
         public int? loanApplicationDetailId { get; set; }
         public int staffId { get; set; }
@@ -1063,11 +1068,13 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal availableCollateralValueBaseAmount { get; set; }
         public decimal expectedCollateralCoverage { get; set; }
         public decimal actualCollateralCoverage { get; set; }
+        public decimal totalCoverage { get; set; }
         public string ReferenceNumber { get; set; }
         public string productName { get; set; }
         public string collateralSummary { get; set; }
         public string collateralCode { get; set; }
-        public int coveragePercentage { get; set; }
+        public int expectedCoveragePercentage { get; set; }
+        public decimal actualCoveragePercentage { get; set; }
         public int approvalStatusId { get; set; }
     }
     public class CollateralUsageStatus

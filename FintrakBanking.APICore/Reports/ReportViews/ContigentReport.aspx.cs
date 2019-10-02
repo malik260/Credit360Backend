@@ -70,7 +70,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     ReportViewer08.ServerReport.ReportServerUrl = new Uri(reportServerUrl);
                     ReportViewer08.ServerReport.ReportServerCredentials = new ReportServerCredentials(userName, password, domain);
-                    ReportViewer08.ServerReport.ReportPath = reportPath + "CONTINGENT LIABILITY REPORT"; // string.Format(reportPath, "Risk Asset");
+                    ReportViewer08.ServerReport.ReportPath = reportPath + "Contigent"; // string.Format(reportPath, "Risk Asset");
 
                     ReportViewer08.ProcessingMode = ProcessingMode.Remote;
                     ReportViewer08.ShowCredentialPrompts = false;
@@ -93,7 +93,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 }
                 catch (Exception ex)
                 {
-                    this.ReportViewer08.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer08.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc"); 
                     this.ReportViewer08.LocalReport.Refresh();
                     return;
                 }
