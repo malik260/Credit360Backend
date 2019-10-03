@@ -16,6 +16,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? principalFrequency { get; set; }
         public short? interestFrequency { get; set; }
         public int? principalFrequencyTypeId { get; set; }
+        public int operationTypeId { get; set; }
         public int? interestFrequencyTypeId { get; set; }
         public Boolean shouldDisburse { get; set; }
         public DateTime loanDate { get; set; }
@@ -100,6 +101,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int oldCasaAccountId { get; set; }
         public int? newCasaAccountId { get; set; }
         public int? loanSystemTypeId { get; set; }
+        public short currencyId { get; set; }
+        public int operationTypeId { get; set; }
     }
 
 

@@ -960,10 +960,16 @@ namespace FintrakBanking.Repositories.Admin
             var userGroupIds = context.TBL_PROFILE_USERGROUP.Where(x => x.USERID == userId)
                                 .Select(x => x.GROUPID).ToList();
 
+            //var staffRoleId = (from a in context.TBL_PROFILE_USER
+            //                   join b in context.TBL_STAFF
+            //                   on a.STAFFID equals b.STAFFID
+            //                   where a.USERID == userId
+            //                   select b.STAFFROLEID).FirstOrDefault();
+
             var staffRoleId = (from a in context.TBL_PROFILE_USER
                                join b in context.TBL_STAFF
                                on a.STAFFID equals b.STAFFID
-                               where a.USERID == userId
+                               where a.STAFFID == userId
                                select b.STAFFROLEID).FirstOrDefault();
 
             var staffGroupIds = context.TBL_PROFILE_STAFF_ROLE_GROUP.Where(x => x.STAFFROLEID == staffRoleId)

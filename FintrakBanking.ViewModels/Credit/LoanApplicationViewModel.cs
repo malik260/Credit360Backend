@@ -843,6 +843,7 @@ namespace FintrakBanking.ViewModels.Credit
         public float? interestRateConcession { get; set; }
         public float? feeRateConcession { get; set; }
         public List<RecommendedChangesViewModel> recommendedChanges { get; set; }
+        public bool? isAvailment { get; set; }
     }
 
     public class CreditApplicationViewModel
@@ -908,6 +909,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? month { get; set; } // "0",
         public int? year { get; set; } // "0",
         public string productAccountName { get; set; }
+        public int casaAccountId { get; set; }
+        public DateTime periodDate { get; set; }
     }
 
 
@@ -965,6 +968,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string productClass { get; set; }
         public string operation { get; set; }
         public  int documentOperation { get; set; }
+    }
+
+    public class accountsViewModels // TEMPORARY LOCATION
+    {
+        public string accountNumber { get; set; } // "2909416.54",
     }
 
 }

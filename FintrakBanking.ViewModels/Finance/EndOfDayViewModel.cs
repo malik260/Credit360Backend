@@ -36,6 +36,8 @@ namespace FintrakBanking.ViewModels.Finance
 
         public int? companyId { get; set; }
 
+        public string errorInformation { get; set; }
+
     }
 }
 

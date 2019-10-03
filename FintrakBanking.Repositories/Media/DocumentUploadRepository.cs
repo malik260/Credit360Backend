@@ -480,7 +480,7 @@ namespace FintrakBanking.Repositories.Media
                     LASTNAME = x.a.LASTNAME,
                     PRODUCTACCOUNTNUMBER = x.b.PRODUCTACCOUNTNUMBER,
                 })
-                .Where(c => c.CUSTOMERCODE == model.customerCode || c.PRODUCTACCOUNTNUMBER == model.customerCode)
+                .Where(c => c.CUSTOMERCODE == model.customerCode || c.PRODUCTACCOUNTNUMBER == model.customerCode || c.FIRSTNAME.ToLower().Contains(model.customerCode.ToLower().Trim()) || model.customerCode.ToLower().Contains(c.FIRSTNAME.ToLower().Trim()))
                 .FirstOrDefault();
 
             if (customer == null) throw new SecureException("Customer not found!");

@@ -370,6 +370,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-        
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("contingent-used-amount/{contingentLoanId}")]
+        public HttpResponseMessage GetContingentTotoalUsed(int contingentLoanId)
+        {
+            var data = repo.GetContingentTotoalUsed(contingentLoanId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
     }
 }

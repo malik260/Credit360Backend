@@ -24,7 +24,8 @@ namespace FintrakBanking.Interfaces.Customer
        bool AddLoanApplicationCovenant(LoanCovenantDetailViewModel entity);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationCovenant(int applicationId);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenant(int applicationDetailId);
-        bool UpdateLoanApplicationCovenant(DateTime date);
+        //bool UpdateLoanApplicationCovenant(DateTime date);
+        bool UpdateLoanApplicationCovenant(DateTime date, int companyId, int staffId, out string transactionReferenceNo);
         DateTime GetFrequencyDate(int frequencyTypeId, DateTime date);
 
         #endregion Loan Covenant Detail

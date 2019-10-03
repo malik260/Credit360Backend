@@ -94,6 +94,15 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class LoanIrregularScheduleViewModel
+    {
+        public DateTime realDate { get; set; }
+        public decimal interestAmount { get; set; }
+        public int payTypeId { get; set; }
+        public string payType { get; set; }
+        public decimal payAmount { get; set; }
+    }
+
     public class LoanReviewIrregularScheduleViewModel
     {
         public int IrregularScheduleInputId { get; set; }

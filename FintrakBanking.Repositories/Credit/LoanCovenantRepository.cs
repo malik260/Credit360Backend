@@ -310,19 +310,118 @@ namespace FintrakBanking.Repositories.Customer
         }
 
 
-
-        public bool UpdateLoanApplicationCovenant(DateTime date)
+        public bool UpdateLoanApplicationCovenant(DateTime date, int companyId, int staffId, out string transactionReferenceNo)
         {
-            var covenants = context.TBL_LOAN_APPLICATION_COVENANT.Where(o => o.NEXTCOVENANTDATE == date).ToList();
+            var covenants = context.TBL_LOAN_APPLICATION_COVENANT.Where(o => o.NEXTCOVENANTDATE == date && o.COMPANYID == companyId).ToList();
 
+
+            var eod_Operation_Log = context.TBL_EOD_OPERATION_LOG.Where(c => c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant && c.COMPANYID == companyId).FirstOrDefault();
+
+
+            List<TBL_EOD_OPERATION_LOG_DETAIL> eod_operation_Detail_List = new List<TBL_EOD_OPERATION_LOG_DETAIL>();
+
+            if (covenants.Count() != 0)
+            {
+                var eodOperations = context.TBL_EOD_OPERATION.OrderBy(x => x.POSITION).ToList();
+
+                foreach (TBL_LOAN_APPLICATION_COVENANT loan in covenants)
+                {
+
+                    TBL_EOD_OPERATION_LOG_DETAIL eod_operation_Detail = new TBL_EOD_OPERATION_LOG_DETAIL();
+
+                    //var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.COVENANTDETAIL && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+
+                    var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == loan.LOANCOVENANTDETAILID.ToString() + '-' + loan.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+
+                    if (checkExistence == null)
+                    {
+                        eod_operation_Detail.EODOPERATIONLOGID = eod_Operation_Log.EODOPERATIONLOGID;
+                        eod_operation_Detail.EODSTATUSID = (int)EodOperationStatusEnum.Processing;
+                        eod_operation_Detail.REFERENCENUMBER = loan.LOANCOVENANTDETAILID.ToString() + '-' + loan.LOANAPPLICATIONDETAILID.ToString();
+                        eod_operation_Detail.EODOPERATIONID = (int)EodOperationEnum.UpdateLoanApplicationCovenant;
+                        eod_operation_Detail.EODDATE = date;
+                        eod_operation_Detail.EODUSERID = staffId;
+                        eod_operation_Detail_List.Add(eod_operation_Detail);
+
+                    }
+
+                }
+
+                context.TBL_EOD_OPERATION_LOG_DETAIL.AddRange(eod_operation_Detail_List);
+
+                context.SaveChanges();
+
+            }
+
+
+            transactionReferenceNo = "";
             foreach (var covenant in covenants)
             {
-                covenant.PREVIOUSCOVENANTDATE = (DateTime)covenant.NEXTCOVENANTDATE;
-                covenant.NEXTCOVENANTDATE = GetFrequencyDate((int)covenant.FREQUENCYTYPEID, (DateTime)covenant.NEXTCOVENANTDATE);
+
+                var checkExistence = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODSTATUSID != (int)EodOperationStatusEnum.Completed && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+
+                if (checkExistence != null)
+                {
+
+                    var eod_Operation_Log_Detail_Set_Value = context.TBL_EOD_OPERATION_LOG_DETAIL.Where(c => c.REFERENCENUMBER == covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString() && c.EODDATE == date && c.EODOPERATIONID == (int)EodOperationEnum.UpdateLoanApplicationCovenant).FirstOrDefault();
+
+                    eod_Operation_Log_Detail_Set_Value.STARTDATETIME = DateTime.Now;
+                    eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+
+                    context.SaveChanges();
+
+
+                    try
+                    {
+
+                        //transactionReferenceNo = covenant.COVENANTDETAIL.ToString();
+
+                        transactionReferenceNo = covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString();
+
+                        covenant.PREVIOUSCOVENANTDATE = (DateTime)covenant.NEXTCOVENANTDATE;
+                        covenant.NEXTCOVENANTDATE = GetFrequencyDate((int)covenant.FREQUENCYTYPEID, (DateTime)covenant.NEXTCOVENANTDATE);
+
+
+                        eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                        eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Completed;
+                        eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = "No Error";
+                        context.SaveChanges();
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        eod_Operation_Log_Detail_Set_Value.ENDDATETIME = DateTime.Now;
+                        eod_Operation_Log_Detail_Set_Value.EODSTATUSID = (int)EodOperationStatusEnum.Error;
+                        eod_Operation_Log_Detail_Set_Value.EODUSERID = staffId;
+                        //eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {covenant.COVENANTDETAIL} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                        eod_Operation_Log_Detail_Set_Value.ERRORINFORMATION = $"Ref No - {covenant.LOANCOVENANTDETAILID.ToString() + '-' + covenant.LOANAPPLICATIONDETAILID.ToString()} Exception - {ex.Message}  - inner exception -  {ex.InnerException}";
+                        context.SaveChanges();
+                    }
+
+
+
+                }
+
+
             }
 
             return context.SaveChanges() != 0;
         }
+
+        //public bool UpdateLoanApplicationCovenant(DateTime date)
+        //{
+        //    var covenants = context.TBL_LOAN_APPLICATION_COVENANT.Where(o => o.NEXTCOVENANTDATE == date).ToList();
+
+        //    foreach (var covenant in covenants)
+        //    {
+        //        covenant.PREVIOUSCOVENANTDATE = (DateTime)covenant.NEXTCOVENANTDATE;
+        //        covenant.NEXTCOVENANTDATE = GetFrequencyDate((int)covenant.FREQUENCYTYPEID, (DateTime)covenant.NEXTCOVENANTDATE);
+        //    }
+
+        //    return context.SaveChanges() != 0;
+        //}
 
 
         public bool AddLoanApplicationCovenant(LoanCovenantDetailViewModel entity)
