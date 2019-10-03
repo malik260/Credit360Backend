@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region Region Setup
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("region")]
         public HttpResponseMessage GetRegion()
         {
