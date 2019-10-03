@@ -2387,25 +2387,25 @@ namespace FintrakBanking.Repositories.Credit
         {
 
 
-            var insurance = context.TBL_COLLATERAL_ITEM_POLICY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == details.collateralId && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
-            if (insurance != null)
-            {
-                details.insurancePolicy = new InsurancePolicy();
-                details.insurancePolicy.referenceNumber = insurance.POLICYREFERENCENUMBER;
-                details.insurancePolicy.insuranceCompanyId = insurance.INSURANCECOMPANYID;
-                details.insurancePolicy.sumInsured = insurance.SUMINSURED;
-                details.insurancePolicy.startDate = insurance.STARTDATE;
-                details.insurancePolicy.expiryDate = insurance.ENDDATE;
-                details.insurancePolicy.insuranceTypeId = insurance.INSURANCETYPEID;
-                details.insurancePolicy.policyId = insurance.POLICYID;
-                details.insurancePolicy.inSurPremiumAmount = insurance.PREMIUMAMOUNT;
-                details.insurancePolicy.description = insurance.DESCRIPTION;
-                details.insurancePolicy.premiumPercent = insurance.PREMIUMPERCENT;
-                details.insurancePolicy.approvalStatusId = insurance.APPROVALSTATUSID;
-                details.insurancePolicy.differInsurancePolicy = insurance.DIFFERPOLICY;
-                details.insurancePolicy.companyAddress = insurance.COMPANYADDRESS;
+            //var insurance = context.TBL_COLLATERAL_ITEM_POLICY.FirstOrDefault(x => x.COLLATERALCUSTOMERID == details.collateralId && x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved);
+            //if (insurance != null)
+            //{
+            //    details.insurancePolicy = new InsurancePolicy();
+            //    details.insurancePolicy.referenceNumber = insurance.POLICYREFERENCENUMBER;
+            //    details.insurancePolicy.insuranceCompanyId = insurance.INSURANCECOMPANYID;
+            //    details.insurancePolicy.sumInsured = insurance.SUMINSURED;
+            //    details.insurancePolicy.startDate = insurance.STARTDATE;
+            //    details.insurancePolicy.expiryDate = insurance.ENDDATE;
+            //    details.insurancePolicy.insuranceTypeId = insurance.INSURANCETYPEID;
+            //    details.insurancePolicy.policyId = insurance.POLICYID;
+            //    details.insurancePolicy.inSurPremiumAmount = insurance.PREMIUMAMOUNT;
+            //    details.insurancePolicy.description = insurance.DESCRIPTION;
+            //    details.insurancePolicy.premiumPercent = insurance.PREMIUMPERCENT;
+            //    details.insurancePolicy.approvalStatusId = insurance.APPROVALSTATUSID;
+            //    details.insurancePolicy.differInsurancePolicy = insurance.DIFFERPOLICY;
+            //    details.insurancePolicy.companyAddress = insurance.COMPANYADDRESS;
 
-            }
+            //}
             return details;
 
         }
