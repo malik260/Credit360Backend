@@ -127,7 +127,8 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string facilityUpgradeSupportSchemeHolder = "@{{facilityUpgradeSupportSchemeData}}";
         private readonly string invoiceDiscountingDataHolder = "@{{invoiceDiscountingData}}";
         private readonly string cashCollaterizedDataHolder = "@{{cashCollaterizedData}}";
-        private readonly string staffCarLoansDataHolder = "@{{staffcarLoansData}}";
+        private readonly string temporaryOverdraftHolder = "@{{temporaryOverdraftData}}";
+        private readonly string staffCarLoansDataHolder = "@{{staffCarLoansData}}";
         private readonly string staffMortgageLoansDataHolder = "@{{staffMortgageLoansData}}";
         private readonly string staffPersonalLoansAGMDataHolder = "@{{staffPersonalLoansAGMData}}";
         private readonly string staffPersonalLoanDataHolder = "@{{staffPersonalLoanData}}";
@@ -280,6 +281,7 @@ namespace FintrakBanking.Repositories.Credit
         private string staffMortgageLoansData;
         private string staffPersonalLoansAGMData;
         private string staffPersonalLoanData;
+        private string temporaryOverdraftData;
 
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
@@ -349,8 +351,17 @@ namespace FintrakBanking.Repositories.Credit
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
-
                
+                this.memoData = MemoMarkupHtml();
+                this.facilityUpgradeSupportSchemeData = FacilityUpgradeSupportSchemeHtml();
+                this.invoiceDiscountingData = InvoiceDiscountingHtml();
+                this.cashCollaterizedData = CashCollaterizedHtml();
+                this.staffcarLoansData = StaffCarLoansHtml();
+                this.staffMortgageLoansData = StaffMortgageLoansHtml();
+                this.staffPersonalLoansAGMData = StaffPersonalLoanAGMHtml();
+                this.staffPersonalLoanData = StaffPersonalLoanHtml();
+                this.temporaryOverdraftData = TemporaryOverdraftHtml();
+                
     }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
@@ -2661,16 +2672,18 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(amountPaidSoFarHolder, amountPaidSoFar);
             content = content.Replace(amountProposedHolder, amountProposed);
 
-            // for output document 
-            /*content = content.Replace(memoHolder, shareHolders);
-            content = content.Replace(facilityUpgradeSupportSchemeHolder, signitories);
-            content = content.Replace(invoiceDiscountingDataHolder, directors);
-            content = content.Replace(cashCollaterizedDataHolder, isSecurity);
-            content = content.Replace(staffCarLoansDataHolder, isOwnerOccupied);
-            content = content.Replace(staffMortgageLoansDataHolder, amountDisbursed);
-            content = content.Replace(staffPersonalLoansAGMDataHolder, amountPaidSoFar);
-            content = content.Replace(staffPersonalLoanDataHolder, amountProposed);*/
-       
+            // for output document          
+            content = content.Replace(memoHolder, memoData);
+            content = content.Replace(facilityUpgradeSupportSchemeHolder, facilityUpgradeSupportSchemeData);
+            content = content.Replace(invoiceDiscountingDataHolder, invoiceDiscountingData);
+            content = content.Replace(cashCollaterizedDataHolder, cashCollaterizedData);
+            content = content.Replace(staffCarLoansDataHolder, staffcarLoansData);
+            content = content.Replace(staffMortgageLoansDataHolder, staffMortgageLoansData);
+            content = content.Replace(staffPersonalLoansAGMDataHolder, staffPersonalLoansAGMData);
+            content = content.Replace(staffPersonalLoanDataHolder, staffPersonalLoanData);
+            content = content.Replace(temporaryOverdraftHolder, temporaryOverdraftData);
+
+
             return content;
         }
 
@@ -3139,7 +3152,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>MEMO</b></h3>
-                <table border=1 width=700 cellpadding=15 cellspacing=0>
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <td><b>Date</b></td>
                         <td></td>
@@ -3193,7 +3206,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (FACILITY UPGRADE SUPPORT SCHEME)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -3233,7 +3246,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>School Fees Information</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <td>Total No of Pupils</td>
                         <td>----------------------</td>
@@ -3266,7 +3279,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -3300,7 +3313,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Account Activity with Current (Major) Banker per period of 6 months</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Period (e.g. Jan 08 to Mar 09)</b></th>
                         <th><b>Debits</b></th>
@@ -3655,14 +3668,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -3685,7 +3698,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
+                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -3890,9 +3903,7 @@ namespace FintrakBanking.Repositories.Credit
                      </tr> 
                      <tr>
                         <td colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        
                     </tr> 
                     <tr>
                         <td>Loan Application Form</td>
@@ -3999,7 +4010,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -4061,7 +4072,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -4095,7 +4106,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>6 Months Activity with Current (Major) Banker</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Month</b></th>
                         <th><b>Debits</b></th>
@@ -4169,14 +4180,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -4199,7 +4210,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
+                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -4392,9 +4403,7 @@ namespace FintrakBanking.Repositories.Credit
                                      
                      <tr>
                         <td colspan='4'></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        
                     </tr> 
                     <tr>
                         <td>Acceptance of Domiciliation Agreements</td>
@@ -4462,9 +4471,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                      <tr>
                         <td colspan='4'></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                       
                     </tr> 
                      <tr>
                         <td>Facility Maximum Tenor</td>
@@ -4512,7 +4519,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=500 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='4'><strong>Documentation Checklist</strong></th>                     
                     </tr> 
@@ -4607,10 +4614,10 @@ namespace FintrakBanking.Repositories.Credit
             var n = 0;
             result = result + $@"
                 <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
-                <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
+                <h3><b>CREDIT PROGRAM SHEET (CASH COLLATERIZED)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -4649,7 +4656,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -4690,7 +4697,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>12 Months Activity with Current (Major) Banker</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Month</b></th>
                         <th><b>Debits</b></th>
@@ -4806,14 +4813,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -4836,7 +4843,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
+                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -4981,9 +4988,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>                                                   
                      <tr>
                         <td colspan='4'><strong>RECOMMENDATION:</strong></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        
                     </tr> 
                     <tr>
                         <td colspan='4'>Based on the foregoing, we hereby recommend………………………..</td>                   
@@ -4992,7 +4997,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=500 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></th>                     
                     </tr> 
@@ -5082,7 +5087,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <h3><b>MEMO</b></h3>
                 <br />
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td colspan=2><strong>TEMPORARY OVERDRAFT (TOD)</strong></td>
                         <td></td>
@@ -5164,7 +5169,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>3 MONTHS ACTIVITY:</b></h4>
-                <table border=1 width=500 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                    <tr>
                         <td>Month</td>
                         <td>Debits</td>
@@ -5237,7 +5242,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=0 width=500 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                    <tr>
                         <td COLSPAN=2>ATTESTATION: I hereby undertake to sponsor the TOD based on my expert knowledge of the customer and his business, and state that I would be personally responsible in ensuring repayment in line with approved terms.</td>
                         
@@ -5256,54 +5261,52 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
                 <h3><b>Staff Car Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
-                <h4><b>Staff Information</b></h4>
+                <h3><b>Staff Information</b></h3>
                 <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
-                        <td>------------------------------------------</td>
+                        <td>------------------</td>
                         <td>Level/ Designation: </td>
                         <td>-------------------</td>
                     </tr>
                    <tr>
                         <td>Supervisor’s Name:</td>
-                        <td>------------------------------------------</td>
+                        <td>-----------------</td>
                         <td>Level/ Designation</td>
                         <td>-------------------</td>
                     </tr> 
                      <tr>
                         <td>Borrower’s Residential Address</td>
-                        <td colspan=3>----------------------------------------------------</td>
+                        <td colspan=3>-----------------</td>
                        
                     </tr>
                    <tr>
                         <td>Branch / Unit:</td>
-                        <td>------------------</td>
-                        <td>Group:</td
-                        <td>------------------</td>
-                        <td>>Division:</td>
-                        <td>------------------</td>
+                        <td>-----</td>
+                        <td>Group: </td>
+                        <td>Division: </td>                     
                     </tr> 
                      <tr>
                         <td>Date of Employment:</td>
-                        <td>-----------------------------------</td>
+                        <td>---------------------</td>
                         <td>Employment Status</td>
                         <td>-------------------</td>
                     </tr>
                    <tr>
                         <td>No. Of years in Access Bank:</td>
-                        <td>-----------------------</td>
+                        <td>----------------</td>
                         <td>Total No. of years in Employment</td>
-                        <td>-----------------------</td>
+                        <td>---------------</td>
                         
                     </tr>    
                     <tr>
                         <td>Account Number:</td>
-                        <td>----------------------</td>
+                        <td>-------------</td>
                         <td>Loan Tenor: ---Five (5) Years</td>
-                        <td>-------------------</td>
+                        <td>--------------</td>
                     </tr>
                    <tr>
                         <td>Car Amount:</td>
@@ -5314,7 +5317,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>    
                      <tr>
                         <td>Car Loan Limit:</td>
-                        <td>-----------------------------------</td>
+                        <td>------------------</td>
                         <td>(Amount in words</td>
                         <td>₦-------------------)</td>
                     </tr>
@@ -5330,7 +5333,7 @@ namespace FintrakBanking.Repositories.Credit
                         <td><input type='checkbox' name='Male' value='Male'> Male
                             <input type='checkbox' name='Female' value='Female'> Female</td>
                         <td>Email Address:</td>
-                        <td>-------------------------------</td>
+                        <td>-----------------</td>
                     </tr>
                    <tr>
                         <td></td>
@@ -5341,9 +5344,9 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>  
                     <tr>
                         <td>Telephone numbers:</td>
-                        <td>-----------------------</td>
-                        <td>-----------------------</td>
-                        <td>-----------------------</td>
+                        <td>-----------------</td>
+                        <td>-----------------</td>
+                        <td>-----------------</td>
                         
                     </tr> 
                      <tr>
@@ -5358,7 +5361,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=700 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -5402,7 +5405,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -5447,7 +5450,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -5556,7 +5559,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -5586,14 +5589,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Car Loan</td>
@@ -5793,47 +5796,45 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
                 <h3><b>Staff Mortgage Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
-                <h4><b>Staff Information</b></h4>
+                <h3><b>Staff Information</b></h3>
                 <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
-                        <td>------------------------------------------</td>
+                        <td>------------------</td>
                         <td>Level/ Designation: </td>
                         <td>-------------------</td>
                     </tr>
                    <tr>
                         <td>Supervisor’s Name:</td>
-                        <td>------------------------------------------</td>
+                        <td>-----------------</td>
                         <td>Level/ Designation</td>
                         <td>-------------------</td>
                     </tr> 
                      <tr>
                         <td>Borrower’s Residential Address</td>
-                        <td colspan=3>----------------------------------------------------</td>
+                        <td colspan=3>--------------------</td>
                        
                     </tr>
                    <tr>
                         <td>Branch / Unit:</td>
-                        <td>------------------</td>
-                        <td>Group:</td
-                        <td>------------------</td>
-                        <td>>Division:</td>
-                        <td>------------------</td>
+                        <td>--------------</td>
+                        <td>Group:---------------</td>
+                        <td>Division:-------------</td>
                     </tr> 
                      <tr>
                         <td>Date of Employment:</td>
-                        <td>-----------------------------------</td>
+                        <td>-------------------</td>
                         <td>Employment Status</td>
                         <td>-------------------</td>
                     </tr>
                    <tr>
                         <td>No. Of years in Access Bank:</td>
-                        <td>-----------------------</td>
+                        <td>-------------------</td>
                         <td>Total No. of years in Employment</td>
-                        <td>-----------------------</td>
+                        <td>--------------------</td>
                         
                     </tr>    
                     <tr>
@@ -5910,7 +5911,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=700 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -5954,7 +5955,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -5999,7 +6000,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -6108,7 +6109,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -6137,14 +6138,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Mortgage Loan</td>
@@ -6345,16 +6346,8 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h3><b>BOARD / BCC (for AGM & above):</b></h3>
-                <table border=0 width=500 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr> 
-                  
-                 ";
-            result = result + $"</table>";
+                <h3><b>BOARD / BCC (for AGM & above):</b></h3>                           
+                 ";       
             return result;
         }
 
@@ -6363,35 +6356,32 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
                 <h3><b>Staff Personal Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
                 <h4><b>Staff Information</b></h4>
                 <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
-                        <td>------------------------------------------</td>
+                        <td>-----------------------------</td>
                         <td>Level/ Designation: </td>
                         <td>-------------------</td>
                     </tr>
                    <tr>
                         <td>Supervisor’s Name:</td>
-                        <td>------------------------------------------</td>
+                        <td>------------------------------</td>
                         <td>Level/ Designation</td>
                         <td>-------------------</td>
                     </tr> 
                      <tr>
                         <td>Borrower’s Residential Address</td>
-                        <td colspan=3>----------------------------------------------------</td>
-                       
+                        <td colspan=3>---------------------</td>                    
                     </tr>
                    <tr>
                         <td>Branch / Unit:</td>
-                        <td>------------------</td>
-                        <td>Group:</td
-                        <td>------------------</td>
-                        <td>>Division:</td>
-                        <td>------------------</td>
+                        <td>-------------</td>
+                        <td>Group:-------------</td>
+                        <td>Division:-----------</td>
                     </tr> 
                      <tr>
                         <td>Date of Employment:</td>
@@ -6464,7 +6454,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=700 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -6473,13 +6463,13 @@ namespace FintrakBanking.Repositories.Credit
                     </tr> 
                     <tr>
                         <td>Basic Salary:</td>
-                        <td>---------------------------------</td>
+                        <td>-----------------</td>
                         <td>Debt Service Ratio (including new loan)</td>
                         <td>-------------%</td>               
                     </tr>  
                    <tr>
                        <td>Status of Employment ((Un)Confirmed):</td>
-                        <td>----------------------------</td>
+                        <td>------------</td>
                         <td><strong>Age:</strong></td>
                         <td>---------------</td>               
                     </tr> 
@@ -6508,7 +6498,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -6553,7 +6543,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -6662,7 +6652,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -6691,14 +6681,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Personal Loan</td>
@@ -6916,7 +6906,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>
-                <table border=0 width=500 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
                         <th></th>
@@ -6933,39 +6923,37 @@ namespace FintrakBanking.Repositories.Credit
             var result = String.Empty;
             var n = 0;
             result = result + $@"
-                <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
                 <h3><b>Staff Personal Loan Scheme – Facility Approval Memo</b></h3>
                 <br />
                 <h4><b>Staff Information</b></h4>
                 <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Staff’s Name</td> 
-                        <td>------------------------------------------</td>
+                        <td>----------------------</td>
                         <td>Level/ Designation: </td>
                         <td>-------------------</td>
                     </tr>
                    <tr>
                         <td>Supervisor’s Name:</td>
-                        <td>------------------------------------------</td>
+                        <td>---------------------</td>
                         <td>Level/ Designation</td>
                         <td>-------------------</td>
                     </tr> 
                      <tr>
                         <td>Borrower’s Residential Address</td>
-                        <td colspan=3>----------------------------------------------------</td>
+                        <td colspan=3>--------------------</td>
                        
                     </tr>
                    <tr>
                         <td>Branch / Unit:</td>
-                        <td>------------------</td>
-                        <td>Group:</td
-                        <td>------------------</td>
-                        <td>>Division:</td>
-                        <td>------------------</td>
+                        <td>-------------</td>
+                        <td>Group:--------</td>
+                        <td>Division:--------</td>
                     </tr> 
                      <tr>
                         <td>Date of Employment:</td>
-                        <td>-----------------------------------</td>
+                        <td>--------------------</td>
                         <td>Employment Status</td>
                         <td>-------------------</td>
                     </tr>
@@ -7034,7 +7022,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>To be completed by HR Only</b></h4>
-                <table border=0 width=700 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
@@ -7078,7 +7066,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -7123,7 +7111,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Approved Amount</b></th>
@@ -7232,7 +7220,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Outstanding Amount (‘000)</b></th>
@@ -7261,14 +7249,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td>Personal Loan</td>
@@ -7474,15 +7462,8 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>
-                <table border=0 width=500 cellpadding=10 cellspacing=0>
-                     <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr> 
-                  
-                 ";
-            result = result + $"</table>";
+                
+                 ";   
             return result;
         }
     }
