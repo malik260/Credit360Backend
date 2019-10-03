@@ -84,6 +84,11 @@
     <Compile Include="DocumentModels\TBL_DOC_INVOICE.cs" />
     <Compile Include="DocumentModels\TBL_JOB_REQUEST_MSG_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_MEDIA_LOAN_DOCUMENTS.cs" />
+    <Compile Include="Models\TBL_ALERT_LEVEL.cs" />
+    <Compile Include="Models\TBL_ALERT_LEVEL_GROUP.cs" />
+    <Compile Include="Models\TBL_ALERT_LEVEL_GRP_MAPPING.cs" />
+    <Compile Include="Models\TBL_ALERT_SETUP.cs" />
+    <Compile Include="Models\TBL_ALERT_TITLE.cs" />
     <Compile Include="Models\TBL_API_URL.cs" />
     <Compile Include="Models\TBL_APPROVAL_LEVEL_SETTING.cs" />
     <Compile Include="Models\TBL_ATC_LODGMENT.cs" />
