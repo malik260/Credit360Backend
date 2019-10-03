@@ -19,7 +19,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal valueOfCollateral { get; set; }
         public decimal ipc { get; set; }
         public decimal pmu { get; set; }
-        public decimal less { get; set; }
         public decimal amountDisbursed { get; set; }
         public decimal amountRequested { get; set; }
         public int projectSiteReportId { get; set; }
