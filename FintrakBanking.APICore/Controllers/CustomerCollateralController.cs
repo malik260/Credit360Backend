@@ -439,9 +439,10 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut, Route("customer-collateral/{collateralId}")]
         public async Task<HttpResponseMessage> UpdateCollateral([FromBody] CollateralViewModel entity, int collateralId)
         {
-            try
-            {
+            //try
+            //{
                 entity.lastUpdatedBy = token.GetStaffId;
+                entity.createdBy = token.GetStaffId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.companyId = token.GetCompanyId;
@@ -453,11 +454,11 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-            }
+            //}
+            //catch (SecureException ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            //}
         }
 
         [HttpGet, Route("customer-collateral/customer/{id}/application/{applicationId}")]
@@ -2237,6 +2238,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost, Route("delete-proposed-collateral-coverage")]
         public HttpResponseMessage DeleteProposedCollateral(CollateralCoverageViewModel model)
         {
+            model.createdBy = token.GetStaffId;
             var response = repo.DeleteProposedCollateral(model);
             if (response)
             {
