@@ -1,29 +1,28 @@
-﻿using System;
+﻿using FintrakBanking.Common.Extensions;
+using Microsoft.Reporting.WebForms;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using FintrakBanking.Common.Extensions;
-using System.Globalization;
-using Microsoft.Reporting.WebForms;
-
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class RiskAssetsReport : System.Web.UI.Page
+
+    public partial class ExtensionReport : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
-            if (!IsPostBack) 
+            if (!IsPostBack)
             {
                 try
                 {
                     CultureInfo provider = CultureInfo.InvariantCulture;
                     string postedDate = Request.QueryString["runDate"];
-                    DateTime RunDate = Convert.ToDateTime(postedDate);               
+                    DateTime RunDate = Convert.ToDateTime(postedDate);
                     string rDate = RunDate.Year + "-" + RunDate.Month + "-" + RunDate.Day;
                     string Level = Request.QueryString["level"];
                     string MisCode = Request.QueryString["misCode"];
@@ -61,13 +60,13 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     string reportServerUrl = ConfigurationManager.AppSettings["ReportServerURL"];
                     string domain = ConfigurationManager.AppSettings["rsDomain"];
-                    string userName = ConfigurationManager.AppSettings["rsUserName"]; 
-                    string password = ConfigurationManager.AppSettings["rsPassword"];  
+                    string userName = ConfigurationManager.AppSettings["rsUserName"];
+                    string password = ConfigurationManager.AppSettings["rsPassword"];
                     string reportPath = ConfigurationManager.AppSettings["ServerReportPath"];
 
                     ReportViewer.ServerReport.ReportServerUrl = new Uri(reportServerUrl);
                     ReportViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials(userName, password, domain);
-                    ReportViewer.ServerReport.ReportPath = reportPath + "Risk Asset"; // string.Format(reportPath, "Risk Asset");
+                    ReportViewer.ServerReport.ReportPath = reportPath + "Extension"; // string.Format(reportPath, "Risk Asset");
 
                     ReportViewer.ProcessingMode = ProcessingMode.Remote;
                     ReportViewer.ShowCredentialPrompts = false;
@@ -75,12 +74,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     ReportParameter[] reportParameter = new ReportParameter[8];
                     reportParameter[0] = new ReportParameter("MisCode", MisCode);
                     reportParameter[1] = new ReportParameter("Level", Level);
-                    reportParameter[2] = new ReportParameter("ExposureType", ExposureType); 
-                    reportParameter[3] = new ReportParameter("DivisionName", DivisionName); 
-                    reportParameter[4] = new ReportParameter("GroupName", GroupName); 
-                    reportParameter[5] = new ReportParameter("BranchName", BranchName); 
+                    reportParameter[2] = new ReportParameter("ExposureType", ExposureType);
+                    reportParameter[3] = new ReportParameter("DivisionName", DivisionName);
+                    reportParameter[4] = new ReportParameter("GroupName", GroupName);
+                    reportParameter[5] = new ReportParameter("BranchName", BranchName);
                     reportParameter[6] = new ReportParameter("RunDate", rDate); // yyyy-mm-dd
-                    reportParameter[7] = new ReportParameter("RegionName", RegionName); 
+                    reportParameter[7] = new ReportParameter("RegionName", RegionName);
 
                     //==== NOTE: for report on server, use the below ============
                     ReportViewer.ServerReport.SetParameters(reportParameter);
@@ -95,6 +94,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     return;
                 }
             }
+
         }
     }
 }

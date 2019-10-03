@@ -1317,6 +1317,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralCustomerId { get; set; }
         public string valuationName { get; set; }
         public string valuationReason { get; set; }
+        public string createdByName { get; set; }
+        
     }
 
     public class AgeAnalysisViewModel
