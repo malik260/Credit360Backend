@@ -17,6 +17,9 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "date")]
         public DateTime PAYMENTDATE { get; set; }
 
+        public int PAYMENTTYPEID { get; set; }
+
+
         //[Column(TypeName = "money")]
         public decimal PAYMENTAMOUNT { get; set; }
 

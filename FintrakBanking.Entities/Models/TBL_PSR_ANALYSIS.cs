@@ -19,8 +19,6 @@ namespace FintrakBanking.Entities.Models
 
         public decimal IPC { get; set; }
         public decimal PMU { get; set; }
-
-        public decimal LESS { get; set; }
         public decimal AMOUNTDISBURSED { get; set; }
         public decimal AMOUNTREQUESTED { get; set; }
         public int PROJECTSITEREPORTID { get; set; }

@@ -13,5 +13,15 @@ namespace FintrakBanking.Interfaces.Credit
         string Replace(string content);
 
         string GetDrawdownMemoHtml(int staffId, int operationId, int targetId);
+        //output document function
+        string MemoMarkupHtml();
+        string FacilityUpgradeSupportSchemeHtml();
+        string InvoiceDiscountingHtml();
+        string CashCollaterizedHtml();
+        string TemporaryOverdraftHtml();
+        string StaffCarLoansHtml();
+        string StaffMortgageLoansHtml();
+        string StaffPersonalLoanAGMHtml();
+        string StaffPersonalLoanHtml();
     }
 }

@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -283,5 +284,151 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, Message = e.Message });
             }
         }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-recovery-new")]
+        public HttpResponseMessage AddLaonRecoveryPayment(LoanRecoveryPaymentViewModel model)
+        {
+            var Message = string.Empty;
+            try
+            {
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var success = repo.AddLaonRecoveryPayment(model);
+                if (success)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = success });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No LoanRecovery found" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("recovery-amount-paid/{loanReviewOperationId}")]
+        public HttpResponseMessage GetLoanRecoverySearch(int loanReviewOperationId)
+        {
+            var Message = string.Empty;
+            try
+            {
+                var LoanRecoveryPayment = repo.GetTotalRecoveryPayments(loanReviewOperationId);
+                if (LoanRecoveryPayment != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = LoanRecoveryPayment });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No LoanRecovery found" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, Message = e.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("recovery-payment-schedule/{loanReviewOperationId}")]
+        public HttpResponseMessage GetAllLoanRecoveryPayments(int loanReviewOperationId)
+        {
+            var Message = string.Empty;
+            try
+            {
+                var LoanRecoveryPaymentPlan = repo.GetRecoveryPaymentSchedule(loanReviewOperationId).ToList();
+                if (LoanRecoveryPaymentPlan.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = LoanRecoveryPaymentPlan, count = LoanRecoveryPaymentPlan.Count });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No LoanRecovery found" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, Message = e.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-recovery-search/{searchValue}")]
+        public HttpResponseMessage GetLoanRecoverySearch(string searchValue)
+        {
+            var Message = string.Empty;
+            try
+            {
+                var LoanRecoveryPaymentPlan = repo.GetLoanRecoveryPayment(searchValue).ToList();
+                if (LoanRecoveryPaymentPlan.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = LoanRecoveryPaymentPlan, count = LoanRecoveryPaymentPlan.Count });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No LoanRecovery found" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, Message = e.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("recovery-repayment-go-for-approval")]
+        public HttpResponseMessage RecoveryPaymentGoForApproval(LoanRecoveryPaymentViewModel entity)
+        {
+            var Message = string.Empty;
+            try
+            {
+                entity.staffId = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.RecoveryPaymentGoForApproval(entity);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No LoanRecovery found" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, Message = e.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("recovery-repayment-approval")]
+        public HttpResponseMessage LoanRecoveryPaymentWaitingForApproval()
+        {
+            var Message = string.Empty;
+            try
+            {
+                var data = repo.LoanRecoveryPaymentWaitingForApproval(token.GetStaffId, token.GetCompanyId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No LoanRecovery found" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, Message = e.Message });
+            }
+        }
+
+
     }
 }

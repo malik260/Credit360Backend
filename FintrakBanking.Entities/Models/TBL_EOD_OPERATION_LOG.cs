@@ -24,6 +24,7 @@ namespace FintrakBanking.Entities.Models
         public int? EODSTATUSID { get; set; }
 
         public int? COMPANYID { get; set; }
+        public string ERRORINFORMATION { get; set; }
 
     }
 }
