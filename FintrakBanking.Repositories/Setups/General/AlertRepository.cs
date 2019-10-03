@@ -36,6 +36,18 @@ namespace FintrakBanking.Repositories.Setups.General
             return alerts;
         }
 
+        public AlertViewModel GetAlertById(int id)
+        {
+            var alert = (from a in context.TBL_ALERT_TITLE.Where(x=>x.ALERTTITLEID == id)
+                          select new AlertViewModel
+                          {
+                              alertTitleId = a.ALERTTITLEID,
+                              title = a.TITLE,
+                              template = a.TEMPLATE
+                          }).FirstOrDefault();
+            return alert;
+        }
+
         public bool AddAlertTitle(AlertViewModel model)
         {
             var entity = new TBL_ALERT_TITLE

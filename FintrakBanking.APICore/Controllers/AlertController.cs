@@ -42,6 +42,24 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("alert-title/{id}")]
+        public HttpResponseMessage GetAlertTitleById([FromUri] int id)
+        {
+            try
+            {
+                var alertViewModels = _repo.GetAlertById(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("alert-title")]

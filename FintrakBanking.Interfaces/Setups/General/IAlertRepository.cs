@@ -14,5 +14,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool AddAlertTitle(AlertViewModel model);
         bool UpdateLcCondition(AlertViewModel model, int id, UserInfo user);
         bool DeleteLcCondition(int id, UserInfo user);
+        AlertViewModel GetAlertById(int id);
     }
 }
