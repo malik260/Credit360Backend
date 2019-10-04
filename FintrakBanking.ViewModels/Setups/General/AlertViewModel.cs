@@ -13,7 +13,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string template { get; set; }
 
     }
-    public class AlertSetupViewModel
+    public class AlertSetupViewModel : GeneralEntity
     {
         public int alertSetupId { get; set; }
         public int titleId { get; set; }
@@ -22,21 +22,21 @@ namespace FintrakBanking.ViewModels.Setups.General
     }
 
 
-    public class LevelGroupMappingViewModel
+    public class LevelGroupMappingViewModel : GeneralEntity
     {
         public int alertLevelGroupMapId { get; set; }
         public int levelGroupId { get; set; }
-        public int levelCode { get; set; }
+        public string levelCode { get; set; }
     }
 
-    public class AlertLevelGroupViewModel
+    public class AlertLevelGroupViewModel : GeneralEntity
     {
         public int alertLevelGroupId { get; set; }
         public string levelGroupName { get; set; }
         public string description { get; set; }
     }
 
-    public class AlertLevelViewModel
+    public class AlertLevelViewModel : GeneralEntity
     {
         public int alertLevelId { get; set; }
         public string emailList { get; set; }
