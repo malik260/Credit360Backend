@@ -71,7 +71,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FintrakBanking.Interfaces\bin\Debug\FintrakBanking.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="FintrakBanking.Repositories">
+    <Reference Include="FintrakBanking.Repositories, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FintrakBanking.Repositories\bin\Debug\FintrakBanking.Repositories.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -1289,14 +1290,12 @@
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Pharmaceuticals &amp; Healthcare Report -2019-05-29.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Power Report - 2019-05-08.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Telecommunications Report - 2019-03-13.pdf" />
-    <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Reports\Report\MaturityReport.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
