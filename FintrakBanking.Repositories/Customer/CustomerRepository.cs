@@ -4608,32 +4608,37 @@ namespace FintrakBanking.Repositories.Customer
             //Check if Customer address information exist in the temp table using the targetId
             if (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Address_Addition)
             {
-                temp = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.TEMPADDRESSID == targetId);
-                if (temp != null) //If temp record is not null select the information from the main table
+                entity = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x => x.CUSTOMERID == modified.CUSTOMERID);
+                if(entity != null)
                 {
-                    JObject currentDataStr = JObject.Parse(Convert.ToString(entity));
-                    var recentData = currentDataStr.ToString();
+                    temp = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.TEMPADDRESSID == targetId);
+                    if (temp != null) //If temp record is not null select the information from the main table
+                    {
+                        JObject currentDataStr = JObject.Parse(Convert.ToString(entity));
+                        var recentData = currentDataStr.ToString();
 
-                    JObject existingDataStr = JObject.Parse(Convert.ToString(temp));
-                    var existingData = existingDataStr["data"].ToString();
+                        JObject existingDataStr = JObject.Parse(Convert.ToString(temp));
+                        var existingData = existingDataStr["data"].ToString();
 
-                    detail = $"Customer address for customer with code: : {temp.TBL_CUSTOMER.CUSTOMERCODE} has been added. <br> New address: <br>{recentData}";
+                        detail = $"Customer address for customer with code: : {temp.TBL_CUSTOMER.CUSTOMERCODE} has been added. <br> New address: <br>{recentData}";
 
-                    entity = new TBL_CUSTOMER_ADDRESS();
-                    entity.ACTIVE = temp.ACTIVE;
-                    entity.ADDRESS = temp.ADDRESS;
-                    entity.ADDRESSTYPEID = temp.ADDRESSTYPEID;
-                    entity.CITYID = temp.CITYID;
-                    entity.CUSTOMERID = temp.CUSTOMERID;
-                    entity.STATEID = temp.STATEID;
-                    entity.HOMETOWN = temp.HOMETOWN;
-                    entity.POBOX = temp.POBOX;
-                    entity.STATEID = temp.STATEID;
-                    entity.ELECTRICMETERNUMBER = temp.ELECTRICMETERNUMBER;
-                    entity.NEARESTLANDMARK = temp.NEARESTLANDMARK;
-                    entity.LOCALGOVERNMENTID = temp.LOCALGOVERNMENTID;
-                    context.TBL_CUSTOMER_ADDRESS.Add(entity);
+                        entity = new TBL_CUSTOMER_ADDRESS();
+                        entity.ACTIVE = temp.ACTIVE;
+                        entity.ADDRESS = temp.ADDRESS;
+                        entity.ADDRESSTYPEID = temp.ADDRESSTYPEID;
+                        entity.CITYID = temp.CITYID;
+                        entity.CUSTOMERID = temp.CUSTOMERID;
+                        entity.STATEID = temp.STATEID;
+                        entity.HOMETOWN = temp.HOMETOWN;
+                        entity.POBOX = temp.POBOX;
+                        entity.STATEID = temp.STATEID;
+                        entity.ELECTRICMETERNUMBER = temp.ELECTRICMETERNUMBER;
+                        entity.NEARESTLANDMARK = temp.NEARESTLANDMARK;
+                        entity.LOCALGOVERNMENTID = temp.LOCALGOVERNMENTID;
+                        context.TBL_CUSTOMER_ADDRESS.Add(entity);
+                    }
                 }
+               
             }
             else if (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Address_Modification)
             {
