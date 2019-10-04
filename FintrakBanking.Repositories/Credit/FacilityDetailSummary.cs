@@ -225,6 +225,35 @@ namespace FintrakBanking.Repositories.Credit
             return loanAppProdFee;
         }
 
+        public List<LoanReviewIrregularScheduleViewModel> GetLoanIregularInput(int loanReviewOperationId)
+        {
+            var loanSchedule = (from sch in context.TBL_LOAN_REVIEW_OPRATN_IREG_SC
+                                where sch.LOANREVIEWOPERATIONID == loanReviewOperationId
+                                orderby sch.PAYMENTDATE ascending
+                                select new LoanReviewIrregularScheduleViewModel
+                                {
+                                    LoanReviewOperationId = sch.LOANREVIEWOPERATIONID,
+                                    PaymentDate = sch.PAYMENTDATE,
+                                    PaymentAmount = sch.PAYMENTAMOUNT,
+                                    //loan = sch.LOANID,
+                                    //paymentNumber = sch.PAYMENTNUMBER,
+                                    //paymentDate = sch.PAYMENTDATE,
+                                    //startPrincipalAmount = (double)sch.STARTPRINCIPALAMOUNT,
+                                    //periodPaymentAmount = (double)sch.PERIODPAYMENTAMOUNT,
+                                    //periodInterestAmount = (double)sch.PERIODINTERESTAMOUNT,
+                                    //periodPrincipalAmount = (double)sch.PERIODPRINCIPALAMOUNT,
+                                    //endPrincipalAmount = (double)sch.ENDPRINCIPALAMOUNT,
+                                    //interestRate = sch.INTERESTRATE,
+                                    //amortisedStartPrincipalAmount = (double)sch.AMORTISEDSTARTPRINCIPALAMOUNT,
+                                    //amortisedPeriodPaymentAmount = (double)sch.AMORTISEDPERIODPAYMENTAMOUNT,
+                                    //amortisedPeriodInterestAmount = (double)sch.AMORTISEDPERIODINTERESTAMOUNT,
+                                    //amortisedPeriodPrincipalAmount = (double)sch.AMORTISEDPERIODPRINCIPALAMOUNT,
+                                    //amortisedEndPrincipalAmount = (double)sch.AMORTISEDENDPRINCIPALAMOUNT,
+                                    //effectiveInterestRate = sch.EFFECTIVEINTERESTRATE
+                                }).ToList();
+            return loanSchedule;
+        }
+
         public List<LoanCovenantDetailViewModel> LoanCovenantDetail(int loanId)
         {
             var data = (from a in context.TBL_LOAN_COVENANT_DETAIL

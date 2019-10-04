@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Linq;
+using FintrakBanking.Interfaces.Setups.General;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -25,15 +26,17 @@ namespace FintrakBanking.APICore.Controllers
         private ILoanOperationsRepository repo;
         private ILoanRepository loanRepo;
         private IEndOfDayRepository repoEOD;
+        private IGeneralSetupRepository generalSetup;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
 
 
         public LoanOperationsController(ILoanOperationsRepository _repo,
-            IEndOfDayRepository _repoEOD, ILoanRepository _loanRepo)
+            IEndOfDayRepository _repoEOD, ILoanRepository _loanRepo, IGeneralSetupRepository _genSetup)
         {
             this.repo = _repo;
             this.repoEOD = _repoEOD;
             this.loanRepo = _loanRepo;
+            this.generalSetup = _genSetup;
         }
 
         [HttpGet]
@@ -338,6 +341,56 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approved-overdraft-route-and-review-application")]
+        public HttpResponseMessage GetLoanReviewApplicationOverDraftRouteAndOperations()
+        {
+            try
+            {
+
+                var data = loanRepo.GetLoanReviewApplicationOverDraftRouteAndOperations(token.GetStaffId, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approved-loan-review-awaiting-operation")]
+        public HttpResponseMessage GetApprovedLoanReviewAwaitingOperation()
+        {
+            try
+            {
+                var data = loanRepo.GetApprovedLoanReviewAwaitingOperation(token.GetStaffId, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("overdraft-detail/")]
@@ -429,6 +482,32 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approved-loan-review-route")]
+        public HttpResponseMessage GetApprovedLoanReviewAwaitingRoute()
+        {
+            try
+            {
+                var data = loanRepo.GetApprovedLoanReviewAwaitingRoute(token.GetStaffId, token.GetCompanyId);
+                if (data.Count() == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("approved-line-review")]
@@ -591,7 +670,53 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("cancel-full-and-final/{loanId}/status/{statusId}")]
+        public HttpResponseMessage CancelFullAndFinal(int loanId, int statusId)
+        {
+            try
+            {
 
+                if (statusId == (int)FullAndFinalStatusEnum.Cancelled)
+                {
+                    var response = loanRepo.CancelFullAndFinal(loanId, statusId);
+                }
+                else if (statusId == (int)FullAndFinalStatusEnum.Completed)
+                {
+                    var loan = repo.GetLoanInformation(loanId);
+
+                    LoanReviewOperationViewModel model = new LoanReviewOperationViewModel();
+
+                    model.userBranchId = (short)token.GetBranchId;
+                    model.applicationUrl = HttpContext.Current.Request.Path;
+                    model.createdBy = token.GetStaffId;
+                    model.companyId = token.GetCompanyId;
+                    model.approvalStatusId = (int)ApprovalStatusEnum.Pending;
+                    model.loanId = loanId;
+                    model.productTypeId = loan.PRODUCTID;
+                    model.loanSystemTypeId = loan.LOANSYSTEMTYPEID;
+                    model.operationTypeId = (int)OperationsEnum.FullAndFinalCompleteWriteOff;
+                    model.reviewDetails = "Full And Final Complete Write-Off";
+                    model.approvalStatusId = 0;
+                    model.operationCompleted = false;
+                    model.proposedEffectiveDate = generalSetup.GetApplicationDate();
+
+                    var response = repo.AddOperationReview(model);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                     new { success = true, message = "Record created successfully" });
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+
+
+        }
 
         [HttpGet]
         [ClaimsAuthorization]

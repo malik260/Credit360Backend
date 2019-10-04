@@ -15,6 +15,11 @@ namespace FintrakBanking.Entities.Models
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }
         //public virtual DbSet<TBL_ENDOFDAY_MONITORING> TBL_ENDOFDAY_MONITORING { get; set; }
+        public virtual DbSet<TBL_ALERT_TITLE> TBL_ALERT_TITLE { get; set; }
+        public virtual DbSet<TBL_ALERT_SETUP> TBL_ALERT_SETUP { get; set; }
+        public virtual DbSet<TBL_ALERT_LEVEL_GRP_MAPPING> TBL_ALERT_LEVEL_GRP_MAPPING { get; set; }
+        public virtual DbSet<TBL_ALERT_LEVEL_GROUP> TBL_ALERT_LEVEL_GROUP { get; set; }
+        public virtual DbSet<TBL_ALERT_LEVEL> TBL_ALERT_LEVEL { get; set; }
         public virtual DbSet<TBL_ACCOUNT_CATEGORY> TBL_ACCOUNT_CATEGORY { get; set; }
         public virtual DbSet<TBL_ACCOUNT_TYPE> TBL_ACCOUNT_TYPE { get; set; }
         public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
@@ -48,6 +53,8 @@ namespace FintrakBanking.Entities.Models
 
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL_STAFF> TBL_TEMP_APPROVAL_LEVEL_STAFF { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATE> TBL_APPROVAL_STATE { get; set; }
+        public virtual DbSet<TBL_LOAN_FULLANDFINAL_STATUS> TBL_LOAN_FULLANDFINAL_STATUS { get; set; }
+
         public virtual DbSet<TBL_APPROVAL_STATUS> TBL_APPROVAL_STATUS { get; set; }
         public virtual DbSet<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
         public virtual DbSet<TBL_APPROVAL_VOTE_OPTION> TBL_APPROVAL_VOTE_OPTION { get; set; }
@@ -183,6 +190,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOMER_GRP_FS_CAPTN_DET> TBL_CUSTOMER_GRP_FS_CAPTN_DET { get; set; }
         public virtual DbSet<TBL_CUSTOMER_GUARDIAN> TBL_CUSTOMER_GUARDIAN { get; set; }
         public virtual DbSet<TBL_CUSTOMER_IDENTI_MODE_TYPE> TBL_CUSTOMER_IDENTI_MODE_TYPE { get; set; }
+        public virtual DbSet<TBL_EOD_OPERATION_LOG_DETAIL> TBL_EOD_OPERATION_LOG_DETAIL { get; set; }
         public virtual DbSet<TBL_CUSTOMER_IDENTIFICATION> TBL_CUSTOMER_IDENTIFICATION { get; set; }
         public virtual DbSet<TBL_CUSTOMER_MODIFICATION> TBL_CUSTOMER_MODIFICATION { get; set; }
         public virtual DbSet<TBL_CUSTOMER_MODIFICATN_TYPE> TBL_CUSTOMER_MODIFICATN_TYPE { get; set; }
@@ -194,6 +202,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CUSTOMER_SIGNATORY> TBL_CUSTOMER_SIGNATORY { get; set; }
         public virtual DbSet<TBL_CUSTOMER_TYPE> TBL_CUSTOMER_TYPE { get; set; }
         public virtual DbSet<TBL_DAILY_ACCRUAL> TBL_DAILY_ACCRUAL { get; set; }
+        public virtual DbSet<TBL_DAILY_ACCRUAL_TEMP> TBL_DAILY_ACCRUAL_TEMP { get; set; }
         public virtual DbSet<TBL_DAILY_ACCRUAL_CATEGORY> TBL_DAILY_ACCRUAL_CATEGORY { get; set; }
         public virtual DbSet<TBL_DAY_COUNT_CONVENTION> TBL_DAY_COUNT_CONVENTION { get; set; }
         public virtual DbSet<TBL_DAY_INTEREST_TYPE> TBL_DAY_INTEREST_TYPE { get; set; }
@@ -246,6 +255,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_APPLICATION_COLLATRL2> TBL_LOAN_APPLICATION_COLLATRL2 { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COLT2_LOG> TBL_LOAN_APPLICATION_COLT2_LOG { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COVENANT> TBL_LOAN_APPLICATION_COVENANT { get; set; }
+        public virtual DbSet<TBL_LOAN_CAMSOL_ARCHIVE> TBL_LOAN_CAMSOL_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETAIL> TBL_LOAN_APPLICATION_DETAIL { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_ARCH> TBL_LOAN_APPLICATION_DETL_ARCH { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_BG> TBL_LOAN_APPLICATION_DETL_BG { get; set; }
@@ -267,6 +277,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_BOOKING_REQUEST> TBL_LOAN_BOOKING_REQUEST { get; set; }
         public virtual DbSet<TBL_LOAN_BULK_INTEREST_REVIEW> TBL_LOAN_BULK_INTEREST_REVIEW { get; set; }
+        public virtual DbSet<TBL_DAILY_ACCRUAL_ARCHIVE> TBL_DAILY_ACCRUAL_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_CAMSOL> TBL_LOAN_CAMSOL { get; set; }
         public virtual DbSet<TBL_TEMP_LOAN_CAMSOL> TBL_TEMP_LOAN_CAMSOL { get; set; }
         public virtual DbSet<TBL_LOAN_CAMSOL_TYPE> TBL_LOAN_CAMSOL_TYPE { get; set; }

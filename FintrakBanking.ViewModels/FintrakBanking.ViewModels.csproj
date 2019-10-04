@@ -102,6 +102,7 @@
     <Compile Include="Credit\ChecklistSearchViewModel.cs" />
     <Compile Include="Credit\CollateralInsuranceRequestViewModel.cs" />
     <Compile Include="Credit\DailyAccrualDetailViewModel.cs" />
+    <Compile Include="Credit\EODErrorLogDetailsViewModel.cs" />
     <Compile Include="Credit\Form3800BReportViewModel.cs" />
     <Compile Include="Credit\ClassifiedAssetManagementViewModel.cs" />
     <Compile Include="Credit\CollateralPerfectionyettoCommence.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Credit\LoanPaymentScheduleViewModel.cs" />
     <Compile Include="Credit\LoanPreliminaryEvaluationViewModel.cs" />
     <Compile Include="Credit\LoanPrincipalViewModel.cs" />
+    <Compile Include="Credit\LoanRecoveryPaymentViewModel.cs" />
     <Compile Include="Credit\OperationSignatoryViewModel.cs" />
     <Compile Include="Credit\OriginalDocumentReleaseViewModel.cs" />
     <Compile Include="Credit\ProjectSiteReportViewModel.cs" />
@@ -246,6 +248,7 @@
     <Compile Include="Setups\General\AccountSensitivityViewModel.cs" />
     <Compile Include="Setups\General\AccreditedConsultantsViewModel.cs" />
     <Compile Include="Setups\General\ActivityViewModel.cs" />
+    <Compile Include="Setups\General\AlertViewModel.cs" />
     <Compile Include="Setups\General\AuthorisedSignatoryViewModel.cs" />
     <Compile Include="Setups\General\BranchLimitViewModel.cs" />
     <Compile Include="Setups\General\BranchViewModel.cs" />
@@ -255,6 +258,7 @@
     <Compile Include="Setups\General\DocumentUploadViewModel.cs" />
     <Compile Include="Setups\General\EmployerType.cs" />
     <Compile Include="Setups\General\EmployerViewModel.cs" />
+    <Compile Include="Setups\General\LoanCamsolViewModel.cs" />
     <Compile Include="Setups\General\LoanRecoverySetupViewModel.cs" />
     <Compile Include="Setups\General\LocalGovtViewModel.cs" />
     <Compile Include="Setups\General\MonitoringSetupViewModel.cs" />

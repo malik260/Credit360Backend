@@ -400,6 +400,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal writtenOffAmount { get; set; }
         public bool passed { get; set; }
         public List<string> errorMessage { get; set; }
+        public string pricipalFrequencyTypeName { get; set; }
+        public string responsiblePerson { get; set; }
 
 
 
@@ -828,6 +830,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string interestRateAndFees { get; set; }
         public string loanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
+        public int? capRegionId { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
@@ -1080,6 +1083,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string currencyCode { get; set; }
 
         public string branchCode { get; set; }
+        public string applicationReferenceNumber { get; set; }
+        public int loanApplicationDetailId { get; set; }
 
         //public string currencyCode { get; set; }
         //referenceNumber = groupedQ.Key.PRODUCTCODE + '/' + groupedQ.Key.CURRENCYCODE + '/' + groupedQ.Key.BRANCHCODE + '/' + groupedQ.Key.COMPANYID.ToString(),
@@ -1312,6 +1317,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int collateralCustomerId { get; set; }
         public string valuationName { get; set; }
         public string valuationReason { get; set; }
+        public string createdByName { get; set; }
+        
     }
 
     public class AgeAnalysisViewModel

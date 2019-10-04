@@ -478,10 +478,94 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return overDraft;
         } //done
 
-        public List<LoanViewModel> BondAndGuarantee(DateTime startDate, DateTime endDate , int approvalStatus)
+        //public List<LoanViewModel> BondAndGuarantee(DateTime startDate, DateTime endDate , int approvalStatus)
+        //{
+        //    List<LoanViewModel> bondAndGuarantee = new List<LoanViewModel>();
+        //    if (approvalStatus == (int)LoanStatusEnum.Expired)
+        //    {
+        //        bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
+        //                            join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+        //                            join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+        //                            join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+        //                            join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
+        //                            join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+        //                            where a.ISTENORED == false && a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate
+        //                            && a.LOANSTATUSID == (int)LoanStatusEnum.Active && a.RELATED_LOAN_REFERENCE_NUMBER != string.Empty
+        //                            orderby a.MATURITYDATE descending
+
+        //                            select new LoanViewModel
+        //                            {
+
+        //                                applicationReferenceNumber = a.LOANREFERENCENUMBER,
+        //                                loanReferenceNumber = a.LOANREFERENCENUMBER,
+        //                                bookingDate = a.BOOKINGDATE,
+        //                                disburseDate = a.DISBURSEDATE,
+        //                                maturityDate = a.MATURITYDATE,
+        //                                principalAmount = a.CONTINGENTAMOUNT,
+        //                                exchangeRate = a.EXCHANGERATE,
+        //                                loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                                relationshipManagerId = a.RELATIONSHIPMANAGERID,
+        //                                relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+        //                                relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+        //                                relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+        //                                relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+        //                                relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+        //                                branchId = a.BRANCHID,
+        //                                branchName = br.BRANCHNAME,
+        //                                customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+        //                                loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+        //                                productName = p.PRODUCTNAME,
+        //                                productTypeName = pt.PRODUCTTYPENAME,
+        //                                outstandingPrincipal = a.CONTINGENTAMOUNT
+
+
+
+
+
+        //                                                }).ToList();
+
+        //        return bondAndGuarantee;
+        //    }
+        //    else
+        //    {
+
+        //         bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
+        //                                                join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+        //                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+        //                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+        //                                                where a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate && a.LOANSTATUSID == approvalStatus
+        //                                                orderby a.MATURITYDATE descending
+
+        //                                                select new LoanViewModel
+        //                                                {
+        //                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
+        //                                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
+        //                                                    bookingDate = a.BOOKINGDATE,
+        //                                                    disburseDate = a.DISBURSEDATE,
+        //                                                    maturityDate = a.MATURITYDATE,
+        //                                                    principalAmount = a.CONTINGENTAMOUNT,
+        //                                                    exchangeRate = a.EXCHANGERATE,
+        //                                                    loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                                                    relationshipManagerId = a.RELATIONSHIPMANAGERID,
+        //                                                    relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+        //                                                    relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+        //                                                    relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+        //                                                    relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+        //                                                    relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+        //                                                    branchId = a.BRANCHID,
+        //                                                    branchName = br.BRANCHNAME,
+        //                                                    customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+        //                                                    notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now)
+        //                                                }).ToList();
+        //        return bondAndGuarantee;
+        //    }
+        //} // to do
+
+
+        public List<LoanViewModel> BondAndGuarantee(DateTime startDate, DateTime endDate, int facilityStatusId)
         {
             List<LoanViewModel> bondAndGuarantee = new List<LoanViewModel>();
-            if (approvalStatus == (int)LoanStatusEnum.Expired)
+            if (facilityStatusId == -1) // expired facility
             {
                 bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
                                     join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
@@ -518,45 +602,45 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                         productTypeName = pt.PRODUCTTYPENAME,
                                         outstandingPrincipal = a.CONTINGENTAMOUNT
 
-                                       
-                                                            
 
 
-                                                        }).ToList();
+
+
+                                    }).ToList();
 
                 return bondAndGuarantee;
             }
             else
             {
 
-                 bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
-                                                        join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
-                                                        join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
-                                                        join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                                        where a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate && a.LOANSTATUSID == approvalStatus
-                                                        orderby a.MATURITYDATE descending
+                bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
+                                    join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
+                                    join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                                    join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
+                                    where a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate && a.LOANSTATUSID == facilityStatusId
+                                    orderby a.MATURITYDATE descending
 
-                                                        select new LoanViewModel
-                                                        {
-                                                            applicationReferenceNumber = a.LOANREFERENCENUMBER,
-                                                            loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                                            bookingDate = a.BOOKINGDATE,
-                                                            disburseDate = a.DISBURSEDATE,
-                                                            maturityDate = a.MATURITYDATE,
-                                                            principalAmount = a.CONTINGENTAMOUNT,
-                                                            exchangeRate = a.EXCHANGERATE,
-                                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
-                                                            relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
-                                                            relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
-                                                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
-                                                            relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
-                                                            relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
-                                                            branchId = a.BRANCHID,
-                                                            branchName = br.BRANCHNAME,
-                                                            customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
-                                                            notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now)
-                                                        }).ToList();
+                                    select new LoanViewModel
+                                    {
+                                        applicationReferenceNumber = a.LOANREFERENCENUMBER,
+                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                        bookingDate = a.BOOKINGDATE,
+                                        disburseDate = a.DISBURSEDATE,
+                                        maturityDate = a.MATURITYDATE,
+                                        principalAmount = a.CONTINGENTAMOUNT,
+                                        exchangeRate = a.EXCHANGERATE,
+                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                        relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                        relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.LASTNAME,
+                                        relationshipManagerEmail = a.TBL_STAFF1.EMAIL,
+                                        relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                        relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME,
+                                        relationshipOfficerEmail = a.TBL_STAFF.EMAIL,
+                                        branchId = a.BRANCHID,
+                                        branchName = br.BRANCHNAME,
+                                        customerName = cs.FIRSTNAME + " " + cs.MAIDENNAME + " " + cs.LASTNAME,
+                                        notificationDuration = (int)DbFunctions.DiffDays((DateTime?)a.MATURITYDATE, (DateTime?)DateTime.Now)
+                                    }).ToList();
                 return bondAndGuarantee;
             }
         } // to do

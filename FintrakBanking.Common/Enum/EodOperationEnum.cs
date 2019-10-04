@@ -19,6 +19,7 @@ namespace FintrakBanking.Common.Enum
         UpdateLoanApplicationCovenant = 9,
         UpdateLoanClassification = 10,
         DailyWrittenOffFacilityAccrual = 11,
+        ProcessDailyFeeAccrual = 12,
     }
 }
 

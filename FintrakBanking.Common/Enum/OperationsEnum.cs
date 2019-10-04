@@ -51,7 +51,6 @@ namespace FintrakBanking.Common.Enum
         LoanBookingFeeOveride = 40,
         BondsAndGuarantees = OfferLetterApproval,
         DefferedChecklistApproval = 42,
-        WaivedChecklistApproval = 148,
         CustomerInformationApproval = 44,
         OverrideRequest = 43,
         LoanReviewApprovalApplication = 45,
@@ -111,17 +110,22 @@ namespace FintrakBanking.Common.Enum
         GlobalInterestRateChange=100,
         CustomerGroupMapping = 101,
         DeleteStaff = 102,
+        UserAccountStatusChange = 103,
         ContingentLiabilityTerminateAndRebook = 104,
         CancelContingentLiability = 105,
-        UserAccountStatusChange = 103,
         ContingentLiabilityAmountAddition = 106,
+        APS_RelaseChecklist = 107,
+        APS_ReleaseCAP = 108,
+        APS_ReleasePrincipaRequest = 109,
         FinalCollateralRelease = 110,
         TemporalCollateralRelease = 111,
-        APS_RelaseChecklist = 107,
-        APS_ReleaseCAP =108,
-        APS_ReleasePrincipaRequest =109,
         DailyWriteoffInterestAccural = 112,
         LoanRecoveryPayment = 113,
+        LoanRecoveryCompletion = 114,
+        FullAndFinalCompleteWriteOff = 115,
+        LmsOperations = 116,
+        EarnUnEarnedFee = 117,
+
         //
         AdhocApproval = 133,
         OriginalDocumentApproval = 134,
@@ -137,8 +141,16 @@ namespace FintrakBanking.Common.Enum
         CreditCardsSalaryBacked = 145,
         CreditCardsCleanCards = 146,
         SecurityRelease = 147,
-        InitiationLevelAppraisal = 148,
+        WaivedChecklistApproval = 148,
+        //InitiationLevelAppraisal = 148,   //this has to be changed, using an existing enum
         CallMemo = 150,
+
+        //New Id's for existing Enumn that were edited
+
+        AnnualReview = 200,
+        IndictiveTermsheet = 201,
+        CreditCardsCashBacked = 202,
+
 
     }
 

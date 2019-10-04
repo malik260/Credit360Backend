@@ -509,7 +509,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public int customerId { get; set; }
         public bool differInsurancePolicy { get; set; }
-        public string policyState { get; set; }
+        public string policyStateId { get; set; }
         public string companyAddress { get; set; }
         public int? prevoiusInsuranceId { get; set; }
     }
