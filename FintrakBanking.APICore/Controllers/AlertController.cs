@@ -12,6 +12,7 @@ using System.Web.Http;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Web;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -86,6 +87,55 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("alert-title/{id}")]
+        public HttpResponseMessage UpdateAlertTitle([FromUri] int id, [FromBody] AlertViewModel entity)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = _token.GetBranchId,
+                    companyId = _token.GetCompanyId,
+                    createdBy = _token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+
+                var data = _repo.UpdateAlertTitle(id, entity, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updateding this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updateding this record {e.Message}" });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("alert-title/{id}")]
+        public HttpResponseMessage DeleteOriginalDocumentApproval(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = _token.GetBranchId,
+                companyId = _token.GetCompanyId,
+                createdBy = _token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = _repo.DeleteAlertTitle(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
         #endregion
 
