@@ -651,7 +651,7 @@ namespace FintrakBanking.Repositories.Risk
                 controlOptionId = entity.CONTROLOPTIONID,
                 racCategoryTypeId = entity.RACCATEGORYTYPEID,
                 showAtDrawDown = entity.SHOWATDRAWDOWN,
-                requireComment = entity.REQUIRECOMMENT,
+                requireComment = entity.REQUIRECOMMENT.Value,
                 currencyId = entity.CURRENCYID,
                 currencyType = entity.CURRENCYTYPE,
                 isRacTierControlKey=entity.ISRACTIERCONTROLKEY,

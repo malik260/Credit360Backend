@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime LASTVALUATIONDATE { get; set; }
 
-        public DateTime? NEXTVALUATIONDATE { get; set; }
+        //public DateTime? NEXTVALUATIONDATE { get; set; }
 
 
         public short? VALUERID { get; set; }
