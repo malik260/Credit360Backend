@@ -1,7 +1,7 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Credit;
-//using FintrakBanking.Repositories.Credit;
+using FintrakBanking.Repositories.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using System;
 using System.Collections.Generic;

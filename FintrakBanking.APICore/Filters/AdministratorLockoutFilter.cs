@@ -1,6 +1,5 @@
 ﻿using FintrakBanking.Entities.Models;
 using FintrakBanking.Repositories.Setups.General;
-//using FintrakBanking.Repositories.Setups.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
