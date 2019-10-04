@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return alert;
         }
 
-        public bool AddAlertTitle(AlertViewModel model)
+        public bool AddAlertTitle(AlertViewModel model) 
         {
             var entity = new TBL_ALERT_TITLE
             {
