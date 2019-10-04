@@ -120,11 +120,18 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string amountDisbursedHolder = "@{{AmountDisbursed}}";
         private readonly string amountPaidSoFarHolder = "@{{AmountPaidSoFar}}";
         private readonly string amountProposedHolder = "@{{AmountProposed}}";
-
         private readonly string customerTurnoverHolder = "@{{CustomerTurnover}}";
 
-        // for output document
+        // for output document 
         private readonly string memoHolder = "@{{memoData}}";
+        private readonly string facilityUpgradeSupportSchemeHolder = "@{{facilityUpgradeSupportSchemeData}}";
+        private readonly string invoiceDiscountingDataHolder = "@{{invoiceDiscountingData}}";
+        private readonly string cashCollaterizedDataHolder = "@{{cashCollaterizedData}}";
+        private readonly string temporaryOverdraftHolder = "@{{temporaryOverdraftData}}";
+        private readonly string staffCarLoansDataHolder = "@{{staffCarLoansData}}";
+        private readonly string staffMortgageLoansDataHolder = "@{{staffMortgageLoansData}}";
+        private readonly string staffPersonalLoansAGMDataHolder = "@{{staffPersonalLoansAGMData}}";
+        private readonly string staffPersonalLoanDataHolder = "@{{staffPersonalLoanData}}";
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -265,6 +272,17 @@ namespace FintrakBanking.Repositories.Credit
         private string othersPerfected7;
         private string othersDeferred7;
 
+        // out ducument properties definition
+        private string memoData;
+        private string facilityUpgradeSupportSchemeData;
+        private string invoiceDiscountingData;
+        private string cashCollaterizedData;
+        private string staffcarLoansData;
+        private string staffMortgageLoansData;
+        private string staffPersonalLoansAGMData;
+        private string staffPersonalLoanData;
+        private string temporaryOverdraftData;
+
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
         {
@@ -333,12 +351,18 @@ namespace FintrakBanking.Repositories.Credit
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
-
-
-
-
-
-            }
+               
+                this.memoData = MemoMarkupHtml();
+                this.facilityUpgradeSupportSchemeData = FacilityUpgradeSupportSchemeHtml();
+                this.invoiceDiscountingData = InvoiceDiscountingHtml();
+                this.cashCollaterizedData = CashCollaterizedHtml();
+                this.staffcarLoansData = StaffCarLoansHtml();
+                this.staffMortgageLoansData = StaffMortgageLoansHtml();
+                this.staffPersonalLoansAGMData = StaffPersonalLoanAGMHtml();
+                this.staffPersonalLoanData = StaffPersonalLoanHtml();
+                this.temporaryOverdraftData = TemporaryOverdraftHtml();
+                
+    }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
             {
@@ -384,7 +408,15 @@ namespace FintrakBanking.Repositories.Credit
                 this.securityAnalysis = this.GetSecurityAnalysisMarkUP();
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
 
-
+                // out ducument properties definition
+                /*this.memoData = MemoMarkupHtml();
+                this.facilityUpgradeSupportSchemeData = Fa;
+                this.invoiceDiscountingData;
+                this.cashCollaterizedData;
+                this.staffcarLoansData;
+                this.staffMortgageLoansData;
+                this.staffPersonalLoansAGMData;
+                this.staffPersonalLoanData;*/
 
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrApplication.APPLICATIONREFERENCENUMBER);
@@ -2640,6 +2672,18 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(amountPaidSoFarHolder, amountPaidSoFar);
             content = content.Replace(amountProposedHolder, amountProposed);
 
+            // for output document          
+            content = content.Replace(memoHolder, memoData);
+            content = content.Replace(facilityUpgradeSupportSchemeHolder, facilityUpgradeSupportSchemeData);
+            content = content.Replace(invoiceDiscountingDataHolder, invoiceDiscountingData);
+            content = content.Replace(cashCollaterizedDataHolder, cashCollaterizedData);
+            content = content.Replace(staffCarLoansDataHolder, staffcarLoansData);
+            content = content.Replace(staffMortgageLoansDataHolder, staffMortgageLoansData);
+            content = content.Replace(staffPersonalLoansAGMDataHolder, staffPersonalLoansAGMData);
+            content = content.Replace(staffPersonalLoanDataHolder, staffPersonalLoanData);
+            content = content.Replace(temporaryOverdraftHolder, temporaryOverdraftData);
+
+
             return content;
         }
 
@@ -3101,14 +3145,14 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        private string MemoMarkupHtml()
+        public string MemoMarkupHtml()
         {
             var result = String.Empty;
             var n = 0;
             result = result + $@"
                 <br />
                 <h3><b>MEMO</b></h3>
-                <table border=1 width=700 cellpadding=15 cellspacing=0>
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <td><b>Date</b></td>
                         <td></td>
@@ -3153,7 +3197,7 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        private string FacilityUpgradeSupportSchemeHtml()
+        public string FacilityUpgradeSupportSchemeHtml()
         {
             var result = String.Empty;
             var n = 0;
@@ -3162,7 +3206,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (FACILITY UPGRADE SUPPORT SCHEME)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -3202,7 +3246,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>School Fees Information</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <td>Total No of Pupils</td>
                         <td>----------------------</td>
@@ -3235,7 +3279,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -3269,7 +3313,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Account Activity with Current (Major) Banker per period of 6 months</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Period (e.g. Jan 08 to Mar 09)</b></th>
                         <th><b>Debits</b></th>
@@ -3624,14 +3668,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -3654,7 +3698,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
+                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -3859,9 +3903,7 @@ namespace FintrakBanking.Repositories.Credit
                      </tr> 
                      <tr>
                         <td colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        
                     </tr> 
                     <tr>
                         <td>Loan Application Form</td>
@@ -3959,7 +4001,7 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        private string InvoiceDiscountingHtml()
+        public string InvoiceDiscountingHtml()
         {
             var result = String.Empty;
             var n = 0;
@@ -3968,7 +4010,7 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -4030,7 +4072,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -4064,7 +4106,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>6 Months Activity with Current (Major) Banker</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Month</b></th>
                         <th><b>Debits</b></th>
@@ -4138,14 +4180,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -4168,7 +4210,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
+                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -4361,9 +4403,7 @@ namespace FintrakBanking.Repositories.Credit
                                      
                      <tr>
                         <td colspan='4'></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        
                     </tr> 
                     <tr>
                         <td>Acceptance of Domiciliation Agreements</td>
@@ -4431,9 +4471,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                      <tr>
                         <td colspan='4'></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                       
                     </tr> 
                      <tr>
                         <td>Facility Maximum Tenor</td>
@@ -4481,7 +4519,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=500 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='4'><strong>Documentation Checklist</strong></th>                     
                     </tr> 
@@ -4570,16 +4608,16 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        private string CashCollaterizedHtml()
+        public string CashCollaterizedHtml()
         {
             var result = String.Empty;
             var n = 0;
             result = result + $@"
                 <br /><h4><b>Access Bank Plc RC 125384</b></h4><br/>
-                <h3><b>CREDIT PROGRAM SHEET (INVOICE DISCOUNTING CREDIT PROGRAM)</b></h3>
+                <h3><b>CREDIT PROGRAM SHEET (CASH COLLATERIZED)</b></h3>
                 <br />
                 <h4><b>Customer Information</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td>Borrower</td>
                         <td colspan='3'>------------------------------------------</td>
@@ -4618,7 +4656,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>Customer Facilities as @ xx/xx/xxxx</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th><b>Facility</b></th>
                         <th><b>Amount (‘000)</b></th>
@@ -4659,7 +4697,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>12 Months Activity with Current (Major) Banker</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='2'><b>Month</b></th>
                         <th><b>Debits</b></th>
@@ -4775,14 +4813,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
                         <td></td>
@@ -4805,7 +4843,7 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Price:</strong></td>
-                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
+                        <td><table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Interest Rate:</strong></td>
                         <td></td>
@@ -4950,9 +4988,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>                                                   
                      <tr>
                         <td colspan='4'><strong>RECOMMENDATION:</strong></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        
                     </tr> 
                     <tr>
                         <td colspan='4'>Based on the foregoing, we hereby recommend………………………..</td>                   
@@ -4961,7 +4997,7 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=500 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></th>                     
                     </tr> 
@@ -5044,14 +5080,14 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        private string TemporaryOverdraftHtml()
+        public string TemporaryOverdraftHtml()
         {
             var result = String.Empty;
             var n = 0;
             result = result + $@"
                 <h3><b>MEMO</b></h3>
                 <br />
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td colspan=2><strong>TEMPORARY OVERDRAFT (TOD)</strong></td>
                         <td></td>
@@ -5075,162 +5111,499 @@ namespace FintrakBanking.Repositories.Credit
                         <td>XXXXXXXX</td>
                     </tr> 
                     <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
+                        <td>Nature of Business:</td>
+                        <td>XXXXXXXX</td>
                     </tr>  
                    <tr>
-                       <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
+                        <td>Promoter/M.D. of Company:</td>
+                        <td>XXXXXXXX</td>
                     </tr> 
                     <tr>
-                       <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
+                        <td>Account No:</td>
+                        <td>XXXXXXXX</td>
+                    </tr> 
+                     <tr>
+                        <td>Book Balance:</td>
+                        <td>XXXXXXXX</td>
+                    </tr> 
+                     <tr>
+                        <td>Available Balance:</td>
+                        <td>XXXXXXXX</td>
+                    </tr> 
+                     <tr>
+                        <td>Unavailable Balance: </td>
+                        <td>XXXXXXXX</td>
                     </tr> 
                  ";
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>12 Months Activity with Current (Major) Banker</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     
+                   <tr>
+                        <td><strong>New Request:</strong></td>
+                        <td>New</td>
+                        <td><strong>Amount:</strong></td>
+                        <td>N XXXXXXXX TOD</td>
+                    </tr> 
+                    <tr>
+                        <td><strong>Interest Rate:</strong></td>
+                        <td>X p.a.</td>
+                        <td><strong>Tenor:</strong></td>
+                        <td>Maximum of 30 days in a year</td>
+                    </tr> 
+
+                   <tr>
+                        <td><strong>Fee:</strong></td>
+                        <td>As approved</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td><strong>Reason for this request:</strong></td>
+                        <td colspan=3></td>
+                    </tr> 
+                    
+                 ";
+            result = result + $"</table>";          
+            result = result + $@"
+                <br />
+                <h4><b>3 MONTHS ACTIVITY:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                   <tr>
+                        <td>Month</td>
+                        <td>Debits</td>
+                        <td>Credits</td>
+                    </tr> 
+                   <tr>
+                        <td>Jul</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Aug</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Sept</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4>Collateral/Support/Justification:</h4>
+                <p><ul><li>List the supporting documents and their perfection status.</li></ul></p>
+                <br />
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     
+                   <tr>
+                        <td colspan='2'><strong>APPROVAL INFORMATION</strong></td>                     
+                    </tr> 
+                    <tr>
+                        <td><strong>Name</strong></td>
+                        <td><strong>SIGNATURE</strong></td>
+                    </tr> 
+                   <tr>
+                        <td><strong>Relationship Officer.</strong></td>
+                        <td>_______________</td>
+                    </tr> 
+                    <tr>
+                        <td><strong>Relationship Manager.</strong></td>
+                        <td>_______________</td>
+                    </tr> 
+                     <tr>
+                        <td><strong>Zonal/Group Head</strong></td>
+                        <td>_______________</td>
+                    </tr> 
+                    <tr>
+                        <td><strong>Zonal/Group Head</strong></td>
+                        <td>_______________</td>
+                    </tr> 
+                     <tr>
+                        <td><strong>Credit Risk Mgt.</strong></td>
+                        <td>_______________</td>
+                    </tr> 
+                    <tr>
+                        <td><strong>APPROVAL	Executive Director</strong></td>
+                        <td>_______________</td>
+                    </tr>  
+                    <tr>
+                        <td>GDMD</td>
+                        <td>_______________</td>
+                    </tr>  
+                    <tr>
+                        <td>GMD</td>
+                        <td>_______________</td>
+                    </tr>  
+                   ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                   <tr>
+                        <td COLSPAN=2>ATTESTATION: I hereby undertake to sponsor the TOD based on my expert knowledge of the customer and his business, and state that I would be personally responsible in ensuring repayment in line with approved terms.</td>
+                        
+                    </tr> 
+                    <tr>
+                        <td><strong>Signature & Date<strong></td>
+                        <td>__________________</td>
+                    </tr>                  
+                 ";
+            result = result + $"</table>";    
+            return result;
+        }
+
+        public string StaffCarLoansHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
+                <h3><b>Staff Car Loan Scheme – Facility Approval Memo</b></h3>
+                <br />
+                <h3><b>Staff Information</b></h3>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Staff’s Name</td> 
+                        <td>------------------</td>
+                        <td>Level/ Designation: </td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Supervisor’s Name:</td>
+                        <td>-----------------</td>
+                        <td>Level/ Designation</td>
+                        <td>-------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>Borrower’s Residential Address</td>
+                        <td colspan=3>-----------------</td>
+                       
+                    </tr>
+                   <tr>
+                        <td>Branch / Unit:</td>
+                        <td>-----</td>
+                        <td>Group: </td>
+                        <td>Division: </td>                     
+                    </tr> 
+                     <tr>
+                        <td>Date of Employment:</td>
+                        <td>---------------------</td>
+                        <td>Employment Status</td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>No. Of years in Access Bank:</td>
+                        <td>----------------</td>
+                        <td>Total No. of years in Employment</td>
+                        <td>---------------</td>
+                        
+                    </tr>    
+                    <tr>
+                        <td>Account Number:</td>
+                        <td>-------------</td>
+                        <td>Loan Tenor: ---Five (5) Years</td>
+                        <td>--------------</td>
+                    </tr>
+                   <tr>
+                        <td>Car Amount:</td>
+                        <td>₦------------------------</td>
+                        <td>(Amount in words</td>
+                        <td>-----------------------)</td>
+                        
+                    </tr>    
+                     <tr>
+                        <td>Car Loan Limit:</td>
+                        <td>------------------</td>
+                        <td>(Amount in words</td>
+                        <td>₦-------------------)</td>
+                    </tr>
+                   <tr>
+                        <td>Facility Amount:</td>
+                        <td>₦-----------------------</td>
+                        <td>(Amount in words</td>
+                        <td>-----------------------)</td>
+                        
+                    </tr>    
+                     <tr>
+                        <td><strong>Sex:</strong></td>
+                        <td><input type='checkbox' name='Male' value='Male'> Male
+                            <input type='checkbox' name='Female' value='Female'> Female</td>
+                        <td>Email Address:</td>
+                        <td>-----------------</td>
+                    </tr>
+                   <tr>
+                        <td></td>
+                        <td></td>
+                        <td valign='top'>Office</td>
+                        <td valign='top'>Personal</td>
+                        
+                    </tr>  
+                    <tr>
+                        <td>Telephone numbers:</td>
+                        <td>-----------------</td>
+                        <td>-----------------</td>
+                        <td>-----------------</td>
+                        
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td valign='top'>Office</td>
+                        <td valign='top'>Home</td>
+                        <td valign='top'>Mobile</td>
+                        
+                    </tr>  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>To be completed by HR Only</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
+                        <td>---------------</td>
+                        <td colspan=2>(indicate OK or NOT OK)</td>
+                    </tr> 
+                    <tr>
+                        <td>Basic Salary:</td>
+                        <td>---------------------------------</td>
+                        <td>Debt Service Ratio (including new loan)</td>
+                        <td>-------------%</td>               
+                    </tr>  
+                   <tr>
+                       <td>Status of Employment ((Un)Confirmed):</td>
+                        <td>----------------------------</td>
+                        <td><strong>Age:</strong></td>
+                        <td>---------------</td>               
+                    </tr> 
+                    <tr>
+                       <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td valign='top'>(Indicate OK or NOT OK)</td>
+                    </tr> 
+                    <tr>
+                       <td colspan=3>Disciplinary case (Warning Letter / Suspension in the past six (6) months):</td>
+                        <td>Yes<input type='checkbox' name='Yes' value='Yes'> 
+                            No<input type='checkbox' name='No' value='No'></td>
+                    </tr> 
+                    <tr>
+                        <td>Fast Track:</td>
+                        <td>Yes<input type='checkbox' name='Yes' value='Yes'> 
+                            No<input type='checkbox' name='No' value='No'></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Outstanding Amount (‘000)</b></th>
+                        <th><b>Maturity Date</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Monthly Repayment</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Approved Amount</b></th>
+                        <th><b>Date of Last Repayment</b></th>
+                        <th><b>Security</b></th>
+                   </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
                 <table border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
-                        <th colspan='2'><b>Month</b></th>
-                        <th><b>Debits</b></th>
-                        <th><b>Credits</b></th>
-                        <th><b>Returned Cheque</b></th>
-                    </tr> 
+                        <th><b>Month</b></th>
+                        <th><b>Debit</b></th>
+                        <th><b>Credit</b></th>
+                        <th><b>EOM Balance</b></th>
+                        <th><b>Returned Cheques</b></th>
+                   </tr> 
                    <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr> 
                     <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr>  
-                   <tr>
-                       <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr> 
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>   
                     <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr> 
-                    <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr>  
-                   <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr> 
-                    <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr> 
-                    <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr>  
-                   <tr>
-                       <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr> 
-                    <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr> 
-                    <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr>  
-                   <tr>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                        <td>---------------</td>
-                    </tr> 
-                    <tr>
-                       <td colspan='2'>Current Book Balance</td>
-                        <td colspan='3'>------------------------------------------------------</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr> 
                      <tr>
-                       <td colspan='2'>Average Monthly Credit Turnover</td>
-                        <td colspan='3'>------------------------------------------------------</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr> 
                      <tr>
-                       <td colspan='2'><b>Other Bankers/Age</b></td>
-                        <td colspan='3'>------------------------------------------------------</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr> 
                      <tr>
-                       <td colspan='2'>Existing Facility Type/Maturity</td>
-                        <td colspan='3'>------------------------------------------------------</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr> 
                      <tr>
-                       <td colspan='2'>Security/Support</td>
-                        <td colspan='3'>------------------------------------------------------</td>
+                        <td><strong>Total</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr> 
+                    <tr>
+                        <td><strong>Average</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Outstanding Amount (‘000)</b></th>
+                        <th><b>Maturity Date</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Monthly Repayment</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>                     
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
                  ";
             result = result + $"</table>";
             result = result + $@"
                 <br />
                 <h4><b>CURRENT REQUEST:</b></h4>
-                <table border=1 width=700 cellpadding=10 cellspacing=0>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
                     
                    <tr>
                         <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
                     </tr> 
                      <tr>
                         <td>
-                        <table border=1 width=500 cellpadding=10 cellspacing=0>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
                         <tr>
                         <td><strong>Facility Type:</strong></td>
-                        <td></td>
+                        <td>Car Loan</td>
                         </tr>
                         <tr>
                         <td><strong>Facility Amount:</strong></td>
-                        <td></td>
+                        <td>NGN</td>
                         </tr>
                         <tr>
                         <td><strong>Purpose:</strong></td>
@@ -5238,33 +5611,25 @@ namespace FintrakBanking.Repositories.Credit
                         </tr>
                         <tr>
                         <td><strong>Tenor:</strong></td>
-                        <td></td>
+                        <td>5 years (60 months)</td>
                         </tr>
                         <tr>
                         <td><strong>Repayment Plan</strong></td>
                         <td></td>
                         </tr>
                         <tr>
-                        <td><strong>Price:</strong></td>
-                        <td><table border=1 width=300 cellpadding=10 cellspacing=0>
-                        <tr>
                         <td><strong>Interest Rate:</strong></td>
-                        <td></td>
+                        <td>5% p.a.</td>
                         </tr>
                         <tr>
-                        <td><strong>Management Fees:</strong></td>
-                        <td></td>
-                        </tr>
-                         <tr>
-                        <td><strong>COT</strong></td>
-                        <td></td>
-                        </tr>
-                        </table></td>
+                        <td><strong>Positive Credit Check Reports:</strong> </td>
+                        <td>CRMS and two (2) other Credit Bureaus
+                        </td>
                         </tr>
                         <tr>
-                        <td><strong>Security/Support:</strong> </td>
-                        <td><ul><li>Cash Collateral in the currency of obligation. In cases where cash collateral is in a currency other than obligation currency, facility shall not exceed 90% of cash collateral. </li> 
-                                <li>At maturity of facility, cash collateral should be liquidated into the account to clean up any shortfall in account position.</li>           
+                        <td><strong>Disbursement:</strong> </td>
+                        <td><ul><li>Original Car particulars and spare key Staff’s salaries, allowances and other emoluments. </li> 
+                                <li>Comprehensive Insurance Cover on Car financed with The Bank noted as First Loss Payee.</li>           
                                 </ul>
                         </td>
                         </tr>
@@ -5273,13 +5638,25 @@ namespace FintrakBanking.Repositories.Credit
                     </tr> 
 
                      <tr>
-                        <td><strong>BACKGROUND INFORMATION ON THE OBLIGOR</strong> (including the mitigation of all risks analyzed in the credit program as well as any identified risk peculiar to the obligor).</td>
+                        <td><strong>Background Information On The Obligor:</strong> </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Current Request:</strong> </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rationale for Current Request:</strong> </td>
                     </tr>
                      <tr>
-                        <td><strong>ATTESTATION:</strong><br/> 
-                            I, ……………………………...attest to the integrity of the Promoter................................having known him/her for at least ........years. 
-	
-                            <br/><strong>Signature & Date</strong>	
+                        <td><strong><hr>Conditions Precedent To Drawdown:</strong><br/> 
+                           Conditions precedent to drawdown shall include but shall not be limited to the following
+                            <ul>                           
+                                <li>Duly approved Staff Car Loan FAM.</li>
+                                <li> Duly accepted Offer Letter</li>
+                                <li> Pro-forma invoice obtained from an acceptable vendor and duly endorsed by designated officer in Procurement Unit.</li>
+                                <li>Signed letter of set-off, letter of undertaking and irrevocable transfer of ownership.</li>
+                                <li>Positive Credit Check Report from CRMS and two (2) Credit Bureaus.</li>
+                                <li> Where required, Equitable Contribution must be in place prior to loan drawdown</li>
+                            </ul>
                         </td>
                     </tr> 
                    
@@ -5287,7 +5664,92 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>CONCURRENCES:</b></h4>
+                <h4><b>Risk Acceptance Criteria (RAC) – Staff Car Loans</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Description</b></th>
+                        <th><b>Required</b></th>
+                        <th><b>Actual</b></th>
+                        <th><b>Exception (Y/N)</b></th>
+                    </tr> 
+                   <tr>
+                        <td>Minimum years as Access Bank staff </td>
+                        <td>Upon confirmation</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Maximum Loan Amount</td>
+                        <td>4 times staff annual basic salary subject to 33.33 DSR.</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Global Limit</td>
+                        <td>Aggregate value of all staff loan types shall not exceed 2.5% of the Bank’s total loan portfolio.</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Employment Status</td>
+                        <td>Confirmed</td>
+                        <td></td>
+                        <td></td>
+                    </tr>   
+                     <tr>
+                        <td>Qualifying Grade</td>
+                        <td>ET and above</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   <tr>
+                        <td>Minimum Appraisal Rating</td>
+                        <td>“B”</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Overall Debt Service Ratio (DSR)</td>
+                        <td>33.33% of staff’s basic income</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Good Credit Checks</td>
+                        <td>From CRMS & 2 other Credit Bureaus</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Maximum Tenor</td>
+                        <td>60 Months</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Car Loan within the last 60 months</td>
+                        <td>None</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Nature of employment</td>
+                        <td>Professional staff</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Line ED’s Approval</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+           
+            result = result + $@"
+                <br />
+                <h4><b>Approval Information:</b></h4>
                 <table border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
@@ -5295,42 +5757,196 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>SIGNATURE & DATE</b></th>
                     </tr> 
                    <tr>
-                        <td>ACCOUNT OFFICER </td>
+                        <td>Staff / Applicant </td>
                         <td></td>
                         <td></td>
                     </tr> 
                    <tr>
-                        <td>TEAM LEAD /REL. MANAGER </td>
+                        <td>Staff’s Group Head </td>
                         <td></td>
                         <td></td>
                     </tr> 
                    <tr>
-                        <td>RETAIL SALES MANAGER</td>
+                        <td>HR Officer</td>
                         <td></td>
                         <td></td>
                     </tr> 
                     <tr>
-                        <td>ZONAL HEAD</td>
+                        <td>Group Head, CRM – PBD </td>
                         <td></td>
                         <td></td>
                     </tr>  
                     <tr>
-                        <td>PRODUCT MGT (HEAD)</td>
+                        <td>Group Head, Credit Admin & Portfolio Management</td>
                         <td></td>
                         <td></td>
                     </tr> 
-                  <tr>
-                        <td>GH, PRODUCT & CHANNELS MGT</td>
-                        <td></td>
-                        <td></td>
-                    </tr>  
                     <tr>
-                        <td>CREDIT RISK MANAGEMENT </td>
+                        <td>Approval: Group Head, Human Resources </td>
                         <td></td>
                         <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string StaffMortgageLoansHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
+                <h3><b>Staff Mortgage Loan Scheme – Facility Approval Memo</b></h3>
+                <br />
+                <h3><b>Staff Information</b></h3>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Staff’s Name</td> 
+                        <td>------------------</td>
+                        <td>Level/ Designation: </td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Supervisor’s Name:</td>
+                        <td>-----------------</td>
+                        <td>Level/ Designation</td>
+                        <td>-------------------</td>
                     </tr> 
                      <tr>
-                        <td><strong>APPROVAL:</strong></td>
+                        <td>Borrower’s Residential Address</td>
+                        <td colspan=3>--------------------</td>
+                       
+                    </tr>
+                   <tr>
+                        <td>Branch / Unit:</td>
+                        <td>--------------</td>
+                        <td>Group:---------------</td>
+                        <td>Division:-------------</td>
+                    </tr> 
+                     <tr>
+                        <td>Date of Employment:</td>
+                        <td>-------------------</td>
+                        <td>Employment Status</td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>No. Of years in Access Bank:</td>
+                        <td>-------------------</td>
+                        <td>Total No. of years in Employment</td>
+                        <td>--------------------</td>
+                        
+                    </tr>    
+                    <tr>
+                        <td>Account Number:</td>
+                        <td>----------------------</td>
+                        <td>Loan Tenor (max 10 years):</td>
+                        <td>----------------Years</td>
+                    </tr>
+                   <tr>
+                        <td>Property Value:</td>
+                        <td>₦------------------------</td>
+                        <td>(Amount in words</td>
+                        <td>-----------------------)</td>
+                        
+                    </tr>    
+                     <tr>
+                        <td>Mortgage Entitlement:</td>
+                        <td>₦--------------------------</td>
+                        <td>(Amount in words</td>
+                        <td>-------------------)</td>
+                    </tr>
+                   <tr>
+                        <td>Facility Amount:</td>
+                        <td>₦-----------------------</td>
+                        <td>(Amount in words</td>
+                        <td>-----------------------)</td>
+                        
+                    </tr>  
+                    <tr>
+                        <td>Agency Fee @ 5%:</td>
+                        <td>₦-----------------------</td>
+                        <td>(Amount in words</td>
+                        <td>-----------------------)</td>
+                        
+                    </tr>  
+                     <tr>
+                        <td><strong>Sex:</strong></td>
+                        <td><input type='checkbox' name='Male' value='Male'> Male
+                            <input type='checkbox' name='Female' value='Female'> Female</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Telephone numbers:</td>
+                        <td>-----------------------</td>
+                        <td>-----------------------</td>
+                        <td>-----------------------</td>
+                        
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td valign='top'>Office</td>
+                        <td valign='top'>Home</td>
+                        <td valign='top'>Mobile</td>
+                        
+                    </tr> 
+                     <tr>
+                        <td>eMail Address:</td>
+                        <td>-----------------------</td>
+                        <td></td>
+                        <td>-----------------------</td>
+                        
+                    </tr> 
+                   <tr>
+                        <td></td>
+                        <td valign='top'>Office</td>
+                        <td></td>
+                        <td valign='top'>Personal</td>
+                        
+                    </tr>  
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>To be completed by HR Only</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
+                        <td>---------------</td>
+                        <td colspan=2>(indicate OK or NOT OK)</td>
+                    </tr> 
+                    <tr>
+                        <td>Basic Salary:</td>
+                        <td>---------------------------------</td>
+                        <td>Debt Service Ratio (including new loan)</td>
+                        <td>-------------%</td>               
+                    </tr>  
+                   <tr>
+                       <td>Status of Employment ((Un)Confirmed):</td>
+                        <td>----------------------------</td>
+                        <td><strong>Age:</strong></td>
+                        <td>---------------</td>               
+                    </tr> 
+                    <tr>
+                       <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td valign='top'>(Indicate OK or NOT OK)</td>
+                    </tr> 
+                    <tr>
+                       <td colspan=3>Disciplinary case (Warning Letter / Suspension in the past six (6) months):</td>
+                        <td>Yes<input type='checkbox' name='Yes' value='Yes'> 
+                            No<input type='checkbox' name='No' value='No'></td>
+                    </tr> 
+                    <tr>
+                        <td>Fast Track:</td>
+                        <td>Yes<input type='checkbox' name='Yes' value='Yes'> 
+                            No<input type='checkbox' name='No' value='No'></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                     </tr> 
@@ -5338,108 +5954,153 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>CHECKLIST / ELIGIBILITY</b></h4>
-                <table border=1 width=900 cellpadding=10 cellspacing=0>
-                     
-                   <tr>
-                        <td colspan='4'><strong>TARGET MARKET SCREENING CRITERIA</strong></td>                     
-                    </tr> 
-                    <tr>
-                        <td></td>
-                        <td><strong>Required</strong></td>
-                        <td><strong>Actual</strong></td>
-                        <td><strong>Exception (Y/N)</strong></td>
+                <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Outstanding Amount (‘000)</b></th>
+                        <th><b>Maturity Date</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Monthly Repayment</b></th>
                     </tr> 
                    <tr>
-                        <td>Minimum years in business</td>
-                        <td>5</td>
-                        <td></td>
-                        <td></td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
                     </tr> 
                     <tr>
-                        <td>Current KYC doc</td>
-                        <td>Yes</td>
-                        <td></td>
-                        <td></td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
                     </tr> 
                     <tr>
-                        <td>100% cash collateral or </td>
-                        <td>Yes</td>
-                        <td></td>
-                        <td></td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
                     </tr> 
+                    
                     <tr>
-                        <td>Satisfactory Trade or Bank Checking/CBN CRMS system</td>
-                        <td>Yes</td>
-                        <td></td>
-                        <td></td>
-                    </tr>                                      
-                     <tr>
-                        <td colspan='4'><strong>RISK ACCEPTANCE CRITERIA</strong></td>
-                    </tr> 
-                    <tr>
-                        <td>Facility Maximum Tenor</td>
-                        <td>5 Years</td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td>Facility tenor not longer than cash collateral tenor</td>
-                        <td>Yes</td>
-                        <td></td>
-                        <td>No Deviation Allowed</td>
-                    </tr>                                                   
-                     <tr>
-                        <td colspan='4'><strong>RECOMMENDATION:</strong></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr> 
-                    <tr>
-                        <td colspan='4'>Based on the foregoing, we hereby recommend………………………..</td>                   
-                    </tr>                                    
-                   ";
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <table border=1 width=500 cellpadding=10 cellspacing=0>
+                <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
                      <tr>
-                        <th colspan='4'><strong>DOCUMENTATION CHECKLIST</strong></th>                     
-                    </tr> 
+                        <th><b>Facility Type</b></th>
+                        <th><b>Approved Amount</b></th>
+                        <th><b>Date of Last Repayment</b></th>
+                        <th><b>Security</b></th>
+                   </tr> 
                    <tr>
-                        <td>Offer Letter</td>
-                        <td>Yes</td>
-                        <td></td>
-                        <td></td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
                     </tr> 
-                   <tr>
-                        <td>Board Resolution accepting offer by persons authorized by the Board of Directors</td>
-                        <td>Yes</td>
-                        <td></td>
-                        <td></td>
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
                     </tr>  
                    <tr>
-                        <td>Letter of Lien/Set Off</td>
-                        <td>Yes</td>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Month</b></th>
+                        <th><b>Debit</b></th>
+                        <th><b>Credit</b></th>
+                        <th><b>EOM Balance</b></th>
+                        <th><b>Returned Cheques</b></th>
+                   </tr> 
+                   <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                     </tr> 
                     <tr>
-                        <td>Other Documents as may be required for each product</td>
-                        <td>In Place</td>
                         <td></td>
                         <td></td>
-                    </tr>  
-                   
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>   
                     <tr>
-                        <td>Overdrafts: 90% of cash collateral (where interest and fees are paid upfront), otherwise 80%</td>
-                        <td>90%</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td><strong>Total</strong></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                     </tr> 
                     <tr>
-                        <td>Bonds & Guarantees: 100% of cash collateral provided all fees are paid.</td>
-                        <td>100%</td>
+                        <td><strong>Average</strong></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                     </tr>                   
@@ -5447,7 +6108,199 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                 <br />
-                <h4><b>APPROVALS:</b></h4>
+                <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Outstanding Amount (‘000)</b></th>
+                        <th><b>Maturity Date</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Monthly Repayment</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>                     
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
+                    </tr> 
+                     <tr>
+                        <td>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Facility Type:</strong></td>
+                        <td>Mortgage Loan</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Facility Amount:</strong></td>
+                        <td>NGN</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Purpose:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Tenor:</strong></td>
+                        <td>10 years (120 months)</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Repayment Plan</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Interest Rate:</strong></td>
+                        <td>5% per annum in line with policy.</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Positive Credit Check Reports:</strong> </td>
+                        <td>Must be obtained from CRMS and two (2) other Credit Bureaus
+                        </td>
+                        </tr>
+                        <tr>
+                        <td><strong>Security/Support:</strong> </td>
+                        <td>
+                        </td>
+                        </tr>
+                        </table>
+                        </td>
+                    </tr> 
+
+                     <tr>
+                        <td><strong>Background Information On The Obligor:</strong> </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Current Request:</strong> </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rationale for Current Request:</strong> </td>
+                    </tr>
+                     <tr>
+                        <td><strong><hr>Conditions Precedent To Drawdown:</strong><br/> 
+                           Conditions precedent to drawdown shall include but shall not be limited to the following
+                            <ul>                           
+                                <li>Duly approved Staff Mortgage Loan Facility Approval Memo (FAM).</li>
+                                <li>Duly accepted Offer Letter</li>
+                                <li>All mortgage documents required to place Legal mortgage on the property financed.</li>
+                                <li>Signed letter of set-off</li>
+                                <li>Positive Credit Check Report from CRMS and two (2) other Credit Bureaus.</li>
+                                <li>Drawdown memo must be approved by CRM – PBD, The Legal Team in CRM, Drawdown Team and Treasury.</li>
+                            </ul>
+                        </td>
+                    </tr>                   
+            ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Risk Acceptance Criteria – Staff Mortgage Loan</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Description</b></th>
+                        <th><b>Required</b></th>
+                        <th><b>Actual</b></th>
+                        <th><b>Exception (Y/N)</b></th>
+                    </tr> 
+                   <tr>
+                        <td>Minimum years as Access Bank staff </td>
+                        <td>24 Months</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Maximum Loan Amount</td>
+                        <td>10 times annual staff Housing Allowance subject to 33.33% Debt Service ratio and retirement age of 60</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Global Limit</td>
+                        <td>Aggregate value of all staff loan types shall not exceed 2.5% of the Bank’s total loan portfolio.</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Qualifying Age</td>
+                        <td>55 years or lower (facility maturity shall not exceed retirement age – presently 60 years).</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   <tr>
+                        <td>Employment Status</td>
+                        <td>Confirmed</td>
+                        <td></td>
+                        <td></td>
+                    </tr>   
+                    <tr>
+                        <td>Qualifying Grade</td>
+                        <td>SM and Above</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Minimum Appraisal Rating</td>
+                        <td>“B”</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Overall Debt Service Ratio (DSR)</td>
+                        <td>33.33% of staff’s basic income</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Good Credit Checks</td>
+                        <td>Good Credit Checks from CRMS & 2 Others</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Maximum Tenor</td>
+                        <td>120 Months subject to the number of years as an employee and the retirement age of 60.</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Mortgage Loan within the last 120 months</td>
+                        <td>None</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Nature of employment</td>
+                        <td>Professional staff</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Line ED’s Approval</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Approval Information:</b></h4>
                 <table border=1 width=900 cellpadding=10 cellspacing=0>
                      <tr>
                         <th></th>
@@ -5455,33 +6308,1162 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>SIGNATURE & DATE</b></th>
                     </tr> 
                    <tr>
-                        <td>RELATIONSHIP OFFICER </td>
+                        <td>Staff / Applicant </td>
                         <td></td>
                         <td></td>
                     </tr> 
                    <tr>
-                        <td>RELATIONSHIP MANAGER </td>
+                        <td>Line Supervisor/ Group Head</td>
                         <td></td>
                         <td></td>
                     </tr> 
                    <tr>
-                        <td>GROUP HEAD</td>
+                        <td>Group Head, Human Resources</td>
                         <td></td>
                         <td></td>
                     </tr> 
                     <tr>
-                        <td>CREDIT RISK MANAGEMENT </td>
+                        <td>Group Head, CRM – PBD</td>
                         <td></td>
                         <td></td>
                     </tr>  
-                   
                     <tr>
-                        <td>APPROVAL </td>
+                        <td>Group Head, Credit Admin & Portfolio Management</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td><strong>Approval:</strong> Line ED </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td><strong>Approval:</strong> GMD </td>
                         <td></td>
                         <td></td>
                     </tr> 
                  ";
             result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h3><b>BOARD / BCC (for AGM & above):</b></h3>                           
+                 ";       
+            return result;
+        }
+
+        public string StaffPersonalLoanAGMHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
+                <h3><b>Staff Personal Loan Scheme – Facility Approval Memo</b></h3>
+                <br />
+                <h4><b>Staff Information</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Staff’s Name</td> 
+                        <td>-----------------------------</td>
+                        <td>Level/ Designation: </td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Supervisor’s Name:</td>
+                        <td>------------------------------</td>
+                        <td>Level/ Designation</td>
+                        <td>-------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>Borrower’s Residential Address</td>
+                        <td colspan=3>---------------------</td>                    
+                    </tr>
+                   <tr>
+                        <td>Branch / Unit:</td>
+                        <td>-------------</td>
+                        <td>Group:-------------</td>
+                        <td>Division:-----------</td>
+                    </tr> 
+                     <tr>
+                        <td>Date of Employment:</td>
+                        <td>-----------------------------------</td>
+                        <td>Employment Status</td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>No. Of years in Access Bank:</td>
+                        <td>-----------------------</td>
+                        <td>Total No. of years in Employment</td>
+                        <td>-----------------------</td>
+                        
+                    </tr>    
+                    <tr>
+                        <td>Account Number:</td>
+                        <td>----------------------</td>
+                        <td>Loan Tenor:</td>
+                        <td>----------------</td>
+                    </tr>
+                   <tr>
+                        <td>Facility Entitlement:</td>
+                        <td>₦------------------------</td>
+                        <td>(Amount in words</td>
+                        <td>-----------------------)</td>
+                        
+                    </tr>                       
+                    <tr>
+                        <td>Facility Amount:</td>
+                        <td>₦-----------------------</td>
+                        <td>(Amount in words</td>
+                        <td>-----------------------)</td>                      
+                    </tr>                    
+                     <tr>
+                        <td><strong>Sex:</strong></td>
+                        <td><input type='checkbox' name='Male' value='Male'> Male
+                            <input type='checkbox' name='Female' value='Female'> Female</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Telephone numbers:</td>
+                        <td>-----------------------</td>
+                        <td>-----------------------</td>
+                        <td>-----------------------</td>                     
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td valign='top'>Office</td>
+                        <td valign='top'>Home</td>
+                        <td valign='top'>Mobile</td>                     
+                    </tr> 
+                     <tr>
+                        <td>eMail Address:</td>
+                        <td>-----------------------</td>
+                        <td></td>
+                        <td>-----------------------</td>
+                        
+                    </tr> 
+                   <tr>
+                        <td></td>
+                        <td valign='top'>Office</td>
+                        <td></td>
+                        <td valign='top'>Personal</td>
+                        
+                    </tr>  
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>To be completed by HR Only</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
+                        <td>---------------</td>
+                        <td colspan=2>(indicate OK or NOT OK)</td>
+                    </tr> 
+                    <tr>
+                        <td>Basic Salary:</td>
+                        <td>-----------------</td>
+                        <td>Debt Service Ratio (including new loan)</td>
+                        <td>-------------%</td>               
+                    </tr>  
+                   <tr>
+                       <td>Status of Employment ((Un)Confirmed):</td>
+                        <td>------------</td>
+                        <td><strong>Age:</strong></td>
+                        <td>---------------</td>               
+                    </tr> 
+                    <tr>
+                       <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td valign='top'>(Indicate OK or NOT OK)</td>
+                    </tr> 
+                    <tr>
+                       <td colspan=3>Disciplinary case (Warning Letter / Suspension in the past six (6) months):</td>
+                        <td>Yes<input type='checkbox' name='Yes' value='Yes'> 
+                            No<input type='checkbox' name='No' value='No'></td>
+                    </tr> 
+                    <tr>
+                        <td>Fast Track:</td>
+                        <td>Yes<input type='checkbox' name='Yes' value='Yes'> 
+                            No<input type='checkbox' name='No' value='No'></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Outstanding Amount (‘000)</b></th>
+                        <th><b>Maturity Date</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Monthly Repayment</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Approved Amount</b></th>
+                        <th><b>Date of Last Repayment</b></th>
+                        <th><b>Security</b></th>
+                   </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Month</b></th>
+                        <th><b>Debit</b></th>
+                        <th><b>Credit</b></th>
+                        <th><b>EOM Balance</b></th>
+                        <th><b>Returned Cheques</b></th>
+                   </tr> 
+                   <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>   
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td><strong>Total</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td><strong>Average</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Outstanding Amount (‘000)</b></th>
+                        <th><b>Maturity Date</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Monthly Repayment</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>                     
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
+                    </tr> 
+                     <tr>
+                        <td>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Facility Type:</strong></td>
+                        <td>Personal Loan</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Facility Amount:</strong></td>
+                        <td>NGN</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Purpose:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Tenor:</strong> (2 years max for ET to SM and 4 years max for AGM and above):</td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Repayment Plan</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Interest Rate:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Positive Credit Check Reports:</strong> </td>
+                        <td>To be obtained from CRMS and two other Credit Bureaus
+                        </td>
+                        </tr>
+                        <tr>
+                        <td><strong>Security/Support:</strong> </td>
+                        <td><ul>
+                                <li>Staff salaries, allowances and other emoluments.</li>
+                                <li>Shares/ Stocks of **blue chip companies. Value of the collateral shall be determined by applying 30% discount on the
+                                    ‘market value’ of such shares/ stocks. Such collateral value must be adequate to cover full recovery of The Bank’s principal and also provide minimum of 12 months interest payment cover. The assessed market value of such shares shall be based on average value of such shares over a twelve (12) month period as indicated on the Stock Exchange Daily Official List (SEDOL) and shall also reflect the most current market perception of expected future performance of such shares on the Stock Exchange.
+                                    In addition, The Bank reserves the right to dispose of shares/ stocks pledged as collateral for Staff Loans should the value of such shares / stocks depreciate by over 30% and apply proceeds of such sale to liquidate the applicable loan(s). But before exercising this right, the staff shall be required to beefup the value of the collateral securing the loan to the level it was prior to the diminution in the values of the underlying shares/ stocks within forty-eight (48) hours.</li>
+                                <li>Cash backed (where applicable).</li>
+                            </ul>
+                         </td>
+                        </tr>
+                        </table>
+                        </td>
+                    </tr> 
+
+                     <tr>
+                        <td><strong>Background Information On The Obligor:</strong> </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Current Request:</strong> </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rationale for Current Request:</strong> </td>
+                    </tr>
+                     <tr>
+                        <td><strong><hr>Conditions Precedent To Drawdown:</strong><br/> 
+                           Conditions precedent to drawdown shall include, but not limited to the following:
+                            <ul>                           
+                                <li>Duly completed and signed Staff Loan Application Form.</li>
+                                <li>Duly approved Staff Personal Loan Facility Approval Memo (FAM).</li>
+                                <li>Duly accepted Offer Letter</li>
+                                <li>Where shares / stocks are used as collateral, evidence that such shares / stocks have been transferred to Marina Securities Ltd or any other stock broking firm approved by The Bank.</li>
+                                <li>Signed letter of set-off</li>
+                                <li>Positive Credit Check Report from CRMS and two (2) other Credit Bureaus.</li>
+                                <li>Drawdown memo must be approved by CRM – PBD, The Legal Team in Credit Admin and Portfolio Management Group, Credit Admin (Drawdown) and Treasury.</li>
+                            </ul>
+                        </td>
+                    </tr>                   
+            ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Risk Acceptance Criteria – Staff Personal Loan</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Description</b></th>
+                        <th><b>Required</b></th>
+                        <th><b>Actual</b></th>
+                        <th><b>Exception (Y/N)</b></th>
+                    </tr> 
+                   <tr>
+                        <td>Minimum years in The Bank </td>
+                        <td>Upon confirmation</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Maximum Loan Amount</td>
+                        <td><ul>
+                            <li><strong>ET - SM:</strong> Up to staff’s annual basic salary for two years subject to DSR not exceeding onethird of staff’s basic monthly salary.</li>
+                            <li><strong>AGM AND Above:</strong> Up to staff’s annual basic salary for four years subject to DSR not exceeding one-third of staff’s basic monthly / yearly salary.</li>
+                        </ul>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Global Limit</td>
+                        <td>Aggregate value of all staff loan types shall not exceed 2.5% of the Bank’s total loan portfolio.</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Security – Shares/ Stocks of blue chip companies.</td>
+                        <td>100% secured with shares of blue chips per Guideline in the Product Paper and The CPG.</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   <tr>
+                        <td>Security – Cash-backed</td>
+                        <td>100% cash backed</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Employment Status</td>
+                        <td>Confirmed</td>
+                        <td></td>
+                        <td></td>
+                    </tr>   
+                    <tr>
+                        <td>Qualifying Grade</td>
+                        <td>ET and Above</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Minimum Appraisal Rating</td>
+                        <td>“B”</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Overall Debt Service Ratio (DSR)</td>
+                        <td>33.33% of staff’s basic income</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Good Credit Checks</td>
+                        <td>To be obtained from CRMS and two(2) other credit bureaus</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Maximum Tenor</td>
+                        <td><ul>
+                             <li><strong>ET - SM:</strong> Up to 24 months depending on loan amount. Where loan amount is less than 50% of staff’s basic annual salary, tenor shall not exceed one year.</li>
+                             <li><strong>AGM AND Above:</strong> Up to 48 months.</li>
+                            </ul>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Mortgage Loan within the last 120 months</td>
+                        <td>None</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Nature of employment</td>
+                        <td>Full time employee</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Line ED’s Approval</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Approval Information:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th><b>NAME</b></th>
+                        <th><b>SIGNATURE & DATE</b></th>
+                    </tr> 
+                   <tr>
+                        <td>Staff / Applicant </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Line Supervisor/ Group Head</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Group Head, Human Resources</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Group Head, CRM – PBD</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Group Head, Credit Admin & Portfolio Management</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td><strong>Approval:</strong> GMD </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h3><b>BOARD / BCC (for AGM & above):</b></h3>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr> 
+                  
+                 ";
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string StaffPersonalLoanHtml()
+        {
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
+                <h3><b>Staff Personal Loan Scheme – Facility Approval Memo</b></h3>
+                <br />
+                <h4><b>Staff Information</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td>Staff’s Name</td> 
+                        <td>----------------------</td>
+                        <td>Level/ Designation: </td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>Supervisor’s Name:</td>
+                        <td>---------------------</td>
+                        <td>Level/ Designation</td>
+                        <td>-------------------</td>
+                    </tr> 
+                     <tr>
+                        <td>Borrower’s Residential Address</td>
+                        <td colspan=3>--------------------</td>
+                       
+                    </tr>
+                   <tr>
+                        <td>Branch / Unit:</td>
+                        <td>-------------</td>
+                        <td>Group:--------</td>
+                        <td>Division:--------</td>
+                    </tr> 
+                     <tr>
+                        <td>Date of Employment:</td>
+                        <td>--------------------</td>
+                        <td>Employment Status</td>
+                        <td>-------------------</td>
+                    </tr>
+                   <tr>
+                        <td>No. Of years in Access Bank:</td>
+                        <td>-----------------------</td>
+                        <td>Total No. of years in Employment</td>
+                        <td>-----------------------</td>
+                        
+                    </tr>    
+                    <tr>
+                        <td>Account Number:</td>
+                        <td>----------------------</td>
+                        <td>Loan Tenor:</td>
+                        <td>----------------</td>
+                    </tr>
+                   <tr>
+                        <td>Facility Entitlement:</td>
+                        <td>₦------------------------</td>
+                        <td>(Amount in words</td>
+                        <td>-----------------------)</td>
+                        
+                    </tr>                       
+                    <tr>
+                        <td>Facility Amount:</td>
+                        <td>₦-----------------------</td>
+                        <td>(Amount in words</td>
+                        <td>-----------------------)</td>                      
+                    </tr>                    
+                     <tr>
+                        <td><strong>Sex:</strong></td>
+                        <td><input type='checkbox' name='Male' value='Male'> Male
+                            <input type='checkbox' name='Female' value='Female'> Female</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Telephone numbers:</td>
+                        <td>-----------------------</td>
+                        <td>-----------------------</td>
+                        <td>-----------------------</td>                     
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td valign='top'>Office</td>
+                        <td valign='top'>Home</td>
+                        <td valign='top'>Mobile</td>                     
+                    </tr> 
+                     <tr>
+                        <td>eMail Address:</td>
+                        <td>-----------------------</td>
+                        <td></td>
+                        <td>-----------------------</td>
+                        
+                    </tr> 
+                   <tr>
+                        <td></td>
+                        <td valign='top'>Office</td>
+                        <td></td>
+                        <td valign='top'>Personal</td>
+                        
+                    </tr>  
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>To be completed by HR Only</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td>Staff Rating (Key Talent, A*, A, B, C, D):</td>
+                        <td>---------------</td>
+                        <td colspan=2>(indicate OK or NOT OK)</td>
+                    </tr> 
+                    <tr>
+                        <td>Basic Salary:</td>
+                        <td>---------------------------------</td>
+                        <td>Debt Service Ratio (including new loan)</td>
+                        <td>-------------%</td>               
+                    </tr>  
+                   <tr>
+                       <td>Status of Employment ((Un)Confirmed):</td>
+                        <td>----------------------------</td>
+                        <td><strong>Age:</strong></td>
+                        <td>---------------</td>               
+                    </tr> 
+                    <tr>
+                       <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td valign='top'>(Indicate OK or NOT OK)</td>
+                    </tr> 
+                    <tr>
+                       <td colspan=3>Disciplinary case (Warning Letter / Suspension in the past six (6) months):</td>
+                        <td>Yes<input type='checkbox' name='Yes' value='Yes'> 
+                            No<input type='checkbox' name='No' value='No'></td>
+                    </tr> 
+                    <tr>
+                        <td>Fast Track:</td>
+                        <td>Yes<input type='checkbox' name='Yes' value='Yes'> 
+                            No<input type='checkbox' name='No' value='No'></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Staff Existing Facilities with Access Bank as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Outstanding Amount (‘000)</b></th>
+                        <th><b>Maturity Date</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Monthly Repayment</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Staff Loan History (Facilities already Paid Down only) as at: --------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Approved Amount</b></th>
+                        <th><b>Date of Last Repayment</b></th>
+                        <th><b>Security</b></th>
+                   </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>  
+                   <tr>
+                       <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Analysis of Six (6) Months Bank Statement</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Month</b></th>
+                        <th><b>Debit</b></th>
+                        <th><b>Credit</b></th>
+                        <th><b>EOM Balance</b></th>
+                        <th><b>Returned Cheques</b></th>
+                   </tr> 
+                   <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>   
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td><strong>Total</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td><strong>Average</strong></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Staff Existing Facilities with Other Banks as at: -------------------------------- (dd/mmm/yyyy)</b></h4>
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Facility Type</b></th>
+                        <th><b>Outstanding Amount (‘000)</b></th>
+                        <th><b>Maturity Date</b></th>
+                        <th><b>Security</b></th>
+                        <th><b>Monthly Repayment</b></th>
+                    </tr> 
+                   <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr> 
+                    <tr>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                        <td>---------------</td>
+                    </tr>                     
+                    <tr>
+                       <td colspan='5'><strong><hr>Total<hr></strong></td>
+                     </tr>                  
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><b>PRINCIPAL TERMS & CONDITIONS INCLUDING SECURITY/SUPPORT:</b></td>
+                    </tr> 
+                     <tr>
+                        <td>
+                        <table border=1 width=900 cellpadding=10 cellspacing=0>
+                        <tr>
+                        <td><strong>Facility Type:</strong></td>
+                        <td>Personal Loan</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Facility Amount:</strong></td>
+                        <td>NGN</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Purpose:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Tenor:</strong> (2 years max for ET to SM and 4 years max for AGM and above):</td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Repayment Plan</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Interest Rate:</strong></td>
+                        <td></td>
+                        </tr>
+                        <tr>
+                        <td><strong>Positive Credit Check Reports:</strong> </td>
+                        <td>CRMS and two other Credit Bureaus
+                        </td>
+                        </tr>
+                        <tr>
+                        <td><strong>Security/Support:</strong> </td>
+                        <td>
+                         </td>
+                        </tr>
+                        </table>
+                        </td>
+                    </tr> 
+
+                     <tr>
+                        <td><strong>Background Information On The Obligor:</strong> </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Current Request:</strong> </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Rationale for Current Request:</strong> </td>
+                    </tr>
+                     <tr>
+                        <td><strong><hr>Conditions Precedent To Drawdown:</strong><br/> 
+                           Conditions precedent to drawdown shall include, but not limited to the following:
+                            <ul>                           
+                                <li>Duly approved Staff Personal Loan Facility Approval Memo (FAM).</li>
+                                <li>Duly accepted Offer Letter</li>
+                                <li>Cash security inform of Shares/Investment acceptable.</li>
+                                <li>Signed letter of set-off</li>
+                                <li>Positive Credit Check Report from CRMS and two (2) other Credit Bureaus.</li>
+                                <li>Drawdown memo must be approved by CRM – PBD, The Legal Team in Credit Admin and Portfolio Management Group, Credit Admin (Drawdown) and Treasury.</li>
+                            </ul>
+                        </td>
+                    </tr>                   
+            ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Risk Acceptance Criteria – Staff Personal Loan</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th><b>Description</b></th>
+                        <th><b>Required</b></th>
+                        <th><b>Actual</b></th>
+                        <th><b>Exception (Y/N)</b></th>
+                    </tr> 
+                   <tr>
+                        <td>Minimum years in The Bank </td>
+                        <td>Upon confirmation</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Maximum Loan Amount</td>
+                        <td><ul>
+                            <li><strong>ET - SM:</strong> Up to staff’s annual basic salary for two years subject to DSR not exceeding onethird of staff’s basic monthly salary.</li>
+                            <li><strong>AGM AND Above:</strong> Up to staff’s annual basic salary for four years subject to DSR not exceeding one-third of staff’s basic monthly / yearly salary.</li>
+                        </ul>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Global Limit</td>
+                        <td>Aggregate value of all staff loan types shall not exceed 2.5% of the Bank’s total loan portfolio.</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Security – Shares/ Stocks of blue chip companies.</td>
+                        <td>100% secured with shares of blue chips per Guideline in the Product Paper and The CPG.</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                   <tr>
+                        <td>Security – Cash-backed</td>
+                        <td>100% cash backed</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Employment Status</td>
+                        <td>Confirmed</td>
+                        <td></td>
+                        <td></td>
+                    </tr>   
+                    <tr>
+                        <td>Qualifying Grade</td>
+                        <td>ET and Above</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Minimum Appraisal Rating</td>
+                        <td>“B”</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Overall Debt Service Ratio (DSR)</td>
+                        <td>33.33% of staff’s basic income</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td>Good Credit Checks</td>
+                        <td>To be obtained from CRMS and two(2) other credit bureaus</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Maximum Tenor</td>
+                        <td><ul>
+                             <li><strong>ET - SM:</strong> Up to 24 months depending on loan amount. Where loan amount is less than 50% of staff’s basic annual salary, tenor shall not exceed one year.</li>
+                             <li><strong>AGM AND Above:</strong> Up to 48 months.</li>
+                            </ul>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    
+                    <tr>
+                        <td>Nature of employment</td>
+                        <td>Full time employee</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Line ED’s Approval</td>
+                        <td>Yes</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h4><b>Approval Information:</b></h4>
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                     <tr>
+                        <th></th>
+                        <th><b>NAME</b></th>
+                        <th><b>SIGNATURE & DATE</b></th>
+                    </tr> 
+                   <tr>
+                        <td>Staff / Applicant </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>Staff’s Group Head</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                   <tr>
+                        <td>HR Officer</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                    <tr>
+                        <td>Group Head, CRM – PBD</td>
+                        <td></td>
+                        <td></td>
+                    </tr>  
+                    <tr>
+                        <td>Group Head, Credit Admin & Portfolio Management</td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                     <tr>
+                        <td><strong>Approval:</strong> Group Head, Human Resources </td>
+                        <td></td>
+                        <td></td>
+                    </tr> 
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />
+                <h3><b>BOARD / BCC (for AGM & above):</b></h3>
+                
+                 ";   
             return result;
         }
     }

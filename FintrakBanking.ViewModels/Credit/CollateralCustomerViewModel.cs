@@ -509,7 +509,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public int customerId { get; set; }
         public bool differInsurancePolicy { get; set; }
-        public string policyState { get; set; }
+        public string policyStateId { get; set; }
         public string companyAddress { get; set; }
         public int? prevoiusInsuranceId { get; set; }
     }
@@ -1048,7 +1048,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralCoverageViewModel : GeneralEntity
     {
         public bool coverAll { get; set; }
-        public int currencyId { get; set; }
+        public int? currencyId { get; set; }
         public string collateralCurrencyCode { get; set; }
         public string baseCurrencyCode { get; set; }
         public int coverage { get; set; }

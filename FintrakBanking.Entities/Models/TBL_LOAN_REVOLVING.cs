@@ -132,7 +132,7 @@ namespace FintrakBanking.Entities.Models
 
         public short REVOLVINGTYPEID { get; set; }
 
-        public DateTime LASTRESTRUCTUREDATE { get; set; }
+        public DateTime? LASTRESTRUCTUREDATE { get; set; }
 
         [StringLength(200)]
         public string FIELD1 { get; set; }

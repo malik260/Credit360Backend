@@ -1033,6 +1033,96 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
+        public string ExtensionReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/ExtensionReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string MaturityReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/MaturityReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string IfrsClassificationReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/IfrsClassificationReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string RiskAssetByIFRSClassificationReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetByIFRSClassificationReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+        public string RiskAssetByVarianceReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetByVarianceReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string RiskAssetDistributionBySectorReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetDistributionBySectorReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string RiskAssetMainReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetMainReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string RiskAssetTeamReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/RiskAssetTeamReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+        public string UnpaidObligationReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            string path = string.Empty;
+            path = reportPath + "ReportViews/UnpaidObligationReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            return path;
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
 
 }

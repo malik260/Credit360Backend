@@ -72,7 +72,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isComplete { get; set; }
         public bool debitBusiness { get; set; }
         public string accountNumber { get; set; }
-        public DateTime dateCompleted { get; set; }
+        public DateTime? dateCompleted { get; set; }
     }
 
 

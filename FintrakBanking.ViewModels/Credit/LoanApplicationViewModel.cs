@@ -44,7 +44,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerGroupId { get; set; }
         public string customerGroupCode { get; set; }
         public short loanTypeId { get; set; }
-        public int casaAccountId { get; set; }
+        public int? casaAccountId { get; set; }
         public short currencyId { get; set; }
         public string currencyCode { get; set; }
         public short loanStatusId { get; set; }
@@ -393,7 +393,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string repaymentTerm { get; set; }
 
-        public int repaymentScheduleId { get; set; }
+        public int? repaymentScheduleId { get; set; }
 
         public int?  crmsFundingSourceId { get; set; }
 

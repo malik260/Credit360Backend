@@ -47,6 +47,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\FintrakBanking.ReportObjects.dll</HintPath>
     </Reference>
+    <Reference Include="FintrakBanking.Repositories">
+      <HintPath>..\FintrakBanking.Repositories\bin\Debug\FintrakBanking.Repositories.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
@@ -100,10 +103,6 @@
     <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
       <Project>{6A7C3564-00B2-45D4-A40C-4B52A06C296A}</Project>
       <Name>FintrakBanking.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.Repositories\FintrakBanking.Repositories.csproj">
-      <Project>{2853B1D8-AF5F-4691-A513-9EB63A45DD4D}</Project>
-      <Name>FintrakBanking.Repositories</Name>
     </ProjectReference>
     <ProjectReference Include="..\FinTrakBanking.ThirdPartyIntegration\FinTrakBanking.ThirdPartyIntegration.csproj">
       <Project>{81C64D5D-3674-499E-B718-257AA862B1B2}</Project>
