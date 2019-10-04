@@ -596,6 +596,29 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Product Region
 
+        [HttpGet] [ClaimsAuthorization]  
+        [Route("product-by-productclass/{id}/customerType/{cid}")]
+        public HttpResponseMessage GetAllProduct(int id, int cid)
+        {
+            try
+            {
+
+                var data = repo.GetAllProductByProductClass(id, cid).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+
+                    new { success = true, result = data.ToList() });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -621,28 +644,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet] [ClaimsAuthorization]  
-        [Route("product-by-productclass/{id}/customerType/{cid}")]
-        public HttpResponseMessage GetAllProduct(int id, int cid)
-        {
-            try
-            {
-
-                var data = repo.GetAllProductByProductClass(id, cid).ToList();
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-
-                    new { success = true, result = data.ToList() });  //Ok(accounts);
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
 
         [HttpGet]
         [ClaimsAuthorization]

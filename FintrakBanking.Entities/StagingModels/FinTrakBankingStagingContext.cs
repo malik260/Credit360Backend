@@ -623,9 +623,9 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.LOANREFERENCENUMBER)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_WATCHLIST>()
-                .Property(e => e.INTERESTRATE)
-                .HasPrecision(15, 0);
+            //modelBuilder.Entity<STG_LOAN_WATCHLIST>()
+            //    .Property(e => e.INTERESTRATE)
+            //    .HasPrecision(15, 0);
 
             modelBuilder.Entity<STG_LOAN_WATCHLIST>()
                 .Property(e => e.PRINCIPALAMOUNT)
