@@ -4642,31 +4642,36 @@ namespace FintrakBanking.Repositories.Customer
             }
             else if (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Address_Modification)
             {
-                temp = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.TEMPADDRESSID == targetId);
-                if (temp != null) //If temp record is not null select the information from the main table
+                entity = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x => x.CUSTOMERID == modified.CUSTOMERID);
+                if(entity != null)
                 {
-                    JObject currentDataStr = JObject.Parse(Convert.ToString(entity));
-                    var recentData = currentDataStr.ToString();
+                    temp = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.TEMPADDRESSID == targetId);
+                    if (temp != null) //If temp record is not null select the information from the main table
+                    {
+                        JObject currentDataStr = JObject.Parse(Convert.ToString(entity));
+                        var recentData = currentDataStr.ToString();
 
-                    JObject existingDataStr = JObject.Parse(Convert.ToString(temp));
-                    var existingData = existingDataStr["data"].ToString();
+                        JObject existingDataStr = JObject.Parse(Convert.ToString(temp));
+                        var existingData = existingDataStr["data"].ToString();
 
-                    detail = $"Customer address for customer with code: : {temp.TBL_CUSTOMER.CUSTOMERCODE} has been updated. Existing data :<br> {existingData}. <br> New Data: <br>{recentData}";
+                        detail = $"Customer address for customer with code: : {temp.TBL_CUSTOMER.CUSTOMERCODE} has been updated. Existing data :<br> {existingData}. <br> New Data: <br>{recentData}";
 
-                    entity = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x => x.ADDRESSID == temp.ADDRESSID);
-                    entity.ACTIVE = temp.ACTIVE;
-                    entity.ADDRESS = temp.ADDRESS;
-                    entity.ADDRESSTYPEID = temp.ADDRESSTYPEID;
-                    entity.CITYID = temp.CITYID;
-                    entity.CUSTOMERID = temp.CUSTOMERID;
-                    entity.STATEID = temp.STATEID;
-                    entity.HOMETOWN = temp.HOMETOWN;
-                    entity.POBOX = temp.POBOX;
-                    entity.STATEID = temp.STATEID;
-                    entity.ELECTRICMETERNUMBER = temp.ELECTRICMETERNUMBER;
-                    entity.NEARESTLANDMARK = temp.NEARESTLANDMARK;
-                    entity.LOCALGOVERNMENTID = temp.LOCALGOVERNMENTID;
+                        entity = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x => x.ADDRESSID == temp.ADDRESSID);
+                        entity.ACTIVE = temp.ACTIVE;
+                        entity.ADDRESS = temp.ADDRESS;
+                        entity.ADDRESSTYPEID = temp.ADDRESSTYPEID;
+                        entity.CITYID = temp.CITYID;
+                        entity.CUSTOMERID = temp.CUSTOMERID;
+                        entity.STATEID = temp.STATEID;
+                        entity.HOMETOWN = temp.HOMETOWN;
+                        entity.POBOX = temp.POBOX;
+                        entity.STATEID = temp.STATEID;
+                        entity.ELECTRICMETERNUMBER = temp.ELECTRICMETERNUMBER;
+                        entity.NEARESTLANDMARK = temp.NEARESTLANDMARK;
+                        entity.LOCALGOVERNMENTID = temp.LOCALGOVERNMENTID;
+                    }
                 }
+                
             }
 
             //update the temp table, set ISCURRENT to false and APPROVALSTATUSID to approvalStatusId
