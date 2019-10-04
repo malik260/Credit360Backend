@@ -4279,6 +4279,7 @@ namespace FintrakBanking.Repositories.Credit
                 stateName = x.TBL_STATE.STATENAME,
                 stateId = x.STATEID,
                 localGovtName = x.TBL_LOCALGOVERNMENT.NAME,
+                localGovernmentId = x.LOCALGOVERNMENTID,
                 bankShareOfCollateral = x.BANKSHAREOFCOLLATERAL,
 
                 description = x.PROPERTYNAME,
