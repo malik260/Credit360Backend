@@ -390,6 +390,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationCustomerId { get; set; }
         public int applicationCustomerId { get; set; }
         public int? loanApplicationId { get; set; }
+        public int? loanApplicationDetailId { get; set; }
         public int? collateralUsageStatus { get; set; }
         public int? status { get; set; }
         public int? premiumPercent { get; set; }
@@ -402,6 +403,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string requestReason { get; set; }
         public string requestComment { get; set; }
         public bool isMapped { get; set; }
+        public bool isProposed { get; set; }
         public string collateralSummary { get; set; }
         public int? loopedStaffId { get; set; }
         public string lastApprovalComment { get; set; }
