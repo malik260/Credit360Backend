@@ -248,6 +248,7 @@
     <Compile Include="Setups\General\AccountSensitivityViewModel.cs" />
     <Compile Include="Setups\General\AccreditedConsultantsViewModel.cs" />
     <Compile Include="Setups\General\ActivityViewModel.cs" />
+    <Compile Include="Setups\General\AlertViewModel.cs" />
     <Compile Include="Setups\General\AuthorisedSignatoryViewModel.cs" />
     <Compile Include="Setups\General\BranchLimitViewModel.cs" />
     <Compile Include="Setups\General\BranchViewModel.cs" />

@@ -32,6 +32,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     string GroupName = Request.QueryString["groupName"];
                     string BranchName = Request.QueryString["branchName"];
                     string RegionName = Request.QueryString["regionName"];
+
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -75,11 +76,13 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     ReportParameter[] reportParameter = new ReportParameter[8];
                     reportParameter[0] = new ReportParameter("MisCode", MisCode);
                     reportParameter[1] = new ReportParameter("Level", Level);
-                    reportParameter[2] = new ReportParameter("ExposureType", ExposureType); 
+                    reportParameter[2] = new ReportParameter("ExposureType", ExposureType);
+                    reportParameter[6] = new ReportParameter("RunDate", rDate); // yyyy-mm-dd
+
+
                     reportParameter[3] = new ReportParameter("DivisionName", DivisionName); 
                     reportParameter[4] = new ReportParameter("GroupName", GroupName); 
-                    reportParameter[5] = new ReportParameter("BranchName", BranchName); 
-                    reportParameter[6] = new ReportParameter("RunDate", rDate); // yyyy-mm-dd
+                    reportParameter[5] = new ReportParameter("BranchName", BranchName);                     
                     reportParameter[7] = new ReportParameter("RegionName", RegionName); 
 
                     //==== NOTE: for report on server, use the below ============

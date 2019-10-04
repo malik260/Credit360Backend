@@ -4189,7 +4189,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.PROPERTYADDRESS = entity.propertyAddress;
             collateral.DATEOFACQUISITION = entity.dateOfAcquisition;
             collateral.LASTVALUATIONDATE = entity.lastValuationDate;
-            collateral.NEXTVALUATIONDATE = entity.nextValuationDate;
+            //collateral.NEXTVALUATIONDATE = entity.nextValuationDate;
             collateral.VALUERID = entity.valuerId;
             collateral.VALUERREFERENCENUMBER = entity.valuerReferenceNumber;
             collateral.PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId;
@@ -9489,6 +9489,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     CUSTOMERID = model.customerId,
                     DELETED = false,
+                    SYSTEMDATETIME = DateTime.Now,
 
                 };
                 context.TBL_LOAN_APPLICATION_COLLATERL.Add(data);
@@ -9550,8 +9551,17 @@ namespace FintrakBanking.Repositories.Credit
                     };
                     context.TBL_LOAN_APPLICATION_COLLATERL.Add(data);
 
-                    if (context.SaveChanges() > 0)
-                        return true;
+                    try
+                    {
+                        if (context.SaveChanges() > 0)
+                            return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+
+                    
 
                 }
                 else

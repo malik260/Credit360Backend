@@ -51,7 +51,7 @@ namespace FintrakBanking.Entities.Models
 
         public int RELATIONSHIPMANAGERID { get; set; }
 
-        public int CASAACCOUNTID { get; set; }
+        public int? CASAACCOUNTID { get; set; }
 
         //[Column(TypeName = "date")]
         public DateTime APPLICATIONDATE { get; set; }

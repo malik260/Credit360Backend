@@ -1050,7 +1050,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralCoverageViewModel : GeneralEntity
     {
         public bool coverAll { get; set; }
-        public int currencyId { get; set; }
+        public int? currencyId { get; set; }
         public string collateralCurrencyCode { get; set; }
         public string baseCurrencyCode { get; set; }
         public int coverage { get; set; }
