@@ -12,7 +12,7 @@ namespace FintrakBanking.ViewModels
         public int staffId { get; set; }
         public string applicationUrl { get; set; }
         public string userIPAddress { get; set; }
-        public DateTime SystemDateTime { get; set; }        
+        public DateTime? SystemDateTime { get; set; }        
         public int createdBy { get; set; }
         public string userName { get; set; }
         public string passCode { get; set; }
@@ -20,7 +20,7 @@ namespace FintrakBanking.ViewModels
         public string companyName { get; set; }
         public string branchName { get; set; }
         public string staffName { get; set; }
-        public DateTime applicationDate { get; set; }
+        public DateTime? applicationDate { get; set; }
         public SessionStatusInfo sessionStatusInfo { get; set; }
         public DateTime? lastLoginDate { get; set; }
         public string staffRole { get; set; }

@@ -9193,8 +9193,17 @@ namespace FintrakBanking.Repositories.Credit
                     };
                     context.TBL_LOAN_APPLICATION_COLLATERL.Add(data);
 
-                    if (context.SaveChanges() > 0)
-                        return true;
+                    try
+                    {
+                        if (context.SaveChanges() > 0)
+                            return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+
+                    
 
                 }
                 else

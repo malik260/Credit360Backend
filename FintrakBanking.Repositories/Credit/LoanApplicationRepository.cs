@@ -4831,7 +4831,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvedProductName = context.TBL_PRODUCT.Where(o=>o.PRODUCTID==b.APPROVEDPRODUCTID).Select(o=>o.PRODUCTNAME).FirstOrDefault(),
 
                             //requireCollateral = a.REQUIRECOLLATERAL,
-                            repaymentScheduleId = (int)b.REPAYMENTSCHEDULEID,
+                            repaymentScheduleId = b.REPAYMENTSCHEDULEID,
                             isTakeOverApplication = b.ISTAKEOVERAPPLICATION,
                             repaymentTerm = b.REPAYMENTTERMS,
                             loanApplicationId = b.LOANAPPLICATIONID,
