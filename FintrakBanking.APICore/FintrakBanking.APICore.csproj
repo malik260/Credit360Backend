@@ -65,11 +65,11 @@
     </Reference>
     <Reference Include="FintrakBanking.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FintrakBanking.Common\bin\Debug\FintrakBanking.Common.dll</HintPath>
+      <HintPath>..\FintrakBanking.Common\obj\Debug\FintrakBanking.Common.dll</HintPath>
     </Reference>
     <Reference Include="FintrakBanking.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FintrakBanking.Interfaces\bin\Debug\FintrakBanking.Interfaces.dll</HintPath>
+      <HintPath>..\FintrakBanking.Interfaces\obj\Debug\FintrakBanking.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.4.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
