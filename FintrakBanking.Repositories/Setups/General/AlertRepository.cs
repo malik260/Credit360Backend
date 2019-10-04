@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return alert;
         }
 
-        public bool AddAlertTitle(AlertViewModel model)
+        public bool AddAlertTitle(AlertViewModel model) 
         {
             var entity = new TBL_ALERT_TITLE
             {
@@ -76,20 +76,20 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateLcCondition(AlertViewModel model, int id, UserInfo user)
+        public bool UpdateAlertTitle(int id, AlertViewModel model, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_TITLE.Find(id);
             entity.TITLE = model.title;
             entity.TEMPLATE = model.template;
-           
+
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.AlertTitleUpdated,
+                AUDITTYPEID = (short)AuditTypeEnum.OriginalDocumentApprovalUpdated,
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_ALERT_TITLE '{entity.ToString()}' was updated by {auditStaff}",
+                DETAIL = $"TBL_ALERT_TITLE'{entity.TITLE}' was updated by {auditStaff}",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-        public bool DeleteLcCondition(int id, UserInfo user)
+       public bool DeleteAlertTitle(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_TITLE.Find(id);
             
@@ -112,7 +112,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 AUDITTYPEID = (short)AuditTypeEnum.AlertTitleDeleted,
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_Lc Condition '{entity.ToString()}' was deleted by {auditStaff}",
+                DETAIL = $"TBL_ALERT_TITLE '{entity.ToString()}' was deleted by {auditStaff}",
                 IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
