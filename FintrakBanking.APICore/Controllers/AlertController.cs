@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-﻿using FintrakBanking.ViewModels.Setups.General;
-=======
-﻿using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.Common.CustomException;
->>>>>>> 49e051a9f3d2c85b35cda11cea544adf4d394fc9
 using System;
 using System.Linq;
 using System.Net;
@@ -15,7 +9,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
-using System.Web;
+
 using FintrakBanking.ViewModels;
 using FintrakBanking.APICore.JWTAuth;
 
