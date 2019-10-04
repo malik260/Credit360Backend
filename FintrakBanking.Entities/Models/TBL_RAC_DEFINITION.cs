@@ -58,7 +58,7 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
         public int? DELETEDBY { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
-        public bool REQUIRECOMMENT { get; set; }
+        public bool? REQUIRECOMMENT { get; set; }
         public short? CURRENCYID { get; set; }
         public string CURRENCYTYPE { get; set; }
         public bool? ISRACTIERCONTROLKEY { get; set; }

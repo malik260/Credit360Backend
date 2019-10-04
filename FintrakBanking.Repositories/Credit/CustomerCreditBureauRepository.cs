@@ -324,6 +324,7 @@ namespace FintrakBanking.Repositories.Credit
             this.auditTrail.AddAuditTrail(audit);
             // End of Audit Section ---------------------
             context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
+
             if (context.SaveChanges() > 0)
             {
                 docModel.customerCreditBureauId = data.CUSTOMERCREDITBUREAUID;
@@ -334,6 +335,7 @@ namespace FintrakBanking.Repositories.Credit
                 else return 0;
             }
             else return 0;
+          
         }
 
         public bool AddCreditBureauReportDocument(LoanDocumentViewModel model, byte[] file)

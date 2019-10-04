@@ -669,7 +669,7 @@ namespace FintrakBanking.ReportObjects
                                                   currentDefferalDate = c.DEFERREDDATE,
                                                   deferralDurration = (int)DbFunctions.DiffDays((DateTime?)c.DEFERREDDATE, (DateTime?)c.DATETIMECREATED),
 
-                                                  cummulativeDays = c.DEFERREDDATE.Day + c.DATETIMECREATED.Day,
+                                                  cummulativeDays = c.DEFERREDDATE.Value.Day + c.DATETIMECREATED.Day,
                                                   deferralExpiryDate = (b.EXPIRYDATE.Value == null ? default(DateTime) : b.EXPIRYDATE.Value),
 
                                                   nameOfBM = context.TBL_STAFF.Where(o => o.SUPERVISOR_STAFFID.Value == e.CREATEDBY).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
@@ -770,7 +770,7 @@ namespace FintrakBanking.ReportObjects
                                name = c.FIRSTNAME + " " + c.MIDDLENAME + " " + c.LASTNAME,
                                facilityProduct = e.TBL_PRODUCT.PRODUCTNAME,
                                customerCode = c.CUSTOMERCODE,
-                               initialDefferalDate = a.DEFERREDDATE,
+                               initialDefferalDate = a.DEFERREDDATE.Value,
                                applicationRefrenceNumber = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                defferalDocument = b.CONDITION,
                                facilityAmount = d.APPROVEDAMOUNT,

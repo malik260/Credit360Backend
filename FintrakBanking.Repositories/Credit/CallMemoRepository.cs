@@ -300,11 +300,11 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<CallMemoViewModel> SearchCallMemo(int staffId, CallMemoViewModel model)
         {
             var data = (from a in _context.TBL_CALL_MEMO
-                        //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                            //join b in _context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in _context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         where (c.FIRSTNAME + " " + c.LASTNAME).ToLower().Contains(model.CustomerName.ToLower())
-                        && a.NEXTCALLDATE >= model.StartDate && a.NEXTCALLDATE <= model.EndDate 
-                        && c.APPROVALSTATUS == (int) ApprovalStatusEnum.Approved
+                        && a.NEXTCALLDATE >= model.StartDate && a.NEXTCALLDATE <= model.EndDate
+                        && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                         orderby a.CALLMEMOID
                         select new CallMemoViewModel
                         {
