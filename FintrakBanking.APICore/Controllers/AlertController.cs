@@ -121,7 +121,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("alert-title/{id}")]
-        public HttpResponseMessage DeleteOriginalDocumentApproval(int id)
+        public HttpResponseMessage DeleteAlertTitle(int id)
         {
             UserInfo user = new UserInfo()
             {

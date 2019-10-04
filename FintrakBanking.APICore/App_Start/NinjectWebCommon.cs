@@ -273,8 +273,6 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IRepaymentTermsRepository>().To<RepaymentTermsRepository>();
             kernel.Bind<IAuthourisedSignatoryRepository>().To<AuthourisedSignatoryRepository>();
             kernel.Bind<IAlertRepository>().To<AlertRepository>();
-
-            kernel.Bind<IAlertRepository>().To<AlertRepository>();
         }
 
     }
