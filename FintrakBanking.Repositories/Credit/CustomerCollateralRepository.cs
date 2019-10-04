@@ -4107,7 +4107,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.PROPERTYADDRESS = entity.propertyAddress;
             collateral.DATEOFACQUISITION = entity.dateOfAcquisition;
             collateral.LASTVALUATIONDATE = entity.lastValuationDate;
-            collateral.NEXTVALUATIONDATE = entity.nextValuationDate;
+            //collateral.NEXTVALUATIONDATE = entity.nextValuationDate;
             collateral.VALUERID = entity.valuerId;
             collateral.VALUERREFERENCENUMBER = entity.valuerReferenceNumber;
             collateral.PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId;
