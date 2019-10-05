@@ -25,6 +25,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class LevelGroupMappingViewModel : GeneralEntity
     {
+        public string levelGroupName { get; set; }
         public int alertLevelGroupMapId { get; set; }
         public int levelGroupId { get; set; }
         public string levelCode { get; set; }

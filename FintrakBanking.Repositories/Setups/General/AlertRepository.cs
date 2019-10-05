@@ -140,7 +140,9 @@ namespace FintrakBanking.Repositories.Setups.General
                               alertSetupId = a.ALERTSETUPID,
                               titleId = a.TITLEID,
                               levelGroupMappingId = a.LEVELGROUPID,
-                              frequencyId = a.FREQUENCYID
+                              frequencyId = a.FREQUENCYID,
+                              title = context.TBL_ALERT_TITLE.Where(at => at.ALERTTITLEID == a.TITLEID).Select(at => at.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(at => at.ALERTTITLEID == a.TITLEID).Select(at => at.TITLE).FirstOrDefault(),
+                              levelCode = context.TBL_ALERT_LEVEL_GRP_MAPPING.Where(g => g.ALERTLEVELGROUPMAPID == a.LEVELGROUPID).Select(at => at.LEVELCODE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_LEVEL_GRP_MAPPING.Where(g => g.ALERTLEVELGROUPMAPID == a.LEVELGROUPID).Select(at => at.LEVELCODE).FirstOrDefault()
                           });
             return alerts;
         }
@@ -246,7 +248,8 @@ namespace FintrakBanking.Repositories.Setups.General
                           {
                               alertLevelGroupMapId = a.ALERTLEVELGROUPMAPID,
                               levelGroupId = a.LEVELGROUPID,
-                              levelCode = a.LEVELCODE
+                              levelCode = a.LEVELCODE,
+                              levelGroupName = context.TBL_ALERT_LEVEL_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_LEVEL_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault()
                           });
             return alerts;
         }
