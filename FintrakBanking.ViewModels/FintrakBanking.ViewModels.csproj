@@ -316,10 +316,6 @@
       <Project>{18CEFC20-2662-4757-94DE-23D623FFC98D}</Project>
       <Name>FintrakBanking.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
-      <Project>{FB338A9B-9C63-46ED-A8C3-D75A08DAD6F0}</Project>
-      <Name>FintrakBanking.Entities</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

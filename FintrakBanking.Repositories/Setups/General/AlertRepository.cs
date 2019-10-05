@@ -591,8 +591,23 @@ namespace FintrakBanking.Repositories.Setups.General
                 LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList.ToString(), "100442", 0);
             }
         }
+
         public bool validateConditionTrigger(short frequencyId, short conditionId)
         {
+            var systemDate = general.GetApplicationDate();
+
+            var frequency = context.TBL_ALERT_FREQUENCY.Find(frequencyId);
+
+            if(frequency != null)
+            {
+                if (ValidateFrequency()) { }
+            }
+            return true;
+        }
+
+        private bool ValidateFrequency()
+        {
+            //if
             return true;
         }
 

@@ -1480,10 +1480,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
-      <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
-      <Name>FintrakBanking.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.ReportObjects\FintrakBanking.ReportObjects.csproj">
       <Project>{335b391e-60c0-47c2-9d7f-10cef0de800e}</Project>
       <Name>FintrakBanking.ReportObjects</Name>

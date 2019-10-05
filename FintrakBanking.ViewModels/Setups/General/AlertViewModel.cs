@@ -15,6 +15,9 @@ namespace FintrakBanking.ViewModels.Setups.General
     }
     public class AlertSetupViewModel : GeneralEntity
     {
+        public string title;
+        public string levelCode;
+
         public int alertSetupId { get; set; }
         public int titleId { get; set; }
         public int levelGroupMappingId { get; set; }
