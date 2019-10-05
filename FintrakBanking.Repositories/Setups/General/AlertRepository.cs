@@ -571,7 +571,7 @@ namespace FintrakBanking.Repositories.Setups.General
             postAlertNotification(alerts);
         }
 
-        public void postAlertNotification(List<AlertsViewModel> alerts)
+        private void postAlertNotification(List<AlertsViewModel> alerts)
         {
             foreach(var alert in alerts)
             {
@@ -579,26 +579,29 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
-        public bool validateConditionTrigger(short frequencyId, short conditionId)
+        private bool validateConditionTrigger(short frequencyId, short conditionId)
         {
-            var systemDate = general.GetApplicationDate();
 
-            var frequency = context.TBL_ALERT_FREQUENCY.Find(frequencyId);
-
-            if(frequency != null)
+            if (ValidateFrequency(frequencyId))
             {
-                if (ValidateFrequency()) { }
+                return true;
+            }
+            else { return false; }
+        }
+
+        private bool ValidateFrequency(short frequencyId)
+        {
+            var frequency = context.TBL_ALERT_FREQUENCY.Find(frequencyId);
+            var systemDate = general.GetApplicationDate();
+            var condition = "";
+            if(frequencyId == (short)AlertFrequencyEnum.DATE)
+            {
+                //systemDate.Date == 
             }
             return true;
         }
 
-        private bool ValidateFrequency()
-        {
-            //if
-            return true;
-        }
-
-        public List<AlertLevelViewModel> GetReceivergroup(int levelGroupId)
+        private List<AlertLevelViewModel> GetReceivergroup(int levelGroupId)
         {
           var levels =  (from g in context.TBL_ALERT_LEVEL_GROUP
                           join m in context.TBL_ALERT_LEVEL_GRP_MAPPING on g.ALERTLEVELGROUPID equals m.LEVELGROUPID
@@ -643,7 +646,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
-        public void SaveMessageDetails(MessageLogViewModel model)
+        private void SaveMessageDetails(MessageLogViewModel model)
         {
             var message = new TBL_MESSAGE_LOG()
             {
