@@ -1,4 +1,6 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Admin;
@@ -7,6 +9,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,10 +31,10 @@ namespace FintrakBanking.Repositories.Setups.General
             this.general = _general;
         }
 
-        public IEnumerable<AlertViewModel> GetAllAlerts()
+        public IEnumerable<AlertTitleViewModel> GetAllAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE
-                                      select new AlertViewModel
+                                      select new AlertTitleViewModel
                                       {
                                           alertTitleId = a.ALERTTITLEID,
                                           title = a.TITLE,
@@ -40,10 +43,10 @@ namespace FintrakBanking.Repositories.Setups.General
             return alerts;
         }
 
-        public AlertViewModel GetAlertById(int id)
+        public AlertTitleViewModel GetAlertById(int id)
         {
             var alert = (from a in context.TBL_ALERT_TITLE.Where(x=>x.ALERTTITLEID == id)
-                          select new AlertViewModel
+                          select new AlertTitleViewModel
                           {
                               alertTitleId = a.ALERTTITLEID,
                               title = a.TITLE,
@@ -52,7 +55,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return alert;
         }
 
-        public bool AddAlertTitle(AlertViewModel model) 
+        public bool AddAlertTitle(AlertTitleViewModel model)
         {
             var entity = new TBL_ALERT_TITLE
             {
@@ -80,7 +83,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateAlertTitle(int id, AlertViewModel model, UserInfo user)
+        public bool UpdateAlertTitle(int id, AlertTitleViewModel model, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_TITLE.Find(id);
             entity.TITLE = model.title;
@@ -108,7 +111,7 @@ namespace FintrakBanking.Repositories.Setups.General
        public bool DeleteAlertTitle(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_TITLE.Find(id);
-            
+            context.TBL_ALERT_TITLE.Remove(entity);
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
@@ -136,9 +139,8 @@ namespace FintrakBanking.Repositories.Setups.General
                           {
                               alertSetupId = a.ALERTSETUPID,
                               titleId = a.TITLEID,
-                              levelGroupMappingId = a.LEVELGROUPMAPPINGID,
-                              frequencyId = a.FREQUENCYID,
-                              conditionId = a.CONDITIONID
+                              levelGroupMappingId = a.LEVELGROUPID,
+                              frequencyId = a.FREQUENCYID
                           });
             return alerts;
         }
@@ -150,9 +152,8 @@ namespace FintrakBanking.Repositories.Setups.General
                          {
                              alertSetupId = a.ALERTSETUPID,
                              titleId = a.TITLEID,
-                             levelGroupMappingId = a.LEVELGROUPMAPPINGID,
-                             frequencyId = a.FREQUENCYID,
-                             conditionId = a.CONDITIONID
+                             levelGroupMappingId = a.LEVELGROUPID,
+                             frequencyId = a.FREQUENCYID
                          }).FirstOrDefault();
             return alert;
         }
@@ -161,7 +162,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var entity = new TBL_ALERT_SETUP
             {
-                LEVELGROUPMAPPINGID = model.levelGroupMappingId,
+               // LEVELGROUPMAPPINGID = model.levelGroupMappingId,
                 TITLEID = model.titleId,
                 FREQUENCYID = model.frequencyId,
                 CONDITIONID = model.conditionId
@@ -192,7 +193,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var entity = this.context.TBL_ALERT_SETUP.Find(id);
             entity.TITLEID = model.titleId;
             entity.FREQUENCYID = model.frequencyId;
-            entity.LEVELGROUPMAPPINGID = model.levelGroupMappingId;
+            //entity.LEVELGROUPMAPPINGID = model.levelGroupMappingId;
             entity.CONDITIONID = model.conditionId;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
@@ -217,7 +218,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool DeleteAlertSetup(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_SETUP.Find(id);
-
+            context.TBL_ALERT_SETUP.Remove(entity);
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
@@ -318,7 +319,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool DeleteAlertLevelGroupMapping(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_LEVEL_GRP_MAPPING.Find(id);
-
+            context.TBL_ALERT_LEVEL_GRP_MAPPING.Remove(entity);
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
@@ -419,7 +420,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool DeleteAlertLevelGroup(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_LEVEL_GROUP.Find(id);
-
+            context.TBL_ALERT_LEVEL_GROUP.Remove(entity);
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
@@ -448,8 +449,8 @@ namespace FintrakBanking.Repositories.Setups.General
                               alertLevelId = a.ALERTLEVELID,
                               emailList = a.EMAILLIST,
                               levelCode = a.LEVELCODE,
-                              alertTitleId = a.ALERTLEVELID,
-                              alertTitle = context.TBL_ALERT_TITLE.Where(t => t.ALERTTITLEID == a.ALERTTITLEID).Select(t => t.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(t => t.ALERTTITLEID == a.ALERTTITLEID).Select(t => t.TITLE).FirstOrDefault()
+                              levelGroupId = a.LEVELGROUPID,
+                              levelGroupName = context.TBL_ALERT_LEVEL_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_LEVEL_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault()
                           });
             return alerts;
         }
@@ -462,8 +463,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              alertLevelId = a.ALERTLEVELID,
                              emailList = a.EMAILLIST,
                              levelCode = a.LEVELCODE,
-                             alertTitleId = a.ALERTLEVELID,
-                             alertTitle = context.TBL_ALERT_TITLE.Where(t => t.ALERTTITLEID == a.ALERTTITLEID).Select(t => t.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(t => t.ALERTTITLEID == a.ALERTTITLEID).Select(t => t.TITLE).FirstOrDefault()
+                             levelGroupId = a.LEVELGROUPID,
+                             levelGroupName = context.TBL_ALERT_LEVEL_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_LEVEL_GROUP.Where(t => t.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(t => t.LEVELGROUPNAME).FirstOrDefault()
                          }).FirstOrDefault();
             return alert;
         }
@@ -474,7 +475,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 EMAILLIST = model.emailList,
                 LEVELCODE = model.levelCode,
-                ALERTTITLEID = model.alertTitleId
+                LEVELGROUPID = model.levelGroupId
             };
 
             context.TBL_ALERT_LEVEL.Add(entity);
@@ -502,7 +503,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var entity = this.context.TBL_ALERT_LEVEL.Find(id);
             entity.EMAILLIST = model.emailList;
             entity.LEVELCODE = model.levelCode;
-            entity.ALERTTITLEID = model.alertTitleId;
+            entity.LEVELGROUPID = model.levelGroupId;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -526,7 +527,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool DeleteAlertLevel(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_LEVEL.Find(id);
-            this.context.Database.Delete(entity);
+            context.TBL_ALERT_LEVEL.Remove(entity);
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
@@ -545,6 +546,120 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
+
+        public void validateAlertCheck()
+        {
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+
+            var alertSuject = context.TBL_ALERT_TITLE;
+            var alertSetup = context.TBL_ALERT_SETUP;
+            foreach(var i in alertSetup)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+
+                var alertcategory = context.TBL_ALERT_TITLE.Where(x => x.ALERTTITLEID == i.TITLEID).FirstOrDefault();
+                if(alertcategory != null)
+                {
+                    alert.alertTitle = alertcategory.TITLE;
+                    alert.template = alertcategory.TEMPLATE;
+
+                    if (validateConditionTrigger(i.FREQUENCYID, i.CONDITIONID ?? 0))
+                    {
+                        alert.canFire = true;
+                        var levels = GetReceivergroup(i.LEVELGROUPID);
+                        foreach (var level in levels)
+                        {
+                            var levelRecord = context.TBL_ALERT_LEVEL.Where(x => x.LEVELCODE == level.levelCode).ToList();
+                            alert.receiverEmailList.AddRange(levelRecord.Select(x => x.EMAILLIST));
+                        }
+                    }
+                    else { alert.canFire = false; }
+                }
+
+                alerts.Add(alert);
+            }
+            postAlertNotification(alerts);
+        }
+
+        public void postAlertNotification(List<AlertsViewModel> alerts)
+        {
+            foreach(var alert in alerts)
+            {
+                LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList.ToString(), "100442", 0);
+            }
+        }
+        public bool validateConditionTrigger(short frequencyId, short conditionId)
+        {
+            return true;
+        }
+
+        public List<AlertLevelViewModel> GetReceivergroup(int levelGroupId)
+        {
+          var levels =  (from g in context.TBL_ALERT_LEVEL_GROUP
+                          join m in context.TBL_ALERT_LEVEL_GRP_MAPPING on g.ALERTLEVELGROUPID equals m.LEVELGROUPID
+                          join l in context.TBL_ALERT_LEVEL on m.LEVELCODE equals l.LEVELCODE
+                          where g.ALERTLEVELGROUPID == levelGroupId select new AlertLevelViewModel
+                          {
+                              levelCode = l.LEVELCODE,
+                              levelGroupId = l.LEVELGROUPID
+                          }).ToList();
+
+            return levels;
+        }
+
+        private void LogEmailAlert(string messageBody, string alertSubject, string recipients, string jobReQuestCode, int targetId)
+        {
+            try
+            {
+                string recipient = recipients.Trim();
+
+                string messageSubject = alertSubject;
+                string messageContent = messageBody;
+                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = jobReQuestCode,
+                    targetId = targetId,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
+
+        public void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+
+        }
+
 
         public IEnumerable<AlertMisViewModel> GetAllUserMisCode()
         {

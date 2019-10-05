@@ -15,5 +15,6 @@ namespace FintrakBanking.Entities.Models
         public int ALERTTITLEID { get; set; }
         public string TITLE { get; set; }
         public string TEMPLATE { get; set; }
+        
     }
 }

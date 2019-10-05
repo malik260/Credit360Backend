@@ -15,6 +15,6 @@ namespace FintrakBanking.Entities.Models
         public int ALERTLEVELID { get; set; }
         public string EMAILLIST { get; set; }
         public string LEVELCODE { get; set; }
-        public int ALERTTITLEID { get; set; }
+        public short LEVELGROUPID { get; set; }
     }
 }

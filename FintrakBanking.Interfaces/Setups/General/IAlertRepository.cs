@@ -10,11 +10,11 @@ namespace FintrakBanking.Interfaces.Setups.General
 {
    public interface IAlertRepository
     {
-        IEnumerable<AlertViewModel> GetAllAlerts();
-        bool AddAlertTitle(AlertViewModel model);
+        IEnumerable<AlertTitleViewModel> GetAllAlerts();
+        bool AddAlertTitle(AlertTitleViewModel model);
         bool DeleteAlertTitle(int id, UserInfo user);
-        AlertViewModel GetAlertById(int id);
-        bool UpdateAlertTitle(int id, AlertViewModel model, UserInfo user);
+        AlertTitleViewModel GetAlertById(int id);
+        bool UpdateAlertTitle(int id, AlertTitleViewModel model, UserInfo user);
         IEnumerable<AlertSetupViewModel> GetAllAlertSetup();
         AlertSetupViewModel GetAlertSetupById(int id);
         bool AddAlertSetup(AlertSetupViewModel model);
