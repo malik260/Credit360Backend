@@ -13,6 +13,23 @@
         Daily = 2,
         Yearly = 3
     }
+
+    public enum AlertFrequencyEnum
+    {
+        HOURLY = 1,
+        DAILY = 2,
+        DAYCOUNT = 3,
+        DATE = 4,
+        WEEKLY = 5,
+        BIWEEKLY = 6,
+        MONTHLY = 7,
+        BIMONTHLY = 8,
+        QUARTERLY = 9,
+        ANNUALY = 10,
+        BIANNUAL = 11,
+        CONDITIONONLY = 12,
+        EVENT = 13,
+    }
 }
 
 //1	Yearly
@@ -24,4 +41,6 @@
 //7	Weekly
 //8	Daily
 //9	Thrice-Yearly
+
+
 

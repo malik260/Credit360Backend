@@ -3,6 +3,7 @@ using FintrakBanking.Common.Extensions;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ReportObjects.Credit;
 using FintrakBanking.Repositories.Setups.General;
+using FintrakBanking.Repositories.Setups.General;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;

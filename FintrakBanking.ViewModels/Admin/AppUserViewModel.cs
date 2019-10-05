@@ -12,8 +12,7 @@ namespace FintrakBanking.ViewModels.Admin
             activities = new List<UserActivities>();
         }
 
-        public int staffId { get; set; }
-        public string username { get; set; }
+
         public string password { get; set; }
         public string confirmPassword { get; set; }
         public string securityQuestion { get; set; }
