@@ -1,15 +1,17 @@
-﻿using FintrakBanking.APICore.JWTAuth;
-using FintrakBanking.Common.CustomException;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
+using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
-using System.Web;
+
 using FintrakBanking.ViewModels;
+using FintrakBanking.APICore.JWTAuth;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -23,6 +25,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             this._repo = repo;
         }
+
 
         #region title Setup
         [HttpGet]
@@ -61,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("alert-title")]
-        public HttpResponseMessage AddAlertTitle([FromBody] AlertViewModel entity)
+        public HttpResponseMessage AddAlertTitle([FromBody] AlertTitleViewModel entity)
         {
             try
             {
@@ -89,7 +92,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("alert-title/{id}")]
-        public HttpResponseMessage UpdateAlertTitle([FromUri] int id, [FromBody] AlertViewModel entity)
+        public HttpResponseMessage UpdateAlertTitle([FromUri] int id, [FromBody] AlertTitleViewModel entity)
         {
             try
             {
@@ -121,7 +124,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpDelete]
         [ClaimsAuthorization]
         [Route("alert-title/{id}")]
-        public HttpResponseMessage DeleteOriginalDocumentApproval(int id)
+        public HttpResponseMessage DeleteAlertTitle(int id)
         {
             UserInfo user = new UserInfo()
             {

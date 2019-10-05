@@ -339,23 +339,23 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 
                 if (hubCordinatorFullStaffData != null)
-                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, hubCordinatorFullStaffData.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
+                    LogEmailAlert(messageBoby, alertSubject, hubCordinatorFullStaffData.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
 
                 var hubTeamLeadEntry = context.TBL_JOB_TYPE_HUB_STAFF.Where(x => x.JOBTYPEUNITID == data.JOBTYPEUNITID && x.ISTEAMLEAD == true).FirstOrDefault();
                 if(hubTeamLeadEntry != null && fromStaffData != null)
                 {
                     var teamLeadStaff = context.TBL_STAFF.Find(hubTeamLeadEntry.STAFFID);
-                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, teamLeadStaff.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
+                    LogEmailAlert(messageBoby, alertSubject, teamLeadStaff.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
                 }
                 if (toStaffData != null)
                 {
                     var reciverStaff = context.TBL_STAFF.Find(toStaffData.STAFFID);
-                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, reciverStaff.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
+                    LogEmailAlert(messageBoby, alertSubject, reciverStaff.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
                 }
                 var verificationOfficer = context.TBL_STAFF.Find(model.createdBy); 
                 if(verificationOfficer != null)
                 {
-                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, verificationOfficer.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
+                    LogEmailAlert(messageBoby, alertSubject, verificationOfficer.EMAIL, data.JOBREQUESTCODE, data.JOBREQUESTID);
                 }
             }
 
@@ -1673,7 +1673,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             });
         }
 
-        private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string alertSubject, string recipients, string jobReQuestCode, int targetId)
+        private void LogEmailAlert(string messageBody, string alertSubject, string recipients, string jobReQuestCode, int targetId)
         {
             try
             {
@@ -1898,7 +1898,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                 $"Please acknowledge receipt of this mail.";
 
                             string alertSubject = $"Loan Collateral Search";
-                            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE, jobRequestData.JOBREQUESTID);
+                            LogEmailAlert(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE, jobRequestData.JOBREQUESTID);
                         }
                     }
 
@@ -2095,7 +2095,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         string messageBoby = jobRequestDetail.FirstOrDefault().DESCRIPTION2;
 
                         string alertSubject = $"Loan {subTypeClass}";
-                        LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE, jobRequestData.JOBREQUESTID);
+                        LogEmailAlert(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE, jobRequestData.JOBREQUESTID);
                     }
 
                     // Audit Section ---------------------------
@@ -2340,7 +2340,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
             string messageBoby = $"Dear RM, <br /><br />This is to bring to your attention that legal has specified charges for collateral on job request with code '{jobRequest.JOBREQUESTCODE}'. <br /><br /> You attention is required to effect the charges. <br /><br />";
             string alertSubject = $"Collateral Search Request";
-            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetStaffEmailRecipients(jobRequest.SENDERSTAFFID), jobRequest.JOBREQUESTCODE, jobRequest.JOBREQUESTID);
+            LogEmailAlert(messageBoby, alertSubject, GetStaffEmailRecipients(jobRequest.SENDERSTAFFID), jobRequest.JOBREQUESTCODE, jobRequest.JOBREQUESTID);
 
 
             return context.SaveChanges() > 0;

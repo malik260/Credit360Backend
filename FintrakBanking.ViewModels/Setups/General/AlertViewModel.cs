@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class AlertViewModel : GeneralEntity
+    public class AlertTitleViewModel : GeneralEntity
     {
         public int alertTitleId { get; set; }
         public string title { get; set; }
-        public string template { get; set; }
+        public string template { get; set; }      
 
     }
     public class AlertSetupViewModel : GeneralEntity
@@ -18,7 +18,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int alertSetupId { get; set; }
         public int titleId { get; set; }
         public int levelGroupMappingId { get; set; }
-        public int frequencyId { get; set; }
+        public short frequencyId { get; set; }
+        public short conditionId { get; set; }
     }
 
 
@@ -41,5 +42,17 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int alertLevelId { get; set; }
         public string emailList { get; set; }
         public string levelCode { get; set; }
+        public short levelGroupId { get; set; }
     }
+
+    public class AlertsViewModel : GeneralEntity
+    {
+        public string alertTitle { get; set; }
+        public string frequencyMode { get; set; }
+        public List<string> receiverEmailList { get; set; }
+        public string template { get; set; }
+        public bool canFire { get; set; }
+    }
+
+
 }
