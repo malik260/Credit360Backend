@@ -2268,28 +2268,6 @@ namespace FintrakBanking.Repositories.Credit
                         ";
             foreach (var cc in customerCollaterals)
             {
-                //switch (cc.collateralTypeId)
-                //{
-                //    case (int)CollateralTypeEnum.TermDeposit: remark = context.TBL_COLLATERAL_DEPOSIT.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.PlantAndMachinery: remark = context.TBL_COLLATERAL_PLANT_AND_EQUIP.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.Miscellaneous: remark = context.TBL_COLLATERAL_MISCELLANEOUS.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.NOTE; break;
-                //    case (int)CollateralTypeEnum.Gaurantee: remark = context.TBL_COLLATERAL_GAURANTEE.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.CASA: remark = context.TBL_COLLATERAL_CASA.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.Property: remark = context.TBL_COLLATERAL_IMMOVE_PROPERTY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.TreasuryBillsAndBonds: remark = context.TBL_COLLATERAL_MKT_SECURITY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.InsurancePolicy: remark = context.TBL_COLLATERAL_POLICY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.PreciousMetal: remark = context.TBL_COLLATERAL_PRECIOUSMETAL.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.MarketableSecurities_Shares: remark = context.TBL_COLLATERAL_STOCK.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.COMPANYNAME; break;
-                //    case (int)CollateralTypeEnum.Vehicle: remark = context.TBL_COLLATERAL_VEHICLE.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.Promissory: remark = context.TBL_COLLATERAL_PROMISSORY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.PROMISSORYNOTEID; break;
-                //    case (int)CollateralTypeEnum.ISPO: remark = context.TBL_COLLATERAL_ISPO.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.DomiciliationContract: remark = context.TBL_COLLATERAL_INDEMNITY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.DomiciliationSalary: remark = context.TBL_COLLATERAL_DOMICILIATION.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-                //    case (int)CollateralTypeEnum.Indemity: remark = context.TBL_COLLATERAL_INDEMNITY.FirstOrDefault(c => c.COLLATERALCUSTOMERID == cc.collateralId)?.REMARK; break;
-
-                //    default:
-                //        break;
-                //}
                         result += $@"
                             <li>{cc.collateralSummary}</li>
                         ";
