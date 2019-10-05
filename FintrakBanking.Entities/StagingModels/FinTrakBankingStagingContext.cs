@@ -4,7 +4,6 @@ namespace FintrakBanking.Entities.StagingModels
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
-    using FintrakBanking.Entities.Models;
 
     [DbConfigurationType(typeof(OracleDatabaseConfiguration))]
     public partial class FinTrakBankingStagingContext : DbContext
@@ -64,8 +63,7 @@ namespace FintrakBanking.Entities.StagingModels
         public virtual DbSet<STG_CURRENCY_TBL> STG_CURRENCY_TBL { get; set; }
         public virtual DbSet<STG_SCHEMECODE_TBL> STG_SCHEMECODE_TBL { get; set; }
         public virtual DbSet<STG_GL_SUBHEAD_TBL> STG_GL_SUBHEAD_TBL { get; set; }
-        public virtual DbSet<STG_USER_MIS> STG_USER_MIS { get; set; }
-
+       
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
