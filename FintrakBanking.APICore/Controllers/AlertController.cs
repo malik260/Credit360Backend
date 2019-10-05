@@ -26,6 +26,7 @@ namespace FintrakBanking.APICore.Controllers
             this._repo = repo;
         }
 
+
         #region title Setup
         [HttpGet]
         [ClaimsAuthorization]
@@ -63,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("alert-title")]
-        public HttpResponseMessage AddAlertTitle([FromBody] AlertViewModel entity)
+        public HttpResponseMessage AddAlertTitle([FromBody] AlertTitleViewModel entity)
         {
             try
             {
@@ -91,7 +92,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("alert-title/{id}")]
-        public HttpResponseMessage UpdateAlertTitle([FromUri] int id, [FromBody] AlertViewModel entity)
+        public HttpResponseMessage UpdateAlertTitle([FromUri] int id, [FromBody] AlertTitleViewModel entity)
         {
             try
             {
