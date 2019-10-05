@@ -160,7 +160,8 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                // LEVELGROUPMAPPINGID = model.levelGroupMappingId,
                 TITLEID = model.titleId,
-                FREQUENCYID = model.frequencyId
+                FREQUENCYID = model.frequencyId,
+                CONDITIONID = model.conditionId
             };
 
             context.TBL_ALERT_SETUP.Add(entity);
@@ -189,6 +190,7 @@ namespace FintrakBanking.Repositories.Setups.General
             entity.TITLEID = model.titleId;
             entity.FREQUENCYID = model.frequencyId;
             //entity.LEVELGROUPMAPPINGID = model.levelGroupMappingId;
+            entity.CONDITIONID = model.conditionId;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------

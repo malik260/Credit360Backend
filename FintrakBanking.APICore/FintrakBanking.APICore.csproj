@@ -65,11 +65,11 @@
     </Reference>
     <Reference Include="FintrakBanking.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FintrakBanking.Common\bin\Debug\FintrakBanking.Common.dll</HintPath>
+      <HintPath>..\FintrakBanking.Common\obj\Debug\FintrakBanking.Common.dll</HintPath>
     </Reference>
     <Reference Include="FintrakBanking.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FintrakBanking.Interfaces\bin\Debug\FintrakBanking.Interfaces.dll</HintPath>
+      <HintPath>..\FintrakBanking.Interfaces\obj\Debug\FintrakBanking.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.4.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
@@ -302,6 +302,10 @@
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Users\FINTRAK\Desktop\XLeratorDLL-financial.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNet.Identity.Core">
@@ -1282,7 +1286,6 @@
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Pharmaceuticals &amp; Healthcare Report -2019-05-29.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Power Report - 2019-05-08.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Telecommunications Report - 2019-03-13.pdf" />
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
@@ -1490,7 +1493,7 @@
       <Name>FintrakBanking.Repositories</Name>
     </ProjectReference>
     <ProjectReference Include="..\FinTrakBanking.ThirdPartyIntegration\FinTrakBanking.ThirdPartyIntegration.csproj">
-      <Project>{81C64D5D-3674-499E-B718-257AA862B1B2}</Project>
+      <Project>{81c64d5d-3674-499e-b718-257aa862b1b2}</Project>
       <Name>FinTrakBanking.ThirdPartyIntegration</Name>
     </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
@@ -1607,6 +1610,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

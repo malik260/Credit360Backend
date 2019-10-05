@@ -3,7 +3,6 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ReportObjects.ReportHelper;
-using FintrakBanking.Repositories.Setups.General;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Media;
