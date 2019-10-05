@@ -1,4 +1,6 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
@@ -6,6 +8,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,10 +27,10 @@ namespace FintrakBanking.Repositories.Setups.General
             this.general = _general;
         }
 
-        public IEnumerable<AlertViewModel> GetAllAlerts()
+        public IEnumerable<AlertTitleViewModel> GetAllAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE
-                                      select new AlertViewModel
+                                      select new AlertTitleViewModel
                                       {
                                           alertTitleId = a.ALERTTITLEID,
                                           title = a.TITLE,
@@ -36,10 +39,10 @@ namespace FintrakBanking.Repositories.Setups.General
             return alerts;
         }
 
-        public AlertViewModel GetAlertById(int id)
+        public AlertTitleViewModel GetAlertById(int id)
         {
             var alert = (from a in context.TBL_ALERT_TITLE.Where(x=>x.ALERTTITLEID == id)
-                          select new AlertViewModel
+                          select new AlertTitleViewModel
                           {
                               alertTitleId = a.ALERTTITLEID,
                               title = a.TITLE,
@@ -48,7 +51,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return alert;
         }
 
-        public bool AddAlertTitle(AlertViewModel model)
+        public bool AddAlertTitle(AlertTitleViewModel model)
         {
             var entity = new TBL_ALERT_TITLE
             {
@@ -76,7 +79,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateAlertTitle(int id, AlertViewModel model, UserInfo user)
+        public bool UpdateAlertTitle(int id, AlertTitleViewModel model, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_TITLE.Find(id);
             entity.TITLE = model.title;
@@ -132,7 +135,7 @@ namespace FintrakBanking.Repositories.Setups.General
                           {
                               alertSetupId = a.ALERTSETUPID,
                               titleId = a.TITLEID,
-                              levelGroupMappingId = a.LEVELGROUPMAPPINGID,
+                              levelGroupMappingId = a.LEVELGROUPID,
                               frequencyId = a.FREQUENCYID
                           });
             return alerts;
@@ -145,7 +148,7 @@ namespace FintrakBanking.Repositories.Setups.General
                          {
                              alertSetupId = a.ALERTSETUPID,
                              titleId = a.TITLEID,
-                             levelGroupMappingId = a.LEVELGROUPMAPPINGID,
+                             levelGroupMappingId = a.LEVELGROUPID,
                              frequencyId = a.FREQUENCYID
                          }).FirstOrDefault();
             return alert;
@@ -155,7 +158,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var entity = new TBL_ALERT_SETUP
             {
-                LEVELGROUPMAPPINGID = model.levelGroupMappingId,
+               // LEVELGROUPMAPPINGID = model.levelGroupMappingId,
                 TITLEID = model.titleId,
                 FREQUENCYID = model.frequencyId
             };
@@ -185,7 +188,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var entity = this.context.TBL_ALERT_SETUP.Find(id);
             entity.TITLEID = model.titleId;
             entity.FREQUENCYID = model.frequencyId;
-            entity.LEVELGROUPMAPPINGID = model.levelGroupMappingId;
+            //entity.LEVELGROUPMAPPINGID = model.levelGroupMappingId;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -531,5 +534,119 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
+
+        public void validateAlertCheck()
+        {
+            List<AlertsViewModel> alerts = new List<AlertsViewModel>();
+
+            var alertSuject = context.TBL_ALERT_TITLE;
+            var alertSetup = context.TBL_ALERT_SETUP;
+            foreach(var i in alertSetup)
+            {
+                AlertsViewModel alert = new AlertsViewModel();
+
+                var alertcategory = context.TBL_ALERT_TITLE.Where(x => x.ALERTTITLEID == i.TITLEID).FirstOrDefault();
+                if(alertcategory != null)
+                {
+                    alert.alertTitle = alertcategory.TITLE;
+                    alert.template = alertcategory.TEMPLATE;
+
+                    if (validateConditionTrigger(i.FREQUENCYID, i.CONDITIONID ?? 0))
+                    {
+                        alert.canFire = true;
+                        var levels = GetReceivergroup(i.LEVELGROUPID);
+                        foreach (var level in levels)
+                        {
+                            var levelRecord = context.TBL_ALERT_LEVEL.Where(x => x.LEVELCODE == level.levelCode).ToList();
+                            alert.receiverEmailList.AddRange(levelRecord.Select(x => x.EMAILLIST));
+                        }
+                    }
+                    else { alert.canFire = false; }
+                }
+
+                alerts.Add(alert);
+            }
+            postAlertNotification(alerts);
+        }
+
+        public void postAlertNotification(List<AlertsViewModel> alerts)
+        {
+            foreach(var alert in alerts)
+            {
+                LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList.ToString(), "100442", 0);
+            }
+        }
+        public bool validateConditionTrigger(short frequencyId, short conditionId)
+        {
+            return true;
+        }
+
+        public List<AlertLevelViewModel> GetReceivergroup(int levelGroupId)
+        {
+          var levels =  (from g in context.TBL_ALERT_LEVEL_GROUP
+                          join m in context.TBL_ALERT_LEVEL_GRP_MAPPING on g.ALERTLEVELGROUPID equals m.LEVELGROUPID
+                          join l in context.TBL_ALERT_LEVEL on m.LEVELCODE equals l.LEVELCODE
+                          where g.ALERTLEVELGROUPID == levelGroupId select new AlertLevelViewModel
+                          {
+                              levelCode = l.LEVELCODE,
+                              levelGroupId = l.LEVELGROUPID
+                          }).ToList();
+
+            return levels;
+        }
+
+        private void LogEmailAlert(string messageBody, string alertSubject, string recipients, string jobReQuestCode, int targetId)
+        {
+            try
+            {
+                string recipient = recipients.Trim();
+
+                string messageSubject = alertSubject;
+                string messageContent = messageBody;
+                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = jobReQuestCode,
+                    targetId = targetId,
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
+
+        public void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+                TARGETID = (int)model.targetId
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+
+        }
+
     }
 }
