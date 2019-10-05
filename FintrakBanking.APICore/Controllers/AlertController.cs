@@ -586,6 +586,22 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("alert-level-mis")]
+        public HttpResponseMessage GetAllUserMisCode()
+        {
+            try
+            {
+                var misViewModels = _repo.GetAllUserMisCode();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = misViewModels, count = misViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 
 }

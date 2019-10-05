@@ -35,5 +35,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool AddAlertLevel(AlertLevelViewModel model);
         bool UpdateAlertLevel(int id, AlertLevelViewModel model, UserInfo user);
         bool DeleteAlertLevel(int id, UserInfo user);
+        IEnumerable<AlertMisViewModel> GetAllUserMisCode();
     }
 }

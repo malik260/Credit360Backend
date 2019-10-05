@@ -84,6 +84,7 @@
     <Compile Include="DocumentModels\TBL_DOC_INVOICE.cs" />
     <Compile Include="DocumentModels\TBL_JOB_REQUEST_MSG_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_MEDIA_LOAN_DOCUMENTS.cs" />
+    <Compile Include="StagingModels\STG_USER_MIS.cs" />
     <Compile Include="Models\TBL_ALERT_LEVEL.cs" />
     <Compile Include="Models\TBL_ALERT_LEVEL_GROUP.cs" />
     <Compile Include="Models\TBL_ALERT_LEVEL_GRP_MAPPING.cs" />

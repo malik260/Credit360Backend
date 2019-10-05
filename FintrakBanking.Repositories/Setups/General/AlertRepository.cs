@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
@@ -15,11 +16,14 @@ namespace FintrakBanking.Repositories.Setups.General
    public class AlertRepository : IAlertRepository
     {
         private FinTrakBankingContext context;
+        private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
-        public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general)
+        public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
+                                FinTrakBankingStagingContext _context2)
         {
             this.context = _context;
+            this.context2 = _context2;
             this.audit = _audit;
             this.general = _general;
         }
@@ -443,7 +447,9 @@ namespace FintrakBanking.Repositories.Setups.General
                           {
                               alertLevelId = a.ALERTLEVELID,
                               emailList = a.EMAILLIST,
-                              levelCode = a.LEVELCODE
+                              levelCode = a.LEVELCODE,
+                              alertTitleId = a.ALERTLEVELID,
+                              alertTitle = context.TBL_ALERT_TITLE.Where(t => t.ALERTTITLEID == a.ALERTTITLEID).Select(t => t.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(t => t.ALERTTITLEID == a.ALERTTITLEID).Select(t => t.TITLE).FirstOrDefault()
                           });
             return alerts;
         }
@@ -455,7 +461,9 @@ namespace FintrakBanking.Repositories.Setups.General
                          {
                              alertLevelId = a.ALERTLEVELID,
                              emailList = a.EMAILLIST,
-                             levelCode = a.LEVELCODE
+                             levelCode = a.LEVELCODE,
+                             alertTitleId = a.ALERTLEVELID,
+                             alertTitle = context.TBL_ALERT_TITLE.Where(t => t.ALERTTITLEID == a.ALERTTITLEID).Select(t => t.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(t => t.ALERTTITLEID == a.ALERTTITLEID).Select(t => t.TITLE).FirstOrDefault()
                          }).FirstOrDefault();
             return alert;
         }
@@ -465,7 +473,8 @@ namespace FintrakBanking.Repositories.Setups.General
             var entity = new TBL_ALERT_LEVEL
             {
                 EMAILLIST = model.emailList,
-                LEVELCODE = model.levelCode
+                LEVELCODE = model.levelCode,
+                ALERTTITLEID = model.alertTitleId
             };
 
             context.TBL_ALERT_LEVEL.Add(entity);
@@ -493,6 +502,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var entity = this.context.TBL_ALERT_LEVEL.Find(id);
             entity.EMAILLIST = model.emailList;
             entity.LEVELCODE = model.levelCode;
+            entity.ALERTTITLEID = model.alertTitleId;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -516,7 +526,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public bool DeleteAlertLevel(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_LEVEL.Find(id);
-
+            this.context.Database.Delete(entity);
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
@@ -534,6 +544,19 @@ namespace FintrakBanking.Repositories.Setups.General
             // Audit Section end ------------------------
 
             return context.SaveChanges() != 0;
+        }
+
+        public IEnumerable<AlertMisViewModel> GetAllUserMisCode()
+        {
+            var alerts = (from a in context2.STG_USER_MIS
+                          select new AlertMisViewModel
+                          {
+                              loginId = a.LOGINID,
+                              userMisId = a.USERMISID,
+                              profitCenterDefinitionCode = a.PROFITCENTERDEFINITIONCODE,
+                              profitCenterMisCode = a.PROFITCENTERMISCODE
+                          }).GroupBy(a => a.profitCenterDefinitionCode).Select(a => a.FirstOrDefault());
+            return alerts;
         }
     }
 }
