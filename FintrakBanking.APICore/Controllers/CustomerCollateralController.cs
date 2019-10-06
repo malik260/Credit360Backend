@@ -727,7 +727,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var response = repo.GetCollateralTypeByCollateralId(collateralId, typeId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, data = response });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
