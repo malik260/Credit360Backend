@@ -8,13 +8,20 @@ namespace FintrakBanking.ViewModels.Setups.General
 {
     public class AlertTitleViewModel : GeneralEntity
     {
+        public string levelGroupName;
+        public string levelCode;
+
         public int alertTitleId { get; set; }
         public string title { get; set; }
-        public string template { get; set; }      
+        public string template { get; set; }
 
     }
     public class AlertSetupViewModel : GeneralEntity
     {
+        public string title;
+        public string levelGroupName;
+        public string levelCode;
+
         public int alertSetupId { get; set; }
         public int titleId { get; set; }
         public int levelGroupMappingId { get; set; }
@@ -25,6 +32,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class LevelGroupMappingViewModel : GeneralEntity
     {
+        public string levelGroupName { get; set; }
         public int alertLevelGroupMapId { get; set; }
         public int levelGroupId { get; set; }
         public string levelCode { get; set; }
@@ -39,6 +47,8 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class AlertLevelViewModel : GeneralEntity
     {
+        public string levelGroupName;
+
         public int alertLevelId { get; set; }
         public string emailList { get; set; }
         public string levelCode { get; set; }
@@ -52,7 +62,21 @@ namespace FintrakBanking.ViewModels.Setups.General
         public List<string> receiverEmailList { get; set; }
         public string template { get; set; }
         public bool canFire { get; set; }
+        public int alertTitleId { get; set; }
     }
 
+    public class AlertMisViewModel
+    {
+        public string profitCenterDefinitionCode { get; set; }
+        public string profitCenterMisCode { get; set; }
+        public int userMisId { get; set; }
+        public string loginId { get; set; }
+    }
 
+    public class AlertFrequencyViewModel
+    {
+        public int alertFrequencyId { get; set; }
+        public string frequencyMode { get; set; }
+        public string description { get; set; }
+    }
 }

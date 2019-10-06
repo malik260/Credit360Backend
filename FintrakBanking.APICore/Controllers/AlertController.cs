@@ -46,6 +46,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("load-alert-title")]
+        public HttpResponseMessage GetAlerts()
+        {
+            try
+            {
+                var alertViewModels = _repo.GetAlerts();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("alert-title/{id}")]
         public HttpResponseMessage GetAlertTitleById([FromUri] int id)
         {
@@ -586,6 +602,38 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
         #endregion
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("alert-level-mis")]
+        public HttpResponseMessage GetAllUserMisCode()
+        {
+            try
+            {
+                var misViewModels = _repo.GetAllUserMisCode();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = misViewModels, count = misViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("alert-frequency")]
+        public HttpResponseMessage GetAllFrequency()
+        {
+            try
+            {
+                var frequency = _repo.GetAllFrequency();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = frequency, count = frequency.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
     }
 

@@ -35,8 +35,8 @@ namespace FintrakBanking.Entities.StagingModels
 
         public int? FEEFREQUENCYTYPEID { get; set; }
 
-        [Column(TypeName = "float")]
-        public double? INTERESTRATE { get; set; }
+        //[Column(TypeName = "float")]
+        public float INTERESTRATE { get; set; }
         //public decimal? INTERESTRATE { get; set; }
 
         public DateTime? EFFECTIVEDATE { get; set; }
