@@ -614,23 +614,68 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private bool validateConditionTrigger(short frequencyId, short conditionId)
         {
-            if (ValidateFrequency(frequencyId))
+            if (ValidateFrequency(frequencyId, conditionId))
             {
                 return true;
             }
             else { return false; }
         }
 
-        private bool ValidateFrequency(short frequencyId)
+        private bool ValidateFrequency(short frequencyId, short conditionId)
         {
             var frequency = context.TBL_ALERT_FREQUENCY.Find(frequencyId);
             var systemDate = general.GetApplicationDate();
-            var condition = "";
+
             if (frequencyId == (short)AlertFrequencyEnum.DATE)
             {
-                //systemDate.Date == 
+                var condition = context.TBL_ALERT_CONDITION.Find(conditionId);
+                if(condition != null)
+                {
+                    if(systemDate.Date == condition.LASTRUNDATE) return true; else  return false;
+                }
+
             }
-            return true;
+
+            if (frequencyId == (short)AlertFrequencyEnum.DAILY)
+            {
+                var condition = context.TBL_ALERT_CONDITION.Find(conditionId);
+                if (condition != null)
+                {
+                    if (systemDate.Date > condition.LASTRUNDATE) return true; else return false;
+                }
+
+            }
+
+            if (frequencyId == (short)AlertFrequencyEnum.DAYCOUNT)
+            {
+                var condition = context.TBL_ALERT_CONDITION.Find(conditionId);
+                if (condition != null)
+                {
+                    var count = 3; //TODO
+                    if ( condition.LASTRUNDATE.AddDays(count) == systemDate) return true; else return false;
+                }
+
+            }
+
+            if (frequencyId == (short)AlertFrequencyEnum.WEEKLY)
+            {
+                var condition = context.TBL_ALERT_CONDITION.Find(conditionId);
+                if (condition != null)
+                {
+                    if (condition.LASTRUNDATE.AddDays(7) == systemDate) return true; else return false;
+                }
+
+            }
+            if (frequencyId == (short)AlertFrequencyEnum.EVENT)
+            {
+                var condition = context.TBL_ALERT_CONDITION.Find(conditionId);
+                if (condition != null)
+                {
+                    //if (condition.LASTRUNDATE.AddDays(7) == systemDate) return true; else return false;
+                }
+
+            }
+            return false;
         }
 
         private List<AlertLevelViewModel> GetReceivergroup(int levelGroupId)
