@@ -575,13 +575,12 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             foreach(var alert in alerts)
             {
-                LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList.ToString(), "100442", 0);
+                if (alert.canFire) LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList.ToString(), "100442", 0);
             }
         }
 
         private bool validateConditionTrigger(short frequencyId, short conditionId)
         {
-
             if (ValidateFrequency(frequencyId))
             {
                 return true;
