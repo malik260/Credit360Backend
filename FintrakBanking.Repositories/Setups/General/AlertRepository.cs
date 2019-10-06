@@ -77,7 +77,10 @@ namespace FintrakBanking.Repositories.Setups.General
             var entity = new TBL_ALERT_TITLE
             {
                 TITLE = model.title,
-                TEMPLATE = model.template
+                TEMPLATE = model.template,
+                BUSINESSOWNER = model.businessOwner,
+                SENDEREMAIL = model.senderEmail,
+                SENDERNAME = model.senderName
             };
 
             context.TBL_ALERT_TITLE.Add(entity);
@@ -105,6 +108,9 @@ namespace FintrakBanking.Repositories.Setups.General
             var entity = this.context.TBL_ALERT_TITLE.Find(id);
             entity.TITLE = model.title;
             entity.TEMPLATE = model.template;
+            entity.BUSINESSOWNER = model.businessOwner;
+            entity.SENDERNAME = model.senderName;
+            entity.SENDEREMAIL = model.senderEmail;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
