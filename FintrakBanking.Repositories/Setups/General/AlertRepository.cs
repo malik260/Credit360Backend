@@ -777,5 +777,136 @@ namespace FintrakBanking.Repositories.Setups.General
                           }).ToList();
             return frequency;
         }
+
+        public IEnumerable<AlertConditionViewModel> GetAllConditions()
+        {
+            var condition = (from a in context.TBL_ALERT_CONDITION             
+                          select new AlertConditionViewModel
+                          {
+                              alertConditionId = a.ALERTCONDITIONID,
+                              triggerSource = a.TRIGGERSOURCE,
+                              type = a.TYPE,
+                              formular = a.FORMULAR,
+                              operationId = a.OPERATIONID,
+                              lastRunDate = a.LASTRUNDATE,
+                              alertInterval = a.ALERTINTERVAL,
+                              nextRunDate = a.NEXTRUNDATE                            
+                          });
+            return condition;
+        }
+
+        public AlertConditionViewModel GetAlertConditionById(int id)
+        {
+            var alert = (from a in context.TBL_ALERT_CONDITION.Where(x => x.ALERTCONDITIONID == id)
+                         select new AlertConditionViewModel
+                         {
+                             alertConditionId = a.ALERTCONDITIONID,
+                             triggerSource = a.TRIGGERSOURCE,
+                             type = a.TYPE,
+                             formular = a.FORMULAR,
+                             operationId = a.OPERATIONID,
+                             lastRunDate = a.LASTRUNDATE,
+                             alertInterval = a.ALERTINTERVAL,
+                             nextRunDate = a.NEXTRUNDATE
+                         }).FirstOrDefault();
+            return alert;
+        }
+
+        public bool AddAlertCondition(AlertConditionViewModel model)
+        {
+            var entity = new TBL_ALERT_CONDITION
+            {
+                TRIGGERSOURCE = model.triggerSource,
+                TYPE = model.type,
+                FORMULAR = model.formular,
+                OPERATIONID = model.operationId,
+                LASTRUNDATE = model.lastRunDate,
+                ALERTINTERVAL = model.alertInterval,
+                NEXTRUNDATE = model.nextRunDate
+            };
+
+            context.TBL_ALERT_CONDITION.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_CONDITION '{entity.ToString()}' created by {auditStaff}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateAlertCondition(int id, AlertConditionViewModel model, UserInfo user)
+        {
+            var entity = this.context.TBL_ALERT_CONDITION.Find(id);
+            entity.TRIGGERSOURCE = model.triggerSource;
+            entity.LASTRUNDATE = model.lastRunDate;
+            entity.NEXTRUNDATE = model.nextRunDate;
+            entity.FORMULAR = model.formular;
+            entity.OPERATIONID = model.operationId;
+            entity.TYPE = model.type;
+            entity.ALERTINTERVAL = model.alertInterval;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_ALERT_CONDITION'{entity.ToString()}' was updated by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.ALERTCONDITIONID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteAlertCondition(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_ALERT_CONDITION.Find(id);
+            context.TBL_ALERT_CONDITION.Remove(entity);
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionDeleted,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_ALERT_TITLE '{entity.ToString()}' was deleted by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.ALERTCONDITIONID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public IEnumerable<TblOperationsViewModel> GetAllOperations()
+        {
+            var opeartion = (from a in context.TBL_OPERATIONS
+                          select new TblOperationsViewModel
+                          {
+                              operationId = a.OPERATIONID,
+                              operationName = a.OPERATIONNAME,
+                          });
+            return opeartion;
+        }
     }
 }

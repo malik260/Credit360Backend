@@ -17,8 +17,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string businessOwner { get; set; }
         public string senderName { get; set; }
         public string senderEmail { get; set; }
-
-
+        public string templateType { get; set; }
     }
     public class AlertSetupViewModel : GeneralEntity
     {
@@ -69,7 +68,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int alertTitleId { get; set; }
     }
 
-    public class AlertMisViewModel
+    public class AlertMisViewModel : GeneralEntity
     {
         public string profitCenterDefinitionCode { get; set; }
         public string profitCenterMisCode { get; set; }
@@ -77,10 +76,32 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string loginId { get; set; }
     }
 
-    public class AlertFrequencyViewModel
+    public class AlertFrequencyViewModel : GeneralEntity
     {
         public int alertFrequencyId { get; set; }
         public string frequencyMode { get; set; }
         public string description { get; set; }
     }
+
+    public class AlertConditionViewModel : GeneralEntity
+    {
+        public int alertConditionId { get; set; }
+        public string formular { get; set; }
+        public DateTime lastRunDate { get; set; }
+        public DateTime nextRunDate { get; set; }
+        //public DateTime lastRunTime { get; set; }
+        public short? operationId { get; set; }
+        public short? triggerSource { get; set; }
+        public string type { get; set; }
+        public short alertInterval { get; set; }
+        public int title { get; set; }
+
+    }
+
+    public class TblOperationsViewModel 
+    {
+        public int operationId { get; set; }
+        public string operationName { get; set; }
+    }
+
 }
