@@ -22,6 +22,7 @@ using FintrakBanking.ViewModels.Setups.Credit;
 using Newtonsoft.Json.Linq;
 using System.Web.Script.Serialization;
 using Newtonsoft.Json;
+using FintrakBanking.ViewModels.Audit;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -224,10 +225,11 @@ namespace FintrakBanking.Repositories.Customer
 
         public bool AddCustomerAddresses(CustomerAddressViewModels entity)
         {
+            var auditDetail = string.Empty;
+            short auditType = 0;
+
             if (entity != null)
             {
-                var auditDetail = string.Empty;
-                short auditType = 0;
                 try
                 {
                     TBL_CUSTOMER_ADDRESS address;
@@ -4614,11 +4616,29 @@ namespace FintrakBanking.Repositories.Customer
                     temp = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.TEMPADDRESSID == targetId);
                     if (temp != null) //If temp record is not null select the information from the main table
                     {
-                        JObject currentDataStr = JObject.Parse(Convert.ToString(entity));
-                        var recentData = currentDataStr.ToString();
+                        var tempModel = new CustomerAddressViewModels();
 
-                        JObject existingDataStr = JObject.Parse(Convert.ToString(temp));
-                        var existingData = existingDataStr["data"].ToString();
+                        tempModel.active = temp.ACTIVE;
+                        tempModel.address = temp.ADDRESS;
+                        tempModel.addressTypeId = (short)temp.ADDRESSTYPEID;
+                        tempModel.cityId = temp.CITYID;
+                        tempModel.customerId = temp.CUSTOMERID;
+                        tempModel.stateId = temp.STATEID;
+                        tempModel.homeTown = temp.HOMETOWN;
+                        tempModel.pobox = temp.POBOX;
+                        tempModel.localGovernmentId = temp.LOCALGOVERNMENTID;
+                        tempModel.electricMeterNumber = temp.ELECTRICMETERNUMBER;
+                        tempModel.nearestLandmark = temp.NEARESTLANDMARK;
+
+                        var transformedAddressModel = TransformAddressModelToAuditAddressModel(tempModel);
+
+                        var recentData = JsonConvert.SerializeObject(transformedAddressModel);
+
+                        //JObject currentDataStr = JObject.Parse(temp.ToString());
+                        //var recentData = currentDataStr.ToString();
+
+                        //JObject existingDataStr = JObject.Parse(Convert.ToString(temp));
+                        //var existingData = existingDataStr["data"].ToString();
 
                         detail = $"Customer address for customer with code: : {temp.TBL_CUSTOMER.CUSTOMERCODE} has been added. <br> New address: <br>{recentData}";
 
@@ -4643,16 +4663,57 @@ namespace FintrakBanking.Repositories.Customer
             else if (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Address_Modification)
             {
                 entity = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x => x.CUSTOMERID == modified.CUSTOMERID);
-                if(entity != null)
+                
+
+                if (entity != null)
                 {
+                    var entityModel = new CustomerAddressViewModels();
+
+                    entityModel.active = entity.ACTIVE;
+                    entityModel.address = entity.ADDRESS;
+                    entityModel.addressTypeId = (short)entity.ADDRESSTYPEID;
+                    entityModel.cityId = entity.CITYID;
+                    entityModel.customerId = entity.CUSTOMERID;
+                    entityModel.stateId = entity.STATEID;
+                    entityModel.homeTown = entity.HOMETOWN;
+                    entityModel.pobox = entity.POBOX;
+                    entityModel.stateId = entity.STATEID;
+                    entityModel.localGovernmentId = entity.LOCALGOVERNMENTID;
+                    entityModel.electricMeterNumber = entity.ELECTRICMETERNUMBER;
+                    entityModel.nearestLandmark = entity.NEARESTLANDMARK;
+
                     temp = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.TEMPADDRESSID == targetId);
                     if (temp != null) //If temp record is not null select the information from the main table
                     {
-                        JObject currentDataStr = JObject.Parse(Convert.ToString(entity));
-                        var recentData = currentDataStr.ToString();
+                        var tempModel = new CustomerAddressViewModels();
 
-                        JObject existingDataStr = JObject.Parse(Convert.ToString(temp));
-                        var existingData = existingDataStr["data"].ToString();
+                        tempModel.active = temp.ACTIVE;
+                        tempModel.address = temp.ADDRESS;
+                        tempModel.addressTypeId = (short)temp.ADDRESSTYPEID;
+                        tempModel.cityId = temp.CITYID;
+                        tempModel.customerId = temp.CUSTOMERID;
+                        tempModel.stateId = temp.STATEID;
+                        tempModel.homeTown = temp.HOMETOWN;
+                        tempModel.pobox = temp.POBOX;
+                        tempModel.localGovernmentId = temp.LOCALGOVERNMENTID;
+                        tempModel.electricMeterNumber = temp.ELECTRICMETERNUMBER;
+                        tempModel.nearestLandmark = temp.NEARESTLANDMARK;
+
+                        var transformedAddressModel = TransformAddressModelToAuditAddressModel(entityModel);
+
+                        var recentData = JsonConvert.SerializeObject(transformedAddressModel);
+
+                        transformedAddressModel = TransformAddressModelToAuditAddressModel(tempModel);
+
+                        var existingData = JsonConvert.SerializeObject(transformedAddressModel);
+
+                        //JObject currentDataStr = JObject.Parse(con);
+
+                        //var recentData = currentDataStr.ToString();
+
+                        //JObject existingDataStr = JObject.Parse(Convert.ToString(tempModel));
+
+                        //var existingData = existingDataStr["data"].ToString();
 
                         detail = $"Customer address for customer with code: : {temp.TBL_CUSTOMER.CUSTOMERCODE} has been updated. Existing data :<br> {existingData}. <br> New Data: <br>{recentData}";
 
@@ -4665,7 +4726,6 @@ namespace FintrakBanking.Repositories.Customer
                         entity.STATEID = temp.STATEID;
                         entity.HOMETOWN = temp.HOMETOWN;
                         entity.POBOX = temp.POBOX;
-                        entity.STATEID = temp.STATEID;
                         entity.ELECTRICMETERNUMBER = temp.ELECTRICMETERNUMBER;
                         entity.NEARESTLANDMARK = temp.NEARESTLANDMARK;
                         entity.LOCALGOVERNMENTID = temp.LOCALGOVERNMENTID;
@@ -4695,6 +4755,25 @@ namespace FintrakBanking.Repositories.Customer
             //end of Audit section -------------------------------
 
             return context.SaveChanges() > 0;
+        }
+
+        private CustomerAddressAuditViewModel TransformAddressModelToAuditAddressModel(CustomerAddressViewModels customerAddress)
+        {
+            var auditAddressModel = new CustomerAddressAuditViewModel();
+            if (customerAddress != null)
+            {
+                auditAddressModel.address = customerAddress.address;
+                auditAddressModel.addressType = context.TBL_CUSTOMER_ADDRESS_TYPE.Where(a => a.ADDRESSTYPEID == customerAddress.addressTypeId).Select(s => s.ADDRESS_TYPE_NAME).FirstOrDefault();
+                auditAddressModel.city = context.TBL_CITY.Where(a => a.CITYID == customerAddress.cityId).Select(s => s.CITYNAME).FirstOrDefault();
+                auditAddressModel.state = context.TBL_STATE.Where(a => a.STATEID == customerAddress.stateId).Select(s => s.STATENAME).FirstOrDefault();
+                auditAddressModel.homeTown = customerAddress.homeTown;
+                auditAddressModel.pobox = customerAddress.pobox;
+                auditAddressModel.localGovernment = context.TBL_LOCALGOVERNMENT.Where(a => a.LOCALGOVERNMENTID == customerAddress.localGovernmentId).Select(s => s.NAME).FirstOrDefault();
+                auditAddressModel.electricMeterNumber = customerAddress.electricMeterNumber;
+                auditAddressModel.nearestLandmark = customerAddress.nearestLandmark;
+            }
+
+            return auditAddressModel;
         }
 
         private bool ApprovePhoneContactInformation(int modifiedId, int targetId, short approvalStatusId, UserInfo user)
