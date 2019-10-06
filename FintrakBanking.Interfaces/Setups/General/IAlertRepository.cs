@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
-   public interface IAlertRepository
+    public interface IAlertRepository
     {
         IEnumerable<AlertTitleViewModel> GetAllAlerts();
         bool AddAlertTitle(AlertTitleViewModel model);
@@ -37,8 +37,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool DeleteAlertLevel(int id, UserInfo user);
         IEnumerable<AlertMisViewModel> GetAllUserMisCode();
         void validateAlertCheck();
-        void postAlertNotification(List<AlertsViewModel> alerts);
-        List<AlertLevelViewModel> GetReceivergroup(int levelGroupId);
-        void SaveMessageDetails(MessageLogViewModel model);
+        IEnumerable<AlertTitleViewModel> GetAlerts();
+        IEnumerable<AlertFrequencyViewModel> GetAllFrequency();
     }
 }

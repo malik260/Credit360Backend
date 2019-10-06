@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-   public class AlertRepository : IAlertRepository
+    public class AlertRepository : IAlertRepository
     {
         private FinTrakBankingContext context;
         private FinTrakBankingStagingContext context2;
@@ -34,24 +34,41 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<AlertTitleViewModel> GetAllAlerts()
         {
             var alerts = (from a in context.TBL_ALERT_TITLE
-                                      select new AlertTitleViewModel
-                                      {
-                                          alertTitleId = a.ALERTTITLEID,
-                                          title = a.TITLE,
-                                          template = a.TEMPLATE
-                                      });
+                          join b in context.TBL_ALERT_SETUP on a.ALERTTITLEID equals b.TITLEID
+                          join c in context.TBL_ALERT_LEVEL_GROUP on b.LEVELGROUPID equals c.ALERTLEVELGROUPID
+                          join d in context.TBL_ALERT_LEVEL on c.ALERTLEVELGROUPID equals d.LEVELGROUPID
+                          select new AlertTitleViewModel
+                          {
+                              alertTitleId = a.ALERTTITLEID,
+                              title = a.TITLE,
+                              template = a.TEMPLATE,
+                              levelGroupName = c.LEVELGROUPNAME==null ? "N/A" : c.LEVELGROUPNAME,
+                              levelCode = d.LEVELCODE == null ? "N/A" : d.LEVELCODE
+                          });
             return alerts;
         }
 
-        public AlertTitleViewModel GetAlertById(int id)
+        public IEnumerable<AlertTitleViewModel> GetAlerts()
         {
-            var alert = (from a in context.TBL_ALERT_TITLE.Where(x=>x.ALERTTITLEID == id)
+            var alerts = (from a in context.TBL_ALERT_TITLE
                           select new AlertTitleViewModel
                           {
                               alertTitleId = a.ALERTTITLEID,
                               title = a.TITLE,
                               template = a.TEMPLATE
-                          }).FirstOrDefault();
+                          });
+            return alerts;
+        }
+
+        public AlertTitleViewModel GetAlertById(int id)
+        {
+            var alert = (from a in context.TBL_ALERT_TITLE.Where(x => x.ALERTTITLEID == id)
+                         select new AlertTitleViewModel
+                         {
+                             alertTitleId = a.ALERTTITLEID,
+                             title = a.TITLE,
+                             template = a.TEMPLATE
+                         }).FirstOrDefault();
             return alert;
         }
 
@@ -108,7 +125,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-       public bool DeleteAlertTitle(int id, UserInfo user)
+        public bool DeleteAlertTitle(int id, UserInfo user)
         {
             var entity = this.context.TBL_ALERT_TITLE.Find(id);
             context.TBL_ALERT_TITLE.Remove(entity);
@@ -131,18 +148,21 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-        
+
         public IEnumerable<AlertSetupViewModel> GetAllAlertSetup()
         {
             var alerts = (from a in context.TBL_ALERT_SETUP
+                          join c in context.TBL_ALERT_LEVEL_GROUP on a.LEVELGROUPID equals c.ALERTLEVELGROUPID
+                          join d in context.TBL_ALERT_LEVEL on c.ALERTLEVELGROUPID equals d.LEVELGROUPID
                           select new AlertSetupViewModel
                           {
                               alertSetupId = a.ALERTSETUPID,
                               titleId = a.TITLEID,
                               levelGroupMappingId = a.LEVELGROUPID,
                               frequencyId = a.FREQUENCYID,
+                              levelCode = d.LEVELCODE,
                               title = context.TBL_ALERT_TITLE.Where(at => at.ALERTTITLEID == a.TITLEID).Select(at => at.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(at => at.ALERTTITLEID == a.TITLEID).Select(at => at.TITLE).FirstOrDefault(),
-                              levelCode = context.TBL_ALERT_LEVEL_GRP_MAPPING.Where(g => g.ALERTLEVELGROUPMAPID == a.LEVELGROUPID).Select(at => at.LEVELCODE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_LEVEL_GRP_MAPPING.Where(g => g.ALERTLEVELGROUPMAPID == a.LEVELGROUPID).Select(at => at.LEVELCODE).FirstOrDefault()
+                              levelGroupName = context.TBL_ALERT_LEVEL_GROUP.Where(g => g.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(at => at.LEVELGROUPNAME).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_LEVEL_GROUP.Where(g => g.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(at => at.LEVELGROUPNAME).FirstOrDefault()
                           });
             return alerts;
         }
@@ -164,7 +184,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var entity = new TBL_ALERT_SETUP
             {
-               // LEVELGROUPMAPPINGID = model.levelGroupMappingId,
+                // LEVELGROUPMAPPINGID = model.levelGroupMappingId,
                 TITLEID = model.titleId,
                 FREQUENCYID = model.frequencyId,
                 CONDITIONID = model.conditionId
@@ -239,8 +259,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return context.SaveChanges() != 0;
         }
-       
-        
+
+
         public IEnumerable<LevelGroupMappingViewModel> GetAllAlertLevelGroupMapping()
         {
             var alerts = (from a in context.TBL_ALERT_LEVEL_GRP_MAPPING
@@ -299,7 +319,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var entity = this.context.TBL_ALERT_LEVEL_GRP_MAPPING.Find(id);
             entity.LEVELGROUPID = model.levelGroupId;
             entity.LEVELCODE = model.levelCode;
-            
+
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
@@ -342,7 +362,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-        
+
         public IEnumerable<AlertLevelGroupViewModel> GetAllAlertLevelGroup()
         {
             var alerts = (from a in context.TBL_ALERT_LEVEL_GROUP
@@ -443,7 +463,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
-        
+
         public IEnumerable<AlertLevelViewModel> GetAllAlertLevel()
         {
             var alerts = (from a in context.TBL_ALERT_LEVEL
@@ -556,12 +576,12 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var alertSuject = context.TBL_ALERT_TITLE;
             var alertSetup = context.TBL_ALERT_SETUP;
-            foreach(var i in alertSetup)
+            foreach (var i in alertSetup)
             {
                 AlertsViewModel alert = new AlertsViewModel();
 
                 var alertcategory = context.TBL_ALERT_TITLE.Where(x => x.ALERTTITLEID == i.TITLEID).FirstOrDefault();
-                if(alertcategory != null)
+                if (alertcategory != null)
                 {
                     alert.alertTitle = alertcategory.TITLE;
                     alert.template = alertcategory.TEMPLATE;
@@ -586,7 +606,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private void postAlertNotification(List<AlertsViewModel> alerts)
         {
-            foreach(var alert in alerts)
+            foreach (var alert in alerts)
             {
                 LogEmailAlert(alert.template, alert.alertTitle, alert.receiverEmailList.ToString(), "100442", 0);
             }
@@ -607,7 +627,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var frequency = context.TBL_ALERT_FREQUENCY.Find(frequencyId);
             var systemDate = general.GetApplicationDate();
             var condition = "";
-            if(frequencyId == (short)AlertFrequencyEnum.DATE)
+            if (frequencyId == (short)AlertFrequencyEnum.DATE)
             {
                 //systemDate.Date == 
             }
@@ -616,10 +636,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private List<AlertLevelViewModel> GetReceivergroup(int levelGroupId)
         {
-          var levels =  (from g in context.TBL_ALERT_LEVEL_GROUP
+            var levels = (from g in context.TBL_ALERT_LEVEL_GROUP
                           join m in context.TBL_ALERT_LEVEL_GRP_MAPPING on g.ALERTLEVELGROUPID equals m.LEVELGROUPID
                           join l in context.TBL_ALERT_LEVEL on m.LEVELCODE equals l.LEVELCODE
-                          where g.ALERTLEVELGROUPID == levelGroupId select new AlertLevelViewModel
+                          where g.ALERTLEVELGROUPID == levelGroupId
+                          select new AlertLevelViewModel
                           {
                               levelCode = l.LEVELCODE,
                               levelGroupId = l.LEVELGROUPID
@@ -693,6 +714,18 @@ namespace FintrakBanking.Repositories.Setups.General
                               profitCenterMisCode = a.PROFITCENTERMISCODE
                           }).GroupBy(a => a.profitCenterDefinitionCode).Select(a => a.FirstOrDefault());
             return alerts;
+        }
+
+        public IEnumerable<AlertFrequencyViewModel> GetAllFrequency()
+        {
+            var frequency = (from a in context.TBL_ALERT_FREQUENCY
+                          select new AlertFrequencyViewModel
+                          {
+                              alertFrequencyId = a.ALERTFREQUENCYID,
+                              frequencyMode = a.FREQUENCYMODE,
+                              description = a.DESCRIPTION
+                          }).ToList();
+            return frequency;
         }
     }
 }

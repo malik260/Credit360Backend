@@ -8,14 +8,18 @@ namespace FintrakBanking.ViewModels.Setups.General
 {
     public class AlertTitleViewModel : GeneralEntity
     {
+        public string levelGroupName;
+        public string levelCode;
+
         public int alertTitleId { get; set; }
         public string title { get; set; }
-        public string template { get; set; }      
+        public string template { get; set; }
 
     }
     public class AlertSetupViewModel : GeneralEntity
     {
         public string title;
+        public string levelGroupName;
         public string levelCode;
 
         public int alertSetupId { get; set; }
@@ -61,7 +65,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int alertTitleId { get; set; }
     }
 
-    public class AlertMisViewModel 
+    public class AlertMisViewModel
     {
         public string profitCenterDefinitionCode { get; set; }
         public string profitCenterMisCode { get; set; }
@@ -69,5 +73,10 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string loginId { get; set; }
     }
 
-
+    public class AlertFrequencyViewModel
+    {
+        public int alertFrequencyId { get; set; }
+        public string frequencyMode { get; set; }
+        public string description { get; set; }
+    }
 }

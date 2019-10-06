@@ -111,6 +111,10 @@
       <Project>{18CEFC20-2662-4757-94DE-23D623FFC98D}</Project>
       <Name>FintrakBanking.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
+      <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
+      <Name>FintrakBanking.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
       <Project>{6A7C3564-00B2-45D4-A40C-4B52A06C296A}</Project>
       <Name>FintrakBanking.Interfaces</Name>
