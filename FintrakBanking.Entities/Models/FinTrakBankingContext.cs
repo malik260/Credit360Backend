@@ -553,7 +553,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ALERT_LEVEL_GRP_MAPPING> TBL_ALERT_LEVEL_GRP_MAPPING { get; set; }
         public virtual DbSet<TBL_ALERT_LEVEL_GROUP> TBL_ALERT_LEVEL_GROUP { get; set; }
         public virtual DbSet<TBL_ALERT_LEVEL> TBL_ALERT_LEVEL { get; set; } 
-        public virtual DbSet<TBL_ALERT_FREQUENCY> TBL_ALERT_FREQUENCY { get; set; }
+        public virtual DbSet<TBL_ALERT_FREQUENCY> TBL_ALERT_FREQUENCY { get; set; } 
+        public virtual DbSet<TBL_ALERT_CONDITION> TBL_ALERT_CONDITION { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 
