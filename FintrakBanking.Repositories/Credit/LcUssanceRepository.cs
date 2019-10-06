@@ -150,7 +150,7 @@ namespace FintrakBanking.Repositories.credit
                                 invoiceDueDate = x.INVOICEDUEDATE,
                                 lcReferenceNumber = x.LCREFERENCENUMBER,
                                 dateTimeCreated = (DateTime)x.DATETIMECREATED
-                                }).GroupBy(l => l.lcUssanceId).Select(l => l.OrderByDescending(t => t.lcApprovalTrailId).FirstOrDefault())
+                            }).GroupBy(l => l.lcUssanceId).Select(l => l.OrderByDescending(t => t.lcApprovalTrailId).FirstOrDefault())
                                 .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                                 || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
                                 && l.loopedStaffId == staffId)).ToList();

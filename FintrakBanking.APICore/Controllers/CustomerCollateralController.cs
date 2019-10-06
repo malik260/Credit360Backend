@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.APICore.JWTAuth;
@@ -26,6 +25,7 @@ using System.Net.Http.Formatting;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -727,7 +727,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var response = repo.GetCollateralTypeByCollateralId(collateralId, typeId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, data = response });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
