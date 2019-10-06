@@ -202,6 +202,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Services.Design" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
       <Private>True</Private>
@@ -294,9 +295,8 @@
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\FINTRAK\Desktop\XLeratorDLL-financial.dll</HintPath>
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>..\..\..\Users\USER\Documents\C# Materials\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
