@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.MonitoringMe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakBanking.LoanRepaymentBackgroundService", "FintrakBanking.LoanRepaymentBackgroundService\FintrakBanking.LoanRepaymentBackgroundService.csproj", "{BFAEEB68-C7AC-4B1D-A5B4-119516641323}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FintrakCFL", "WebApplication1\FintrakCFL.csproj", "{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +233,18 @@ Global
 		{BFAEEB68-C7AC-4B1D-A5B4-119516641323}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BFAEEB68-C7AC-4B1D-A5B4-119516641323}.Release|x86.ActiveCfg = Release|Any CPU
 		{BFAEEB68-C7AC-4B1D-A5B4-119516641323}.Release|x86.Build.0 = Release|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.Debug|x86.Build.0 = Debug|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.DebugLocal|x86.ActiveCfg = Debug|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.DebugLocal|x86.Build.0 = Debug|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.Release|x86.ActiveCfg = Release|Any CPU
+		{C791732A-DFC9-4A5F-BD09-0AAC9B1CA4AA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
