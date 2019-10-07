@@ -39,5 +39,11 @@ namespace FintrakBanking.Interfaces.Setups.General
         void validateAlertCheck();
         IEnumerable<AlertTitleViewModel> GetAlerts();
         IEnumerable<AlertFrequencyViewModel> GetAllFrequency();
+        IEnumerable<AlertConditionViewModel> GetAllConditions();
+        AlertConditionViewModel GetAlertConditionById(int id);
+        bool AddAlertCondition(AlertConditionViewModel model);
+        bool UpdateAlertCondition(int id, AlertConditionViewModel model, UserInfo user);
+        bool DeleteAlertCondition(int id, UserInfo user);
+        IEnumerable<TblOperationsViewModel> GetAllOperations();
     }
 }
