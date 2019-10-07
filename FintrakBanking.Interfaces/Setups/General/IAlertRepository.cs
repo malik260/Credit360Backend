@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
-   public interface IAlertRepository
+    public interface IAlertRepository
     {
-        IEnumerable<AlertViewModel> GetAllAlerts();
-        bool AddAlertTitle(AlertViewModel model);
+        IEnumerable<AlertTitleViewModel> GetAllAlerts();
+        bool AddAlertTitle(AlertTitleViewModel model);
         bool DeleteAlertTitle(int id, UserInfo user);
-        AlertViewModel GetAlertById(int id);
-        bool UpdateAlertTitle(int id, AlertViewModel model, UserInfo user);
+        AlertTitleViewModel GetAlertById(int id);
+        bool UpdateAlertTitle(int id, AlertTitleViewModel model, UserInfo user);
         IEnumerable<AlertSetupViewModel> GetAllAlertSetup();
         AlertSetupViewModel GetAlertSetupById(int id);
         bool AddAlertSetup(AlertSetupViewModel model);
@@ -35,5 +35,15 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool AddAlertLevel(AlertLevelViewModel model);
         bool UpdateAlertLevel(int id, AlertLevelViewModel model, UserInfo user);
         bool DeleteAlertLevel(int id, UserInfo user);
+        IEnumerable<AlertMisViewModel> GetAllUserMisCode();
+        void validateAlertCheck();
+        IEnumerable<AlertTitleViewModel> GetAlerts();
+        IEnumerable<AlertFrequencyViewModel> GetAllFrequency();
+        IEnumerable<AlertConditionViewModel> GetAllConditions();
+        AlertConditionViewModel GetAlertConditionById(int id);
+        bool AddAlertCondition(AlertConditionViewModel model);
+        bool UpdateAlertCondition(int id, AlertConditionViewModel model, UserInfo user);
+        bool DeleteAlertCondition(int id, UserInfo user);
+        IEnumerable<TblOperationsViewModel> GetAllOperations();
     }
 }

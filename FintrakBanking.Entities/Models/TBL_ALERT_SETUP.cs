@@ -14,7 +14,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int ALERTSETUPID { get; set; }
         public int TITLEID { get; set; }
-        public int LEVELGROUPMAPPINGID { get; set; }
-        public int FREQUENCYID { get; set; }
+        public int LEVELGROUPID { get; set; }
+        public short FREQUENCYID { get; set; }
+        public short? CONDITIONID { get; set; }
     }
 }

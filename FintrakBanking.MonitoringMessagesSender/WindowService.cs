@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Interfaces.AlertMonitoring;
 using FintrakBanking.Repositories.AlertMonitoring;
+using FintrakBanking.Repositories.Setups.General;
 using System;
 using System.Configuration;
 using System.Data.Entity.Validation;
@@ -17,6 +18,7 @@ namespace FintrakBanking.MonitoringMessagesSender
         private Timer _syncTimer;
         private static object s_lock = new object();
         EmailSender emailSender = new EmailSender();
+        AlertRepository alert;
         private string interval = ConfigurationManager.AppSettings["emailServiceInterval"];
         private string slaEscalationIntervalInHours = ConfigurationManager.AppSettings["SLAEscalationIntervalInHours"];
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
@@ -60,7 +62,7 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
-
+                    alert.validateAlertCheck();
                    // SEND EMAILS
                     bool response = emailSender.SendEmails();
                     if (response == true)

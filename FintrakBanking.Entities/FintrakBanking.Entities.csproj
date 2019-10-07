@@ -84,6 +84,8 @@
     <Compile Include="DocumentModels\TBL_DOC_INVOICE.cs" />
     <Compile Include="DocumentModels\TBL_JOB_REQUEST_MSG_DOCUMENT.cs" />
     <Compile Include="DocumentModels\TBL_TEMP_MEDIA_LOAN_DOCUMENTS.cs" />
+    <Compile Include="Models\TBL_ALERT_CONDITION.cs" />
+    <Compile Include="Models\TBL_ALERT_FREQUENCY.cs" />
     <Compile Include="Models\TBL_ALERT_LEVEL.cs" />
     <Compile Include="Models\TBL_ALERT_LEVEL_GROUP.cs" />
     <Compile Include="Models\TBL_ALERT_LEVEL_GRP_MAPPING.cs" />
@@ -1059,6 +1061,7 @@
     <Compile Include="StagingModels\STG_STAFF_RAW2.cs" />
     <Compile Include="StagingModels\STG_SUB_SECTOR.cs" />
     <Compile Include="StagingModels\STG_TREASURY_RATE_TBL.cs" />
+    <Compile Include="StagingModels\STG_USER_MIS.cs" />
     <Compile Include="StagingModels\TBL_FINANCE_TRANSACTION_STAGING.cs" />
     <Compile Include="StagingModels\TBL_CUSTOMER_SIGNATORY.cs" />
   </ItemGroup>

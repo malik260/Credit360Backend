@@ -26,6 +26,7 @@ namespace FintrakBanking.APICore.Controllers
             this._repo = repo;
         }
 
+
         #region title Setup
         [HttpGet]
         [ClaimsAuthorization]
@@ -35,6 +36,22 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var alertViewModels = _repo.GetAllAlerts();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("load-alert-title")]
+        public HttpResponseMessage GetAlerts()
+        {
+            try
+            {
+                var alertViewModels = _repo.GetAlerts();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
             }
             catch (SecureException ex)
@@ -63,7 +80,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("alert-title")]
-        public HttpResponseMessage AddAlertTitle([FromBody] AlertViewModel entity)
+        public HttpResponseMessage AddAlertTitle([FromBody] AlertTitleViewModel entity)
         {
             try
             {
@@ -91,7 +108,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("alert-title/{id}")]
-        public HttpResponseMessage UpdateAlertTitle([FromUri] int id, [FromBody] AlertViewModel entity)
+        public HttpResponseMessage UpdateAlertTitle([FromUri] int id, [FromBody] AlertTitleViewModel entity)
         {
             try
             {
@@ -585,6 +602,170 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
         #endregion
+
+        #region others
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("alert-level-mis")]
+        public HttpResponseMessage GetAllUserMisCode()
+        {
+            try
+            {
+                var misViewModels = _repo.GetAllUserMisCode();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = misViewModels, count = misViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("alert-frequency")]
+        public HttpResponseMessage GetAllFrequency()
+        {
+            try
+            {
+                var frequency = _repo.GetAllFrequency();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = frequency, count = frequency.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("alert-operations")]
+        public HttpResponseMessage GetAllOpeartions()
+        {
+            try
+            {
+                var alertViewModels = _repo.GetAllOperations();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
+
+        #region condition Setup
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("alert-condition")]
+        public HttpResponseMessage GetAllAlertConditions()
+        {
+            try
+            {
+                var alertViewModels = _repo.GetAllConditions();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("alert-condition/{id}")]
+        public HttpResponseMessage GetAlertConditionById([FromUri] int id)
+        {
+            try
+            {
+                var alertViewModels = _repo.GetAlertConditionById(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("alert-condition")]
+        public HttpResponseMessage AddAlertCondition([FromBody] AlertConditionViewModel entity)
+        {
+            try
+            {
+                entity.companyId = _token.GetCompanyId;
+                entity.userBranchId = (short)_token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = _token.GetStaffId;
+
+                var data = _repo.AddAlertCondition(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("alert-condition/{id}")]
+        public HttpResponseMessage UpdateAlertCondition([FromUri] int id, [FromBody] AlertConditionViewModel entity)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = _token.GetBranchId,
+                    companyId = _token.GetCompanyId,
+                    createdBy = _token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+
+                var data = _repo.UpdateAlertCondition(id, entity, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updateding this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error updateding this record {e.Message}" });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("alert-condition/{id}")]
+        public HttpResponseMessage DeleteAlertCondition(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = _token.GetBranchId,
+                companyId = _token.GetCompanyId,
+                createdBy = _token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = _repo.DeleteAlertCondition(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+        #endregion
+
+        
 
     }
 
