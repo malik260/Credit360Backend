@@ -214,6 +214,13 @@
     <Compile Include="WorkFlow\IWorkFlowRepository.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Operations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">
       <Project>{18cefc20-2662-4757-94de-23d623ffc98d}</Project>
       <Name>FintrakBanking.Common</Name>
@@ -226,13 +233,6 @@
       <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
       <Name>FintrakBanking.ViewModels</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Operations\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
