@@ -312,13 +312,15 @@ namespace FintrakBanking.Repositories.Setups.General
             var currCode = context.TBL_CURRENCY.Find(company.CURRENCYID).CURRENCYCODE;
             if (limit > company.SHAREHOLDERSFUND)
             {
-                throw new SecureException("Limit cannot be greater than Company Limit of " + currCode + company.SHAREHOLDERSFUND);
+                throw new SecureException("Limit cannot be greater than Company Limit of " + currCode + String.Format("{0:0,0.00}", company.SHAREHOLDERSFUND));
             }
         }
 
         public bool AddSector(SectorViewModel model)
         {
-            ValidateAgainstCompanyLimit(model.companyId, model.sectorLimit);
+            var sectors = context.TBL_SECTOR.ToList();
+            var limit = sectors.Sum(s => s.LOAN_LIMIT) + model.sectorLimit;
+            ValidateAgainstCompanyLimit(model.companyId, limit);
                 var response = 0;
                 context.TBL_SECTOR.Add(new TBL_SECTOR()
                 {
