@@ -24,10 +24,12 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string title;
         public string levelGroupName;
         public string levelCode;
+        public string operationName;
+        public string formular;
 
         public int alertSetupId { get; set; }
         public int titleId { get; set; }
-        public int levelGroupMappingId { get; set; }
+        public int levelGroupId { get; set; }
         public short frequencyId { get; set; }
         public short conditionId { get; set; }
     }
@@ -85,16 +87,20 @@ namespace FintrakBanking.ViewModels.Setups.General
 
     public class AlertConditionViewModel : GeneralEntity
     {
+        public string titleName { get; set; }
+        public string operationName { get; set; }
+
         public int alertConditionId { get; set; }
         public string formular { get; set; }
         public DateTime lastRunDate { get; set; }
         public DateTime nextRunDate { get; set; }
         //public DateTime lastRunTime { get; set; }
         public short? operationId { get; set; }
-        public short? triggerSource { get; set; }
+        public string triggerSource { get; set; }
         public string type { get; set; }
-        public short alertInterval { get; set; }
-        public int title { get; set; }
+        public short? alertInterval { get; set; }
+        public int? title { get; set; }
+        public string actionForTrigger { get; set; }
 
     }
 

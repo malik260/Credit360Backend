@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.CreditLimitValidations;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -474,6 +475,34 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"There was an error saving this record {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [Route("obligor-limit/{riskRatingId}")]
+        public HttpResponseMessage DeleteObligorLimit([FromBody] ObligorLimitViewModel entity)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.BranchId = (short)token.GetBranchId;
+                user.companyId = (short)token.GetCompanyId;
+                user.applicationUrl = HttpContext.Current.Request.Path;
+                user.staffId = token.GetStaffId;
+
+                var data = repo.DeleteRiskRating(entity.riskRatingId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "Changes deleted Successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"deleted Changes not Successfull" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
             }
         }
 
