@@ -603,6 +603,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
+        #region others
         [HttpGet]
         [ClaimsAuthorization]
         [Route("alert-level-mis")]
@@ -634,6 +635,23 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("alert-operations")]
+        public HttpResponseMessage GetAllOpeartions()
+        {
+            try
+            {
+                var alertViewModels = _repo.GetAllOperations();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
 
         #region condition Setup
         [HttpGet]
@@ -747,21 +765,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("alert-operations")]
-        public HttpResponseMessage GetAllOpeartions()
-        {
-            try
-            {
-                var alertViewModels = _repo.GetAllOperations();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        
 
     }
 

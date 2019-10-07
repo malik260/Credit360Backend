@@ -18,9 +18,10 @@ namespace FintrakBanking.Entities.Models
         public DateTime NEXTRUNDATE { get; set; }
         //public DateTime LASTRUNTIME { get; set; }
         public short? OPERATIONID { get; set; }
-        public short? TRIGGERSOURCE { get; set; }
+        public string TRIGGERSOURCE { get; set; }
+        public string ACTIONFORTRIGGER { get; set; }
         public string TYPE { get; set; }
-        public short ALERTINTERVAL { get; set; }
-        public int title { get; set; }
+        public short? ALERTINTERVAL { get; set; }
+        public int? TITLE { get; set; }
     }
 }
