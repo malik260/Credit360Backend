@@ -84,6 +84,7 @@
     <Compile Include="CASA\IOverRideRepository.cs" />
     <Compile Include="Credit\IAtcLodgmentDetailRepository.cs" />
     <Compile Include="Credit\IAtcLodgmentRepository.cs" />
+    <Compile Include="Credit\ICashFlowLendingRepository.cs" />
     <Compile Include="Credit\ICollateralValuationRepository.cs" />
     <Compile Include="Credit\IDeferredFeeRepository.cs" />
     <Compile Include="Credit\ILcConditionRepository.cs" />

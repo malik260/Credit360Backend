@@ -340,6 +340,7 @@
     <Compile Include="Controllers\AuthorisedSignatoryController.cs" />
     <Compile Include="Controllers\BulkDisbursementPackageController.cs" />
     <Compile Include="Controllers\BusinessRuleController.cs" />
+    <Compile Include="Controllers\CashFlowLendingController.cs" />
     <Compile Include="Controllers\CollateralValuationController.cs" />
     <Compile Include="Controllers\DeferredFeeController.cs" />
     <Compile Include="Controllers\DocumentCategoryController.cs" />
