@@ -165,7 +165,6 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IEmailRepository>().To<EmailRepository>();
             kernel.Bind<IAdminRepository>().To<AdminRepository>();
             kernel.Bind<ILoanCovenantRepository>().To<LoanCovenantRepository>();
-            kernel.Bind<ICustomerCollateralRepository>().To<CustomerCollateralRepository>();
             kernel.Bind<ICountryRepository>().To<CountryRepository>();
             kernel.Bind<ICustomerFSCaptionGroupRepository>().To<CustomerFSCaptionGroupRepository>();
             kernel.Bind<ICustomerFSCaptionRepository>().To<CustomerFSCaptionRepository>();
@@ -259,6 +258,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILcDocumentRepository>().To<LcDocumentRepository>();
             kernel.Bind<ILcShippingRepository>().To<LcShippingRepository>();
             kernel.Bind<ILcConditionRepository>().To<LcConditionRepository>();
+            kernel.Bind<ICustomerCollateralRepository>().To<CustomerCollateralRepository>();
 
             kernel.Bind<IAtcLodgmentRepository>().To<AtcLodgmentRepository>();
             kernel.Bind<IAtcLodgmentDetailRepository>().To<AtcLodgmentDetailRepository>();
@@ -272,6 +272,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IRepaymentTermsRepository>().To<RepaymentTermsRepository>();
             kernel.Bind<IAuthourisedSignatoryRepository>().To<AuthourisedSignatoryRepository>();
             kernel.Bind<IAlertRepository>().To<AlertRepository>();
+            kernel.Bind<ICashFlowLendingRepository>().To<CashFlowLendingRepository>();
         }
     }
     

@@ -11,6 +11,8 @@ using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.APICore.JWTAuth;
 using System.Collections.Generic;
+using FintrakBanking.ViewModels;
+using System.Web;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -420,13 +422,44 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       [HttpPut] [ClaimsAuthorization]
-        [Route("sectors/{id}")]
-        public HttpResponseMessage UpdateCompany([FromBody] SectorViewModel model ,short id)
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("sectors")]
+        public HttpResponseMessage AddSector([FromBody] SectorViewModel model)
         {
             try
             {
-                var data = repo.Updatesector( model, id);
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+                var data = repo.AddSector(model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, message = "Sector has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "Sector has not been created successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut] [ClaimsAuthorization]
+        [Route("sectors/{id}")]
+        public HttpResponseMessage UpdateSector([FromBody] SectorViewModel model ,short id)
+        {
+            try
+            {
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.Path;
+                var data = repo.UpdateSector( model, id);
 
                 if (data)
                 {
@@ -436,6 +469,35 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "Sector has not been updated successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("sectors/{id}")]
+        public HttpResponseMessage DeleteSector(int id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo();
+                user.companyId = token.GetCompanyId;
+                user.staffId = token.GetStaffId;
+                user.BranchId = (short)token.GetBranchId;
+                user.userIPAddress = HttpContext.Current.Request.Path;
+                var data = repo.DeleteSector(id, user);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, message = "Sector has been deleted successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "Sector has not been deleted successfully" });
             }
             catch (SecureException ex)
             {
