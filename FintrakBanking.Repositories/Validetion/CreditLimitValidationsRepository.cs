@@ -712,6 +712,35 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return false;
         }
 
+        public bool DeleteRiskRating(int id, UserInfo user)
+        {
+            var response = 0;
+            var rating = context.TBL_CUSTOMER_RISK_RATING.Find(id);
+
+            if (rating != null)
+            {
+                context.TBL_CUSTOMER_RISK_RATING.Remove(rating);
+
+
+                //// Audit Section ---------------------------
+                //var audit = new TBL_AUDIT
+                //{
+                //    AUDITTYPEID = (short)AuditTypeEnum.ratin,
+                //    STAFFID = user.staffId,
+                //    BRANCHID = (short)user.BranchId,
+                //    DETAIL = $"Deleted sector: '{rating.ToString()} ",
+                //    IPADDRESS = user.userIPAddress,
+                //    URL = user.applicationUrl,
+                //    APPLICATIONDATE = GetApplicationDate(),
+                //    SYSTEMDATETIME = DateTime.Now
+                //};
+                ////end of Audit section -------------------------------
+                response = context.SaveChanges();
+            }
+
+            return response != 0;
+        }
+
         public bool ValidateRiskRating(string riskRating)
         {
             var isExist = (from x in context.TBL_CUSTOMER_RISK_RATING where x.RISKRATING == riskRating select x).ToList();
