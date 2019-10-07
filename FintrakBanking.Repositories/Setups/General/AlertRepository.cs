@@ -802,7 +802,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                  operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID == a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault()==null ? "N/A" : context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                                  lastRunDate = a.LASTRUNDATE,
                                  alertInterval = a.ALERTINTERVAL,
-                                 nextRunDate = a.NEXTRUNDATE,
+                                 nextRunDate = (DateTime)a.NEXTRUNDATE,
                                  title = a.TITLE,
                                  actionForTrigger = a.ACTIONFORTRIGGER,
                                  titleName = context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()==null ? "N/A" : context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()
@@ -823,7 +823,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault() == null ? "N/A" : context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                              lastRunDate = a.LASTRUNDATE,
                              alertInterval = a.ALERTINTERVAL,
-                             nextRunDate = a.NEXTRUNDATE,
+                             nextRunDate = (DateTime)a.NEXTRUNDATE,
                              title = a.TITLE,
                              actionForTrigger = a.ACTIONFORTRIGGER,
                              titleName = context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()
