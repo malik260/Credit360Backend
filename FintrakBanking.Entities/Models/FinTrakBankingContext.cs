@@ -27,7 +27,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_GRP_MAPPING> TBL_TEMP_APPROVAL_GRP_MAPPING { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_SETTING> TBL_APPROVAL_LEVEL_SETTING { get; set; }
-
+        
+        public virtual DbSet<TBL_ALERT_TEMPLATE_TYPE> TBL_ALERT_TEMPLATE_TYPE { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL> TBL_TEMP_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
