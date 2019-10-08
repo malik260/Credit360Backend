@@ -17,6 +17,7 @@
         public int? localGovernmentId { get; set; }
         public string localGovernmentName { get; set; }
         public string stateName { get; set; }
+        public string city { get; set; }
     }
 
 
