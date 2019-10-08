@@ -323,6 +323,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.LOCALGOVERNMENTID = entity.localGovernmentId;
                             modifiedTargetId = temp.TEMPADDRESSID;
 
+                            auditDetail = "Added new Customer Address for customer ID: + (" + entity.customerId + ") ";
+                            auditType = (short)AuditTypeEnum.CustomerAddressAdded;
+
                         }
                         else //if customer address information has no existing record being modified and approved, insert new row
                         {
@@ -346,6 +349,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.ISCURRENT = true;
                             temp.LOCALGOVERNMENTID = entity.localGovernmentId;
                             context.TBL_TEMP_CUSTOMER_ADDRESS.Add(temp);
+
+                            auditDetail = "Added new Customer Address for customer ID: + (" + entity.customerId + ") ";
+                            auditType = (short)AuditTypeEnum.CustomerAddressAdded;
                         }
 
                         var modified = new TBL_CUSTOMER_MODIFICATION
@@ -653,6 +659,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
                             modifiedTargetId = temp.TEMPPHONECONTACTID;
+
+                            auditDetail = "Added new Customer Phone Number for customer ID: + (" + entity.customerId + ") ";
+                            auditType = (short)AuditTypeEnum.CustomerContactAdded;
                         }
                         else //if customer phoneContact information has no existing record being modified and approved, insert new row
                         {
@@ -668,6 +677,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
                             context.TBL_TEMP_CUSTOMER_PHONCONTACT.Add(temp);
+
+                            auditDetail = "Added new Customer Phone Number for customer ID: + (" + entity.customerId + ") ";
+                            auditType = (short)AuditTypeEnum.CustomerContactAdded;
 
                         }
 
@@ -844,6 +856,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.ACTIVE = entity.active;
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
+
+                            auditDetail = "Added Customer's Next Of Kin for customer ID: + (" + entity.customerId + ") ";
+                            auditType = (short)AuditTypeEnum.CustomerDetailAdded;
                         }
                         else //if customer phoneContact information has no existing record being modified and approved, insert new row
                         {
@@ -864,6 +879,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.ISCURRENT = true;
                             context.TBL_TEMP_CUSTOMER_NEXTOFKIN.Add(temp);
                             //  var res = context.SaveChanges() > 0;
+
+                            auditDetail = "Added Customer's Next Of Kin for customer ID: + (" + entity.customerId + ") ";
+                            auditType = (short)AuditTypeEnum.CustomerDetailAdded;
 
                         }
 
@@ -1388,9 +1406,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.EMAILADDRESS = entity.email;
                             temp.CREATEDBY = entity.createdBy;
                             temp.DATECREATED = DateTime.Now;
-                            temp.GENDER = entity.gender;
-                            temp.MARITALSTATUSID = entity.maritalStatusId;
-                            temp.DATEOFBIRTH = entity.dateOfBirth;
+                            //temp.GENDER = entity.gender;
+                            //temp.MARITALSTATUSID = entity.maritalStatusId;
+                            //temp.DATEOFBIRTH = entity.dateOfBirth;
                             // temp.TBL_TEMP_COMPANY_BENEFICIA = beneficialList;
 
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
@@ -1420,9 +1438,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.DATECREATED = DateTime.Now;
                             temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                             temp.ISCURRENT = true;
-                            temp.GENDER = entity.gender;
-                            temp.MARITALSTATUSID = entity.maritalStatusId;
-                            temp.DATEOFBIRTH = entity.dateOfBirth;
+                            //temp.GENDER = entity.gender;
+                            //temp.MARITALSTATUSID = entity.maritalStatusId;
+                            //temp.DATEOFBIRTH = entity.dateOfBirth;
                             context.TBL_TEMP_CUSTOMER_DIRECTOR.Add(temp);
 
                         }
@@ -1459,7 +1477,7 @@ namespace FintrakBanking.Repositories.Customer
 
                                 workflow.StaffId = entity.staffId;
                                 workflow.CompanyId = entity.companyId;
-                                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                                workflow.StatusId = (int)ApprovalStatusEnum.Processing;     //Formerly Pending (int)ApprovalStatusEnum.Pending; 
                                 workflow.TargetId = targetId;
                                 workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
                                 workflow.ExternalInitialization = true;
@@ -1952,6 +1970,9 @@ namespace FintrakBanking.Repositories.Customer
                             temp.MONTHLYINCOME = entity.monthlyIncome;
                             temp.EXPENDITURE = entity.expenditure;
                             context.TBL_TEMP_CUSTOMEREMPLOYMENT.Add(temp);
+
+                            auditDetail = "Added Customer Employment History for customer ID: + (" + entity.customerId + ") ";
+                            auditType = (short)AuditTypeEnum.CustomerDetailAdded;
                         }
 
                         // modifiedTargetId = entity.placeOfWorkId;
@@ -3482,6 +3503,7 @@ namespace FintrakBanking.Repositories.Customer
                                address = x.ADDRESS,
                                addressTypeId = x.ADDRESSTYPEID,
                                cityId = x.CITYID,
+                               city = context.TBL_CITY.Where(c => c.CITYID == x.CITYID).Select(s => s.CITYNAME).FirstOrDefault(),
                                customerId = x.CUSTOMERID,
                                homeTown = x.HOMETOWN,
                                nearestLandmark = x.NEARESTLANDMARK,
@@ -3601,6 +3623,7 @@ namespace FintrakBanking.Repositories.Customer
                                          employerName = s.EMPLOYERNAME,
                                          officePhone = s.OFFICEPHONE,
                                          employerStateId = s.EMPLOYERSTATEID,
+                                         employerState = s.EMPLOYERSTATE,
                                          yearOfEmployment = s.YEAROFEMPLOYMENT,
                                          totalWorkingExperience = s.TOTALWORKINGEXPERIENCE,
                                          yearsOfCurrentEmployment = s.YEARSOFCURRENTEMPLOYMENT,
@@ -3715,9 +3738,9 @@ namespace FintrakBanking.Repositories.Customer
                                         address = s.ADDRESS,
                                         phoneNumber = s.PHONENUMBER,
                                         email = s.EMAILADDRESS,
-                                        dateOfBirth = s.DATEOFBIRTH,
-                                        gender = s.GENDER,
-                                        maritalStatusId = s.MARITALSTATUSID,
+                                        //dateOfBirth = s.DATEOFBIRTH,
+                                        //gender = s.GENDER,
+                                        //maritalStatusId = s.MARITALSTATUSID,
                                         customerCompanyBeneficial = context.TBL_CUSTOMER_COMPANY_BENEFICIA
                                             .Where(a => a.COMPANYDIRECTORID == s.COMPANYDIRECTORID && a.DELETED == false).Select(x =>
                                                 new CustomerCompanyBeneficiaryViewModels()
@@ -3801,9 +3824,9 @@ namespace FintrakBanking.Repositories.Customer
                                         address = s.ADDRESS,
                                         phoneNumber = s.PHONENUMBER,
                                         email = s.EMAILADDRESS,
-                                        dateOfBirth = s.DATEOFBIRTH,
-                                        gender = s.GENDER,
-                                        maritalStatusId = s.MARITALSTATUSID,
+                                        //dateOfBirth = s.DATEOFBIRTH,
+                                        //gender = s.GENDER,
+                                        //maritalStatusId = s.MARITALSTATUSID,
                                     }).ToList();
             return companyDirectors;
         }
@@ -4610,9 +4633,6 @@ namespace FintrakBanking.Repositories.Customer
             //Check if Customer address information exist in the temp table using the targetId
             if (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Address_Addition)
             {
-                entity = context.TBL_CUSTOMER_ADDRESS.FirstOrDefault(x => x.CUSTOMERID == modified.CUSTOMERID);
-                if(entity != null)
-                {
                     temp = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.TEMPADDRESSID == targetId);
                     if (temp != null) //If temp record is not null select the information from the main table
                     {
@@ -4657,7 +4677,6 @@ namespace FintrakBanking.Repositories.Customer
                         entity.LOCALGOVERNMENTID = temp.LOCALGOVERNMENTID;
                         context.TBL_CUSTOMER_ADDRESS.Add(entity);
                     }
-                }
                
             }
             else if (modified.MODIFICATIONTYPEID == (int)CustomerInformationTrackerEnum.Address_Modification)
@@ -5180,9 +5199,9 @@ namespace FintrakBanking.Repositories.Customer
                     entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                     entity.SHAREHOLDINGPERCENTAGE = temp.SHAREHOLDINGPERCENTAGE;
                     entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
-                    entity.MARITALSTATUSID = temp.MARITALSTATUSID;
-                    entity.GENDER = temp.GENDER;
-                    entity.DATEOFBIRTH = temp.DATEOFBIRTH;
+                    //entity.MARITALSTATUSID = temp.MARITALSTATUSID;
+                    //entity.GENDER = temp.GENDER;
+                    //entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                     if (temp.ISPOLITICALLYEXPOSED == true)
                     {
                         if (CustomerRec.ISPOLITICALLYEXPOSED == false)
@@ -5221,9 +5240,9 @@ namespace FintrakBanking.Repositories.Customer
                     entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                     entity.SHAREHOLDINGPERCENTAGE = temp.SHAREHOLDINGPERCENTAGE;
                     entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
-                    entity.MARITALSTATUSID = temp.MARITALSTATUSID;
-                    entity.GENDER = temp.GENDER;
-                    entity.DATEOFBIRTH = temp.DATEOFBIRTH;
+                    //entity.MARITALSTATUSID = temp.MARITALSTATUSID;
+                    //entity.GENDER = temp.GENDER;
+                    //entity.DATEOFBIRTH = temp.DATEOFBIRTH;
                     if (temp.ISPOLITICALLYEXPOSED == true)
                     {
                         if (CustomerRec.ISPOLITICALLYEXPOSED == false)
