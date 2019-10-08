@@ -1473,10 +1473,10 @@ namespace FintrakBanking.Repositories.Credit
                 var entity = (from ir in context.TBL_INSURANCE_REQUEST
                               join cip in context.TBL_COLLATERAL_ITEM_POLICY on ir.COLLATERALCUSTOMERID equals cip.COLLATERALCUSTOMERID
                               where model.collateralId == cip.COLLATERALCUSTOMERID &&
-                                 ir.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                 cip.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                               select cip).ToList();
 
-                if (entity.Count > 0) throw new SecureException("Collateral Already undergoing Insurnace Request Approval");
+                if (entity.Any()) throw new SecureException("Collateral Item already undergoing Insurnace Request Approval");
 
                 
 
@@ -1613,8 +1613,17 @@ namespace FintrakBanking.Repositories.Credit
         public bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model)
         {
             var data = context.TBL_INSURANCE_REQUEST.FirstOrDefault(d => d.COLLATERALCUSTOMERID == model.collateralCustomerId &&
-                                                                        d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred);
-            if (data != null) return false;
+                                                                        d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing 
+                                                                        || d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred);
+
+            if (data != null) throw new SecureException("Collateral Item is already Undergoing Insurance Request Approval");
+
+            var data2 = context.TBL_INSURANCE_REQUEST.FirstOrDefault(d => d.COLLATERALCUSTOMERID == model.collateralCustomerId &&
+                                                                        d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending);
+
+            if (data2 != null) throw new SecureException("A Pending Insurance Request already exists for this Collateral");
+
+
 
             var policy = context.TBL_INSURANCE_REQUEST.Add(new TBL_INSURANCE_REQUEST
             {
