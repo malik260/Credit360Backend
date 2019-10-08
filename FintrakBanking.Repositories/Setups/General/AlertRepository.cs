@@ -58,7 +58,8 @@ namespace FintrakBanking.Repositories.Setups.General
                               templateType = a.TEMPLATETYPE,
                               businessOwner = a.BUSINESSOWNER,
                               senderEmail = a.SENDEREMAIL,
-                              senderName = a.SENDERNAME                         
+                              senderName = a.SENDERNAME,
+                              templateTypeName = context.TBL_ALERT_TEMPLATE_TYPE.Where(x => x.ALERTTEMPLATETYPEID == a.TEMPLATETYPE).Select(x => x.PLACEHOLDER).FirstOrDefault()
                           });
             return alerts;
         }
@@ -74,7 +75,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              templateType = a.TEMPLATETYPE,
                              businessOwner = a.BUSINESSOWNER,
                              senderEmail = a.SENDEREMAIL,
-                             senderName = a.SENDERNAME
+                             senderName = a.SENDERNAME,
+                             templateTypeName = context.TBL_ALERT_TEMPLATE_TYPE.Where(x => x.ALERTTEMPLATETYPEID == a.TEMPLATETYPE).Select(x => x.PLACEHOLDER).FirstOrDefault()
                          }).FirstOrDefault();
             return alert;
         }
@@ -167,19 +169,19 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<AlertSetupViewModel> GetAllAlertSetup()
         {
             var alerts = (from a in context.TBL_ALERT_SETUP
-                          //join c in context.TBL_ALERT_LEVEL_GROUP on a.LEVELGROUPID equals c.ALERTLEVELGROUPID
-                          //join d in context.TBL_ALERT_LEVEL on c.ALERTLEVELGROUPID equals d.LEVELGROUPID
-                          //join x in context.TBL_ALERT_CONDITION on (int)a.CONDITIONID equals x.ALERTCONDITIONID
-                          //join f in context.TBL_OPERATIONS on (int)x.OPERATIONID equals f.OPERATIONID
+                          join c in context.TBL_ALERT_LEVEL_GROUP on a.LEVELGROUPID equals c.ALERTLEVELGROUPID
+                          join d in context.TBL_ALERT_LEVEL on c.ALERTLEVELGROUPID equals d.LEVELGROUPID
+                          join x in context.TBL_ALERT_CONDITION on (int)a.CONDITIONID equals x.ALERTCONDITIONID
+                          join f in context.TBL_OPERATIONS on (int)x.OPERATIONID equals f.OPERATIONID
                           select new AlertSetupViewModel
                           {
                               alertSetupId = a.ALERTSETUPID,
                               titleId = a.TITLEID,
                               levelGroupId = a.LEVELGROUPID,
                               frequencyId = a.FREQUENCYID,
-                              //levelCode = d.LEVELCODE,
-                              //operationName = f.OPERATIONNAME,
-                             // formular = x.FORMULAR,
+                              levelCode = d.LEVELCODE,
+                              operationName = f.OPERATIONNAME,
+                              formular = x.FORMULAR,
                               title = context.TBL_ALERT_TITLE.Where(at => at.ALERTTITLEID == a.TITLEID).Select(at => at.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(at => at.ALERTTITLEID == a.TITLEID).Select(at => at.TITLE).FirstOrDefault(),
                               levelGroupName = context.TBL_ALERT_LEVEL_GROUP.Where(g => g.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(at => at.LEVELGROUPNAME).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_LEVEL_GROUP.Where(g => g.ALERTLEVELGROUPID == a.LEVELGROUPID).Select(at => at.LEVELGROUPNAME).FirstOrDefault()
                           });
