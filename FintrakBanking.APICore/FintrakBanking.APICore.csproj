@@ -323,6 +323,9 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="CFLAuthentication\BasicAuthenticationFilter.cs" />
+    <Compile Include="CFLAuthentication\BasicAuthenticationIdentity.cs" />
+    <Compile Include="CFLAuthentication\MyBasicAuthenticationFilter.cs" />
     <Compile Include="Controllers\AccountCategoryController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AccountSensitivityController.cs" />
