@@ -651,9 +651,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 var condition = context.TBL_ALERT_CONDITION.Find(conditionId);
                 if(condition != null)
                 {
-                    if(systemDate.Date == condition.LASTRUNDATE) return true; else  return false;
+                    if(systemDate.Date == condition.NEXTRUNDATE) return true; else  return false;
                 }
-
             }
 
             if (frequencyId == (short)AlertFrequencyEnum.DAILY)
@@ -661,9 +660,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 var condition = context.TBL_ALERT_CONDITION.Find(conditionId);
                 if (condition != null)
                 {
-                    if (systemDate.Date > condition.LASTRUNDATE) return true; else return false;
+                    if (systemDate.Date > condition.LASTRUNDATE && systemDate.Date <= condition.NEXTRUNDATE) return true; else return false;
                 }
-
             }
 
             if (frequencyId == (short)AlertFrequencyEnum.DAYCOUNT)
@@ -671,10 +669,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 var condition = context.TBL_ALERT_CONDITION.Find(conditionId);
                 if (condition != null)
                 {
-                    var count = 3; //TODO
-                    if ( condition.LASTRUNDATE.AddDays(count) == systemDate) return true; else return false;
+                    var count = condition.ALERTINTERVAL ?? 0; 
+                    if (condition.LASTRUNDATE.AddDays(count) == systemDate) return true; else return false;
                 }
-
             }
 
             if (frequencyId == (short)AlertFrequencyEnum.WEEKLY)
@@ -684,8 +681,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     if (condition.LASTRUNDATE.AddDays(7) == systemDate) return true; else return false;
                 }
-
             }
+
             if (frequencyId == (short)AlertFrequencyEnum.EVENT)
             {
                 var condition = context.TBL_ALERT_CONDITION.Find(conditionId);
@@ -693,8 +690,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     //if (condition.LASTRUNDATE.AddDays(7) == systemDate) return true; else return false;
                 }
-
             }
+
             return false;
         }
 
@@ -805,7 +802,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                  operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID == a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault()==null ? "N/A" : context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                                  lastRunDate = a.LASTRUNDATE,
                                  alertInterval = a.ALERTINTERVAL,
-                                 nextRunDate = a.NEXTRUNDATE,
+                                 nextRunDate = (DateTime)a.NEXTRUNDATE,
                                  title = a.TITLE,
                                  actionForTrigger = a.ACTIONFORTRIGGER,
                                  titleName = context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()==null ? "N/A" : context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()
@@ -826,7 +823,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault() == null ? "N/A" : context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                              lastRunDate = a.LASTRUNDATE,
                              alertInterval = a.ALERTINTERVAL,
-                             nextRunDate = a.NEXTRUNDATE,
+                             nextRunDate = (DateTime)a.NEXTRUNDATE,
                              title = a.TITLE,
                              actionForTrigger = a.ACTIONFORTRIGGER,
                              titleName = context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()

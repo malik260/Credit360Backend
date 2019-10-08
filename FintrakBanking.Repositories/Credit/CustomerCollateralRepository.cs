@@ -1473,10 +1473,10 @@ namespace FintrakBanking.Repositories.Credit
                 var entity = (from ir in context.TBL_INSURANCE_REQUEST
                               join cip in context.TBL_COLLATERAL_ITEM_POLICY on ir.COLLATERALCUSTOMERID equals cip.COLLATERALCUSTOMERID
                               where model.collateralId == cip.COLLATERALCUSTOMERID &&
-                                 cip.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                 ir.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                               select cip).ToList();
 
-                if (entity.Count > 0) return false;
+                if (entity.Count > 0) throw new SecureException("Collateral Already undergoing Insurnace Request Approval");
 
                 
 
