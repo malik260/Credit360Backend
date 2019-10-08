@@ -1879,6 +1879,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 requireCollateral = a.REQUIRECOLLATERAL,
                 approvalStatusId = (short)a.APPROVALSTATUSID,
+                applicationStatusId = a.APPLICATIONSTATUSID,
                 loanApplicationId = a.LOANAPPLICATIONID,
                 applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                 customerId = a.CUSTOMERID ?? 0,
