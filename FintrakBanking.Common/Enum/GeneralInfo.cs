@@ -425,6 +425,21 @@ namespace FintrakBanking.Common.Enum
         AlertTitleAdded = 526,
         AlertTitleUpdated = 527,
         AlertTitleDeleted = 528,
+        AlertSetupAdded = 529,
+        AlertSetupUpdated = 530,
+        AlertSetupDeleted = 531,
+        AlertLevelGroupMappingAdded = 532,
+        AlertLevelGroupMappingUpdated = 533,
+        AlertLevelGroupMappingDeleted = 534,
+        AlertLevelGroupAdded = 535,
+        AlertLevelGroupUpdated = 536,
+        AlertLevelGroupDeleted = 537,
+        AlertLevelAdded = 538,
+        AlertLevelUpdated = 539,
+        AlertLevelDeleted = 540,
+        AlertConditionAdded = 541,
+        AlertConditionUpdated = 542,
+        AlertConditionDeleted = 543
     };
     public enum RegulatoryTypeEnum
     {

@@ -16,8 +16,8 @@ namespace FintrakBanking.Interfaces.Credit
     {
         #region Collateral
 
-        int AddCollateral(CollateralViewModel entity, byte[] file);
-        //   bool AddCollateral(CollateralViewModel entity);
+        //int AddCollateral(CollateralViewModel entity, byte[] file);
+        int AddCollateral(CollateralViewModel entity);
         int AddReleaseDocument(CollateralViewModel model, byte[] file);
         IEnumerable<CollateralViewModel> GetCollateralReleaseDocument(int releaseId);
         CollateralViewModel GetReleaseSupportingDocument(int documentId);

@@ -6,40 +6,109 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Setups.General
 {
-    public class AlertViewModel : GeneralEntity
+    public class AlertTitleViewModel : GeneralEntity
     {
+        public string levelGroupName;
+        public string levelCode;
+        public string templateTypeName;
+
         public int alertTitleId { get; set; }
         public string title { get; set; }
         public string template { get; set; }
-
+        public string businessOwner { get; set; }
+        public string senderName { get; set; }
+        public string senderEmail { get; set; }
+        public int templateType { get; set; }
     }
-    public class AlertSetupViewModel
+    public class AlertSetupViewModel : GeneralEntity
     {
+        public string title;
+        public string levelGroupName;
+        public string levelCode;
+        public string operationName;
+        public string formular;
+
         public int alertSetupId { get; set; }
         public int titleId { get; set; }
-        public int levelGroupMappingId { get; set; }
-        public int frequencyId { get; set; }
+        public int levelGroupId { get; set; }
+        public short frequencyId { get; set; }
+        public short conditionId { get; set; }
     }
 
 
-    public class LevelGroupMappingViewModel
+    public class LevelGroupMappingViewModel : GeneralEntity
     {
+        public string levelGroupName { get; set; }
         public int alertLevelGroupMapId { get; set; }
         public int levelGroupId { get; set; }
-        public int levelCode { get; set; }
+        public string levelCode { get; set; }
     }
 
-    public class AlertLevelGroupViewModel
+    public class AlertLevelGroupViewModel : GeneralEntity
     {
         public int alertLevelGroupId { get; set; }
         public string levelGroupName { get; set; }
         public string description { get; set; }
     }
 
-    public class AlertLevelViewModel
+    public class AlertLevelViewModel : GeneralEntity
     {
+        public string levelGroupName;
+
         public int alertLevelId { get; set; }
         public string emailList { get; set; }
         public string levelCode { get; set; }
+        public short levelGroupId { get; set; }
     }
+
+    public class AlertsViewModel : GeneralEntity
+    {
+        public string alertTitle { get; set; }
+        public string frequencyMode { get; set; }
+        public List<string> receiverEmailList { get; set; }
+        public string template { get; set; }
+        public bool canFire { get; set; }
+        public int alertTitleId { get; set; }
+    }
+
+    public class AlertMisViewModel : GeneralEntity
+    {
+        public string profitCenterDefinitionCode { get; set; }
+        public string profitCenterMisCode { get; set; }
+        public int userMisId { get; set; }
+        public string loginId { get; set; }
+    }
+
+    public class AlertFrequencyViewModel : GeneralEntity
+    {
+        public int alertFrequencyId { get; set; }
+        public string frequencyMode { get; set; }
+        public string description { get; set; }
+    }
+
+    public class AlertConditionViewModel : GeneralEntity
+    {
+        public string titleName { get; set; }
+        public string operationName { get; set; }
+
+        public int alertConditionId { get; set; }
+        public string formular { get; set; }
+        public DateTime lastRunDate { get; set; }
+        public DateTime nextRunDate { get; set; }
+        //public DateTime lastRunTime { get; set; }
+        public short? operationId { get; set; }
+        public string triggerSource { get; set; }
+        public string type { get; set; }
+        public short? alertInterval { get; set; }
+        public int? title { get; set; }
+        public string actionForTrigger { get; set; }
+
+    }
+
+    public class TblOperationsViewModel 
+    {
+        public int operationId { get; set; }
+        public string operationName { get; set; }
+    }
+
 }

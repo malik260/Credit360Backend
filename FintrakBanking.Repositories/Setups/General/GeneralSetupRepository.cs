@@ -306,9 +306,51 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
-
-        public bool Updatesector (SectorViewModel model, short id)
+        public void ValidateAgainstCompanyLimit(int companyId, decimal? limit)
         {
+            var company = context.TBL_COMPANY.Find(companyId);
+            var currCode = context.TBL_CURRENCY.Find(company.CURRENCYID).CURRENCYCODE;
+            if (limit > company.SHAREHOLDERSFUND)
+            {
+                throw new SecureException("Limit cannot be greater than Company Limit of " + currCode + String.Format("{0:0,0.00}", company.SHAREHOLDERSFUND));
+            }
+        }
+
+        public bool AddSector(SectorViewModel model)
+        {
+            var sectors = context.TBL_SECTOR.ToList();
+            var limit = sectors.Sum(s => s.LOAN_LIMIT) + model.sectorLimit;
+            ValidateAgainstCompanyLimit(model.companyId, limit);
+                var response = 0;
+                context.TBL_SECTOR.Add(new TBL_SECTOR()
+                {
+                    CODE = model.sectorCode,
+                    NAME = model.sectorName,
+                    LOAN_LIMIT = model.sectorLimit
+                });
+
+
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.SectorAdded,
+                    STAFFID = (int)model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added Sector: '{model.sectorName}' with code: {model.sectorCode} ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = DateTime.Now,
+                    SYSTEMDATETIME = DateTime.Now
+                };
+            //end of Audit section -------------------------------
+            response = context.SaveChanges();
+            return response != 0;
+        }
+
+        public bool UpdateSector (SectorViewModel model, short id)
+        {
+            ValidateAgainstCompanyLimit(model.companyId, model.sectorLimit);
             var response = 0;
             var sector  = context.TBL_SECTOR.Find(id);
 
@@ -318,7 +360,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 sector.NAME = model.sectorName;
                 sector.LOAN_LIMIT = model.sectorLimit;
 
-                response = context.SaveChanges();
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -326,13 +367,43 @@ namespace FintrakBanking.Repositories.Setups.General
                     AUDITTYPEID = (short)AuditTypeEnum.SectorUpdated,
                     STAFFID = (int)model.lastUpdatedBy,
                     BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Updated branch: '{model.sectorName}' with code: {model.sectorCode} ",
+                    DETAIL = $"Updated sector: '{model.sectorName}' with code: {model.sectorCode} ",
                     IPADDRESS = model.userIPAddress,
                     URL = model.applicationUrl,
                     APPLICATIONDATE = DateTime.Now,
                     SYSTEMDATETIME = DateTime.Now
                 };
                 //end of Audit section -------------------------------
+                response = context.SaveChanges();
+            }
+
+            return response != 0;
+        }
+
+        public bool DeleteSector(int id, UserInfo user)
+        {
+            var response = 0;
+            var sector = context.TBL_SECTOR.Find(id);
+
+            if (sector != null)
+            {
+                context.TBL_SECTOR.Remove(sector);
+
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.SectorDeleted,
+                    STAFFID = user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Deleted sector: '{sector.ToString()} ",
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                //end of Audit section -------------------------------
+                response = context.SaveChanges();
             }
 
             return response != 0;

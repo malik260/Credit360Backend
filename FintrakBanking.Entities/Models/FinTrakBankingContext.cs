@@ -15,11 +15,6 @@ namespace FintrakBanking.Entities.Models
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }
         //public virtual DbSet<TBL_ENDOFDAY_MONITORING> TBL_ENDOFDAY_MONITORING { get; set; }
-        public virtual DbSet<TBL_ALERT_TITLE> TBL_ALERT_TITLE { get; set; }
-        public virtual DbSet<TBL_ALERT_SETUP> TBL_ALERT_SETUP { get; set; }
-        public virtual DbSet<TBL_ALERT_LEVEL_GRP_MAPPING> TBL_ALERT_LEVEL_GRP_MAPPING { get; set; }
-        public virtual DbSet<TBL_ALERT_LEVEL_GROUP> TBL_ALERT_LEVEL_GROUP { get; set; }
-        public virtual DbSet<TBL_ALERT_LEVEL> TBL_ALERT_LEVEL { get; set; }
         public virtual DbSet<TBL_ACCOUNT_CATEGORY> TBL_ACCOUNT_CATEGORY { get; set; }
         public virtual DbSet<TBL_ACCOUNT_TYPE> TBL_ACCOUNT_TYPE { get; set; }
         public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
@@ -32,7 +27,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_GRP_MAPPING> TBL_TEMP_APPROVAL_GRP_MAPPING { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_SETTING> TBL_APPROVAL_LEVEL_SETTING { get; set; }
-
+        
+        public virtual DbSet<TBL_ALERT_TEMPLATE_TYPE> TBL_ALERT_TEMPLATE_TYPE { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL> TBL_TEMP_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
@@ -553,6 +549,13 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_AUTHORISED_SIGNATORY> TBL_AUTHORISED_SIGNATORY { get; set; }
         public virtual DbSet<TBL_OPERATION_SIGNATORY> TBL_OPERATION_SIGNATORY { get; set; }
         public virtual DbSet<TBL_OPERATION_CAMSOL_LIST> TBL_OPERATION_CAMSOL_LIST { get; set; }
+        public virtual DbSet<TBL_ALERT_TITLE> TBL_ALERT_TITLE { get; set; }
+        public virtual DbSet<TBL_ALERT_SETUP> TBL_ALERT_SETUP { get; set; }
+        public virtual DbSet<TBL_ALERT_LEVEL_GRP_MAPPING> TBL_ALERT_LEVEL_GRP_MAPPING { get; set; }
+        public virtual DbSet<TBL_ALERT_LEVEL_GROUP> TBL_ALERT_LEVEL_GROUP { get; set; }
+        public virtual DbSet<TBL_ALERT_LEVEL> TBL_ALERT_LEVEL { get; set; } 
+        public virtual DbSet<TBL_ALERT_FREQUENCY> TBL_ALERT_FREQUENCY { get; set; } 
+        public virtual DbSet<TBL_ALERT_CONDITION> TBL_ALERT_CONDITION { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

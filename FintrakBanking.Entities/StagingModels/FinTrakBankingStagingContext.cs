@@ -30,6 +30,7 @@ namespace FintrakBanking.Entities.StagingModels
         public virtual DbSet<STG_TREASURY_RATE_TBL> STG_TREASURY_RATE_TBL { get; set; }
 
         public virtual DbSet<STG_CASA_DAILY_BALANCE_INPUT> STG_CASA_DAILY_BALANCE_INPUT { get; set; }
+        public virtual DbSet<STG_USER_MIS> STG_USER_MIS { get; set; }
 
         //public virtual DbSet<STG_CASA_DAILY_BALANCE_INPUT> STG_CASA_DAILY_BALANCE_INPUT { get; set; }
         //public virtual DbSet<STG_CASA_DAILY_BALANCE> STG_CASA_DAILY_BALANCE { get; set; }
@@ -623,9 +624,9 @@ namespace FintrakBanking.Entities.StagingModels
                 .Property(e => e.LOANREFERENCENUMBER)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_WATCHLIST>()
-                .Property(e => e.INTERESTRATE)
-                .HasPrecision(15, 0);
+            //modelBuilder.Entity<STG_LOAN_WATCHLIST>()
+            //    .Property(e => e.INTERESTRATE)
+            //    .HasPrecision(15, 0);
 
             modelBuilder.Entity<STG_LOAN_WATCHLIST>()
                 .Property(e => e.PRINCIPALAMOUNT)

@@ -81,6 +81,7 @@
     <Compile Include="Admin\ProfileSettingViewModel.cs" />
     <Compile Include="Admin\UserActions.cs" />
     <Compile Include="AlertMonitoring\SLANotificationViewModel.cs" />
+    <Compile Include="Audit\customerAddressAuditViewModel.cs" />
     <Compile Include="Authentication\TokenVM.cs" />
     <Compile Include="CASA\CasaViewModel.cs" />
     <Compile Include="CASA\CustomerSearchVM.cs" />
@@ -312,17 +313,17 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">
-      <Project>{18CEFC20-2662-4757-94DE-23D623FFC98D}</Project>
+      <Project>{18cefc20-2662-4757-94de-23d623ffc98d}</Project>
       <Name>FintrakBanking.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
-      <Project>{FB338A9B-9C63-46ED-A8C3-D75A08DAD6F0}</Project>
+      <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
       <Name>FintrakBanking.Entities</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

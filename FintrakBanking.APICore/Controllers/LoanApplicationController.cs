@@ -1805,6 +1805,16 @@ namespace FintrakBanking.APICore.Controllers
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("cash-collaterized-process-flow")]
+        public HttpResponseMessage getCashCollaterizedProcessFlowBy()
+        {
+            var response = repo.getCashCollaterizedProcessFlowBy();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]

@@ -49,6 +49,7 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
+                    
 
                     // SEND EMAILS
                     bool response = emailSender.SendEmails();

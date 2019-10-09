@@ -45,19 +45,19 @@ namespace FintrakBanking.Repositories.Risk
 
             List<int> categoryIds = new List<int>();
 
-            bool isSelfemployed = false;
-            var employmentTypeRecord = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(x => x.CUSTOMERID == model.customerId && x.ACTIVE == true).FirstOrDefault();
-            var isDirector = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID== model.customerId).Any();
+            //bool isSelfemployed = false;
+
+            //var isDirector = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x => x.CUSTOMERID== model.customerId).Any();
 
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerId ).FirstOrDefault();
             int? customerTypeId = customer != null ? customer.CUSTOMERTYPEID : null;
 
             bool isCorporate = customerTypeId == (short)CustomerTypeEnum.Corporate;
 
-            if (employmentTypeRecord != null)
-            {
-                isSelfemployed = employmentTypeRecord.EMPLOYERNAME.ToUpper() == "SELF EMPLOYED";
-            }
+            //if (employmentTypeRecord != null)
+            //{
+            //    isSelfemployed = employmentTypeRecord.EMPLOYERNAME.ToUpper() == "SELF EMPLOYED";
+            //}
 
             if(model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS")
             {
@@ -72,8 +72,8 @@ namespace FintrakBanking.Repositories.Risk
 
                 var racDefinitionOnEmployerByProduct = context.TBL_RAC_DEFINITION.Where(x => 
                                                                     ((x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT") || (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"))
-                                                                    && ( (x.EMPLOYMENTTYPE == "EMPLOYER" && (isCorporate || isDirector || isSelfemployed == true ))
-                                                                        || (x.EMPLOYMENTTYPE == "EMPLOYEE" && (!isCorporate && isSelfemployed == false )) )
+                                                                    && ( (x.EMPLOYMENTTYPE == "EMPLOYER" && isCorporate )
+                                                                        || (x.EMPLOYMENTTYPE == "EMPLOYEE" && !isCorporate ) )
                                                                     && x.SHOWATDRAWDOWN == model.isDrawdown && x.ISACTIVE == true && x.DELETED == false).ToList();              
 
                 racDefinition = racDefinitionOnProduct.Count() > 0 ? racDefinitionOnProduct : racDefinitionOnProductClass;
@@ -95,30 +95,7 @@ namespace FintrakBanking.Repositories.Risk
                                                             && x.SHOWATDRAWDOWN == model.isDrawdown
                                                             && x.ISACTIVE == true && x.DELETED == false).ToList();
             }
-            //else
-            //if (model.searchBaseId == (short)RacAccessEnum.Product || model.searchBaseId == null)
-            //{
-            //    racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
-            //                                              && x.SHOWATDRAWDOWN == model.isDrawdown 
-            //                                              && x.ISACTIVE == true && x.DELETED == false).ToList();
 
-            //}
-            //else
-            //if (model.searchBaseId == (short)RacAccessEnum.CreditCard)
-            //{
-            //    var localCurrencyId = context.TBL_COMPANY.FirstOrDefault().CURRENCYID;
-            //    racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.CURRENCYTYPE == model.currencyType
-            //                                                && (
-            //                                                    (x.CURRENCYTYPE =="LCY" && model.currencyId == localCurrencyId && model.currencyId != null) 
-            //                                                    || (x.CURRENCYTYPE == "FCY" && model.currencyId != localCurrencyId && model.currencyId != null) 
-            //                                                    || (x.CURRENCYTYPE == "CUSTOM" && x.CURRENCYID == model.currencyId && model.currencyId != null) 
-            //                                                    || (x.CURRENCYTYPE == null && x.CURRENCYID == model.currencyId)
-            //                                                    || (x.CURRENCYTYPE == null && x.CURRENCYID == null)
-            //                                                    )
-            //                                                && x.OPERATIONID == model.operationId
-            //                                                && x.SHOWATDRAWDOWN == model.isDrawdown
-            //                                                && x.ISACTIVE == true && x.DELETED == false).ToList();
-            //}
 
             categoryIds.AddRange(racDefinition.Select(x => x.RACCATEGORYID).ToList());
 
@@ -651,7 +628,7 @@ namespace FintrakBanking.Repositories.Risk
                 controlOptionId = entity.CONTROLOPTIONID,
                 racCategoryTypeId = entity.RACCATEGORYTYPEID,
                 showAtDrawDown = entity.SHOWATDRAWDOWN,
-                requireComment = entity.REQUIRECOMMENT,
+                requireComment = entity.REQUIRECOMMENT.Value,
                 currencyId = entity.CURRENCYID,
                 currencyType = entity.CURRENCYTYPE,
                 isRacTierControlKey=entity.ISRACTIERCONTROLKEY,

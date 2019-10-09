@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.APICore.JWTAuth;
@@ -26,6 +25,7 @@ using System.Net.Http.Formatting;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -334,52 +334,52 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost, Route("customer-collateral")]
-        public async Task<HttpResponseMessage> AddCollateral()
-        {
-            CollateralViewModel incomingData = new CollateralViewModel();
+        //[HttpPost, Route("customer-collateral")]
+        //public async Task<HttpResponseMessage> AddCollateral()
+        //{
+        //    CollateralViewModel incomingData = new CollateralViewModel();
 
-            if (!Request.Content.IsMimeMultipartContent())
-            {
-                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
-            }
+        //    if (!Request.Content.IsMimeMultipartContent())
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+        //    }
 
-            MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
-            await Request.Content.ReadAsMultipartAsync(provider);
+        //    MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+        //    await Request.Content.ReadAsMultipartAsync(provider);
 
-            var formData = provider.FormData["formData"];
+        //    var formData = provider.FormData["formData"];
 
-            var errors = new List<string>();
-            incomingData = JsonConvert.DeserializeObject<CollateralViewModel>(formData,
-                 new JsonSerializerSettings
-                 {
-                     NullValueHandling = NullValueHandling.Include,
-                     Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs earg)
-                     {
-                         errors.Add(earg.ErrorContext.Member.ToString());
-                         earg.ErrorContext.Handled = true;
-                     }
-                 });
-
-
-            if (!provider.FileStreams.Any())
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
-            }
-
-            incomingData.userBranchId = (short)token.GetBranchId;
-            incomingData.companyId = token.GetCompanyId;
-            incomingData.createdBy = token.GetStaffId;
-            incomingData.applicationUrl = HttpContext.Current.Request.Path;
-
-            var file = provider.Contents.FirstOrDefault();
-            var buffer = await file.ReadAsByteArrayAsync();
-            var data = repo.AddCollateral(incomingData, buffer);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+        //    var errors = new List<string>();
+        //    incomingData = JsonConvert.DeserializeObject<CollateralViewModel>(formData,
+        //         new JsonSerializerSettings
+        //         {
+        //             NullValueHandling = NullValueHandling.Include,
+        //             Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs earg)
+        //             {
+        //                 errors.Add(earg.ErrorContext.Member.ToString());
+        //                 earg.ErrorContext.Handled = true;
+        //             }
+        //         });
 
 
-        }
+        //    if (!provider.FileStreams.Any())
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+        //    }
+
+        //    incomingData.userBranchId = (short)token.GetBranchId;
+        //    incomingData.companyId = token.GetCompanyId;
+        //    incomingData.createdBy = token.GetStaffId;
+        //    incomingData.applicationUrl = HttpContext.Current.Request.Path;
+
+        //    var file = provider.Contents.FirstOrDefault();
+        //    var buffer = await file.ReadAsByteArrayAsync();
+        //    var data = repo.AddCollateral(incomingData, buffer);
+
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+
+
+        //}
 
         [HttpPost, Route("customer-join-collateral")]
         public async Task<HttpResponseMessage> AddJoinCollateralInformation()
@@ -727,7 +727,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var response = repo.GetCollateralTypeByCollateralId(collateralId, typeId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, data = response });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
             {
@@ -1315,34 +1315,28 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Collateral 
 
-        // [HttpPost] [ClaimsAuthorization]
-        //[Route("customer-collateral")]
-        //public async Task<HttpResponseMessage> AddCollateral([FromBody] CollateralCustomerViewModel entity)
-        //{
-        //    try
-        //    {
-        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("customer-collateral")]
+        public  HttpResponseMessage AddCollateral([FromBody] CollateralViewModel entity)
+        {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        //        entity.createdBy = token.GetStaffId;
-        //        entity.userBranchId = (short)token.GetBranchId;
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
-        //        //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-        //        entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.companyId = token.GetCompanyId;
 
-        //        var response = await repo.AddCollateralCustomer(entity);
-        //        if (response)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
-        //        }
+                var response =  repo.AddCollateral(entity);
+                if (response > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                }
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        }
 
         //[HttpPut]
         //[Route("customer-collateral/{collateralCustomerId}")]
@@ -2112,7 +2106,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this request, Insurance request may already exist" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this request, Contact the System Administrator" });
             }
 
             catch (SecureException ex)
