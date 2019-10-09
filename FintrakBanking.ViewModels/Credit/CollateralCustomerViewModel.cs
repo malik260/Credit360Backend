@@ -472,7 +472,7 @@ namespace FintrakBanking.ViewModels.Credit
     //}
 
     public class InsurancePolicy : GeneralEntity
-        {
+    {
         public string referenceNumber { get; set; }
         public decimal sumInsured { get; set; }
         public string insuranceCompany { get; set; }
@@ -719,6 +719,22 @@ namespace FintrakBanking.ViewModels.Credit
         public string insurerDetails { get; set; }
         public DateTime policyRenewalDate { get; set; }
         public string remark { get; set; }
+        public int collateraalId { get; set; }
+        public string referenceNumber { get; set; }
+        public int insuranceCompanyId { get; set; }
+        public decimal sumInsured { get; set; }
+        public DateTime startDate { get; set; }
+        public string description { get; set; }
+        public int? premiumPercent { get; set; }
+        public int createdBy { get; set; }
+        public decimal? inSurPremiumAmount { get; set; }
+        public int insuranceTypeId { get; set; }
+        public DateTime expiryDate { get; set; }
+        public int companyId { get; set; }
+        public short userBranchId { get; set; }
+        public string applicationUrl { get; set; }
+        public string userIPAddress { get; set; }
+        public int? policyStateId { get; set; }
     }
 
     public class CollateralGauranteeViewModel
@@ -977,7 +993,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    public class ApplicationCollateralMapping
+    public class ApplicationCollateralMapping : GeneralEntity
     {
         public int? collateralId { get; set; }
         public int loanAppCollateralId { get; set; }
@@ -1062,7 +1078,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public int customerId { get; set; }
         public decimal facilityAmount { get; set; }
-        public string facilityCurrencyCode { get; set; }
+        public decimal facilityAmountFcy { get; set; }
+        public string facilityCurrencyCodeFcy { get; set; }
         public int facilityCurrencyId { get; set; }
         public int loanApplicationId { get; set; }
         public int? loanApplicationDetailId { get; set; }
@@ -1078,6 +1095,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int expectedCoveragePercentage { get; set; }
         public decimal actualCoveragePercentage { get; set; }
         public int approvalStatusId { get; set; }
+        public bool isMapped { get; set; }
+        public bool isUsed { get; set; }
     }
     public class CollateralUsageStatus
     {

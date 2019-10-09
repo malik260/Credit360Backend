@@ -147,27 +147,39 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                           where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active || d.LOANSTATUSID == (short)LoanStatusEnum.Inactive
                                           select new
                                           {
-                                              d.OUTSTANDINGPRINCIPAL
+                                              d.OUTSTANDINGPRINCIPAL,
+                                              d.EXCHANGERATE
                                           }).ToList();
-            var sumLoanTotalExposure = loanTotalExposure.Select(c => c.OUTSTANDINGPRINCIPAL).Sum();
+            var sumLoanTotalExposure = loanTotalExposure.Select(c => c.OUTSTANDINGPRINCIPAL * (decimal)c.EXCHANGERATE).Sum();
 
 
             var ODTotalExposure  = (from d in context.TBL_LOAN_REVOLVING
                                         where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active 
                                         select new
                                         {
-                                            d.OVERDRAFTLIMIT
+                                            d.OVERDRAFTLIMIT,
+                                              d.EXCHANGERATE
                                         }).ToList();
-            var sumODTotalExposure = ODTotalExposure.Select(c => c.OVERDRAFTLIMIT).Sum();
+            var sumODTotalExposure = ODTotalExposure.Select(c => c.OVERDRAFTLIMIT * (decimal)c.EXCHANGERATE).Sum();
+
+            var contingentTotalExposure = (from d in context.TBL_LOAN_CONTINGENT
+                                   where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                   select new
+                                   {
+                                       d.CONTINGENTAMOUNT,
+                                        d.EXCHANGERATE
+                                   }).ToList();
+            var sumContingentTotalExposure = contingentTotalExposure.Select(c => c.CONTINGENTAMOUNT * (decimal)c.EXCHANGERATE).Sum();
 
             var loanOutstandingBalance = (from d in context.TBL_LOAN
                                           where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active 
                                           && d.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing 
                                           select new
                                           {
-                                              d.OUTSTANDINGPRINCIPAL
+                                              d.OUTSTANDINGPRINCIPAL,
+                                              d.EXCHANGERATE
                                           }).ToList();
-            var sumLoanOutstandingBalance = loanOutstandingBalance.Select(c => c.OUTSTANDINGPRINCIPAL).Sum();
+            var sumLoanOutstandingBalance = loanOutstandingBalance.Select(c => c.OUTSTANDINGPRINCIPAL * (decimal)c.EXCHANGERATE).Sum();
 
 
             var ODOutstandingBalance = (from d in context.TBL_LOAN_REVOLVING
@@ -175,9 +187,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                                         && d.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
                                         select new
                                         {
-                                            d.OVERDRAFTLIMIT
+                                            d.OVERDRAFTLIMIT,
+                                            d.EXCHANGERATE
                                         }).ToList();
-            var sumODOutstandingBalance = ODOutstandingBalance.Select(c => c.OVERDRAFTLIMIT).Sum();
+            var sumODOutstandingBalance = ODOutstandingBalance.Select(c => c.OVERDRAFTLIMIT * (decimal)c.EXCHANGERATE).Sum();
 
             var limitAmount = from a in context.TBL_BRANCH
                               where a.BRANCHID == branchId
@@ -186,7 +199,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             var branchRatio = (((double)(sumLoanOutstandingBalance + sumODOutstandingBalance) / (double)(sumLoanTotalExposure + sumODTotalExposure)) * 100);
             if (!doubleHasRealValue(branchRatio)) { branchRatio = 0; }
-            model.totalExposure = (double)(sumLoanTotalExposure + sumODTotalExposure);
+            model.totalExposure = (double)(sumLoanTotalExposure + sumODTotalExposure + sumContingentTotalExposure);
             model.outstandingBalance = (double)(sumLoanOutstandingBalance + sumODOutstandingBalance);
             model.limit = (double)limitAmount.FirstOrDefault();
             model.difference = model.limit - model.outstandingBalance;
@@ -391,11 +404,15 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
 
-            var data = from a in context.TBL_LOAN
-                                 join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
-                                 where a.SUBSECTORID == c.SUBSECTORID && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                 let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).Sum(x => x.OUTSTANDINGPRINCIPAL)
-                                 select (decimal?)sumPrincipalAmount ?? 0;
+            //var data = from a in context.TBL_LOAN
+            //                     join c in context.TBL_SUB_SECTOR on a.SUBSECTORID equals c.SUBSECTORID
+            //                     where a.SUBSECTORID == c.SUBSECTORID && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+            //                     let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).Sum(x => x.OUTSTANDINGPRINCIPAL)
+            //                     select (decimal?)sumPrincipalAmount ?? 0;
+            var sumPrincipalAmountLoan = context.TBL_LOAN.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Sum(x => x.OUTSTANDINGPRINCIPAL * (decimal)x.EXCHANGERATE);
+            var sumPrincipalAmountRevolving = context.TBL_LOAN_REVOLVING.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).Sum(x => x.OVERDRAFTLIMIT * (decimal)x.EXCHANGERATE);
+            var sumPrincipalAmountContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).Sum(x => x.CONTINGENTAMOUNT * (decimal)x.EXCHANGERATE);
+            var data = sumPrincipalAmountLoan + sumPrincipalAmountRevolving + sumPrincipalAmountContingent;
 
             var limitAmount = 0;
             var sector = context.TBL_SECTOR.FirstOrDefault(a => a.SECTORID == subSector.SECTORID);
@@ -409,10 +426,11 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             //                                                                            //select maximumValue;
             //                  select a.MAXIMUMVALUE;
 
-            model.outstandingBalance = (double)data.FirstOrDefault();
+            //model.outstandingBalance = (double)data.FirstOrDefault();
+            model.outstandingBalance = (double)data;
 
             model.limit = (double)limitAmount;
-            model.difference = (double)data.FirstOrDefault() - (double)limitAmount;
+            model.difference = (double)data - (double)limitAmount;
             model.maximumAllowedLimit = (decimal?)sector.LOAN_LIMIT ?? 0;
 
             return model;
