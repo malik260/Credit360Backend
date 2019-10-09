@@ -977,7 +977,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
-    public class ApplicationCollateralMapping
+    public class ApplicationCollateralMapping : GeneralEntity
     {
         public int? collateralId { get; set; }
         public int loanAppCollateralId { get; set; }
@@ -1062,7 +1062,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal collateralValue { get; set; }
         public int customerId { get; set; }
         public decimal facilityAmount { get; set; }
-        public string facilityCurrencyCode { get; set; }
+        public decimal facilityAmountFcy { get; set; }
+        public string facilityCurrencyCodeFcy { get; set; }
         public int facilityCurrencyId { get; set; }
         public int loanApplicationId { get; set; }
         public int? loanApplicationDetailId { get; set; }
@@ -1078,6 +1079,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int expectedCoveragePercentage { get; set; }
         public decimal actualCoveragePercentage { get; set; }
         public int approvalStatusId { get; set; }
+        public bool isMapped { get; set; }
+        public bool isUsed { get; set; }
     }
     public class CollateralUsageStatus
     {

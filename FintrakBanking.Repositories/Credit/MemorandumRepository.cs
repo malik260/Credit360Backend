@@ -350,7 +350,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
-                this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SHAREHOLDERSFUND;
+                //this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SHAREHOLDERSFUND;
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
 
                 this.memoData = MemoMarkupHtml();
@@ -571,13 +571,14 @@ namespace FintrakBanking.Repositories.Credit
             var result = new List<DropDownSelect>();
             if (operationId == (int)OperationsEnum.CreditAppraisal)
             {
-                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
-                var detail = this.conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == details.FirstOrDefault()?.LOANAPPLICATIONDETAILID);
-                foreach (var d in detail)
+                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
+                var conditions = this.conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == details.FirstOrDefault()?.LOANAPPLICATIONDETAILID);
+                foreach (var d in conditions)
                 {
                     if (d.condition != null)
                     {
-                        result.Add(new DropDownSelect { id = d.conditionId, name = d.condition });
+                        var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == d.loanApplicationDetailId).FirstOrDefault();
+                        result.Add(new DropDownSelect { typeId = (int)d.loanApplicationDetailId, id = d.conditionId, name = d.condition, title = detail.TBL_PRODUCT1.PRODUCTNAME });
                     }
                 }
             }
@@ -590,7 +591,7 @@ namespace FintrakBanking.Repositories.Credit
             if (operationId == (int)OperationsEnum.CreditAppraisal)
             {
 
-                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).ToList();
+                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
                 var allTransactions = this.transactionsRepo.GetAllTransactionDynamics().OrderBy(a => a.position);
                 var transactions = new List<TransactionDynamicsViewModel>();
                 foreach (var d in details)
@@ -602,7 +603,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (t.dynamics != null)
                     {
-                        result.Add(new DropDownSelect { typeId = (int)t.loanApplicationDetailId, name = t.dynamics });
+                        var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == t.loanApplicationDetailId).FirstOrDefault();
+                        result.Add(new DropDownSelect { typeId = (int)t.loanApplicationDetailId, name = t.dynamics, title = detail.TBL_PRODUCT1.PRODUCTNAME });
                     }
                 }
             }
@@ -1067,7 +1069,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         private string GetConditionsPrecedentToDrawdownMarkup()
         {
-            var conditions = GetConditionsPrecedentToDrawdown(); // new
+            var conditions = GetConditionsPrecedentToDrawdown().GroupBy(c => c.typeId); // new
 
             var result = String.Empty;
             var n = 0;
@@ -1078,15 +1080,21 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
                     </tr>
                  ";
-            foreach (var e in conditions)
+            foreach (var g in conditions)
             {
-                n++;
-                result = result + $@"
+                var c = g.FirstOrDefault();
+                result += c.title;
+                foreach(var e in g)
+                {
+                    n++;
+                    result = result + $@"
                     <tr>
                         <td>{n}</td>
                         <td>{e.name}</td>
                     </tr>
-                ";
+                    ";
+                }
+                
             }
             result = result + $"</table>";
             return result;
@@ -1110,6 +1118,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 n++;
                 var o = 0;
+                var c = group.FirstOrDefault();
+                result += c.title;
                 foreach (var t in group)
                 {
                     o++;

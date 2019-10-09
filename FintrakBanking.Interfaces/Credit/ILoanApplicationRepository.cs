@@ -135,6 +135,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationDetailsByReference(string reference, int companyId);
 
+        CurrentCustomerExposure GetCurrentCompanyExposure();
+
+        CurrentCustomerExposure GetCurrentCustomerExposure(int customerId);
+
         LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId);
 
         LoanApplicationTagsViewModel GetLoanApplicationTags(int id);
