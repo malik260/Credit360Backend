@@ -76,6 +76,7 @@ namespace FintrakBanking.ViewModels.Risk
 
     public class RacDefinitionViewModel : GeneralEntity
     {
+        
         public string productClassName { get; set; }
 
         public short? currencyId { get; set; }
@@ -117,6 +118,7 @@ namespace FintrakBanking.ViewModels.Risk
         public string operationName { get; set; }
         public string approvalLevelName { get; set; }
         public decimal? controlAmount { get; set; }
+        public decimal? controlAmountMax { get; set; }
         public int? controlOptionId { get; set; }
         public string controlOption { get; set; }
         public string racCategoryType { get; set; }
