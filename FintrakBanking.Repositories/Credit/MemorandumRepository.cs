@@ -737,7 +737,7 @@ namespace FintrakBanking.Repositories.Credit
                 <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>NAME OF CUSTOMER:</b></th>
-                        <th><b></b></th>
+                        <th><b>{customerName}</b></th>
                         <th><b>CURRENT/APG A/C NO:</b></th>
                         <th><b></b></th>
                     </tr>
