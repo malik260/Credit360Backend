@@ -20,7 +20,7 @@ namespace FintrakBanking.APICore.CFLAuthentication
             //var userBus = new BusUser();
 
             //var user = userBus.AuthenticateAndLoad(username, password);
-            if (username != "fintrak&@#$" && password != "fintrak&@#348")
+            if (!username.Equals("fintrak&@#$") || !password.Equals("fintrak&@#348"))
                 return false;
 
             return true;

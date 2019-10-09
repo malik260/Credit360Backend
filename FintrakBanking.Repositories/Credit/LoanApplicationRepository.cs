@@ -5386,6 +5386,28 @@ namespace FintrakBanking.Repositories.Credit
             else return productFlow;
         }
 
+        public RevisedProcessFlowModel getCashCollaterizedProcessFlowBy()
+        {
+            var cashCollaterzedFlow = (from c in context.TBL_LOAN_APPLICATN_FLOW_CHANGE
+                                   where c.PLACEHOLDER.ToLower() == "cash collaterized" || c.PLACEHOLDER.ToLower() == "cash collaterised" || c.PLACEHOLDER.ToLower() == "cash-collaterized"
+                                       select new RevisedProcessFlowModel
+                                   {
+                                       flowchangeId = c.FLOWCHANGEID,
+                                       placeHolder = c.PLACEHOLDER,
+                                       productClassId = c.PRODUCTCLASSID,
+                                       productId = c.PRODUCTID,
+                                       productTypeId = c.PRODUCTTYPEID,
+                                       destinationUrl = c.DESTINATIONURL,
+                                       skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
+                                       operationId = c.OPERATIONID,
+                                       label = c.LABEL,
+                                       dateTimeCreated = c.DATETIMECREATED,
+                                       createdBy = c.CREATEDBY
+                                   }).FirstOrDefault();
+
+            return cashCollaterzedFlow;
+        }
+
         public IEnumerable<LoanApplicationViewModel> GetFacilityByApplicationId(int loanApplicationId)
         {
             return (context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x => new LoanApplicationViewModel

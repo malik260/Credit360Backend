@@ -3,6 +3,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -23,6 +24,8 @@ namespace FintrakBanking.Repositories.Credit
         private ITransactionDynamicsRepository transactionsRepo;
         private IConditionPrecedentRepository conditionsRepo;
         private ICustomerCollateralRepository collateralRepo;
+        private IGeneralSetupRepository _genSetup;
+
 
         public MemorandumRepository(
             FinTrakBankingContext context, 
@@ -32,7 +35,8 @@ namespace FintrakBanking.Repositories.Credit
             ICustomerGroupRepository groupRepo, 
             ITransactionDynamicsRepository transactionsRepo,
             IConditionPrecedentRepository conditionsRepo,
-            ICustomerCollateralRepository collateralRepo
+            ICustomerCollateralRepository collateralRepo,
+           IGeneralSetupRepository genSetup
             )
         {
             this.context = context;
@@ -43,6 +47,7 @@ namespace FintrakBanking.Repositories.Credit
             this.transactionsRepo = transactionsRepo;
             this.conditionsRepo = conditionsRepo;
             this.collateralRepo = collateralRepo;
+            this._genSetup = genSetup;
         }
 
         // init
@@ -120,7 +125,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string amountDisbursedHolder = "@{{AmountDisbursed}}";
         private readonly string amountPaidSoFarHolder = "@{{AmountPaidSoFar}}";
         private readonly string amountProposedHolder = "@{{AmountProposed}}";
-        private readonly string customerTurnoverHolder = "@{{CustomerTurnover}}";
+        private readonly string customerTurnoverHolder = "@{{CustomerTurnover}}"; 
 
         // for output document 
         private readonly string memoHolder = "@{{memoData}}";
@@ -132,6 +137,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string staffMortgageLoansDataHolder = "@{{staffMortgageLoansData}}";
         private readonly string staffPersonalLoansAGMDataHolder = "@{{staffPersonalLoansAGMData}}";
         private readonly string staffPersonalLoanDataHolder = "@{{staffPersonalLoanData}}";
+        private readonly string documentatonDeferralWaiverDataHolder = "@{{documentatonDeferralWaiverData}}";
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -282,6 +288,7 @@ namespace FintrakBanking.Repositories.Credit
         private string staffPersonalLoansAGMData;
         private string staffPersonalLoanData;
         private string temporaryOverdraftData;
+        private string documentatonDeferralWaiverData;
 
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
@@ -363,7 +370,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.staffPersonalLoanData = StaffPersonalLoanHtml();
                 this.temporaryOverdraftData = TemporaryOverdraftHtml();
                 
-    }
+
+            }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
             {
@@ -465,7 +473,7 @@ namespace FintrakBanking.Repositories.Credit
                     //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     //this.customerExposure = CustomerExposureMarkup();
                 }
-
+                //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
                 string customerName = String.Empty;
                 if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
                 if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
@@ -485,7 +493,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.otherFee = "";
                 this.effectiveDate = "";
                 this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
-
+                this.currentDate = DateTime.Now.ToShortDateString();
                 approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
 
@@ -736,7 +744,7 @@ namespace FintrakBanking.Repositories.Credit
                 <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>NAME OF CUSTOMER:</b></th>
-                        <th><b></b></th>
+                        <th><b>{customerName}</b></th>
                         <th><b>CURRENT/APG A/C NO:</b></th>
                         <th><b></b></th>
                     </tr>
@@ -2670,6 +2678,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(staffPersonalLoansAGMDataHolder, staffPersonalLoansAGMData);
             content = content.Replace(staffPersonalLoanDataHolder, staffPersonalLoanData);
             content = content.Replace(temporaryOverdraftHolder, temporaryOverdraftData);
+            content = content.Replace(documentatonDeferralWaiverDataHolder, documentatonDeferralWaiverData);
 
 
             return content;
@@ -7453,6 +7462,182 @@ namespace FintrakBanking.Repositories.Credit
                 
                  ";   
             return result;
+        }
+    
+         public string DocumentationDeferralWaiverFormHtml(int staffId, int operationId, int targetId)
+        {
+            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
+                <h3><b>DOCUMENTATION DEFERRAL/WAIVER FORM</b></h3>
+                <br />
+               
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td><strong>BORROWER:</strong></td> 
+                        <td>{customerName}</td>
+                        <td><strong>DATE:</strong> </td>
+                        <td>{currentDate}</td>
+                    </tr>
+                   <tr>
+                        <td><strong>FACILITY TYPE::</strong></td> 
+                        <td>{facilityType}</td>
+                        <td><strong>BRANCH:</strong> </td>
+                        <td>{branchName}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>FACILITY AMOUNT:</strong></td> 
+                        <td>{approvedAmount}</td>
+                        <td><strong>FINAL APPROVAL:</strong><br><em>(AS PER CPG)</em></td>  
+                        <td></td>
+                    </tr>
+                   <tr>
+                        <td><strong>PREPARED BY:</strong></td> 
+                        <td colspan=3>{preparedBy}</td>                                   
+                    </tr>
+                      
+                   
+                 ";
+            result = result + $"</table>";
+            var condition = GetChecklistAwaitingApproval(staffId);
+            result = result + $@"
+                <br />              
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><em><strong>Documents/Conditions precedent to draw down as approved in the FAM</strong></em>:</td>
+                        <td><strong><em>Description of Document</strong></em></td>
+                        <td><strong><em>Reason for Deferral/waiver</strong></em></td>
+                        <td><strong><em>No of days</em></strong></td>
+                        <td><strong><em>Number of times deferred</strong></em></td>
+                    </tr>                         
+                 ";
+            foreach(var d in condition) {
+                result = result + $@"
+                  <tr>
+                        <td>{d.condition}</td>
+                         <td>{d.loanInformation}</td>
+                        <td>{d.reason}</td>
+                        <td>{d.cummulativeDays}</td>    
+                        <td>{d.deferralDuration}</td>
+                    </tr> 
+                ";
+            }
+            result = result + $"</table>";
+            result = result + $@"
+                    <br/>
+                   <p><strong><em>ACCOUNT OFFICER:</em></strong>{relationshipOfficer}</p>
+                    <br/>
+                   <p><strong><em>RELATIONSHIP MANAGER:</em></strong>{relationshipManager}</p>
+                       <br/>
+                   <p><strong><em>GROUP HEAD:</em></strong></p>
+                      <br/>
+                   <p><strong><em>CRM:</em></strong></p>
+                      <br/>
+                   <p><strong><em>APPROVAL:</em></strong></p>
+                    <br/>
+                   <p><strong><em>ED:</em></strong>...........</p>
+                     <br/>
+                   <p><strong><em>GDMD:</em></strong>...........<br><em>(for deferrals below N1Billion)</em></p>
+                     <br/>
+                   <p><strong><em>GMD:</em></strong>...........<br><em>(for deferrals above N1Billion)</em></p>
+                       <br/>
+                   <p><strong>(Waivers of any Pre-availment condition included in the credit approval shall require approval in writing at the appropriate approval credit authority level)</strong></p>
+                   ";
+            return result;
+        }
+
+       private IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId)
+        {
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
+
+            var dataLOS = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                           join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
+                           join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
+                           where c.ISLMS == false
+                           && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
+                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                               && atrail.RESPONSESTAFFID == null
+                               && atrail.LOOPEDSTAFFID == null
+                           orderby a.DATETIMECREATED descending
+                           select new ChecklistApprovalViewModel()
+                           {
+                               customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                               customerId = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID : a.TBL_CUSTOMER.CUSTOMERID,
+                               proposedAmount = a.APPROVEDAMOUNT,
+                               approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               deferredDate = b.DEFEREDDATE,
+                               deferralDuration = 1,
+                               cummulativeDays = 1,
+                               condition = b.CONDITION,
+                               conditionId = b.LOANCONDITIONID,
+                               loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                               applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                               dateCreated = b.DATETIMECREATED,
+                               operationId = atrail.OPERATIONID,
+                               //Loan Information
+                               relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
+                               relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
+                               applicationAmount = a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
+                               applicationTenor = a.PROPOSEDTENOR,
+                               applicationDate = a.TBL_LOAN_APPLICATION.APPLICATIONDATE,
+                               isInvestmentGrade = a.TBL_LOAN_APPLICATION.ISINVESTMENTGRADE,
+                               isPoliticallyExposed = a.TBL_LOAN_APPLICATION.ISPOLITICALLYEXPOSED,
+                               isRelatedParty = a.TBL_LOAN_APPLICATION.ISRELATEDPARTY,
+                               approvalStatusId = a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                               applicationStatusId = a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
+                               submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
+                               loanInformation = a.LOANPURPOSE,
+                               isLMS = c.ISLMS == true,
+                               reason = c.DEFERRALREASON
+                           }).ToList();
+
+            var dataLMS = (from a in context.TBL_LMSR_APPLICATION_DETAIL
+                           join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
+                           join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
+                           join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
+                           where c.ISLMS == true
+                            && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
+                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                               && atrail.RESPONSESTAFFID == null
+                               && atrail.LOOPEDSTAFFID == null
+                           orderby a.DATETIMECREATED descending
+                           select new ChecklistApprovalViewModel()
+                           {
+                               customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                               proposedAmount = a.APPROVEDAMOUNT,
+                               approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == b.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                               deferredDate = b.DEFEREDDATE,
+                               deferralDuration = 1,
+                               cummulativeDays = 1,
+                               condition = b.CONDITION,
+                               conditionId = b.LOANCONDITIONID,
+                               loanApplicationId = a.LOANAPPLICATIONID,
+                               applicationReferenceNumber = a.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               checklistStatus = context.TBL_CHECKLIST_STATUS.Where(o => o.CHECKLISTSTATUSID == b.CHECKLISTSTATUSID).Select(o => o.CHECKLISTSTATUSNAME).FirstOrDefault(),
+                               dateCreated = b.DATETIMECREATED,
+                               relationshipOfficerName = "",//context.TBL_STAFF.Where(o=>o.STAFFID ==a. a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
+                               relationshipManagerName = "",//a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
+                               applicationAmount = 0,//a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
+                               applicationTenor = 0,//a.PROPOSEDTENOR,
+                               applicationDate = a.TBL_LMSR_APPLICATION.APPLICATIONDATE,
+                               isInvestmentGrade = false,//a.TBL_LOAN_APPLICATION.ISINVESTMENTGRADE,
+                               isPoliticallyExposed = false,//a.TBL_LOAN_APPLICATION.ISPOLITICALLYEXPOSED,
+                               isRelatedParty = false,//a.TBL_LOAN_APPLICATION.ISRELATEDPARTY,
+                               approvalStatusId = 0,//a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                               applicationStatusId = 0,//a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
+                               submittedForAppraisal = true,//a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
+                               loanInformation = "",//a.LOANPURPOSE
+                               isLMS = c.ISLMS == true
+                           }).ToList();
+
+
+            return dataLOS.Union(dataLMS);
         }
     }
 }

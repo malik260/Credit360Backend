@@ -90,6 +90,7 @@
     <Compile Include="Models\TBL_ALERT_LEVEL_GROUP.cs" />
     <Compile Include="Models\TBL_ALERT_LEVEL_GRP_MAPPING.cs" />
     <Compile Include="Models\TBL_ALERT_SETUP.cs" />
+    <Compile Include="Models\TBL_ALERT_TEMPLATE_TYPE.cs" />
     <Compile Include="Models\TBL_ALERT_TITLE.cs" />
     <Compile Include="Models\TBL_API_URL.cs" />
     <Compile Include="Models\TBL_APPROVAL_LEVEL_SETTING.cs" />

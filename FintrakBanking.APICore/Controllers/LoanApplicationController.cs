@@ -1367,21 +1367,35 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application/loan-cancellation")]
         public HttpResponseMessage LoanApplicationCancellationRequest([FromBody] LoanApplicationViewModel data)
         {
-            try
+            data.createdBy = token.GetStaffId;
+            data.companyId = token.GetCompanyId;
+            var response = repo.SaveCancelledApplcation(data);
+            if (response)
             {
-                data.createdBy = token.GetStaffId;
-                data.companyId = token.GetCompanyId;
-                var response = repo.SaveCancelledApplcation(data);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (ConditionNotMetException e)
+            else
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, warning = true, message = $"Error: {e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, result = response });
             }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            
+            //if()
+            //return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            //try
+            //{
+            //    data.createdBy = token.GetStaffId;
+            //    data.companyId = token.GetCompanyId;
+            //    var response = repo.SaveCancelledApplcation(data);
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            //}
+            //catch (ConditionNotMetException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, warning = true, message = $"Error: {e.Message}" });
+            //}
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            //}
         }
 
         [HttpGet]
@@ -1805,6 +1819,16 @@ namespace FintrakBanking.APICore.Controllers
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("cash-collaterized-process-flow")]
+        public HttpResponseMessage getCashCollaterizedProcessFlowBy()
+        {
+            var response = repo.getCashCollaterizedProcessFlowBy();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
