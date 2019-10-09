@@ -157,7 +157,7 @@ namespace FintrakBanking.Repositories.Credit
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
                     statusId = d.APPROVALSTATUSID,
                     terms = d.REPAYMENTTERMS,
-                    schedule = d.REPAYMENTSCHEDULE,
+                    schedule = context.TBL_REPAYMENT_TERM.Find(d.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
                     //loanReferenceNumber = d.LOANREFERENCENUMBER,
                 })
 
@@ -384,7 +384,8 @@ namespace FintrakBanking.Repositories.Credit
                     REVIEWDETAILS = detail.reviewDetails,
                     PRODUCTID = detail.productId,
                     REPAYMENTTERMS = String.Empty,
-                    REPAYMENTSCHEDULE = String.Empty,
+                    REPAYMENTSCHEDULEID = detail.repaymentScheduleId,
+                    //REPAYMENTSCHEDULE = context.TBL_REPAYMENT_TERM.Find(x.d.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
                     CUSTOMERID = loan.customerId,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
                     CREATEDBY = staffId,
@@ -1463,6 +1464,7 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_LOAN_COLLATERAL_MAPPING.Add(new TBL_LOAN_COLLATERAL_MAPPING
                     {
                         COLLATERALCUSTOMERID = recommended.COLLATERALCUSTOMERID,
+                        LOANAPPCOLLATERALID = recommended.LOANAPPCOLLATERALID,
                         LOANID = d.LOANID,
                         LOANSYSTEMTYPEID = d.LOANSYSTEMTYPEID,
                         ISRELEASED = false,

@@ -35,11 +35,10 @@
         [StringLength(2000)]
         public string REPAYMENTTERMS { get; set; }
 
-        //[StringLength(2000)]
-        //public string REPAYMENTSCHEDULEID { get; set; }
+        public int REPAYMENTSCHEDULEID { get; set; }
 
-        [StringLength(2000)]
-        public string REPAYMENTSCHEDULE { get; set; }
+        //[StringLength(2000)]
+        //public string REPAYMENTSCHEDULE { get; set; }
 
         public int CREATEDBY { get; set; }
 

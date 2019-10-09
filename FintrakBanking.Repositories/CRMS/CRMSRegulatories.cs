@@ -1097,7 +1097,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                          //100
                          GOVERNMENT_CODE = stateCode + "-" + lgaCode,
-                         REPAYMENT_SOURCE = a.REPAYMENTSCHEDULE,
+                         REPAYMENT_SOURCE = context.TBL_REPAYMENT_TERM.Find(a.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
 
                          //200
                          GOVERNMENT_MDA_TIN = b.TAXNUMBER,
@@ -1198,7 +1198,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                              //100
                              GOVERNMENT_CODE = stateCode + "-" + lgaCode,
-                             REPAYMENT_SOURCE = a.REPAYMENTSCHEDULE,
+                             REPAYMENT_SOURCE = context.TBL_REPAYMENT_TERM.Find(a.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
 
                              //200
                              GOVERNMENT_MDA_TIN = b.TAXNUMBER,
@@ -1301,7 +1301,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                               //100
                               GOVERNMENT_CODE = stateCode + "-" + lgaCode,
-                              REPAYMENT_SOURCE = a.REPAYMENTSCHEDULE,
+                              REPAYMENT_SOURCE = context.TBL_REPAYMENT_TERM.Find(a.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
 
                               //200
                               GOVERNMENT_MDA_TIN = b.TAXNUMBER,
