@@ -1398,7 +1398,31 @@ namespace FintrakBanking.Repositories.Credit
             if (result.Count > 0) return false;
             else return true;
         }
-        public bool AddInsurancePolicy(InsurancePolicy entity)
+
+        public bool UpdateInsurancePolicy(int id, CollateralInsurancePolicyViewModel model)
+        {
+            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find(id);
+            if (entity == null) return false;
+
+            entity.INSURANCECOMPANYID = model.insuranceCompanyId;
+            entity.SUMINSURED = model.sumInsured;
+            entity.STARTDATE = (DateTime)model.startDate;
+            entity.ENDDATE = (DateTime)model.expiryDate;
+            entity.INSURANCETYPEID = model.insuranceTypeId;
+            entity.CREATEDBY = model.createdBy;
+            entity.DELETED = false;
+            entity.PREMIUMAMOUNT = model.inSurPremiumAmount;
+            entity.PREMIUMPERCENT = model.premiumPercent;
+            entity.DESCRIPTION = model.description;
+            entity.HASEXPIRED = false;
+            entity.POLICYSTATEID = model.policyStateId;
+            entity.LASTUPDATEDBY = model.createdBy;
+            entity.DATETIMEUPDATED = DateTime.Now;
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddInsurancePolicy(CollateralInsurancePolicyViewModel entity)
         {
             var result = context.TBL_COLLATERAL_ITEM_POLICY.Where(ip => ip.COLLATERALCUSTOMERID == entity.collateraalId
                                                                     && ip.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
@@ -1422,9 +1446,9 @@ namespace FintrakBanking.Repositories.Credit
                 PREMIUMPERCENT = entity.premiumPercent,
                 DESCRIPTION = entity.description,
                 HASEXPIRED = false,
+                POLICYSTATEID = entity.policyStateId,
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing
-
-
+                
 
             });
 
@@ -9905,19 +9929,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() != 0;
         }
-
-        public bool UpdateInsurancePolicy(int id,InsurancePolicy model)
-        {
-            var entity = this.context.TBL_COLLATERAL_ITEM_POLICY.Find(id);
-            entity.POLICYREFERENCENUMBER = model.referenceNumber;
-            //entity.INSURANCETYPE = model.insuranceType;
-            entity.INSURANCETYPEID = model.insuranceTypeId;
-            entity.SUMINSURED = model.sumInsured;
-            entity.HASEXPIRED = model.hasExpired;
-            entity.LASTUPDATEDBY = model.createdBy;
-            entity.DATETIMEUPDATED = genSetup.GetApplicationDate();
-            return context.SaveChanges() != 0;
-        }
+        
 
         public bool DeleteInsurancePolicy(int id, UserInfo user)
         {

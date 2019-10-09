@@ -139,7 +139,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<InsurancePolicy> GetInsuranceType();
 
-        bool AddInsurancePolicy(InsurancePolicy entity);
+        bool AddInsurancePolicy(CollateralInsurancePolicyViewModel entity);
 
         List<InsurancePolicy> GetCollateralInsurancePoliciesWaitingForApproval(int staffId);
         IEnumerable<InsurancePolicy> Explore(string searchString);
@@ -168,7 +168,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool AddInsurancePolicyFile(InsurancePolicy model);
         bool DeleteInsurancePolicy(int id, UserInfo user);
-        bool UpdateInsurancePolicy(int id, InsurancePolicy model);
+        bool UpdateInsurancePolicy(int id, CollateralInsurancePolicyViewModel model);
 
 
 
