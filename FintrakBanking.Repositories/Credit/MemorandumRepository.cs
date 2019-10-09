@@ -3,6 +3,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -23,6 +24,8 @@ namespace FintrakBanking.Repositories.Credit
         private ITransactionDynamicsRepository transactionsRepo;
         private IConditionPrecedentRepository conditionsRepo;
         private ICustomerCollateralRepository collateralRepo;
+        private IGeneralSetupRepository _genSetup;
+
 
         public MemorandumRepository(
             FinTrakBankingContext context, 
@@ -32,7 +35,8 @@ namespace FintrakBanking.Repositories.Credit
             ICustomerGroupRepository groupRepo, 
             ITransactionDynamicsRepository transactionsRepo,
             IConditionPrecedentRepository conditionsRepo,
-            ICustomerCollateralRepository collateralRepo
+            ICustomerCollateralRepository collateralRepo,
+           IGeneralSetupRepository genSetup
             )
         {
             this.context = context;
@@ -43,6 +47,7 @@ namespace FintrakBanking.Repositories.Credit
             this.transactionsRepo = transactionsRepo;
             this.conditionsRepo = conditionsRepo;
             this.collateralRepo = collateralRepo;
+            this._genSetup = genSetup;
         }
 
         // init
@@ -488,7 +493,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.otherFee = "";
                 this.effectiveDate = "";
                 this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
-
+                this.currentDate = DateTime.Now.ToShortDateString();
                 approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
 
@@ -7487,6 +7492,7 @@ namespace FintrakBanking.Repositories.Credit
                    
                  ";
             result = result + $"</table>";
+            var condition = GetChecklistAwaitingApproval(staffId);
             result = result + $@"
                 <br />              
                 <table border=1 width=900 cellpadding=10 cellspacing=0>
@@ -7497,17 +7503,19 @@ namespace FintrakBanking.Repositories.Credit
                         <td><strong><em>Reason for Deferral/waiver</strong></em></td>
                         <td><strong><em>No of days</em></strong></td>
                         <td><strong><em>Number of times deferred</strong></em></td>
-                    </tr> 
-
-                    <tr>
-                        <td></td>
-                         <td></td>
-                        <td></td>
-                        <td></td>    
-                        <td></td>
-                    </tr> 
-                         
+                    </tr>                         
                  ";
+            foreach(var d in condition) {
+                result = result + $@"
+                  <tr>
+                        <td>{d.condition}</td>
+                         <td>{d.loanInformation}</td>
+                        <td>{d.reason}</td>
+                        <td>{d.cummulativeDays}</td>    
+                        <td>{d.deferralDuration}</td>
+                    </tr> 
+                ";
+            }
             result = result + $"</table>";
             result = result + $@"
                     <br/>
@@ -7529,8 +7537,97 @@ namespace FintrakBanking.Repositories.Credit
                        <br/>
                    <p><strong>(Waivers of any Pre-availment condition included in the credit approval shall require approval in writing at the appropriate approval credit authority level)</strong></p>
                    ";
-            result = result + GetApprovalLevelsHtml();
             return result;
+        }
+
+       private IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId)
+        {
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
+
+            var dataLOS = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                           join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
+                           join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
+                           where c.ISLMS == false
+                           && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
+                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                               && atrail.RESPONSESTAFFID == null
+                               && atrail.LOOPEDSTAFFID == null
+                           orderby a.DATETIMECREATED descending
+                           select new ChecklistApprovalViewModel()
+                           {
+                               customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                               customerId = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.CUSTOMERGROUPID : a.TBL_CUSTOMER.CUSTOMERID,
+                               proposedAmount = a.APPROVEDAMOUNT,
+                               approvalStatus = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                               deferredDate = b.DEFEREDDATE,
+                               deferralDuration = 1,
+                               cummulativeDays = 1,
+                               condition = b.CONDITION,
+                               conditionId = b.LOANCONDITIONID,
+                               loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                               applicationReferenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                               dateCreated = b.DATETIMECREATED,
+                               operationId = atrail.OPERATIONID,
+                               //Loan Information
+                               relationshipOfficerName = a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
+                               relationshipManagerName = a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
+                               applicationAmount = a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
+                               applicationTenor = a.PROPOSEDTENOR,
+                               applicationDate = a.TBL_LOAN_APPLICATION.APPLICATIONDATE,
+                               isInvestmentGrade = a.TBL_LOAN_APPLICATION.ISINVESTMENTGRADE,
+                               isPoliticallyExposed = a.TBL_LOAN_APPLICATION.ISPOLITICALLYEXPOSED,
+                               isRelatedParty = a.TBL_LOAN_APPLICATION.ISRELATEDPARTY,
+                               approvalStatusId = a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                               applicationStatusId = a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
+                               submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
+                               loanInformation = a.LOANPURPOSE,
+                               isLMS = c.ISLMS == true,
+                               reason = c.DEFERRALREASON
+                           }).ToList();
+
+            var dataLMS = (from a in context.TBL_LMSR_APPLICATION_DETAIL
+                           join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
+                           join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
+                           join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
+                           where c.ISLMS == true
+                            && ((atrail.OPERATIONID == (int)OperationsEnum.DefferedChecklistApproval) || (atrail.OPERATIONID == (int)OperationsEnum.WaivedChecklistApproval))
+                               && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                               && atrail.RESPONSESTAFFID == null
+                               && atrail.LOOPEDSTAFFID == null
+                           orderby a.DATETIMECREATED descending
+                           select new ChecklistApprovalViewModel()
+                           {
+                               customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                               proposedAmount = a.APPROVEDAMOUNT,
+                               approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == b.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                               deferredDate = b.DEFEREDDATE,
+                               deferralDuration = 1,
+                               cummulativeDays = 1,
+                               condition = b.CONDITION,
+                               conditionId = b.LOANCONDITIONID,
+                               loanApplicationId = a.LOANAPPLICATIONID,
+                               applicationReferenceNumber = a.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                               checklistStatus = context.TBL_CHECKLIST_STATUS.Where(o => o.CHECKLISTSTATUSID == b.CHECKLISTSTATUSID).Select(o => o.CHECKLISTSTATUSNAME).FirstOrDefault(),
+                               dateCreated = b.DATETIMECREATED,
+                               relationshipOfficerName = "",//context.TBL_STAFF.Where(o=>o.STAFFID ==a. a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
+                               relationshipManagerName = "",//a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
+                               applicationAmount = 0,//a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
+                               applicationTenor = 0,//a.PROPOSEDTENOR,
+                               applicationDate = a.TBL_LMSR_APPLICATION.APPLICATIONDATE,
+                               isInvestmentGrade = false,//a.TBL_LOAN_APPLICATION.ISINVESTMENTGRADE,
+                               isPoliticallyExposed = false,//a.TBL_LOAN_APPLICATION.ISPOLITICALLYEXPOSED,
+                               isRelatedParty = false,//a.TBL_LOAN_APPLICATION.ISRELATEDPARTY,
+                               approvalStatusId = 0,//a.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                               applicationStatusId = 0,//a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
+                               submittedForAppraisal = true,//a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
+                               loanInformation = "",//a.LOANPURPOSE
+                               isLMS = c.ISLMS == true
+                           }).ToList();
+
+
+            return dataLOS.Union(dataLMS);
         }
     }
 }

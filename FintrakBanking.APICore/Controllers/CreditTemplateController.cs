@@ -507,7 +507,8 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetDrawdownMemo([FromUri] int operationId, [FromUri] int targetId)
         {
             try
-            {         
+            {
+                var roleId = token.GetRoleId;      
                 var response = _memoRepo.DocumentationDeferralWaiverFormHtml(token.GetStaffId, operationId, targetId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
