@@ -77,7 +77,7 @@ namespace FintrakBanking.Repositories.CASA
 
                     _workFlow.StaffId = item.createdBy;
                     _workFlow.CompanyId = item.companyId;
-                    _workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    _workFlow.StatusId = (int)ApprovalStatusEnum.Pending; 
                     _workFlow.TargetId = data.OVERRIDE_DETAILID;
                     _workFlow.Comment = "Initiation";
                     _workFlow.OperationId = (int)OperationsEnum.OverrideRequest;

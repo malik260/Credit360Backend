@@ -63,10 +63,6 @@
     <Reference Include="EntityFramework.SqlServerCompact, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.SqlServerCompact.6.2.0\lib\net45\EntityFramework.SqlServerCompact.dll</HintPath>
     </Reference>
-    <Reference Include="FintrakBanking.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FintrakBanking.Common\obj\Debug\FintrakBanking.Common.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.4.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
     </Reference>
@@ -206,6 +202,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Services.Design" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.SqlServer.Compact.4.0.8876.1\lib\net40\System.Data.SqlServerCe.dll</HintPath>
       <Private>True</Private>
@@ -298,9 +295,8 @@
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\FINTRAK\Desktop\XLeratorDLL-financial.dll</HintPath>
+    <Reference Include="XLeratorDLL-financial">
+      <HintPath>..\..\..\Users\USER\Documents\C# Materials\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -327,6 +323,9 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="CFLAuthentication\BasicAuthenticationFilter.cs" />
+    <Compile Include="CFLAuthentication\BasicAuthenticationIdentity.cs" />
+    <Compile Include="CFLAuthentication\MyBasicAuthenticationFilter.cs" />
     <Compile Include="Controllers\AccountCategoryController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AccountSensitivityController.cs" />
@@ -344,6 +343,7 @@
     <Compile Include="Controllers\AuthorisedSignatoryController.cs" />
     <Compile Include="Controllers\BulkDisbursementPackageController.cs" />
     <Compile Include="Controllers\BusinessRuleController.cs" />
+    <Compile Include="Controllers\CashFlowLendingController.cs" />
     <Compile Include="Controllers\CollateralValuationController.cs" />
     <Compile Include="Controllers\DeferredFeeController.cs" />
     <Compile Include="Controllers\DocumentCategoryController.cs" />
@@ -472,11 +472,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\MiddleOffice.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MiddleOffice.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\PSR.cs">
       <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\PSR.designer.cs">
       <DependentUpon>PSR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportDataset\ReportDataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.cs">
       <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>
@@ -1476,32 +1486,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
-      <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
-      <Name>FintrakBanking.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
-      <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
-      <Name>FintrakBanking.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.ReportObjects\FintrakBanking.ReportObjects.csproj">
-      <Project>{335b391e-60c0-47c2-9d7f-10cef0de800e}</Project>
-      <Name>FintrakBanking.ReportObjects</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.Repositories\FintrakBanking.Repositories.csproj">
-      <Project>{2853b1d8-af5f-4691-a513-9eb63a45dd4d}</Project>
-      <Name>FintrakBanking.Repositories</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FinTrakBanking.ThirdPartyIntegration\FinTrakBanking.ThirdPartyIntegration.csproj">
-      <Project>{81c64d5d-3674-499e-b718-257aa862b1b2}</Project>
-      <Name>FinTrakBanking.ThirdPartyIntegration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
-      <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
-      <Name>FintrakBanking.ViewModels</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS12.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.rdlc" />
@@ -1611,6 +1595,36 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
     <Folder Include="Properties\PublishProfiles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">
+      <Project>{18cefc20-2662-4757-94de-23d623ffc98d}</Project>
+      <Name>FintrakBanking.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
+      <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
+      <Name>FintrakBanking.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
+      <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
+      <Name>FintrakBanking.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.ReportObjects\FintrakBanking.ReportObjects.csproj">
+      <Project>{335b391e-60c0-47c2-9d7f-10cef0de800e}</Project>
+      <Name>FintrakBanking.ReportObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.Repositories\FintrakBanking.Repositories.csproj">
+      <Project>{2853b1d8-af5f-4691-a513-9eb63a45dd4d}</Project>
+      <Name>FintrakBanking.Repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FinTrakBanking.ThirdPartyIntegration\FinTrakBanking.ThirdPartyIntegration.csproj">
+      <Project>{81c64d5d-3674-499e-b718-257aa862b1b2}</Project>
+      <Name>FinTrakBanking.ThirdPartyIntegration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
+      <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
+      <Name>FintrakBanking.ViewModels</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

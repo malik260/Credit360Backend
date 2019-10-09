@@ -274,4 +274,56 @@ namespace FintrakBanking.ViewModels.Customer
         //  public int customerTypeId { get; set; }
         //  public string customerTypeName { get; set; }
     }
+
+    // REST API VIEW MODELS FOR CLIENT INPUT
+    public class IncomingCustomerViewModels 
+    {
+        public string createdBy { get; set; }
+        public string creationMailSent { get; set; }
+        public string customerNumber { get; set; }
+        public string customerSensitivityLevelId { get; set; }
+        public string customerType { get; set; }
+        public string customerTypeId { get; set; }
+        public string dateOfBirth { get; set; }
+        public string emailAddress { get; set; }
+        public string firstName { get; set; }
+        public string gender { get; set; }
+        public string lastName { get; set; }
+        public string maidenName { get; set; }
+        public string maritalStatus { get; set; }
+        public string title { get; set; }
+        public string middleName { get; set; }
+        public string misCode { get; set; }
+        public string misStaff { get; set; }
+        public string nationality { get; set; }
+        public string occupation { get; set; }
+        public string placeOfBirth { get; set; }
+        public string isPoliticallyExposed { get; set; }
+        public string isInvestmentGrade { get; set; }
+        public string isRealatedParty { get; set; }
+        public string relationshipOfficerId { get; set; }
+        public string spouse { get; set; }
+        public string subSectorId { get; set; }
+        public string taxNumber { get; set; }
+        public string riskRatingId { get; set; }
+        public string customerBVN { get; set; }
+        public string prospectCustomerCode { get; set; }
+        public string crmsCompanySizeId { get; set; }
+        public string crmsLegalStatusId { get; set; }
+        public string crmsRelationshipTypeId { get; set; }
+        public string countryOfResidentId { get; set; }
+        public string numberOfDependents { get; set; }
+        public string numberOfLoansTaken { get; set; }
+        public string loanMonthlyRepaymentFromOtherBanks { get; set; }
+        public string dateOfRelationshipWithBank { get; set; }
+        public string relationshipTypeId { get; set; }
+        public string teamLDP { get; set; }
+        public string teamNPL { get; set; }
+        public string corr { get; set; }
+        public string pastDueObligations { get; set; }
+        public string businessUnitId { get; set; }
     }
+
+
+
+}

@@ -27,7 +27,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_GRP_MAPPING> TBL_TEMP_APPROVAL_GRP_MAPPING { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_SETTING> TBL_APPROVAL_LEVEL_SETTING { get; set; }
-
+        
+        public virtual DbSet<TBL_ALERT_TEMPLATE_TYPE> TBL_ALERT_TEMPLATE_TYPE { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL> TBL_TEMP_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
@@ -553,7 +554,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ALERT_LEVEL_GRP_MAPPING> TBL_ALERT_LEVEL_GRP_MAPPING { get; set; }
         public virtual DbSet<TBL_ALERT_LEVEL_GROUP> TBL_ALERT_LEVEL_GROUP { get; set; }
         public virtual DbSet<TBL_ALERT_LEVEL> TBL_ALERT_LEVEL { get; set; } 
-        public virtual DbSet<TBL_ALERT_FREQUENCY> TBL_ALERT_FREQUENCY { get; set; }
+        public virtual DbSet<TBL_ALERT_FREQUENCY> TBL_ALERT_FREQUENCY { get; set; } 
+        public virtual DbSet<TBL_ALERT_CONDITION> TBL_ALERT_CONDITION { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

@@ -50,7 +50,9 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<SectorViewModel> GetAllSubSectors();
 
-        bool Updatesector(SectorViewModel model, short id);
+        bool UpdateSector(SectorViewModel model, short id);
+        bool DeleteSector(int Id, UserInfo user);
+        bool AddSector(SectorViewModel model);
 
         IEnumerable<int> GetStaffApprovalLevelIds(int staffId, int operationId);
         List<int> GetRouteLevels(int operationId, int depth);
