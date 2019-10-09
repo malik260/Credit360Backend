@@ -388,7 +388,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     this.LogCode = LoginCode;
                     var gcode = LoginCode.Split('@');
                     loginCodeStr = gcode[0];
-                    ipAddressStr = gcode[1];
+
+                    if (gcode.Length > 1) {
+                        ipAddressStr = gcode[1];
+                    }
                 }
 
                 if (loginCodeStr == null || loginCodeStr == Guid.Empty.ToString())

@@ -67,10 +67,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\FintrakBanking.Common\obj\Debug\FintrakBanking.Common.dll</HintPath>
     </Reference>
-    <Reference Include="FintrakBanking.Interfaces, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\FintrakBanking.Interfaces\obj\Debug\FintrakBanking.Interfaces.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.4.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
     </Reference>
@@ -1483,6 +1479,10 @@
     <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
       <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
       <Name>FintrakBanking.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
+      <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
+      <Name>FintrakBanking.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.ReportObjects\FintrakBanking.ReportObjects.csproj">
       <Project>{335b391e-60c0-47c2-9d7f-10cef0de800e}</Project>
