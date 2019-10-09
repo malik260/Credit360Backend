@@ -62,7 +62,7 @@ namespace FintrakBanking.Entities.Models
 
         //public  string POLICYSTATE { get; set; }
         public string COMPANYADDRESS { get; set; }
-        public int?  PREVIOUSINSURANCEID { get; set; }
+        //public int?  PREVIOUSINSURANCEID { get; set; }
 
 
         public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }

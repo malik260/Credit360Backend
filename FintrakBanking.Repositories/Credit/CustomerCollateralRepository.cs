@@ -1476,7 +1476,7 @@ namespace FintrakBanking.Repositories.Credit
                                  cip.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                               select cip).ToList();
 
-                if (entity.Count > 0) return false;
+                if (entity.Any()) throw new SecureException("Collateral Item already undergoing Insurnace Request Approval");
 
                 
 
@@ -1613,8 +1613,17 @@ namespace FintrakBanking.Repositories.Credit
         public bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model)
         {
             var data = context.TBL_INSURANCE_REQUEST.FirstOrDefault(d => d.COLLATERALCUSTOMERID == model.collateralCustomerId &&
-                                                                        d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred);
-            if (data != null) return false;
+                                                                        d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing 
+                                                                        || d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred);
+
+            if (data != null) throw new SecureException("Collateral Item is already Undergoing Insurance Request Approval");
+
+            var data2 = context.TBL_INSURANCE_REQUEST.FirstOrDefault(d => d.COLLATERALCUSTOMERID == model.collateralCustomerId &&
+                                                                        d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending);
+
+            if (data2 != null) throw new SecureException("A Pending Insurance Request already exists for this Collateral");
+
+
 
             var policy = context.TBL_INSURANCE_REQUEST.Add(new TBL_INSURANCE_REQUEST
             {

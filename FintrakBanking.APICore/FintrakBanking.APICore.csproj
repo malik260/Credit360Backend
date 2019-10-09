@@ -323,6 +323,9 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="CFLAuthentication\BasicAuthenticationFilter.cs" />
+    <Compile Include="CFLAuthentication\BasicAuthenticationIdentity.cs" />
+    <Compile Include="CFLAuthentication\MyBasicAuthenticationFilter.cs" />
     <Compile Include="Controllers\AccountCategoryController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AccountSensitivityController.cs" />
@@ -469,11 +472,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\MiddleOffice.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MiddleOffice.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\PSR.cs">
       <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\PSR.designer.cs">
       <DependentUpon>PSR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportDataset\ReportDataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ReportDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.cs">
       <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>

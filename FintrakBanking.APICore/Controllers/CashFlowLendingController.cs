@@ -1,4 +1,5 @@
-﻿using FintrakBanking.APICore.JWTAuth;
+﻿using FintrakBanking.APICore.CFLAuthentication;
+using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
@@ -17,6 +18,7 @@ using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
+    [MyBasicAuthenticationFilter] // Authorization: Basic ZmludHJhayZAIyQ6ZmludHJhayZAIzM0OA==
     [RoutePrefix("api/v1/fintrak")]
     public class CashFlowLendingController : ApiController
     { 

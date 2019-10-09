@@ -120,7 +120,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string amountDisbursedHolder = "@{{AmountDisbursed}}";
         private readonly string amountPaidSoFarHolder = "@{{AmountPaidSoFar}}";
         private readonly string amountProposedHolder = "@{{AmountProposed}}";
-        private readonly string customerTurnoverHolder = "@{{CustomerTurnover}}";
+        private readonly string customerTurnoverHolder = "@{{CustomerTurnover}}"; 
 
         // for output document 
         private readonly string memoHolder = "@{{memoData}}";
@@ -132,6 +132,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string staffMortgageLoansDataHolder = "@{{staffMortgageLoansData}}";
         private readonly string staffPersonalLoansAGMDataHolder = "@{{staffPersonalLoansAGMData}}";
         private readonly string staffPersonalLoanDataHolder = "@{{staffPersonalLoanData}}";
+        private readonly string documentatonDeferralWaiverDataHolder = "@{{documentatonDeferralWaiverData}}";
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -282,6 +283,7 @@ namespace FintrakBanking.Repositories.Credit
         private string staffPersonalLoansAGMData;
         private string staffPersonalLoanData;
         private string temporaryOverdraftData;
+        private string documentatonDeferralWaiverData;
 
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
@@ -351,7 +353,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
                 this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SHAREHOLDERSFUND;
-                //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
+                //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS(); 
 
                 this.memoData = MemoMarkupHtml();
                 this.facilityUpgradeSupportSchemeData = FacilityUpgradeSupportSchemeHtml();
@@ -363,7 +365,8 @@ namespace FintrakBanking.Repositories.Credit
                 this.staffPersonalLoanData = StaffPersonalLoanHtml();
                 this.temporaryOverdraftData = TemporaryOverdraftHtml();
                 
-    }
+
+            }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
             {
@@ -465,7 +468,7 @@ namespace FintrakBanking.Repositories.Credit
                     //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     //this.customerExposure = CustomerExposureMarkup();
                 }
-
+                //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
                 string customerName = String.Empty;
                 if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
                 if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
@@ -734,7 +737,7 @@ namespace FintrakBanking.Repositories.Credit
                 <table border=1 width=900 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>NAME OF CUSTOMER:</b></th>
-                        <th><b></b></th>
+                        <th><b>{customerName}</b></th>
                         <th><b>CURRENT/APG A/C NO:</b></th>
                         <th><b></b></th>
                     </tr>
@@ -2660,6 +2663,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(staffPersonalLoansAGMDataHolder, staffPersonalLoansAGMData);
             content = content.Replace(staffPersonalLoanDataHolder, staffPersonalLoanData);
             content = content.Replace(temporaryOverdraftHolder, temporaryOverdraftData);
+            content = content.Replace(documentatonDeferralWaiverDataHolder, documentatonDeferralWaiverData);
 
 
             return content;
@@ -7442,6 +7446,90 @@ namespace FintrakBanking.Repositories.Credit
                 <h3><b>BOARD / BCC (for AGM & above):</b></h3>
                 
                  ";   
+            return result;
+        }
+    
+         public string DocumentationDeferralWaiverFormHtml(int staffId, int operationId, int targetId)
+        {
+            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br /><h4><b>Access Bank Plc RC 125384</b></h4>
+                <h3><b>DOCUMENTATION DEFERRAL/WAIVER FORM</b></h3>
+                <br />
+               
+                <table border=0 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td><strong>BORROWER:</strong></td> 
+                        <td>{customerName}</td>
+                        <td><strong>DATE:</strong> </td>
+                        <td>{currentDate}</td>
+                    </tr>
+                   <tr>
+                        <td><strong>FACILITY TYPE::</strong></td> 
+                        <td>{facilityType}</td>
+                        <td><strong>BRANCH:</strong> </td>
+                        <td>{branchName}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>FACILITY AMOUNT:</strong></td> 
+                        <td>{approvedAmount}</td>
+                        <td><strong>FINAL APPROVAL:</strong><br><em>(AS PER CPG)</em></td>  
+                        <td></td>
+                    </tr>
+                   <tr>
+                        <td><strong>PREPARED BY:</strong></td> 
+                        <td colspan=3>{preparedBy}</td>                                   
+                    </tr>
+                      
+                   
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                <br />              
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    
+                   <tr>
+                        <td><em><strong>Documents/Conditions precedent to draw down as approved in the FAM</strong></em>:</td>
+                        <td><strong><em>Description of Document</strong></em></td>
+                        <td><strong><em>Reason for Deferral/waiver</strong></em></td>
+                        <td><strong><em>No of days</em></strong></td>
+                        <td><strong><em>Number of times deferred</strong></em></td>
+                    </tr> 
+
+                    <tr>
+                        <td></td>
+                         <td></td>
+                        <td></td>
+                        <td></td>    
+                        <td></td>
+                    </tr> 
+                         
+                 ";
+            result = result + $"</table>";
+            result = result + $@"
+                    <br/>
+                   <p><strong><em>ACCOUNT OFFICER:</em></strong>{relationshipOfficer}</p>
+                    <br/>
+                   <p><strong><em>RELATIONSHIP MANAGER:</em></strong>{relationshipManager}</p>
+                       <br/>
+                   <p><strong><em>GROUP HEAD:</em></strong></p>
+                      <br/>
+                   <p><strong><em>CRM:</em></strong></p>
+                      <br/>
+                   <p><strong><em>APPROVAL:</em></strong></p>
+                    <br/>
+                   <p><strong><em>ED:</em></strong>...........</p>
+                     <br/>
+                   <p><strong><em>GDMD:</em></strong>...........<br><em>(for deferrals below N1Billion)</em></p>
+                     <br/>
+                   <p><strong><em>GMD:</em></strong>...........<br><em>(for deferrals above N1Billion)</em></p>
+                       <br/>
+                   <p><strong>(Waivers of any Pre-availment condition included in the credit approval shall require approval in writing at the appropriate approval credit authority level)</strong></p>
+                   ";
+            result = result + GetApprovalLevelsHtml();
             return result;
         }
     }
