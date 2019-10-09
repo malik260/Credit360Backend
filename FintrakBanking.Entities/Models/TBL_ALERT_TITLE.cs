@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
         public string BUSINESSOWNER { get; set; }
         public string SENDERNAME { get; set; }
         public string SENDEREMAIL { get; set; }
-        public string TEMPLATETYPE { get; set; }
+        public int TEMPLATETYPE { get; set; }
 
     }
 }

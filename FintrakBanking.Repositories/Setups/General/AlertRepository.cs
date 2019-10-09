@@ -58,7 +58,8 @@ namespace FintrakBanking.Repositories.Setups.General
                               templateType = a.TEMPLATETYPE,
                               businessOwner = a.BUSINESSOWNER,
                               senderEmail = a.SENDEREMAIL,
-                              senderName = a.SENDERNAME                         
+                              senderName = a.SENDERNAME,
+                              templateTypeName = context.TBL_ALERT_TEMPLATE_TYPE.Where(x => x.ALERTTEMPLATETYPEID == a.TEMPLATETYPE).Select(x => x.PLACEHOLDER).FirstOrDefault()
                           });
             return alerts;
         }
@@ -74,7 +75,8 @@ namespace FintrakBanking.Repositories.Setups.General
                              templateType = a.TEMPLATETYPE,
                              businessOwner = a.BUSINESSOWNER,
                              senderEmail = a.SENDEREMAIL,
-                             senderName = a.SENDERNAME
+                             senderName = a.SENDERNAME,
+                             templateTypeName = context.TBL_ALERT_TEMPLATE_TYPE.Where(x => x.ALERTTEMPLATETYPEID == a.TEMPLATETYPE).Select(x => x.PLACEHOLDER).FirstOrDefault()
                          }).FirstOrDefault();
             return alert;
         }

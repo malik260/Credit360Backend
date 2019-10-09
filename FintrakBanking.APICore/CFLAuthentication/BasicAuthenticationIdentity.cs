@@ -9,7 +9,7 @@ namespace FintrakBanking.APICore.CFLAuthentication
     public class BasicAuthenticationIdentity : GenericIdentity
     {
     public BasicAuthenticationIdentity(string name, string password)
-:       base(name, "Basic")
+      :base(name, "Basic")
         {
             this.Password = password;
         }  
