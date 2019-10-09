@@ -364,7 +364,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.staffPersonalLoansAGMData = StaffPersonalLoanAGMHtml();
                 this.staffPersonalLoanData = StaffPersonalLoanHtml();
                 this.temporaryOverdraftData = TemporaryOverdraftHtml();
-                this.documentatonDeferralWaiverData = DocumentatonDeferralWaiverFormHtml();
+                
 
             }
 
@@ -468,7 +468,7 @@ namespace FintrakBanking.Repositories.Credit
                     //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     //this.customerExposure = CustomerExposureMarkup();
                 }
-
+                //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
                 string customerName = String.Empty;
                 if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
                 if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
@@ -7449,8 +7449,10 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
     
-         public string DocumentatonDeferralWaiverFormHtml()
+         public string DocumentationDeferralWaiverFormHtml(int staffId, int operationId, int targetId)
         {
+            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+
             var result = String.Empty;
             var n = 0;
             result = result + $@"
@@ -7461,25 +7463,25 @@ namespace FintrakBanking.Repositories.Credit
                 <table border=0 width=900 cellpadding=10 cellspacing=0>
                     <tr>
                         <td><strong>BORROWER:</strong></td> 
-                        <td></td>
+                        <td>{customerName}</td>
                         <td><strong>DATE:</strong> </td>
-                        <td></td>
+                        <td>{currentDate}</td>
                     </tr>
                    <tr>
                         <td><strong>FACILITY TYPE::</strong></td> 
-                        <td></td>
+                        <td>{facilityType}</td>
                         <td><strong>BRANCH:</strong> </td>
-                        <td></td>
+                        <td>{branchName}</td>
                     </tr>
                     <tr>
                         <td><strong>FACILITY AMOUNT:</strong></td> 
-                        <td></td>
+                        <td>{approvedAmount}</td>
                         <td><strong>FINAL APPROVAL:</strong><br><em>(AS PER CPG)</em></td>  
                         <td></td>
                     </tr>
                    <tr>
                         <td><strong>PREPARED BY:</strong></td> 
-                        <td colspan=3></td>                                   
+                        <td colspan=3>{preparedBy}</td>                                   
                     </tr>
                       
                    
@@ -7493,8 +7495,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td><em><strong>Documents/Conditions precedent to draw down as approved in the FAM</strong></em>:</td>
                         <td><strong><em>Description of Document</strong></em></td>
                         <td><strong><em>Reason for Deferral/waiver</strong></em></td>
-                         <td><strong><em>No of days</em></strong></td>
-                         <td><strong><em>Number of times deferred</strong></em></td>
+                        <td><strong><em>No of days</em></strong></td>
+                        <td><strong><em>Number of times deferred</strong></em></td>
                     </tr> 
 
                     <tr>
@@ -7509,9 +7511,9 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                     <br/>
-                   <p><strong><em>ACCOUNT OFFICER:</em></strong></p>
+                   <p><strong><em>ACCOUNT OFFICER:</em></strong>{relationshipOfficer}</p>
                     <br/>
-                   <p><strong><em>RELATIONSHIP MANAGER:</em></strong></p>
+                   <p><strong><em>RELATIONSHIP MANAGER:</em></strong>{relationshipManager}</p>
                        <br/>
                    <p><strong><em>GROUP HEAD:</em></strong></p>
                       <br/>
@@ -7527,7 +7529,7 @@ namespace FintrakBanking.Repositories.Credit
                        <br/>
                    <p><strong>(Waivers of any Pre-availment condition included in the credit approval shall require approval in writing at the appropriate approval credit authority level)</strong></p>
                    ";
-                                           
+            result = result + GetApprovalLevelsHtml();
             return result;
         }
     }
