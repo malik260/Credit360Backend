@@ -503,6 +503,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-drawdown-memo/{operationId}/operationId/{targetId}/targetId")]
+        public HttpResponseMessage GetDrawdownMemo([FromUri] int operationId, [FromUri] int targetId)
+        {
+            try
+            {         
+                var response = _memoRepo.DocumentationDeferralWaiverFormHtml(token.GetStaffId, operationId, targetId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("document-section/operation/{operationId}/target/{targetId}")]
         public HttpResponseMessage GetLoadedDocumentSections(int operationId, int targetId)
         {
