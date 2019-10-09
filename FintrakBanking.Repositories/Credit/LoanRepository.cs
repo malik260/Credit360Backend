@@ -258,23 +258,23 @@ namespace FintrakBanking.Repositories.Credit
             if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
             {
                 var data = ((this.context.TBL_LOAN.Count(x => x.BRANCHID == branch.BRANCHID && x.PRODUCTID == productId)) + 1);
-                var reference = $"{branch.BRANCHCODE}-{productCode}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+                var reference = $"{branch.BRANCHCODE.Trim()}-{productCode.Trim()}-{CommonHelpers.GenerateZeroString(5).Trim() + data.ToString().Right(5).Trim()}";
 
                 for (var count = data; context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == reference).Any(); count++)
                 {
-                    reference = $"{branch.BRANCHCODE}-{productCode}-{CommonHelpers.GenerateZeroString(5) + count.ToString().Right(5)}";
+                    reference = $"{branch.BRANCHCODE.Trim()}-{productCode.Trim()}-{CommonHelpers.GenerateZeroString(5).Trim() + count.ToString().Right(5).Trim()}";
                 };
                 return reference;
             }
             else if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
             {
                 var data = ((this.context.TBL_LOAN_REVOLVING.Count(x => x.BRANCHID == branch.BRANCHID && x.PRODUCTID == productId)) + 1);
-                return $"{branch.BRANCHCODE}-{productCode}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+                return $"{branch.BRANCHCODE.Trim()}-{productCode.Trim()}-{CommonHelpers.GenerateZeroString(5).Trim() + data.ToString().Right(5).Trim()}";
             }
             else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
             {
                 var data = ((this.context.TBL_LOAN_CONTINGENT.Count(x => x.BRANCHID == branch.BRANCHID && x.PRODUCTID == productId)) + 1);
-                return $"{productCode}-{branch.BRANCHCODE}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+                return $"{productCode.Trim()}-{branch.BRANCHCODE.Trim()}-{CommonHelpers.GenerateZeroString(5).Trim() + data.ToString().Right(5).Trim()}";
             }
             else throw new ConditionNotMetException("Loan Product Type not defined for Loan Booking");
 
