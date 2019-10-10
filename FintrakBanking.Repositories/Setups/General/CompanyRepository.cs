@@ -315,6 +315,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                  bvn = data.BVN,
                                  address = data.ADDRESS,
                                  email = data.EMAIL,
+                                 shareHoldingPercentage = data.SHAREHOLDINGPERCENTAGE,
                                  phoneNumber = data.PHONENUMBER,
                                  isActive = data.ISACTIVE,
                              }).ToList();
@@ -350,6 +351,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                  email = data.EMAIL,
                                  phoneNumber = data.PHONENUMBER,
                                  isActive = data.ISACTIVE,
+                                 shareHoldingPercentage = data.SHAREHOLDINGPERCENTAGE,
                                  directorName = data.FIRSTNAME + " " + data.MIDDLENAME + " " + data.LASTNAME
                              }).ToList();
 
@@ -381,6 +383,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         comDirector.ISACTIVE = director.isActive;
                         comDirector.LASTUPDATEDBY = director.createdBy;
                         comDirector.DATETIMEUPDATED = DateTime.Now;
+                        comDirector.SHAREHOLDINGPERCENTAGE = director.shareHoldingPercentage;
                     }
                 }
                 else
@@ -402,6 +405,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         CREATEDBY = director.createdBy,
                         DATETIMECREATED = DateTime.Now,
                         DELETED = false,
+                        SHAREHOLDINGPERCENTAGE = director.shareHoldingPercentage
                     };
                     context.TBL_COMPANY_DIRECTOR.Add(comDirector);
                 }
