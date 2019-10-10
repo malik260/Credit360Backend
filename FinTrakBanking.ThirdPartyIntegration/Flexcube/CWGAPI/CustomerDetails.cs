@@ -51,8 +51,11 @@
                 if (apiConfig == null)
                 {
                     apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
-                    API_URL = apiConfig.URL;
-                    API_KEY = apiConfig.KEY;
+
+                    if (apiConfig != null) {
+                        API_URL = apiConfig.URL;
+                        API_KEY = apiConfig.KEY;
+                    }
                 }
             }
 
