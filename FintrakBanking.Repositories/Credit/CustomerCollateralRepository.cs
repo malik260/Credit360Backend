@@ -2030,8 +2030,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var list = new List<CollateralCoverageViewModel>();
             var customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == customerId).ToList();
-            var companyId = context.TBL_CUSTOMER.Find(customerId).COMPANYID;
-            var baseCurrencyCode = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).TBL_CURRENCY.CURRENCYCODE;
+            var baseCurrencyCode = context.TBL_COMPANY.FirstOrDefault()?.TBL_CURRENCY.CURRENCYCODE;
             //foreach (var f in customerFacilities)
             //{
             int coveragePercentage = 0;
