@@ -16,6 +16,8 @@ namespace FintrakBanking.APICore.JWTAuth
         public int GetUserId { get { return int.Parse(this.GetInfoFromToken(6).ToString()); } }
         public string LoginCode { get { return  this.GetInfoFromToken(8).ToString(); } }
         public int GetRoleId { get { return int.Parse(this.GetInfoFromToken(9).ToString()); } }
+        public int GetUserGroupId { get { return int.Parse(this.GetInfoFromToken(10).ToString()); } }
+
 
         private object GetInfoFromToken(int tokenType)
         {
@@ -34,6 +36,7 @@ namespace FintrakBanking.APICore.JWTAuth
                 case 6: return decryptedToken.FirstOrDefault(st => st.Type == "userId").Value.ToString();
                 case 8: return decryptedToken.FirstOrDefault(st => st.Type == "logincode").Value.ToString();
                 case 9: return decryptedToken.FirstOrDefault(st => st.Type == "roleId").Value.ToString();
+                case 10: return decryptedToken.FirstOrDefault(st => st.Type == "userGroupId").Value.ToString();
                 default: return decryptedToken.FirstOrDefault(st => st.Type == "staffId").Value.ToString();
             }
         }

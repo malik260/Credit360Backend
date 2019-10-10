@@ -766,6 +766,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (record != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
             {
                 var staff1 = context.TBL_STAFF.Find(profile.STAFFID);
+                var userGroup = context.TBL_PROFILE_USERGROUP.Find(profile.STAFFID);
                 var userInfo = new UserViewModel();
 
                 userInfo.companyId = staff1.COMPANYID;
@@ -788,14 +789,18 @@ namespace FintrakBanking.Repositories.Setups.General
                 profile.LOGINCODE = LogCode;
                 profile.FAILEDLOGONATTEMPT = 0;
 
+                if (userGroup != null) {
+                    userInfo.userGroupId = userGroup.GROUPID;
+                }
+
                 context.Entry(profile).State = EntityState.Modified;
                 context.SaveChanges();
-
                 return userInfo;
             }
             else if (record != null && record.PASSWORD == password)
             {
                 var staff = context.TBL_STAFF.Find(profile.STAFFID);
+                var userGroup = context.TBL_PROFILE_USERGROUP.Find(profile.STAFFID);
                 var userInfo = new UserViewModel();
 
                 userInfo.companyId = staff.COMPANYID;
@@ -818,14 +823,13 @@ namespace FintrakBanking.Repositories.Setups.General
                 profile.LOGINCODE = LogCode;
                 profile.FAILEDLOGONATTEMPT = 0;
 
-                context.Entry(profile).State = EntityState.Modified;
-                //try
-                //{
-                context.SaveChanges();
-                //}catch(Exception ex)
-                //{
+                if (userGroup != null) {
+                    userInfo.userGroupId = userGroup.GROUPID;
+                }
 
-                //}
+                context.Entry(profile).State = EntityState.Modified;
+               
+                context.SaveChanges();
                 return userInfo;
             }
             else

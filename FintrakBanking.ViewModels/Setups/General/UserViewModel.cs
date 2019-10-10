@@ -60,6 +60,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int corrMatrixId { get; set; }
         public string corrMatrixDescription { get; set; }
 
+        public int userGroupId { get; set; }
+
 
         public string strIsFirstLogin
         {

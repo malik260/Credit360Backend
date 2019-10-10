@@ -5258,7 +5258,7 @@ namespace FintrakBanking.Repositories.Credit
                     //List<short> sectorIds = details.Select(x => x.subSectorId).ToList();
                     //foreach (var sectorId in sectorIds)
                     //{
-                        var sectorValidation = limitValidation.ValidateNPLBySector(facility.sectorId);
+                        var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
                         decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
                         //var sector = context.TBL_SECTOR.Find(sectorId);
                         if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
@@ -5281,6 +5281,13 @@ namespace FintrakBanking.Repositories.Credit
             if (proposedExposure >= company.SHAREHOLDERSFUND)
             {
                 throw new SecureException("Company Limit Exceeded");
+            }
+
+            var insiderLimit = limitValidation.ValidateNPLByInsiderCustomer();
+            var insiderExposure = insiderLimit.outstandingBalance + (double)applicationAmount;     
+            if (insiderExposure >= (double)insiderLimit.maximumAllowedLimit)
+            {
+                throw new SecureException("Insider Limit Exceeded");
             }
 
         }

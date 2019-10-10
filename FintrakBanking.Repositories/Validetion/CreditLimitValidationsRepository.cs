@@ -409,9 +409,12 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             //                     where a.SUBSECTORID == c.SUBSECTORID && a.LOANSTATUSID == (short)LoanStatusEnum.Active
             //                     let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).Sum(x => x.OUTSTANDINGPRINCIPAL)
             //                     select (decimal?)sumPrincipalAmount ?? 0;
-            var sumPrincipalAmountLoan = context.TBL_LOAN.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Sum(x => x.OUTSTANDINGPRINCIPAL * (decimal)x.EXCHANGERATE);
-            var sumPrincipalAmountRevolving = context.TBL_LOAN_REVOLVING.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).Sum(x => x.OVERDRAFTLIMIT * (decimal)x.EXCHANGERATE);
-            var sumPrincipalAmountContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).Sum(x => x.CONTINGENTAMOUNT * (decimal)x.EXCHANGERATE);
+            var principalAmountLoan = context.TBL_LOAN.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            var sumPrincipalAmountLoan = principalAmountLoan.Sum(x => x.OUTSTANDINGPRINCIPAL * (decimal)x.EXCHANGERATE);
+            var principalAmountRevolving = context.TBL_LOAN_REVOLVING.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).ToList();
+            var sumPrincipalAmountRevolving = principalAmountRevolving.Sum(x => x.OVERDRAFTLIMIT * (decimal)x.EXCHANGERATE);
+            var principalAmountContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.TBL_SUB_SECTOR.SECTORID == subSector.SECTORID).ToList();
+            var sumPrincipalAmountContingent = principalAmountContingent.Sum(x => x.CONTINGENTAMOUNT * (decimal)x.EXCHANGERATE);
             var data = sumPrincipalAmountLoan + sumPrincipalAmountRevolving + sumPrincipalAmountContingent;
 
             var limitAmount = 0;
@@ -551,6 +554,28 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             model.outstandingBalance = (double)outstandingbal.FirstOrDefault();
             model.limit = (double)limitAmount;
             model.difference = (double)outstandingbal.FirstOrDefault() - (double)limitAmount;
+            return model;
+        }
+
+        public CreditLimitValidationsModel ValidateNPLByInsiderCustomer()
+        {
+            CreditLimitValidationsModel model = new CreditLimitValidationsModel();
+
+            var limitAmount = 0;
+            var principalAmountLoan = context.TBL_LOAN.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            var sumPrincipalAmountLoan = principalAmountLoan.Sum(x => x.OUTSTANDINGPRINCIPAL * (decimal)x.EXCHANGERATE);
+            var principalAmountRevolving = context.TBL_LOAN_REVOLVING.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            var sumPrincipalAmountRevolving = principalAmountRevolving.Sum(x => x.OVERDRAFTLIMIT * (decimal)x.EXCHANGERATE);
+            var principalAmountContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            var sumPrincipalAmountContingent = principalAmountContingent.Sum(x => x.CONTINGENTAMOUNT * (decimal)x.EXCHANGERATE);
+            var data = sumPrincipalAmountLoan + sumPrincipalAmountRevolving + sumPrincipalAmountContingent;
+
+            var companyCapital = context.TBL_COMPANY.FirstOrDefault().SHAREHOLDERSFUND;
+            double maxLimit = (float)companyCapital * 0.1;
+            model.outstandingBalance = (double)data;
+            model.limit = (double)limitAmount;
+            model.difference = (double)data - (double)limitAmount;
+            model.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
             return model;
         }
 
