@@ -49,6 +49,7 @@ namespace FintrakBanking.Entities.Models
         public int? ROLEID { get; set; }
 
         public decimal? CONTROLAMOUNT { get; set; }
+        public decimal? CONTROLAMOUNTMAX { get; set; }
         public int? CONTROLOPTIONID { get; set; }
 
         public int CREATEDBY { get; set; }

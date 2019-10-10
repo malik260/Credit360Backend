@@ -589,6 +589,7 @@ namespace FintrakBanking.Repositories.Risk
                     operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == x.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
                     approvalLevelName = context.TBL_APPROVAL_LEVEL.Where(o => o.APPROVALLEVELID == x.APPROVALLEVELID).Select(o => o.LEVELNAME).FirstOrDefault(),
                     controlAmount = x.CONTROLAMOUNT,
+                    controlAmountMax = x.CONTROLAMOUNTMAX,
                     controlOptionId = x.CONTROLOPTIONID,
                     controlOption = context.TBL_RAC_OPTION_ITEM.Where(o => o.RACOPTIONID == x.RACOPTIONID).Select(o => o.LABEL).FirstOrDefault(),
                     showAtDrawDown = x.SHOWATDRAWDOWN,
@@ -624,6 +625,7 @@ namespace FintrakBanking.Repositories.Risk
                 operationId = entity.OPERATIONID,
                 approvalLevelId = entity.APPROVALLEVELID,
                 roleId = entity.ROLEID,
+                controlAmountMax = entity.CONTROLAMOUNTMAX,
                 controlAmount = entity.CONTROLAMOUNT,
                 controlOptionId = entity.CONTROLOPTIONID,
                 racCategoryTypeId = entity.RACCATEGORYTYPEID,
@@ -663,6 +665,7 @@ namespace FintrakBanking.Repositories.Risk
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
                 CONTROLOPTIONID = model.controlOptionId,
+                CONTROLAMOUNTMAX = model.controlAmountMax,
                 CONTROLAMOUNT = model.controlAmount,
                 REQUIRECOMMENT = model.requireComment,
                 RACCATEGORYTYPEID = model.racCategoryTypeId,
@@ -711,6 +714,7 @@ namespace FintrakBanking.Repositories.Risk
             entity.OPERATIONID = model.operationId;
             entity.APPROVALLEVELID = model.approvalLevelId;
             entity.ROLEID = model.roleId;
+            entity.CONTROLAMOUNTMAX = model.controlAmountMax;
             entity.CONTROLAMOUNT = model.controlAmount;
             entity.CONTROLOPTIONID = model.controlOptionId;
             entity.REQUIRECOMMENT = model.requireComment;
