@@ -1944,6 +1944,7 @@ namespace FintrakBanking.Repositories.Credit
             // select
             // radio
             // textarea
+            
 
             switch (definition.RACINPUTTYPEID)
             {
@@ -1973,6 +1974,7 @@ namespace FintrakBanking.Repositories.Credit
             4   Less Than
             5   Less Than or Equal To
             6   Not Equal To
+            7   Boundary (Min & Max)
             */
             /*
             DEFINEDFUNCTIONID -- actual
@@ -2012,6 +2014,9 @@ namespace FintrakBanking.Repositories.Credit
                         else return decimalValue <= ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     case 6:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue <= definition.CONTROLAMOUNT;
+                        else return decimalValue != ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
+                    case 7:
+                        if (definition.DEFINEDFUNCTIONID == 1) return (decimalValue >= definition.CONTROLAMOUNT && decimalValue <= definition.CONTROLAMOUNT);
                         else return decimalValue != ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     default:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue == definition.CONTROLAMOUNT;

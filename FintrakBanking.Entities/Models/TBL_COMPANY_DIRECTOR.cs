@@ -46,5 +46,6 @@
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+        public int? SHAREHOLDINGPERCENTAGE { get; set; }
     }
 }
