@@ -59,6 +59,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string phoneNumber { get; set; }
         public bool isActive { get; set; }
         public string directorName { get; set; }
+        public int? shareHoldingPercentage { get; set; }
     }
         public class LanguageViewModel
     {

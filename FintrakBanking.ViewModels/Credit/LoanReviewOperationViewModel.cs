@@ -418,6 +418,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string loanReferenceNumber { get; set; }
         public int statusId { get; set; }
         public string terms { get; set; }
+        public int repaymentScheduleId { get; set; }
         public string schedule { get; set; }
         public int loanApplicationDetailId { get; set; }
     }
@@ -502,6 +503,7 @@ public int? newInterestFrequencyTypeId { get; set; }
     {
         public int id { get; set; }
         public string name { get; set; }
+        public string title { get; set; }
         public int typeId { get; set; }
         public int currencyId { get; set; }
 

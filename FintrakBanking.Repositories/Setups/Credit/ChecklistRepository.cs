@@ -1850,6 +1850,7 @@ namespace FintrakBanking.Repositories.Credit
                         workflow.CompanyId = model.companyId;
                         workflow.StatusId = (int)ApprovalStatusEnum.Pending;
                         workflow.TargetId = loanConditionId;
+                        workflow.NextLevelId = null;
                         workflow.Comment = "LMS Checklist Approval";
                         workflow.OperationId = model.checkListStatusId == (int)CheckListStatusEnum.Deferred ? (int)OperationsEnum.DefferedChecklistApproval : (int)OperationsEnum.WaivedChecklistApproval;
                         workflow.ExternalInitialization = true;
