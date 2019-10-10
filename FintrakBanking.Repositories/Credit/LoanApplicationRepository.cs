@@ -5258,7 +5258,7 @@ namespace FintrakBanking.Repositories.Credit
                     //List<short> sectorIds = details.Select(x => x.subSectorId).ToList();
                     //foreach (var sectorId in sectorIds)
                     //{
-                        var sectorValidation = limitValidation.ValidateNPLBySector(facility.sectorId);
+                        var sectorValidation = limitValidation.ValidateNPLBySector(facility.subSectorId);
                         decimal sectorAmount = (decimal)sectorValidation.outstandingBalance + (facility.proposedAmount * (decimal)facility.exchangeRate);
                         //var sector = context.TBL_SECTOR.Find(sectorId);
                         if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit for sector, " + facility.sectorName + " exceeded!");
