@@ -557,6 +557,28 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return model;
         }
 
+        public CreditLimitValidationsModel ValidateNPLByInsiderCustomer()
+        {
+            CreditLimitValidationsModel model = new CreditLimitValidationsModel();
+
+            var limitAmount = 0;
+            var principalAmountLoan = context.TBL_LOAN.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            var sumPrincipalAmountLoan = principalAmountLoan.Sum(x => x.OUTSTANDINGPRINCIPAL * (decimal)x.EXCHANGERATE);
+            var principalAmountRevolving = context.TBL_LOAN_REVOLVING.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            var sumPrincipalAmountRevolving = principalAmountRevolving.Sum(x => x.OVERDRAFTLIMIT * (decimal)x.EXCHANGERATE);
+            var principalAmountContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            var sumPrincipalAmountContingent = principalAmountContingent.Sum(x => x.CONTINGENTAMOUNT * (decimal)x.EXCHANGERATE);
+            var data = sumPrincipalAmountLoan + sumPrincipalAmountRevolving + sumPrincipalAmountContingent;
+
+            var companyCapital = context.TBL_COMPANY.FirstOrDefault().SHAREHOLDERSFUND;
+            double maxLimit = (float)companyCapital * 0.1;
+            model.outstandingBalance = (double)data;
+            model.limit = (double)limitAmount;
+            model.difference = (double)data - (double)limitAmount;
+            model.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
+            return model;
+        }
+
         public CreditLimitValidationsModel ValidateAmountByCustomerGroup(int customergroupId)
         {
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();

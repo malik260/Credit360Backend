@@ -5283,6 +5283,13 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Company Limit Exceeded");
             }
 
+            var insiderLimit = limitValidation.ValidateNPLByInsiderCustomer();
+            var insiderExposure = insiderLimit.outstandingBalance + (double)applicationAmount;     
+            if (insiderExposure >= (double)insiderLimit.maximumAllowedLimit)
+            {
+                throw new SecureException("Insider Limit Exceeded");
+            }
+
         }
 
         public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
