@@ -5290,6 +5290,17 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Insider Limit Exceeded");
             }
 
+            if(limitValidation.IsDirectorRelatedGroup(application.customerGroupId) || limitValidation.CustomerIsDirector(application.customerId))
+            {
+                var directorLimit = limitValidation.ValidateNPLByDirectors();
+                var directorExposure = (double)applicationAmount;
+                if (directorExposure >= (double)directorLimit.maximumAllowedLimit)
+                {
+                    throw new SecureException("Director Limit Exceeded");
+                }
+
+            }
+
         }
 
         public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
