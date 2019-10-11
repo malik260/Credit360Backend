@@ -11669,6 +11669,58 @@ namespace FintrakBanking.Repositories.Credit
         //    inputTransactions.Add(credit);
         //    financeTransaction.PostTransaction(inputTransactions);
         //}
+        
+
+        //private IQueryable<LoanViewModel> SearchTermLoan(string searchQuery)
+        //{
+        //    DateTime applicationDate = getApplicationDate();
+
+        //    if (!string.IsNullOrWhiteSpace(searchQuery))
+        //    {
+        //        searchQuery = searchQuery.ToUpper();
+        //    }
+        //    var allFilteredLoan = (from a in context.TBL_LOAN
+        //                           join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+        //                           join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+        //                           where a.ISDISBURSED == true &&  // a.MATURITYDATE >=      &&  //a.LOANSTATUSID != 7 &&
+        //                           (a.LOANREFERENCENUMBER.ToUpper().Contains(searchQuery.Trim()) ||
+        //                           b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
+        //                           b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+        //                           b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+        //                           b.CUSTOMERID.ToString().Contains(searchQuery.Trim()) ||
+        //                           c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim())) 
+        //                           && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled 
+        //                               || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated 
+        //                               || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive
+        //                               || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
+        //                           ) 
+        //                          // && a.MATURITYDATE > applicationDate
+        //                           select new LoanViewModel
+        //                           {
+        //                               loanId = a.TERMLOANID,
+        //                               customerId = a.CUSTOMERID,
+        //                               currencyId = a.CURRENCYID,
+        //                               productId = a.PRODUCTID,
+        //                               customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+        //                               loanReferenceNumber = a.LOANREFERENCENUMBER,
+        //                               loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+        //                               applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+        //                               loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+        //                               interestRate = a.INTERESTRATE,
+        //                               principalAmount = a.PRINCIPALAMOUNT,
+        //                               effectiveDate = a.EFFECTIVEDATE,
+        //                               maturityDate = a.MATURITYDATE,
+        //                               //loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                               productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+        //                               productName = a.TBL_PRODUCT.PRODUCTNAME,
+        //                               isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
+        //                               writtenOff = a.LOANSTATUSID == 7,
+        //                               loanStatusId = a.LOANSTATUSID,
+        //                               loanSystemTypeId = a.LOANSYSTEMTYPEID
+        //                           });
+        //    var j = allFilteredLoan.ToList();
+        //    return allFilteredLoan;
+        //}
 
         private IQueryable<LoanViewModel> SearchTermLoan(string searchQuery)
         {
@@ -11686,14 +11738,13 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
-                                   b.CUSTOMERID.ToString().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim())) 
-                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled 
-                                       || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated 
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim()))
+                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled
+                                       || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated
                                        || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive
                                        || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
-                                   ) 
-                                  // && a.MATURITYDATE > applicationDate
+                                   )
+                                   // && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -11721,6 +11772,56 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
         }
 
+        //private IQueryable<LoanViewModel> SearchRevolvingLoan(string searchQuery)
+        //{
+        //    DateTime applicationDate = getApplicationDate();
+
+        //    if (!string.IsNullOrWhiteSpace(searchQuery))
+        //    {
+        //        searchQuery = searchQuery.ToLower();
+        //    }
+
+        //    var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
+        //                           join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+        //                           join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+        //                           where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 &&
+        //                           (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.CUSTOMERID.ToString().Contains(searchQuery.Trim()) ||
+        //                           c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) 
+        //                           && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)  //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
+        //                          // && a.MATURITYDATE > applicationDate
+        //                           select new LoanViewModel
+        //                           {
+        //                               loanId = a.REVOLVINGLOANID,
+        //                               customerId = a.CUSTOMERID,
+        //                               currencyId = a.CURRENCYID,
+        //                               productId = a.PRODUCTID,
+        //                               loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+        //                               customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+        //                               loanReferenceNumber = a.LOANREFERENCENUMBER,
+        //                               applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+        //                               loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+        //                               interestRate = a.INTERESTRATE,
+        //                               principalAmount = a.OVERDRAFTLIMIT,
+        //                               effectiveDate = a.EFFECTIVEDATE,
+        //                               maturityDate = a.MATURITYDATE,
+        //                               loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                               productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+        //                               productName = a.TBL_PRODUCT.PRODUCTNAME,
+        //                               isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == (short)PrudentialGuidelineTypeEnum.Performing,
+        //                               writtenOff = a.LOANSTATUSID == (short)LoanStatusEnum.WriteOff,
+        //                               loanStatusId = a.LOANSTATUSID,
+        //                               loanSystemTypeId = a.LOANSYSTEMTYPEID
+        //                           });
+
+        //    var test = allFilteredLoan.ToList();
+
+        //    return allFilteredLoan;
+        //}
+
         private IQueryable<LoanViewModel> SearchRevolvingLoan(string searchQuery)
         {
             DateTime applicationDate = getApplicationDate();
@@ -11738,10 +11839,9 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
-                                   b.CUSTOMERID.ToString().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) 
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
                                    && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)  //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
-                                  // && a.MATURITYDATE > applicationDate
+                                                                                                                                                 // && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
                                        loanId = a.REVOLVINGLOANID,
@@ -11771,6 +11871,54 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
         }
 
+
+
+        //public IQueryable<LoanViewModel> SearchAllOverdraft(string searchQuery)
+        //{
+
+        //    if (!string.IsNullOrWhiteSpace(searchQuery))
+        //    {
+        //        searchQuery = searchQuery.ToLower();
+        //    }
+
+        //    var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
+        //                           join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+        //                           join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+        //                           where a.ISDISBURSED == true && 
+        //                           (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+        //                           c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
+        //                           && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive)
+        //                           select new LoanViewModel
+        //                           {
+        //                               loanId = a.REVOLVINGLOANID,
+        //                               customerId = a.CUSTOMERID,
+        //                               productId = a.PRODUCTID,
+        //                               loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+        //                               customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+        //                               loanReferenceNumber = a.LOANREFERENCENUMBER,
+        //                               applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+        //                               loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+        //                               interestRate = a.INTERESTRATE,
+        //                               principalAmount = a.OVERDRAFTLIMIT,
+        //                               effectiveDate = a.EFFECTIVEDATE,
+        //                               maturityDate = a.MATURITYDATE,
+        //                               loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                               productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+        //                               productName = a.TBL_PRODUCT.PRODUCTNAME,
+        //                               isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == (short)PrudentialGuidelineTypeEnum.Performing,
+        //                               writtenOff = a.LOANSTATUSID == (short)LoanStatusEnum.WriteOff,
+        //                               loanStatusId = a.LOANSTATUSID,
+        //                               loanSystemTypeId = a.LOANSYSTEMTYPEID
+        //                           });
+
+        //    var test = allFilteredLoan.ToList();
+
+        //    return allFilteredLoan;
+        //}
+
         public IQueryable<LoanViewModel> SearchAllOverdraft(string searchQuery)
         {
 
@@ -11782,7 +11930,7 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && 
+                                   where a.ISDISBURSED == true &&
                                    (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
@@ -11817,6 +11965,64 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
         }
 
+
+        //private IQueryable<LoanViewModel> SearchContigentLoan(string searchQuery)
+        //{
+        //    DateTime applicationDate = getApplicationDate();
+
+        //    if (!string.IsNullOrWhiteSpace(searchQuery))
+        //    {
+        //        searchQuery = searchQuery.ToLower();
+        //    }
+        //    List<short> loanStatus = new List<short>();
+        //    loanStatus.Add((short)LoanStatusEnum.Cancelled);
+        //    loanStatus.Add((short)LoanStatusEnum.Terminated);
+
+
+        //    var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
+        //                           join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+        //                           join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+        //                           where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 && 
+        //                           (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+        //                           b.CUSTOMERID.ToString().Contains(searchQuery.Trim()) ||
+        //                           c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
+        //                           && !loanStatus.Contains(a.LOANSTATUSID)
+        //                           //&& (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled)
+        //                           //|| (a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)
+        //                           //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
+        //                          // && a.MATURITYDATE > applicationDate
+        //                           select new LoanViewModel
+        //                           {
+        //                               loanId = a.CONTINGENTLOANID,
+        //                               customerId = a.CUSTOMERID,
+        //                               currencyId = a.CURRENCYID,
+        //                               productId = a.PRODUCTID,
+        //                               customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+        //                               loanReferenceNumber = a.LOANREFERENCENUMBER,
+        //                               applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+        //                               loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+        //                               interestRate = 1,
+        //                               principalAmount = a.CONTINGENTAMOUNT,
+        //                               effectiveDate = a.EFFECTIVEDATE,
+        //                               maturityDate = a.MATURITYDATE,
+        //                               loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                               productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+        //                               productName = a.TBL_PRODUCT.PRODUCTNAME,
+        //                               // isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
+        //                               writtenOff = a.LOANSTATUSID == 7,
+        //                               loanStatusId = a.LOANSTATUSID,
+        //                               loanSystemTypeId = a.LOANSYSTEMTYPEID
+
+        //                           });
+
+        //    //var test = allFilteredLoan.Where(x=>(x.loanStatusId != (short)LoanStatusEnum.Cancelled) ||( x.loanStatusId != (short)LoanStatusEnum.Terminated)).ToList();
+        //    //allFilteredLoan = test;
+        //    return allFilteredLoan;
+        //}
+
         private IQueryable<LoanViewModel> SearchContigentLoan(string searchQuery)
         {
             DateTime applicationDate = getApplicationDate();
@@ -11844,7 +12050,7 @@ namespace FintrakBanking.Repositories.Credit
                                    //&& (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled)
                                    //|| (a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)
                                    //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
-                                  // && a.MATURITYDATE > applicationDate
+                                   // && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
                                        loanId = a.CONTINGENTLOANID,
@@ -11874,6 +12080,45 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
         }
 
+        //private IQueryable<LoanViewModel> SearchLoanLine(string searchQuery)
+        //{
+        //    if (!string.IsNullOrWhiteSpace(searchQuery)) searchQuery = searchQuery.ToUpper();
+
+        //    var allFilteredLoan = (from a in context.TBL_LOAN_APPLICATION
+        //                           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+        //                           join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+        //                           where a.APPROVALSTATUSID == 2 && d.STATUSID == 2
+        //                           && (
+        //                               a.APPLICATIONREFERENCENUMBER.Contains(searchQuery.Trim()) ||
+        //                               b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
+        //                               b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+        //                               b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+        //                               b.CUSTOMERID.ToString().Contains(searchQuery.Trim())
+        //                           )
+        //                           select new LoanViewModel
+        //                           {
+        //                               loanId = d.LOANAPPLICATIONDETAILID,
+        //                               customerId = d.CUSTOMERID,
+        //                               currencyId = d.CURRENCYID,
+        //                               productId = d.APPROVEDPRODUCTID,
+        //                               customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
+        //                               loanReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+        //                               applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+        //                               loanApplicationId = d.LOANAPPLICATIONID,
+        //                               interestRate = 1,
+        //                               principalAmount = d.APPROVEDAMOUNT,
+        //                               //effectiveDate = a.EFFECTIVEDATE,
+        //                               //maturityDate = a.MATURITYDATE,
+        //                               loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                               productTypeId = d.TBL_PRODUCT1.PRODUCTTYPEID, // 1
+        //                               productName = d.TBL_PRODUCT1.PRODUCTNAME, // 1
+        //                               loanSystemTypeId = (int)LoanSystemTypeEnum.LineFacility,
+        //                               //writtenOff = a.LOANSTATUSID == 7
+
+        //                           });
+        //    return allFilteredLoan;
+        //}
+
         private IQueryable<LoanViewModel> SearchLoanLine(string searchQuery)
         {
             if (!string.IsNullOrWhiteSpace(searchQuery)) searchQuery = searchQuery.ToUpper();
@@ -11886,8 +12131,7 @@ namespace FintrakBanking.Repositories.Credit
                                        a.APPLICATIONREFERENCENUMBER.Contains(searchQuery.Trim()) ||
                                        b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
                                        b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
-                                       b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
-                                       b.CUSTOMERID.ToString().Contains(searchQuery.Trim())
+                                       b.LASTNAME.ToUpper().Contains(searchQuery.Trim())
                                    )
                                    select new LoanViewModel
                                    {
@@ -11912,7 +12156,6 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan;
         }
-
 
         private IQueryable<LoanViewModel> SearchTermLoanFeeCharge(string searchQuery)
         {
@@ -12188,6 +12431,50 @@ namespace FintrakBanking.Repositories.Credit
         //    return allFilteredLoan;
         //}
 
+        //public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery)
+        //{
+        //    //bool all = (performanceTypeId != 1) && (performanceTypeId != 2);
+        //    //bool performing = performanceTypeId == 1;
+        //    var applicationDate = generalSetup.GetApplicationDate();
+
+        //    IEnumerable<LoanViewModel> allFilteredLoan = null;
+        //    if (!string.IsNullOrWhiteSpace(searchQuery))
+        //    {
+        //        searchQuery = searchQuery.ToLower();
+        //    }
+
+        //    if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+        //    {
+        //        if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+        //        {
+        //            allFilteredLoan = SearchTermLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
+        //        }
+        //        else if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
+        //        {
+        //            allFilteredLoan = SearchRevolvingLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
+        //        }
+        //        else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
+        //        {
+        //            allFilteredLoan = SearchContigentLoan(searchQuery);
+        //        }
+        //        else if (loanSystemTypeId == (int)LoanSystemTypeEnum.LineFacility)
+        //        {
+        //            allFilteredLoan = SearchLoanLine(searchQuery);
+        //        }
+        //        else
+        //        {
+        //            throw new SecureException("Not Implemented!");
+        //        }
+
+        //    }
+
+        //    if (allFilteredLoan.Count() == 0)
+        //    {
+        //        throw new SecureException("Loan account is not found!");
+        //    }
+
+        //    return allFilteredLoan;
+        //}
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery)
         {
             //bool all = (performanceTypeId != 1) && (performanceTypeId != 2);
@@ -12225,10 +12512,6 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            if (allFilteredLoan.Count() == 0)
-            {
-                throw new SecureException("Loan account is not found!");
-            }
 
             return allFilteredLoan;
         }
