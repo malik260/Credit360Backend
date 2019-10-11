@@ -975,5 +975,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountNumber { get; set; } // "2909416.54",
     }
 
+    public class LoanApplicationLienViewModel : GeneralEntity
+    {
+        public bool isReleased { get; set; }
+        public string accountNo { get; set; }
+        public int applicationDetailLienId { get; set; }
+        public int applicationDetailId { get; set; }
+        public float amount { get; set; }
+    }
+
 }
 
