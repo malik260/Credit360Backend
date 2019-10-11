@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext _context,
             IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
-             IIntegrationWithFinacle _integration,
+            IIntegrationWithFinacle _integration,
             IFinanceTransactionRepository fina,
             ICreditLimitValidationsRepository limitValidation,
             CreditCommonRepository creditCommon,
@@ -5290,6 +5290,17 @@ namespace FintrakBanking.Repositories.Credit
                 throw new SecureException("Insider Limit Exceeded");
             }
 
+            if(limitValidation.IsDirectorRelatedGroup(application.customerGroupId) || limitValidation.CustomerIsDirector(application.customerId))
+            {
+                var directorLimit = limitValidation.ValidateNPLByDirectors();
+                var directorExposure = (double)applicationAmount;
+                if (directorExposure >= (double)directorLimit.maximumAllowedLimit)
+                {
+                    throw new SecureException("Director Limit Exceeded");
+                }
+
+            }
+
         }
 
         public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
@@ -5597,6 +5608,158 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-       
+
+        // for lien operations
+        public LoanApplicationLienViewModel GetApplicationDetailLien(int id)
+        {
+            return (from x in context.TBL_APPLICATIONDETAIL_LIEN
+                    where x.APPLICATIONDETAILLIENID == id
+                    select new LoanApplicationLienViewModel
+                    {
+                        applicationDetailLienId = x.APPLICATIONDETAILLIENID,
+                        applicationDetailId = x.APPLICATIONDETAILID,
+                        amount = x.AMOUNT,
+                        accountNo = x.ACCOUNTNO,
+                        isReleased = x.ISRELEASED
+                    }).FirstOrDefault();
+        }
+
+        public IEnumerable<LoanApplicationLienViewModel> GetApplicationDetailLien()
+        {
+            return (from x in context.TBL_APPLICATIONDETAIL_LIEN
+                    select new LoanApplicationLienViewModel
+                    {
+                        applicationDetailLienId = x.APPLICATIONDETAILLIENID,
+                        applicationDetailId = x.APPLICATIONDETAILID,
+                        amount = x.AMOUNT,
+                        accountNo = x.ACCOUNTNO,
+                        isReleased = x.ISRELEASED
+                    }).ToList();
+        }
+
+
+        public IEnumerable<LoanApplicationLienViewModel> GetLienByApplicationDetailId(int id)
+        {
+            return (from x in context.TBL_APPLICATIONDETAIL_LIEN
+                    where x.APPLICATIONDETAILID == id
+                    select new LoanApplicationLienViewModel
+                    {
+                        applicationDetailLienId = x.APPLICATIONDETAILLIENID,
+                        applicationDetailId = x.APPLICATIONDETAILID,
+                        amount = x.AMOUNT,
+                        accountNo = x.ACCOUNTNO,
+                        isReleased = x.ISRELEASED
+                    }).ToList();
+        }
+
+        public IEnumerable<LoanApplicationLienViewModel> GetApplicationDetailLienByIsReleased(bool isReleased)
+        {
+            return (from x in context.TBL_APPLICATIONDETAIL_LIEN
+                    where x.ISRELEASED == isReleased
+                    select new LoanApplicationLienViewModel
+                    {
+                        applicationDetailLienId = x.APPLICATIONDETAILLIENID,
+                        applicationDetailId = x.APPLICATIONDETAILID,
+                        amount = x.AMOUNT,
+                        accountNo = x.ACCOUNTNO,
+                        isReleased = x.ISRELEASED
+                    }).ToList();
+        }
+
+        public IEnumerable<LoanApplicationLienViewModel> GetApplicationDetailLienByAccountNo(string accountNo)
+        {
+            return (from x in context.TBL_APPLICATIONDETAIL_LIEN
+                    where x.ACCOUNTNO.Trim() == accountNo.Trim()
+                    select new LoanApplicationLienViewModel
+                    {
+                        applicationDetailLienId = x.APPLICATIONDETAILLIENID,
+                        applicationDetailId = x.APPLICATIONDETAILID,
+                        amount = x.AMOUNT,
+                        accountNo = x.ACCOUNTNO,
+                        isReleased = x.ISRELEASED
+                    }).ToList();
+        }
+
+        public bool AddLoanApplicationDetailLien(LoanApplicationLienViewModel model)
+        {
+               var entity = new TBL_APPLICATIONDETAIL_LIEN
+                {
+                    APPLICATIONDETAILID = model.applicationDetailId,
+                    AMOUNT = model.amount,
+                    ACCOUNTNO = model.accountNo,
+                    ISRELEASED = false,
+                };
+
+                var id = context.TBL_APPLICATIONDETAIL_LIEN.Add(entity);
+
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+                // Audit Section ---------------------------
+                this.audit.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ProjectSiteReportAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' created by {auditStaff}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                });
+                // Audit Section end ------------------------
+
+               return context.SaveChanges() != 0;
+        }
+    
+        public bool UpdateLoanApplicationDetailLien(LoanApplicationLienViewModel model, int id, UserInfo user)
+        {
+            var entity = this.context.TBL_APPLICATIONDETAIL_LIEN.Find(id);
+            entity.APPLICATIONDETAILID = model.applicationDetailId;
+            entity.AMOUNT = model.amount;
+            entity.ACCOUNTNO = model.accountNo;
+            entity.ISRELEASED = model.isReleased;
+            
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ProjectSiteReportUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' was updated by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.APPLICATIONDETAILLIENID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteLoanApplicationDetailLien(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_APPLICATIONDETAIL_LIEN.Find(id);
+            entity.ISRELEASED = true;
+           
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ProjectSiteReportDeleted,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' was deleted by {auditStaff}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.APPLICATIONDETAILLIENID
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
     }
 }

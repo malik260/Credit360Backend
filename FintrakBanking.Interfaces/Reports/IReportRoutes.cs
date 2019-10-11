@@ -128,7 +128,6 @@ namespace FintrakBanking.Interfaces.Reports
         string RiskAssetMainReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetTeamReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string UnpaidObligationReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
-
-
+        string RiskAssetMain1Report(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
     }
 }

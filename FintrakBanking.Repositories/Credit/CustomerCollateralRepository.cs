@@ -1870,6 +1870,7 @@ namespace FintrakBanking.Repositories.Credit
                         currencyId = c.c.CURRENCYID,
                         currencyCode = c.c.TBL_CURRENCY.CURRENCYCODE,
                         baseCurrencyId = company.CURRENCYID,
+                        baseCurrencyCode = company.TBL_CURRENCY.CURRENCYCODE,
                         currency = c.c.TBL_CURRENCY.CURRENCYNAME,
                         disAllowCollateral = disAllowCollateral && c.c.CURRENCYID == company.CURRENCYID, // facilityCurrency != baseCurrency && collateralCurrency == baseCurrency
                         collateralTypeName = c.c.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
@@ -1892,13 +1893,14 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationId = c.c.LOANAPPLICATIONID,
                         collateralSummary = c.c.COLLATERALSUMMARY,
                         isMapped = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),
-                        isProposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),                        //remark = c.c.
+                        isProposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),       
+                        companyId = companyId,//remark = c.c.
                     })
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First());
 
-            collaterals = ResolveCollateralValues(collaterals.ToList());
-            return collaterals.OrderByDescending(x => x.collateralId);
+                collaterals = ResolveCollateralValues(collaterals.ToList());
+                return collaterals.OrderByDescending(x => x.collateralId);
         }
         public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral(int? loanApplicationId, int currencyId, int companyId)
         {
@@ -2292,6 +2294,8 @@ namespace FintrakBanking.Repositories.Credit
                 var proposes = context.TBL_LOAN_APPLICATION_COLLATERL.Where(pc => pc.DELETED == false && pc.COLLATERALCUSTOMERID == collateral.collateralId).ToList();
                 usage = proposes.Sum(p => p.COLLATERALCOVERAGE);
                 collateral.availableCollateralValue = (decimal)collateral.collateralValue - usage;
+                collateral.exchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, collateral.companyId).sellingRate;
+                collateral.collateralValueLcy = (decimal)collateral.collateralValue * (decimal)collateral.exchangeRate;
                 list.Add(collateral);
             }
             return list;
