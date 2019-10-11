@@ -14,11 +14,13 @@ namespace FintrakBanking.Interfaces.CreditLimitValidations
         // int ValidateBlackList(int customerId);
 
         int ValidateWatchList(int customerId);
-
+        bool IsDirectorRelatedGroup(int? customerGroupId);
+        bool CustomerIsDirector(int? customerId);
+        CreditLimitValidationsModel ValidateNPLByDirectors();
         //int ValidateCamsol(int customerId);
 
         //IEnumerable<CustomerEligibilityViewModel> ValidateCamsol(string customerCode);
-
+        CreditLimitValidationsModel ValidateNPLByInsiderCustomer();
         IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode);
 
         CreditLimitValidationsModel ValidateAmountByBranch(short branchId);

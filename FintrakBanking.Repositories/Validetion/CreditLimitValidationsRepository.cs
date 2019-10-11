@@ -557,6 +557,61 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return model;
         }
 
+        public CreditLimitValidationsModel ValidateNPLByInsiderCustomer()
+        {
+            CreditLimitValidationsModel model = new CreditLimitValidationsModel();
+
+            var limitAmount = 0;
+            var principalAmountLoan = context.TBL_LOAN.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            var sumPrincipalAmountLoan = principalAmountLoan.Sum(x => x.OUTSTANDINGPRINCIPAL * (decimal)x.EXCHANGERATE);
+            var principalAmountRevolving = context.TBL_LOAN_REVOLVING.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            var sumPrincipalAmountRevolving = principalAmountRevolving.Sum(x => x.OVERDRAFTLIMIT * (decimal)x.EXCHANGERATE);
+            var principalAmountContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.TBL_CUSTOMER.ISREALATEDPARTY && x.LOANSTATUSID == (short)LoanStatusEnum.Active).ToList();
+            var sumPrincipalAmountContingent = principalAmountContingent.Sum(x => x.CONTINGENTAMOUNT * (decimal)x.EXCHANGERATE);
+            var data = sumPrincipalAmountLoan + sumPrincipalAmountRevolving + sumPrincipalAmountContingent;
+
+            var companyCapital = context.TBL_COMPANY.FirstOrDefault().SHAREHOLDERSFUND;
+            double maxLimit = (float)companyCapital * 0.1;
+            model.outstandingBalance = (double)data;
+            model.limit = (double)limitAmount;
+            model.difference = (double)data - (double)limitAmount;
+            model.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
+            return model;
+        }
+
+        public CreditLimitValidationsModel ValidateNPLByDirectors()
+        {
+                CreditLimitValidationsModel models = new CreditLimitValidationsModel();
+                var companyCapital = context.TBL_COMPANY.FirstOrDefault().SHAREHOLDERSFUND;
+                double maxLimit = (float)companyCapital * 0.01;
+                models.maximumAllowedLimit = (decimal?)maxLimit ?? 0;
+                return models;
+        }
+
+        public bool IsDirectorRelatedGroup(int? customerGroupId)
+        {
+
+            var customerIds = context.TBL_CUSTOMER_GROUP_MAPPING.Where(x => x.CUSTOMERGROUPID == customerGroupId)?.Select(x => x.CUSTOMERID).ToList();
+            if (customerIds.Count() <= 0) return false;
+            foreach (var id in customerIds)
+            {
+                var bvn = context.TBL_CUSTOMER.Find(id).CUSTOMERBVN;
+                var isDirector = context.TBL_COMPANY_DIRECTOR.Any(d => d.BVN.Trim() == bvn.Trim());
+                if (isDirector) return isDirector;
+            }
+            return false;
+        }
+
+        public bool CustomerIsDirector(int? customerId)
+        {
+            var bvn = context.TBL_CUSTOMER.Find(customerId)?.CUSTOMERBVN;
+            if (bvn == null) return false;
+            var isDirector = context.TBL_COMPANY_DIRECTOR.Any(d => d.BVN.Trim() == bvn.Trim());
+            if (isDirector) return isDirector;
+            return false;
+        }
+
+
         public CreditLimitValidationsModel ValidateAmountByCustomerGroup(int customergroupId)
         {
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
