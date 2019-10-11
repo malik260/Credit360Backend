@@ -423,6 +423,7 @@ namespace FintrakBanking.APICore.Providers
                 currIdentity.AddClaim(new Claim("countryId", user.countryId.ToString()));
                 currIdentity.AddClaim(new Claim("userId", user.user_id.ToString()));
                 currIdentity.AddClaim(new Claim("roleId", user.roleId.ToString()));
+                currIdentity.AddClaim(new Claim("userGroupId", user.userGroupId.ToString()));
                 currIdentity.AddClaim(new Claim("logincode", user.logincode == null ? Guid.NewGuid().ToString() + "@" + ipAddress : user.logincode));
                 var today = DateTime.Now;
 
