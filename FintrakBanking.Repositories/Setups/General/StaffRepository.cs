@@ -2017,9 +2017,9 @@ namespace FintrakBanking.Repositories.Setups.General
         }
 
 
-        public IQueryable<simpleStaffModel> SearchApprovers(int operationId, int roleId, string searchQuery ="", int companyId=0)
+        public IQueryable<simpleStaffModel> SearchApprovers(int operationId, int roleId, int groupId, string searchQuery ="", int companyId=0)
         {
-            var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId);
+            var nextApprovalLvlRoleId = GetNextApprovalLvlRoleId(roleId, groupId);
             IQueryable<simpleStaffModel> staff = null;
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
@@ -2052,8 +2052,9 @@ namespace FintrakBanking.Repositories.Setups.General
             return staff;
         }
 
-        public int GetNextApprovalLvlRoleId(int roleId, int groupId=261)
+        public int GetNextApprovalLvlRoleId(int roleId, int groupId)
         {
+            //if (groupId <= 0) groupId = 261;
             var levels = context.TBL_APPROVAL_LEVEL.Where(l => l.GROUPID == groupId).ToList();
             var currentPosition = levels.Find(l => l.STAFFROLEID == roleId).POSITION;
             var nextRoleId = levels.Find(l => l.POSITION == currentPosition + 1).STAFFROLEID;
