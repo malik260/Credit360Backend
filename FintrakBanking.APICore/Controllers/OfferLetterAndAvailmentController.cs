@@ -757,5 +757,48 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("offer-letter/is-offer-letter-generated")]
+        public HttpResponseMessage IsOfferLEtterGenerated(OfferLetterViewModel data)
+        {
+            try
+            {
+                bool response = repo.IsOfferLetterGenerated(data.documentTemplate, data.loanApplicationId, token.GetStaffId, token.GetBranchId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "success" });
+
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("offer-letter/apply-template")]
+        public HttpResponseMessage ApplyTemplateToOfferLetter(OfferLetterViewModel data)
+        {
+            try
+            {
+                bool response = repo.ApplyTemplateToOfferLetter(data.documentTemplate, data.loanApplicationId, token.GetStaffId, token.GetBranchId);
+
+                //bool response = repo.EditOfferLetterTitle(data.customerId, data.offerLetterTitle, token.GetStaffId, token.GetBranchId);
+
+                if (response == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The Template was Attached successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
     }
 }
