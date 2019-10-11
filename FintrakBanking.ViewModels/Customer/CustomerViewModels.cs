@@ -275,55 +275,335 @@ namespace FintrakBanking.ViewModels.Customer
         //  public string customerTypeName { get; set; }
     }
 
+
+
     // REST API VIEW MODELS FOR CLIENT INPUT
+    //=================================================================================================================================================================
+    //=================================================================================================================================================================
     public class IncomingCustomerViewModels 
     {
-        public string createdBy { get; set; }
-        public string creationMailSent { get; set; }
-        public string customerNumber { get; set; }
-        public string customerSensitivityLevelId { get; set; }
+
         public string customerType { get; set; }
-        public string customerTypeId { get; set; }
-        public string dateOfBirth { get; set; }
+        public ApiCustomerBusinessDetailsViewModel corporateCustomerInformation { get; set; }
+        public ApiCustomerBusinessDetailsViewModel individualCustomerInformation { get; set; }
+        public List<ApiAddressesViewModel> customerAddresses { get; set; }
+        public List<ApicontactViewModel> contacts { get; set; }
+        public List<ApiDirectorViewModel> companyDirectors { get; set; }
+        public List<ApiCompanySignatoriesViewModel> companySignatories { get; set; }
+        public List<ApiIndividualSupplierViewModel> individualSuppliers { get; set; }
+        public List<ApiIndividualClientViewModel> individualClients { get; set; }
+        public List<ApiCorporateSupplierViewModel> corporateSuppliers { get; set; }
+        public List<ApiCorporateClientViewModel> corporateClients { get; set; }
+        public List<ApiShareholderViewModel> individualshareholders { get; set; }
+        public List<ApiInsiderRelatedViewModel> insiderRelatedParties { get; set; }
+        public List<ApiEmploymentHistoryViewModel> individualEmploymentHistory { get; set; }
+        public ApiNextOfkinViewModel individualNextOfKin { get; set; }
+        public List<ApiCreditBureauViewModel> creditBureauReport { get; set; }
+        public List<ApiSupportingdocumentsViewModel> customerSupportingDocuments { get; set; }
+    }
+
+    public class ApiCustomerBusinessDetailsViewModel
+    {
+        public string customerType { get; set; }
+        public string customerCode { get; set; }
+        public string crmsLegalStatus { get; set; }
+        public string crmsRelationship { get; set; }
+        public string crmsCompanySize { get; set; }
+        public string accountOfficer { get; set; }
+        public string corporateName { get; set; }
+        public string dateOfIncorporation { get; set; }
         public string emailAddress { get; set; }
-        public string firstName { get; set; }
-        public string gender { get; set; }
-        public string lastName { get; set; }
-        public string maidenName { get; set; }
-        public string maritalStatus { get; set; }
+        public string tin { get; set; }
+        public string businessUnit { get; set; }
+        public string relationshipTypeWithBank { get; set; }
+        public string teamLdr { get; set; }
+        public string teamNpl { get; set; }
+        public string sector { get; set; }
+        public string subSector { get; set; }
+        public string politicallyExposed { get; set; }
+        public string corporateOrSmeInformation { get; set; }
+        public string registrationNumber { get; set; }
+        public string companyWebsite { get; set; }
+        public string companyEmail { get; set; }
+        public string registeredOffice { get; set; }
+        public string annualTurnOver { get; set; }
+        public string paidUpCapital { get; set; }
+        public string authorizedCapital { get; set; }
+        public string numberOfEmployees { get; set; }
+        public string countryOfParentCompany { get; set; }
+        public string companyStructure { get; set; }
+        public string businessSector { get; set; }
+        public string shareholdersFund { get; set; }
+    }
+
+    public class ApiIndividualCustomerDetails
+    {
+        public string customerType { get; set; }
+        public string customerCode { get; set; }
+        public string crmsLegalStatus { get; set; }
+        public string crmsRelationship { get; set; }
+        public string crmsCompanySize { get; set; }
+        public string accountOfficer { get; set; }
+        public string corporateName { get; set; }
+        public string dateOfIncorporation { get; set; }
+        public string emailAddress { get; set; }
+        public string tin { get; set; }
+        public string businessUnit { get; set; }
+        public string relationshipTypeWithBank { get; set; }
+        public string teamLdr { get; set; }
+        public string teamNpl { get; set; }
+        public string sector { get; set; }
+        public string subSector { get; set; }
+        public string politicallyExposed { get; set; }
+        public string corporateOrSmeInformation { get; set; }
+        public string registrationNumber { get; set; }
+        public string companyWebsite { get; set; }
+        public string companyEmail { get; set; }
+        public string registeredOffice { get; set; }
+        public string annualTurnOver { get; set; }
+        public string paidUpCapital { get; set; }
+        public string authorizedCapital { get; set; }
+        public string numberOfEmployees { get; set; }
+        public string countryOfParentCompany { get; set; }
+        public string companyStructure { get; set; }
+        public string businessSector { get; set; }
+        public string shareholdersFund { get; set; }
+
+        public string relationshipManagerCode { get; set; }
         public string title { get; set; }
+        public string gender { get; set; }
+        public string firstName { get; set; }
+        public string dateOfBirth { get; set; }
         public string middleName { get; set; }
-        public string misCode { get; set; }
-        public string misStaff { get; set; }
-        public string nationality { get; set; }
+        public string customerBvn { get; set; }
+        public string LastName { get; set; }
+        public string PlaceOfBirth { get; set; }
+        public string maritalStatus { get; set; }
         public string occupation { get; set; }
-        public string placeOfBirth { get; set; }
-        public string isPoliticallyExposed { get; set; }
-        public string isInvestmentGrade { get; set; }
-        public string isRealatedParty { get; set; }
-        public string relationshipOfficerId { get; set; }
         public string spouse { get; set; }
-        public string subSectorId { get; set; }
-        public string taxNumber { get; set; }
-        public string riskRatingId { get; set; }
-        public string customerBVN { get; set; }
-        public string prospectCustomerCode { get; set; }
-        public string crmsCompanySizeId { get; set; }
-        public string crmsLegalStatusId { get; set; }
-        public string crmsRelationshipTypeId { get; set; }
-        public string countryOfResidentId { get; set; }
+        public List<ApiChildrenViewmodel> children { get; set; }
+        public string countryOfOrigin { get; set; }
+        public string countryOfResidence { get; set; }
+        public string pastDueObligation { get; set; }
         public string numberOfDependents { get; set; }
         public string numberOfLoansTaken { get; set; }
         public string loanMonthlyRepaymentFromOtherBanks { get; set; }
-        public string dateOfRelationshipWithBank { get; set; }
-        public string relationshipTypeId { get; set; }
-        public string teamLDP { get; set; }
-        public string teamNPL { get; set; }
-        public string corr { get; set; }
-        public string pastDueObligations { get; set; }
-        public string businessUnitId { get; set; }
+
     }
 
+    public class ApiChildrenViewmodel
+    {
+        public string childName { get; set; }
+        public string childDateOfBirth { get; set; }
+    }
 
+    public class ApiAddressesViewModel
+    {
+        public string addressType { get; set; }  //contactAddress/mailingAddress
+        public string address { get; set; }
+        public string state { get; set; }
+        public string lga { get; set; }
+        public string nearestLandmark { get; set; }
+        public string city { get; set; }
+        public string utilityBillNumber { get; set; }
+    }
+
+    public class ApicontactViewModel
+    {
+        public string officeLandNumber { get; set; }
+        public string officeMobileNumber { get; set; }
+    }
+
+    public class ApiDirectorViewModel
+    {
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string otherNames { get; set; }
+        public string email { get; set; }
+        public string gender { get; set; }
+        public string maritalStatus { get; set; }
+        public string bvn { get; set; }
+        public string nin { get; set; }
+        public string phoneNumber { get; set; }
+        public string dateOfBirth { get; set; }
+        public string address { get; set; }
+        public string politicallyExposed { get; set; }
+    }
+
+    public class ApiCompanySignatoriesViewModel
+    {
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string otherNames { get; set; }
+        public string email { get; set; }
+        public string gender { get; set; }
+        public string maritalStatus { get; set; }
+        public string bvn { get; set; }
+        public string nin { get; set; }
+        public string phoneNumber { get; set; }
+        public string dateOfBirth { get; set; }
+        public string address { get; set; }
+        public string politicallyexposed { get; set; }
+    }
+
+    public class ApiIndividualSupplierViewModel
+    {
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string otherNames { get; set; }
+        public string isBankCustomer { get; set; }
+        public string BankName { get; set; }
+        public string accountNumber { get; set; }
+        public string tin { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+        public string natureOfBusiness { get; set; }
+        public string address { get; set; }
+    }
+
+    public class ApiCorporateSupplierViewModel
+    {
+        public string corporateName { get; set; }
+        public string rcNumber { get; set; }
+        public string contactPerson { get; set; }
+        public string isBankCustomer { get; set; }
+        public string BankName { get; set; }
+        public string accountNumber { get; set; }
+        public string tin { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+        public string natureOfBusiness { get; set; }
+        public string address { get; set; }
+    }
+
+    public class ApiIndividualClientViewModel
+    {
+        public string firstName { get; set; }
+        public string customerCode { get; set; }
+        public string lastName { get; set; }
+        public string otherNames { get; set; }
+        public string isBankCustomer { get; set; }
+        public string BankName { get; set; }
+        public string accountNumber { get; set; }
+        public string tin { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+        public string natureOfBusiness { get; set; }
+        public string address { get; set; }
+    }
+
+    public class ApiCorporateClientViewModel
+    {
+        public string corporateName { get; set; }
+        public string rcNumber { get; set; }
+        public string contactPerson { get; set; }
+        public string isBankCustomer { get; set; }
+        public string BankName { get; set; }
+        public string accountNumber { get; set; }
+        public string tin { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+        public string natureOfBusiness { get; set; }
+        public string address { get; set; }
+    }
+
+    public class ApiShareholderViewModel
+    {
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string otherNames { get; set; }
+        public string nin { get; set; }
+        public string bvn { get; set; }
+        public string percentageShareholding { get; set; }
+        public string tin { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+        public string address { get; set; }
+        public string politicallyExposed { get; set; }
+    }
+
+    public class ApiUltimateBeneficialOwner
+    {
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string otherNames { get; set; }
+        public string nin { get; set; }
+        public string bvn { get; set; }
+        public string percentageShareholding { get; set; }
+        public string tin { get; set; }
+        public string phoneNumber { get; set; }
+        public string email { get; set; }
+        public string address { get; set; }
+        public string politicallyExposed { get; set; }
+    }
+
+    public class ApiInsiderRelatedViewModel
+    {
+        public string companyDirectorFirstName { get; set; }
+        public string companyDirectorLastName { get; set; }
+        public string companyDirectorOtherNames { get; set; }
+        public string companyDirectorType { get; set; }  //(Board Member,Shareholder,Board Member/Shareholder,Account Signatory)
+        public string RelationshipType { get; set; }
+    }
+
+    public class ApiSupportingdocumentsViewModel
+    {
+        public string uploadType { get; set; }   //E.g. Passport, ID Card
+        public string uploadTitle { get; set; }
+        public string fileNumber { get; set; }
+        public string physicalLocation { get; set; }
+        public string fileData { get; set; }
+        public string fileExtension { get; set; }
+    }
+
+    public class ApiEmploymentHistoryViewModel
+    {
+        public string EmployerType {get; set;} //E.g. Self Employed, Other Employer
+        public string employerName { get; set; }
+        public string employerAddress { get; set; }
+        public string employerCountry { get; set; }
+        public string employerState { get; set; }
+        public string officePhone { get; set; }
+        public string employmentDate { get; set; }
+        public string previousEmployer { get; set; }
+        public string yearsInEmployment { get; set; }
+        public string totalWorkingExperience { get; set; }
+        public string yearsOfCurrentEmployment { get; set; }
+        public string terminalBenefits { get; set; }
+        public string annualIncome { get; set; }
+        public string monthlyIncome { get; set; }
+        public string expenditure { get; set; }
+    }
+
+    public class ApiNextOfkinViewModel
+    {
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string dateOfBirth { get; set; }
+        public string relationship { get; set; }
+        public string email { get; set; }
+        public string gender { get; set; }
+        public string state { get; set; }
+        public string lga { get; set; }
+        public string cityORTown { get; set; }
+        public string phoneNumber { get; set; }
+        public string address { get; set; }
+        public string nearestLandmark {get; set;}
+        public List<ApiInsiderRelatedViewModel> insiderRelatedList { get; set; }
+    }
+
+    public class ApiCreditBureauViewModel
+    {
+        public string creditBureauType { get; set; }
+        public string reportFileDateinPDF { get; set; }
+        public string reportStatus { get; set; }                        //(positive = 1, Negative =0)
+    }
+
+    public class APIResponse
+    {
+        public string StatusCode { get; set; }   
+        public string Message { get; set; }
+
+    }
 
 }
