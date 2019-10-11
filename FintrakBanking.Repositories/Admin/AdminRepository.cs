@@ -969,7 +969,7 @@ namespace FintrakBanking.Repositories.Admin
             var staffRoleId = (from a in context.TBL_PROFILE_USER
                                join b in context.TBL_STAFF
                                on a.STAFFID equals b.STAFFID
-                               where a.STAFFID == userId
+                               where a.USERID == userId
                                select b.STAFFROLEID).FirstOrDefault();
 
             var staffGroupIds = context.TBL_PROFILE_STAFF_ROLE_GROUP.Where(x => x.STAFFROLEID == staffRoleId)
