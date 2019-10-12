@@ -1076,6 +1076,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currencyName { get; set; }
         public int collateralCoverageId { get; set; }
         public int collateralId { get; set; }
+        public string collateralTypeName { get; set; }
         public int collateralTypeId { get; set; }
         public decimal collateralValue { get; set; }
         public int customerId { get; set; }
