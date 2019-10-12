@@ -24,6 +24,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
         public short currencyId { get; set; }
         public string currencyCode { get; set; }
+        public string baseCurrencyCode { get; set; }
         public string currency { get; set; }
         public string collateralCode { get; set; }
         public string camRefNumber { get; set; }
@@ -37,6 +38,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string insuranceType { get; set; }
         public string metalType { get; set; }
         public string machineType { get; set; }
+        public decimal collateralValueLcy { get; set; }
         public double exchangeRate { get; set; }
         public string capturedBy { get; set; }
         public string address { get; set; }

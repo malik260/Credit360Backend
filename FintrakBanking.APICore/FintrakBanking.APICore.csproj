@@ -852,6 +852,13 @@
     <Compile Include="Reports\ReportViews\RiskAssetMain.aspx.designer.cs">
       <DependentUpon>RiskAssetMain.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetMain1.aspx.cs">
+      <DependentUpon>RiskAssetMain1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetMain1.aspx.designer.cs">
+      <DependentUpon>RiskAssetMain1.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\RiskAssetsReport.aspx.cs">
       <DependentUpon>RiskAssetsReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1231,6 +1238,7 @@
     <Content Include="Reports\ReportViews\RiskAssetByVariance.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetDistributionBySector.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetMain.aspx" />
+    <Content Include="Reports\ReportViews\RiskAssetMain1.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetsReport.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetTeam.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
@@ -1292,6 +1300,7 @@
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Pharmaceuticals &amp; Healthcare Report -2019-05-29.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Power Report - 2019-05-08.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Telecommunications Report - 2019-03-13.pdf" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
@@ -1594,7 +1603,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
-    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">
