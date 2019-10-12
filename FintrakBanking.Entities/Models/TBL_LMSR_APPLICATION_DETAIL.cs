@@ -23,7 +23,7 @@
         public int OPERATIONID { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
-        public int LOANSYSTEMTYPEID { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
         public int CUSTOMERID { get; set; }
 
         // public short STATUSID { get; set; }
