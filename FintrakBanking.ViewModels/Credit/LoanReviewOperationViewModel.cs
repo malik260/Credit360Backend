@@ -376,7 +376,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int loanId { get; set; }
         public int customerId { get; set; }
         public int detailId { get; set; }
-        public short loanSystemTypeId { get; set; }
+        public int loanSystemTypeId { get; set; }
         public int operationId { get; set; }
         //public string loanSystemType { get; set; }
         public string loanSystemTypeName { get; set; }
@@ -430,8 +430,8 @@ public int? newInterestFrequencyTypeId { get; set; }
 
         public short operationId { get; set; }
         public string operationName { get; set; }
-        public short loanSystemTypeId { get; set; }
-        public short productTypeId { get; set; }
+        public int loanSystemTypeId { get; set; }
+        public int productTypeId { get; set; }
     }
 
     public class SelectListViewModel

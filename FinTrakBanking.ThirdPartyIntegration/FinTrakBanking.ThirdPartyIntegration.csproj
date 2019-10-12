@@ -121,24 +121,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">
-      <Project>{18cefc20-2662-4757-94de-23d623ffc98d}</Project>
-      <Name>FintrakBanking.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
-      <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
-      <Name>FintrakBanking.Entities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
-      <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
-      <Name>FintrakBanking.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
-      <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
-      <Name>FintrakBanking.ViewModels</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
@@ -348,7 +330,24 @@
     </None>
     <Content Include="Connected Services\XDSWebService\XDSNigeriaWebService.asmx" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">
+      <Project>{18cefc20-2662-4757-94de-23d623ffc98d}</Project>
+      <Name>FintrakBanking.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
+      <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
+      <Name>FintrakBanking.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.Interfaces\FintrakBanking.Interfaces.csproj">
+      <Project>{6a7c3564-00b2-45d4-a40c-4b52a06c296a}</Project>
+      <Name>FintrakBanking.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
+      <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
+      <Name>FintrakBanking.ViewModels</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
