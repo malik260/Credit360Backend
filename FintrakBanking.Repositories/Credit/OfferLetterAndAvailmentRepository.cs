@@ -3092,6 +3092,170 @@ namespace FintrakBanking.Repositories.Credit
             }).FirstOrDefault();
         }
 
+        public bool IsOfferLetterGenerated(int templateId, int loanApplicationId, int staffId, int branchId)
+        {
+            // TBL_LOAN_OFFER_LETTER offerLetterExists = new TBL_LOAN_OFFER_LETTER();
+            var offerLetterExists = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == loanApplicationId && o.ISLMS == false);
+
+            if (offerLetterExists.Any())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool ApplyTemplateToOfferLetter(int templateId, int loanApplicationId, int staffId, int branchId)
+        {
+            AddOfferLetterClausesWithTemplate(loanApplicationId, templateId, staffId, false, false);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.EditOfferLetterContent,
+                STAFFID = staffId,
+                BRANCHID = (short)branchId,
+                DETAIL =
+               $"Offer Letter Template Has Been Applied For Loan Application ID  " + loanApplicationId,
+                IPADDRESS = "",
+                URL = "",
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = loanApplicationId
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+
+            if (context.SaveChanges() > 0)
+                return true;
+
+            return false;
+        }
+
+        public void AddOfferLetterClausesWithTemplate(int applicationId, int templateId, int staffId, bool isLMS, bool callSaveChanges)
+        {
+            int? customerExist = null;
+            var detail = new OfferLetterViewModel();
+            if (isLMS)
+            {
+                customerExist = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
+
+                var cause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+                cause = cause.Replace("{@RelationshipManagerName}", "");
+                cause = cause.Replace("{@BusinessManagerName}", "");
+
+
+                detail = (from a in context.TBL_LMSR_APPLICATION
+                          join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                          where a.LOANAPPLICATIONID == applicationId
+                          select new OfferLetterViewModel
+                          {
+                              customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                              offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                              offerLetterClauses = cause, //context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                              customerId = b.CUSTOMERID,
+                              customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.ADDRESS).FirstOrDefault(),
+                              title = b.TITLE,
+                          }).FirstOrDefault();
+
+            }
+            else
+            {
+                customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
+                //Get RM and BM for LOS
+
+                var loanApp = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => o).FirstOrDefault();
+
+                var rm = context.TBL_STAFF.Where(o => o.STAFFID == loanApp.RELATIONSHIPMANAGERID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault();
+
+                var rmId = loanApp.RELATIONSHIPMANAGERID;
+                var bmId = context.TBL_STAFF.Where(o => o.STAFFID == rmId).Select(o => o.SUPERVISOR_STAFFID).FirstOrDefault();
+                var bm = context.TBL_STAFF.Where(o => o.STAFFID == bmId).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault();
+
+                var clause = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault();
+
+                clause = clause != null ? clause.Replace("{@RelationshipManagerName}", rm) : null;
+                clause = clause != null ? clause.Replace("{@BusinessManagerName}", bm) : null;
+                if (loanApp.LOANAPPLICATIONTYPEID == (int)LoanTypeEnum.Single)
+                {
+                    detail = (from a in context.TBL_LOAN_APPLICATION
+                              join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                              where a.LOANAPPLICATIONID == applicationId
+                              select new OfferLetterViewModel
+                              {
+                                  customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                  offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  // offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  offerLetterClauses = clause,
+                                  customerId = b.CUSTOMERID,
+                                  customerAddress = context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.ADDRESS).FirstOrDefault(),
+                                  title = b.TITLE,
+
+                              }).FirstOrDefault();
+                }
+                else
+                {
+                    detail = (from a in context.TBL_LOAN_APPLICATION
+                              join b in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals b.CUSTOMERGROUPID
+                              where a.LOANAPPLICATIONID == applicationId
+                              select new OfferLetterViewModel
+                              {
+                                  customerName = context.TBL_CUSTOMER_GROUP.Where(o => o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o => o.GROUPNAME).FirstOrDefault(),
+                                  offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == templateId && o.TEMPLATESECTIONCODE == "OFFERLETTERACCEPT").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  // offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONCODE == "OFFERLETTERCLAUSE").Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                  offerLetterClauses = clause,
+                                  customerId = b.CUSTOMERGROUPID,
+                                  customerAddress = "",
+                                  title = "",
+
+                              }).FirstOrDefault();
+                }
+            }
+
+
+            var offerLetterDoc = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == detail.customerId).Select(o => o).FirstOrDefault();
+            if (offerLetterDoc != null)
+            {
+                offerLetterDoc.OFFERLETTERSALUTATION = "The Managing Director, <br /><br /> " + detail.customerName + "<br /><br />" + detail.customerAddress + "<br /><br /> Attention: " + detail.title + " " + detail.customerName;
+                // offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
+
+                if (!context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Any())
+                {
+
+                    var loanOfferLetter = new TBL_LOAN_OFFER_LETTER
+                    {
+                        CREATEDBY = staffId,
+                        DATETIMECREATED = DateTime.Now,
+                        DELETED = false,
+                        ISLMS = isLMS,
+                        LOANAPPLICATIONID = applicationId,
+                        OFFERLETTERACCEPTANCE = detail.offerLetteracceptance,
+                        OFFERLETTERCLAUSES = detail.offerLetterClauses,
+                        ISACCEPTED = true,
+                        ISFINAL = false
+                    };
+
+                    context.TBL_LOAN_OFFER_LETTER.Add(loanOfferLetter);
+
+
+                }
+                else
+                {
+                    TBL_LOAN_OFFER_LETTER offerLetterExists = new TBL_LOAN_OFFER_LETTER();
+                    offerLetterExists = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId && o.ISLMS == isLMS).FirstOrDefault();
+                    offerLetterExists.OFFERLETTERACCEPTANCE = detail.offerLetteracceptance;
+                    offerLetterExists.OFFERLETTERCLAUSES = detail.offerLetterClauses;
+                    offerLetterExists.LASTUPDATEDBY = staffId;
+                    offerLetterExists.ISACCEPTED = true;
+                    offerLetterExists.ISFINAL = false;
+                    offerLetterExists.DATETIMEUPDATED = DateTime.Now;
+
+                }
+                if (callSaveChanges)
+                    context.SaveChanges();
+            }
+
+        }
+
         //public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
         //{
         //    var details = application.LoanApplicationDetail;

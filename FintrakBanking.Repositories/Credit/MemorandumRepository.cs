@@ -310,16 +310,20 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 //string customerName = String.Empty;
-                if (loanApplication.CUSTOMERGROUPID != null)
-                {
-                    this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
-                    this.customerId = (int)loanApplication.CUSTOMERGROUPID;
+
+                if (loanApplication != null) {
+                    if (loanApplication.CUSTOMERGROUPID != null)
+                    {
+                        this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+                        this.customerId = (int)loanApplication.CUSTOMERGROUPID;
+                    }
+                    if (loanApplication.CUSTOMERID != null)
+                    {
+                        this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+                        this.customerId = (int)loanApplication.CUSTOMERID;
+                    }
                 }
-                if (loanApplication.CUSTOMERID != null)
-                {
-                    this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
-                    this.customerId = (int)loanApplication.CUSTOMERID;
-                }
+                
 
                 this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId).ToList();
                 this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
