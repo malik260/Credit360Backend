@@ -157,7 +157,8 @@ namespace FintrakBanking.Repositories.Credit
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
                     statusId = d.APPROVALSTATUSID,
                     terms = d.REPAYMENTTERMS,
-                    schedule = context.TBL_REPAYMENT_TERM.Find(d.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
+                    schedule = context.TBL_REPAYMENT_TERM.Where( term => term.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(term => term.REPAYMENTTERMDETAIL).FirstOrDefault(),
+                    //schedule = context.TBL_REPAYMENT_TERM.Find(d.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
                     //loanReferenceNumber = d.LOANREFERENCENUMBER,
                 })
 
