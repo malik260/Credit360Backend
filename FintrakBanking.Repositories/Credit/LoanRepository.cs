@@ -3893,6 +3893,9 @@ namespace FintrakBanking.Repositories.Credit
                 loanRecord.APPROVEDBY = user.createdBy;
                 loanRecord.APPROVERCOMMENT = user.comment;
 
+                loanRecord.EXT_PRUDENT_GUIDELINE_STATUSID = (int) LoanPrudentialStatusEnum.Performing;
+                loanRecord.USER_PRUDENTIAL_GUIDE_STATUSID = (int)LoanPrudentialStatusEnum.Performing;
+
                 if (loanRecord.EFFECTIVEDATE < systemDate)
                 {
                   //  ProcessBackDatedTeamLoansInterestAccrual(loanRecord.EFFECTIVEDATE, loanRecord.TERMLOANID);

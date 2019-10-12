@@ -484,7 +484,7 @@ namespace FintrakBanking.Repositories.Credit
                     SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
 
                     //generate offer letter doc
-                    offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
+                    //offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
 
                     generateOutPutDocument = true;
                 }

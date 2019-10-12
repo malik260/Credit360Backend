@@ -84,7 +84,7 @@ namespace FintrakBanking.Repositories.Credit
             .Join(context.TBL_BRANCH, a => a.BRANCHID, b => b.BRANCHID, (a, b) => new { a, b })
             .Join(context.TBL_CUSTOMER, ab => ab.a.CUSTOMERID, c => c.CUSTOMERID, (ab, c) => new { ab, c, b = ab.b })
             .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
-                    && x.APPROVALSTATEID != (int)ApprovalState.Ended
+                    && x.APPROVALSTATEID != (short)ApprovalState.Ended
                     && x.RESPONSESTAFFID == null
                     && (x.TBL_APPROVAL_LEVEL1.LEVELTYPEID != 2 || operationIds.Contains(48))
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
@@ -157,7 +157,8 @@ namespace FintrakBanking.Repositories.Credit
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
                     statusId = d.APPROVALSTATUSID,
                     terms = d.REPAYMENTTERMS,
-                    schedule = context.TBL_REPAYMENT_TERM.Find(d.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
+                    schedule = context.TBL_REPAYMENT_TERM.Where(c => c.REPAYMENTSCHEDULEID == d.REPAYMENTSCHEDULEID).Select(c => c.REPAYMENTTERMDETAIL).FirstOrDefault(),
+                    //schedule = context.TBL_REPAYMENT_TERM.Find(d.REPAYMENTSCHEDULEID).REPAYMENTTERMDETAIL,
                     //loanReferenceNumber = d.LOANREFERENCENUMBER,
                 })
 
