@@ -297,7 +297,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal interesrtOnPastDueInterest { get; set; }
         public decimal penalChargeAmount { get; set; }
         public DateTime? lastRestructureDate  { get; set; }
-        public int loanSystemTypeId  { get; set; }
+        public short loanSystemTypeId  { get; set; }
         public bool isPerforming { get; set; }
         public object loanPrincipal { get; set; }
         public List<LoanDisbursementViewModel> loanBeneficiary { get; set; }
