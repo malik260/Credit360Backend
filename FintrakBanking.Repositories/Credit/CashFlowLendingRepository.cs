@@ -68,7 +68,18 @@ namespace FintrakBanking.Repositories.Credit
             List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
             if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99"); }
 
-            if (saveIndividualCustomerInformation())
+            DateTime dateTime12;
+            if (!DateTime.TryParse(model.individualCustomerInformation.dateOfBirth, out dateTime12)) { return fireResponse("Date of birth not in the right format", "99"); }
+
+            List<string> mStatus = new List<string> { "single", "married", "divorced", "widowed" };
+            if (model.individualCustomerInformation.maritalStatus.ToLower() == "single") { model.individualCustomerInformation.maritalStatus = "1"; }
+            if (model.individualCustomerInformation.maritalStatus.ToLower() == "married") { model.individualCustomerInformation.maritalStatus = "2"; }
+            if (model.individualCustomerInformation.maritalStatus.ToLower() == "divorced") { model.individualCustomerInformation.maritalStatus = "3"; }
+            if (model.individualCustomerInformation.maritalStatus.ToLower() == "widowed") { model.individualCustomerInformation.maritalStatus = "4"; }
+            if (model.individualCustomerInformation.maritalStatus == "0") { fireResponse("Zero value is not a recognized marital status.","99"); }
+            if (!mStatus.Contains(model.individualCustomerInformation.maritalStatus)) { fireResponse($"Value, '{model.individualCustomerInformation.maritalStatus}' is not a valid marital status.", "99"); }
+
+            if (saveIndividualCustomerInformation(model))
             {
                 fireResponse("Success","00");
             }
@@ -90,7 +101,7 @@ namespace FintrakBanking.Repositories.Credit
             List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
             if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau","99"); }
 
-            if (saveIndividualCustomerInformation())
+            if (saveIndividualCustomerInformation(model))
             {
                 fireResponse("Success", "00");
             }
@@ -99,16 +110,71 @@ namespace FintrakBanking.Repositories.Credit
             return response;
         }
 
-        private bool saveIndividualCustomerInformation()
+        private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
         {
-           
+            var model = entity.individualCustomerInformation;
+            
+
+            var customer = new TBL_CUSTOMER
+            {
+                ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
+                BRANCHID = 1, //entity.userBranchId,
+                COMPANYID = 1, //entity.companyId,
+                CREATEDBY = 1, //(int)entity.createdBy,
+                CREATIONMAILSENT = true, //entity.creationMailSent,
+                CUSTOMERCODE = model.customerCode,
+                CUSTOMERSENSITIVITYLEVELID = 1, //entity.customerSensitivityLevelId,
+                CUSTOMERTYPEID = (short)CustomerTypeEnum.Individual,
+                DATEOFBIRTH = Convert.ToDateTime(model.dateOfBirth),
+                DATETIMECREATED = DateTime.Now,
+                EMAILADDRESS = model.emailAddress,
+                FIRSTNAME = model.firstName,
+                GENDER = model.gender,
+                LASTNAME = model.lastName,
+                //MAIDENNAME = model.maidenName,
+                MARITALSTATUS = Convert.ToInt16(model.maritalStatus),
+                TITLE = model.title,
+                MIDDLENAME = model.middleName,
+                //MISCODE = model.misCode,
+                //MISSTAFF = model.misStaff,
+                NATIONALITYID = context.TBL_COUNTRY.Where(X => X.NAME == model.countryOfOrigin).FirstOrDefault()?.COUNTRYID,
+                OCCUPATION = model.occupation,
+                PLACEOFBIRTH = model.PlaceOfBirth,
+                ISPOLITICALLYEXPOSED = model.politicallyExposed == "1" ? true : false,
+                //ISINVESTMENTGRADE = model,
+                ISREALATEDPARTY = entity.insiderRelatedParties.Count > 0 ?  true : false,
+                ///RELATIONSHIPOFFICERID = model.relationshipManagerCode,
+                SPOUSE = model.spouse,
+                //SUBSECTORID = model.,
+                //RISKRATINGID = model.riskRatingId,
+                CUSTOMERBVN = model.customerBvn,
+                //PROSPECTCUSTOMERCODE = model.prospectCustomerCode,
+                ISPROSPECT = false,
+                CRMSCOMPANYSIZEID = Convert.ToInt32(model.crmsCompanySize),
+                //CRMSLEGALSTATUSID = model.crmsLegalStatus,
+                CRMSRELATIONSHIPTYPEID = context.TBL_CRMS_REGULATORY.Where(x=>x.CODE == (model.crmsRelationship)).FirstOrDefault()?.CRMSREGULATORYID,
+                COUNTRYOFRESIDENTID = context.TBL_COUNTRY.Where(X => X.NAME == model.countryOfResidence).FirstOrDefault()?.COUNTRYID ,
+                NUMBEROFDEPENDENTS = model.children.Count(),
+                //NUMBEROFLOANSTAKEN = model.numberOfLoansTaken,
+                //MONTHLYLOANREPAYMENT = model.loanMonthlyRepaymentFromOtherBanks,
+                //DATEOFRELATIONSHIPWITHBANK = model.dateOfRelationshipWithBank,
+                //RELATIONSHIPTYPEID = model.relationshipTypeCode,
+                TEAMLDR = model.teamLdr,
+                TEAMNPL = model.teamNpl,
+                //CORR = model.corr,
+                PASTDUEOBLIGATIONS = Convert.ToDecimal(model.pastDueObligation),
+                //BUSINESSUNTID = model.businessUnitId
+      
+            };
             return false;
         }
 
-        private bool saveCorporateCustomerInformation()
+        private bool saveCorporateCustomerInformation(ApiCustomerBusinessDetailsViewModel model)
         {
             return false;
         }
+
+        
         //public string AddCustomer(IncomingCustomerViewModels model)
         //{
         //    validateCustomerDetails(model);
