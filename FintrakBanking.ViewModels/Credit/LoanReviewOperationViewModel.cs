@@ -376,7 +376,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int loanId { get; set; }
         public int customerId { get; set; }
         public int detailId { get; set; }
-        public int loanSystemTypeId { get; set; }
+        public short loanSystemTypeId { get; set; }
         public int operationId { get; set; }
         //public string loanSystemType { get; set; }
         public string loanSystemTypeName { get; set; }
