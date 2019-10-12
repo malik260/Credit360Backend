@@ -1483,7 +1483,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanRefNo { get; set; }
         public string customerName { get; set; }
         public int loanId { get; set; }
-        public int loanSystemTypeId { get; set; }
+        public short loanSystemTypeId { get; set; }
     }
 
 
