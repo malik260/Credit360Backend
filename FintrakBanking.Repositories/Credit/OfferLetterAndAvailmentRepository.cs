@@ -195,13 +195,20 @@ namespace FintrakBanking.Repositories.Credit
 
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
 
-            var acceptIds = context.TBL_LOAN_APPLICATION.Where(x => x.APPROVALSTATUSID == 2 && x.AVAILMENTDATE == null)
-                .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == 6 && t.RESPONSESTAFFID == staffId),
-                    a => a.LOANAPPLICATIONID, b => b.TARGETID, (a, b) => new { a, b })
-                    .Select(x => new { TARGETID = x.b.TARGETID })
-                    .Select(t => t.TARGETID)
-                    .ToList()
-                    ;
+            var acceptIds = (from a in context.TBL_LOAN_APPLICATION
+                             join b in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals b.TARGETID
+                             where a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && a.AVAILMENTDATE == null
+                             && b.OPERATIONID == a.OPERATIONID && b.RESPONSESTAFFID == staffId
+                             select new { TARGETID = b.TARGETID }).Select(t => t.TARGETID).ToList();
+
+
+            //var acceptIds2 = context.TBL_LOAN_APPLICATION.Where(x => x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && x.AVAILMENTDATE == null)
+            //    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == 6 && t.RESPONSESTAFFID == staffId),
+            //        a => a.LOANAPPLICATIONID, b => b.TARGETID, (a, b) => new { a, b })
+            //        .Select(x => new { TARGETID = x.b.TARGETID })
+            //        .Select(t => t.TARGETID)
+            //        .ToList()
+            //        ;
 
             IQueryable<CamProcessedLoanViewModel> data = null;
 

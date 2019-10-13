@@ -38,7 +38,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int prudentialGuidelineTypeId { get; set; }
 
         public int productTypeId { get; set; }
-        public int loanSystemTypeId { get; set; }
+        public short loanSystemTypeId { get; set; }
 
     }
 }
