@@ -1925,15 +1925,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (definition.ISREQUIRED == false) return true;
 
-            if (definition.REQUIREUPLOAD)
-            {
-                var docContext = new Entities.DocumentModels.FinTrakBankingDocumentsContext();
-                if (!docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
-                        && x.OPERATIONID == (int)OperationsEnum.CreditAppraisal
-                        && x.TARGETID == targetId
-                ).Any())
-                    return false;
-            }
+            //if (definition.REQUIREUPLOAD)
+            //{
+            //    var docContext = new Entities.DocumentModels.FinTrakBankingDocumentsContext();
+            //    if (!docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == false
+            //            && x.OPERATIONID == definition.OPERATIONID
+            //            && x.TARGETID == targetId
+            //    ).Any())
+            //        return false;
+            //}
 
             int integerConversion;
             int? integerValue = null;
