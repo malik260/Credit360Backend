@@ -72,7 +72,7 @@ namespace FintrakBanking.Repositories.Risk
 
                 var racDefinitionOnEmployerByProduct = context.TBL_RAC_DEFINITION.Where(x => 
                                                                     ((x.PRODUCTID == model.productId && x.SEARCHPLACEHOLDER == "PRODUCT") || (x.PRODUCTCLASSID == model.productClassId && x.SEARCHPLACEHOLDER == "PRODUCTCLASS"))
-                                                                    && ( (x.EMPLOYMENTTYPE == "EMPLOYER" && isCorporate )
+                                                                    && ( ((x.EMPLOYMENTTYPE == "EMPLOYER" && isCorporate)  || (x.EMPLOYMENTTYPE == "SELFEMPLOYED" && isCorporate))
                                                                         || (x.EMPLOYMENTTYPE == "EMPLOYEE" && !isCorporate ) )
                                                                     && x.SHOWATDRAWDOWN == model.isDrawdown && x.ISACTIVE == true && x.DELETED == false).ToList();              
 

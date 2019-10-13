@@ -35,7 +35,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalStatusId { get; set; }
         public int applicationStatusId { get; set; }
         public int loanId { get; set; }
-        public int loanSystemTypeId { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
         public bool submittedForAppraisal { get; set; }
         public string loanInformation { get; set; }
         public bool isLMS { get; set; }
