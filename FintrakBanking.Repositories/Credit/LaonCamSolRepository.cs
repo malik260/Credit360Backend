@@ -530,7 +530,7 @@ namespace FintrakBanking.Repositories.Credit
                 REMARK = camsolModel.remark,
 
                 //STAFFCODE = staffCode,
-                LOANSYSTEMTYPEID = camsolModel.loansystemtypeid,
+                LOANSYSTEMTYPEID = camsolModel.LOANSYSTEMTYPEID,
                 CUSTOMERNAME = camsolModel.customername,
                 PRINCIPAL = camsolModel.principal,
                 INTERESTINSUSPENSE = camsolModel.interestinsuspense,

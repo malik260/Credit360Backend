@@ -1243,7 +1243,7 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class ProductType
     {
-        public int loanSystemTypeId { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
         public string loanSystemTypeName { get; set; }
     }
 

@@ -16817,7 +16817,7 @@ namespace FintrakBanking.Repositories.Credit
                         //}
                     }
 
-                    int loanSystemTypeId = reviewApplicationDetail != null ? (short)reviewApplicationDetail.LOANSYSTEMTYPEID : (short)model.loanSystemTypeId;
+                    short loanSystemTypeId = reviewApplicationDetail != null ? (short)reviewApplicationDetail.LOANSYSTEMTYPEID : (short)model.loanSystemTypeId;
                     if ((int)OperationsEnum.Prepayment != model.operationTypeId || (int)OperationsEnum.LoanTermination == model.operationTypeId)
                     {
                         if (DoesOperationExist(model.loanId, model.operationTypeId, loanSystemTypeId))

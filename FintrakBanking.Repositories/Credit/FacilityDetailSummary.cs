@@ -1356,7 +1356,7 @@ namespace FintrakBanking.Repositories.Credit
                         // where productTypeId.Contains(x.LOANSYSTEMTYPEID)
                     select new ProductType
                     {
-                        loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                        LOANSYSTEMTYPEID = x.LOANSYSTEMTYPEID,
                         loanSystemTypeName = x.LOANSYSTEMTYPENAME
                     }).ToList();
         }

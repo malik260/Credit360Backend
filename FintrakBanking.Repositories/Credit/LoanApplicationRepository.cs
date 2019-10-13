@@ -5624,6 +5624,20 @@ namespace FintrakBanking.Repositories.Credit
                     }).FirstOrDefault();
         }
 
+        public IEnumerable<LoanApplicationLienViewModel> GetLienByCollateralId(int collateralId)
+        {
+            return (from x in context.TBL_APPLICATIONDETAIL_LIEN
+                    where x.APPLICATIONDETAILLIENID == collateralId
+                    select new LoanApplicationLienViewModel
+                    {
+                        applicationDetailLienId = x.APPLICATIONDETAILLIENID,
+                        applicationDetailId = x.APPLICATIONDETAILID,
+                        amount = x.AMOUNT,
+                        accountNo = x.ACCOUNTNO,
+                        isReleased = x.ISRELEASED
+                    }).ToList();
+        }
+
         public IEnumerable<LoanApplicationLienViewModel> GetApplicationDetailLien()
         {
             return (from x in context.TBL_APPLICATIONDETAIL_LIEN
@@ -5638,17 +5652,18 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public IEnumerable<LoanApplicationLienViewModel> GetLienByApplicationDetailId(int id)
+        public IEnumerable<LoanApplicationLienViewModel> GetLienByApplicationDetailId(int applicationDetailId)
         {
             return (from x in context.TBL_APPLICATIONDETAIL_LIEN
-                    where x.APPLICATIONDETAILID == id
+                    where x.APPLICATIONDETAILID == applicationDetailId
                     select new LoanApplicationLienViewModel
                     {
                         applicationDetailLienId = x.APPLICATIONDETAILLIENID,
                         applicationDetailId = x.APPLICATIONDETAILID,
                         amount = x.AMOUNT,
                         accountNo = x.ACCOUNTNO,
-                        isReleased = x.ISRELEASED
+                        isReleased = x.ISRELEASED,
+                        collateralId = x.COLLATERALCUSTOMERID
                     }).ToList();
         }
 
@@ -5688,6 +5703,7 @@ namespace FintrakBanking.Repositories.Credit
                     AMOUNT = model.amount,
                     ACCOUNTNO = model.accountNo,
                     ISRELEASED = false,
+                    COLLATERALCUSTOMERID = model.collateralId,
                 };
 
                 var id = context.TBL_APPLICATIONDETAIL_LIEN.Add(entity);
@@ -5696,7 +5712,7 @@ namespace FintrakBanking.Repositories.Credit
                 // Audit Section ---------------------------
                 this.audit.AddAuditTrail(new TBL_AUDIT
                 {
-                    AUDITTYPEID = (short)AuditTypeEnum.ProjectSiteReportAdded,
+                    AUDITTYPEID = (short)AuditTypeEnum.LienPlaced,
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' created by {auditStaff}",
@@ -5713,26 +5729,29 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateLoanApplicationDetailLien(LoanApplicationLienViewModel model, int id, UserInfo user)
         {
             var entity = this.context.TBL_APPLICATIONDETAIL_LIEN.Find(id);
-            entity.APPLICATIONDETAILID = model.applicationDetailId;
-            entity.AMOUNT = model.amount;
-            entity.ACCOUNTNO = model.accountNo;
-            entity.ISRELEASED = model.isReleased;
-            
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
+            if (entity != null)
             {
-                AUDITTYPEID = (short)AuditTypeEnum.ProjectSiteReportUpdated,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.APPLICATIONDETAILLIENID
-            });
-            // Audit Section end ------------------------
+                entity.APPLICATIONDETAILID = model.applicationDetailId;
+                entity.AMOUNT = model.amount;
+                entity.ACCOUNTNO = model.accountNo;
+                entity.ISRELEASED = model.isReleased;
+
+                var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+                // Audit Section ---------------------------
+                this.audit.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ProjectSiteReportUpdated,// lien edited
+                    STAFFID = user.createdBy,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' was updated by {auditStaff}",
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = entity.APPLICATIONDETAILLIENID
+                });
+                // Audit Section end ------------------------
+            }
 
             return context.SaveChanges() != 0;
         }
@@ -5746,7 +5765,7 @@ namespace FintrakBanking.Repositories.Credit
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.ProjectSiteReportDeleted,
+                AUDITTYPEID = (short)AuditTypeEnum.LienReleased,
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' was deleted by {auditStaff}",
