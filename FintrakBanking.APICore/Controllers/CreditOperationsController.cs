@@ -951,6 +951,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-operation/approved-loan-review")]
