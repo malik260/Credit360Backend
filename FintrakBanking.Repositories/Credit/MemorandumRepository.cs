@@ -1151,20 +1151,22 @@ namespace FintrakBanking.Repositories.Credit
         private string GetBusinessSectorsMarkupLOS()
         {
             var result = String.Empty;
-            foreach (var loanDetail in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL)
-            {
-                result = result + loanDetail.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
-            }
+            result += this.loanApplication.TBL_CUSTOMER.TBL_SUB_SECTOR.TBL_SECTOR.NAME;
+            //foreach (var loanDetail in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL)
+            //{
+            //    result = result + loanDetail.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
+            //}
             return result;
         }
 
         private string GetBusinessSectorsMarkupLMS()
         {
             var result = String.Empty;
-            foreach (var loanDetail in this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL)
-            {
-                result = result + loanDetail.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
-            }
+            result += this.loanApplication.TBL_CUSTOMER.TBL_SUB_SECTOR.TBL_SECTOR.NAME;
+            //foreach (var loanDetail in this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL)
+            //{
+            //    result = result + loanDetail.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
+            //}
             return result;
         }
 

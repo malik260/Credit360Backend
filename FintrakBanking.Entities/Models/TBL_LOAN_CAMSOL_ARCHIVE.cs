@@ -31,7 +31,7 @@
 
         public DateTime ARCHIVEDATE { get; set; }
 
-        public int LOANSYSTEMTYPEID { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
         public string CUSTOMERNAME { get; set; }
         public decimal PRINCIPAL { get; set; }
         public decimal INTERESTINSUSPENSE { get; set; }

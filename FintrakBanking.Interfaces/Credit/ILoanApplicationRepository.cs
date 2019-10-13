@@ -169,6 +169,17 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanApplicationViewModel> LoanSearch(string searchString);
         List<accountsViewModels> GetCustomerTransactionsAccounts(int customerId, int applicationId, bool isLms = false);
         CustomerApplicationTransactionsViewModels GetCustomerTransactionsFiltered(int customerId, int applicationId, string accountnumber, int? fromYear, int fromMonth, int? toYear, int toMonth, bool isLms = false);
+
+        IEnumerable<LoanApplicationLienViewModel> GetLienByApplicationDetailId(int applicationDetailId);
+        IEnumerable<LoanApplicationLienViewModel> GetLienByCollateralId(int collateralId);
+        LoanApplicationLienViewModel GetApplicationDetailLien(int id);
+        IEnumerable<LoanApplicationLienViewModel> GetApplicationDetailLienByAccountNo(string accountNo);
+        IEnumerable<LoanApplicationLienViewModel> GetApplicationDetailLienByIsReleased(bool isReleased);
+        IEnumerable<LoanApplicationLienViewModel> GetApplicationDetailLien();
+        bool AddLoanApplicationDetailLien(LoanApplicationLienViewModel model);
+        bool UpdateLoanApplicationDetailLien(LoanApplicationLienViewModel model, int id, UserInfo user);
+        bool DeleteLoanApplicationDetailLien(int id, UserInfo user);
         RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId);
+
     }
 }
