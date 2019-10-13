@@ -14186,6 +14186,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<multipleDisbursementOutputViewModel> startBulkLoanDisbursement(List<multipleDisbursementOutputViewModel> models, UserInfo user)
         {
+            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(models.FirstOrDefault().loanApplicationDetailId);
+            if(applicationDetail != null)
+            {
+                var recResponse = loanApp.SaveRac(models.FirstOrDefault().rac, (int)models.FirstOrDefault().rac?.operationId, (int)models.FirstOrDefault().rac.productId, models.FirstOrDefault().rac.productClassId, models.FirstOrDefault().loanApplicationDetailId, user.createdBy, applicationDetail.LOANAPPLICATIONID);
+                if (recResponse == null) throw new ConditionNotMetException("Risk Acceptance Criteria failed");
+            }
+            
             List<TBL_LOAN> loanTable = new List<TBL_LOAN>();
             foreach (var customerRequest in models)
             {

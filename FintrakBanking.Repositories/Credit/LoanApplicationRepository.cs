@@ -1748,7 +1748,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        private RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
+        public RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
             var msg = new RacReturnInfoViewModel();
@@ -1813,9 +1813,8 @@ namespace FintrakBanking.Repositories.Credit
                         && ids.Contains(x.RACDEFINITIONID) && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
                         && x.RACCATEGORYID == defaultTier.RACCATEGORYID
                         ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
-
-                        continue;
                     }
+
                     if (racTiers.Count() > 0 && ctr > 0)
                     {
                         saveRacoptions(definitions, rac, operationId, targetId, staffId);
@@ -1845,16 +1844,17 @@ namespace FintrakBanking.Repositories.Credit
                 break;
             }
 
-            try
-            {
-                context.TBL_RAC_DETAIL.AddRange(details);
-                context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            
+            context.TBL_RAC_DETAIL.AddRange(details);
+            context.SaveChanges();
+            //try
+            //{
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw ex;
+            //}
+
 
             return null;
 

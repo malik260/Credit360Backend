@@ -1690,6 +1690,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool shouldDisburse { get; set; }
         public bool passed { get; set; }
         public List<string> errorMessages { get; set; }
+        public RacInformationViewModel rac { get; set; }
     }
 
 
