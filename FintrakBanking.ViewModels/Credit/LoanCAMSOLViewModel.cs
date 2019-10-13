@@ -16,7 +16,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanRef { get; set; }
         public decimal balance { get; set; }
         public DateTime date { get; set; }
-        public int loansystemtypeid { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
         public string customername { get; set; }
         public decimal principal { get; set; }
         public decimal interestinsuspense { get; set; }

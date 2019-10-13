@@ -527,7 +527,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int performanceTypeId { get; set; }
         public int productTypeId { get; set; }
         public string searchString { get; set; }
-        public int loanSystemTypeId { get; set; }
+        public short loanSystemTypeId { get; set; }
         public string relatedloanReferenceNumber { get; set; }
         public string loanReferenceNumber { get; set; }
         public DateTime startDate { get; set; }
@@ -981,6 +981,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string accountNo { get; set; }
         public int applicationDetailLienId { get; set; }
         public int applicationDetailId { get; set; }
+        public int collateralId { get; set; }
         public float amount { get; set; }
     }
 

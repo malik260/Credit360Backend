@@ -2030,5 +2030,106 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        #region LIEN
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lien")]
+        public HttpResponseMessage GetApplicationDetailLien()
+        {
+            IEnumerable<LoanApplicationLienViewModel> response = repo.GetApplicationDetailLien();
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lien/{id}")]
+        public HttpResponseMessage GetApplicationDetailLien(int id)
+        {
+            LoanApplicationLienViewModel response = repo.GetApplicationDetailLien(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lien/{applicationDetailId}")]
+        public HttpResponseMessage GetLienByApplicationDetailId(int applicationDetailId)
+        {
+            IEnumerable<LoanApplicationLienViewModel> response = repo.GetLienByApplicationDetailId(applicationDetailId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lien/{collateralId}")]
+        public HttpResponseMessage GetLienByCollateralId(int collateralId)
+        {
+            IEnumerable<LoanApplicationLienViewModel> response = repo.GetLienByCollateralId(collateralId);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lien/{accountNo}")]
+        public HttpResponseMessage GetApplicationDetailLienByAccountNo(string accountNo)
+        {
+            IEnumerable<LoanApplicationLienViewModel> response = repo.GetApplicationDetailLienByAccountNo(accountNo);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lien")]
+        public HttpResponseMessage AddLoanApplicationDetailLien([FromBody] LoanApplicationLienViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddLoanApplicationDetailLien(model);
+            if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("lien/{id}")]
+        public HttpResponseMessage UpdateLoanApplicationDetailLien([FromUri] int id, [FromBody] LoanApplicationLienViewModel model)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdateLoanApplicationDetailLien(model, id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("lien/{id}")]
+        public HttpResponseMessage DeleteLoanApplicationDetailLien(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteLoanApplicationDetailLien(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+        #endregion LIEN
     }
 }

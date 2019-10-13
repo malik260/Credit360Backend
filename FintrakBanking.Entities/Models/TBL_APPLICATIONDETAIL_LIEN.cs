@@ -14,6 +14,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int APPLICATIONDETAILLIENID { get; set; }
         public int APPLICATIONDETAILID { get; set; }
+        public int COLLATERALCUSTOMERID { get; set; }
         public float AMOUNT { get; set; }
         public string ACCOUNTNO { get; set; }
         public bool ISRELEASED { get; set; }
