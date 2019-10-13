@@ -31,7 +31,7 @@ namespace FintrakBanking.Entities.Models
 
         [Required]
         //[StringLength(10)]
-        public DateTime MANUFACTUREDDATE { get; set; }
+        public DateTime? MANUFACTUREDDATE { get; set; }
 
         [Required]
         [StringLength(50)]
