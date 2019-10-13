@@ -3019,20 +3019,24 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var item in bookedDataRecord)
             {
                 var applicationRecord = GetAvailedLoanApplicationDetailById(staffId, companyId, item.loanApplicationDetailId, item.loanBookingRequestId).FirstOrDefault();
-
-                applicationRecord.bookedLoanData = item;
-                applicationRecord.applicationReferenceNumber = item.applicationReferenceNumber;
-                applicationRecord.loanReferenceNumber = item.loanReferenceNumber;
-                data.Add(applicationRecord);
+                if (applicationRecord != null)
+                {
+                    applicationRecord.bookedLoanData = item;
+                    applicationRecord.applicationReferenceNumber = item.applicationReferenceNumber;
+                    applicationRecord.loanReferenceNumber = item.loanReferenceNumber;
+                    data.Add(applicationRecord);
+                }
             }
             foreach (var item in revolvingFacilityRecord)
             {
                 var applicationRecord = GetAvailedLoanApplicationDetailById(staffId, companyId, item.loanApplicationDetailId, item.loanBookingRequestId).FirstOrDefault();
-
-                applicationRecord.bookedRevolvingFacilityData = item;
-                applicationRecord.applicationReferenceNumber = item.applicationReferenceNumber;
-                applicationRecord.loanReferenceNumber = item.loanReferenceNumber;
-                data.Add(applicationRecord);
+                if (applicationRecord != null)
+                {
+                    applicationRecord.bookedRevolvingFacilityData = item;
+                    applicationRecord.applicationReferenceNumber = item.applicationReferenceNumber;
+                    applicationRecord.loanReferenceNumber = item.loanReferenceNumber;
+                    data.Add(applicationRecord);
+                }
             }
             return data;
         }
