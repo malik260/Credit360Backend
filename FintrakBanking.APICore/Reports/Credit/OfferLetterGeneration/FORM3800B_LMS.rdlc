@@ -4295,20 +4295,6 @@ Remarks: ................................................</Value>
           </Border>
         </Style>
       </Rectangle>
-      <Image Name="Image1">
-        <Source>Embedded</Source>
-        <Value>logomain</Value>
-        <Sizing>FitProportional</Sizing>
-        <Left>5.1859in</Left>
-        <Height>0.63542in</Height>
-        <Width>2.29089in</Width>
-        <ZIndex>40</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-        </Style>
-      </Image>
     </ReportItems>
     <Height>23.35572in</Height>
     <Style />
