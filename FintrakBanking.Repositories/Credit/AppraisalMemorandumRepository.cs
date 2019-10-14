@@ -2026,6 +2026,7 @@ namespace FintrakBanking.Repositories.Credit
             // query
             var query = context.TBL_LOAN_APPLICATION.Where(x =>
                     x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                    && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.COMPANYID == companyId
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                     && x.ISADHOCAPPLICATION != true
@@ -2034,6 +2035,7 @@ namespace FintrakBanking.Repositories.Credit
             .Join(
                 context.TBL_APPROVAL_TRAIL.Where(x => (ExclusiveOperations.Contains(x.OPERATIONID))
                     && x.APPROVALSTATEID != (int)ApprovalState.Ended
+                    && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
