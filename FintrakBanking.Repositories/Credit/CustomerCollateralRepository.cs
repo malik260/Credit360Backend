@@ -2885,8 +2885,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     mainVehicle.COLLATERALCUSTOMERID = entity.collateralCustomerId;
                     mainVehicle.PROMISSORYNOTEID = entity.promissoryNoteRefferenceNumber;
-                    mainVehicle.EFFECTIVEDATE = entity.effectiveDate;
-                    mainVehicle.MATURITYDATE = entity.maturityDate;
+                    mainVehicle.EFFECTIVEDATE = entity.promissoryEffectiveDate;
+                    mainVehicle.MATURITYDATE = entity.promissoryMaturityDate;
                     comment = $"New promissory collateral type has been update through loan application by {entity.createdBy} staffid";
                 }
                 else
@@ -2895,8 +2895,8 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         COLLATERALCUSTOMERID = collateralId,
                         PROMISSORYNOTEID = entity.promissoryNoteRefferenceNumber,
-                        EFFECTIVEDATE = entity.effectiveDate,
-                        MATURITYDATE = entity.maturityDate,
+                        EFFECTIVEDATE = entity.promissoryEffectiveDate,
+                        MATURITYDATE = entity.promissoryMaturityDate,
                         //PROMISSORYVALUE = tempPromissory.PROMISSORYVALUE,
 
                     });
@@ -3027,8 +3027,8 @@ namespace FintrakBanking.Repositories.Credit
                     collateral.ADDRESS = entity.address;
                     collateral.BVN = entity.bvn;
                     collateral.EMAILADRRESS = entity.emailAddress;
-                    collateral.ENDDATE = (DateTime)entity.endDate;
-                    collateral.STARTDATE = (DateTime)entity.startDate;
+                    collateral.ENDDATE = entity.endDate;
+                    collateral.STARTDATE = entity.startDate;
                     collateral.FIRSTNAME = entity.firstName;
                     collateral.MIDDLENAME = entity.middleName;
                     collateral.LASTNAME = entity.lastName;
@@ -3049,8 +3049,8 @@ namespace FintrakBanking.Repositories.Credit
                         ADDRESS = entity.address,
                         BVN = entity.bvn,
                         EMAILADRRESS = entity.emailAddress,
-                        ENDDATE = (DateTime)entity.endDate,
-                        STARTDATE = (DateTime)entity.startDate,
+                        ENDDATE = entity.endDate,
+                        STARTDATE = entity.startDate,
                         FIRSTNAME = entity.firstName,
                         MIDDLENAME = entity.middleName,
                         LASTNAME = entity.lastName,
@@ -3197,8 +3197,8 @@ namespace FintrakBanking.Repositories.Credit
                     collateral.ADDRESS = entity.address;
                     collateral.BVN = entity.bvn;
                     collateral.EMAILADRRESS = entity.emailAddress;
-                    collateral.ENDDATE = (DateTime)entity.endDate;
-                    collateral.STARTDATE = (DateTime)entity.startDate;
+                    collateral.ENDDATE = entity.endDate;
+                    collateral.STARTDATE = entity.startDate;
                     collateral.FIRSTNAME = entity.firstName;
                     collateral.MIDDLENAME = entity.middleName;
                     collateral.LASTNAME = entity.lastName;
@@ -3219,8 +3219,8 @@ namespace FintrakBanking.Repositories.Credit
                         ADDRESS = entity.address,
                         BVN = entity.bvn,
                         EMAILADRRESS = entity.emailAddress,
-                        ENDDATE = (DateTime)entity.endDate,
-                        STARTDATE = (DateTime)entity.startDate,
+                        ENDDATE = entity.endDate,
+                        STARTDATE = entity.startDate,
                         FIRSTNAME = entity.firstName,
                         MIDDLENAME = entity.middleName,
                         LASTNAME = entity.lastName,
@@ -3246,8 +3246,8 @@ namespace FintrakBanking.Repositories.Credit
                     ADDRESS = entity.address,
                     BVN = entity.bvn,
                     EMAILADRRESS = entity.emailAddress,
-                    ENDDATE = (DateTime)entity.endDate,
-                    STARTDATE = (DateTime)entity.cStartDate,
+                    ENDDATE = entity.endDate.Value,
+                    STARTDATE = entity.cStartDate,
                     FIRSTNAME = entity.firstName,
                     MIDDLENAME = entity.middleName,
                     LASTNAME = entity.lastName,
@@ -3332,7 +3332,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (mainVehicle != null)
                 {
-                    mainVehicle.COLLATERALCUSTOMERID = entity.collateralCustomerId;
+                    //mainVehicle.COLLATERALCUSTOMERID = entity.collateralCustomerId;
                     mainVehicle.CHASISNUMBER = entity.chasisNumber;
                     mainVehicle.INVOICEVALUE = entity.invoiceValue;
                     mainVehicle.ENGINENUMBER = entity.engineNumber;
