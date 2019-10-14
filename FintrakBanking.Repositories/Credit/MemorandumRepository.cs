@@ -326,7 +326,7 @@ namespace FintrakBanking.Repositories.Credit
                 
 
                 this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId).ToList();
-                this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
+                this.branchName = loanApplication.TBL_BRANCH?.BRANCHNAME;
                 this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
                 this.isRelatedParty = loanApplication.ISRELATEDPARTY == true ? "Yes" : "No";
                 this.recommendedInterestRate = loanApplication.INTERESTRATE.ToString();

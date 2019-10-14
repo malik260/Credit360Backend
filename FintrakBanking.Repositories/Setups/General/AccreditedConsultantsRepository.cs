@@ -86,7 +86,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         phoneNumber = m.PHONENUMBER,
                         address = m.ADDRESS,
                         coreCompetence = m.CORECOMPETENCE,
-                    });
+                    }).Distinct();
 
             return data;
         }

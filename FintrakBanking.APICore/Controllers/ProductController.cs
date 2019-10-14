@@ -980,7 +980,11 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     item.createdBy = token.GetStaffId;
                 }
-
+                if(model.fees == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Mapped fees is required" });
+                }
                 foreach (var item in model.fees)
                 {
                     item.createdBy = token.GetStaffId;
