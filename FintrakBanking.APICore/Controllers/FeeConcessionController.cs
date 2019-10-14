@@ -117,7 +117,7 @@ namespace FintrakBanking.APICore.Controllers
         }
          [HttpPost] [ClaimsAuthorization]
         [Route("fee-concession")]
-        public HttpResponseMessage AddUpdateFeeConcession([FromBody]FeeConcessionViewModel entity)
+        public HttpResponseMessage AddUpdateFeeConcession([FromBody] FeeConcessionViewModel entity)
         {
             try
             {
