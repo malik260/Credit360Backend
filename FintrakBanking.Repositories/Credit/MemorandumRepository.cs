@@ -310,19 +310,23 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 //string customerName = String.Empty;
-                if (loanApplication.CUSTOMERGROUPID != null)
-                {
-                    this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
-                    this.customerId = (int)loanApplication.CUSTOMERGROUPID;
+
+                if (loanApplication != null) {
+                    if (loanApplication.CUSTOMERGROUPID != null)
+                    {
+                        this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+                        this.customerId = (int)loanApplication.CUSTOMERGROUPID;
+                    }
+                    if (loanApplication.CUSTOMERID != null)
+                    {
+                        this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+                        this.customerId = (int)loanApplication.CUSTOMERID;
+                    }
                 }
-                if (loanApplication.CUSTOMERID != null)
-                {
-                    this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
-                    this.customerId = (int)loanApplication.CUSTOMERID;
-                }
+                
 
                 this.customerFacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(f => f.DELETED == false && f.CUSTOMERID == this.customerId).ToList();
-                this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
+                this.branchName = loanApplication.TBL_BRANCH?.BRANCHNAME;
                 this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
                 this.isRelatedParty = loanApplication.ISRELATEDPARTY == true ? "Yes" : "No";
                 this.recommendedInterestRate = loanApplication.INTERESTRATE.ToString();
@@ -1147,20 +1151,22 @@ namespace FintrakBanking.Repositories.Credit
         private string GetBusinessSectorsMarkupLOS()
         {
             var result = String.Empty;
-            foreach (var loanDetail in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL)
-            {
-                result = result + loanDetail.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
-            }
+            result += this.loanApplication.TBL_CUSTOMER.TBL_SUB_SECTOR.TBL_SECTOR.NAME;
+            //foreach (var loanDetail in this.loanApplication.TBL_LOAN_APPLICATION_DETAIL)
+            //{
+            //    result = result + loanDetail.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
+            //}
             return result;
         }
 
         private string GetBusinessSectorsMarkupLMS()
         {
             var result = String.Empty;
-            foreach (var loanDetail in this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL)
-            {
-                result = result + loanDetail.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
-            }
+            result += this.loanApplication.TBL_CUSTOMER.TBL_SUB_SECTOR.TBL_SECTOR.NAME;
+            //foreach (var loanDetail in this.lmsrApplication.TBL_LMSR_APPLICATION_DETAIL)
+            //{
+            //    result = result + loanDetail.TBL_PRODUCT.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault().TBL_SUB_SECTOR.TBL_SECTOR.NAME + "\n";
+            //}
             return result;
         }
 

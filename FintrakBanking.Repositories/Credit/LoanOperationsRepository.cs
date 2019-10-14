@@ -16343,7 +16343,7 @@ namespace FintrakBanking.Repositories.Credit
             return loanOperations;
         }
 
-        public bool DoesOperationExist(int loanId, int operationTypeId, short loanSystemTypeId)
+        public bool DoesOperationExist(int loanId, int operationTypeId, int loanSystemTypeId)
         {
             //List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
 
@@ -17144,7 +17144,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private void LogLMSOperationRouteWorkflow(LoanReviewOperationViewModel model, int loanReviewApplicationId, short loanSystemTypeId)
+        private void LogLMSOperationRouteWorkflow(LoanReviewOperationViewModel model, int loanReviewApplicationId, int loanSystemTypeId)
         {
             if (loanSystemTypeId == (short)LoanSystemTypeEnum.TermDisbursedFacility
                 || loanSystemTypeId == (short)LoanSystemTypeEnum.OverdraftFacility

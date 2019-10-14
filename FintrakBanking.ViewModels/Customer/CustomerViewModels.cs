@@ -285,7 +285,7 @@ namespace FintrakBanking.ViewModels.Customer
 
         public string customerType { get; set; }
         public ApiCustomerBusinessDetailsViewModel corporateCustomerInformation { get; set; }
-        public ApiCustomerBusinessDetailsViewModel individualCustomerInformation { get; set; }
+        public ApiIndividualCustomerDetails individualCustomerInformation { get; set; }
         public List<ApiAddressesViewModel> customerAddresses { get; set; }
         public List<ApicontactViewModel> contacts { get; set; }
         public List<ApiDirectorViewModel> companyDirectors { get; set; }
@@ -376,7 +376,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string dateOfBirth { get; set; }
         public string middleName { get; set; }
         public string customerBvn { get; set; }
-        public string LastName { get; set; }
+        public string lastName { get; set; }
         public string PlaceOfBirth { get; set; }
         public string maritalStatus { get; set; }
         public string occupation { get; set; }

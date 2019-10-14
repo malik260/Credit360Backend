@@ -1933,7 +1933,9 @@ namespace FintrakBanking.Repositories.Credit
                                    collateralValue = c.COLLATERALVALUE,
                                    loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                                    actualCollateralCoverage = x.COLLATERALCOVERAGE,
+                                   collateralTypeId = a.COLLATERALTYPEID,
                                    collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
+                                   collateralTypeName = a.COLLATERALTYPENAME,
                                    facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(o => o.APPROVEDAMOUNT).Sum(),
                                    facilityCurrencyCodeFcy = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).TBL_CURRENCY.CURRENCYCODE,
                                    approvalStatusId = x.APPROVALSTATUSID,
@@ -2001,6 +2003,9 @@ namespace FintrakBanking.Repositories.Credit
                     actualCoveragePercentage = ((actualCollateralCoverage / facilityAmount) * 100),
                     loanApplicationDetailId = collateral.loanApplicationDetailId,
                     collateralId = collateral.collateralId,
+                    collateralTypeId = collateral.collateralTypeId,
+                    collateralTypeName = collateral.collateralTypeName,
+                    collateralSubTypeId = collateral.collateralSubTypeId,
                     collateralCode = collateral.collateralCode,
                     collateralValue = collateralValue,
                     currencyId = collateral.currencyId,
@@ -2525,6 +2530,7 @@ namespace FintrakBanking.Repositories.Credit
                 maturityAmount = specifics.MATURITYAMOUNT,
                 remark = specifics.REMARK,
                 accountName = specifics.ACCOUNTNAME,
+                baseCurrencyCode = specifics.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -3633,7 +3639,7 @@ namespace FintrakBanking.Repositories.Credit
                 vehicleStatus = specifics.VEHICLESTATUS,
                 vehicleMake = specifics.VEHICLEMAKE,
                 modelName = specifics.MODELNAME,
-                dateOfManufacture = specifics.MANUFACTUREDDATE,
+                dateOfManufacture = specifics.MANUFACTUREDDATE.Value,
                 registrationNumber = specifics.REGISTRATIONNUMBER,
                 serialNumber = specifics.SERIALNUMBER,
                 chasisNumber = specifics.CHASISNUMBER,
@@ -3921,6 +3927,7 @@ namespace FintrakBanking.Repositories.Credit
                 securityValue = specifics.SECURITYVALUE,
                 remark = specifics.REMARK,
                 accountName = specifics.ACCOUNTNAME,
+                baseCurrencyCode = specifics.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
 
             };
             details = GetCollateralInsurancePolicy(details);
@@ -4830,6 +4837,7 @@ namespace FintrakBanking.Repositories.Credit
             if (proposed != null)
             {
                 proposed.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
                 //var mapping = new TBL_LOAN_COLLATERAL_MAPPING()
                 //{
                 //    COLLATERALCUSTOMERID = proposed.COLLATERALCUSTOMERID,
@@ -6725,7 +6733,7 @@ namespace FintrakBanking.Repositories.Credit
                                                     vehicleStatus = x.VEHICLESTATUS,
                                                     vehicleMake = x.VEHICLEMAKE,
                                                     modelName = x.MODELNAME,
-                                                    dateOfManufacture = x.MANUFACTUREDDATE,
+                                                    dateOfManufacture = x.MANUFACTUREDDATE.Value,
                                                     registrationNumber = x.REGISTRATIONNUMBER,
                                                     serialNumber = x.REGISTRATIONNUMBER,
                                                     chasisNumber = x.CHASISNUMBER,

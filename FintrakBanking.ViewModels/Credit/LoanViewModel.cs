@@ -1243,7 +1243,7 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class ProductType
     {
-        public int loanSystemTypeId { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
         public string loanSystemTypeName { get; set; }
     }
 
@@ -1571,7 +1571,7 @@ namespace FintrakBanking.ViewModels.Credit
         
         public int pastDueDays { get; set; }
         public int loanId { get; set; }
-        public short loanSytemTypeId { get; set; }
+        public int loanSytemTypeId { get; set; }
         public string businessDevelopmentManger { get; set; }
     }
 
@@ -1690,6 +1690,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool shouldDisburse { get; set; }
         public bool passed { get; set; }
         public List<string> errorMessages { get; set; }
+        public RacInformationViewModel rac { get; set; }
     }
 
 
