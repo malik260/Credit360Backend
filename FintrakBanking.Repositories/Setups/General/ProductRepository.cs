@@ -3391,15 +3391,22 @@ namespace FintrakBanking.Repositories.Setups.General
                         documentTypeId = p.DOCUMENTTYPEID,
                         documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
                         sectorId = p.SECTORID,
-                        subSectorId = p.SUBSECTORID
+                        subSectorId = p.SUBSECTORID,
+                        
                         //productName = p.TBL_PRODUCT.PRODUCTNAME,
                         //productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME
                     }).ToList();
 
             foreach (var mapping in mappings)
             {
+                mapping.sectorName = context.TBL_SECTOR.FirstOrDefault(s => s.SECTORID == mapping.sectorId)?.NAME;
+                mapping.subSectorName = context.TBL_SUB_SECTOR.FirstOrDefault(s => s.SUBSECTORID == mapping.subSectorId)?.NAME;
                 mapping.productName = products.FirstOrDefault(p => p.PRODUCTID == mapping?.productId)?.PRODUCTNAME;
                 mapping.productClassName = productClasses.FirstOrDefault(p => p.PRODUCTCLASSID == mapping?.productClassId)?.PRODUCTCLASSNAME;
+                mapping.sectorName = mapping.sectorName == null ? "N/A" : mapping.sectorName;
+                mapping.subSectorName = mapping.subSectorName == null ? "N/A" : mapping.subSectorName;
+                mapping.productName = mapping.productName == null ? "N/A" : mapping.productName;
+                mapping.productClassName = mapping.productClassName == null ? "N/A" : mapping.productClassName;
             }
 
             return mappings;
@@ -3408,7 +3415,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddProductDocumentMapping(ProductDocumentMappingViewModel model)
         {
-            if (model.mapToProductClass == false && model.mapToProduct == false)
+            if (model.mapToProductClass == false && model.mapToProduct == false && model.mapToSector == false && model.mapToSubSector == false)
             {
                 throw new SecureException("Please select an item to map to!");
             }
