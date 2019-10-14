@@ -1923,7 +1923,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         private bool ValidRacSubmission(TBL_RAC_DEFINITION definition, string value, int operationId, int targetId)
         {
-            if (definition.ISREQUIRED == false) return true;
+            //if (definition.ISREQUIRED == false) return true;
 
             //if (definition.REQUIREUPLOAD)
             //{
