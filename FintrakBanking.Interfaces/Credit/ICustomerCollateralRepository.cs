@@ -34,6 +34,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CollateralViewModel> GetCustomerCollateral(int customerId, int? applicationId, int companyId);
         IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateral( int? applicationDetailId, int currencyId, int companyId);
         IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByCustomerId(int customerId, bool getAll);
+        IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByLoanApplicationDetailId(int loanApplicationDetailId);
         CollateralViewModel GetCustomerCollateralInformation(int collateralCustomerId, int companyId);
         List<CollateralViewModel> GetCustomerPropertyCollaterals(int? customerId, int companyId);
 

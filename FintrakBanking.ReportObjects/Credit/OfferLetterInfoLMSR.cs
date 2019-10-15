@@ -49,23 +49,23 @@ namespace FintrakBanking.ReportObjects.Credit
                                           loanApplicationId = a.LOANAPPLICATIONID,
                                           customerEmailAddress = customerExist != null ? context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerExist).Select(f => f.EMAILADDRESS).FirstOrDefault() : b.EMAILADDRESS,
                                           customerPhoneNumber = customerExist != null ? context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customerExist).Select(f => f.PHONENUMBER).FirstOrDefault() : g.PHONENUMBER,
-                                          isFinal = h.ISFINAL,
+                                          isFinal = h.ISFINAL.Equals(null) ? false : h.ISFINAL,
                                           customerId = b.CUSTOMERID,
                                           operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
-                                          //  producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
-                                          //customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
-                                          //offerLetterTitle = b.OFFERLETTERTITLE,
-                                          //offerLetterSalutation = b.OFFERLETTERSALUTATION,
-                                          // offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
-                                          //offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
+                                          ////  producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
+                                          ////customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
+                                          ////offerLetterTitle = b.OFFERLETTERTITLE,
+                                          ////offerLetterSalutation = b.OFFERLETTERSALUTATION,
+                                          //// offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
+                                          ////offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
 
 
                                       }).FirstOrDefault();
 
-           
+
             //if (offerLetterDetails.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
             //{
-            offerLetterDetails.isFinal = context.TBL_LOAN_OFFER_LETTER.Where(o=>o.LOANAPPLICATIONID== loanDetail.LOANAPPLICATIONID).Select(o=>o.ISFINAL).FirstOrDefault();
+            offerLetterDetails.isFinal = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == loanDetail.LOANAPPLICATIONID).Select(o => o.ISFINAL).FirstOrDefault();
             offerLetterDetails.offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == loanDetail.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault();
             offerLetterDetails.offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == loanDetail.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault();
             offerLetterDetails.offerLetterTitle = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == loanDetail.CUSTOMERID).Select(o => o.OFFERLETTERTITLE).FirstOrDefault();
