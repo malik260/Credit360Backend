@@ -120,5 +120,34 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpPost]
+        //[ClaimsAuthorization]
+        [Route("cfl-loan-request")]
+        public HttpResponseMessage submitRequest([FromBody] CflLoanApplication entity)
+        {
+            try
+            {
+                //entity.userBranchId = (short)token.GetBranchId;
+                //entity.companyId = token.GetCompanyId;
+                //entity.createdBy = token.GetStaffId;
+                //entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.submitRequest(entity);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully, now waiting for approval" });
+                }
+                else
+                {
+
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record, confirm all requested parameters are captured" });
+            }
+        }
+
     }
 }
