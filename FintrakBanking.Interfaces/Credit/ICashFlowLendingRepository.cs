@@ -10,5 +10,6 @@ namespace FintrakBanking.Interfaces.Credit
     public interface ICashFlowLendingRepository
     {
         APIResponse AddCustomer(IncomingCustomerViewModels model);
+        APIResponse submitRequest(CflLoanApplication model);
     }
 }

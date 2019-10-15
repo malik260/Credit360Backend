@@ -2183,6 +2183,111 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public IEnumerable<CollateralCoverageViewModel> GetProposedCustomerCollateralByLoanApplicationDetailId(int loanApplicationDetailId)
+        {
+
+            var list = new List<CollateralCoverageViewModel>();
+            var currencies = context.TBL_CURRENCY.ToList();
+            var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
+            int companyId = facility.TBL_LOAN_APPLICATION.COMPANYID;
+            var baseCurrency = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
+            var baseCurrencyCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == baseCurrency).CURRENCYCODE;
+            int coveragePercentage = 0;
+            decimal collateralValue = 0;
+            decimal facilityAmount = 0;
+            decimal availableCollateralValue = 0;
+            decimal expectedCollateralCoverage = 0;
+            decimal coverageAlreadyAchieved = 0;
+            decimal remainingCoverageToCover = 0;
+            decimal actualCollateralCoverage = 0;
+            decimal totalCoverage = 0;
+
+            var collaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATERL
+                               join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                               join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
+                               join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
+                               //where x.LOANAPPLICATIONDETAILID == loanApplicationDetailId && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing && x.DELETED == false
+                               where x.LOANAPPLICATIONDETAILID == loanApplicationDetailId && x.DELETED == false
+                               orderby x.LOANAPPCOLLATERALID
+                               select new CollateralCoverageViewModel
+                               {
+                                   collateralId = x.COLLATERALCUSTOMERID,
+                                   collateralCode = c.COLLATERALCODE,
+                                   collateralValue = c.COLLATERALVALUE,
+                                   loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                                   actualCollateralCoverage = x.COLLATERALCOVERAGE,
+                                   collateralTypeId = a.COLLATERALTYPEID,
+                                   collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
+                                   collateralTypeName = a.COLLATERALTYPENAME,
+                                   facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(o => o.APPROVEDAMOUNT).Sum(),
+                                   facilityCurrencyCodeFcy = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).TBL_CURRENCY.CURRENCYCODE,
+                                   approvalStatusId = x.APPROVALSTATUSID,
+                                   currencyId = c.CURRENCYID,
+                               }).ToList();
+
+
+            if (collaterals == null) return new List<CollateralCoverageViewModel>();
+
+
+            foreach (var collateral in collaterals)
+            {
+
+
+                var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateral.collateralSubTypeId && o.CURRENCYID == collateral.currencyId).Select(o => o).FirstOrDefault();
+                if (data == null) continue;
+                //var facility = context.TBL_LOAN_APPLICATION_DETAIL.Find(collateral.loanApplicationDetailId);
+                var facilityExchangeRate = repo.GetExchangeRate(DateTime.Now, facility.CURRENCYID, facility.TBL_LOAN_APPLICATION.COMPANYID);
+                var collateralExchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, facility.TBL_LOAN_APPLICATION.COMPANYID);
+                var exchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, companyId);
+
+                coveragePercentage = data.COVERAGE;
+                decimal coverage = decimal.Divide(data.COVERAGE, 100);
+                collateralValue = collateral.collateralValue * (decimal)collateralExchangeRate.sellingRate;
+                facilityAmount = collateral.facilityAmount * (decimal)facilityExchangeRate.sellingRate;
+
+                var alreadyProposedFacilitiesForThisCollateral = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == collateral.collateralId && o.DELETED == false).Select(o => o).ToList();
+                var alreadyProposedCollateralsForThisFacility = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId && o.DELETED == false).Select(o => o).ToList();
+
+                availableCollateralValue = collateralValue;
+
+                availableCollateralValue = availableCollateralValue - alreadyProposedFacilitiesForThisCollateral.Sum(p => p.COLLATERALCOVERAGE);
+                expectedCollateralCoverage = decimal.Multiply(coverage, facilityAmount);
+                actualCollateralCoverage = collateral.actualCollateralCoverage;
+                totalCoverage = ((alreadyProposedCollateralsForThisFacility.Sum(c => c.COLLATERALCOVERAGE)) / facilityAmount) * 100;
+                var cov = new CollateralCoverageViewModel
+                {
+                    collateralSummary = collateral.collateralSummary,
+                    expectedCoveragePercentage = coveragePercentage,
+                    actualCoveragePercentage = ((actualCollateralCoverage / facilityAmount) * 100),
+                    loanApplicationDetailId = collateral.loanApplicationDetailId,
+                    collateralId = collateral.collateralId,
+                    collateralTypeId = collateral.collateralTypeId,
+                    collateralTypeName = collateral.collateralTypeName,
+                    collateralSubTypeId = collateral.collateralSubTypeId,
+                    collateralCode = collateral.collateralCode,
+                    collateralValue = collateralValue,
+                    currencyId = collateral.currencyId,
+                    collateralCurrencyCode = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYID == collateral.currencyId).CURRENCYCODE,
+                    facilityAmount = facilityAmount,
+                    facilityAmountFcy = collateral.facilityAmount,
+                    facilityCurrencyCodeFcy = collateral.facilityCurrencyCodeFcy,
+                    expectedCollateralCoverage = expectedCollateralCoverage,
+                    availableCollateralValue = availableCollateralValue,
+                    availableCollateralValueBaseAmount = availableCollateralValue * (decimal)exchangeRate.sellingRate,
+                    baseCurrencyCode = baseCurrencyCode,
+                    totalCoverage = totalCoverage,
+                    actualCollateralCoverage = actualCollateralCoverage,
+                    approvalStatusId = collateral.approvalStatusId,
+                    ReferenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                    productName = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_PRODUCT.PRODUCTNAME).FirstOrDefault(),
+                };
+
+                list.Add(cov);
+
+            }
+            return list.OrderByDescending(l => l.productName);
+        }
+
 
         public IEnumerable<CollateralViewModel> GetCustomerCollateralReport(string searchParam, int companyId)
         {

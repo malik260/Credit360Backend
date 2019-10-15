@@ -25,7 +25,7 @@
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
             private List<TBL_API_URL> APIUrlConfig;
-          //  private IIntegrationWithFinacle finacle;
+            //  private IIntegrationWithFinacle finacle;
 
             public TransactionPosting(FinTrakBankingContext _context)
             {
