@@ -921,7 +921,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -1003,7 +1003,16 @@ namespace FintrakBanking.Repositories.Credit
                                        outstandingPrincipal = a.OUTSTANDINGPRINCIPAL
 
                                    });
-            return allFilteredLoan.ToList();
+            try
+            {
+                var output = allFilteredLoan.ToList();
+
+                return output;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         
         private List<LoanViewModel> SearchLMSLoan(string searchQuery)
@@ -1347,7 +1356,7 @@ namespace FintrakBanking.Repositories.Credit
                         // where productTypeId.Contains(x.LOANSYSTEMTYPEID)
                     select new ProductType
                     {
-                        loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                        LOANSYSTEMTYPEID = x.LOANSYSTEMTYPEID,
                         loanSystemTypeName = x.LOANSYSTEMTYPENAME
                     }).ToList();
         }

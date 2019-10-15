@@ -29,7 +29,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANID { get; set; }
 
-        public int LOANSYSTEMTYPEID { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
 
         public int CUSTOMERID { get; set; }
 

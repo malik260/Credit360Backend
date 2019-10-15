@@ -245,7 +245,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string vehicleStatus { get; set; }
         public string vehicleMake { get; set; }
         public string modelName { get; set; }
-        public DateTime manufacturedDate { get; set; }
+        public DateTime? manufacturedDate { get; set; }
         public string registrationNumber { get; set; }
         public string serialNumber { get; set; }
         public string chasisNumber { get; set; }
@@ -780,7 +780,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? lastValuationAmount { get; set; }
         public decimal invoiceValue { get; set; }
         public string remark { get; set; }
-        public DateTime dateOfManufacture { get; set; }
+        public DateTime? dateOfManufacture { get; set; }
     }
 
     public class CollateralMiscellaneousViewModel
@@ -1076,6 +1076,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string currencyName { get; set; }
         public int collateralCoverageId { get; set; }
         public int collateralId { get; set; }
+        public string collateralTypeName { get; set; }
         public int collateralTypeId { get; set; }
         public decimal collateralValue { get; set; }
         public int customerId { get; set; }

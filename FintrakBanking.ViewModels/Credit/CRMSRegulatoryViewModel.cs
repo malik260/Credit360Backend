@@ -18,7 +18,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double tenor { get; set; }
         public DateTime effectiveDate { get; set; }
         public int loanId { get; set; }
-        public int loanSystemTypeId { get; set; }
+        public short loanSystemTypeId { get; set; }
         public LoansCount loansCount { get; set; }
         public int? crmsLegalStatusId { get; set; }
         public string operationName { get; set; }
@@ -30,7 +30,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string crmsCode { get; set; }
         public DateTime crmsDate { get; set; }
         public int loanId { get; set; }
-        public int loanSystemTypeId { get; set; }
+        public short LOANSYSTEMTYPEID { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public int templateTypeId { get; set; }
