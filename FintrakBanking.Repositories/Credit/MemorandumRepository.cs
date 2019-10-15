@@ -1,11 +1,13 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
+using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -138,6 +140,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string staffPersonalLoansAGMDataHolder = "@{{staffPersonalLoansAGMData}}";
         private readonly string staffPersonalLoanDataHolder = "@{{staffPersonalLoanData}}";
         private readonly string documentatonDeferralWaiverDataHolder = "@{{documentatonDeferralWaiverData}}";
+        //private readonly string OfferLetterForBondsAndGuaranteesDataHolder = "@{{offerLetterForBondsAndGuaranteesDataHolder}}";
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -289,6 +292,7 @@ namespace FintrakBanking.Repositories.Credit
         private string staffPersonalLoanData;
         private string temporaryOverdraftData;
         private string documentatonDeferralWaiverData;
+        //private string OfferLetterForBondsAndGuaranteesData;
 
         // init
         public bool Init(int operationId, int targetId, bool isDrawdwon = false) // feeder
@@ -2683,8 +2687,9 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(staffMortgageLoansDataHolder, staffMortgageLoansData);
             content = content.Replace(staffPersonalLoansAGMDataHolder, staffPersonalLoansAGMData);
             content = content.Replace(staffPersonalLoanDataHolder, staffPersonalLoanData);
-            content = content.Replace(temporaryOverdraftHolder, temporaryOverdraftData);
+            content = content.Replace(temporaryOverdraftHolder, temporaryOverdraftData); 
             content = content.Replace(documentatonDeferralWaiverDataHolder, documentatonDeferralWaiverData);
+            //content = content.Replace(OfferLetterForBondsAndGuaranteesDataHolder, OfferLetterForBondsAndGuaranteesData);
 
 
             return content;
@@ -7645,6 +7650,123 @@ namespace FintrakBanking.Repositories.Credit
 
             return dataLOS.Union(dataLMS);
         }
+
+        
+       //public string OfferLetterForBondsAndGuaranteesFormHtml(string applicationRefNumber)
+       // {
+       //     DateTime today = DateTime.Today;
+       //     var isInitialize = GenerateOfferLetter(applicationRefNumber);
+            
+       //      var result = String.Empty;
+       //     result = result + $@"
+       //         <br />
+       //        <p><strong>{today}</strong></p>
+       //         <br />
+       //        <p><strong>{isInitialize.offerLetterSalutation}</strong></p>
+       //        <p><strong>{isInitialize.offerLetterTitle}</strong></p>
+       //         <br />
+       //         <p align=justify>We refer to our various discussions on the above subject and are pleased to inform you that the Management of First City Monument Bank Plc has approved the issuance of Bank Guarantee(BG) on behalf of your Company under the following terms and conditions:</p>
+       //         <br>
+       //         <p>Issuer:  {isInitialize.companyName}</p>
+       //         <p>Applicant:  {isInitialize.customerName}</p>
+       //         <p>Beneficiary:  {isInitialize.customerName}</p>
+       //         <p>Type:  {isInitialize.loanType}</p>
+       //         <p>Amount:  {isInitialize.customerName}</p>
+       //         <p>Purpose:  {isInitialize.purpose}</p>
+       //         <p>Tenor:  {isInitialize.tenor}</p>
+       //         <p>Pricing:  {isInitialize.pricing}</p>
+       //         <p>Security:  <ol type=1>
+       //         <li>In line with approval and customer’s tier</li>
+       //         <li>Personal guarantee of the MD of XXXXXXXX supported with a statement of net worth</li>
+       //         <li>Counter Indemnity of XXXXXXXXXXXXXX in favour of FCMB Plc for the full value of the Guarantee.</li>
+       //         <li>Inchoate Legal Mortgage (where applicable)</li>
+       //         <li>Executed Letter of Set Off for the facility sum (where applicable)</li>
+       //         </ol></p>
+       //         <br>
+       //         <p><strong>Communication/Notification</strong></p>    
+       //         <ol type=a>
+       //         <li>Any communication to be made in connection with the facility shall be made in writing either by a letter delivered to the Applicant at its registered address, e-mail or by text message unless otherwise stated. </li>
+       //         <li>Any communication or document including notification of changes to the terms of this facility made or delivered to the Applicant in accordance with (a) above will be deemed to have been made and delivered to the applicant  </li>
+       //         <li>The bank’s lending rates are also published on the Bank’s website <a href=(www.firstcitygroup.com)></a> </li>
+       //         </ol>
+                
+       //         <br>
+       //         <p><strong>Conditions Precedent to Release</strong></p>    
+       //         <ol type=1>
+       //         <li>Receipt of the Company’s request letter. </li>
+       //         <li>Receipt and satisfactory review by the bank of: a)	Contract document for Payment Guarantee and Bank Guarantee </li>
+       //         <li>Lien on investment or any other security provided (where applicable). This must be  backed by the Cash Security Confirmation Form duly completed by the BHOP</li>
+       //         <li>Receipt of bond fee(in line with approval)</li>
+       //         </ol>
+                
+       //         <br>
+       //         <p><strong>Conditions Precedent to Release</strong></p>    
+       //         <ol type=1>
+       //         <li>Receipt of duly accepted Offer Letter signed by the authorized signatories of the Company accepting the Offer</li>
+       //         <li>Receipt of duly executed Board Resolution accepting the facility (where applicable). </li>
+       //         <li>Receipt of executed Personal Guarantee of the Company’s MD/CEO supported with statement of net worth.</li>
+       //         <li>Execution of all documents required for Inchoate Legal Mortgage (where applicable)</li>
+       //         <li>Receipt of Certificate of Pledge/Letter of Set Off for the full facility amount (where applicable) </li>
+       //         <li>Undated Acceptance letter and executed stepping-in right (where applicable) </li>
+       //         <li>Receipt of Form CO2 and CO7</li>
+       //         <li>Receipt of executed Guarantee Application form</li>
+       //         <li>Satisfactory credit checks. CRC,CRMS & XDS</li>
+       //         <li>Receipt of Duly Completed Loan Application Form (LAF)</li>
+       //         </ol>
+
+       //         <br>
+       //         <p><strong>Other conditions or covenants</strong></p>    
+       //         <ol type=1>
+       //         <li>All out-of-pocket expenses including registration, legal fees stamp duties and other fees and charges incurred by the Bank in the processing of this facility, enforcement of security and recovery of the facility in the event of default will be for the account of the Company.</li>
+       //         <li>The text of the performance bond must be acceptable to the bank and must not be open ended.</li>
+       //         <li>The Company shall submit periodic Certificate of Valuation to the Bank as shall be issued from time to time.</li>
+       //         <li>All proceeds from the contract shall be routed through the account of the Company with the bank.</li>
+       //         <li>In line with Clause 5.3 of the Guideline for the Licensing, Operations and Regulation of Credit Bureaus and Credit bureaus Related Transactions in Nigeria by Central Bank of Nigeria, the Bank hereby gives Notice to the Borrower of its duty to share information on the Borrower’s credit status and business history as may be required from time to time by Regulators</li>
+       //         <li>In the event that the bond crystallizes, the Bank will activate an overdraft back up line for the applicant, charge interest and a management fee, and the applicant would be liable to repay. Where any portion of principal and/or interest/fees thereon remains unpaid upon the expiration of these facilities, this offer/acceptance letter with all its attendant terms and conditions shall continue to be in force until full payout of the entire facility. However, this shall neither be deemed as regularization of any default that has occurred nor a waiver of the bank’s right to recall the facilities.</li>
+       //         </ol>
+       //         <br>
+       //         <p align=justify>The Bank reserves the right to review the facility from time to time in the light of changing market conditions and also to terminate this banking facility based on any adverse information threatening the basis of this relationship or putting the facility at the risk of loss and where the company is in breach of any of the terms and conditions of this facility.</p>
+       //         <p align=justify>The terms and conditions of this banking facility are subject to the Laws of the Federal Republic of Nigeria as prescribed from time to time.</p>
+       //         <p>We are pleased to have been able to arrange this facility for your company and hold same available for your acceptance until {today} after which it expires at the option of the Bank.</p>
+       //         <p>Kindly indicate your acceptance of the offer by appending your signature and affixing your Company seal on the attached copy of this offer letter.</p>
+       //         <p>Thank you.</p>
+       //         <br>
+       //         <p>Yours Faithfully, </p>
+       //         <p><strong>For:  FIRST CITY MONUMENT BANK PLC</strong></p>
+       //         <br><br>
+       //         <p></p>
+       //         <p><strong>XXXXXXX</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>XXXXXXX</strong></p>
+       //         <p><strong>ACCOUNT OFFICER</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>BRANCH MANAGER</strong></p>
+       //         <p align=center>Accepted for and on behalf of</p>
+       //         <p align=center>XXXXX</p>
+       //         <p align=center><strong>Accepted by and on behalf of</strong></p>
+       //         <p align=center><strong>(CUSTOMER NAME)</strong></p>
+            
+       //         <p><strong>……………………………….</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>……………………………….</strong></p>
+       //         <p><strong>Authorised Signatory</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Authorised Signatory</strong></p>
+                
+       //         <p><strong>Title:……………………………….</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Title:……………………………….</strong></p>
+                
+       //         <p><strong>Name:……………………………….</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Name:……………………………….</strong></p>
+                
+       //         <p><strong>Date:……………………………….</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Date:……………………………….</strong></p>
+                
+       //         <p><strong>Company’s E-mail:……………………………….</strong></p>
+                
+       //         <p><strong>Company’s Telephone number……………………………….</strong></p>";
+                        
+       //     return result;
+       // }
+
+        
+
+
+        
+
+        
+
+       
+
     }
 }
 
