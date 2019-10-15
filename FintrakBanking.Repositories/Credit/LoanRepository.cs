@@ -1230,7 +1230,7 @@ namespace FintrakBanking.Repositories.Credit
                 entity.loanScheduleInput.interestFrequency = null;
             }
 
-            entity.casaAccountId2 = entity.casaAccountId2 != 0 ? entity.casaAccountId2 : null;
+            entity.casaAccountId2 = (entity.casaAccountId2 == 0 || entity.casaAccountId2 == null) ? entity.casaAccountId : entity.casaAccountId2;
             //var repricingIndexId = entity.loanScheduleInput.repricingModeId != 0 ? entity.loanScheduleInput.repricingModeId :  null;
             //var repricingIndexDuration = entity.loanScheduleInput.repricingDuration != 0 ? entity.loanScheduleInput.repricingDuration : null;
 
@@ -1559,7 +1559,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTID = request.PRODUCTID,
                 COMPANYID = entity.companyId,
                 CASAACCOUNTID = entity.casaAccountId,
-                CASAACCOUNTID2 = entity.casaAccountId2,
+                CASAACCOUNTID2 = (entity.casaAccountId2 ==0 || entity.casaAccountId2 == null) ? entity.casaAccountId : entity.casaAccountId2,
                 BRANCHID = application.BRANCHID, //entity.branchId,
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,
                 RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
@@ -1854,7 +1854,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTID = request.PRODUCTID,
                 COMPANYID = entity.companyId,
                 CASAACCOUNTID = entity.casaAccountId,
-                CASAACCOUNTID2 = applicationDetail.CASAACCOUNTID,
+                CASAACCOUNTID2 = (entity.casaAccountId2 == 0 || entity.casaAccountId2 == null) ? entity.casaAccountId : entity.casaAccountId2,
                 NOSTROACCOUNTID = nostroAccountNumber,
                 NOSTRORATECODEID = entity.nostroRateCodeId,
                 NOSTRORATEAMOUNT = entity.nostroRateAmount,

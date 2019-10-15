@@ -289,7 +289,7 @@ namespace FintrakBanking.Repositories.Customer
 
                 value.ratioCaptionId = (short)item.FSCAPTIONID;
                 value.ratioCaptionName = item.FSCAPTIONNAME;
-                value.fsGroupCaption = item.TBL_CUSTOMER_FS_CAPTION_GROUP.FSCAPTIONGROUPNAME;
+                value.fsGroupCaption = item.TBL_CUSTOMER_FS_CAPTION_GROUP?.FSCAPTIONGROUPNAME;
                 value.fsDate1 = count >= 4 ? lastFourDates[count - 4] : new DateTime(1900, 1, 1);
                 value.fsDate2 = count >= 3 ? lastFourDates[count - 3] : new DateTime(1900, 1, 1);
                 value.fsDate3 = count >= 2 ? lastFourDates[count - 2] : new DateTime(1900, 1, 1);

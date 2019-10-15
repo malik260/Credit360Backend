@@ -175,6 +175,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
          [HttpPost] [ClaimsAuthorization]
         [Route("loan-disbursedloans")]            
         public HttpResponseMessage GetDisburstLoans(DateRange dateRange) 
@@ -293,9 +294,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var loanAppId = repo.GetLmsrApplicationIdByReferenceNumber(applicationRefNumber);
-                var data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
-                //var data = repo.GetGeneratedFORM3800BLMS(applicationRefNumber);
+                var data = repo.GetGeneratedFORM3800BLMS(applicationRefNumber);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -310,6 +309,30 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("form3800b-lms")]
+        //public HttpResponseMessage GetGeneratedForm3800bLMS(string applicationRefNumber)
+        //{
+        //    try
+        //    {
+        //        var loanAppId = repo.GetLmsrApplicationIdByReferenceNumber(applicationRefNumber);
+        //        var data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
+        //        //var data = repo.GetGeneratedFORM3800BLMS(applicationRefNumber);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = data });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
         [HttpGet]
         [ClaimsAuthorization]
