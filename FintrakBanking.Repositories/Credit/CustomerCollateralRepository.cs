@@ -125,11 +125,9 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 catch (Exception ex)
                 {
-
                     throw new SecureException("Error has occured while creating this collateral");
                 }
                 if (saved) { return collateralId; }
-
 
             }
 
@@ -3337,7 +3335,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainVehicle.INVOICEVALUE = entity.invoiceValue;
                     mainVehicle.ENGINENUMBER = entity.engineNumber;
                     mainVehicle.LASTVALUATIONAMOUNT = entity.lastValuationAmount;
-                    mainVehicle.MANUFACTUREDDATE = entity.manufacturedDate;
+                    mainVehicle.MANUFACTUREDDATE = entity.dateOfManufacture;
                     mainVehicle.MODELNAME = entity.modelName;
                     mainVehicle.NAMEOFOWNER = entity.nameOfOwner;
                     mainVehicle.REGISTRATIONCOMPANY = entity.registrationCompany;
@@ -3360,7 +3358,7 @@ namespace FintrakBanking.Repositories.Credit
                         INVOICEVALUE = entity.invoiceValue,
                         ENGINENUMBER = entity.engineNumber,
                         LASTVALUATIONAMOUNT = entity.lastValuationAmount,
-                        MANUFACTUREDDATE = entity.manufacturedDate,
+                        MANUFACTUREDDATE = entity.dateOfManufacture,
                         MODELNAME = entity.modelName,
                         NAMEOFOWNER = entity.nameOfOwner,
                         REGISTRATIONCOMPANY = entity.registrationCompany,
@@ -7185,7 +7183,8 @@ namespace FintrakBanking.Repositories.Credit
                         LIENAMOUNT = entity.lienAmount,
                         SECURITYVALUE = (decimal)entity.securityValue,
                         REMARK = entity.remark,
-                        ACCOUNTNAME = entity.accountName
+                        ACCOUNTNAME = entity.accountName,
+                        EXISTINGLIENAMOUNT = entity.existingLienAmount
                     });
                     comment = $"New Temp CASA collateral type has been created by {entity.createdBy} staffid";
                     workflow.StaffId = entity.createdBy;
