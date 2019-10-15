@@ -40,9 +40,9 @@ namespace FintrakBanking.Entities.Models
 
         public string EMAILADRRESS { get; set; }
 
-        public DateTime  STARTDATE { get; set; }
+        public DateTime?  STARTDATE { get; set; }
 
-        public DateTime  ENDDATE { get; set; }
+        public DateTime?  ENDDATE { get; set; }
 
         public string  REMARK { get; set; }
         public string  DESCRIPTION { get; set; }

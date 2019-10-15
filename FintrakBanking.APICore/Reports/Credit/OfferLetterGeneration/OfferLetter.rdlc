@@ -2779,21 +2779,6 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Image Name="Image1">
-            <Source>Embedded</Source>
-            <Value>logomain</Value>
-            <Sizing>FitProportional</Sizing>
-            <Top>0.02778in</Top>
-            <Left>4.95236in</Left>
-            <Height>0.48959in</Height>
-            <Width>1.93464in</Width>
-            <ZIndex>16</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Image>
           <Tablix Name="Tablix6">
             <TablixBody>
               <TablixColumns>
@@ -2934,13 +2919,27 @@
             <Left>0.18628in</Left>
             <Height>0.5in</Height>
             <Width>6.61739in</Width>
-            <ZIndex>17</ZIndex>
+            <ZIndex>16</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
+          <Image Name="Image1">
+            <Source>Embedded</Source>
+            <Value>logomain</Value>
+            <Sizing>FitProportional</Sizing>
+            <Left>5.0812in</Left>
+            <Height>0.5in</Height>
+            <Width>1.8058in</Width>
+            <ZIndex>17</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Image>
         </ReportItems>
         <Height>12.04306in</Height>
         <Style>

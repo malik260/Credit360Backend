@@ -453,8 +453,7 @@ namespace FintrakBanking.Repositories.Media
                             {
                                 documentCategoryId = x.DOCUMENTCATEGORYID,
                                 documentCategoryName = x.DOCUMENTCATEGORYNAME,
-                            })
-                            .ToList();
+                            }).OrderBy(l => l.documentCategoryName);
         }
 
         public IEnumerable<DocumentTypeViewModel> GetDocumentTypes(int id)
@@ -464,8 +463,7 @@ namespace FintrakBanking.Repositories.Media
                             {
                                 documentTypeId = x.DOCUMENTTYPEID,
                                 documentTypeName = x.DOCUMENTTYPENAME,
-                            })
-                            .ToList();
+                            }).OrderBy(l => l.documentTypeName);
         }
 
         public CustomerDocumentSearchViewModel GetCustomerDocuments(DocumentUploadViewModel model, UserInfo user)

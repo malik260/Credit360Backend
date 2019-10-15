@@ -2057,7 +2057,7 @@ namespace FintrakBanking.Repositories.Setups.General
             //if (groupId <= 0) groupId = 261;
             var levels = context.TBL_APPROVAL_LEVEL.Where(l => l.GROUPID == groupId).ToList();
             var currentPosition = levels.Find(l => l.STAFFROLEID == roleId)?.POSITION ?? 0;
-            var nextRoleId = levels.Find(l => l.POSITION == currentPosition + 1).STAFFROLEID;
+            var nextRoleId = levels.Find(l => l.POSITION == currentPosition + 1)?.STAFFROLEID ?? 0;
             return (int)nextRoleId;
         }
 

@@ -4299,9 +4299,9 @@ Remarks: ................................................</Value>
         <Source>Embedded</Source>
         <Value>logomain</Value>
         <Sizing>FitProportional</Sizing>
-        <Left>5.1859in</Left>
-        <Height>0.63542in</Height>
-        <Width>2.29089in</Width>
+        <Left>5.77003in</Left>
+        <Height>0.5in</Height>
+        <Width>1.8058in</Width>
         <ZIndex>40</ZIndex>
         <Style>
           <Border>
@@ -4313,7 +4313,7 @@ Remarks: ................................................</Value>
     <Height>23.35572in</Height>
     <Style />
   </Body>
-  <Width>7.47679in</Width>
+  <Width>7.57583in</Width>
   <Page>
     <PageFooter>
       <Height>1in</Height>
