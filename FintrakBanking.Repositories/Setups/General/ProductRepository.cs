@@ -3385,17 +3385,28 @@ namespace FintrakBanking.Repositories.Setups.General
                         mapToProductClass = p.MAPTOPRODUCTCLASS,
                         mapToProduct = p.MAPTOPRODUCT,
                         mapToOperation = p.MAPTOOPERATION,
+                        mapToSector = p.MAPTOSECTOR,
+                        mapToSubSector = p.MAPTOSUBSECTOR,
                         required = p.ISREQUIRED,
                         documentTypeId = p.DOCUMENTTYPEID,
                         documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                        sectorId = p.SECTORID,
+                        subSectorId = p.SUBSECTORID,
+                        
                         //productName = p.TBL_PRODUCT.PRODUCTNAME,
                         //productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME
                     }).ToList();
 
             foreach (var mapping in mappings)
             {
+                mapping.sectorName = context.TBL_SECTOR.FirstOrDefault(s => s.SECTORID == mapping.sectorId)?.NAME;
+                mapping.subSectorName = context.TBL_SUB_SECTOR.FirstOrDefault(s => s.SUBSECTORID == mapping.subSectorId)?.NAME;
                 mapping.productName = products.FirstOrDefault(p => p.PRODUCTID == mapping?.productId)?.PRODUCTNAME;
                 mapping.productClassName = productClasses.FirstOrDefault(p => p.PRODUCTCLASSID == mapping?.productClassId)?.PRODUCTCLASSNAME;
+                mapping.sectorName = mapping.sectorName == null ? "N/A" : mapping.sectorName;
+                mapping.subSectorName = mapping.subSectorName == null ? "N/A" : mapping.subSectorName;
+                mapping.productName = mapping.productName == null ? "N/A" : mapping.productName;
+                mapping.productClassName = mapping.productClassName == null ? "N/A" : mapping.productClassName;
             }
 
             return mappings;
@@ -3404,7 +3415,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddProductDocumentMapping(ProductDocumentMappingViewModel model)
         {
-            if (model.mapToProductClass == false && model.mapToProduct == false)
+            if (model.mapToProductClass == false && model.mapToProduct == false && model.mapToSector == false && model.mapToSubSector == false)
             {
                 throw new SecureException("Please select an item to map to!");
             }
@@ -3416,9 +3427,13 @@ namespace FintrakBanking.Repositories.Setups.General
                 PRODUCTCLASSID = model.productClassId,
                 OPERATIONID = model.operationId,
                 MAPTOPRODUCTCLASS = model.mapToProductClass,
+                MAPTOSECTOR = model.mapToSector,
+                MAPTOSUBSECTOR = model.mapToSubSector,
                 MAPTOPRODUCT = model.mapToProduct,
                 MAPTOOPERATION = model.mapToOperation,
                 ISREQUIRED = model.required,
+                SECTORID = model.sectorId,
+                SUBSECTORID = model.subSectorId,
                 DOCUMENTTYPEID=model.documentTypeId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = DateTime.Now,
@@ -3459,9 +3474,13 @@ namespace FintrakBanking.Repositories.Setups.General
             entity.DATETIMEUPDATED = DateTime.Now;
             entity.PRODUCTID = model.productId;
             entity.PRODUCTCLASSID = model.productClassId;
+            entity.SECTORID = model.sectorId;
+            entity.SUBSECTORID = model.subSectorId;
             entity.OPERATIONID = model.operationId;
             entity.MAPTOPRODUCTCLASS = model.mapToProductClass;
             entity.MAPTOPRODUCT = model.mapToProduct;
+            entity.MAPTOSECTOR = model.mapToSector;
+            entity.MAPTOSUBSECTOR = model.mapToSubSector;
             entity.MAPTOOPERATION = model.mapToOperation;
             entity.DOCUMENTTYPEID = model.documentTypeId;
             entity.LASTUPDATEDBY = model.createdBy;
@@ -3481,10 +3500,14 @@ namespace FintrakBanking.Repositories.Setups.General
                     mapToProductClass = x.MAPTOPRODUCTCLASS,
                     mapToProduct = x.MAPTOPRODUCT,
                     mapToOperation = x.MAPTOOPERATION,
+                    mapToSector = x.MAPTOSECTOR,
+                    mapToSubSector = x.MAPTOSUBSECTOR,
                     productDocMapId = x.PRODUCTDOCMAPID,
                     documentCategoryId = x.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
                     documentCategoryName = x.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                    documentTypeId = x.TBL_DOCUMENT_TYPE.DOCUMENTTYPEID
+                    documentTypeId = x.TBL_DOCUMENT_TYPE.DOCUMENTTYPEID,
+                    sectorId = x.SECTORID,
+                    subSectorId = x.SUBSECTORID
 
                 }).FirstOrDefault();
 

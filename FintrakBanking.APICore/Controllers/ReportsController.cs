@@ -269,9 +269,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var loanAppId = repo.GetLoanApplicationIdByReferenceNumber(applicationRefNumber);
-                var data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
-                //var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
+                //var loanAppId = repo.GetLoanApplicationIdByReferenceNumber(applicationRefNumber);
+                //var data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
+                var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

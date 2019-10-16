@@ -98,7 +98,15 @@ namespace FintrakBanking.Repositories.Finance
             {
                 var account = context.TBL_CASA.FirstOrDefault(x => x.PRODUCTACCOUNTNUMBER == accountNumber && x.COMPANYID == companyId);
                 if (account != null)
-                    return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID, currencyId = account.CURRENCYID, accountNo = account.PRODUCTACCOUNTNUMBER, accountName = account.PRODUCTACCOUNTNAME, hasBalance = true };
+                    return new CasaBalanceViewModel {
+                        availableBalance = account.AVAILABLEBALANCE,
+                        ledgerBalance = account.LEDGERBALANCE,
+                        accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID,
+                        currencyId = account.CURRENCYID,
+                        accountNo = account.PRODUCTACCOUNTNUMBER,
+                        accountName = account.PRODUCTACCOUNTNAME,
+                        hasBalance = true,
+                        isCasaAccountDetailAvailable = account.AVAILABLEBALANCE > 0 ? true : false };
                 else
                     return data;
             }
