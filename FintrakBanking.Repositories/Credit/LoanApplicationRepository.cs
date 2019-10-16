@@ -4726,7 +4726,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 workflow.StaffId = data.createdBy;
                 workflow.CompanyId = data.companyId;
-                workflow.StatusId = (short)data.approvalStatusId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = data.tempApplicationCancellationId;
                 workflow.Comment = data.comment;
                 workflow.OperationId = (int)OperationsEnum.LoanApplicationCancellation;

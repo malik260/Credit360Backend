@@ -24,6 +24,8 @@ namespace FintrakBanking.Entities.DocumentModels
         public bool MAPTOPRODUCTCLASS { get; set; }
         public bool MAPTOPRODUCT { get; set; }
         public bool MAPTOOPERATION { get; set; }
+        public bool MAPTOSUBSECTOR { get; set; }
+        public bool  MAPTOSECTOR { get; set; }
         public bool ISREQUIRED { get; set; }
 
         public int CREATEDBY { get; set; }
@@ -33,6 +35,8 @@ namespace FintrakBanking.Entities.DocumentModels
         public DateTime DATETIMEUPDATED { get; set; }
         [ForeignKey("TBL_DOCUMENT_TYPE")]
         public int DOCUMENTTYPEID { get; set; }
+        public int? SECTORID { get; set; }
+        public int? SUBSECTORID { get; set; }
 
         public DateTime DATETIMEDELETED { get; set; }
         public bool DELETED { get; set; }
