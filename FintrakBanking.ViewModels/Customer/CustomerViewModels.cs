@@ -84,7 +84,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string relationshipOfficerName { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public short politicallyExposedPerson { get; set; }
-        
+
         public string misCode { get; set; }
         public string misStaff { get; set; }
         public int approvalStatus { get; set; }
@@ -137,7 +137,7 @@ namespace FintrakBanking.ViewModels.Customer
         //public string companyDirectorTypeName { get; set; }
         public string address { get; set; }
         public string phoneNumber { get; set; }
-       
+
 
         public int customerId { get; set; }
         public string customerCode { get; set; }
@@ -262,14 +262,14 @@ namespace FintrakBanking.ViewModels.Customer
         public string propertyOriginalValue { get; set; }
         public string propertyCurrentValue { get; set; }
     }
-        public class CustomerRelatedDirectorViewModel
-        {
-            public int customerId { get; set; }
-            public string customerName { get; set; }
-            public short? customerTypeId { get; set; }
-            public string customerTypeName { get; set; }
-            public short? directorTypeId { get; set; }
-            public string directorTypeName { get; set; }
+    public class CustomerRelatedDirectorViewModel
+    {
+        public int customerId { get; set; }
+        public string customerName { get; set; }
+        public short? customerTypeId { get; set; }
+        public string customerTypeName { get; set; }
+        public short? directorTypeId { get; set; }
+        public string directorTypeName { get; set; }
         public string customerCode { get; set; }
         //  public int customerTypeId { get; set; }
         //  public string customerTypeName { get; set; }
@@ -280,10 +280,11 @@ namespace FintrakBanking.ViewModels.Customer
     // REST API VIEW MODELS FOR CLIENT INPUT
     //=================================================================================================================================================================
     //=================================================================================================================================================================
-    public class IncomingCustomerViewModels 
+    public class IncomingCustomerViewModels
     {
 
         public string customerType { get; set; }
+        public string request_Id { get; set; }
         public ApiCustomerBusinessDetailsViewModel corporateCustomerInformation { get; set; }
         public ApiIndividualCustomerDetails individualCustomerInformation { get; set; }
         public List<ApiAddressesViewModel> customerAddresses { get; set; }
@@ -558,7 +559,7 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class ApiEmploymentHistoryViewModel
     {
-        public string EmployerType {get; set;} //E.g. Self Employed, Other Employer
+        public string EmployerType { get; set; } //E.g. Self Employed, Other Employer
         public string employerName { get; set; }
         public string employerAddress { get; set; }
         public string employerCountry { get; set; }
@@ -588,7 +589,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string cityORTown { get; set; }
         public string phoneNumber { get; set; }
         public string address { get; set; }
-        public string nearestLandmark {get; set;}
+        public string nearestLandmark { get; set; }
         public List<ApiInsiderRelatedViewModel> insiderRelatedList { get; set; }
     }
 
@@ -597,6 +598,55 @@ namespace FintrakBanking.ViewModels.Customer
         public string creditBureauType { get; set; }
         public string reportFileDateinPDF { get; set; }
         public string reportStatus { get; set; }                        //(positive = 1, Negative =0)
+    }
+
+    public class CflLoanApplication : GeneralEntity
+    {
+        public string requestId { get; set; }
+        public string applicationDate { get; set; }
+
+        public string accountOfficerStaffCode { get; set; }
+
+        public string relationshipManagerStaffCode { get; set; }
+
+        public string productCode { get; set; }
+
+        public string tenor { get; set; }
+
+        public string loanAmount { get; set; }
+
+        public string interestRate { get; set; }
+
+        public string currencyCode { get; set; }
+
+        public string priceIndex { get; set; }
+
+        public string fundingSource { get; set; }
+
+        public string repaymentSource { get; set; }
+
+        public string purpose { get; set; }
+
+        public string settlementAccount { get; set; }
+
+        public string sectorCode { get; set; }
+
+        public string subSector { get; set; }
+
+        public string exchangeRate { get; set; }
+
+        public string repaymentTerm { get; set; }
+        public List<applicationDocument> loanApplicationFiles  { get; set; }
+
+
+}
+
+    public class applicationDocument
+    {
+        public string fileData { get; set; }
+        public string fileExtension { get; set; }
+        public string caption { get; set; }
+        public string contentDescription { get; set; }
     }
 
     public class APIResponse

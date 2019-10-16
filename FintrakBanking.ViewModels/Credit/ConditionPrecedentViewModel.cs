@@ -40,6 +40,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int checklistDifinitionId { get; set; }
         public int? operationId { get; set; }
         public bool isCheckListSpecific { get; set; }
+        public string comment { get; set; }
     }
 
     public class TransactionDynamicsViewModel : GeneralEntity

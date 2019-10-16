@@ -333,6 +333,18 @@ namespace FintrakBanking.Repositories.Credit
             return itemExist;
         }
 
+        public APIResponse submitRequest(CflLoanApplication model)
+        {
+            APIResponse response = new APIResponse();
+            var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == model.productCode).FirstOrDefault();
+
+            if (product == null) { return fireResponse("Product Code does not exist", "99"); }
+            if (model.requestId == null) { return fireResponse("Missing application unique indentifier", "99"); }
+
+
+            return response;
+        }
+
         private void validateCustomerDetails(IncomingCustomerViewModels entity)
         {
             

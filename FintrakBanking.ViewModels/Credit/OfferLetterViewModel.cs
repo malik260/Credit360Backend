@@ -8,6 +8,12 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class OfferLetterViewModel : GeneralEntity
     {
+        public string purpose;
+        public decimal amount;
+        public int tenor;
+        public string loanType;
+        public string pricing;
+
         public int customerId { get; set; }
         public string customerName { get; set; }
         public string customerAddress { get; set; }

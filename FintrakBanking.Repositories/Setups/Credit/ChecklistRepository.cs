@@ -1468,6 +1468,7 @@ namespace FintrakBanking.Repositories.Credit
                                      checkListStatusId = c.CHECKLISTSTATUSID,
                                      validationStatus = c.CHECKLISTVALIDATED,
                                      approvalStatusId = c.APPROVALSTATUSID,
+                                     deferedDate = c.DEFEREDDATE,
                                      approvalStatus = "New",
                                      operationId = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.OPERATIONID,
                                      customerId = c.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,
@@ -1495,6 +1496,7 @@ namespace FintrakBanking.Repositories.Credit
                                      checkListValidated = c.CHECKLISTVALIDATED,
                                      approvalStatusId = c.APPROVALSTATUSID,
                                      approvalStatus = "New",
+                                     deferedDate =c.DEFEREDDATE
 
                                  }).ToList();
                 return condition;
@@ -1506,8 +1508,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
                               join a in context.TBL_LOAN_APPLICATION_DETAIL on c.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                              join d in context.TBL_LOAN_CONDITION_DEFERRAL on c.LOANCONDITIONID equals d.LOANCONDITIONID
                               where a.LOANAPPLICATIONID == loanApplicationId &&
-                             c.ISSUBSEQUENT == false && a.STATUSID == (int)ApprovalStatusEnum.Approved
+                                c.ISSUBSEQUENT == false && a.STATUSID == (int)ApprovalStatusEnum.Approved
+                                && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                               orderby c.ISEXTERNAL descending
                               select new ConditionPrecedentViewModel()
                               {
@@ -1520,8 +1524,9 @@ namespace FintrakBanking.Repositories.Credit
                                   validationStatus = c.CHECKLISTVALIDATED,
                                   approvalStatusId = c.APPROVALSTATUSID,
                                  // checklistDifinitionId = context.TBL_CHECKLIST_DETAIL.Where(o=>o.TARGETID== a.LOANAPPLICATIONDETAILID).Select(o=>o.CHECKLISTDEFINITIONID).FirstOrDefault(),
-                                  isExternal = c.ISEXTERNAL
-
+                                  isExternal = c.ISEXTERNAL,
+                                  deferedDate = c.DEFEREDDATE,
+                                  comment = d.DEFERRALREASON
                               }).ToList();
 
 
@@ -1531,10 +1536,12 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var status1NotStarted = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                                          where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId &&
-                                           c.CHECKLISTSTATUSID != null
-                                           && (c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
-                                          orderby c.ISEXTERNAL descending
+                                            join d in context.TBL_LOAN_CONDITION_DEFERRAL on c.LOANCONDITIONID equals d.LOANCONDITIONID
+                                            where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId &&
+                                            c.CHECKLISTSTATUSID != null
+                                            && (c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                                            && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                                         orderby c.ISEXTERNAL descending
                                           select new ConditionPrecedentViewModel()
                                           {
                                               condition = c.CONDITION,
@@ -1546,6 +1553,7 @@ namespace FintrakBanking.Repositories.Credit
                                               validationStatus = c.CHECKLISTVALIDATED,
                                               isExternal = c.ISEXTERNAL,
                                               approvalStatusId = c.APPROVALSTATUSID,
+                                              comment = d.DEFERRALREASON
                                           }).ToList();
 
                 var status2InProgress = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
@@ -1568,6 +1576,7 @@ namespace FintrakBanking.Repositories.Credit
                                              isExternal = c.ISEXTERNAL,
                                              approvalStatusId = t.APPROVALSTATUSID,
                                              approvalTrailId = t.APPROVALTRAILID,
+                                             comment = t.COMMENT
                                          }).GroupBy(c => c.conditionId).Select(c => c.OrderByDescending(l => l.approvalTrailId).FirstOrDefault())
                                            .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                                             || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
@@ -1744,8 +1753,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model)
         {
             int loanConditionId = 0;
-            if (model.deferedDays != null)
-                model.deferedDate = DateTime.Now.AddDays((int) model.deferedDays);
+            //if (model.deferedDays != null)
+            //    model.deferedDate = DateTime.Now.AddDays((int) model.deferedDays);
 
             if (model.isLMSChecklist == true)
             {
