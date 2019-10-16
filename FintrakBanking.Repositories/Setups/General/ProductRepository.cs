@@ -3375,27 +3375,27 @@ namespace FintrakBanking.Repositories.Setups.General
             var mappings = (from p in docContext.TBL_DOC_MAPPING
                             where p.DELETED == false
                             select new ProductDocumentMappingViewModel()
-                    {
-                        productDocMapId = p.PRODUCTDOCMAPID,
-                        documentCategoryId = p.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
-                        documentCategoryName = p.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                        productId = p.PRODUCTID,
-                        productClassId = p.PRODUCTCLASSID,
-                        operationId = p.OPERATIONID,
-                        mapToProductClass = p.MAPTOPRODUCTCLASS,
-                        mapToProduct = p.MAPTOPRODUCT,
-                        mapToOperation = p.MAPTOOPERATION,
-                        mapToSector = p.MAPTOSECTOR,
-                        mapToSubSector = p.MAPTOSUBSECTOR,
-                        required = p.ISREQUIRED,
-                        documentTypeId = p.DOCUMENTTYPEID,
-                        documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
-                        sectorId = p.SECTORID,
-                        subSectorId = p.SUBSECTORID,
-                        
-                        //productName = p.TBL_PRODUCT.PRODUCTNAME,
-                        //productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME
-                    }).ToList();
+                            {
+                                productDocMapId = p.PRODUCTDOCMAPID,
+                                documentCategoryId = p.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                                documentCategoryName = p.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                                productId = p.PRODUCTID,
+                                productClassId = p.PRODUCTCLASSID,
+                                operationId = p.OPERATIONID,
+                                mapToProductClass = p.MAPTOPRODUCTCLASS,
+                                mapToProduct = p.MAPTOPRODUCT,
+                                mapToOperation = p.MAPTOOPERATION,
+                                mapToSector = p.MAPTOSECTOR,
+                                mapToSubSector = p.MAPTOSUBSECTOR,
+                                required = p.ISREQUIRED,
+                                documentTypeId = p.DOCUMENTTYPEID,
+                                documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                                sectorId = p.SECTORID,
+                                subSectorId = p.SUBSECTORID,
+
+                                //productName = p.TBL_PRODUCT.PRODUCTNAME,
+                                //productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME
+                            }).ToList();
 
             foreach (var mapping in mappings)
             {
