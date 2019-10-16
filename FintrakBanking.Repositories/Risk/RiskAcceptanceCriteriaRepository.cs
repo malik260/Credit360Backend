@@ -82,7 +82,7 @@ namespace FintrakBanking.Repositories.Risk
             }
             else if (model.searchBasePlaceholder == "CREDITCARD")
             {
-                var localCurrencyId = context.TBL_COMPANY.FirstOrDefault().CURRENCYID;
+                var localCurrencyId = context.TBL_COMPANY.FirstOrDefault()?.CURRENCYID ?? 0;
                 racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.CURRENCYTYPE == model.currencyType
                                                             && (
                                                                 (x.CURRENCYTYPE == "LCY" && model.currencyId == localCurrencyId && model.currencyId != null)
@@ -96,6 +96,7 @@ namespace FintrakBanking.Repositories.Risk
                                                             && x.ISACTIVE == true && x.DELETED == false).ToList();
             }
 
+            if (racDefinition.Count() <= 0) return null;
 
             categoryIds.AddRange(racDefinition.Select(x => x.RACCATEGORYID).ToList());
 

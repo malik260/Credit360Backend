@@ -95,7 +95,7 @@ namespace FintrakBanking.APICore.Filters
 
             context.TBL_MESSAGE_LOG.Add(message);
 
-            context.SaveChanges();
+           context.SaveChanges();
         }
 
         private async Task LogUnhandledExceptionAsyncOld(HttpActionExecutedContext httpContext)
