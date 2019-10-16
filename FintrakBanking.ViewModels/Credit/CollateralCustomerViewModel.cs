@@ -1082,6 +1082,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public decimal facilityAmount { get; set; }
         public decimal facilityAmountFcy { get; set; }
+        public decimal collateralValueFcy { get; set; }
         public string facilityCurrencyCodeFcy { get; set; }
         public int facilityCurrencyId { get; set; }
         public int loanApplicationId { get; set; }
