@@ -2356,15 +2356,15 @@ namespace FintrakBanking.Repositories.Credit
             { ++n;
                 var c = d.FirstOrDefault();
                 var currCode = currencies.FirstOrDefault(cu => cu.CURRENCYID == c.currencyId).CURRENCYCODE;
-                var rate = financeTransaction.GetExchangeRate(DateTime.Now, (short)c.currencyId, loanApplication.COMPANYID);
-                var baseCollateralValue = c.collateralValue * (decimal)rate.sellingRate;
-                totalCollateralValue += baseCollateralValue;
+                //var rate = financeTransaction.GetExchangeRate(DateTime.Now, (short)c.currencyId, loanApplication.COMPANYID);
+                //var baseCollateralValue = c.collateralValue * (decimal)rate.sellingRate;
+                totalCollateralValue += c.collateralValue;
                 result = result + $@"
                     <tr>
                         <td>{n}</td>
                         <td>{c.collateralSummary}</td>
-                        <td>{currCode + " " + String.Format("{0:0,0.00}", c.collateralValue)}</td>
-                        <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", baseCollateralValue)}</td>
+                        <td>{currCode + " " + String.Format("{0:0,0.00}", c.collateralValueFcy)}</td>
+                        <td>{baseCurrencyCode + " " + String.Format("{0:0,0.00}", c.collateralValue)}</td>
                     </tr>
                 ";
             }
