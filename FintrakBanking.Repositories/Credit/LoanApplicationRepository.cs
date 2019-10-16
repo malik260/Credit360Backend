@@ -5004,6 +5004,8 @@ namespace FintrakBanking.Repositories.Credit
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
                             proposedAmount = b.PROPOSEDAMOUNT,
+                            sectorId = (short)b.TBL_SUB_SECTOR.SECTORID,
+                            subSectorId = b.SUBSECTORID,
                             approvedProductName = context.TBL_PRODUCT.Where(o=>o.PRODUCTID==b.APPROVEDPRODUCTID).Select(o=>o.PRODUCTNAME).FirstOrDefault(),
 
                             //requireCollateral = a.REQUIRECOLLATERAL,
