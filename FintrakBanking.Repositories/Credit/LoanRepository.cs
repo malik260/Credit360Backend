@@ -38,7 +38,6 @@ using FintrakBanking.ViewModels.Setups.Credit;
 
 namespace FintrakBanking.Repositories.Credit
 {
-
     public class LoanRepository : ILoanRepository
     {
         private FinTrakBankingContext context;
@@ -14819,8 +14818,6 @@ namespace FintrakBanking.Repositories.Credit
             };
             return data;
         }
-
-
 
 
     }

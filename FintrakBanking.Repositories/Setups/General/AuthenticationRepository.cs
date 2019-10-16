@@ -238,6 +238,16 @@ namespace FintrakBanking.Repositories.Setups.General
                     errorMessage = "",
                 };
 
+            int corrMatrixId = 0;// corrMatrix.id;
+            string corrMatrixDescription = "";// corrMatrix.description;
+            _creditOfficerRisk = new CreditOfficerRiskRepository(context);
+            MatrixGrid corrMatrix = _creditOfficerRisk.GetCreditOfficerRiskRating(username);
+            if (corrMatrix.id > 0)
+            {
+                corrMatrixId = corrMatrix.id;
+                corrMatrixDescription = corrMatrix.description;
+            }
+
             var user = db.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username);
 
             if (user != null)
@@ -259,7 +269,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                 branchId = st.BRANCHID.Value,
                                 countryId = coy.COUNTRYID,
                                 branchName = br.BRANCHNAME,
-                                companyName = coy.NAME
+                                companyName = coy.NAME,
+                                corrMatrixDescription = corrMatrixDescription,
+                                corrMatrixId = corrMatrixId
                             }).FirstOrDefault();
 
                 if (data == null)

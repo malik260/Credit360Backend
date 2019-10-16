@@ -43,7 +43,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                 if (res.ToLower().Contains("successful"))
                     output.authenticated = true;
                 else
+                {
                     output.authenticated = false;
+                    output.message = "Two Factor Authentication Failed.";
+                }
+                    
+
 
                 if(staffCode != null)
                 {

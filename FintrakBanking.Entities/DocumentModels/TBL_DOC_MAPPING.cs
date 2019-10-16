@@ -38,7 +38,7 @@ namespace FintrakBanking.Entities.DocumentModels
         public int? SECTORID { get; set; }
         public int? SUBSECTORID { get; set; }
 
-        public DateTime DATETIMEDELETED { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
         public bool DELETED { get; set; }
         public virtual TBL_DOCUMENT_TYPE TBL_DOCUMENT_TYPE { get; set; }
         //public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
