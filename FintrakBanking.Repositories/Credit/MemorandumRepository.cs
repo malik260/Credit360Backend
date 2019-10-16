@@ -478,9 +478,10 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
                     this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
+                
                     //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
                     //this.customerExposure = CustomerExposureMarkup();
-                }
+            }
                 //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
                 string customerName = String.Empty;
                 if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
