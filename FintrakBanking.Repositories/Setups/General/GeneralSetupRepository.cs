@@ -101,7 +101,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         lookupId = data.SECTORID ,
                         lookupName = data.NAME  
-                    }).ToList();
+                    }).OrderBy(l => l.lookupName).ToList();
         }
 
         //public IEnumerable<LookupViewModel> GetAllSectors ()
@@ -116,14 +116,14 @@ namespace FintrakBanking.Repositories.Setups.General
         //            });
         //}
 
-        public IEnumerable<LookupViewModel> GetSubsector( )
+        public IEnumerable<LookupViewModel> GetSubsector()
         {
             return (from data in context.TBL_SUB_SECTOR 
                     select new LookupViewModel()
                     {
                         lookupId = data.SUBSECTORID,
                         lookupName = data.NAME
-                    });
+                    }).OrderBy(l => l.lookupName);
         }
 
         public IEnumerable<LookupViewModel> GetAllCustomerType()
@@ -285,7 +285,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             sectorId = cs.TBL_SECTOR.SECTORID,
                             sectorName = cs.NAME,
                             sectorCode = cs.CODE,
-                        }).Distinct();
+                        }).Distinct().OrderBy(s => s.sectorName);
 
             return data;
         }

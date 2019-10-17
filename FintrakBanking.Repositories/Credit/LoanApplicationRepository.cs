@@ -2016,7 +2016,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue <= definition.CONTROLAMOUNT;
                         else return decimalValue != ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     case 7:
-                        if (definition.DEFINEDFUNCTIONID == 1) return (decimalValue >= definition.CONTROLAMOUNT && decimalValue <= definition.CONTROLAMOUNT);
+                        if (definition.DEFINEDFUNCTIONID == 1) return (decimalValue >= definition.CONTROLAMOUNT && decimalValue <= definition.CONTROLAMOUNTMAX);
                         else return decimalValue != ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     default:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue == definition.CONTROLAMOUNT;
@@ -4726,7 +4726,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 workflow.StaffId = data.createdBy;
                 workflow.CompanyId = data.companyId;
-                workflow.StatusId = (short)data.approvalStatusId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = data.tempApplicationCancellationId;
                 workflow.Comment = data.comment;
                 workflow.OperationId = (int)OperationsEnum.LoanApplicationCancellation;
@@ -5004,6 +5004,8 @@ namespace FintrakBanking.Repositories.Credit
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
                             proposedAmount = b.PROPOSEDAMOUNT,
+                            sectorId = (short)b.TBL_SUB_SECTOR.SECTORID,
+                            subSectorId = b.SUBSECTORID,
                             approvedProductName = context.TBL_PRODUCT.Where(o=>o.PRODUCTID==b.APPROVEDPRODUCTID).Select(o=>o.PRODUCTNAME).FirstOrDefault(),
 
                             //requireCollateral = a.REQUIRECOLLATERAL,

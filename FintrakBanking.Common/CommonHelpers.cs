@@ -10,9 +10,15 @@ using System.Web;
 using System.Data.Entity;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Common.Enum;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.Net;
+using Microsoft.Win32;
+using System.Management;
 
 namespace FintrakBanking.Common
 {
+    
     public static class CommonHelpers
     {
         /// <summary>
@@ -22,8 +28,9 @@ namespace FintrakBanking.Common
         /// <returns></returns>
         /// 
         private static FinTrakBankingContext context;
+        private static ManagementObjectSearcher baseboardSearcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_BaseBoard");
+        private static ManagementObjectSearcher motherboardSearcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_MotherboardDevice");
 
-      
         public static string FormatDate(DateTime date)
         {
             return date.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
@@ -539,5 +546,109 @@ namespace FintrakBanking.Common
             operations.Add((short)OperationsEnum.OverdraftInterestRate);
             return operations;
         }
+
+        public static string GetLocalIpAddress()
+        {
+            UnicastIPAddressInformation mostSuitableIp = null;
+
+            var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+
+            foreach (var network in networkInterfaces)
+            {
+                if (network.OperationalStatus != OperationalStatus.Up)
+                    continue;
+
+                var properties = network.GetIPProperties();
+
+                if (properties.GatewayAddresses.Count == 0)
+                    continue;
+
+                foreach (var address in properties.UnicastAddresses)
+                {
+                    if (address.Address.AddressFamily != AddressFamily.InterNetwork)
+                        continue;
+
+                    if (IPAddress.IsLoopback(address.Address))
+                        continue;
+
+                    if (!address.IsDnsEligible)
+                    {
+                        if (mostSuitableIp == null)
+                            mostSuitableIp = address;
+                        continue;
+                    }
+
+                    // The best IP is the IP got from DHCP server
+                    if (address.PrefixOrigin != PrefixOrigin.Dhcp)
+                    {
+                        if (mostSuitableIp == null || !mostSuitableIp.IsDnsEligible)
+                            mostSuitableIp = address;
+                        continue;
+                    }
+
+                    return address.Address.ToString();
+                }
+            }
+
+            return mostSuitableIp != null
+                ? mostSuitableIp.Address.ToString()
+                : "";
+        }
+
+        public static string HKLM_GetString(string path, string key)
+        {
+            try
+            {
+                RegistryKey rk = Registry.LocalMachine.OpenSubKey(path);
+                if (rk == null) return "";
+                return (string)rk.GetValue(key);
+            }
+            catch { return ""; }
+        }
+
+        public static string FriendlyName()
+        {
+            string ProductName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
+            string CSDVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CSDVersion");
+            if (ProductName != "")
+            {
+                return (ProductName.StartsWith("Microsoft") ? "" : "Microsoft ") + ProductName +
+                            (CSDVersion != "" ? " " + CSDVersion : "");
+            }
+            return "";
+        }
+
+        //public static string GetDeviceName()
+        //{
+        //    ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
+        //    ManagementObjectCollection moc = mc.GetInstances();
+        //    String info = String.Empty;
+        //    foreach (ManagementObject mo in moc)
+        //    {
+        //        info = mo.Properties["Name"].Value.ToString(); //(string)mo["Name"];
+        //        //mo.Properties["Name"].Value.ToString();
+        //        //break;
+        //    }
+        //    return info;
+        //}
+
+        public static string GetDeviceName()
+        {
+          
+             try
+               {
+                 foreach (ManagementObject queryObj in baseboardSearcher.Get())
+                     {
+                            return queryObj["Manufacturer"].ToString();
+                      }
+                        return "";
+                    }
+                    catch (Exception e)
+                    {
+                        return "";
+                    }
+              
+        }
+
     }
 }

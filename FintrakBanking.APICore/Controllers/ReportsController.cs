@@ -269,9 +269,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var loanAppId = repo.GetLoanApplicationIdByReferenceNumber(applicationRefNumber);
-                var data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
-                //var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
+                //var loanAppId = repo.GetLoanApplicationIdByReferenceNumber(applicationRefNumber);
+                //var data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
+                var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -2583,6 +2583,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-drawdown-memo-pdf/{referenceNumber}")]
+        public HttpResponseMessage GetDrawdownMemoPdf([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = repo.DrawdownReport(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }

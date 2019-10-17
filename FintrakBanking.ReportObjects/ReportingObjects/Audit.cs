@@ -44,6 +44,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     url = _audit.URL,
                     branchName = b.BRANCHNAME,
                     ipAddress = _audit.IPADDRESS,
+                    deviceName = _audit.DEVICENAME,
+                    osName = _audit.OSNAME
 
             };
                 return data.ToList();
@@ -61,10 +63,13 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 var data = from lg in context.TBL_PROFILE_USER
                            join st in context.TBL_STAFF on lg.USERNAME equals st.STAFFCODE
                            join b in context.TBL_BRANCH on st.BRANCHID equals b.BRANCHID
-                           where (DbFunctions.TruncateTime((lg.LASTLOGINDATE.Value == null ? defaultDate : lg.LASTLOGINDATE.Value)) >= DbFunctions.TruncateTime(startDate) 
-                           && DbFunctions.TruncateTime((lg.LASTLOGINDATE.Value == null ? defaultDate : lg.LASTLOGINDATE.Value)) <= DbFunctions.TruncateTime(endDate))
-                           && (lg.ISACTIVE == logingStatus) //&& (b.BRANCHCODE==branchCode || branchCode=="")
-                          orderby lg.LASTLOGINDATE descending
+                           where (DbFunctions.TruncateTime(lg.LASTLOGINDATE) >= DbFunctions.TruncateTime(startDate)
+                           && DbFunctions.TruncateTime(lg.LASTLOGINDATE) <= DbFunctions.TruncateTime(endDate))
+                           && (lg.ISACTIVE == logingStatus)
+                           //where (DbFunctions.TruncateTime((lg.LASTLOGINDATE.Value == null ? defaultDate : lg.LASTLOGINDATE.Value)) >= DbFunctions.TruncateTime(startDate)
+                           //&& DbFunctions.TruncateTime((lg.LASTLOGINDATE.Value == null ? defaultDate : lg.LASTLOGINDATE.Value)) <= DbFunctions.TruncateTime(endDate))
+                           //&& (lg.ISACTIVE == logingStatus) //&& (b.BRANCHCODE==branchCode || branchCode=="")
+                           orderby lg.LASTLOGINDATE descending
                            select new LoggingActivities
                            {
                               approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID== lg.APPROVALSTATUSID).Select(o=>o.APPROVALSTATUSNAME).FirstOrDefault(),
@@ -79,7 +84,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                               names = st.FIRSTNAME + " " + st.LASTNAME + " " + st.MIDDLENAME,
                               userName = lg.USERNAME,
                               branchCode = b.BRANCHCODE
-
                            };
                 var result = data.ToList();
                 return result;

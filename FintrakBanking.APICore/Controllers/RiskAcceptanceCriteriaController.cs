@@ -47,7 +47,7 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetRiskAcceptanceCriteriaByProduct(RiskAcceptanceCriteriaViewModel model)
         {
             RiskAcceptanceCriteriaViewModel response = repo.GetRiskAcceptanceCriteriaByProduct(model);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.categories.Count() });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response?.categories?.Count() });
         }
 
         
