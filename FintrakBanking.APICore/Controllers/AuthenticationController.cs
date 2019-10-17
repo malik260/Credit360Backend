@@ -205,7 +205,8 @@ namespace FintrakBanking.APICore.Controllers
                         URL = Request.RequestUri.AbsoluteUri,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now,
-                        TARGETID = -1
+                        TARGETID = -1,
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
 
                     _auditTrail.AddAuditTrail(audit1);
@@ -231,7 +232,8 @@ namespace FintrakBanking.APICore.Controllers
                     URL = Request.RequestUri.AbsoluteUri,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = -1
+                    TARGETID = -1,
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 _auditTrail.AddAuditTrail(audit);
@@ -345,7 +347,8 @@ namespace FintrakBanking.APICore.Controllers
                 URL = Request.RequestUri.AbsoluteUri,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = -1
+                TARGETID = -1,
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             _auditTrail.AddAuditTrail(audit);
@@ -391,7 +394,8 @@ namespace FintrakBanking.APICore.Controllers
                 URL = Request.RequestUri.AbsoluteUri,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = -1
+                TARGETID = -1,
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             _auditTrail.AddAuditTrail(audit);
