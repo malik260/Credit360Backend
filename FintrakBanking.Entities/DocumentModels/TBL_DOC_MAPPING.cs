@@ -24,8 +24,8 @@ namespace FintrakBanking.Entities.DocumentModels
         public bool MAPTOPRODUCTCLASS { get; set; }
         public bool MAPTOPRODUCT { get; set; }
         public bool MAPTOOPERATION { get; set; }
-        public bool MAPTOSUBSECTOR { get; set; }
-        public bool  MAPTOSECTOR { get; set; }
+        public bool? MAPTOSUBSECTOR { get; set; }
+        public bool?  MAPTOSECTOR { get; set; }
         public bool ISREQUIRED { get; set; }
 
         public int CREATEDBY { get; set; }
