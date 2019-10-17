@@ -57,7 +57,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
 
-                    string logo = Server.MapPath("~/Content/icons/firstbank.png");
+                    string logo = Server.MapPath("~/Content/icons/Draft.png");
 
                     Audit audit = new Audit();
                     var data = audit.GetAuditTrailByParam(startDate, endDate, username, auditTypeId);

@@ -2583,6 +2583,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-drawdown-memo-pdf/{referenceNumber}")]
+        public HttpResponseMessage GetDrawdownMemoPdf([FromUri] string referenceNumber)
+        {
+            try
+            {
+                var response = repo.DrawdownReport(referenceNumber);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }

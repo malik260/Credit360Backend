@@ -466,6 +466,11 @@
     <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx.designer.cs">
       <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\DRAWDOWN.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DRAWDOWN.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\FORM3800B.Designer.cs" />
     <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -634,6 +639,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\DisbursalCreditTurnover.aspx.designer.cs">
       <DependentUpon>DisbursalCreditTurnover.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DrawdownMemo.aspx.cs">
+      <DependentUpon>DrawdownMemo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DrawdownMemo.aspx.designer.cs">
+      <DependentUpon>DrawdownMemo.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\ExcessReport.aspx.cs">
       <DependentUpon>ExcessReport.aspx</DependentUpon>
@@ -1206,6 +1218,7 @@
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
     <Content Include="Reports\ReportViews\DisbursalCreditTurnover.aspx" />
+    <Content Include="Reports\ReportViews\DrawdownMemo.aspx" />
     <Content Include="Reports\ReportViews\ExcessReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredFacilityReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
@@ -1326,6 +1339,17 @@
     <Content Include="Reports\Report\Lein.rdlc" />
     <Content Include="Reports\ReportDataset\FORM3800B.xsc">
       <DependentUpon>FORM3800B.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\DRAWDOWN.xsc">
+      <DependentUpon>DRAWDOWN.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\DRAWDOWN.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DRAWDOWN.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\DRAWDOWN.xss">
+      <DependentUpon>DRAWDOWN.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\FORM3800B.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1514,6 +1538,7 @@
     <Content Include="Reports\Report\Blacklist.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR 060219.rdlc" />
     <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
@@ -1530,6 +1555,7 @@
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DrawdownMemo.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExcessReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
@@ -1549,9 +1575,6 @@
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
-    <Content Include="Reports\Report\AuditTrailReports.rdlc">
-      <SubType>Designer</SubType>
-    </Content>
     <EmbeddedResource Include="Reports\Report\CollateralEstimated.rdlc" />
     <EmbeddedResource Include="Reports\Report\FacilityApprovedNotUtilised.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
