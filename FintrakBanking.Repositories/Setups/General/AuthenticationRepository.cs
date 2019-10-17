@@ -800,7 +800,6 @@ namespace FintrakBanking.Repositories.Setups.General
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
                 profile.FAILEDLOGONATTEMPT = 0;
-                profile.USERIP = CommonHelpers.GetLocalIpAddress();
 
                 if (userGroup != null) {
                     userInfo.userGroupId = userGroup.GROUPID;
@@ -835,7 +834,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
                 profile.FAILEDLOGONATTEMPT = 0;
-                profile.USERIP = CommonHelpers.GetLocalIpAddress();
+               
                 if (userGroup != null) {
                     userInfo.userGroupId = userGroup.GROUPID;
                 }
@@ -867,7 +866,6 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         profile.ISLOCKED = true;
                         profile.LASTLOCKOUTDATE = DateTime.Now;
-                        profile.USERIP = CommonHelpers.GetLocalIpAddress();
                         //profile.FAILEDLOGONATTEMPT = 0;
 
                     }
