@@ -2,8 +2,8 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Finance;
 using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService;
-//using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService;
-using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService1;
+using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService;
+//using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthSoapService1;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,15 +40,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                     message = message
                 };
 
-                if (res.ToLower().Contains("successful"))
+                if (res.ToLower().Contains("successful")) { 
+                    output.message = "Authentication Successful!";
                     output.authenticated = true;
+                }
                 else
                 {
                     output.authenticated = false;
-                    output.message = "Two Factor Authentication Failed.";
+                    output.message = "Two Factor Authentication Failed!";
                 }
-                    
-
 
                 if(staffCode != null)
                 {

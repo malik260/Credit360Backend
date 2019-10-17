@@ -2016,7 +2016,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue <= definition.CONTROLAMOUNT;
                         else return decimalValue != ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     case 7:
-                        if (definition.DEFINEDFUNCTIONID == 1) return (decimalValue >= definition.CONTROLAMOUNT && decimalValue <= definition.CONTROLAMOUNT);
+                        if (definition.DEFINEDFUNCTIONID == 1) return (decimalValue >= definition.CONTROLAMOUNT && decimalValue <= definition.CONTROLAMOUNTMAX);
                         else return decimalValue != ReturnNotImplementedException(definition.DEFINEDFUNCTIONID); // TODO...
                     default:
                         if (definition.DEFINEDFUNCTIONID == 1) return decimalValue == definition.CONTROLAMOUNT;

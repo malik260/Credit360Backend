@@ -217,6 +217,7 @@
     <Reference Include="System.IO.Packaging, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.Packaging.4.5.0\lib\net46\System.IO.Packaging.dll</HintPath>
     </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Net.Http.Extensions.Compression.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Extensions.Compression.Server.2.0.6\lib\net45\System.Net.Http.Extensions.Compression.Core.dll</HintPath>
     </Reference>
@@ -1538,6 +1539,7 @@
     <Content Include="Reports\Report\Blacklist.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR 060219.rdlc" />
     <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc" />
     <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
@@ -1574,9 +1576,6 @@
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
-    <Content Include="Reports\Report\AuditTrailReports.rdlc">
-      <SubType>Designer</SubType>
-    </Content>
     <EmbeddedResource Include="Reports\Report\CollateralEstimated.rdlc" />
     <EmbeddedResource Include="Reports\Report\FacilityApprovedNotUtilised.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
