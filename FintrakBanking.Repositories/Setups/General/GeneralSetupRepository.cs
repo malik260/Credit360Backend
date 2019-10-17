@@ -285,7 +285,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             sectorId = cs.TBL_SECTOR.SECTORID,
                             sectorName = cs.NAME,
                             sectorCode = cs.CODE,
-                        }).Distinct();
+                        }).Distinct().OrderBy(s => s.sectorName);
 
             return data;
         }

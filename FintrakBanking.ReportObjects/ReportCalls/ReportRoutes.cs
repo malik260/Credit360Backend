@@ -16,6 +16,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 {
     public class HashProperty
     {
+        private FinTrakBankingContext context;
         public string hashedDateValue { get; set; }
     }
     public class ReportRoutes : IReportRoutes
@@ -1123,12 +1124,13 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-
-
-
-
-
-
+        public string DrawdownReport(string referenceNumber)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+            string path = string.Empty;
+            path = reportPath + "ReportViews/DrawdownMemo.aspx?loanRefNo=" + referenceNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            return path;
+        }
 
 
 

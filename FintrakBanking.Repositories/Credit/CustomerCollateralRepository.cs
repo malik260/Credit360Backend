@@ -2402,9 +2402,9 @@ namespace FintrakBanking.Repositories.Credit
                 usage = 0;
                 var proposes = context.TBL_LOAN_APPLICATION_COLLATERL.Where(pc => pc.DELETED == false && pc.COLLATERALCUSTOMERID == collateral.collateralId).ToList();
                 usage = proposes.Sum(p => p.COLLATERALCOVERAGE);
-                collateral.availableCollateralValue = (decimal)collateral.collateralValue - usage;
-                collateral.exchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, collateral.companyId).sellingRate;
-                collateral.collateralValueLcy = (decimal)collateral.collateralValue * (decimal)collateral.exchangeRate;
+                var exchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, collateral.companyId);
+                collateral.collateralValueLcy = (decimal)collateral.collateralValue * (decimal)exchangeRate.sellingRate;
+                collateral.availableCollateralValue = (decimal)collateral.collateralValueLcy - usage;
                 list.Add(collateral);
             }
             return list;

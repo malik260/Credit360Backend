@@ -212,7 +212,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.branchId,
                     DETAIL = $"{username} - {result.grantMessage}",
-                    IPADDRESS = CommonHelpers.GetUserIP(),
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),// CommonHelpers.GetUserIP(),
                     URL = "/Token",
                     APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                     SYSTEMDATETIME = DateTime.Now,
@@ -238,6 +238,16 @@ namespace FintrakBanking.Repositories.Setups.General
                     errorMessage = "",
                 };
 
+            int corrMatrixId = 0;// corrMatrix.id;
+            string corrMatrixDescription = "";// corrMatrix.description;
+            _creditOfficerRisk = new CreditOfficerRiskRepository(context);
+            MatrixGrid corrMatrix = _creditOfficerRisk.GetCreditOfficerRiskRating(username);
+            if (corrMatrix.id > 0)
+            {
+                corrMatrixId = corrMatrix.id;
+                corrMatrixDescription = corrMatrix.description;
+            }
+
             var user = db.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username);
 
             if (user != null)
@@ -259,7 +269,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                 branchId = st.BRANCHID.Value,
                                 countryId = coy.COUNTRYID,
                                 branchName = br.BRANCHNAME,
-                                companyName = coy.NAME
+                                companyName = coy.NAME,
+                                corrMatrixDescription = corrMatrixDescription,
+                                corrMatrixId = corrMatrixId
                             }).FirstOrDefault();
 
                 if (data == null)
@@ -561,7 +573,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         STAFFID = loginInfo.staffId,
                         BRANCHID = (short)data.branchId,//(short)context.TBL_STAFF.Where(x => x.STAFFID == loginInfo.staffId).Select(x => x.BRANCHID).FirstOrDefault(),
                         DETAIL = $"{userName} - This account is LOCKED",
-                        IPADDRESS = CommonHelpers.GetUserIP(),
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),// CommonHelpers.GetUserIP(),
                         URL = String.Empty, // Request.RequestUri.AbsoluteUri,
                         APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                         SYSTEMDATETIME = DateTime.Now,
@@ -598,7 +610,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = loginInfo.staffId,
                     BRANCHID = (short)context.TBL_STAFF.Where(x => x.STAFFID == loginInfo.staffId).Select(x => x.BRANCHID).FirstOrDefault(),
                     DETAIL = $"{loginInfo.username} - This account is INACTIVE",
-                    IPADDRESS = CommonHelpers.GetUserIP(),
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),// CommonHelpers.GetUserIP(),
                     //URL = Request.RequestUri.AbsoluteUri,
                     APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                     SYSTEMDATETIME = DateTime.Now,
@@ -706,7 +718,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = loginInfo.staffId,
                     BRANCHID = (short)context.TBL_STAFF.Where(x => x.STAFFID == loginInfo.staffId).Select(x => x.BRANCHID).FirstOrDefault(),
                     DETAIL = $"{loginInfo.username} - You cannot resume now.",
-                    IPADDRESS = CommonHelpers.GetUserIP(),
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),// CommonHelpers.GetUserIP(),
                     //URL = Request.RequestUri.AbsoluteUri,
                     APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                     SYSTEMDATETIME = DateTime.Now,
@@ -822,7 +834,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
                 profile.FAILEDLOGONATTEMPT = 0;
-
+               
                 if (userGroup != null) {
                     userInfo.userGroupId = userGroup.GROUPID;
                 }
