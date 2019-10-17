@@ -15,7 +15,7 @@
               <Width>2.02083in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.33333in</Width>
+              <Width>1.88541in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.77083in</Width>
@@ -30,13 +30,16 @@
               <Width>1.01042in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.76042in</Width>
+              <Width>1.28125in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.25in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.14583in</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1in</Width>
@@ -160,7 +163,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Nranch Name</Value>
+                              <Value>Branch Name</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
@@ -409,6 +412,40 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox17</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox6">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>IP</Value>
+                              <Style>
+                                <FontFamily>Calibri</FontFamily>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox6</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -850,6 +887,38 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
+                    <Textbox Name="userIp">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!userIp.Value</Value>
+                              <Style>
+                                <FontFamily>Calibri</FontFamily>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>userIp</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
                     <Textbox Name="deviceName">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -931,6 +1000,7 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
+            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -946,7 +1016,7 @@
         <DataSetName>LoggingActivities</DataSetName>
         <Top>0.85292in</Top>
         <Height>0.5in</Height>
-        <Width>17.875in</Width>
+        <Width>17.9479in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -993,7 +1063,7 @@
     <Height>2in</Height>
     <Style />
   </Body>
-  <Width>18.11458in</Width>
+  <Width>18.42707in</Width>
   <Page>
     <LeftMargin>1in</LeftMargin>
     <RightMargin>1in</RightMargin>
@@ -1072,6 +1142,10 @@
         </Field>
         <Field Name="osName">
           <DataField>osName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="userIp">
+          <DataField>userIp</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
