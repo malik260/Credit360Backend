@@ -24,6 +24,8 @@ namespace FintrakBanking.ViewModels.Admin
         public string staffName => $"{this.firstName} {this.lastName}";
         public string ipAddress { get; set; }
         public string logo { get; set; }
+        public string deviceName { get; set; }
+        public string osName { get; set; }
     }
 
     public class LoggingActivities
@@ -40,6 +42,9 @@ namespace FintrakBanking.ViewModels.Admin
         public string approvalStatus { get; set; }
         public string branchName { get; set; }
         public string branchCode { get; set; }
+        public string deviceName { get; set; }
+        public string osName { get; set; }
+        public string userIp { get; set; }
     }
     public class DormantStaffLog
     {
