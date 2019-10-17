@@ -8844,12 +8844,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnbranchCode;
             
-            private global::System.Data.DataColumn columndeviceName;
-            
-            private global::System.Data.DataColumn columnosName;
-            
-            private global::System.Data.DataColumn columnuserIp;
-            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public LoggingActivitiesDataTable() {
@@ -8981,30 +8975,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn deviceNameColumn {
-                get {
-                    return this.columndeviceName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn osNameColumn {
-                get {
-                    return this.columnosName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public global::System.Data.DataColumn userIpColumn {
-                get {
-                    return this.columnuserIp;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -9040,7 +9010,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public LoggingActivitiesRow AddLoggingActivitiesRow(string approvalStatus, string branchName, string dateCreated, string deactivatedDate, string failedLoggingAttempts, string isUserActive, string isUserLocked, string lastLogginDate, string lastLogOutDate, string names, string userName, string branchCode, string deviceName, string osName, string userIp) {
+            public LoggingActivitiesRow AddLoggingActivitiesRow(string approvalStatus, string branchName, string dateCreated, string deactivatedDate, string failedLoggingAttempts, string isUserActive, string isUserLocked, string lastLogginDate, string lastLogOutDate, string names, string userName, string branchCode) {
                 LoggingActivitiesRow rowLoggingActivitiesRow = ((LoggingActivitiesRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         approvalStatus,
@@ -9054,10 +9024,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         lastLogOutDate,
                         names,
                         userName,
-                        branchCode,
-                        deviceName,
-                        osName,
-                        userIp};
+                        branchCode};
                 rowLoggingActivitiesRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowLoggingActivitiesRow);
                 return rowLoggingActivitiesRow;
@@ -9092,9 +9059,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnnames = base.Columns["names"];
                 this.columnuserName = base.Columns["userName"];
                 this.columnbranchCode = base.Columns["branchCode"];
-                this.columndeviceName = base.Columns["deviceName"];
-                this.columnosName = base.Columns["osName"];
-                this.columnuserIp = base.Columns["userIp"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -9124,12 +9088,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnuserName);
                 this.columnbranchCode = new global::System.Data.DataColumn("branchCode", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnbranchCode);
-                this.columndeviceName = new global::System.Data.DataColumn("deviceName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columndeviceName);
-                this.columnosName = new global::System.Data.DataColumn("osName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnosName);
-                this.columnuserIp = new global::System.Data.DataColumn("userIp", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnuserIp);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -16932,54 +16890,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string deviceName {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoggingActivities.deviceNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'deviceName\' in table \'LoggingActivities\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoggingActivities.deviceNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string osName {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoggingActivities.osNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'osName\' in table \'LoggingActivities\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoggingActivities.osNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public string userIp {
-                get {
-                    try {
-                        return ((string)(this[this.tableLoggingActivities.userIpColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'userIp\' in table \'LoggingActivities\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableLoggingActivities.userIpColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsapprovalStatusNull() {
                 return this.IsNull(this.tableLoggingActivities.approvalStatusColumn);
             }
@@ -17120,42 +17030,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetbranchCodeNull() {
                 this[this.tableLoggingActivities.branchCodeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsdeviceNameNull() {
-                return this.IsNull(this.tableLoggingActivities.deviceNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetdeviceNameNull() {
-                this[this.tableLoggingActivities.deviceNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsosNameNull() {
-                return this.IsNull(this.tableLoggingActivities.osNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetosNameNull() {
-                this[this.tableLoggingActivities.osNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public bool IsuserIpNull() {
-                return this.IsNull(this.tableLoggingActivities.userIpColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void SetuserIpNull() {
-                this[this.tableLoggingActivities.userIpColumn] = global::System.Convert.DBNull;
             }
         }
         

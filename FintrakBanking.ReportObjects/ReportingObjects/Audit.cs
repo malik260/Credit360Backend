@@ -83,11 +83,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                               lastLogOutDate = lg.LASTLOCKOUTDATE,
                               names = st.FIRSTNAME + " " + st.LASTNAME + " " + st.MIDDLENAME,
                               userName = lg.USERNAME,
-                              branchCode = b.BRANCHCODE,
-                              deviceName = lg.DEVICENAME,
-                              osName = lg.OSNAME,
-                              userIp = lg.USERIP
-
+                              branchCode = b.BRANCHCODE
                            };
                 var result = data.ToList();
                 return result;
