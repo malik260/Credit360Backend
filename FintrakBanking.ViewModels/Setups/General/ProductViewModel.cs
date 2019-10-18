@@ -269,8 +269,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool required { get; set; }
         public int? sectorId { get; set; }
         public int? subSectorId { get; set; }
-        public bool mapToSector { get; set; }
-        public bool mapToSubSector { get; set; }
+        public bool? mapToSector { get; set; }
+        public bool? mapToSubSector { get; set; }
         public string sectorName { get; set; }
         public string subSectorName { get; set; }
                                            //public string documentTitle { get; set; }
