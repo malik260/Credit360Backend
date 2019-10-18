@@ -675,5 +675,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response});
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("rac-details/targetId")]
+        public HttpResponseMessage GetRacDetails(RacCategoryTypeViewModel model)
+        {
+            RacCategoryTypeViewModel response = repo.GetRacDetails(model.targetId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response });
+        }
+
     }
 }

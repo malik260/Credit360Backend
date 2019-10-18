@@ -129,5 +129,11 @@ namespace FintrakBanking.Interfaces.Risk
 
         bool RacCategoryTypeExist(int productid, int racCategoryTypeId);
 
+        RacCategoryTypeViewModel GetRacDetails(int targetId);
+       
+
+
+
+
     }
 }
