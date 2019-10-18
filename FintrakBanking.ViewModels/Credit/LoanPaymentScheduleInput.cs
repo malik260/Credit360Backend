@@ -100,7 +100,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal feeAmountDiff { get; set; }
         public int oldCasaAccountId { get; set; }
         public int? newCasaAccountId { get; set; }
-        public int? loanSystemTypeId { get; set; }
+        public short? loanSystemTypeId { get; set; }
         public short currencyId { get; set; }
         public int operationTypeId { get; set; }
     }

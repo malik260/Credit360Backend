@@ -216,7 +216,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     URL = "/Token",
                     APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = -1
+                    TARGETID = -1,
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    DEVICENAME = Environment.UserName //CommonHelpers.GetDeviceName()
                 });
                 context.SaveChanges();
             }
@@ -577,7 +579,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         URL = String.Empty, // Request.RequestUri.AbsoluteUri,
                         APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                         SYSTEMDATETIME = DateTime.Now,
-                        TARGETID = -1
+                        TARGETID = -1,
+                        OSNAME = CommonHelpers.FriendlyName(),
+                        DEVICENAME = Environment.UserName // CommonHelpers.GetDeviceName()
                     });
                     context.SaveChanges();
                     return true;
@@ -614,7 +618,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     //URL = Request.RequestUri.AbsoluteUri,
                     APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = -1
+                    TARGETID = -1,
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    DEVICENAME = Environment.UserName // CommonHelpers.GetDeviceName()
                 };
 
                 _auditTrail.AddAuditTrail(audit);
@@ -722,7 +728,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     //URL = Request.RequestUri.AbsoluteUri,
                     APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = -1
+                    TARGETID = -1,
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    DEVICENAME = Environment.UserName //CommonHelpers.GetDeviceName()
                 };
 
                 _auditTrail.AddAuditTrail(audit);
