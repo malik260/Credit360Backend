@@ -175,10 +175,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added AppraisalMemorandum '{ model.camRef }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),  //model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                OSNAME = CommonHelpers.FriendlyName(),
+                DEVICENAME = CommonHelpers.GetDeviceName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -302,10 +304,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated Appraisal Memorandum Document'{ model.camRef }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(), //model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                OSNAME = CommonHelpers.FriendlyName(),
+                DEVICENAME = CommonHelpers.GetDeviceName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -523,10 +527,13 @@ namespace FintrakBanking.Repositories.Credit
                             $"LINE CHANGES:" +
                             $"'{ LineItemChanges(model.recommendedChanges) }'",
 
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(), //model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                OSNAME = CommonHelpers.FriendlyName(),
+                DEVICENAME = CommonHelpers.GetDeviceName()
+
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -2276,10 +2283,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Committee Vote on Loan Application Reference Number: '{ appl.APPLICATIONREFERENCENUMBER }', ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(), // model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                OSNAME = CommonHelpers.FriendlyName(),
+                DEVICENAME = CommonHelpers.GetDeviceName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
