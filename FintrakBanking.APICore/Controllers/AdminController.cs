@@ -866,7 +866,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Two Factor Authentication not enabled" });
                 }
-                var data = repo.TwoFactorAuthentication("fintrakcredit", passCode);
+                var data = repo.TwoFactorAuthentication(staffCode, passCode);
                 if (data.authenticated == true)
                 {
                        return Request.CreateResponse(HttpStatusCode.OK,
