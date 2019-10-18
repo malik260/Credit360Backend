@@ -218,7 +218,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = -1,
                     OSNAME = CommonHelpers.FriendlyName(),
-                    DEVICENAME = Environment.MachineName //CommonHelpers.GetDeviceName()
+                    DEVICENAME = Environment.UserName //CommonHelpers.GetDeviceName()
                 });
                 context.SaveChanges();
             }
@@ -581,7 +581,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         SYSTEMDATETIME = DateTime.Now,
                         TARGETID = -1,
                         OSNAME = CommonHelpers.FriendlyName(),
-                        DEVICENAME = Environment.MachineName // CommonHelpers.GetDeviceName()
+                        DEVICENAME = Environment.UserName // CommonHelpers.GetDeviceName()
                     });
                     context.SaveChanges();
                     return true;
@@ -620,7 +620,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = -1,
                     OSNAME = CommonHelpers.FriendlyName(),
-                    DEVICENAME = Environment.MachineName // CommonHelpers.GetDeviceName()
+                    DEVICENAME = Environment.UserName // CommonHelpers.GetDeviceName()
                 };
 
                 _auditTrail.AddAuditTrail(audit);
@@ -730,7 +730,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = -1,
                     OSNAME = CommonHelpers.FriendlyName(),
-                    DEVICENAME = Environment.MachineName //CommonHelpers.GetDeviceName()
+                    DEVICENAME = Environment.UserName //CommonHelpers.GetDeviceName()
                 };
 
                 _auditTrail.AddAuditTrail(audit);

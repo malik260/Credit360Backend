@@ -4,6 +4,7 @@ using FintrakBanking.ViewModels.Admin;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,8 +29,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 || _audit.BRANCHID == context.TBL_BRANCH.Where(x => x.BRANCHCODE == username).Select(x => x.BRANCHID).FirstOrDefault()
                 || atype.AUDITTYPENAME.ToLower().StartsWith(username.ToLower().Trim())
                 || _audit.DETAIL.ToLower().Contains(username.ToLower().Trim())
-                || username == null)
-                &&(_audit.AUDITTYPEID== auditTypeId || auditTypeId==0)
+                || username == null || username == String.Empty)
+                && (_audit.AUDITTYPEID == (short)auditTypeId || auditTypeId==0)
                 orderby _audit.SYSTEMDATETIME descending
                 select new AuditViewModel
                 {
@@ -54,15 +55,15 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         }
 
 
-        public IEnumerable<LoggingActivities> GetLoggingStatus(DateTime startDate, DateTime endDate, bool? logingStatus,  string branchCode)
+        public IEnumerable<LoggingActivities> GetLoggingStatus(DateTime? startDate, DateTime? endDate, bool logingStatus,  string branchCode)
         {
             DateTime defaultDate = new DateTime(2018, 1, 1);
 
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var data = from lg in context.TBL_PROFILE_USER
-                           join st in context.TBL_STAFF on lg.USERNAME equals st.STAFFCODE
-                           join b in context.TBL_BRANCH on st.BRANCHID equals b.BRANCHID
+                           join st in context.TBL_STAFF on lg.USERNAME.Trim() equals st.STAFFCODE.Trim()
+                           join b in context.TBL_BRANCH on (short)st.BRANCHID equals b.BRANCHID
                            where (DbFunctions.TruncateTime(lg.LASTLOGINDATE) >= DbFunctions.TruncateTime(startDate)
                            && DbFunctions.TruncateTime(lg.LASTLOGINDATE) <= DbFunctions.TruncateTime(endDate))
                            && (lg.ISACTIVE == logingStatus)
