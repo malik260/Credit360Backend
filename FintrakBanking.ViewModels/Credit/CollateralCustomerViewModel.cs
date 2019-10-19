@@ -1008,6 +1008,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralHistoryList
     {
         public string customerName { get; set; }
+        public string customerGroupName { get; set; }
         public string usedBy { get; set; }
         public string loanRef { get; set; }
         public DateTime expirationDate { get; set; }

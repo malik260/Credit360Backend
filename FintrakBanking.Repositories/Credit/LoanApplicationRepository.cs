@@ -4990,9 +4990,18 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationDetailsByReference(string reference, int companyId)
         {
-            var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == reference)
+            reference = reference.Trim().ToLower();
+            var data = (from a in context.TBL_LOAN_APPLICATION
+            //var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == reference)
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        &&
+                        (
+                            a.APPLICATIONREFERENCENUMBER.Contains(reference)
+                        ||  a.TBL_CUSTOMER.FIRSTNAME.Contains(reference)
+                        ||  a.TBL_CUSTOMER.MIDDLENAME.Contains(reference)
+                        ||  a.TBL_CUSTOMER.LASTNAME.Contains(reference)
+                        )
                         select new LoanApplicationDetailViewModel
                         {
                             currencyName = b.TBL_CURRENCY.CURRENCYNAME,
