@@ -633,6 +633,7 @@ namespace FintrakBanking.Repositories.Credit
                 accountNumber = camsol.ACCOUNTNUMBER;
             }
 
+<<<<<<< HEAD
             string result = $"<p style='font face:arial;size:12px;'><b>{model.requestRef}</b></p> " +
                 $"<p style='font face:arial;size:12px;'><b>{asAtDate}.</b></p> " +
                 $"<p style='font face:arial;size:12px;'><b>{fullName},</b> <br/> {address} </p> " +
@@ -643,9 +644,21 @@ namespace FintrakBanking.Repositories.Credit
                 $"<p style='font face:arial;size:12px;'><b>This report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
                 $"<p style='font face:arial;size:12px;'>Thank you.</p> " +
                 $"<p style='font face:arial;size:12px;'>Yours faithfully,</p> <p style='font face:arial;size:12px;'><b>For:</b> ACCESS BANK PLC</p> " +
+=======
+            string result = $"<font size=2 face=Arial><p><b> {model.requestRef}</b></p> " +
+                $"<p><b>{asAtDate}.</b></p> " +
+                $"<p><b>{fullName},</b> <br/> {address} </p> " +
+                $"<p><b>Dear Sir/Ma,</b></p> " +
+                $"<p><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
+                $"<p>We hereby confirm that <b>{fullName}</b>, with account number {accountNumber} is indebted to our Bank as at {asAtDate}, to the tune of N {debtAmount.ToString("#,##")}.</p> " +
+                $"<p>Please note that interest will continue to accrue on the above amount on a daily basis until the facility is fully liquidated.</p> " +
+                $"<p><b>This report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
+                $"<p>Thank you.</p> " +
+                $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
+>>>>>>> 965004946d00ca2051d437e94376f0d3b712cf6c
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p></font>";
-                $"{GetLetterGenRequestSignatory(model.requestId)}";
+                $"{GetLetterGenRequestSignatory(model.requestId)}</font>";
 
             return result;
         }
@@ -680,6 +693,7 @@ namespace FintrakBanking.Repositories.Credit
                 accountNumber = camsol.ACCOUNTNUMBER;
             }
 
+<<<<<<< HEAD
             string result = $"<p style='font face:arial;size:12px;'><b>REF: {model.requestRef}</b></p> " +
                 $"<p style='font face:arial;size:12px;'><b>{asAtDate}.</b></p> " +
                 $"<p style='font face:arial;size:12px;'><b>{fullName},</b> <br/> {address}</p> " +
@@ -689,9 +703,20 @@ namespace FintrakBanking.Repositories.Credit
                 $"<p style='font face:arial;size:12px;'><b>Please note that this report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
                 $"<p style='font face:arial;size:12px;'>Thank you.</font></p> " +
                 $"<p style='font face:arial;size:12px;'>Yours faithfully,</p> <p style='font face:arial;size:12px;'><b>For:</b> ACCESS BANK PLC</p> " +
+=======
+            string result = $"<font size=2 face=arial><p><b>REF: {model.requestRef}</b></p> " +
+                $"<p><b>{asAtDate}.</b></p> " +
+                $"<p><b>{fullName},</b> <br/> {address} </p> " +
+                $"<p><b>Dear Sir/Ma,</b></p> " +
+                $"<p><b>LETTER OF NON-INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
+                $"<p>We hereby confirm that {fullName}, is not indebted to our Bank as at {asAtDate}.</p> " +
+                $"<p><b>Please note that this report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
+                $"<p>Thank you.</p> " +
+                $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
+>>>>>>> 965004946d00ca2051d437e94376f0d3b712cf6c
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p></font>";
-                $"{GetLetterGenRequestSignatory(model.requestId)}";
+                $"{GetLetterGenRequestSignatory(model.requestId)}</font>";
 
             return result;
         }
