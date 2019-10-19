@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -111,7 +112,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 entity.companyId = _token.GetCompanyId;
                 entity.userBranchId = (short)_token.GetBranchId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.applicationUrl = CommonHelpers.GetLocalIpAddress();//HttpContext.Current.Request.Path;
                 entity.createdBy = _token.GetStaffId;
 
                 var data = _repo.AddUpdateBranchRegionStaff(entity);

@@ -229,6 +229,8 @@
               <xs:element name="branchName" msprop:Generator_ColumnVarNameInTable="columnbranchName" msprop:Generator_ColumnPropNameInRow="branchName" msprop:Generator_ColumnPropNameInTable="branchNameColumn" msprop:Generator_UserColumnName="branchName" type="xs:string" minOccurs="0" />
               <xs:element name="fullName" msprop:Generator_ColumnVarNameInTable="columnfullName" msprop:Generator_ColumnPropNameInRow="fullName" msprop:Generator_ColumnPropNameInTable="fullNameColumn" msprop:Generator_UserColumnName="fullName" type="xs:string" minOccurs="0" />
               <xs:element name="ipAddress" msprop:Generator_ColumnVarNameInTable="columnipAddress" msprop:Generator_ColumnPropNameInRow="ipAddress" msprop:Generator_ColumnPropNameInTable="ipAddressColumn" msprop:Generator_UserColumnName="ipAddress" type="xs:string" minOccurs="0" />
+              <xs:element name="deviceName" msprop:Generator_ColumnVarNameInTable="columndeviceName" msprop:Generator_ColumnPropNameInRow="deviceName" msprop:Generator_ColumnPropNameInTable="deviceNameColumn" msprop:Generator_UserColumnName="deviceName" type="xs:string" minOccurs="0" />
+              <xs:element name="osName" msprop:Generator_ColumnVarNameInTable="columnosName" msprop:Generator_ColumnPropNameInRow="osName" msprop:Generator_ColumnPropNameInTable="osNameColumn" msprop:Generator_UserColumnName="osName" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -388,8 +390,6 @@
               <xs:element name="names" msprop:Generator_ColumnVarNameInTable="columnnames" msprop:Generator_ColumnPropNameInRow="names" msprop:Generator_ColumnPropNameInTable="namesColumn" msprop:Generator_UserColumnName="names" type="xs:string" minOccurs="0" />
               <xs:element name="userName" msprop:Generator_ColumnVarNameInTable="columnuserName" msprop:Generator_ColumnPropNameInRow="userName" msprop:Generator_ColumnPropNameInTable="userNameColumn" msprop:Generator_UserColumnName="userName" type="xs:string" minOccurs="0" />
               <xs:element name="branchCode" msprop:Generator_ColumnVarNameInTable="columnbranchCode" msprop:Generator_ColumnPropNameInRow="branchCode" msprop:Generator_ColumnPropNameInTable="branchCodeColumn" msprop:Generator_UserColumnName="branchCode" type="xs:string" minOccurs="0" />
-              <xs:element name="deviceName" msprop:Generator_ColumnVarNameInTable="columndeviceName" msprop:Generator_ColumnPropNameInRow="deviceName" msprop:Generator_ColumnPropNameInTable="deviceNameColumn" msprop:Generator_UserColumnName="deviceName" type="xs:string" minOccurs="0" />
-              <xs:element name="osName" msprop:Generator_ColumnVarNameInTable="columnosName" msprop:Generator_ColumnPropNameInRow="osName" msprop:Generator_ColumnPropNameInTable="osNameColumn" msprop:Generator_UserColumnName="osName" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

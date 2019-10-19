@@ -201,11 +201,12 @@ namespace FintrakBanking.APICore.Controllers
                         STAFFID = found.staffId,
                         BRANCHID = (short)found.branchId,
                         DETAIL = $"{user.username} login failed",
-                        IPADDRESS = CommonHelpers.GetUserIP(),
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),//CommonHelpers.GetUserIP(),
                         URL = Request.RequestUri.AbsoluteUri,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now,
-                        TARGETID = -1
+                        TARGETID = -1,
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
 
                     _auditTrail.AddAuditTrail(audit1);
@@ -227,11 +228,12 @@ namespace FintrakBanking.APICore.Controllers
                     STAFFID = currUser.staffId,
                     BRANCHID = (short)currUser.branchId,
                     DETAIL = $"{currUser.username} logged in",
-                    IPADDRESS = CommonHelpers.GetUserIP(),
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),//CommonHelpers.GetUserIP(),
                     URL = Request.RequestUri.AbsoluteUri,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = -1
+                    TARGETID = -1,
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 _auditTrail.AddAuditTrail(audit);
@@ -341,11 +343,12 @@ namespace FintrakBanking.APICore.Controllers
                 STAFFID = token.GetStaffId,
                 BRANCHID = (short)token.GetBranchId,
                 DETAIL = $"{token.GetUsername} logged out",
-                IPADDRESS = CommonHelpers.GetUserIP(),
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),//CommonHelpers.GetUserIP(),
                 URL = Request.RequestUri.AbsoluteUri,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = -1
+                TARGETID = -1,
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             _auditTrail.AddAuditTrail(audit);
@@ -387,11 +390,12 @@ namespace FintrakBanking.APICore.Controllers
                 STAFFID = token.GetStaffId,
                 BRANCHID = (short)token.GetBranchId,
                 DETAIL = $"{token.GetUsername} logged out due to system idle timeout " + (DateTime.Now).ToLongTimeString(),
-                IPADDRESS = CommonHelpers.GetUserIP(),
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(), //CommonHelpers.GetUserIP(),
                 URL = Request.RequestUri.AbsoluteUri,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = -1
+                TARGETID = -1,
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             _auditTrail.AddAuditTrail(audit);

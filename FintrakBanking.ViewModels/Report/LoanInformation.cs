@@ -348,5 +348,43 @@ namespace FintrakBanking.ViewModels.Reports
         public string regionName { get; set; }
     }
 
+    public class DrawdownViewModel
+    {
+        public string customerName { get; set; }
+        public string accountNumber { get; set; }
+        public string branch { get; set; }
+        public string misCode { get; set; }
+        public string facilityType { get; set; }
+        public double interestRate { get; set; }
+        public decimal drawdownAmount { get; set; }
+        public double processingFee { get; set; }
+        public int tenor { get; set; }
+        public double mgtFee { get; set; }
+        public int? moratorium { get; set; }
+        public double commitmentFee { get; set; }
+        public decimal principalRepayment { get; set; }
+        public double otherFeeSpecify { get; set; }
+        public string interestRepayment { get; set; }
+        public DateTime? effectiveDate { get; set; }
+        public decimal approvedAmount { get; set; }
+        public double amountUtilized { get; set; }
+        public decimal newRequest { get; set; }
+        public string inPlace { get; set; }
+        public string perfected { get; set; }
+        public string deffered { get; set; }
+        public string relationshipOfficer { get; set; }
+        public string relationshipManager { get; set; }
+        public string riskManagement { get; set; }
+        public string legal { get; set; }
+        public string treasury { get; set; }
+        public string coo { get; set; }
+        public string crmInternation { get; set; }
+        public string otherInPlace { get; set; }
+        public string otherPerfected { get; set; }
+        public string otherDeffered { get; set; }
+
+    }
+
+
 
 }
