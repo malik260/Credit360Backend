@@ -61,10 +61,10 @@ namespace FintrakBanking.ReportObjects
 
                                      select new WorkflowTrackerViewModel()
                                      {
-                                         companyName = company.NAME ,
-                                         groupName = l.TBL_APPROVAL_GROUP.GROUPNAME,
+                                         companyName = company.NAME==null? "": company.NAME,
+                                         groupName = l.TBL_APPROVAL_GROUP.GROUPNAME==null ? "": l.TBL_APPROVAL_GROUP.GROUPNAME,
                                          responseApprovalLevel = l.LEVELNAME,
-                                      //   operationName = f.TBL_OPERATIONS.OPERATIONNAME,
+                                         operationName = f.TBL_OPERATIONS.OPERATIONNAME==null ? "": f.TBL_OPERATIONS.OPERATIONNAME,
                                          arrivalDate = f.SYSTEMARRIVALDATETIME,
                                          sla = l.SLAINTERVAL,
                                          responseDate = (DateTime)(f.SYSTEMRESPONSEDATETIME == null ? DateTime.Now : f.SYSTEMRESPONSEDATETIME),
@@ -95,11 +95,11 @@ namespace FintrakBanking.ReportObjects
                          orderby b.POSITION ascending, c.POSITION  ascending                   
                          select new WorkFlowViewModel()
                             {   
-                                operationName = b.TBL_OPERATIONS.OPERATIONNAME,
+                                operationName = b.TBL_OPERATIONS.OPERATIONNAME==null? "": b.TBL_OPERATIONS.OPERATIONNAME,
                                 groupName = a.GROUPNAME,
                                 //vetoPower = c.VETOPOWER == true ? "Yes" : "No",
                                 levelName = c.LEVELNAME,
-                                //username = (c.TBL_STAFF.FIRSTNAME  + " " + c.TBL_STAFF.LASTNAME).ToUpper(),
+                                username = "Testing",//(c.TBL_STAFF.FIRSTNAME  + " " + c.TBL_STAFF.LASTNAME).ToUpper(),
                                 //scope = c.PROCESSVIEWSCOPEID == 1 ? "Default" : c.PROCESSVIEWSCOPEID == 2 ? "Group" : c.PROCESSVIEWSCOPEID == 3 ? "Global" : null,
                                 grpPosition = b.POSITION,
                                 levelPosition = c.POSITION,
