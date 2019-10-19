@@ -630,7 +630,7 @@ namespace FintrakBanking.Repositories.Credit
         //}
 
 
-        public bool EarnUnEarnedFee(int loanId, int loanSystemTypeId, DateTime applicationDate, int loanReviewOperationId)
+        public bool EarnUnEarnedFee(int loanId, short loanSystemTypeId, DateTime applicationDate, int loanReviewOperationId)
         {
 
             try
@@ -18120,7 +18120,7 @@ namespace FintrakBanking.Repositories.Credit
             var loanFee = context.TBL_LOAN_FEE.Find(loanChargeFeeId);
 
             LoanViewModel loanDetails = new LoanViewModel();
-            if (loanFee.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+            if (loanFee.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility)
             {
                 loanDetails = (from a in context.TBL_LOAN
                                where a.TERMLOANID == loanFee.LOANID
@@ -18135,7 +18135,7 @@ namespace FintrakBanking.Repositories.Credit
                                }).FirstOrDefault();//context.TBL_LOAN.Find(loanFee.LOANID);
 
             }
-            if (loanFee.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability)
+            if (loanFee.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability)
             {
                 loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                where a.CONTINGENTLOANID == loanFee.LOANID
@@ -18151,7 +18151,7 @@ namespace FintrakBanking.Repositories.Credit
                                }).FirstOrDefault();//context.TBL_LOAN_CONTINGENT.Find(loanFee.LOANID);
 
             }
-            if (loanFee.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility)
+            if (loanFee.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility)
             {
                 loanDetails = (from a in context.TBL_LOAN_REVOLVING
                                where a.REVOLVINGLOANID == loanFee.LOANID
@@ -18166,7 +18166,7 @@ namespace FintrakBanking.Repositories.Credit
                                }).FirstOrDefault();//context.TBL_LOAN_REVOLVING.Find(loanFee.LOANID);
 
             }
-            if (loanFee.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.LineFacility)
+            if (loanFee.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility)
             {
                 loanDetails = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                                join b in context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -20428,7 +20428,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         result = OverdraftTopUp(twoFactorAuth, loanId, (decimal)model.newAmount);
 
-                        EarnUnEarnedFee(loanId, (int)facilityType, applicationDate, loanReviewOperationsId);
+                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20444,7 +20444,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = OverdraftRenewal(twoFactorAuth, loanReviewOperationsId, loanId, (decimal)model.newAmount);
 
-                        EarnUnEarnedFee(loanId, (int)facilityType, applicationDate, loanReviewOperationsId);
+                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20460,7 +20460,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = OverdraftExtension(twoFactorAuth, loanId, (decimal)model.newAmount);
 
-                        EarnUnEarnedFee(loanId, (int)facilityType, applicationDate, loanReviewOperationsId);
+                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20476,7 +20476,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = SubAllocation(twoFactorAuth, loanId, (decimal)model.newAmount, applicationDate, staffId);
 
-                        EarnUnEarnedFee(loanId, (int)facilityType, applicationDate, loanReviewOperationsId);
+                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20492,7 +20492,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = OverdraftInterestRate(twoFactorAuth, loanId);
 
-                        EarnUnEarnedFee(loanId, (int)facilityType, applicationDate, loanReviewOperationsId);
+                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -21270,7 +21270,7 @@ namespace FintrakBanking.Repositories.Credit
                         //model.maturityDate = (DateTime)model.newMaturityDate;
                         result = LoanTermination(loanId, model, twoFactorAuth, applicationDate, staffId);
 
-                        EarnUnEarnedFee(loanId, (int)facilityType, applicationDate, loanReviewOperationsId);
+                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -21389,7 +21389,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         result = ProcessContingentLiabilityTermination(twoFactorAuth, model, approvalComment);
 
-                        EarnUnEarnedFee(loanId, (int)facilityType, applicationDate, loanReviewOperationsId);
+                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -23573,7 +23573,7 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_LOAN_REVIEW_OPERATION.Add(new TBL_LOAN_REVIEW_OPERATION
                     {
                         LOANID = item.TERMLOANID,
-                        LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.TermDisbursedFacility,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
+                        LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
                         OPERATIONTYPEID = (int)OperationsEnum.GlobalInterestRateChange,
                         EFFECTIVEDATE = effectiveDate,
                         //REVIEWDETAILS = model.reviewDetails,
@@ -23665,7 +23665,7 @@ namespace FintrakBanking.Repositories.Credit
                         reviewOperation = new TBL_LOAN_REVIEW_OPERATION
                         {
                             LOANID = item.TERMLOANID,
-                            LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.TermDisbursedFacility,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
+                            LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
                             OPERATIONTYPEID = (int)OperationsEnum.InterestRepricing,
                             EFFECTIVEDATE = effectiveDate,
                             REVIEWDETAILS = "Global Interest Rate Change",
@@ -24867,7 +24867,7 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = (int)model.createdBy,
                 ISPRIMARYDOCUMENT = true,
                 COMPANYID = model.companyId,
-                LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.ContingentLiability,
+                LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.ContingentLiability,
                 TEMPLOANREVIEWOPERATIONID = review.LOANREVIEWOPERATIONID,
                 PHYSICALLOCATION = "N/A",
                 DOCUMENTTYPEID = 4,
@@ -24901,7 +24901,7 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = (int)model.createdBy,
                 ISPRIMARYDOCUMENT = true,
                 COMPANYID = model.companyId,
-                LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.ContingentLiability,
+                LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.ContingentLiability,
                 TEMPLOANREVIEWOPERATIONID = loanreviewoperationId,
                 PHYSICALLOCATION = "N/A",
                 DOCUMENTTYPEID = 4,

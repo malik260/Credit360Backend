@@ -633,7 +633,7 @@ namespace FintrakBanking.Repositories.Credit
                 accountNumber = camsol.ACCOUNTNUMBER;
             }
 
-            string result = $"<font face=Arial><p><b> {model.requestRef}</b></p> " +
+            string result = $"<font size=2 face=Arial><p><b> {model.requestRef}</b></p> " +
                 $"<p><b>{asAtDate}.</b></p> " +
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +
@@ -645,7 +645,7 @@ namespace FintrakBanking.Repositories.Credit
                 $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p></font>";
-                $"{GetLetterGenRequestSignatory(model.requestId)}";
+                $"{GetLetterGenRequestSignatory(model.requestId)}</font>";
 
             return result;
         }
@@ -680,7 +680,7 @@ namespace FintrakBanking.Repositories.Credit
                 accountNumber = camsol.ACCOUNTNUMBER;
             }
 
-            string result = $"<font face=Arial><p><b>REF: {model.requestRef}</b></p> " +
+            string result = $"<font size=2 face=arial><p><b>REF: {model.requestRef}</b></p> " +
                 $"<p><b>{asAtDate}.</b></p> " +
                 $"<p><b>{fullName},</b> <br/> {address} </p> " +
                 $"<p><b>Dear Sir/Ma,</b></p> " +
@@ -691,7 +691,7 @@ namespace FintrakBanking.Repositories.Credit
                 $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p></font>";
-                $"{GetLetterGenRequestSignatory(model.requestId)}";
+                $"{GetLetterGenRequestSignatory(model.requestId)}</font>";
 
             return result;
         }

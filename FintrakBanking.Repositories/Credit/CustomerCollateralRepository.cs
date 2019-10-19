@@ -2018,6 +2018,7 @@ namespace FintrakBanking.Repositories.Credit
                     collateralSummary = collateral.collateralSummary,
                     expectedCoveragePercentage = coveragePercentage,
                     actualCoveragePercentage = ((actualCollateralCoverage / facilityAmount) * 100),
+                    loanApplicationId = facility.LOANAPPLICATIONID,
                     loanApplicationDetailId = collateral.loanApplicationDetailId,
                     collateralId = collateral.collateralId,
                     collateralTypeId = collateral.collateralTypeId,
@@ -2037,8 +2038,8 @@ namespace FintrakBanking.Repositories.Credit
                     totalCoverage = totalCoverage,
                     actualCollateralCoverage = actualCollateralCoverage,
                     approvalStatusId = collateral.approvalStatusId,
-                    ReferenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
-                    productName = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_PRODUCT.PRODUCTNAME).FirstOrDefault(),
+                    ReferenceNumber = facility.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                    productName = facility.TBL_PRODUCT.PRODUCTNAME,
                 };
 
                 list.Add(cov);
@@ -7025,54 +7026,54 @@ namespace FintrakBanking.Repositories.Credit
 
         public CollateralHistory getCollateralHistory(int collateralId)
         {
-            var termLoanCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility),
-                    c => c.COLLATERALCUSTOMERID, lc => lc.COLLATERALCUSTOMERID, (c, lc) => new { c, lc })
-                .Join(context.TBL_LOAN, clc => clc.lc.LOANID, l => l.TERMLOANID, (clc, l) => new { clc, l }) // TBL_LOAN
-                .Select(o => new CollateralHistoryList
-                {
-                    customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
-                    loanRef = o.l.LOANREFERENCENUMBER + o.l.TBL_PRODUCT.PRODUCTNAME,
-                    expirationDate = o.l.MATURITYDATE,
-                    collateralValue = o.clc.c.COLLATERALVALUE,
-                    outstandingPrincipal = o.l.OUTSTANDINGPRINCIPAL,
-                    totalOutstanding = o.l.OUTSTANDINGPRINCIPAL + o.l.OUTSTANDINGINTEREST,
-                    runningPrincipal = o.l.PRINCIPALAMOUNT,
-                    dateProposed = o.clc.lc.DATETIMECREATED,
-                    dateUsed = o.l.DISBURSEDATE,
-                    haircut = o.clc.c.HAIRCUT,
-                    exchangeRate = o.l.EXCHANGERATE,
-                    approvedLoanAmount = o.l.PRINCIPALAMOUNT,
-                });
+            //var termLoanCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
+            //    .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility),
+            //        c => c.COLLATERALCUSTOMERID, lc => lc.COLLATERALCUSTOMERID, (c, lc) => new { c, lc })
+            //    .Join(context.TBL_LOAN, clc => clc.lc.LOANID, l => l.TERMLOANID, (clc, l) => new { clc, l }) // TBL_LOAN
+            //    .Select(o => new CollateralHistoryList
+            //    {
+            //        customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
+            //        loanRef = o.l.LOANREFERENCENUMBER + o.l.TBL_PRODUCT.PRODUCTNAME,
+            //        expirationDate = o.l.MATURITYDATE,
+            //        collateralValue = o.clc.c.COLLATERALVALUE,
+            //        outstandingPrincipal = o.l.OUTSTANDINGPRINCIPAL,
+            //        totalOutstanding = o.l.OUTSTANDINGPRINCIPAL + o.l.OUTSTANDINGINTEREST,
+            //        runningPrincipal = o.l.PRINCIPALAMOUNT,
+            //        dateProposed = o.clc.lc.DATETIMECREATED,
+            //        dateUsed = o.l.DISBURSEDATE,
+            //        haircut = o.clc.c.HAIRCUT,
+            //        exchangeRate = o.l.EXCHANGERATE,
+            //        approvedLoanAmount = o.l.PRINCIPALAMOUNT,
+            //    });
 
-            var odCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility),
-                    c => c.COLLATERALCUSTOMERID, lc => lc.COLLATERALCUSTOMERID, (c, lc) => new { c, lc })
-                .Join(context.TBL_LOAN_REVOLVING, clc => clc.lc.LOANID, l => l.REVOLVINGLOANID, (clc, l) => new { clc, l }) // TBL_LOAN_REVOLVING
-                .Select(o => new CollateralHistoryList
-                {
-                    customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
-                    loanRef = o.l.LOANREFERENCENUMBER + o.l.TBL_PRODUCT.PRODUCTNAME,
-                    expirationDate = o.l.MATURITYDATE,
-                    collateralValue = o.clc.c.COLLATERALVALUE,
-                    outstandingPrincipal = o.l.OVERDRAFTLIMIT,
-                    totalOutstanding = o.l.OVERDRAFTLIMIT,
-                    runningPrincipal = o.l.OVERDRAFTLIMIT,
-                    dateProposed = o.clc.lc.DATETIMECREATED,
-                    dateUsed = o.l.DISBURSEDATE,
-                    haircut = o.clc.c.HAIRCUT,
-                    exchangeRate = o.l.EXCHANGERATE,
-                    approvedLoanAmount = o.l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                });
+            //var odCollaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false)// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
+            //    .Join(context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility),
+            //        c => c.COLLATERALCUSTOMERID, lc => lc.COLLATERALCUSTOMERID, (c, lc) => new { c, lc })
+            //    .Join(context.TBL_LOAN_REVOLVING, clc => clc.lc.LOANID, l => l.REVOLVINGLOANID, (clc, l) => new { clc, l }) // TBL_LOAN_REVOLVING
+            //    .Select(o => new CollateralHistoryList
+            //    {
+            //        customerName = o.l.TBL_CUSTOMER.FIRSTNAME + " " + o.l.TBL_CUSTOMER.MIDDLENAME + " " + o.l.TBL_CUSTOMER.LASTNAME,
+            //        loanRef = o.l.LOANREFERENCENUMBER + o.l.TBL_PRODUCT.PRODUCTNAME,
+            //        expirationDate = o.l.MATURITYDATE,
+            //        collateralValue = o.clc.c.COLLATERALVALUE,
+            //        outstandingPrincipal = o.l.OVERDRAFTLIMIT,
+            //        totalOutstanding = o.l.OVERDRAFTLIMIT,
+            //        runningPrincipal = o.l.OVERDRAFTLIMIT,
+            //        dateProposed = o.clc.lc.DATETIMECREATED,
+            //        dateUsed = o.l.DISBURSEDATE,
+            //        haircut = o.clc.c.HAIRCUT,
+            //        exchangeRate = o.l.EXCHANGERATE,
+            //        approvedLoanAmount = o.l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+            //    });
 
-            var collaterals = new CollateralHistory();
+            //var collaterals = new CollateralHistory();
 
-            collaterals.usage = termLoanCollaterals.Union(odCollaterals);
-            collaterals.totalAmountUsedByOutstanding = collaterals.usage.Sum(x => x.outstandingPrincipal);
-            collaterals.totalAmountUsedByPrincipal = collaterals.usage.Sum(x => x.approvedLoanAmount);
-            collaterals.collateralValue = collaterals.usage.Any() ? collaterals.usage.Max(x => x.collateralValue) : 0;
-            collaterals.availableValueByPrincipal = collaterals.collateralValue - collaterals.totalAmountUsedByPrincipal;
-            collaterals.availableValueByOutstanding = collaterals.collateralValue - collaterals.totalAmountUsedByOutstanding;
+            //collaterals.usage = termLoanCollaterals.Union(odCollaterals);
+            //collaterals.totalAmountUsedByOutstanding = collaterals.usage.Sum(x => x.outstandingPrincipal);
+            //collaterals.totalAmountUsedByPrincipal = collaterals.usage.Sum(x => x.approvedLoanAmount);
+            //collaterals.collateralValue = collaterals.usage.Any() ? collaterals.usage.Max(x => x.collateralValue) : 0;
+            //collaterals.availableValueByPrincipal = collaterals.collateralValue - collaterals.totalAmountUsedByPrincipal;
+            //collaterals.availableValueByOutstanding = collaterals.collateralValue - collaterals.totalAmountUsedByOutstanding;
 
             /*
             var testL = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCUSTOMERID == collateralId && x.DELETED == false).ToList();// && x.APPROVALSTATUS == (int)ApprovalStatusEnum.Approved)
@@ -7080,6 +7081,91 @@ namespace FintrakBanking.Repositories.Credit
             var testTL = termLoanCollaterals.ToList();
             var testOD = odCollaterals.ToList();
             */
+
+            var termLoansTiedToCollateral = (from c in context.TBL_COLLATERAL_CUSTOMER
+                                             join lc in context.TBL_LOAN_APPLICATION_COLLATERL on c.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
+                                             join m in context.TBL_LOAN_COLLATERAL_MAPPING on lc.LOANAPPCOLLATERALID equals m.LOANAPPCOLLATERALID into lcm
+                                             from m in lcm.DefaultIfEmpty()
+                                             join l in context.TBL_LOAN on m.LOANID equals l.TERMLOANID into lcml
+                                             from l in lcml.DefaultIfEmpty()
+                                             where (m.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility || m == null)
+                                             && c.COLLATERALCUSTOMERID == collateralId && c.DELETED == false
+                                             select new CollateralHistoryList
+                                             {
+                                                 customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.MIDDLENAME + " " + l.TBL_CUSTOMER.LASTNAME,
+                                                 loanRef = l.LOANREFERENCENUMBER + l.TBL_PRODUCT.PRODUCTNAME,
+                                                 expirationDate = l.MATURITYDATE,
+                                                 collateralValue = c.COLLATERALVALUE,
+                                                 amountInUse = lc.COLLATERALCOVERAGE,
+                                                 outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
+                                                 totalOutstanding = l.OUTSTANDINGPRINCIPAL + l.OUTSTANDINGINTEREST,
+                                                 runningPrincipal = l.PRINCIPALAMOUNT,
+                                                 dateProposed = lc.DATETIMECREATED,
+                                                 dateUsed = l.DISBURSEDATE,
+                                                 haircut = c.HAIRCUT,
+                                                 exchangeRate = l.EXCHANGERATE,
+                                                 approvedLoanAmount = l.PRINCIPALAMOUNT,
+                                             }).ToList();
+
+            var odTiedToCollateral = (from c in context.TBL_COLLATERAL_CUSTOMER
+                                      join lc in context.TBL_LOAN_APPLICATION_COLLATERL on c.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
+                                      join m in context.TBL_LOAN_COLLATERAL_MAPPING on lc.LOANAPPCOLLATERALID equals m.LOANAPPCOLLATERALID into lcm
+                                      from m in lcm.DefaultIfEmpty()
+                                      join l in context.TBL_LOAN_REVOLVING on m.LOANID equals l.REVOLVINGLOANID into lcml
+                                      from l in lcml.DefaultIfEmpty()
+                                      where (m.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility || m == null)
+                                      && c.COLLATERALCUSTOMERID == collateralId && c.DELETED == false
+                                      select new CollateralHistoryList
+                                      {
+                                          customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.MIDDLENAME + " " + l.TBL_CUSTOMER.LASTNAME,
+                                          loanRef = l.LOANREFERENCENUMBER + l.TBL_PRODUCT.PRODUCTNAME,
+                                          expirationDate = l.MATURITYDATE,
+                                          collateralValue = c.COLLATERALVALUE,
+                                          amountInUse = lc.COLLATERALCOVERAGE,
+                                          outstandingPrincipal = l.OVERDRAFTLIMIT,
+                                          totalOutstanding = l.OVERDRAFTLIMIT,
+                                          runningPrincipal = l.OVERDRAFTLIMIT,
+                                          dateProposed = lc.DATETIMECREATED,
+                                          dateUsed = l.DISBURSEDATE,
+                                          haircut = c.HAIRCUT,
+                                          exchangeRate = l.EXCHANGERATE,
+                                          approvedLoanAmount = l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                                      }).ToList();
+
+            var bondTiedtoCollateral = (from c in context.TBL_COLLATERAL_CUSTOMER
+                                        join lc in context.TBL_LOAN_APPLICATION_COLLATERL on c.COLLATERALCUSTOMERID equals lc.COLLATERALCUSTOMERID
+                                        join m in context.TBL_LOAN_COLLATERAL_MAPPING on lc.LOANAPPCOLLATERALID equals m.LOANAPPCOLLATERALID into lcm
+                                        from m in lcm.DefaultIfEmpty()
+                                        join l in context.TBL_LOAN_CONTINGENT on m.LOANID equals l.CONTINGENTLOANID into lcml
+                                        from l in lcml.DefaultIfEmpty()
+                                        where (m.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility || m == null)
+                                        && c.COLLATERALCUSTOMERID == collateralId && c.DELETED == false
+                                        select new CollateralHistoryList
+                                        {
+                                            customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.MIDDLENAME + " " + l.TBL_CUSTOMER.LASTNAME,
+                                            //customerGroupName = l.cu
+                                            loanRef = l.LOANREFERENCENUMBER + l.TBL_PRODUCT.PRODUCTNAME,
+                                            expirationDate = l.MATURITYDATE,
+                                            collateralValue = c.COLLATERALVALUE,
+                                            amountInUse = lc.COLLATERALCOVERAGE,
+                                            outstandingPrincipal = l.CONTINGENTAMOUNT,
+                                            totalOutstanding = l.CONTINGENTAMOUNT,
+                                            runningPrincipal = l.CONTINGENTAMOUNT,
+                                            dateProposed = lc.DATETIMECREATED,
+                                            dateUsed = l.DISBURSEDATE,
+                                            haircut = c.HAIRCUT,
+                                            exchangeRate = l.EXCHANGERATE,
+                                            approvedLoanAmount = l.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                                        }).ToList();
+
+            var collaterals = new CollateralHistory();
+
+            collaterals.usage = termLoansTiedToCollateral.Union(odTiedToCollateral).Union(bondTiedtoCollateral);
+            collaterals.totalAmountUsedByOutstanding = collaterals.usage.Sum(x => x.outstandingPrincipal);
+            collaterals.totalAmountUsedByPrincipal = collaterals.usage.Sum(x => x.approvedLoanAmount);
+            collaterals.collateralValue = collaterals.usage.Any() ? collaterals.usage.Max(x => x.collateralValue) : 0;
+            collaterals.availableValueByPrincipal = collaterals.collateralValue - collaterals.totalAmountUsedByPrincipal;
+            collaterals.availableValueByOutstanding = collaterals.collateralValue - collaterals.totalAmountUsedByOutstanding;
 
             return collaterals;
         }
