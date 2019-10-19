@@ -329,7 +329,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              select new LookupViewModel()
                              {
                                lookupId = (short)data.COMPANYDIRECTORID,
-                               lookupName = data.FIRSTNAME +" "+data.MIDDLENAME+" "+data.LASTNAME
+                               lookupName = data.FIRSTNAME + " " + data.MIDDLENAME + " " + data.LASTNAME
                              }).ToList();
             return directors;
         }
@@ -373,7 +373,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         comDirector.TITLE = director.title;
                         comDirector.FIRSTNAME = director.firstName;
-                        comDirector.MIDDLENAME = director.middleName;
+                        comDirector.MIDDLENAME = director.middleName == null ? " " : director.middleName;
                         comDirector.LASTNAME = director.lastName;
                         comDirector.GENDER = director.gender;
                         comDirector.BVN = director.bvn;
