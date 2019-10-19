@@ -509,7 +509,7 @@ namespace FintrakBanking.Repositories.Risk
             {
                 racCategoryTypeId = x.RACCATEGORYTYPEID,
                 racCategoryType = x.RACCATEGORYTYPE,
-            });
+            }).ToList()?.OrderBy(r => r.racCategoryType);
         }
 
         public bool AddRacCategory(RacCategoryViewModel model)
