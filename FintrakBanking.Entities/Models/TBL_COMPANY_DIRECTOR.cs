@@ -17,7 +17,7 @@
 
         [Required] [StringLength(200)] public string FIRSTNAME { get; set; }
 
-        [Required] [StringLength(200)] public string MIDDLENAME { get; set; }
+        [StringLength(200)] public string MIDDLENAME { get; set; }
 
         [Required] [StringLength(200)] public string LASTNAME { get; set; }
 

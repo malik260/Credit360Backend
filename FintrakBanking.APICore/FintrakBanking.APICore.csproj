@@ -1168,10 +1168,6 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\first-bank-logo.png" />
-    <Content Include="Content\first-bank-new-logo.jpg" />
-    <Content Include="Content\first-bank-new1.jpg" />
-    <Content Include="Content\firstbank.png" />
     <Content Include="Content\Icons\Draft.png" />
     <Content Include="Content\Icons\firstbank-logo.jpg" />
     <Content Include="Content\Icons\first_bank_logo_kmH_icon.ico" />
@@ -1625,8 +1621,8 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Areas\" />
+    <Folder Include="CFLAuthentication\App_Data\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FintrakBanking.Common\FintrakBanking.Common.csproj">

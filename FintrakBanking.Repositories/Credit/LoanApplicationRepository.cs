@@ -1766,7 +1766,7 @@ namespace FintrakBanking.Repositories.Credit
             if (isRacRelated == true)
             {
                 defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                 && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID)
+                 && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID) 
              ).Select(x => x).FirstOrDefault();
 
                 if(defaultTier == null)
@@ -1774,19 +1774,14 @@ namespace FintrakBanking.Repositories.Credit
                     defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && ids.Contains(x.RACDEFINITIONID)
                                 ).Select(x => x).FirstOrDefault();
                 }
-                var definition = definitions.FirstOrDefault();
+                
                 racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                    && (
-                        (definition.PRODUCTID == productId && x.SEARCHPLACEHOLDER == "PRODUCT")
-                        || (definition.PRODUCTCLASSID == productClassId) && (x.SEARCHPLACEHOLDER == "PRODUCTCLASS"))
-                    && x.ISRACTIERCONTROLKEY == true
+                    && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYID == definitions.FirstOrDefault().RACCATEGORYID
                 ).ToList();
 
-                definitions = racTiers.Count() > 0 ? racTiers.Where(o => o.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList() : definitions;
             }
 
-            //List< TBL_RAC_CATEGORY_TYPE> allTiers = context.TBL_RAC_CATEGORY_TYPE.Where(x => x.RACCATEGORYID == racTiers.FirstOrDefault().RACCATEGORYID ).ToList();
-
+            
             List<TBL_RAC_DETAIL> details = new List<TBL_RAC_DETAIL>();
             
             int index; int ctr = 0;
@@ -1796,7 +1791,9 @@ namespace FintrakBanking.Repositories.Credit
                 index = i;
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 if (submission == null) continue;
-                bool validation = ValidRacSubmission(definition, submission.value, operationId, targetId);
+
+                bool validation = validation = ValidRacSubmission(i == 0 && isRacRelated ? defaultTier : definition, submission.value, operationId, targetId); 
+
                 if (validation == false && ctr == 0)
                 {
                     if(racTiers.Count() <= 0)
@@ -4990,9 +4987,18 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationDetailsByReference(string reference, int companyId)
         {
-            var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == reference)
+            reference = reference.Trim().ToLower();
+            var data = (from a in context.TBL_LOAN_APPLICATION
+            //var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == reference)
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        &&
+                        (
+                            a.APPLICATIONREFERENCENUMBER.Contains(reference)
+                        ||  a.TBL_CUSTOMER.FIRSTNAME.Contains(reference)
+                        ||  a.TBL_CUSTOMER.MIDDLENAME.Contains(reference)
+                        ||  a.TBL_CUSTOMER.LASTNAME.Contains(reference)
+                        )
                         select new LoanApplicationDetailViewModel
                         {
                             currencyName = b.TBL_CURRENCY.CURRENCYNAME,
