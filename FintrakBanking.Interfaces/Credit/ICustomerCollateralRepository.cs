@@ -171,6 +171,13 @@ namespace FintrakBanking.Interfaces.Credit
         bool DeleteInsurancePolicy(int id, UserInfo user);
         bool UpdateInsurancePolicy(int id, CollateralInsurancePolicyViewModel model);
 
+        IEnumerable<CollateralSwapViewModel> GetAllCollateralSwaps(int staffId);
+        IEnumerable<CollateralSwapViewModel> GetCollateralSwapsForApproval(int staffId);
+        CollateralSwapViewModel GetCollateralSwap(int collateralSwapId);
+        CollateralSwapViewModel AddCollateralSwap(CollateralSwapViewModel model);
+        bool UpdateCollateralSwap(CollateralSwapViewModel model, int id, UserInfo user);
+        bool DeleteCollateralSwap(int collateralSwapId, UserInfo user);
+
 
 
 

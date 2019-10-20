@@ -1926,6 +1926,7 @@ namespace FintrakBanking.Repositories.Credit
                                orderby x.LOANAPPCOLLATERALID
                                select new CollateralCoverageViewModel
                                {
+                                   loanAppCollateralId = x.LOANAPPCOLLATERALID,
                                    collateralId = x.COLLATERALCUSTOMERID,
                                    collateralCode = c.COLLATERALCODE,
                                    collateralValue = c.COLLATERALVALUE,
@@ -1996,6 +1997,7 @@ namespace FintrakBanking.Repositories.Credit
                 totalCoverage = ((alreadyProposedCollateralsForThisFacility.Sum(c => c.COLLATERALCOVERAGE)) / facilityAmount) * 100;
                 var cov = new CollateralCoverageViewModel
                 {
+                    loanAppCollateralId = collateral.loanAppCollateralId,
                     collateralSummary = collateral.collateralSummary,
                     expectedCoveragePercentage = coveragePercentage,
                     actualCoveragePercentage = ((actualCollateralCoverage / facilityAmount) * 100),
@@ -10205,9 +10207,163 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-       
+        #region collateralswap
+        public IEnumerable<CollateralSwapViewModel> GetAllCollateralSwaps(int staffId)
+        {
+            var requests = context.TBL_COLLATERAL_SWAP_REQUEST.ToList();
+            var swapsInProgress = (from s in context.TBL_COLLATERAL_SWAP_REQUEST
+                                   join t in context.TBL_APPROVAL_TRAIL on s.COLLATERALSWAPID equals t.TARGETID
+                                   where
+                                    (
+                                    s.DELETED == false
+                                    && t.OPERATIONID == (int)OperationsEnum.CollateralSwap
+                                    && s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
+                                    )
+                                   select new CollateralSwapViewModel
+                                   {
+                                       collateralSwapId = s.COLLATERALSWAPID,
+                                       loanCollateralMappingId = s.LOANCOLLATERALMAPPINGID,
+                                       loanAppCollateralId = s.LOANAPPCOLLATERALID,
+                                       oldCollateralId = s.OLDCOLLATERALID,
+                                       newCollateralId = s.NEWCOLLATERALID,
+                                       oldCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.OLDCOLLATERALID).COLLATERALCODE,
+                                       newCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.NEWCOLLATERALID).COLLATERALCODE,
+                                       collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
+                                       approvalStatusId = t.APPROVALSTATUSID,
+                                       approvalTrailId = t.APPROVALTRAILID,
+                                       loopedStaffId = t.LOOPEDSTAFFID,
+                                       swapRef = s.SWAPREF
+                                   }).GroupBy(l => l.collateralSwapId).Select(l => l.OrderByDescending(t => t.approvalTrailId).FirstOrDefault())
+                                       .Where(l => (l.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
+                                                || (l.approvalStatusId == (int)ApprovalStatusEnum.Referred
+                                                && l.loopedStaffId == staffId)).ToList();
 
-       
+            var swapsNotStarted = (from s in context.TBL_COLLATERAL_SWAP_REQUEST
+                                   where s.COLLATERALSWAPSTATUSID == null
+                                   select new CollateralSwapViewModel
+                                   {
+                                       collateralSwapId = s.COLLATERALSWAPID,
+                                       loanCollateralMappingId = s.LOANCOLLATERALMAPPINGID,
+                                       loanAppCollateralId = s.LOANAPPCOLLATERALID,
+                                       oldCollateralId = s.OLDCOLLATERALID,
+                                       newCollateralId = s.NEWCOLLATERALID,
+                                       collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
+                                       swapRef = s.SWAPREF
+                                   }).ToList();
+
+            var result = swapsNotStarted.Union(swapsInProgress);
+            return result;
+        }
+
+        public IEnumerable<CollateralSwapViewModel> GetCollateralSwapsForApproval(int staffId)
+        {
+            var operationId = (int)OperationsEnum.lcReleaseOfShippingDocuments;
+            var levelIds = genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+
+            var collateralSwapsForApproval = (from s in context.TBL_COLLATERAL_SWAP_REQUEST
+                                              join t in context.TBL_APPROVAL_TRAIL on s.COLLATERALSWAPID equals t.TARGETID
+                                              where
+                                               (
+                                               s.DELETED == false
+                                               && t.OPERATIONID == (int)OperationsEnum.CollateralSwap
+                                               && s.COLLATERALSWAPSTATUSID == (int)LoanApplicationStatusEnum.collateralSwapInProgress
+                                               && t.APPROVALSTATEID != (int)ApprovalState.Ended
+                                               && t.RESPONSESTAFFID == null
+                                               && t.LOOPEDSTAFFID == null
+                                               && levelIds.Contains((int)t.TOAPPROVALLEVELID)
+                                               && (t.TOSTAFFID == null || t.TOSTAFFID == staffId)
+                                               )
+                                              select new CollateralSwapViewModel
+                                              {
+                                                  collateralSwapId = s.COLLATERALSWAPID,
+                                                  loanCollateralMappingId = s.LOANCOLLATERALMAPPINGID,
+                                                  loanAppCollateralId = s.LOANAPPCOLLATERALID,
+                                                  oldCollateralId = s.OLDCOLLATERALID,
+                                                  newCollateralId = s.NEWCOLLATERALID,
+                                                  collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
+                                                  approvalStatusId = t.APPROVALSTATUSID,
+                                                  approvalTrailId = t.APPROVALTRAILID,
+                                                  currentApprovalLevelId = t.TOAPPROVALLEVELID,
+                                                  currentApprovalLevel = t.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                                                  approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(a => a.APPROVALSTATUSID == t.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                                  customerName = s.TBL_CUSTOMER.FIRSTNAME + " " + s.TBL_CUSTOMER.MIDDLENAME + " " + s.TBL_CUSTOMER.LASTNAME,
+                                                  swapRef = s.SWAPREF,
+                                                  dateTimeCreated = (DateTime)s.DATETIMECREATED
+                                              }).GroupBy(d => d.collateralSwapId)
+                                                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault()).ToList();
+            return collateralSwapsForApproval;
+        }
+
+
+        public CollateralSwapViewModel GetCollateralSwap(int collateralSwapId)
+        {
+            var swap = (from s in context.TBL_COLLATERAL_SWAP_REQUEST
+                        where s.COLLATERALSWAPID == collateralSwapId
+                        select new CollateralSwapViewModel
+                        {
+                            collateralSwapId = s.COLLATERALSWAPID,
+                            loanCollateralMappingId = s.LOANCOLLATERALMAPPINGID,
+                            loanAppCollateralId = s.LOANAPPCOLLATERALID,
+                            oldCollateralId = s.OLDCOLLATERALID,
+                            newCollateralId = s.NEWCOLLATERALID,
+                            collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
+                            swapRef = s.SWAPREF
+                        }).FirstOrDefault();
+            return swap;
+        }
+
+        public CollateralSwapViewModel AddCollateralSwap(CollateralSwapViewModel model)
+        {
+            var reference = CommonHelpers.GenerateRandomDigitCode(10);
+            var swap = new TBL_COLLATERAL_SWAP_REQUEST()
+            {
+                SWAPREF = reference,
+                LOANCOLLATERALMAPPINGID = model.loanCollateralMappingId,
+                LOANAPPCOLLATERALID = model.loanAppCollateralId,
+                OLDCOLLATERALID = model.oldCollateralId,
+                NEWCOLLATERALID = model.newCollateralId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = genSetup.GetApplicationDate()
+            };
+
+            context.TBL_COLLATERAL_SWAP_REQUEST.Add(swap);
+            var saved = context.SaveChanges() != 0;
+            if (swap.COLLATERALSWAPID <= 0)
+            {
+                throw new SecureException("Didn't return new swap Id");
+            }
+            model.collateralSwapId = swap.COLLATERALSWAPID;
+            model.swapRef = reference;
+            return model;
+
+        }
+
+        public bool UpdateCollateralSwap(CollateralSwapViewModel model, int id, UserInfo user)
+        {
+            var swap = context.TBL_COLLATERAL_SWAP_REQUEST.Find(id);
+            if (swap == null) return false;
+
+            swap.LOANAPPCOLLATERALID = model.loanAppCollateralId;
+            swap.LOANCOLLATERALMAPPINGID = model.loanCollateralMappingId;
+            swap.NEWCOLLATERALID = model.newCollateralId;
+            swap.OLDCOLLATERALID = model.oldCollateralId;
+            swap.DATETIMEUPDATED = genSetup.GetApplicationDate();
+            swap.LASTUPDATEDBY = model.createdBy;
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteCollateralSwap(int collateralSwapId, UserInfo user)
+        {
+            var swap = context.TBL_COLLATERAL_SWAP_REQUEST.Find(collateralSwapId);
+            if (swap == null) return false;
+            swap.DELETED = true;
+            swap.DELETEDBY = user.createdBy;
+
+            return context.SaveChanges() != 0;
+        }
+        #endregion collateralswap
+
     }
 
 }
