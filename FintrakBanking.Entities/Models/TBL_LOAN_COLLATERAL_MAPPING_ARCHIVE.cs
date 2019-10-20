@@ -17,6 +17,8 @@ namespace FintrakBanking.Entities.Models
         int LOANCOLLATERALMAPPINGID { get; set; }
         [ForeignKey("TBL_LOAN_APPLICATION_COLLATERL")]
         public int LOANAPPCOLLATERALID { get; set; }
+        [ForeignKey("TBL_COLLATERAL_SWAP_REQUEST")]
+        public int COLLATERALSWAPID { get; set; }
         [ForeignKey("TBL_COLLATERAL_CUSTOMER")]
         public int COLLATERALCUSTOMERID { get; set; }
         [ForeignKey("TBL_COLLATERAL_CUSTOMER")]
