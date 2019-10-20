@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.Models
         public int LOANAPPCOLLATERALID { get; set; }
         public int OLDCOLLATERALID { get; set; }
         public int NEWCOLLATERALID { get; set; }
+        public int CUSTOMERID { get; set; }
         public string SWAPREF { get; set; }
         public int? COLLATERALSWAPSTATUSID { get; set; }
         public bool DELETED { get; set; }
