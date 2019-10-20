@@ -945,8 +945,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-operation/awaiting-approval")]
-        public HttpResponseMessage GetLoanOperationAwaitingApproval()
-        {
+        public HttpResponseMessage GetLoanOperationAwaitingApproval(){
             var data = repo.GetLoanOperationAwaitingApproval(token.GetStaffId, token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
 

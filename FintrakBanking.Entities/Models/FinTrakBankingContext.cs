@@ -11,6 +11,7 @@ namespace FintrakBanking.Entities.Models
         public FinTrakBankingContext()
             : base("name=FinTrakBankingContext")
         {
+            Database.SetInitializer<FinTrakBankingContext>(null);
         }
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }
