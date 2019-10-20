@@ -558,6 +558,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ALERT_LEVEL> TBL_ALERT_LEVEL { get; set; } 
         public virtual DbSet<TBL_ALERT_FREQUENCY> TBL_ALERT_FREQUENCY { get; set; } 
         public virtual DbSet<TBL_ALERT_CONDITION> TBL_ALERT_CONDITION { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_SWAP_REQUEST> TBL_COLLATERAL_SWAP_REQUEST { get; set; }
+        public virtual DbSet<TBL_LOAN_COLLATERAL_MAPPING_ARCHIVE> TBL_LOAN_COLLATERAL_MAPPING_ARCHIVE { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 
@@ -615,6 +617,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LC_ISSUANCE)
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER>()
+               .HasMany(e => e.TBL_COLLATERAL_SWAP_REQUEST)
+               .WithRequired(e => e.TBL_CUSTOMER)
+               .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_LOAN_CAMSOL>()
                 .HasMany(e => e.TBL_OPERATION_CAMSOL_LIST)
