@@ -559,7 +559,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ALERT_FREQUENCY> TBL_ALERT_FREQUENCY { get; set; } 
         public virtual DbSet<TBL_ALERT_CONDITION> TBL_ALERT_CONDITION { get; set; }
         public virtual DbSet<TBL_COLLATERAL_SWAP_REQUEST> TBL_COLLATERAL_SWAP_REQUEST { get; set; }
-        public virtual DbSet<TBL_LOAN_COLLATERAL_MAPPING_ARCHIVE> TBL_LOAN_COLLATERAL_MAPPING_ARCHIVE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_MAPPING_ARCHIVE> TBL_COLLATERAL_MAPPING_ARCHIVE { get; set; }
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 

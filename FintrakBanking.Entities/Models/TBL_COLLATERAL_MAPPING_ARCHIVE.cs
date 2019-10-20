@@ -8,18 +8,20 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Entities.Models
 {
-    [Table("TBL_COLLATRL_MAPPING_ARCHIVE")]
-    public partial class TBL_LOAN_COLLATERAL_MAPPING_ARCHIVE
+    [Table("TBL_COLLATERAL_MAPPING_ARCHIVE")]
+    public partial class TBL_COLLATERAL_MAPPING_ARCHIVE
     {
         [Key]
         public int LOANCOLLATERALMAPPINGARCHIVEID { get; set; }
-        [ForeignKey("TBL_LOAN_COLLATERAL_MAPPING")]
-        int LOANCOLLATERALMAPPINGID { get; set; }
-        [ForeignKey("TBL_LOAN_APPLICATION_COLLATERL")]
+        //[ForeignKey("TBL_LOAN_COLLATERAL_MAPPING")]
+        public int LOANCOLLATERALMAPPINGID { get; set; }
+        //[ForeignKey("TBL_LOAN_APPLICATION_COLLATERL")]
         public int LOANAPPCOLLATERALID { get; set; }
-        [ForeignKey("TBL_COLLATERAL_CUSTOMER")]
+        //[ForeignKey("TBL_COLLATERAL_SWAP_REQUEST")]
+        public int COLLATERALSWAPID { get; set; }
+        //[ForeignKey("TBL_COLLATERAL_CUSTOMER")]
         public int COLLATERALCUSTOMERID { get; set; }
-        [ForeignKey("TBL_COLLATERAL_CUSTOMER")]
+        //[ForeignKey("TBL_COLLATERAL_CUSTOMER")]
         public int NEWCOLLATERALCUSTOMERID { get; set; }
 
         public int LOANID { get; set; }
@@ -43,5 +45,9 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+        public virtual TBL_COLLATERAL_CUSTOMER TBL_COLLATERAL_CUSTOMER { get; set; }
+        public virtual TBL_LOAN_APPLICATION_COLLATERL TBL_LOAN_APPLICATION_COLLATERL { get; set; }
+        public virtual TBL_LOAN_COLLATERAL_MAPPING TBL_LOAN_COLLATERAL_MAPPING { get; set; }
+        public virtual TBL_COLLATERAL_SWAP_REQUEST TBL_COLLATERAL_SWAP_REQUEST { get; set; }
     }
 }
