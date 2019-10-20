@@ -1345,6 +1345,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("approved-loan-application-details/search")]
+        public HttpResponseMessage SearchApprovedLoanApplicationDetails([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.SearchApprovedLoanApplicationDetails(model.searchString, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application/cancellation")]
