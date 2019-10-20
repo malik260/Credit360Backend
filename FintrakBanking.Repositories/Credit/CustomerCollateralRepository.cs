@@ -10362,6 +10362,51 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() != 0;
         }
+        
+        public IEnumerable<LoanApplicationDetailViewModel> GetCollateralMappingDetails(int loanAppCollateralId)
+        {
+            var data = (from m in context.TBL_LOAN_APPLICATION_COLLATERL
+                        join a in context.TBL_LOAN_APPLICATION on m.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on m.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        where a.DELETED == false && b.DELETED == false && m.DELETED == false && m.LOANAPPCOLLATERALID == loanAppCollateralId
+                        select new LoanApplicationDetailViewModel
+                        {
+                            currencyName = b.TBL_CURRENCY.CURRENCYNAME,
+                            exchangeRate = b.EXCHANGERATE,
+                            loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                            customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
+                            approvedProductId = b.APPROVEDPRODUCTID,
+                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedTenor = b.PROPOSEDTENOR,
+                            proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                            proposedAmount = b.PROPOSEDAMOUNT,
+                            sectorId = (short)b.TBL_SUB_SECTOR.SECTORID,
+                            subSectorId = b.SUBSECTORID,
+                            approvedProductName = context.TBL_PRODUCT.Where(o => o.PRODUCTID == b.APPROVEDPRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+
+                            //requireCollateral = a.REQUIRECOLLATERAL,
+                            repaymentScheduleId = b.REPAYMENTSCHEDULEID,
+                            isTakeOverApplication = b.ISTAKEOVERAPPLICATION,
+                            repaymentTerm = b.REPAYMENTTERMS,
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                            middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                            lastName = b.TBL_CUSTOMER.LASTNAME,
+                            customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                            proposedProductId = b.PROPOSEDPRODUCTID,
+                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                            productClassId = (short?)b.TBL_PRODUCT.PRODUCTCLASSID,
+                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            approvalStatusId = a.APPROVALSTATUSID,
+                        });
+            var result = data.ToList();
+            return result;
+        }
         #endregion collateralswap
 
     }

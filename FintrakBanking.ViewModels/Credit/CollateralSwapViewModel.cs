@@ -19,6 +19,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string currentApprovalLevel { get; set; }
         public string productName { get; set; }
         public string swapRef { get; set; }
+        public string oldCollateralCode { get; set; }
+        public string newCollateralCode { get; set; }
         public int? approvalStatusId { get; set; }
         public int? collateralSwapStatusId { get; set; }
         public string collateralSwapStatus { get; set; }

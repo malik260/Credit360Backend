@@ -177,6 +177,7 @@ namespace FintrakBanking.Interfaces.Credit
         CollateralSwapViewModel AddCollateralSwap(CollateralSwapViewModel model);
         bool UpdateCollateralSwap(CollateralSwapViewModel model, int id, UserInfo user);
         bool DeleteCollateralSwap(int collateralSwapId, UserInfo user);
+        IEnumerable<LoanApplicationDetailViewModel> GetCollateralMappingDetails(int id);
 
 
 

@@ -2496,6 +2496,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-swap-approval")]
+        public HttpResponseMessage GetCollateralSwapsForApproval()
+        {
+            IEnumerable<CollateralSwapViewModel> response = repo.GetCollateralSwapsForApproval(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -2559,7 +2568,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-mapping/{id}")]
+        public HttpResponseMessage GetCollateralMappingDetails(int id)
+        {
+            IEnumerable<LoanApplicationDetailViewModel> response = repo.GetCollateralMappingDetails(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
 
     }
 

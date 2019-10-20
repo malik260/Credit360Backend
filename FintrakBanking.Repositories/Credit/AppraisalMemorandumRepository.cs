@@ -1301,7 +1301,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else if (workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
                 {
-                    //lgr.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected;
                     cs.COLLATERALSWAPSTATUSID = (int)ApprovalStatusEnum.Disapproved;
                     //SendEmailToCustomerForLoanDisapproval(model.LcIssuanceId, model.companyId);
                 }
