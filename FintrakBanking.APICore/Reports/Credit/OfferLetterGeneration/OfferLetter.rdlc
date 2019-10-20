@@ -2926,6 +2926,20 @@
               </Border>
             </Style>
           </Tablix>
+          <Image Name="Image1">
+            <Source>Embedded</Source>
+            <Value>logomain</Value>
+            <Sizing>FitProportional</Sizing>
+            <Left>5.0812in</Left>
+            <Height>0.5in</Height>
+            <Width>1.8058in</Width>
+            <ZIndex>17</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Image>
         </ReportItems>
         <Height>12.04306in</Height>
         <Style>
