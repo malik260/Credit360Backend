@@ -63,7 +63,7 @@ namespace FintrakBanking.APICore.Filters
 
             var log = new TBL_ERRORLOG()
             {
-                USERNAME = userName ?? string.Empty,
+                USERNAME = userName == null ? string.Empty : userName,
                 APIENDPOINT = endPoint.ToString(),
                 ERRORPATH = ex.TargetSite.ToString(),
                 ERRORSOURCE = ex.Source,

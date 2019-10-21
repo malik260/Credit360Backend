@@ -4994,10 +4994,11 @@ namespace FintrakBanking.Repositories.Credit
                         where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
                         &&
                         (
-                            a.APPLICATIONREFERENCENUMBER.Contains(reference)
-                        ||  a.TBL_CUSTOMER.FIRSTNAME.Contains(reference)
-                        ||  a.TBL_CUSTOMER.MIDDLENAME.Contains(reference)
-                        ||  a.TBL_CUSTOMER.LASTNAME.Contains(reference)
+                            a.APPLICATIONREFERENCENUMBER.Trim().ToLower().Contains(reference.Trim())
+                        ||  a.TBL_CUSTOMER_GROUP.GROUPNAME.Trim().ToLower().Contains(reference.Trim())
+                        ||  a.TBL_CUSTOMER.FIRSTNAME.Trim().ToLower().Contains(reference.Trim())
+                        ||  a.TBL_CUSTOMER.MIDDLENAME.Trim().ToLower().Contains(reference.Trim())
+                        ||  a.TBL_CUSTOMER.LASTNAME.Trim().ToLower().Contains(reference.Trim())
                         )
                         select new LoanApplicationDetailViewModel
                         {
@@ -5032,6 +5033,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchName = a.TBL_BRANCH.BRANCHNAME,
                             customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            approvalStatusId = a.APPROVALSTATUSID,
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
@@ -5040,6 +5042,13 @@ namespace FintrakBanking.Repositories.Credit
 
             //}
             // var test = result.Count();
+            return result;
+        }
+
+        public IEnumerable<LoanApplicationDetailViewModel> SearchApprovedLoanApplicationDetails(string reference, int companyId)
+        {
+            var data = GetLoanApplicationDetailsByReference(reference, companyId).Where(a => a.approvalStatusId == (int)ApprovalStatusEnum.Approved);
+            var result = data.ToList();
             return result;
         }
 

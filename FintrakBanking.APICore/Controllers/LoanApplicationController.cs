@@ -1345,6 +1345,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("approved-loan-application-details/search")]
+        public HttpResponseMessage SearchApprovedLoanApplicationDetails([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.SearchApprovedLoanApplicationDetails(model.searchString, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application/cancellation")]
@@ -2044,7 +2061,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lien/{id}")]
+        [Route("lien-id/{id}")]
         public HttpResponseMessage GetApplicationDetailLien(int id)
         {
             LoanApplicationLienViewModel response = repo.GetApplicationDetailLien(id);
@@ -2054,7 +2071,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lien/{applicationDetailId}")]
+        [Route("lien-applicationDetailId/{applicationDetailId}")]
         public HttpResponseMessage GetLienByApplicationDetailId(int applicationDetailId)
         {
             IEnumerable<LoanApplicationLienViewModel> response = repo.GetLienByApplicationDetailId(applicationDetailId);
@@ -2064,7 +2081,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lien/{collateralId}")]
+        [Route("lien-collateralId/{collateralId}")]
         public HttpResponseMessage GetLienByCollateralId(int collateralId)
         {
             IEnumerable<LoanApplicationLienViewModel> response = repo.GetLienByCollateralId(collateralId);
@@ -2074,7 +2091,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lien/{accountNo}")]
+        [Route("lien-accountNo/{accountNo}")]
         public HttpResponseMessage GetApplicationDetailLienByAccountNo(string accountNo)
         {
             IEnumerable<LoanApplicationLienViewModel> response = repo.GetApplicationDetailLienByAccountNo(accountNo);
