@@ -2061,7 +2061,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lien/{id}")]
+        [Route("lien-id/{id}")]
         public HttpResponseMessage GetApplicationDetailLien(int id)
         {
             LoanApplicationLienViewModel response = repo.GetApplicationDetailLien(id);
@@ -2071,7 +2071,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lien/{applicationDetailId}")]
+        [Route("lien-applicationDetailId/{applicationDetailId}")]
         public HttpResponseMessage GetLienByApplicationDetailId(int applicationDetailId)
         {
             IEnumerable<LoanApplicationLienViewModel> response = repo.GetLienByApplicationDetailId(applicationDetailId);
@@ -2081,7 +2081,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lien/{collateralId}")]
+        [Route("lien-collateralId/{collateralId}")]
         public HttpResponseMessage GetLienByCollateralId(int collateralId)
         {
             IEnumerable<LoanApplicationLienViewModel> response = repo.GetLienByCollateralId(collateralId);
@@ -2091,7 +2091,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("lien/{accountNo}")]
+        [Route("lien-accountNo/{accountNo}")]
         public HttpResponseMessage GetApplicationDetailLienByAccountNo(string accountNo)
         {
             IEnumerable<LoanApplicationLienViewModel> response = repo.GetApplicationDetailLienByAccountNo(accountNo);
