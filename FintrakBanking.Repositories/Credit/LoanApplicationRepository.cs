@@ -4987,9 +4987,19 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationDetailsByReference(string reference, int companyId)
         {
-            var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == reference)
+            reference = reference.Trim().ToLower();
+            var data = (from a in context.TBL_LOAN_APPLICATION
+            //var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == reference)
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        &&
+                        (
+                            a.APPLICATIONREFERENCENUMBER.Trim().ToLower().Contains(reference.Trim())
+                        ||  a.TBL_CUSTOMER_GROUP.GROUPNAME.Trim().ToLower().Contains(reference.Trim())
+                        ||  a.TBL_CUSTOMER.FIRSTNAME.Trim().ToLower().Contains(reference.Trim())
+                        ||  a.TBL_CUSTOMER.MIDDLENAME.Trim().ToLower().Contains(reference.Trim())
+                        ||  a.TBL_CUSTOMER.LASTNAME.Trim().ToLower().Contains(reference.Trim())
+                        )
                         select new LoanApplicationDetailViewModel
                         {
                             currencyName = b.TBL_CURRENCY.CURRENCYNAME,
@@ -5023,6 +5033,7 @@ namespace FintrakBanking.Repositories.Credit
                             branchName = a.TBL_BRANCH.BRANCHNAME,
                             customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            approvalStatusId = a.APPROVALSTATUSID,
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
@@ -5031,6 +5042,13 @@ namespace FintrakBanking.Repositories.Credit
 
             //}
             // var test = result.Count();
+            return result;
+        }
+
+        public IEnumerable<LoanApplicationDetailViewModel> SearchApprovedLoanApplicationDetails(string reference, int companyId)
+        {
+            var data = GetLoanApplicationDetailsByReference(reference, companyId).Where(a => a.approvalStatusId == (int)ApprovalStatusEnum.Approved);
+            var result = data.ToList();
             return result;
         }
 
@@ -5343,6 +5361,7 @@ namespace FintrakBanking.Repositories.Credit
                                           destinationUrl = c.DESTINATIONURL,
                                           skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
                                           operationId = c.OPERATIONID,
+                                          hasOperationBasedRac = c.HASOPERATIONBASEDRAC,
                                           dateTimeCreated = c.DATETIMECREATED,
                                           createdBy = c.CREATEDBY
                                       }).ToList();
