@@ -144,7 +144,7 @@
     AnnualReview = 200, //formerly id= 114
     IndictiveTermsheet = 201,   //formerly id = 115
     CreditCardsCashBacked = 202,    //formerly 116
-
+    CollateralSwap = 206,
 
 }
 

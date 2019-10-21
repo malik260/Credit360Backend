@@ -2487,8 +2487,96 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-swap")]
+        public HttpResponseMessage GetAllCollateralSwaps()
+        {
+            IEnumerable<CollateralSwapViewModel> response = repo.GetAllCollateralSwaps(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-swap-approval")]
+        public HttpResponseMessage GetCollateralSwapsForApproval()
+        {
+            IEnumerable<CollateralSwapViewModel> response = repo.GetCollateralSwapsForApproval(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
 
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-swap/{id}")]
+        public HttpResponseMessage GetCollateralSwap(int id)
+        {
+            CollateralSwapViewModel response = repo.GetCollateralSwap(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("collateral-swap")]
+        public HttpResponseMessage AddCollateralSwap([FromBody] CollateralSwapViewModel model)
+        {
+            model.userBranchId = (short)token.GetBranchId;
+            model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            var response = repo.AddCollateralSwap(model);
+            if (response != null) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("collateral-swap/{id}")]
+        public HttpResponseMessage UpdateCollateralSwap([FromBody] CollateralSwapViewModel model, int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.UpdateCollateralSwap(model, id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, message = "The record has been updated successfully", count = 1 });
+        }
+
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("collateral-swap/{id}")]
+        public HttpResponseMessage DeleteCollateralSwap(int id)
+        {
+            UserInfo user = new UserInfo()
+            {
+                BranchId = token.GetBranchId,
+                companyId = token.GetCompanyId,
+                createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
+                userIPAddress = HttpContext.Current.Request.UserHostAddress
+            };
+            bool response = repo.DeleteCollateralSwap(id, user);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-mapping/{id}")]
+        public HttpResponseMessage GetCollateralMappingDetails(int id)
+        {
+            IEnumerable<LoanApplicationDetailViewModel> response = repo.GetCollateralMappingDetails(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+        }
 
     }
 
