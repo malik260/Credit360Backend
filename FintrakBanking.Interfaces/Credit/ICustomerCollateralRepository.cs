@@ -123,6 +123,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<InsurancePolicy> GetTempCollateralInsurancePolicy(int collateralId);
 
         CasaLienViewModel GetAccountLienDetail(string AccountNumber);
+        //CasaLienViewModel GetAccountLienDetailForFD(string AccountNumber);//not implemented
 
         IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId);
 
