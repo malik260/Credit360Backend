@@ -161,10 +161,12 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Added Customer  '{entity.customerName}' with Code: {entity.prospectCustomerCode}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -406,10 +408,12 @@ namespace FintrakBanking.Repositories.Customer
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
                         DETAIL = auditDetail,
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
 
                     this.auditTrail.AddAuditTrail(audit);
@@ -491,10 +495,12 @@ namespace FintrakBanking.Repositories.Customer
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
                         DETAIL = "Added new Customer BVN for customer ID: + (" + entity.customerId + ") ",
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
 
                     this.auditTrail.AddAuditTrail(audit);
@@ -549,10 +555,12 @@ namespace FintrakBanking.Repositories.Customer
                             STAFFID = staffId,
                             BRANCHID = BranchId,
                             DETAIL = "Added new TBL_CUSTOMER_CHILDREN for customer ID: + (" + entity.customerId + ") ",
-                            IPADDRESS = entity.userIPAddress,
+                            IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                             URL = entity.applicationUrl,
                             APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                            SYSTEMDATETIME = DateTime.Now
+                            SYSTEMDATETIME = DateTime.Now,
+                            DEVICENAME = CommonHelpers.GetDeviceName(),
+                            OSNAME = CommonHelpers.FriendlyName()
                         };
 
                         this.auditTrail.AddAuditTrail(audit);
@@ -938,10 +946,12 @@ namespace FintrakBanking.Repositories.Customer
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
                         DETAIL = auditDetail,
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
                     this.auditTrail.AddAuditTrail(audit);
 
@@ -1109,10 +1119,12 @@ namespace FintrakBanking.Repositories.Customer
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
                         DETAIL = "Added Customer's Company Information with CustomerId : " + entity.customerId,
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
                     this.auditTrail.AddAuditTrail(audit);
 
@@ -1160,10 +1172,12 @@ namespace FintrakBanking.Repositories.Customer
                     DETAIL = "Added Customer's Customer Info for: " + customer.FIRSTNAME + " " + customer.LASTNAME +
                              " with Id: " + info.CUSTOMERID + " to company" + " (" + info.COMPANYNAME + ") " + " on " +
                              info.COMPANYINFOMATIONID,
-                    IPADDRESS = ent.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = ent.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 auditTrail.AddAuditTrail(audit);
@@ -1505,10 +1519,12 @@ namespace FintrakBanking.Repositories.Customer
                         BRANCHID = (short)entity.userBranchId,
                         DETAIL =
                             "Added new TBL_CUSTOMER_IDENTIFICATION for customer ID: + (" + entity.customerId + ") ",
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
 
                     this.auditTrail.AddAuditTrail(audit);
@@ -1575,10 +1591,12 @@ namespace FintrakBanking.Repositories.Customer
                         BRANCHID = (short)entity.userBranchId,
                         DETAIL =
                             "Added new TBL_CUSTOMER_IDENTIFICATION for customer ID: + (" + entity.customerId + ") ",
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
 
                     this.auditTrail.AddAuditTrail(audit);
@@ -1808,10 +1826,12 @@ namespace FintrakBanking.Repositories.Customer
                         BRANCHID = (short)entity.userBranchId,
                         DETAIL = "Added new TBL_CUSTOMER_CLIENT_SUPPLIER for customer ID: + (" + entity.customerId +
                                  ") ",
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
                     this.auditTrail.AddAuditTrail(audit);
                     var response = context.SaveChanges() != 0;
@@ -2030,10 +2050,12 @@ namespace FintrakBanking.Repositories.Customer
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
                         DETAIL = auditDetail,
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
 
                     this.auditTrail.AddAuditTrail(audit);
@@ -2067,10 +2089,12 @@ namespace FintrakBanking.Repositories.Customer
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = "Deleted Child: " + child.CHILDNAME + " of customer with  Code : " + child.TBL_CUSTOMER.CUSTOMERCODE,
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 auditTrail.AddAuditTrail(audit);
@@ -2101,10 +2125,12 @@ namespace FintrakBanking.Repositories.Customer
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = "Deleted Customer: " + customer.LASTNAME + " with code: " + customer.CUSTOMERCODE,
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 auditTrail.AddAuditTrail(audit);
@@ -2130,10 +2156,12 @@ namespace FintrakBanking.Repositories.Customer
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = "Deleted Company ultimate beneficial: " + ultimate.SURNAME + " " + ultimate.SURNAME +" for: " + ultimate.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME,
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 auditTrail.AddAuditTrail(audit);
             }
@@ -2948,7 +2976,9 @@ namespace FintrakBanking.Repositories.Customer
                     $"on  ({ entity.customerId })  Has Been Updated from '{previousCustomerName}' to '{entity.firstName}' ",
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 using (var trans = context.Database.BeginTransaction())
                 {
@@ -4231,10 +4261,12 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = "Updated customer information for : + (" + data.FIRSTNAME + " " + data.LASTNAME + ") ",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -4548,10 +4580,12 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = detail, //"Approved Customer Information for customer with code: " + entity.CUSTOMERCODE,
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -4607,10 +4641,12 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = detail, //"Approved Customer Company Information:  with Id: " + entity.COMPANYINFOMATIONID,
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -4765,10 +4801,12 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = detail, // "Approved Customer Address Information:  with Id: " + entity.ADDRESSID,
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -4845,10 +4883,12 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = "Approved Customer Address Information:  with Id: " + entity.PHONECONTACTID,
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -4942,10 +4982,12 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = "Approved Customer Employment History Information:  with Id: " + entity.PLACEOFWORKID,
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -5024,10 +5066,12 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = "Approved Customer Next of Kin Information:  with Id: " + entity.NEXTOFKINID,
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -5122,10 +5166,12 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = "Approved Customer Top Client Supplier Information:  with Id: " + entity.CLIENT_SUPPLIERID,
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -5269,10 +5315,12 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = "Approved Customer Top Client Supplier Information:  with Id: " + entity.COMPANYDIRECTORID,
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -5505,10 +5553,12 @@ namespace FintrakBanking.Repositories.Customer
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
                     DETAIL = auditDetail,
-                    IPADDRESS = entity.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -5633,10 +5683,12 @@ namespace FintrakBanking.Repositories.Customer
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = "Updated TBL_CUSTOMER: " + entity.customerName + " with code: " + entity.customerCode +
                          " on" + " (" + entity.customerId + ") ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             using (var trans = context.Database.BeginTransaction())
             {

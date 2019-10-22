@@ -10,6 +10,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -93,10 +94,12 @@ namespace FintrakBanking.Repositories.Setups.General
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
                         DETAIL = "Added Branch Region with Name : " + entity.regionName,
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = DateTime.Now,
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
                     };
                     this.auditTrail.AddAuditTrail(audit);
 
@@ -179,10 +182,12 @@ namespace FintrakBanking.Repositories.Setups.General
                         STAFFID = entity.createdBy,
                         BRANCHID = (short)entity.userBranchId,
                         DETAIL = "Added Branch Region Staff For with Region : " + region.REGION_NAME,
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
                         APPLICATIONDATE = DateTime.Now,
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
                     };
                     this.auditTrail.AddAuditTrail(audit);
 
@@ -229,10 +234,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Deleted region staff: '{staff.FIRSTNAME}' '{staff.LASTNAME}' in region: {region.REGION_NAME} ",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 //end of Audit section -------------------------------
             }
@@ -380,10 +387,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Added branch: '{model.branchName}' with code: {model.branchCode} ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 //end of Audit section -------------------------------
             }
@@ -422,10 +431,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)model.lastUpdatedBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Updated branch: '{model.branchName}' with code: {model.branchCode} ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 //end of Audit section -------------------------------
             }
@@ -453,10 +464,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Updated branch: '{model.branchName}' with code: {model.branchCode} ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
             //end of Audit section -------------------------------
             this.auditTrail.AddAuditTrail(audit);
@@ -480,10 +493,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Deleted branch: '{branch.BRANCHNAME}' with code: {branch.BRANCHCODE} ",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 //end of Audit section -------------------------------
             }

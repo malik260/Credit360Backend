@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Customer;
@@ -86,8 +87,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 //DETAIL = $"Updated FS Ratio Caption : { data.RATIOCAPTION } with postion: {data.POSITION}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -145,8 +148,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 //DETAIL = $"Deleted FS Ratio Caption: { data.RATIOCAPTION }. ",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -187,8 +192,10 @@ namespace FintrakBanking.Repositories.Customer
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Added FS Ratio Detail {data.TBL_CUSTOMER_FS_CAPTION} with divisor type '{auditDivisor}' and value typ '{auditValue }' ",
-                    IPADDRESS = model.userIPAddress,
-                    URL = model.applicationUrl,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL =model.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };
@@ -382,8 +389,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated FS Ratio Detail {data.TBL_CUSTOMER_FS_CAPTION} with divisor type '{audit_divisor}' and value typ '{audit_value }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -413,8 +422,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted FS Ratio Detail {data.TBL_CUSTOMER_FS_CAPTION} with divisor type '{audit_divisor}' and value type '{audit_value }' ",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };

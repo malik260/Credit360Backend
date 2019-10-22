@@ -10,6 +10,7 @@ using System.Linq;
 using FintrakBanking.Common.Enum; 
 using FintrakBanking.ViewModels.Customer;
 using System.ComponentModel.Composition;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -59,8 +60,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Added Customer FS Caption : { data.FSCAPTIONNAME } in group ( {auditInfo.FSCAPTIONGROUPNAME })",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 TARGETID = data.FSCAPTIONID 
@@ -98,8 +101,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted Customer FS Caption: { data.FSCAPTIONNAME } in group ( {auditInfo.FSCAPTIONGROUPNAME })",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -243,8 +248,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated Customer FS Caption : { data.FSCAPTIONNAME }  in group ( {auditInfo.FSCAPTIONGROUPNAME })",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };

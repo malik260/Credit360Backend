@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using FintrakBanking.Common.CustomException;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.Finance
 {
@@ -217,10 +218,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Approved Account '{accountModel.ACCOUNTNAME}' with staff code'{accountModel.ACCOUNTCODE}'",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             try
@@ -291,10 +294,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = (int)account.createdBy,
                 BRANCHID = (short)account.userBranchId,
                 DETAIL = $"Added New Account: {account.accountName} with code: {account.accountCode}",
-                IPADDRESS = account.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = account.applicationUrl,
                 SYSTEMDATETIME = DateTime.Now,
-                APPLICATIONDATE = _genSetup.GetApplicationDate()
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -372,10 +377,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = accountModel.createdBy,
                 BRANCHID = (short)accountModel.userBranchId,
                 DETAIL = $"Initiated Chart of Account Creation for '{accountModel.accountName}' with code'{accountModel.accountCode}'",
-                IPADDRESS = accountModel.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = accountModel.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -567,10 +574,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = (int)account.createdBy,
                 BRANCHID = (short)account.userBranchId,
                 DETAIL = $"Updated New Account: {accountModel.ACCOUNTNAME} with code: {accountModel.ACCOUNTCODE}",
-                IPADDRESS = account.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = account.applicationUrl,
                 SYSTEMDATETIME = DateTime.Now,
-                APPLICATIONDATE = _genSetup.GetApplicationDate()
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -715,11 +724,13 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = accountModel.createdBy,
                 BRANCHID = (short)accountModel.userBranchId,
                 DETAIL = $"Initiated updated of Chart Of Account '{accountModel.accountName}' with code'{accountModel.accountCode}'",
-                IPADDRESS = accountModel.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = accountModel.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = accountId
+                TARGETID = accountId,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -861,10 +872,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted New Account: {accountModel.ACCOUNTNAME} with code: {accountModel.ACCOUNTCODE}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 SYSTEMDATETIME = DateTime.Now,
-                APPLICATIONDATE = _genSetup.GetApplicationDate()
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------

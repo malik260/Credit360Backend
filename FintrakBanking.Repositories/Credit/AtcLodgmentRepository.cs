@@ -1,3 +1,4 @@
+using FintrakBanking.Common;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
@@ -511,10 +512,14 @@ namespace FintrakBanking.Repositories.credit
                         STAFFID = atc.createdBy,
                         BRANCHID = (short)atc.userBranchId,
                         DETAIL = $"TBL_Atc Release of '{entity.UNITTORELEASE}' units created by {auditStaff}",
-                        IPADDRESS = atc.userIPAddress,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = atc.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+
+                       
                     });
                     // Audit Section end ------------------------
 
@@ -559,11 +564,13 @@ namespace FintrakBanking.Repositories.credit
                     AUDITTYPEID = (short)AuditTypeEnum.AtcLodgmentAdded,
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"TBL_Atc Lodgment '{model.description}' created by {auditStaff}",
-                    IPADDRESS = model.userIPAddress,
+                    DETAIL = $"TBL_Atc Lodgment '{model.description}' created by {auditStaff}",               
                     URL = model.applicationUrl,
                     APPLICATIONDATE = general.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),      
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 });
                 // Audit Section end ------------------------
             }
@@ -699,12 +706,13 @@ namespace FintrakBanking.Repositories.credit
                     AUDITTYPEID = (short)AuditTypeEnum.AtcLodgmentUpdated,
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
-                    DETAIL = $"TBL_Atc Lodgment '{entity.DESCRIPTION}' was updated by {auditStaff}",
-                    IPADDRESS = user.userIPAddress,
+                    DETAIL = $"TBL_Atc Lodgment '{entity.DESCRIPTION}' was updated by {auditStaff}",                 
                     URL = user.applicationUrl,
                     APPLICATIONDATE = general.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = entity.ATCLODGMENTID
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 });
                 // Audit Section end ------------------------
             }
@@ -728,11 +736,12 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_Atc Lodgment '{entity.DESCRIPTION}' was deleted by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.ATCLODGMENTID
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),           
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
             });
             // Audit Section end ------------------------
 
@@ -751,12 +760,13 @@ namespace FintrakBanking.Repositories.credit
                 AUDITTYPEID = (short)AuditTypeEnum.AtcReleaseDeleted,
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_Atc release '{entity.UNITTORELEASE}' was deleted by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                DETAIL = $"TBL_Atc release '{entity.UNITTORELEASE}' was deleted by {auditStaff}",        
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.ATCLODGMENTID
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),            
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
             });
             // Audit Section end ------------------------
 
@@ -896,12 +906,15 @@ namespace FintrakBanking.Repositories.credit
                     AUDITTYPEID = (short)AuditTypeEnum.AtcTypeDeleted,
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
-                    DETAIL = $"ATC Type '{entity.ACTTYPENAME}' was deleted by {auditStaff}",
-                    IPADDRESS = user.userIPAddress,
+                    DETAIL = $"ATC Type '{entity.ACTTYPENAME}' was deleted by {auditStaff}",            
                     URL = user.applicationUrl,
                     APPLICATIONDATE = general.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = entity.ATCTYPEID
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),              
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+
+
                 });
           
             // Audit Section end ------------------------

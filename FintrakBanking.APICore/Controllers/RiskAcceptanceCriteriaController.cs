@@ -678,10 +678,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("rac-details/targetId")]
-        public HttpResponseMessage GetRacDetails(RacCategoryTypeViewModel model)
+        [Route("rac-details/{targetId}")]
+        public HttpResponseMessage GetRacDetails([FromUri] int targetId)
         {
-            RacCategoryTypeViewModel response = repo.GetRacDetails(model.targetId);
+           List<RacCategoryTypeViewModel> response = repo.GetRacDetails(targetId); 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response });
         }
 

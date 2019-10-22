@@ -471,11 +471,13 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = staffModel.createdBy,
                 BRANCHID = (short)staffModel.BranchId,
                 DETAIL = $"Updated Staff '{staffModel.StaffFullName}' with code'{staffModel.StaffCode}'",
-                IPADDRESS = staffModel.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = staffModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = staffid
+                TARGETID = staffid,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -694,10 +696,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.BranchId,
                 DETAIL = $"Approved Deleted Staff '{targetStaff?.FIRSTNAME}' with code'{targetStaff?.STAFFCODE}'",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -1184,10 +1188,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Approved Staff '{tempStaff?.FIRSTNAME + " " + tempStaff?.LASTNAME}' with staff code'{tempStaff?.STAFFCODE}'",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             try
@@ -1500,10 +1506,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Approved Staff '{temp?.FIRSTNAME + " " + temp?.LASTNAME}' with staff code'{temp?.STAFFCODE}'",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             try
@@ -1659,10 +1667,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = staffModel.createdBy,
                 BRANCHID = (short)staffModel.BranchId,
                 DETAIL = $"Updated Staff Creation for '{staffModel?.StaffFullName}' with code'{staffModel?.StaffCode}'",
-                IPADDRESS = staffModel.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = staffModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -2431,10 +2441,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = staffModel.createdBy,
                 BRANCHID = (short)staffModel.BranchId,
                 DETAIL = $"Initiated Staff and User Creation for '{staffModel?.StaffFullName}' with code'{staffModel?.StaffCode}'",
-                IPADDRESS = staffModel.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = staffModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -2488,10 +2500,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Added Signature for staff {staffInfo?.FIRSTNAME + ' ' + staffInfo?.LASTNAME} with code '{ model.staffCode }' ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = appdate,
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 // End of Audit Section ---------------------
             }
@@ -2510,10 +2524,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = model.lastUpdatedBy,
                     BRANCHID = model.userBranchId,
                     DETAIL = $"Updated Signature for staff {staffInfo?.FIRSTNAME + ' ' + staffInfo?.LASTNAME} with code '{ model.staffCode }' ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = appdate,
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
             }
 
@@ -2544,10 +2560,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = model.userBranchId,
                 DETAIL = $"Updated Signature for staff {staffInfo?.FIRSTNAME + ' ' + staffInfo?.LASTNAME} with code '{ model.staffCode }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             auditTrail.AddAuditTrail(audit);

@@ -176,11 +176,11 @@ namespace FintrakBanking.Repositories.Credit
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added AppraisalMemorandum '{ model.camRef }' ",
                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),  //model.userIPAddress,
-                URL = model.applicationUrl,
+                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                OSNAME = CommonHelpers.FriendlyName(),
-                DEVICENAME = CommonHelpers.GetDeviceName()
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -308,8 +308,10 @@ namespace FintrakBanking.Repositories.Credit
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                OSNAME = CommonHelpers.FriendlyName(),
-                DEVICENAME = CommonHelpers.GetDeviceName()
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+
+
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -2287,8 +2289,8 @@ namespace FintrakBanking.Repositories.Credit
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                OSNAME = CommonHelpers.FriendlyName(),
-                DEVICENAME = CommonHelpers.GetDeviceName()
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------

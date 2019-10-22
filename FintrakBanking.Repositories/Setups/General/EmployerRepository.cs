@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
 using System.Data;
 using FintrakBanking.Common.Extensions;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -54,10 +55,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = employer.staffId,
                     BRANCHID = (short)employer.userBranchId,
                     DETAIL = $"Loan employer with {employer.companyId} id is added",
-                    IPADDRESS = employer.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = employer.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this._auditTrail.AddAuditTrail(audit);
                 _context.SaveChanges();
@@ -84,10 +87,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = employer.staffId,
                     BRANCHID = (short)employer.userBranchId,
                     DETAIL = $"Loan employer with {employer.companyId} id is deleted",
-                    IPADDRESS = employer.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = employer.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this._auditTrail.AddAuditTrail(audit);
                 _context.SaveChanges();
@@ -177,10 +182,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = employer.staffId,
                     BRANCHID = (short)employer.userBranchId,
                     DETAIL = $"Loan employer with {employer.companyId} id is updated",
-                    IPADDRESS = employer.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = employer.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this._auditTrail.AddAuditTrail(audit);
                 _context.SaveChanges();
@@ -237,10 +244,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = employerType.staffId,
                     BRANCHID = (short)employerType.userBranchId,
                     DETAIL = $"Employer Type with {employerType.employerTypeName} name is added",
-                    IPADDRESS = employerType.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = employerType.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this._auditTrail.AddAuditTrail(audit);
                 _context.SaveChanges();
@@ -263,10 +272,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = employerType.staffId,
                     BRANCHID = (short)employerType.userBranchId,
                     DETAIL = $"Loan employer with {employerType.employerTypeName} name is deleted",
-                    IPADDRESS = employerType.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = employerType.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this._auditTrail.AddAuditTrail(audit);
                 _context.SaveChanges();
@@ -290,10 +301,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = employerType.staffId,
                     BRANCHID = (short)employerType.userBranchId,
                     DETAIL = $"Loan employer with {employerType.companyId} id is updated",
-                    IPADDRESS = employerType.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = employerType.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this._auditTrail.AddAuditTrail(audit);
                 _context.SaveChanges();
@@ -337,10 +350,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = employerSubType.staffId,
                     BRANCHID = (short)employerSubType.userBranchId,
                     DETAIL = $"Employer Sub Type with {employerSubType.employerSubTypeName} name is added",
-                    IPADDRESS = employerSubType.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = employerSubType.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this._auditTrail.AddAuditTrail(audit);
                 _context.SaveChanges();
@@ -363,10 +378,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = employerSubType.staffId,
                     BRANCHID = (short)employerSubType.userBranchId,
                     DETAIL = $"Loan employer sub type with {employerSubType.employerSubTypeName} name is deleted",
-                    IPADDRESS = employerSubType.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = employerSubType.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this._auditTrail.AddAuditTrail(audit);
                 _context.SaveChanges();
@@ -390,10 +407,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = employerSubType.staffId,
                     BRANCHID = (short)employerSubType.userBranchId,
                     DETAIL = $"Loan employer sub type with {employerSubType.companyId} id is updated",
-                    IPADDRESS = employerSubType.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = employerSubType.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this._auditTrail.AddAuditTrail(audit);
                 _context.SaveChanges();
