@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.CustomException;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
@@ -74,8 +75,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Record Added For CRMS Collateral On Loan Detail '{model.applicationId}'",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 TARGETID = model.applicationId
@@ -2946,11 +2949,13 @@ namespace FintrakBanking.Repositories.Credit
                     BRANCHID = (short)branchId,
                     DETAIL =
                    $"Change offer letter title for a customer with custimerId " + custimerId,
-                    IPADDRESS = "",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = "",
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = custimerId
+                    TARGETID = custimerId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -2978,11 +2983,13 @@ namespace FintrakBanking.Repositories.Credit
                     BRANCHID = (short)branchId,
                     DETAIL =
                   $"Change offer letter saluatation for a customer with custimerId " + custimerId,
-                    IPADDRESS = "",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = "",
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = custimerId
+                    TARGETID = custimerId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -3012,11 +3019,13 @@ namespace FintrakBanking.Repositories.Credit
                     BRANCHID = (short)branchId,
                     DETAIL =
                    $"Change offer letter acceptance discription for customer with db loan application Id " + applicationId,
-                    IPADDRESS = "",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = "",
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = applicationId
+                    TARGETID = applicationId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -3046,11 +3055,14 @@ namespace FintrakBanking.Repositories.Credit
                     BRANCHID = (short)branchId,
                     DETAIL =
                    $"Change offer letter clause for customer with db loan application Id " + applicationId,
-                    IPADDRESS = "",
-                    URL = "",
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),                
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = applicationId
+                 
+                   
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -3122,8 +3134,9 @@ namespace FintrakBanking.Repositories.Credit
                 BRANCHID = (short)branchId,
                 DETAIL =
                $"Offer Letter Template Has Been Applied For Loan Application ID  " + loanApplicationId,
-                IPADDRESS = "",
-                URL = "",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 TARGETID = loanApplicationId

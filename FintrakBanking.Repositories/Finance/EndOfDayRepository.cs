@@ -15,6 +15,7 @@ using System.ServiceModel;
 using System.Transactions;
 using System.Data.Entity;
 using FintrakBanking.Interfaces.ThridPartyIntegration;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Finance
 {
@@ -224,9 +225,12 @@ namespace FintrakBanking.Repositories.Finance
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Ran end of day from {applicationDate.ToString("dd/MM/yyyy")} to {nextWorkDay.AddDays(-1).ToString("dd/MM/yyyy")} successfully",
                 IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),
                 APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+
             };
 
 
@@ -348,10 +352,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = (int)model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Ran end of day from {applicationDate.ToString("dd/mmm/yyyy")} to {nextWorkDay.AddDays(-1).ToString("dd/mmm/yyyy")} successfully",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
 

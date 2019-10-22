@@ -768,10 +768,12 @@ namespace FintrakBanking.Repositories.Admin
                 STAFFID = (int)group.createdBy,
                 BRANCHID = (short)group.userBranchId,
                 DETAIL = $"Added User group with name : '{group.groupName}' ",
-                IPADDRESS = group.userIPAddress,
-                URL = group.applicationUrl,
+                URL =  group.applicationUrl,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -797,9 +799,11 @@ namespace FintrakBanking.Repositories.Admin
                 BRANCHID = (short)groupModel.userBranchId,
                 DETAIL = $"Udate User group with name : '{groupModel.groupName}' ",
                 IPADDRESS = groupModel.userIPAddress,
-                URL = groupModel.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);

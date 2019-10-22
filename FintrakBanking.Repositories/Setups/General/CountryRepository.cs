@@ -11,6 +11,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -328,10 +329,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated tbl_State with Id: {entity.StateId} ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -388,10 +391,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated tbl_State with Id: {entity.StateId} ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             auditTrail.AddAuditTrail(audit);

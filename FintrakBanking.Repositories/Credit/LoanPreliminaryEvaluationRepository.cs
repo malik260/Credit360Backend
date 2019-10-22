@@ -116,8 +116,10 @@ namespace FintrakBanking.Repositories.Credit
                 BRANCHID = model.userBranchId,
                 STAFFID = model.createdBy,
                 DETAIL = detail,
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 SYSTEMDATETIME = DateTime.Now,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
             };
@@ -245,10 +247,13 @@ namespace FintrakBanking.Repositories.Credit
                     BRANCHID = item.userBranchId,
                     STAFFID = item.createdBy,
                     DETAIL = $"Created Prelimenary Evaluation with code ({penRecord.PRELIMINARYEVALUATIONCODE}) for customer {customerRecord.FIRSTNAME} {customerRecord.LASTNAME}",
-                    IPADDRESS = item.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = item.applicationUrl,
-                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    
                 };
 
                 using (var trans = context.Database.BeginTransaction())
@@ -665,8 +670,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Approved Prelimenary Evaluation with code ({penRecord.PRELIMINARYEVALUATIONCODE})",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -1298,7 +1305,9 @@ namespace FintrakBanking.Repositories.Credit
                 BRANCHID = model.branchId,
                 DETAIL = $"Prelimenary Evaluation with code ({penRecord.PRELIMINARYEVALUATIONCODE}) updated",
                 IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 TARGETID = loanPenId
@@ -1621,8 +1630,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
                 DETAIL = $"Prelimenary Evaluation with code ({penRecord.PRELIMINARYEVALUATIONCODE}) has been sent for loan application",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 TARGETID = loanPenId

@@ -338,11 +338,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Added Sector: '{model.sectorName}' with code: {model.sectorCode} ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = DateTime.Now,
-                    SYSTEMDATETIME = DateTime.Now
-                };
+                    SYSTEMDATETIME = DateTime.Now,
+                     DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
+            };
             //end of Audit section -------------------------------
             response = context.SaveChanges();
             return response != 0;
@@ -368,10 +370,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)model.lastUpdatedBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Updated sector: '{model.sectorName}' with code: {model.sectorCode} ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = DateTime.Now,
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 //end of Audit section -------------------------------
                 response = context.SaveChanges();
@@ -397,10 +401,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Deleted sector: '{sector.ToString()} ",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 //end of Audit section -------------------------------
                 response = context.SaveChanges();

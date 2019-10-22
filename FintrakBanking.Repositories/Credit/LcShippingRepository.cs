@@ -11,6 +11,7 @@ using FintrakBanking.Interfaces.credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -118,10 +119,12 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"TBL_Lc Shipping '{entity.ToString()}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             });
             // Audit Section end ------------------------
 
@@ -151,10 +154,12 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_Lc Shipping '{entity.ToString()}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 TARGETID = entity.LCSHIPPINGID
             });
             // Audit Section end ------------------------
@@ -177,10 +182,12 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_Lc Shipping '{entity.ToString()}' was deleted by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 TARGETID = entity.LCSHIPPINGID
             });
             // Audit Section end ------------------------

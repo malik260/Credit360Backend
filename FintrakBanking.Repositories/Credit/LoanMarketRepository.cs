@@ -9,6 +9,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -53,10 +54,12 @@ namespace FintrakBanking.Repositories.Credit
                     STAFFID = loanMarket.staffId,
                     BRANCHID = (short)loanMarket.userBranchId,
                     DETAIL = $"Approved Loan market with {loanMarket.companyId} company id is added",
-                    IPADDRESS = loanMarket.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = loanMarket.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 this._auditTrail.AddAuditTrail(audit);
 
@@ -85,10 +88,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = loanMarket.staffId,
                 BRANCHID = (short)loanMarket.userBranchId,
                 DETAIL = $"Deleted market with {data.MARKETID} id",
-                IPADDRESS = loanMarket.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = loanMarket.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this._auditTrail.AddAuditTrail(audit);
@@ -167,10 +172,12 @@ namespace FintrakBanking.Repositories.Credit
                     STAFFID = loanMarket.staffId,
                     BRANCHID = (short)loanMarket.userBranchId,
                     DETAIL = $"Update market with {loanMarket.marketId} id",
-                    IPADDRESS = loanMarket.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = loanMarket.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 this._auditTrail.AddAuditTrail(audit);

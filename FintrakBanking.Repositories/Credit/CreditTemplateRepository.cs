@@ -10,6 +10,7 @@ using FintrakBanking.Common.Enum;
 using System.Linq;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -56,10 +57,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added CreditTemplate '{ model.templateTitle }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -90,10 +93,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated CreditTemplate '{ model.templateTitle }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -433,10 +438,12 @@ var qry = Foo.GroupJoin(
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added DocumentTemplate '{ model.templateName }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL =model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -466,10 +473,12 @@ var qry = Foo.GroupJoin(
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated DocumentTemplate '{ model.templateName }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -518,10 +527,12 @@ var qry = Foo.GroupJoin(
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added DocumentTemplateSection '{ model.title }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -557,10 +568,12 @@ var qry = Foo.GroupJoin(
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated DocumentTemplateSection '{ model.title }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -582,10 +595,12 @@ var qry = Foo.GroupJoin(
                 STAFFID = lastUpdatedBy,
                 BRANCHID = userBranchId,
                 DETAIL = $"Deleted DocumentTemplateSection '{ data.TITLE }' ",
-                IPADDRESS = userIPAddress,
+                IPADDRESS =CommonHelpers.GetLocalIpAddress(),
                 URL = applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -616,10 +631,12 @@ var qry = Foo.GroupJoin(
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added DocumentTemplateSectionRole for Section ' { section.TITLE } with Staff Role {staff.STAFFROLENAME } '",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -646,10 +663,12 @@ var qry = Foo.GroupJoin(
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated DocumentTemplateSectionRole '{ model.sectionRoleId } Of Section { section.TITLE } with Staff Role {staff.STAFFROLENAME } ' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -671,10 +690,12 @@ var qry = Foo.GroupJoin(
                 STAFFID = lastUpdatedBy,
                 BRANCHID = userBranchId,
                 DETAIL = $"Deleted DocumentTemplateSectionRole '{ data.SECTIONROLEID }' ",
-                IPADDRESS = userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------

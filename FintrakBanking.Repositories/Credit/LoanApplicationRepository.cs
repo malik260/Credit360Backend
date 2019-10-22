@@ -741,11 +741,14 @@ namespace FintrakBanking.Repositories.Credit
                 BRANCHID = (short)entity.BranchId,
                 DETAIL =
                     $"Change Loan Application Status with reference number '{data.APPLICATIONREFERENCENUMBER}' to {GetLoanStatus((short)entity.approvalStatusId)}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.targetId
+                TARGETID = entity.targetId,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+              
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -2231,11 +2234,14 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = loan.createdBy,
                 BRANCHID = (short)loan.userBranchId,
                 DETAIL = $"Applied for loan with reference number: {loan.applicationReferenceNumber}",
-                IPADDRESS = loan.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = loan.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = loan.loanApplicationId
+                TARGETID = loan.loanApplicationId,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+               
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -3028,10 +3034,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = entity.FirstOrDefault().createdBy,
                 BRANCHID = (short)entity.FirstOrDefault().userBranchId,
                 DETAIL = $"Added collateral loan application with reference Number: {entity.FirstOrDefault().applicationReferenceNumber}",
-                IPADDRESS = entity.FirstOrDefault().userIPAddress,
-                URL = entity.FirstOrDefault().applicationUrl,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+               // URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 TARGETID = entity.FirstOrDefault().loanAppCollateralId
             };
 
@@ -4205,10 +4213,12 @@ namespace FintrakBanking.Repositories.Credit
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Re-applied for loan with reference number: { referenceNumber }",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS =CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     TARGETID = model.applicationId
                 };
                 this.auditTrail.AddAuditTrail(audit);
@@ -4308,10 +4318,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Updated loan application with reference Number: {loan.APPLICATIONREFERENCENUMBER}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 TARGETID = entity.applicationDetailedId
             };
 
@@ -4936,10 +4948,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated loan application detail with with applicationdetailId : {model.loanApplicationDetailId}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 TARGETID = model.loanApplicationDetailId
             };
 
@@ -5557,10 +5571,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"TBL_LOAN_APPLICATN_FLOW_CHANGE '{entity.ToString()}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS =CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             });
             // Audit Section end ------------------------
 
@@ -5587,10 +5603,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_LOAN_APPLICATN_FLOW_CHANGE '{entity.ToString()}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 TARGETID = entity.FLOWCHANGEID
             });
             // Audit Section end ------------------------
@@ -5614,10 +5632,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_LOAN_APPLICATN_FLOW_CHANGE '{entity.ToString()}' was deleted by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 TARGETID = entity.FLOWCHANGEID
             });
             // Audit Section end ------------------------
@@ -5733,10 +5753,13 @@ namespace FintrakBanking.Repositories.Credit
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' created by {auditStaff}",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = general.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
+                  
                 });
                 // Audit Section end ------------------------
 
@@ -5761,10 +5784,12 @@ namespace FintrakBanking.Repositories.Credit
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' was updated by {auditStaff}",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
-                    APPLICATIONDATE = general.GetApplicationDate(),
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     TARGETID = entity.APPLICATIONDETAILLIENID
                 });
                 // Audit Section end ------------------------
@@ -5786,10 +5811,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' was deleted by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 TARGETID = entity.APPLICATIONDETAILLIENID
             });
             // Audit Section end ------------------------

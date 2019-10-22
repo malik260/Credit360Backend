@@ -484,10 +484,12 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"TBL_Lc Issuance '{entity.ToString()}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
-                APPLICATIONDATE = systemDate,
-                SYSTEMDATETIME = DateTime.Now
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             context.TBL_AUDIT.Add(aud);
             // Audit Section end ------------------------
@@ -550,10 +552,12 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_Lc Issuance '{entity.ToString()}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 TARGETID = entity.LCISSUANCEID
             });
             // Audit Section end ------------------------
@@ -576,10 +580,12 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_Lc Issuance '{entity.ToString()}' was deleted by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 TARGETID = entity.LCISSUANCEID
             });
             // Audit Section end ------------------------
@@ -891,10 +897,13 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"TBL_LCRELEASE_AMOUNT '{entity.ToString()}' created by {auditStaff}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = systemDate,
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            
             };
             context.TBL_AUDIT.Add(aud);
             // Audit Section end ------------------------
@@ -922,10 +931,13 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"TBL_LCRELEASE_AMOUNT '{entity.ToString()}' updated by {auditStaff}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = systemDate,
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                  DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+             
             };
             context.TBL_AUDIT.Add(aud);
             // Audit Section end ------------------------

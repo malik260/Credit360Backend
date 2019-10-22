@@ -9,6 +9,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -69,10 +70,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added the following custom field : { model.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(model.hostPageId).HOSTPAGE } form ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -111,10 +114,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"updated the following custom field : { model.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(model.hostPageId).HOSTPAGE } form ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -174,10 +179,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
                     DETAIL = $"Added the following custom field : { entity.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(entity.hostPageId).HOSTPAGE } form ",
-                    IPADDRESS = entity.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -228,10 +235,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"updated the following custom field : { custom.LABELNAME} to  {context.TBL_CUSTOM_HOSTPAGE.Find(custom.HOSTPAGEID).HOSTPAGE } form ",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -275,10 +284,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = entity.lastUpdatedBy,
                     BRANCHID = (short)entity.userBranchId,
                     DETAIL = $"updated the following custom field : { entity.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(entity.hostPageId).HOSTPAGE } form ",
-                    IPADDRESS = entity.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -327,10 +338,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
                     DETAIL = $"Added the following custom field : { entity.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(entity.hostPageId).HOSTPAGE } form ",
-                    IPADDRESS = entity.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -401,10 +414,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
                     DETAIL = $"Deleted a custome field data for : { entity.labelName} from  {context.TBL_CUSTOM_HOSTPAGE.Find(entity.hostPageId).HOSTPAGE }  ",
-                    IPADDRESS = entity.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -439,10 +454,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
                     DETAIL = $"Added the following custom field : { entity.labelName} to  {context.TBL_CUSTOM_HOSTPAGE.Find(entity.hostPageId).HOSTPAGE } form ",
-                    IPADDRESS = entity.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = entity.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);

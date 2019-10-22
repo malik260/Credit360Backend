@@ -12,6 +12,7 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Credit;
 using System.ComponentModel.Composition;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.Finance
 {
@@ -73,10 +74,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = productCollateral.createdBy,
                 BRANCHID = (short)productCollateral.userBranchId,
                 DETAIL = "Added product collateral type: " + collateralInfo.COLLATERALTYPENAME + " to product " + product.PRODUCTCODE + " (" + product.PRODUCTNAME + ")",
-                IPADDRESS = productCollateral.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = productCollateral.applicationUrl,
                 SYSTEMDATETIME = DateTime.Now,
-                APPLICATIONDATE = _genSetup.GetApplicationDate()
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
 
 
             };
@@ -130,10 +133,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     STAFFID = productCollateral.createdBy,
                     BRANCHID = (short)productCollateral.userBranchId,
                     DETAIL = "Added product collateral type: " + collateralInfo?.COLLATERALTYPENAME + " to product " + product?.PRODUCTCODE + " (" + product?.PRODUCTNAME + ")",
-                    IPADDRESS = productCollateral.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = productCollateral.applicationUrl,
                     SYSTEMDATETIME = DateTime.Now,
-                    APPLICATIONDATE = _genSetup.GetApplicationDate()
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -184,10 +189,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Added CollateralType for product '{productToUpdate.PRODUCTNAME}' with product code'{productToUpdate.PRODUCTCODE}'",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -333,10 +340,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = "Deleted product collateral type: " + collateralInfo.collateralTypeName + " to product " + collateralInfo.productCode + " (" + collateralInfo.productName + ")",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -370,10 +379,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = "Deleted product collateral type: " + collateralType.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME + " to product " + collateralType.TBL_PRODUCT.PRODUCTCODE + " (" + collateralType.TBL_PRODUCT.PRODUCTNAME + ")",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);

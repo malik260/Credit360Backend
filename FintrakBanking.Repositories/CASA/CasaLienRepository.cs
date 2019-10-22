@@ -128,7 +128,11 @@ namespace FintrakBanking.Repositories.CASA
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+
+                 
             };
             this.auditTrail.AddAuditTrail(audit);
 

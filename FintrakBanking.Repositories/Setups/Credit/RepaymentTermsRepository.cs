@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.Credit;
@@ -74,10 +75,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"TBL_REPAYMENT_TERM with {model.ToString()} is added",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 });
             return context.SaveChanges() != 0;
         }
@@ -101,10 +104,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"TBL_REPAYMENT_TERM with {model.ToString()} is updated",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 });
             return context.SaveChanges() != 0;
         }
@@ -126,10 +131,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"TBL_REPAYMENT_TERM with {term.ToString()} is updated",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 });
             return context.SaveChanges() != 0;
         }
