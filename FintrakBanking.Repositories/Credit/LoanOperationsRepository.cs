@@ -351,7 +351,7 @@ namespace FintrakBanking.Repositories.Credit
                              join c in context.TBL_BRANCH on a.BRANCHID equals c.BRANCHID
                              join d in context.TBL_CURRENCY on a.CURRENCYID equals d.CURRENCYID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan && a.COMPANYID == companyId
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID, a.EXCHANGERATE, a.REFERENCENUMBER,  } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, b.PRODUCTCODE, c.BRANCHCODE, d.CURRENCYCODE, a.CATEGORYID, a.EXCHANGERATE, a.REFERENCENUMBER, } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
                                  productId = groupedQ.Key.PRODUCTID,
@@ -753,7 +753,7 @@ namespace FintrakBanking.Repositories.Credit
                         var termLoans = (from a in context.TBL_LOAN_FEE
                                          join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                                          join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
-                                         where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.LOANSYSTEMTYPEID == loanSystemTypeId 
+                                         where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.LOANSYSTEMTYPEID == loanSystemTypeId
                                          && (a.LOANREVIEWOPERATIONID.Equals(null) || !a.LOANREVIEWOPERATIONID.Equals(loanReviewOperationId))
                                          && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID && (a.FEEAMOUNT - a.EARNEDFEEAMOUNT) > 0 //&& a.FEEAMOUNT > 0
                                          select new DailyInterestAccrualViewModel()
@@ -7498,6 +7498,7 @@ namespace FintrakBanking.Repositories.Credit
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                             && b.OPERATIONDATE.Equals(null)
                              select new RevolvingLoanViewModel()
                              {
                                  loanId = a.REVOLVINGLOANID,
@@ -7688,6 +7689,7 @@ namespace FintrakBanking.Repositories.Credit
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                              && b.LOANREVIEWOPERATIONID == loanReviewOperationsId
+                             && b.OPERATIONDATE.Equals(null)
                              select new RevolvingLoanViewModel()
                              {
                                  loanId = a.REVOLVINGLOANID,
@@ -7850,6 +7852,7 @@ namespace FintrakBanking.Repositories.Credit
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                             && b.OPERATIONDATE.Equals(null)
                              select new RevolvingLoanViewModel()
                              {
                                  loanId = a.REVOLVINGLOANID,
@@ -8062,6 +8065,7 @@ namespace FintrakBanking.Repositories.Credit
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              join c in context.TBL_CASA on b.CASA_ACCOUNTID equals c.CASAACCOUNTID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                             && b.OPERATIONDATE.Equals(null)
                              select new RevolvingLoanViewModel()
                              {
                                  loanId = a.REVOLVINGLOANID,
@@ -8248,6 +8252,7 @@ namespace FintrakBanking.Repositories.Credit
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                             && b.OPERATIONDATE.Equals(null)
                              && b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
                              select new RevolvingLoanViewModel()
                              {
@@ -8305,6 +8310,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 model.productTypeId = (int)LoanSystemTypeEnum.OverdraftFacility;
 
+                var validateThirdPartyIntegration = USE_THIRD_PARTY_INTEGRATION;
+
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
 
@@ -8341,14 +8348,34 @@ namespace FintrakBanking.Repositories.Credit
 
                 var result = context.SaveChanges() > 0;
 
-                if (interestRateResult == true && result == true)
+                if (validateThirdPartyIntegration)
                 {
-                    output = true;
+                    if (interestRateResult == true && result == true)
+                    {
+                        output = true;
+                    }
+                    else
+                    {
+                        throw new SecureException("OD Operation Not Completed because interest rate cannot be set");
+                    }
                 }
                 else
                 {
-                    throw new SecureException("OD Operation Not Completed because interest rate cannot be set");
+                    if (result)
+                    {
+                        output = true;
+                    }
+                    else
+                    {
+                        throw new SecureException("OD Operation Not Completed because interest rate cannot be set");
+                    }
                 }
+
+
+
+
+
+
             }
             catch (Exception ex)
             {
@@ -19486,9 +19513,9 @@ namespace FintrakBanking.Repositories.Credit
             oldContingent.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;//.CancelContingentLiability;
             result = context.SaveChanges() > 0;
 
-            //transactionDetails.AddRange(financeTransaction.BuildLoanContingentFeesReversal(oldContingent.LOANAPPLICATIONDETAILID, staffId));
+            transactionDetails.AddRange(financeTransaction.BuildLoanContingentFeesReversal(oldContingent.LOANAPPLICATIONDETAILID, staffId));
 
-            //financeTransaction.PostTransaction(transactionDetails, false, twoFactorAuth);
+            financeTransaction.PostTransaction(transactionDetails, false, twoFactorAuth);
 
             if (result)
             {
