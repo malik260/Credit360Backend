@@ -43,6 +43,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string capturedBy { get; set; }
         public string address { get; set; }
 
+        public DateTime? validTill { get; set; }
         public int? customerGroupId { get; set; }
         public int loanTypeId { get; set; }
         
