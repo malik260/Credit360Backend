@@ -1049,6 +1049,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
             collateral.EXCHANGERATE = model.exchangeRate;
             collateral.COLLATERALSUMMARY = model.collateralSummary;
+            collateral.VALIDTILL = model.validTill;
         }
 
         private void DeleteCollateral(int collateralId)
@@ -2657,10 +2658,13 @@ namespace FintrakBanking.Repositories.Credit
         private CollateralViewModel GetCollateralDeposit(int collateralId)
         {
             var specifics = context.TBL_COLLATERAL_DEPOSIT.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
+            CasaBalanceViewModel acc = repo.GetCASABalance(specifics.ACCOUNTNUMBER, specifics.TBL_COLLATERAL_CUSTOMER.COMPANYID);
             if (specifics == null)
             {
                 return null;
             }
+            specifics.AVAILABLEBALANCE = acc.availableBalance;
+            specifics.ACCOUNTNAME = acc.accountName;
             var details = new CollateralViewModel
             {
                 collateralId = specifics.COLLATERALCUSTOMERID,
@@ -2670,15 +2674,16 @@ namespace FintrakBanking.Repositories.Credit
                 accountNumber = specifics.ACCOUNTNUMBER,
                 existingLienAmount = specifics.EXISTINGLIENAMOUNT,
                 lienAmount = specifics.LIENAMOUNT,
-                availableBalance = specifics.AVAILABLEBALANCE,
+                availableBalance = acc.availableBalance,
                 securityValue = specifics.SECURITYVALUE,
                 maturityDate = specifics.MATURITYDATE,
                 maturityAmount = specifics.MATURITYAMOUNT,
                 remark = specifics.REMARK,
-                accountName = specifics.ACCOUNTNAME,
+                accountName = acc.accountName,
                 baseCurrencyCode = specifics.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
             };
             details = GetCollateralInsurancePolicy(details);
+            var saved = context.SaveChanges() != 0;
             return details;
         }
         private CollateralViewModel GetCollateralInsurancePolicy(CollateralViewModel details)
@@ -4047,6 +4052,7 @@ namespace FintrakBanking.Repositories.Credit
                 collateral = new TBL_COLLATERAL_CASA()
                 {
                     ACCOUNTNUMBER = entity.collateralCode,
+                    COLLATERALCUSTOMERID = entity.collateralId,
                     // ISOWNEDBYCUSTOMER = entity.isOwnedByCustomer,
                     AVAILABLEBALANCE = entity.availableBalance,
                     // EXISTINGLIENAMOUNT = entity.existingLienAmount,
@@ -4056,7 +4062,7 @@ namespace FintrakBanking.Repositories.Credit
                     ACCOUNTNAME = entity.accountName
                 };
                 context.TBL_COLLATERAL_CASA.Add(collateral);
-                //var saved = context.SaveChanges() > 0;
+                var saved = context.SaveChanges() != 0;
                 return;
             }
             collateral.ACCOUNTNUMBER = entity.collateralCode;
@@ -4072,6 +4078,13 @@ namespace FintrakBanking.Repositories.Credit
         private CollateralViewModel GetCollateralCasa(int collateralId)
         {
             var specifics = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == collateralId);
+            if (specifics == null)
+            {
+                return null;
+            }
+            CasaBalanceViewModel acc = repo.GetCASABalance(specifics.ACCOUNTNUMBER, specifics.TBL_COLLATERAL_CUSTOMER.COMPANYID);
+            specifics.AVAILABLEBALANCE = acc.availableBalance;
+            specifics.ACCOUNTNAME = acc.accountName;
             var details = new CollateralViewModel
             {
                 collateralId = specifics.COLLATERALCUSTOMERID,
@@ -4079,16 +4092,17 @@ namespace FintrakBanking.Repositories.Credit
                 collateralCustomerId = specifics.COLLATERALCUSTOMERID,
                 accountNumber = specifics.ACCOUNTNUMBER,
                 //  isOwnedByCustomer = specifics.ISOWNEDBYCUSTOMER,
-                availableBalance = specifics.AVAILABLEBALANCE,
+                availableBalance = acc.availableBalance,
                 //  existingLienAmount = specifics.EXISTINGLIENAMOUNT,
                 lienAmount = specifics.LIENAMOUNT,
                 securityValue = specifics.SECURITYVALUE,
                 remark = specifics.REMARK,
-                accountName = specifics.ACCOUNTNAME,
+                accountName = acc.accountName,
                 baseCurrencyCode = specifics.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
 
             };
             details = GetCollateralInsurancePolicy(details);
+            var saved = context.SaveChanges() != 0;
             return details;
         }
 
@@ -7411,7 +7425,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (entity.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
-                var mainCasa = (from x in context.TBL_COLLATERAL_DEPOSIT
+                var mainCasa = (from x in context.TBL_COLLATERAL_CASA
                                 where x.COLLATERALCUSTOMERID == collateralId
                                 select (x)).FirstOrDefault();
 
@@ -7748,6 +7762,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainCollateral.VALUATIONCYCLE = model.valuationCycle;
                     mainCollateral.HAIRCUT = model.haircut;
                     mainCollateral.CURRENCYID = model.currencyId;
+                    mainCollateral.VALIDTILL = model.validTill;
                     mainCollateral.EXCHANGERATE = repo.GetExchangeRate(DateTime.Now, model.currencyId, model.companyId).sellingRate;
 
                     if (model.loanTypeId == 1)
@@ -7792,7 +7807,8 @@ namespace FintrakBanking.Repositories.Credit
                         RELATEDCOLLATERALCODE = model.relatedCollateralCode,
                         LOANAPPLICATIONID = model.loanApplicationId,
                         COLLATERALSUMMARY = model.collateralSummary,
-                        COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
+                        COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose,
+                        VALIDTILL = model.validTill
                     });
 
                     if (model.loanTypeId == 1)
@@ -7848,7 +7864,7 @@ namespace FintrakBanking.Repositories.Credit
                     COLLATERALSUMMARY = model.collateralSummary,
                     COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose,
                     ISCURRENT = true,
-
+                    VALIDTILL = model.validTill,
                 });
 
                 if (model.loanTypeId == 1)
