@@ -4233,6 +4233,20 @@ Remarks: ................................................</Value>
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
+      <Image Name="Image1">
+        <Source>Embedded</Source>
+        <Value>logomain</Value>
+        <Sizing>FitProportional</Sizing>
+        <Left>5.20673in</Left>
+        <Height>0.63542in</Height>
+        <Width>2.29089in</Width>
+        <ZIndex>38</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Image>
     </ReportItems>
     <Height>24.08628in</Height>
     <Style />

@@ -2040,7 +2040,7 @@ namespace FintrakBanking.Repositories.Credit
                     totalCoverage = totalCoverage,
                     actualCollateralCoverage = actualCollateralCoverage,
                     approvalStatusId = collateral.approvalStatusId,
-                    ReferenceNumber = facility.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                    referenceNumber = facility.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                     productName = facility.TBL_PRODUCT.PRODUCTNAME,
                 };
 
@@ -2195,7 +2195,8 @@ namespace FintrakBanking.Repositories.Credit
                     availableCollateralValue = availableCollateralValue,
                     actualCollateralCoverage = actualCollateralCoverage,
                     approvalStatusId = collateral.approvalStatusId,
-                    ReferenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                    //productAccNumber = context.
+                    referenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                     productName = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_PRODUCT.PRODUCTNAME).FirstOrDefault(),
                     isUsed = context.TBL_LOAN_APPLICATION_COLLATERL.Any(p => p.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId && p.COLLATERALCUSTOMERID == collateral.collateralId && p.DELETED == false && p.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                 };
@@ -2302,7 +2303,7 @@ namespace FintrakBanking.Repositories.Credit
                     totalCoverage = totalCoverage,
                     actualCollateralCoverage = actualCollateralCoverage,
                     approvalStatusId = collateral.approvalStatusId,
-                    ReferenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                    referenceNumber = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                     productName = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == collateral.loanApplicationDetailId).Select(x => x.TBL_PRODUCT.PRODUCTNAME).FirstOrDefault(),
                 };
 
@@ -10095,7 +10096,7 @@ namespace FintrakBanking.Repositories.Credit
                 expectedCollateralCoverage = expectedCollateralCoverage,
                 availableCollateralValue = availableCollateralValue,
                 actualCollateralCoverage = actualCollateralCoverage,
-                ReferenceNumber = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).Select(x => x.RELATEDREFERENCENUMBER).FirstOrDefault(),
+                referenceNumber = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).Select(x => x.RELATEDREFERENCENUMBER).FirstOrDefault(),
                 productName = model.productName,
                 loanApplicationDetailId = model.loanApplicationDetailId,
                 loanApplicationId = model.loanApplicationId,
@@ -10293,6 +10294,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanAppCollateralId = s.LOANAPPCOLLATERALID,
                                        oldCollateralId = s.OLDCOLLATERALID,
                                        newCollateralId = s.NEWCOLLATERALID,
+                                       customerId = s.CUSTOMERID,
                                        oldCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.OLDCOLLATERALID).COLLATERALCODE,
                                        newCollateralCode = context.TBL_COLLATERAL_CUSTOMER.FirstOrDefault(c => c.COLLATERALCUSTOMERID == s.NEWCOLLATERALID).COLLATERALCODE,
                                        collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
@@ -10313,6 +10315,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanCollateralMappingId = s.LOANCOLLATERALMAPPINGID,
                                        loanAppCollateralId = s.LOANAPPCOLLATERALID,
                                        oldCollateralId = s.OLDCOLLATERALID,
+                                       customerId = s.CUSTOMERID,
                                        newCollateralId = s.NEWCOLLATERALID,
                                        collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
                                        swapRef = s.SWAPREF
@@ -10347,6 +10350,7 @@ namespace FintrakBanking.Repositories.Credit
                                                   loanAppCollateralId = s.LOANAPPCOLLATERALID,
                                                   oldCollateralId = s.OLDCOLLATERALID,
                                                   newCollateralId = s.NEWCOLLATERALID,
+                                                  customerId = s.CUSTOMERID,
                                                   collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
                                                   approvalStatusId = t.APPROVALSTATUSID,
                                                   approvalTrailId = t.APPROVALTRAILID,
@@ -10373,6 +10377,7 @@ namespace FintrakBanking.Repositories.Credit
                             loanAppCollateralId = s.LOANAPPCOLLATERALID,
                             oldCollateralId = s.OLDCOLLATERALID,
                             newCollateralId = s.NEWCOLLATERALID,
+                            customerId = s.CUSTOMERID,
                             collateralSwapStatusId = s.COLLATERALSWAPSTATUSID,
                             swapRef = s.SWAPREF
                         }).FirstOrDefault();
@@ -10389,6 +10394,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPCOLLATERALID = model.loanAppCollateralId,
                 OLDCOLLATERALID = model.oldCollateralId,
                 NEWCOLLATERALID = model.newCollateralId,
+                CUSTOMERID = model.customerId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = genSetup.GetApplicationDate()
             };
@@ -10414,6 +10420,7 @@ namespace FintrakBanking.Repositories.Credit
             swap.LOANCOLLATERALMAPPINGID = model.loanCollateralMappingId;
             swap.NEWCOLLATERALID = model.newCollateralId;
             swap.OLDCOLLATERALID = model.oldCollateralId;
+            swap.CUSTOMERID = model.customerId;
             swap.DATETIMEUPDATED = genSetup.GetApplicationDate();
             swap.LASTUPDATEDBY = model.createdBy;
 

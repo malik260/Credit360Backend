@@ -753,7 +753,8 @@ namespace FintrakBanking.Repositories.Credit
                         var termLoans = (from a in context.TBL_LOAN_FEE
                                          join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                                          join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
-                                         where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.LOANSYSTEMTYPEID == loanSystemTypeId && a.LOANREVIEWOPERATIONID != loanReviewOperationId
+                                         where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.LOANSYSTEMTYPEID == loanSystemTypeId 
+                                         && (a.LOANREVIEWOPERATIONID.Equals(null) || !a.LOANREVIEWOPERATIONID.Equals(loanReviewOperationId))
                                          && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID && (a.FEEAMOUNT - a.EARNEDFEEAMOUNT) > 0 //&& a.FEEAMOUNT > 0
                                          select new DailyInterestAccrualViewModel()
                                          {
@@ -19475,9 +19476,9 @@ namespace FintrakBanking.Repositories.Credit
             oldContingent.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;//.CancelContingentLiability;
             result = context.SaveChanges() > 0;
 
-            transactionDetails.AddRange(financeTransaction.BuildLoanContingentFeesReversal(oldContingent.LOANAPPLICATIONDETAILID, staffId));
+            //transactionDetails.AddRange(financeTransaction.BuildLoanContingentFeesReversal(oldContingent.LOANAPPLICATIONDETAILID, staffId));
 
-            financeTransaction.PostTransaction(transactionDetails, false, twoFactorAuth);
+            //financeTransaction.PostTransaction(transactionDetails, false, twoFactorAuth);
 
             if (result)
             {
