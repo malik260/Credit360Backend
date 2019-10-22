@@ -15,6 +15,7 @@ using FintrakBanking.Common.CustomException;
 using System.Data.Entity;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.Approval
 {
@@ -272,10 +273,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"New approval Level '{ model.levelName }' created by this super-admin {audit_staff}",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 this.auditTrail.AddAuditTrail(audit);
             }
@@ -344,10 +347,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"New approval Level '{ model.levelName }' request for approval initiated ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 this.auditTrail.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
@@ -424,11 +429,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Updated Approval Level '{model.levelName}'. ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = model.approvalLevelId
+                    TARGETID = model.approvalLevelId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
             }
@@ -495,11 +502,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Updated Approval Level '{model.levelName}' to go for approval. ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = model.approvalLevelId
+                    TARGETID = model.approvalLevelId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 this.auditTrail.AddAuditTrail(audit);
             }
@@ -531,11 +540,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Workflow approval level '{model.LEVELNAME}' was deleted by this super-admin {audit_staff}",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = model.APPROVALLEVELID
+                    TARGETID = model.APPROVALLEVELID,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -606,11 +617,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Approval request to delete workflow approval level '{model.LEVELNAME}'",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = model.APPROVALLEVELID
+                    TARGETID = model.APPROVALLEVELID,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 this.auditTrail.AddAuditTrail(audit);

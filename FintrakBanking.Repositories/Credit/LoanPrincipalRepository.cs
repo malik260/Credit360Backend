@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -55,8 +56,10 @@ namespace FintrakBanking.Repositories.Credit
                     STAFFID = loanP.staffId,
                     BRANCHID = (short)loanP.userBranchId,
                     DETAIL = $"Loan principal with {loanP.companyId} company id is added",
-                    IPADDRESS = loanP.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = loanP.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };
@@ -87,8 +90,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = loanPrincipal.staffId,
                 BRANCHID = (short)loanPrincipal.userBranchId,
                 DETAIL = $"Deleted loan principal with {data.PRINCIPALID} id",
-                IPADDRESS = loanPrincipal.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = loanPrincipal.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -167,8 +172,10 @@ namespace FintrakBanking.Repositories.Credit
                     STAFFID = model.staffId,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Update loan principal with {model.principalId} id",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };

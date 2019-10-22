@@ -11,6 +11,7 @@ using FintrakBanking.Interfaces.credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -105,10 +106,12 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"TBL_Lc Document '{entity.ToString()}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                 URL =model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             });
             // Audit Section end ------------------------
 
@@ -135,11 +138,13 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_Lc Document '{entity.ToString()}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                TARGETID = entity.LCDOCUMENTID,
+                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.LCDOCUMENTID
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             });
             // Audit Section end ------------------------
 
@@ -161,11 +166,13 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_Lc Document '{entity.ToString()}' was deleted by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
+
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.LCDOCUMENTID
+                TARGETID = entity.LCDOCUMENTID,
+                 URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             });
             // Audit Section end ------------------------
 

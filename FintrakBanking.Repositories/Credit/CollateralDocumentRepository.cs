@@ -9,6 +9,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using System.Linq;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -56,10 +57,14 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Collateral Document '{ model.documentTitle }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS =CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+
+                
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -90,10 +95,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Collateral Document '{ model.documentTitle }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -122,10 +129,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated Collateral Document '{ model.documentTitle }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -329,10 +338,12 @@ namespace FintrakBanking.Repositories.Credit
                STAFFID = model.createdBy,
                BRANCHID = (short)model.userBranchId,
                DETAIL = $"Added Collateral Visitation File '{ model.documentTitle }' ",
-               IPADDRESS = model.userIPAddress,
-               URL = model.applicationUrl,
+               IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+               URL =model.applicationUrl,
                APPLICATIONDATE = general.GetApplicationDate(),
-               SYSTEMDATETIME = DateTime.Now
+               SYSTEMDATETIME = DateTime.Now,
+               DEVICENAME = CommonHelpers.GetDeviceName(),
+               OSNAME = CommonHelpers.FriendlyName()
            };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -368,10 +379,12 @@ namespace FintrakBanking.Repositories.Credit
                STAFFID = model.createdBy,
                BRANCHID = (short)model.userBranchId,
                DETAIL = $"Added Collateral Visitation File '{ model.documentTitle }' ",
-               IPADDRESS = model.userIPAddress,
-               URL = model.applicationUrl,
+               IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+               URL =model.applicationUrl,
                APPLICATIONDATE = general.GetApplicationDate(),
-               SYSTEMDATETIME = DateTime.Now
+               SYSTEMDATETIME = DateTime.Now,
+               DEVICENAME = CommonHelpers.GetDeviceName(),
+               OSNAME = CommonHelpers.FriendlyName()
            };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------

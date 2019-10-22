@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.Finance;
@@ -60,10 +61,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = (int)accounttype.createdBy,
                 BRANCHID = (short)accounttype.userBranchId,
                 DETAIL = $"Added accounttype: '{accounttype.accountTypeName}' with code: '{accounttype.accountTypeCode}' ",
-                IPADDRESS = accounttype.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = accounttype.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -131,10 +134,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = (int)accounttype.createdBy,
                 BRANCHID = (short)accounttype.userBranchId,
                 DETAIL = $"Updated accounttype: '{accounttype.accountTypeName}' with code: '{accounttype.accountTypeCode}' ",
-                IPADDRESS = accounttype.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = accounttype.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -158,10 +163,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = (int)user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted accounttype: '{type.ACCOUNTTYPENAME}' with code: '{type.ACCOUNTTYPECODE}' ",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);

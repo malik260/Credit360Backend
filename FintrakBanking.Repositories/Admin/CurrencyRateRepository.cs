@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
@@ -141,10 +142,12 @@ namespace FintrakBanking.Repositories.Admin
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Currency Rate :  { data.EXCHANGERATE } for date : '{data.DATE} ' on {audit_BaseCurrency} to: {audit_Currency} conversion",
-                IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                 IPADDRESS = CommonHelpers.GetLocalIpAddress(),        
+                 DEVICENAME = CommonHelpers.GetDeviceName(),
+                 OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -177,10 +180,12 @@ namespace FintrakBanking.Repositories.Admin
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated Currency Rate : { data.EXCHANGERATE } for date: '{data.DATE}' on {audit_BaseCurrency} to: {audit_Currency} conversion",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+                URL = model.applicationUrl,
+                IPADDRESS = model.userIPAddress
             };
 
             this.auditTrail.AddAuditTrail(audit);

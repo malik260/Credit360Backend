@@ -11,6 +11,7 @@ using FintrakBanking.Interfaces.credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.credit
 {
@@ -77,11 +78,13 @@ namespace FintrakBanking.Repositories.credit
                 AUDITTYPEID = (short)AuditTypeEnum.AtcLodgmentDetailAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"TBL_Atc Lodgment Detail '{entity.DESCRIPTION}' created by {auditStaff}",
-                IPADDRESS = model.userIPAddress,
+                DETAIL = $"TBL_Atc Lodgment Detail '{entity.DESCRIPTION}' created by {auditStaff}",       
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
             });
             // Audit Section end ------------------------
 
@@ -105,11 +108,12 @@ namespace FintrakBanking.Repositories.credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_Atc Lodgment Detail '{entity.DESCRIPTION}' was deleted by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
+                URL =user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.ATCLODGMENTDETAILID
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),            
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
             });
             // Audit Section end ------------------------
 

@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.CustomException;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
@@ -281,10 +282,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)productGroupModel.createdBy,
                     BRANCHID = (short)productGroupModel.userBranchId,
                     DETAIL = $"Added tbl_Product Group: '{productGroupModel.productGroupName}' ",
-                    IPADDRESS = productGroupModel.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = productGroupModel.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -315,10 +318,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = productGroup.createdBy,
                     BRANCHID = (short)productGroup.userBranchId,
                     DETAIL = $"Updated tbl_Product Group: '{productGroup.productGroupName}' with code: '{productGroup.productGroupCode}' ",
-                    IPADDRESS = productGroup.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = productGroup.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -------------------------------
@@ -343,11 +348,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Deleted Product Group: '{productPriceIndex?.PRODUCTGROUPNAME}' with code '{productPriceIndex?.PRODUCTGROUPCODE}' ",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = productGroupId
+                    TARGETID = productGroupId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -444,10 +451,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = productType.createdBy,
                     BRANCHID = (short)productType.userBranchId,
                     DETAIL = $"Added tbl_Product Type: '{productType.productTypeName}' ",
-                    IPADDRESS = productType.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = productType.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -498,10 +507,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = productType.createdBy,
                     BRANCHID = (short)productType.userBranchId,
                     DETAIL = $"Updated tbl_Product Type: '{productType.productTypeName}' ",
-                    IPADDRESS = productType.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = productType.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -527,11 +538,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Deleted Product Type: '{data.PRODUCTTYPENAME}' under group '{data.TBL_PRODUCT_GROUP.PRODUCTGROUPNAME}' ",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = productTypeId
+                    TARGETID = productTypeId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -1980,10 +1993,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = productModel.createdBy,
                     BRANCHID = (short)productModel.userBranchId,
                     DETAIL = $"Initiated Product Creation for '{productModel.productName}' with code'{productModel.productCode}'",
-                    IPADDRESS = productModel.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = productModel.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 using (var trans = context.Database.BeginTransaction())
@@ -2373,11 +2388,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = productModel.createdBy,
                     BRANCHID = (short)productModel.userBranchId,
                     DETAIL = $"Updated Product '{productModel.productName}' with code'{productModel.productCode}'",
-                    IPADDRESS = productModel.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = productModel.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = productId
+                    TARGETID = productId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 using (var trans = context.Database.BeginTransaction())
@@ -2779,10 +2796,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)prodPriceIndexGlobal.createdBy,
                     BRANCHID = (short)prodPriceIndexGlobal.userBranchId,
                     DETAIL = $"Added Price Index Global: '{prodPriceIndexGlobal.productPriceIndexGlobalId}' ",
-                    IPADDRESS = prodPriceIndexGlobal.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = prodPriceIndexGlobal.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 bool output;
                 var productPriceIndexId = 0;
@@ -2852,10 +2871,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)prodPriceIndexGlobal.createdBy,
                     BRANCHID = (short)prodPriceIndexGlobal.userBranchId,
                     DETAIL = $"Updated Price Index Global: '{prodPriceIndexGlobal.productPriceIndexGlobalId}' ",
-                    IPADDRESS = prodPriceIndexGlobal.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = prodPriceIndexGlobal.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 bool output;
                 var productPriceIndexId = 0;
@@ -2943,10 +2964,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)prodPriceIndex.createdBy,
                     BRANCHID = (short)prodPriceIndex.userBranchId,
                     DETAIL = $"Added tbl_Product Price Index: '{prodPriceIndex.priceIndexName}' ",
-                    IPADDRESS = prodPriceIndex.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = prodPriceIndex.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -2984,10 +3007,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)prodPriceIndex.createdBy,
                     BRANCHID = (short)prodPriceIndex.userBranchId,
                     DETAIL = $"Updated tbl_Product Price Index: '{prodPriceIndex.priceIndexName}' ",
-                    IPADDRESS = prodPriceIndex.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = prodPriceIndex.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -3013,11 +3038,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Deleted tbl_Product Price Index: '{data.PRICEINDEXNAME}' with rate '{data.PRICEINDEXRATE}' ",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = productPriceIndexId
+                    TARGETID = productPriceIndexId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -3341,10 +3368,12 @@ namespace FintrakBanking.Repositories.Setups.General
                             STAFFID = (int)model.createdBy,
                             BRANCHID = (short)model.userBranchId,
                             DETAIL = $"Added/Updated Product Classification with name: '{model.productClassName}' ",
-                            IPADDRESS = model.userIPAddress,
+                            IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                             URL = model.applicationUrl,
                             APPLICATIONDATE = genSetup.GetApplicationDate(),
-                            SYSTEMDATETIME = DateTime.Now
+                            SYSTEMDATETIME = DateTime.Now,
+                            DEVICENAME = CommonHelpers.GetDeviceName(),
+                            OSNAME = CommonHelpers.FriendlyName(),
                         };
 
                         this.auditTrail.AddAuditTrail(audit);
@@ -3375,27 +3404,27 @@ namespace FintrakBanking.Repositories.Setups.General
             var mappings = (from p in docContext.TBL_DOC_MAPPING
                             where p.DELETED == false
                             select new ProductDocumentMappingViewModel()
-                    {
-                        productDocMapId = p.PRODUCTDOCMAPID,
-                        documentCategoryId = p.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
-                        documentCategoryName = p.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
-                        productId = p.PRODUCTID,
-                        productClassId = p.PRODUCTCLASSID,
-                        operationId = p.OPERATIONID,
-                        mapToProductClass = p.MAPTOPRODUCTCLASS,
-                        mapToProduct = p.MAPTOPRODUCT,
-                        mapToOperation = p.MAPTOOPERATION,
-                        mapToSector = p.MAPTOSECTOR,
-                        mapToSubSector = p.MAPTOSUBSECTOR,
-                        required = p.ISREQUIRED,
-                        documentTypeId = p.DOCUMENTTYPEID,
-                        documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
-                        sectorId = p.SECTORID,
-                        subSectorId = p.SUBSECTORID,
-                        
-                        //productName = p.TBL_PRODUCT.PRODUCTNAME,
-                        //productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME
-                    }).ToList();
+                            {
+                                productDocMapId = p.PRODUCTDOCMAPID,
+                                documentCategoryId = p.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                                documentCategoryName = p.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                                productId = p.PRODUCTID,
+                                productClassId = p.PRODUCTCLASSID,
+                                operationId = p.OPERATIONID,
+                                mapToProductClass = p.MAPTOPRODUCTCLASS,
+                                mapToProduct = p.MAPTOPRODUCT,
+                                mapToOperation = p.MAPTOOPERATION,
+                                mapToSector = p.MAPTOSECTOR,
+                                mapToSubSector = p.MAPTOSUBSECTOR,
+                                required = p.ISREQUIRED,
+                                documentTypeId = p.DOCUMENTTYPEID,
+                                documentType = p.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                                sectorId = p.SECTORID,
+                                subSectorId = p.SUBSECTORID,
+
+                                //productName = p.TBL_PRODUCT.PRODUCTNAME,
+                                //productClassName = p.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME
+                            }).ToList();
 
             foreach (var mapping in mappings)
             {
@@ -3449,10 +3478,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = (int)model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added : TBL_PRODUCT_DOCUMENT_MAPPING'{model.productId}' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -3557,10 +3588,12 @@ namespace FintrakBanking.Repositories.Setups.General
             STAFFID = (int)model.createdBy,
             BRANCHID = (short)model.userBranchId,
             DETAIL = $"Added : TBL_DOCUMENT_DEFINITION'{model.documentDefinitionId}' ",
-            IPADDRESS = model.userIPAddress,
+            IPADDRESS = CommonHelpers.GetLocalIpAddress(),
             URL = model.applicationUrl,
             APPLICATIONDATE = genSetup.GetApplicationDate(),
-            SYSTEMDATETIME = DateTime.Now
+            SYSTEMDATETIME = DateTime.Now,
+            DEVICENAME = CommonHelpers.GetDeviceName(),
+            OSNAME = CommonHelpers.FriendlyName(),
         };
 
         this.auditTrail.AddAuditTrail(audit);

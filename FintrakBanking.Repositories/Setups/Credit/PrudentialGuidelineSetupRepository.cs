@@ -12,6 +12,7 @@ using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.Credit
 {
@@ -67,10 +68,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                     STAFFID = guideline.staffId,
                     BRANCHID = (short)guideline.userBranchId,
                     DETAIL = $"Loan Loan prudential guideline with {guideline.classification} classification is added",
-                    IPADDRESS = guideline.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = guideline.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 this.auditTrail.AddAuditTrail(audit);
 

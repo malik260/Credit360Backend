@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
@@ -156,10 +157,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = (int)model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added all weekends in the year : '{model.date.Year}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -188,10 +191,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = (int)model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Holiday: '{model.description}' with Id: {model.publicHolidayId} ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
@@ -217,10 +222,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Updated branch: '{model.description}' with CountryId: {model.countryId} ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -------------------------------
@@ -247,10 +254,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = (int)model.staffId,
                     BRANCHID = (short)model.BranchId,
                     DETAIL = $"Delete Public holyday with public Holiday Id: " + id,
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -------------------------------
