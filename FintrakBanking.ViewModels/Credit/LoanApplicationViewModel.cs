@@ -407,6 +407,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string conditionPrecedent { get; set; }
 
+        public string cflRrequestId { get; set; }
+
         public string conditionSubsequent { get; set; }
 
         public string transactionDynamics { get; set; }
