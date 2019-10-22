@@ -625,7 +625,7 @@ namespace FintrakBanking.Repositories.Credit
             var camsol = context.TBL_LOAN_CAMSOL.Where(O => O.CUSTOMERNAME.Contains(model.customerName.ToUpper()) || model.customerName.ToUpper().Contains(O.CUSTOMERNAME)).FirstOrDefault();
 
             decimal debtAmount = 0;
-            var reference = "ABP/ROG/OA/BO/03/2016/0061";
+            var reference = "<p style='font face:arial; size:12px'>ABP/ROG/OA/BO/03/2016/0061</p>";
             var asAtDate = model.asAtDate.ToString("dd MMM yyyy");
             var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault()?.ADDRESS;
             var customerCode = model.customerCode;
@@ -639,19 +639,19 @@ namespace FintrakBanking.Repositories.Credit
                 accountNumber = camsol.ACCOUNTNUMBER;
             }
 
-            string result = $"<font face=Arial><p><b> {model.requestRef}</b></p> " +
-                $"<p><b>{asAtDate}.</b></p> " +
-                $"<p><b>{fullName},</b> <br/> {address} </p> " +
-                $"<p><b>Dear Sir/Ma,</b></p> " +
-                $"<p><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
-                $"<p>We hereby confirm that <b>{fullName}</b>, with account number {accountNumber} is indebted to our Bank as at {asAtDate}, to the tune of N {debtAmount.ToString("#,##")}.</p> " +
-                $"<p>Please note that interest will continue to accrue on the above amount on a daily basis until the facility is fully liquidated.</p> " +
-                $"<p><b>This report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
-                $"<p>Thank you.</p> " +
-                $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
+            string result = $"<p style='font face:arial;size:12px;'><b>{model.requestRef}</b></p> " +
+                $"<p style='font face:arial;size:12px;'><b>{asAtDate}.</b></p> " +
+                $"<p style='font face:arial;size:12px;'><b>{fullName},</b> <br/> {address} </p> " +
+                $"<p style='font face:arial;size:12px;'><b>Dear Sir/Ma,</b></p> " +
+                $"<p style='font face:arial;size:12px;'><b>LETTER OF INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
+                $"<p style='font face:arial;size:12px;'>We hereby confirm that <b>{fullName}</b>, with account number {accountNumber} is indebted to our Bank as at {asAtDate}, to the tune of N {debtAmount.ToString("#,##")}.</p> " +
+                $"<p style='font face:arial;size:12px;'>Please note that interest will continue to accrue on the above amount on a daily basis until the facility is fully liquidated.</p> " +
+                $"<p style='font face:arial;size:12px;'><b>This report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
+                $"<p style='font face:arial;size:12px;'>Thank you.</p> " +
+                $"<p style='font face:arial;size:12px;'>Yours faithfully,</p> <p style='font face:arial;size:12px;'><b>For:</b> ACCESS BANK PLC</p> " +
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p></font>";
-                $"{GetLetterGenRequestSignatory(model.requestId)}";
+                $"{GetLetterGenRequestSignatory(model.requestId)}</font>";
 
             return result;
         }
@@ -663,7 +663,7 @@ namespace FintrakBanking.Repositories.Credit
                 .OrderBy(s => s.POSITION);
             foreach(var s in signatories)
             {
-                result += $@"<p></p><p><b>AUTHORISED SIGNATORY <br/> {s.TBL_AUTHORISED_SIGNATORY.SIGNATORYNAME} <br/> {s.TBL_AUTHORISED_SIGNATORY.SIGNATORYTITLE}</b></p>";
+                result += $@"<p></p><p style='font face:arial;size:12px;'><b>AUTHORISED SIGNATORY <br/> {s.TBL_AUTHORISED_SIGNATORY.SIGNATORYNAME} <br/> {s.TBL_AUTHORISED_SIGNATORY.SIGNATORYTITLE}</b></p>";
             }
             return result;
         }
@@ -676,7 +676,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var camsol = context.TBL_LOAN_CAMSOL.Where(O => O.CUSTOMERNAME.Contains(model.customerName.ToUpper()) || model.customerName.ToUpper().Contains(O.CUSTOMERNAME)).FirstOrDefault();
 
-            var reference = "ABP/ROG/OA/BO/03/2016/0061";
+            var reference = "<p style='font face:arial;size:12px;'>ABP/ROG/OA/BO/03/2016/0061</p>";
             var asAtDate = model.asAtDate.ToString("dd MMM yyyy");
             var address = context.TBL_CUSTOMER_ADDRESS.Where(O => O.CUSTOMERID == model.customerId).FirstOrDefault()?.ADDRESS;
             var fullName = model.customerName;
@@ -685,19 +685,18 @@ namespace FintrakBanking.Repositories.Credit
             if (camsol != null) {
                 accountNumber = camsol.ACCOUNTNUMBER;
             }
-
-            string result = $"<font face=Arial><p><b>REF: {model.requestRef}</b></p> " +
-                $"<p><b>{asAtDate}.</b></p> " +
-                $"<p><b>{fullName},</b> <br/> {address} </p> " +
-                $"<p><b>Dear Sir/Ma,</b></p> " +
-                $"<p><b>LETTER OF NON-INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
-                $"<p>We hereby confirm that {fullName}, is not indebted to our Bank as at {asAtDate}.</p> " +
-                $"<p><b>Please note that this report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
-                $"<p>Thank you.</p> " +
-                $"<p>Yours faithfully,</p> <p><b>For:</b> ACCESS BANK PLC</p> " +
+            string result = $"<p style='font face:arial;size:12px;'><b>REF: {model.requestRef}</b></p> " +
+                $"<p style='font face:arial;size:12px;'><b>{asAtDate}.</b></p> " +
+                $"<p style='font face:arial;size:12px;'><b>{fullName},</b> <br/> {address}</p> " +
+                $"<p style='font face:arial;size:12px;'><b>Dear Sir/Ma,</b></p> " +
+                $"<p style='font face:arial;size:12px;'><b>LETTER OF NON-INDEBTEDNESS – {fullName} - {accountNumber}</b></p> " +
+                $"<p style='font face:arial;size:12px;'>We hereby confirm that {fullName}, is not indebted to our Bank as at {asAtDate}.</p> " +
+                $"<p style='font face:arial;size:12px;'><b>Please note that this report is given in strict confidence and without liability on the part of Access Bank Plc or any of its staff or agent.</b></p> " +
+                $"<p style='font face:arial;size:12px;'>Thank you.</font></p> " +
+                $"<p style='font face:arial;size:12px;'>Yours faithfully,</p> <p style='font face:arial;size:12px;'><b>For:</b> ACCESS BANK PLC</p> " +              
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> EMMANUELLA OGHOR <br/> ASSISTANT BRANCH MANAGER</b></p> " +
                 //$"<p></p><p><b>AUTHORISED SIGNATORY <br/> IKECHUKWU ONYEMEM <br/> BRANCH MANAGER</b></p></font>";
-                $"{GetLetterGenRequestSignatory(model.requestId)}";
+                $"{GetLetterGenRequestSignatory(model.requestId)}</font>";
 
             return result;
         }
@@ -707,7 +706,7 @@ namespace FintrakBanking.Repositories.Credit
             var n = 0;
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=750 cellpadding=15 cellspacing=0>
+                <table border=1 width=750 cellpadding=15 cellspacing=0 style='font face: arial; size:12px'>
                     <tr>
                         <th><b>Facility Type</b></th>
                         <th><b>Loan Amount (N)</b></th>

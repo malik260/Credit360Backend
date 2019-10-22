@@ -12077,7 +12077,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
-                                   && loanStatus.Contains(a.LOANSTATUSID) //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
+                                   && !loanStatus.Contains(a.LOANSTATUSID) //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
                                                                                                                                                  // && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {

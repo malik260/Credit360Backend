@@ -448,7 +448,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return staffLevels.Union(roleLevelIds);
         }
 
-        public IEnumerable<int> GetStaffApprovalLevelIds(int staffId, int operationId = 0)
+        public IEnumerable<int> GetStaffApprovalLevelIds(int staffId, int operationId)
         {
             var relievedLevelids = GetRelievedStaffApprovalLevelIds(staffId, operationId); // for approval delegation
 

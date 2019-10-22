@@ -739,6 +739,9 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 newGroupCustomer.DATETIMECREATED = DateTime.Now;
 
                 if (oldGroupCustomer == null && oldGroupCustomers.Count == 0) {
+                    if (item.relationshipTypeId <= 0) {
+                        throw new SecureException("Kindly select the 'Relationship Type'");
+                    }
                     newGroupCustomer.RELATIONSHIPTYPEID = item.relationshipTypeId;
                 }
                 else {
