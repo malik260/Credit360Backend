@@ -43,6 +43,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetTeamAndRevolving(DateRange dateRange, int companyId, int staffId);
         string GetEarnedUnearnedInterest(DateRange dateRange, int companyId, int staffId);
         string RiskAssets(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string CbnTeam(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string GetCollateralRevaluation(int companyId, int value);
         string GetPostedTransactions(ReportSearchEntity searchEntity, int companyId);
         string GetStakeholdersOnExpirationOfFTP(ReportSearchEntity searchEntity, int companyId, int staffId);
@@ -130,5 +131,11 @@ namespace FintrakBanking.Interfaces.Reports
         string UnpaidObligationReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetMain1Report(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string DrawdownReport(string referenceNumber);
+        string RiskAssetByCbnNplClassification(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string ContigentLiabilityReportMain(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string ContigentLiabilityReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string ContigentLiabilityReportMain1(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+
+
     }
 }

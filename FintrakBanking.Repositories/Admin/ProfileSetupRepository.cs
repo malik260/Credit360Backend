@@ -10,6 +10,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories
 {
@@ -77,10 +78,14 @@ namespace FintrakBanking.Repositories
                     STAFFID = entity.createdBy,
                     BRANCHID = (short)entity.userBranchId,
                     DETAIL = $"Updated application profile setting",
-                IPADDRESS = entity.userIPAddress,
-                    URL = entity.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                    URL = entity.applicationUrl,
+                  
+
                 };
                 this._auditTrail.AddAuditTrail(audit);
                _context.SaveChanges();

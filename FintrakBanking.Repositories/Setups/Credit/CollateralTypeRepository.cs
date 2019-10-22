@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
@@ -131,10 +132,12 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                     STAFFID = entity.createdBy,
                     BRANCHID = entity.userBranchId,
                     DETAIL = $"Added collateral Document Type: { entity.documentType  }  Created for {collateralType.COLLATERALTYPENAME} ",
-                    IPADDRESS = entity.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     APPLICATIONDATE = genSetup.GetApplicationDate().Date,
                     SYSTEMDATETIME = DateTime.Now.Date,
-                    URL = entity.applicationUrl
+                    URL = entity.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 context.TBL_COLLATERAL_DOCUMENT_TYPE.Add(docType);
                 this.auditTrail.AddAuditTrail(audit);
@@ -156,10 +159,12 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                     STAFFID = entity.createdBy,
                     BRANCHID = entity.userBranchId,
                     DETAIL = $"Updated collateral Document Type: { entity.documentType  }  Created for {collateralType.COLLATERALTYPENAME} ",
-                    IPADDRESS = entity.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     APPLICATIONDATE = genSetup.GetApplicationDate().Date,
                     SYSTEMDATETIME = DateTime.Now.Date,
-                    URL = entity.applicationUrl
+                    URL = entity.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 //context.TBL_COLLATERAL_DOCUMENT_TYPE.Add(docType);
                 this.auditTrail.AddAuditTrail(audit);
@@ -196,10 +201,12 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated Collateral Type: { entity.collateralTypeName } ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -294,10 +301,12 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated Collateral Type: { entity.collateralSubTypeName } ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -321,10 +330,12 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted Collateral Sub Type: { entity.collateralSubTypeName } ",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -355,10 +366,12 @@ namespace FintrakBanking.Interfaces.Setups.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Added Collateral Type sub: { entity.collateralSubTypeName } ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
