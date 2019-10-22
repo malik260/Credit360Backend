@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
@@ -69,10 +70,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = "Added new tbl_Department ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -110,10 +113,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Added new department unit {entity.unitName} to {departmentName} department",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -141,10 +146,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated department unit with Id: {unitId} ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -178,10 +185,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Delete department unit with Id: {unitId} ",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = date,
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -502,10 +511,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated tbl_Department with Id: {entity.departmentId} ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             auditTrail.AddAuditTrail(audit);

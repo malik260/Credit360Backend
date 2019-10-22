@@ -10,6 +10,7 @@ using System.Text;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.Approval
 {
@@ -75,11 +76,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Approval Group '{model.groupName}'",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = model.groupId
+                TARGETID = model.groupId,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             context.TBL_APPROVAL_GROUP.Add(data);
@@ -104,11 +107,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated Approval Group '{model.groupName}'",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = model.groupId
+                TARGETID = model.groupId,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -131,11 +136,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted Approval Group '{data.GROUPNAME}'",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = data.GROUPID
+                TARGETID = data.GROUPID,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);

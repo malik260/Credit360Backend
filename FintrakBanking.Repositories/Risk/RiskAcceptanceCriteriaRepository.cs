@@ -1499,6 +1499,25 @@ namespace FintrakBanking.Repositories.Risk
             return context.TBL_RAC_DEFINITION.Any(o => o.PRODUCTID == productid && o.RACCATEGORYTYPEID == racCategoryTypeId);
         }
 
+        public List<RacCategoryTypeViewModel> GetRacDetails(int targetId)
+        {
+            List<RacCategoryTypeViewModel> racItems = new List<RacCategoryTypeViewModel>();
+            var racDetailsIds = context.TBL_RAC_DETAIL.Where(x => x.TARGETID == targetId).Select(x => x.RACDEFINITIONID);
+            foreach (var racDefId in racDetailsIds)
+            {
+                racItems = (from a in context.TBL_RAC_DEFINITION.Where(a => a.RACDEFINITIONID == racDefId)
+                            join b in context.TBL_RAC_ITEM on a.RACITEMID equals b.RACITEMID
+
+                            select new RacCategoryTypeViewModel
+                            {
+                                 criteria = b.CRITERIA,
+                                 //isActive = a.ISACTIVE
+                            })
+               .ToList();
+               
+            }
+            return racItems;
+        }
        
     }
 

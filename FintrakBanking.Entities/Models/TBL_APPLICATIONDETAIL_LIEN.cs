@@ -15,8 +15,15 @@ namespace FintrakBanking.Entities.Models
         public int APPLICATIONDETAILLIENID { get; set; }
         public int APPLICATIONDETAILID { get; set; }
         public int COLLATERALCUSTOMERID { get; set; }
-        public float AMOUNT { get; set; }
+        public decimal AMOUNT { get; set; }
         public string ACCOUNTNO { get; set; }
         public bool ISRELEASED { get; set; }
+        public bool DELETED { get; set; }
+        public int? DELETEDBY { get; set; }
+        public int CREATEDBY { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
+        public DateTime? DATETIMEDELETED { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
     } 
 }

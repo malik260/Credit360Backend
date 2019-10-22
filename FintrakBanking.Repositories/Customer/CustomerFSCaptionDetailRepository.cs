@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Customer;
@@ -52,8 +53,10 @@ namespace FintrakBanking.Repositories.Customer
                     STAFFID = entity.createdBy,
                     BRANCHID = entity.userBranchId,
                     DETAIL = $"Added FS Caption Detail for customer {customer} and caption {caption} . Amount is { exisitingDeletedRecord?.AMOUNT:#,##0} with date {exisitingDeletedRecord?.FSDATE:dd/MM/yyyy}",
-                    IPADDRESS = entity.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = entity.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };
@@ -85,8 +88,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = entity.createdBy,
                 BRANCHID = entity.userBranchId,
                 DETAIL = $"Added FS Caption Detail for customer {customer} and caption {caption} . Amount is { data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -133,8 +138,10 @@ namespace FintrakBanking.Repositories.Customer
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Deleted FS Caption Detail for customer {customer} and caption {caption}. Amount is {data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };
@@ -252,8 +259,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = entity.createdBy,
                 BRANCHID = entity.userBranchId,
                 DETAIL = $"Updated FS Caption Detail for customer {customer} and caption {caption} . Amount is { data?.AMOUNT.ToString("#,##0") } with date {data?.FSDATE.ToString("dd/MM/yyyy")}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -367,8 +376,10 @@ namespace FintrakBanking.Repositories.Customer
                         STAFFID = entity.createdBy,
                         BRANCHID = entity.userBranchId,
                         DETAIL = $"Added FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { exisitingDeletedRecord?.AMOUNT:#,##0} with date {exisitingDeletedRecord?.FSDATE:dd/MM/yyyy}",
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now
                     };
@@ -401,8 +412,10 @@ namespace FintrakBanking.Repositories.Customer
                         STAFFID = entity.createdBy,
                         BRANCHID = entity.userBranchId,
                         DETAIL = $"Added FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
-                        IPADDRESS = entity.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = entity.applicationUrl,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now
                     };
@@ -445,8 +458,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = entity.createdBy,
                 BRANCHID = entity.userBranchId,
                 DETAIL = $"Updated FS Caption Detail for customer group {customerGrp} and caption {caption} . Amount is { data?.AMOUNT.ToString("#,##0") } with date {data?.FSDATE.ToString("dd/MM/yyyy")}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -481,8 +496,10 @@ namespace FintrakBanking.Repositories.Customer
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Deleted FS Caption Detail for customer {customerGrp} and caption {caption}. Amount is {data?.AMOUNT:#,##0} with date {data?.FSDATE:dd/MM/yyyy}",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };

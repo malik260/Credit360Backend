@@ -8,6 +8,7 @@ using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.Common.Enum;
 using System.Linq;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Finance
 {
@@ -48,10 +49,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Tax '{ data.TAXNAME }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -83,10 +86,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = model.staffId,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated Tax '{ data.TAXNAME }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -152,10 +157,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted Tax '{ data.TAXNAME }' ",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
