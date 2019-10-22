@@ -218,7 +218,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = -1,
                     OSNAME = CommonHelpers.FriendlyName(),
-                    DEVICENAME = Environment.UserName //CommonHelpers.GetDeviceName()
+                     DEVICENAME = CommonHelpers.GetDeviceName(),
+               
                 });
                 context.SaveChanges();
             }
@@ -580,8 +581,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                         SYSTEMDATETIME = DateTime.Now,
                         TARGETID = -1,
-                        OSNAME = CommonHelpers.FriendlyName(),
-                        DEVICENAME = Environment.UserName // CommonHelpers.GetDeviceName()
+                        OSNAME = CommonHelpers.FriendlyName(),                      
+                         DEVICENAME = CommonHelpers.GetDeviceName(),
+                    
                     });
                     context.SaveChanges();
                     return true;
@@ -619,8 +621,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = -1,
-                    OSNAME = CommonHelpers.FriendlyName(),
-                    DEVICENAME = Environment.UserName // CommonHelpers.GetDeviceName()
+                    OSNAME = CommonHelpers.FriendlyName(),  
+                     DEVICENAME = CommonHelpers.GetDeviceName(),
+            
                 };
 
                 _auditTrail.AddAuditTrail(audit);
@@ -729,8 +732,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = -1,
-                    OSNAME = CommonHelpers.FriendlyName(),
-                    DEVICENAME = Environment.UserName //CommonHelpers.GetDeviceName()
+                    OSNAME = CommonHelpers.FriendlyName(),                   
+                     DEVICENAME = CommonHelpers.GetDeviceName(),
+                
                 };
 
                 _auditTrail.AddAuditTrail(audit);

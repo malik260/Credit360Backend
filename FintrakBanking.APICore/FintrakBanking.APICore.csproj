@@ -557,6 +557,13 @@
     <Compile Include="Reports\ReportViews\CashCollaterizedCredits.aspx.designer.cs">
       <DependentUpon>CashCollaterizedCredits.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CbnNplTeamReport.aspx.cs">
+      <DependentUpon>CbnNplTeamReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CbnNplTeamReport.aspx.designer.cs">
+      <DependentUpon>CbnNplTeamReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CollateralInsurance.aspx.cs">
       <DependentUpon>CollateralInsurance.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -598,6 +605,27 @@
     </Compile>
     <Compile Include="Reports\ReportViews\ContigentLiabilityInformation.aspx.designer.cs">
       <DependentUpon>ContigentLiabilityInformation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ContigentLiabilityReport.aspx.cs">
+      <DependentUpon>ContigentLiabilityReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ContigentLiabilityReport.aspx.designer.cs">
+      <DependentUpon>ContigentLiabilityReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ContigentLiabilityReportMain.aspx.cs">
+      <DependentUpon>ContigentLiabilityReportMain.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ContigentLiabilityReportMain.aspx.designer.cs">
+      <DependentUpon>ContigentLiabilityReportMain.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ContigentLiabilityReportMain1.aspx.cs">
+      <DependentUpon>ContigentLiabilityReportMain1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ContigentLiabilityReportMain1.aspx.designer.cs">
+      <DependentUpon>ContigentLiabilityReportMain1.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\ContigentReport.aspx.cs">
       <DependentUpon>ContigentReport.aspx</DependentUpon>
@@ -836,6 +864,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\Repayment.aspx.designer.cs">
       <DependentUpon>Repayment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetByCbnClassification.aspx.cs">
+      <DependentUpon>RiskAssetByCbnClassification.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetByCbnClassification.aspx.designer.cs">
+      <DependentUpon>RiskAssetByCbnClassification.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\RiskAssetByIFRSClassificationaspx.aspx.cs">
       <DependentUpon>RiskAssetByIFRSClassificationaspx.aspx</DependentUpon>
@@ -1202,6 +1237,7 @@
     <Content Include="Reports\ReportViews\CashBacked.aspx" />
     <Content Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx" />
     <Content Include="Reports\ReportViews\CashCollaterizedCredits.aspx" />
+    <Content Include="Reports\ReportViews\CbnNplTeamReport.aspx" />
     <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
     <Content Include="Reports\ReportViews\CollateralInsurance.aspx" />
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
@@ -1209,6 +1245,9 @@
     <Content Include="Reports\ReportViews\CollateralValuationReport.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
     <Content Include="Reports\ReportViews\ContigentLiabilityInformation.aspx" />
+    <Content Include="Reports\ReportViews\ContigentLiabilityReport.aspx" />
+    <Content Include="Reports\ReportViews\ContigentLiabilityReportMain.aspx" />
+    <Content Include="Reports\ReportViews\ContigentLiabilityReportMain1.aspx" />
     <Content Include="Reports\ReportViews\ContigentReport.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
@@ -1244,6 +1283,7 @@
     <Content Include="Reports\ReportViews\PSR.aspx" />
     <Content Include="Reports\ReportViews\ReceivableInterest.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
+    <Content Include="Reports\ReportViews\RiskAssetByCbnClassification.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByIFRSClassificationaspx.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByVariance.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetDistributionBySector.aspx" />

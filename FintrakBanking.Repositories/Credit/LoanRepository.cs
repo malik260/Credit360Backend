@@ -627,8 +627,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Applied for loan with reference number: {loanReferenceNumber}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -736,8 +738,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Applied for loan with reference number: {loanReferenceNumber}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -840,8 +844,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Applied for loan with reference number: {contingentFacility.LOANREFERENCENUMBER}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -941,8 +947,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Applied for loan with reference number: {loanReferenceNumber}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -1156,8 +1164,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Editted loan booking with loan account number: {loanReferenceNumber}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -1334,8 +1344,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Applied for loan with reference number: {loanReferenceNumber}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -1464,8 +1476,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Editted loan booking with loan account number: {loanData.LOANREFERENCENUMBER}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -1610,8 +1624,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Applied for loan with reference number: {loanReferenceNumber}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -1761,8 +1777,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Editted loan booking with loan account number: {loanData.LOANREFERENCENUMBER}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -1909,8 +1927,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Applied for FX-loan with reference number: {loanReferenceNumber}",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -3785,8 +3805,10 @@ namespace FintrakBanking.Repositories.Credit
                     STAFFID = user.staffId,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"{action} Facility Booking with code ({loanReferenceNumber})",
-                    IPADDRESS = user.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = user.applicationUrl,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };
@@ -7116,8 +7138,10 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Request to book loan of amount '{ entity.amount_Requested }' for customer'{entity.customerName}'",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -13126,10 +13150,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.BranchId,
                 DETAIL = $"facility booking with booking account number  refered back to modifier.",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             context.TBL_AUDIT.Add(audit);
             //end of Audit section -------------------------------

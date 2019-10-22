@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.Credit;
@@ -71,10 +72,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added CrmsRegulatory '{ model.description }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -102,10 +105,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated CrmsRegulatory with ID= ' {data.CRMSREGULATORYID} with Description= { data.DESCRIPTION }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -126,10 +131,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 STAFFID = lastUpdatedBy,
                 BRANCHID = userBranchId,
                 DETAIL = $"Deleted CrmsRegulatory with ID= ' {data.CRMSREGULATORYID} with Description= { data.DESCRIPTION }' ",
-                IPADDRESS = userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------

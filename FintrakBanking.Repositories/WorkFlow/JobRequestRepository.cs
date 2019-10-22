@@ -89,10 +89,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = applicationDate,
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this.audit.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
@@ -184,10 +186,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Reply JobRequest '{ data.JOBREQUESTCODE }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -219,10 +223,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Job request with code '{ data.JOBREQUESTCODE }' was re-routed from '{existingUnit.UNITNAME}' to '{newUnit.UNITNAME}'",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -372,10 +378,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = info,
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -1837,10 +1845,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
                         DETAIL = auditDetail,
-                        IPADDRESS = model.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
                     };
                     this.audit.AddAuditTrail(audit);
                     // End of Audit Section ---------------------
@@ -1980,10 +1990,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
                         DETAIL = auditDetail,
-                        IPADDRESS = model.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
                     };
                     this.audit.AddAuditTrail(audit);
                     // End of Audit Section ---------------------
@@ -2105,10 +2117,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
                         DETAIL = auditDetail,
-                        IPADDRESS = model.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
                     };
                     this.audit.AddAuditTrail(audit);
                     // End of Audit Section ---------------------
@@ -2178,10 +2192,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
                         DETAIL = auditDetail,
-                        IPADDRESS = model.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
+                        SYSTEMDATETIME = DateTime.Now,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName(),
                     };
                     this.audit.AddAuditTrail(audit);
                     // End of Audit Section ---------------------
@@ -2421,10 +2437,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.BranchId,
                 DETAIL = $"Updated Job request details table with accredited consultant payment status as'{ payStatus }' on job request with code '{data.TBL_JOB_REQUEST.JOBREQUESTCODE}' for '{data.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME}' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -2538,10 +2556,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Staff with staff code '{ staff.STAFFCODE }' of '{unit.UNITNAME}' unit was added to '{hub.HUBNAME}' hub  ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -2582,10 +2602,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"New update made to 'job type hub staff'  thus: staff code - '{ staff.STAFFCODE }', hub - '{hub.HUBNAME}', unit - '{unit.UNITNAME}'.",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
 
@@ -2619,10 +2641,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Joy Type has been assigned to a staff with ID '{ model.staffId }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = applicationDate,
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -2647,10 +2671,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Deleted job Type admin with detail: JobType - '{jobType.JOBTYPENAME}' staff code '{ staff.STAFFCODE }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
 
@@ -2678,10 +2704,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"'{jobType.JOBTYPENAME}' staff admin has been modified. New admin staff code : '{ staff.STAFFCODE }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS =CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
 
@@ -2815,10 +2843,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Loan Document '{ model.documentTitle }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -2860,10 +2890,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Loan Document '{ model.documentTitle }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -2908,10 +2940,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated LoanDocument '{ model.documentTitle }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -3552,10 +3586,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.lastUpdatedBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated JobType '{ model.jobTypeName }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -3579,10 +3615,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added JobType '{ model.jobTypeName }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
@@ -3658,10 +3696,12 @@ namespace FintrakBanking.Repositories.WorkFlow
                     STAFFID = feedback.createdBy,
                     BRANCHID = (short)feedback.userBranchId,
                     DETAIL = $"Added/Updated new job request feedback: {feedback.jobStatusFeedbackName}",
-                    IPADDRESS = feedback.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = feedback.applicationUrl,
                     APPLICATIONDATE = general.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this.audit.AddAuditTrail(audit);
                 return context.SaveChanges() > 0;

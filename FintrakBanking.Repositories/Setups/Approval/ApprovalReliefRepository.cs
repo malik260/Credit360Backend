@@ -78,11 +78,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
                         DETAIL = $"Added '{model.reliefStaffName}' as Staff Relief for: '{model.staffName}'",
-                        IPADDRESS = model.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = model.applicationUrl,
                         APPLICATIONDATE = general.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now,
-                        TARGETID = model.reliefId
+                        TARGETID = model.reliefId,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
                     using (var trans = context.Database.BeginTransaction())
                     {
@@ -210,11 +212,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated Staff Relief of '{model.staffName}'",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = model.reliefId
+                TARGETID = model.reliefId,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -382,10 +386,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = "Approved Approval Relief",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             try

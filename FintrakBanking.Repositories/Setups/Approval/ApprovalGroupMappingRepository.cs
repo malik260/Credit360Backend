@@ -12,6 +12,7 @@ using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.Approval
 {
@@ -78,11 +79,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Added Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     SYSTEMDATETIME = DateTime.Now,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                    TARGETID = entity.GROUPOPERATIONMAPPINGID
+                    TARGETID = entity.GROUPOPERATIONMAPPINGID,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 this.auditTrail.AddAuditTrail(audit);
 
@@ -136,11 +139,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Approval Group Mapping for Operation: {operationName} in Group: {groupName} was added and is going for approval",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     SYSTEMDATETIME = DateTime.Now,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                    TARGETID = entity.GROUPOPERATIONMAPPINGID
+                    TARGETID = entity.GROUPOPERATIONMAPPINGID,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 this.auditTrail.AddAuditTrail(audit);
 
@@ -184,11 +189,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.BranchId,
                     DETAIL = $"Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     SYSTEMDATETIME = DateTime.Now,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
                     TARGETID = data.GROUPOPERATIONMAPPINGID,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
 
                 };
 
@@ -237,11 +244,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.BranchId,
                     DETAIL = $"Request to Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     SYSTEMDATETIME = DateTime.Now,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
                     TARGETID = entity.GROUPOPERATIONMAPPINGID,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
 
                 };
 
@@ -332,11 +341,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = (int)model.lastUpdatedBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $" Approval Group Mapping for Operation: {operationName} in Group: {groupName} was updated by a super-admin",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     SYSTEMDATETIME = DateTime.Now,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                    TARGETID = data.GROUPOPERATIONMAPPINGID
+                    TARGETID = data.GROUPOPERATIONMAPPINGID,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -383,11 +394,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Updated Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     SYSTEMDATETIME = DateTime.Now,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                    TARGETID = entity.GROUPOPERATIONMAPPINGID
+                    TARGETID = entity.GROUPOPERATIONMAPPINGID,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 this.auditTrail.AddAuditTrail(audit);

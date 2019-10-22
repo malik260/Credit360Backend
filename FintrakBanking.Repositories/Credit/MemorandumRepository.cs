@@ -7514,7 +7514,7 @@ namespace FintrakBanking.Repositories.Credit
                    
                  ";
             result = result + $"</table>";
-            var condition = GetChecklistAwaitingApproval(staffId);
+            var condition = GetChecklistAwaitingApproval(staffId,operationId);
             result = result + $@"
                 <br />              
                 <table border=1 width=900 cellpadding=10 cellspacing=0>
@@ -7562,9 +7562,9 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-       private IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId)
+       private IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int operationId)
         {
-            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
             var dataLOS = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                            join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID

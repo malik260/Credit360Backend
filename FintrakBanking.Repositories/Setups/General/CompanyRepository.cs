@@ -12,6 +12,7 @@ using System.Linq;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -415,10 +416,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = director.createdBy,
                     BRANCHID = (short)director.userBranchId,
                     DETAIL = $"Added new director information {director.firstName} {director.lastName}",
-                    IPADDRESS = director.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = director.applicationUrl,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
                 this.auditTrail.AddAuditTrail(audit);
                 return context.SaveChanges() > 0;
@@ -444,10 +447,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = "Deleted Company Director information with companyDirectorId: " + companyDirectorId,
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
             this.auditTrail.AddAuditTrail(audit);
             return context.SaveChanges() > 0;

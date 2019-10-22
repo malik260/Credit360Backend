@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using FintrakBanking.ViewModels.Setups.Finance;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -78,10 +79,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = productFee.createdBy,
                     BRANCHID = (short)productFee.userBranchId,
                     DETAIL = $"Added Product Fee: { productFee.feeName } to product {product} with amount {productFee.rateValue} ",
-                    IPADDRESS = productFee.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = productFee.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -144,10 +147,12 @@ namespace FintrakBanking.Repositories.Setups.General
                     STAFFID = productFee.createdBy,
                     BRANCHID = (short)productFee.userBranchId,
                     DETAIL = $"Initiated adding Fee: { productFee.feeName } for product {productName} with amount {productFee.rateValue} ",
-                    IPADDRESS = productFee.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = productFee.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -208,10 +213,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Added Fee for product '{productToUpdate?.PRODUCTNAME}' with product code'{productToUpdate?.PRODUCTCODE}'",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -256,10 +263,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted TBL_PRODUCT Fee: {productFee?.CHARGEFEENAME} to product {data.TBL_PRODUCT?.PRODUCTNAME} ",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -445,10 +454,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 STAFFID = productFee.createdBy,
                 BRANCHID = (short)productFee.userBranchId,
                 DETAIL = $"Updated TBL_PRODUCT Fee: { productFee.feeName } to product {productName} with amount {productFee.rateValue} ",
-                IPADDRESS = productFee.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = productFee.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
             };
 
             this.auditTrail.AddAuditTrail(audit);

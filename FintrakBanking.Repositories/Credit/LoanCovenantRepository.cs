@@ -11,6 +11,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Credit;
 using System.ComponentModel.Composition;
 using FintrakBanking.ViewModels.Setups;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -97,9 +98,11 @@ namespace FintrakBanking.Repositories.Customer
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Delete loan convent to loan ref: { loanRef } ",
                 IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -162,9 +165,11 @@ namespace FintrakBanking.Repositories.Customer
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated loan convent to loan ref: { loanRef } ",
                 IPADDRESS = entity.userIPAddress,
-                URL = entity.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
             this.auditTrail.AddAuditTrail(audit);
 
@@ -198,9 +203,11 @@ namespace FintrakBanking.Repositories.Customer
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Defined loan convent type: { entity.covenantTypeName } ",
                 IPADDRESS = entity.userIPAddress,
-                URL = entity.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -223,9 +230,11 @@ namespace FintrakBanking.Repositories.Customer
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated loan convent type: { entity.covenantTypeName } ",
                 IPADDRESS = entity.userIPAddress,
-                URL = entity.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             //this.auditTrail.AddAuditTrail(audit);
@@ -454,9 +463,11 @@ namespace FintrakBanking.Repositories.Customer
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Added loan application covenant on application: { appl.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER } ",
                 IPADDRESS = entity.userIPAddress,
-                URL = entity.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -477,9 +488,11 @@ namespace FintrakBanking.Repositories.Customer
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Delete loan application covenant: { covenant.COVENANTDETAIL } ",
                 IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -601,9 +614,11 @@ namespace FintrakBanking.Repositories.Customer
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Added loan REVIEW application covenant on application: { appl.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER } ",
                 IPADDRESS = entity.userIPAddress,
-                URL = entity.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -624,9 +639,11 @@ namespace FintrakBanking.Repositories.Customer
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Delete loan REVIEW application covenant: { covenant.COVENANTDETAIL } ",
                 IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
+                URL = CommonHelpers.GetLocalIpAddress(),// groupModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);

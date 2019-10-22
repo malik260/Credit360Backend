@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -111,10 +112,12 @@ namespace FintrakBanking.Repositories.Credit
                     STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"TBL_DEFERRED_LOAN_FEE '{entity.DESCRIPTION}' created by {auditStaff}",
-                    IPADDRESS = user.userIPAddress,
-                    URL = user.applicationUrl,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                     URL = user.applicationUrl,
                     APPLICATIONDATE = general.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 });
                 // Audit Section end ------------------------
             }
@@ -144,11 +147,13 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_DEFERRED_LOAN_FEE '{entity.DESCRIPTION}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(), 
+                TARGETID = entity.DEFERREDLOANFEEID,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.DEFERREDLOANFEEID
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             });
             // Audit Section end ------------------------
 
@@ -170,11 +175,13 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_DEFERRED_LOAN_FEE '{entity.DESCRIPTION}' was deleted by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                TARGETID = entity.DEFERREDLOANFEEID,
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.DEFERREDLOANFEEID
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             });
             // Audit Section end ------------------------
 
