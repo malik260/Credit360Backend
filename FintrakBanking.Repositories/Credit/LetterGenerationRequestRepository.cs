@@ -574,9 +574,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<CamsolLoanDocumentViewModel> GetCamsolLoansByCustomerCode(string customerName, string customerCode)
         {
+            customerName = customerName.Trim().ToLower();
             var data = from O in context.TBL_LOAN_CAMSOL
                        join C in context.TBL_LOAN_CAMSOL_TYPE on O.CAMSOLTYPEID equals C.CAMSOLTYPEID
-                       where O.CUSTOMERNAME.Contains(customerName.ToUpper()) || O.CUSTOMERCODE == customerCode
+                       where O.CUSTOMERNAME.Trim().ToLower().Contains(customerName) || O.CUSTOMERCODE == customerCode || O.CUSTOMERNAME.Trim().ToLower() == customerName
                        orderby O.LOAN_CAMSOLID descending
                        select new CamsolLoanDocumentViewModel
                        {
