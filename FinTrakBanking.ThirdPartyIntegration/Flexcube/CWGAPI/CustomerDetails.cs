@@ -25,7 +25,7 @@
         {
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
-            private List<TBL_API_URL> APIUrlConfig;
+            private IEnumerable<TBL_API_URL> APIUrlConfig;
 
             //private static HttpClient httpClientInstance;
             //private HttpClientHandler handler = new HttpClientHandler();
@@ -34,7 +34,7 @@
             {
                 this.context = _context;
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
-                APIUrlConfig = context.TBL_API_URL.ToList();
+                APIUrlConfig = context.TBL_API_URL;
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
                 //staffRepo = _staffRepo;
