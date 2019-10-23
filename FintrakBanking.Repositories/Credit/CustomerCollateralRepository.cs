@@ -966,7 +966,7 @@ namespace FintrakBanking.Repositories.Credit
 
             switch (entity.collateralTypeId)
             {
-                //  case (int)CollateralTypeEnum.TermDeposit: UpdateDepositCollateral(entity); break;
+                case (int)CollateralTypeEnum.TermDeposit: UpdateDepositCollateral(entity); break;
                 case (int)CollateralTypeEnum.PlantAndMachinery: UpdateEquipmentCollateral(entity); break;
                 //  case (int)CollateralTypeEnum.Miscellaneous: UpdateMiscellaneousCollateral(entity); break;
                 case (int)CollateralTypeEnum.Gaurantee: UpdateGuaranteeCollateral(entity); break;
@@ -2678,9 +2678,11 @@ namespace FintrakBanking.Repositories.Credit
                 availableBalance = acc.availableBalance,
                 securityValue = specifics.SECURITYVALUE,
                 maturityDate = specifics.MATURITYDATE,
+                effectiveDate= specifics.EFFECTIVEDATE,
                 maturityAmount = specifics.MATURITYAMOUNT,
                 remark = specifics.REMARK,
                 accountName = acc.accountName,
+                bank = specifics.BANK,
                 baseCurrencyCode = specifics.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
             };
             details = GetCollateralInsurancePolicy(details);
@@ -5906,6 +5908,48 @@ namespace FintrakBanking.Repositories.Credit
                 REMARK = entity.remark,
                 ACCOUNTNAME = entity.accountName
             });
+
+        }
+
+        private void UpdateDepositCollateral(CollateralViewModel entity)
+        {
+            var collateral = context.TBL_COLLATERAL_DEPOSIT
+                .Where(x => x.COLLATERALCUSTOMERID == entity.collateralId)
+                .FirstOrDefault();
+            if (collateral == null)
+            {
+                collateral = new TBL_COLLATERAL_DEPOSIT()
+                {
+                    BANK = entity.bank,
+                    COLLATERALCUSTOMERID = entity.collateralId,
+                    DEALREFERENCENUMBER = entity.dealReferenceNumber,
+                    ACCOUNTNUMBER = entity.accountNumber,
+                    EXISTINGLIENAMOUNT = entity.existingLienAmount,
+                    LIENAMOUNT = entity.lienAmount,
+                    AVAILABLEBALANCE = entity.availableBalance,
+                    SECURITYVALUE = (decimal)entity.securityValue,
+                    MATURITYDATE = entity.maturityDate,
+                    MATURITYAMOUNT = entity.maturityAmount,
+                    EFFECTIVEDATE = entity.effectiveDate,
+                    REMARK = entity.remark,
+                    ACCOUNTNAME = entity.accountName
+                };
+                context.TBL_COLLATERAL_DEPOSIT.Add(collateral);
+                //var saved = context.SaveChanges() != 0;
+                return;
+            }
+            collateral.BANK = entity.bank;
+            collateral.DEALREFERENCENUMBER = entity.dealReferenceNumber;
+            collateral.ACCOUNTNUMBER = entity.accountNumber;
+            collateral.EXISTINGLIENAMOUNT = entity.existingLienAmount;
+            collateral.LIENAMOUNT = entity.lienAmount;
+            collateral.AVAILABLEBALANCE = entity.availableBalance;
+            collateral.SECURITYVALUE = (decimal)entity.securityValue;
+            collateral.MATURITYDATE = entity.maturityDate;
+            collateral.MATURITYAMOUNT = entity.maturityAmount;
+            collateral.EFFECTIVEDATE = entity.effectiveDate;
+            collateral.REMARK = entity.remark;
+            collateral.ACCOUNTNAME = entity.accountName;
 
         }
 
