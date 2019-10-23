@@ -203,24 +203,24 @@
 
                             var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == accountOutput.product).FirstOrDefault();
 
-                            accountOutput.accountName = accountAPI.accountName;
-                            accountOutput.accountNo = accountAPI.accountNumber;
-                            accountOutput.availableBalance = accountAPI.balance;
+                            //accountOutput.accountName = accountAPI.accountName;
+                            //accountOutput.accountNo = accountAPI.accountNumber;
+                            //accountOutput.availableBalance = accountAPI.balance;
                             accountOutput.currencyId = currencyId;
                             accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
-                            accountOutput.customerCode = accountAPI.customerCode;
-                            accountOutput.product = accountAPI.product;
-                            accountOutput.currencyType = accountAPI.currencyType;
-                            accountOutput.accountStatus = accountAPI.accountStatus;
-                            accountOutput.freezeStatus = accountAPI.freezeStatus;
-                            accountOutput.freezeReason = accountAPI.freezeReason;
-                            accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
+                            //accountOutput.customerCode = accountAPI.customerCode;
+                            //accountOutput.product = accountAPI.product;
+                            //accountOutput.currencyType = accountAPI.currencyType;
+                            //accountOutput.accountStatus = accountAPI.accountStatus;
+                            //accountOutput.freezeStatus = accountAPI.freezeStatus;
+                            //accountOutput.freezeReason = accountAPI.freezeReason;
+                            //accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
                             accountOutput.hasBalance = true;
                             accountOutput.isCasaAccountDetailAvailable = true;
                             if(product != null)
                             {
-                                accountOutput.productType = accountAPI.productType;
-                                accountOutput.productName = accountAPI.productName;
+                                //accountOutput.productType = accountAPI.productType;
+                                //accountOutput.productName = accountAPI.productName;
                             }
 
 

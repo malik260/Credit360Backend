@@ -439,7 +439,9 @@ namespace FintrakBanking.Common.Enum
         AlertLevelDeleted = 540,
         AlertConditionAdded = 541,
         AlertConditionUpdated = 542,
-        AlertConditionDeleted = 543
+        AlertConditionDeleted = 543,
+        //LienProposed = 544,
+        //LienUnproposed = 545
     };
     public enum RegulatoryTypeEnum
     {

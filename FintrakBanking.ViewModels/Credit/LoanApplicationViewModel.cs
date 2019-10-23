@@ -407,6 +407,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string conditionPrecedent { get; set; }
 
+        public string cflRrequestId { get; set; }
+
         public string conditionSubsequent { get; set; }
 
         public string transactionDynamics { get; set; }
@@ -936,6 +938,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevisedProcessFlowModel : GeneralEntity
     {
+        public bool hasOperationBasedRac { get; set; }
+
         public string label { get; set; }
         public short? productTypeId { get; set; }
 
@@ -982,7 +986,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationDetailLienId { get; set; }
         public int applicationDetailId { get; set; }
         public int collateralId { get; set; }
-        public float amount { get; set; }
+        public decimal amount { get; set; }
     }
 
 }
