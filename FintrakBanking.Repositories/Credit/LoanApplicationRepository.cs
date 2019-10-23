@@ -5375,6 +5375,7 @@ namespace FintrakBanking.Repositories.Credit
                                           destinationUrl = c.DESTINATIONURL,
                                           skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
                                           operationId = c.OPERATIONID,
+                                          hasOperationBasedRac = c.HASOPERATIONBASEDRAC,
                                           dateTimeCreated = c.DATETIMECREATED,
                                           createdBy = c.CREATEDBY
                                       }).ToList();

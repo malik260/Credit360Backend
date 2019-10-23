@@ -1928,6 +1928,7 @@ namespace FintrakBanking.Repositories.Credit
                         isMapped = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),
                         isProposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),
                         companyId = companyId,//remark = c.c.
+                        validTill = c.c.VALIDTILL,
                     })
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First());
