@@ -457,7 +457,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var roleLevelIds = context.TBL_APPROVAL_LEVEL
                 .Where(x => x.DELETED == false && x.STAFFROLEID == staff.STAFFROLEID)
                 .Select(x => x.APPROVALLEVELID)
-                .Distinct();
+                .Distinct().ToList();
 
             int scope = (int)ProcessViewScopeEnum.Level; // default 1
 
