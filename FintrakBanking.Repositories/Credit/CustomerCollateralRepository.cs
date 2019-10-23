@@ -1049,6 +1049,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.DATETIMEUPDATED = genSetup.GetApplicationDate();
             collateral.EXCHANGERATE = model.exchangeRate;
             collateral.COLLATERALSUMMARY = model.collateralSummary;
+            collateral.VALIDTILL = model.validTill;
         }
 
         private void DeleteCollateral(int collateralId)
@@ -1927,6 +1928,7 @@ namespace FintrakBanking.Repositories.Credit
                         isMapped = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),
                         isProposed = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.COLLATERALCUSTOMERID == c.c.COLLATERALCUSTOMERID && o.DELETED == false).Any(),
                         companyId = companyId,//remark = c.c.
+                        validTill = c.c.VALIDTILL,
                     })
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First());
@@ -7761,6 +7763,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainCollateral.VALUATIONCYCLE = model.valuationCycle;
                     mainCollateral.HAIRCUT = model.haircut;
                     mainCollateral.CURRENCYID = model.currencyId;
+                    mainCollateral.VALIDTILL = model.validTill;
                     mainCollateral.EXCHANGERATE = repo.GetExchangeRate(DateTime.Now, model.currencyId, model.companyId).sellingRate;
 
                     if (model.loanTypeId == 1)
@@ -7805,7 +7808,8 @@ namespace FintrakBanking.Repositories.Credit
                         RELATEDCOLLATERALCODE = model.relatedCollateralCode,
                         LOANAPPLICATIONID = model.loanApplicationId,
                         COLLATERALSUMMARY = model.collateralSummary,
-                        COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose
+                        COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose,
+                        VALIDTILL = model.validTill
                     });
 
                     if (model.loanTypeId == 1)
@@ -7861,7 +7865,7 @@ namespace FintrakBanking.Repositories.Credit
                     COLLATERALSUMMARY = model.collateralSummary,
                     COLLATERALUSAGESTATUSID = (int)CollateralUsageStatusEnum.Propose,
                     ISCURRENT = true,
-
+                    VALIDTILL = model.validTill,
                 });
 
                 if (model.loanTypeId == 1)
