@@ -46,7 +46,7 @@
                 if (apiConfig != null)
                 {
                     API_URL = apiConfig.URL;
-                    API_KEY = apiConfig.KEY;
+                    API_KEY = apiConfig.APIKEY;
                 }
                 if (apiConfig == null)
                 {
@@ -54,7 +54,7 @@
 
                     if (apiConfig != null) {
                         API_URL = apiConfig.URL;
-                        API_KEY = apiConfig.KEY;
+                        API_KEY = apiConfig.APIKEY;
                     }
                 }
             }
