@@ -610,6 +610,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 isGroupLoan = true;
             }
+
             int? casaAccountId = null;
             string refNumber = GenerateLoanReference(loan.customerId.Value);
             if (loan.customerAccount != "N/A")
@@ -721,7 +722,6 @@ namespace FintrakBanking.Repositories.Credit
                 TARGETID = loan.loanApplicationId,
                 DEVICENAME = CommonHelpers.GetDeviceName(),
                 OSNAME = CommonHelpers.FriendlyName(),
-
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -734,7 +734,6 @@ namespace FintrakBanking.Repositories.Credit
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
             var update = loan.LoanApplicationDetail.SingleOrDefault();
             if (update == null) fireResponse("Sequence contain not single! " + loan.LoanApplicationDetail.Count(), "99");
-
 
             if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTCLASSID != (int)ProductClassEnum.BondAndGuarantees))
             {
