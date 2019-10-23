@@ -76,6 +76,7 @@ namespace FintrakBanking.Repositories.Risk
                 if (model.isOperationbased)
                 {
                     var racDefinitionOperation = context.TBL_RAC_DEFINITION.Where(x =>x.OPERATIONID == model.operationId
+                                                                                        && x.SEARCHPLACEHOLDER == "OPERATION"
                                                                                          && x.SHOWATDRAWDOWN == model.isDrawdown
                                                                                          && x.ISACTIVE == true
                                                                                          && x.DELETED == false).ToList();
