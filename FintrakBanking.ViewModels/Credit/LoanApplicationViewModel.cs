@@ -982,7 +982,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationDetailLienId { get; set; }
         public int applicationDetailId { get; set; }
         public int collateralId { get; set; }
-        public float amount { get; set; }
+        public decimal amount { get; set; }
     }
 
 }

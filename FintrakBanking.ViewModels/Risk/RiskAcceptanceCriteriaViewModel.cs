@@ -64,7 +64,7 @@ namespace FintrakBanking.ViewModels.Risk
         public String comment { get; set; }
     }
 
-    public class RacCategoryViewModel : GeneralEntity
+    public class RacCategoryViewModel : GeneralEntity 
     {
         public int racCategoryId { get; set; }
 
@@ -215,10 +215,14 @@ namespace FintrakBanking.ViewModels.Risk
 
     public class RacCategoryTypeViewModel : GeneralEntity
     {
+        public string criteria;
+        public bool isActive;
+
         public int racCategoryId { get; set; }
         public string racCategoryType { get; set; }
         public string racCategoryName { get; set; }
-        public int racCategoryTypeId { get; set; }
+        public int racCategoryTypeId { get; set; } 
+        public int targetId { get; set; }
     }
 }
 

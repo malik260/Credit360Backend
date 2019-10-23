@@ -550,10 +550,13 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = camsolModel.createdBy,
                 BRANCHID = (short)camsolModel.BranchId,
                 DETAIL = $"Initiated Camsol for '{camsolModel?.customername}' with code'{camsolModel?.customercode}'",
-                IPADDRESS = camsolModel.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = camsolModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                  DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            
             };
 
             auditTrail.AddAuditTrail(audit);
@@ -740,10 +743,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = data.staffId,
                 BRANCHID = (short)data.BranchId,
                 DETAIL = "Approved Loan Camsol",
-                IPADDRESS = data.userIPAddress,
-                URL = data.applicationUrl,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                 URL = data.applicationUrl,       
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             try

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -61,11 +62,14 @@ namespace FintrakBanking.Repositories.CASA
                     STAFFID = item.staffId,
                     BRANCHID = (short)item.userBranchId,
                     DETAIL = $"Override Request Initaited",
-                    IPADDRESS = item.userIPAddress,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName(),
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = item.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = data.OVERRIDE_DETAILID
+                   
+                   
                 };
                 this._auditTrail.AddAuditTrail(audit);
 
@@ -247,11 +251,13 @@ namespace FintrakBanking.Repositories.CASA
                                 STAFFID = entity.staffId,
                                 BRANCHID = (short)entity.userBranchId,
                                 DETAIL = $" Override Request approval was effected successfully",
-                                IPADDRESS = entity.userIPAddress,
                                 URL = entity.applicationUrl,
                                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
                                 SYSTEMDATETIME = DateTime.Now,
-                                TARGETID = entity.overrideDetailId
+                                DEVICENAME = CommonHelpers.GetDeviceName(),
+                                OSNAME = CommonHelpers.FriendlyName()
+
+                                
                             };
                             this._auditTrail.AddAuditTrail(audit1);
 
@@ -274,7 +280,8 @@ namespace FintrakBanking.Repositories.CASA
                             URL = entity.applicationUrl,
                             APPLICATIONDATE = _genSetup.GetApplicationDate(),
                             SYSTEMDATETIME = DateTime.Now,
-                            TARGETID = entity.overrideDetailId
+                            DEVICENAME = CommonHelpers.GetDeviceName(),
+                            OSNAME = CommonHelpers.FriendlyName()
                         };
                         this._auditTrail.AddAuditTrail(audit1);
 

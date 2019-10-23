@@ -831,10 +831,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = (int)SystemStaff.System,//model.createdBy,
                 BRANCHID = model.branchId,
                 DETAIL = $"Loan Daily Write-off Interest Accrual Posting: {model.referenceNumber}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -916,10 +918,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = (int)SystemStaff.System,//model.createdBy,
                 BRANCHID = model.branchId,
                 DETAIL = $"Loan Daily Interest Accrual Posting: {model.referenceNumber}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -996,10 +1000,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
                 DETAIL = $"Daily Amortized Fee Posting: {model.referenceNumber}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             //this.auditTrail.AddAuditTrail(audit);
@@ -1076,10 +1082,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
                 DETAIL = $"Authorised Overdraft Daily Interest Accrual Posting: {model.referenceNumber}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -1156,10 +1164,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
                 DETAIL = $"Unauthorised Overdraft Daily Interest Accrual Posting: {product.PRODUCTCODE}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -1545,10 +1555,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
                 DETAIL = $"Interval Fees and Commission charge Posting : {model.loanReferenceNumber}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -3837,10 +3849,12 @@ namespace FintrakBanking.Repositories.Finance
                 STAFFID = model.createdBy,
                 BRANCHID = model.branchId,
                 DETAIL = $"Interest Suspension Posting: {model.referenceNumber}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = model.date,//generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);

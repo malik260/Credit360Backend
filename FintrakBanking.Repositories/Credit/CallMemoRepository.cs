@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.CustomException;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
@@ -159,11 +160,13 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.LimitAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = model.userBranchId,
-                DETAIL = $"Added tbl_Call_Limit '{ data.CALLLIMITID }' ",
-                IPADDRESS = model.userIPAddress,
+                DETAIL = $"Added tbl_Call_Limit '{ data.CALLLIMITID }' ",        
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),             
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
             };
 
             _auditTrail.AddAuditTrail(audit);
@@ -189,11 +192,13 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.LimitUpdated,
                 STAFFID = model.createdBy,
                 BRANCHID = model.userBranchId,
-                DETAIL = $"Updated tbl_Call_Limit : '{ data.CALLLIMITID }' ",
-                IPADDRESS = model.userIPAddress,
+                DETAIL = $"Updated tbl_Call_Limit : '{ data.CALLLIMITID }' ",               
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),              
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
             };
 
             _auditTrail.AddAuditTrail(audit);
@@ -218,11 +223,13 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.LimitDeleted,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
-                DETAIL = $"Deleted tbl_Call_Limit with Id : '{ limitId }' ",
-                IPADDRESS = user.userIPAddress,
+                DETAIL = $"Deleted tbl_Call_Limit with Id : '{ limitId }' ",   
                 URL = user.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),             
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
             };
 
             _auditTrail.AddAuditTrail(audit);
@@ -395,10 +402,14 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = model.userBranchId,
                 DETAIL = $"Added Call Memo for: '{ data.PURPOSE }' by {model.staffId}",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
+
+               
             };
 
             _auditTrail.AddAuditTrail(audit);
@@ -463,10 +474,12 @@ namespace FintrakBanking.Repositories.Credit
                 STAFFID = model.createdBy,
                 BRANCHID = model.userBranchId,
                 DETAIL = $"Updated tbl_Call_Limit for data with Id : '{ data.CALLMEMOID }' ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             _auditTrail.AddAuditTrail(audit);

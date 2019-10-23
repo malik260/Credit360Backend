@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.Finance;
@@ -56,10 +57,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 STAFFID = category.createdBy,
                 BRANCHID = (short)category.userBranchId,
                 DETAIL = $"Added Finance Account Category:  {accountCategory.ACCOUNTCATEGORYNAME}",
-                IPADDRESS = category.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = category.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
 
 
             };

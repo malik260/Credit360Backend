@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Media
 {
@@ -375,11 +376,13 @@ namespace FintrakBanking.Repositories.Media
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_Document Upload '{model.targetCode}' was updated by {auditStaff}",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.DOCUMENTUPLOADID
+                TARGETID = entity.DOCUMENTUPLOADID,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             });
             // Audit Section end ------------------------
 

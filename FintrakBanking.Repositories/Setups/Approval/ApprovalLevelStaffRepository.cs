@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.CustomException;
+﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
@@ -217,11 +218,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"The Approval-Level '{audit_staff_level?.LEVELNAME}' for user code '{audit_staff?.STAFFCODE}' is was created by the super-admin with id {admin}",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = model.staffLevelId
+                    TARGETID = model.staffLevelId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
 
@@ -278,11 +281,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"The Approval-Level '{audit_staff_level?.LEVELNAME}' for user code '{audit_staff?.STAFFCODE}' has been created and is going for approvals",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = model.staffLevelId
+                    TARGETID = model.staffLevelId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
 
@@ -364,11 +369,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Approval Level for staff with code '{audit_staff}' to level {model.staffLevelName}' was updated by this super-admin {admin}",
-                    IPADDRESS = model.userIPAddress,
+                    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                     URL = model.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = model.staffLevelId
+                    TARGETID = model.staffLevelId,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
 
                 this.auditTrail.AddAuditTrail(audit);
@@ -423,11 +430,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         STAFFID = model.createdBy,
                         BRANCHID = (short)model.userBranchId,
                         DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.staffLevelName}' is updated and is going for approval",
-                        IPADDRESS = model.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = model.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now,
-                        TARGETID = model.staffLevelId
+                        TARGETID = model.staffLevelId,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
 
                     this.auditTrail.AddAuditTrail(audit);
@@ -469,11 +478,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         STAFFID = user.createdBy,
                         BRANCHID = (short)user.BranchId,
                         DETAIL = $"Added Approval Level Staff {audit_staff_level.LEVELNAME}' for staff with code '{audit_staff.STAFFCODE}' ",
-                        IPADDRESS = user.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = user.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now,
-                        TARGETID = model.STAFFLEVELID
+                        TARGETID = model.STAFFLEVELID,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
 
                     this.auditTrail.AddAuditTrail(audit);
@@ -529,11 +540,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         STAFFID = user.createdBy,
                         BRANCHID = (short)user.BranchId,
                         DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.STAFFLEVELID}' is delete and the action is going for approval ",
-                        IPADDRESS = user.userIPAddress,
+                        IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                         URL = user.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now,
-                        TARGETID = data.STAFFLEVELID
+                        TARGETID = data.STAFFLEVELID,
+                        DEVICENAME = CommonHelpers.GetDeviceName(),
+                        OSNAME = CommonHelpers.FriendlyName()
                     };
 
                     this.auditTrail.AddAuditTrail(audit);

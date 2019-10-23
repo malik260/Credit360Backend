@@ -208,7 +208,10 @@ namespace FintrakBanking.Repositories.Credit
                 // IPADDRESS = model.userIPAddress,
                 //URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
             });
 
             if (context.SaveChanges() > 0) return true;

@@ -15,6 +15,7 @@ using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -92,8 +93,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Added KYC Item: { entity.item  } ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -123,8 +126,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated KYC Item: { entity.item  } ",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -159,8 +164,10 @@ namespace FintrakBanking.Repositories.Customer
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Added Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName } )",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -202,8 +209,10 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 STAFFID = custGroupModel.createdBy,
                 BRANCHID = (short)custGroupModel.userBranchId,
                 DETAIL = $"Added Customer Group: { custGroupModel.groupName } with Code: { custGroupModel.groupCode } ( { custGroupModel.groupName } )",
-                IPADDRESS = custGroupModel.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = custGroupModel.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -259,8 +268,10 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted Customer Group: { entity.GROUPNAME } with Code: { entity.GROUPCODE } ( { entity.GROUPNAME })",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -344,8 +355,10 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName })",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -420,8 +433,10 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = $"Updated Customer Group: { entity.groupName } with Code: { entity.groupCode } ( { entity.groupName })",
-                IPADDRESS = entity.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 TARGETID = customerGroupId
@@ -530,8 +545,10 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Approved Customer Group '{customerGroupModel.GROUPNAME}' with group code'{customerGroupModel.GROUPCODE}'",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -598,8 +615,10 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 //StaffId = entity.createdBy,
                 //BranchId = (short)entity.userBranchId,
                 DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {entity.customerCode } to group  ( { groupName } ) ",
-                //IPAddress = entity.userIPAddress,
-                //Url = entity.applicationUrl,
+                //IPAddress = CommonHelpers.GetLocalIpAddress(),
+                URL = entity.applicationUrl,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
@@ -640,10 +659,12 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {model.customerCode } to group  ( { groupName } ) ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -744,10 +765,12 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     STAFFID = createdBy,
                     BRANCHID = userBranchId,
                     DETAIL = $"Added Customer Group Mapping to customer: { customerName } with code: { newGroupCustomer.TBL_CUSTOMER.CUSTOMERCODE } to group  ( { groupName } ) ",
-                    //IPAddress = entity.userIPAddress,
+                    //IPAddress =CommonHelpers.GetLocalIpAddress() ,
                     //Url = entity.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
+                    SYSTEMDATETIME = DateTime.Now,
+                    DEVICENAME = CommonHelpers.GetDeviceName(),
+                    OSNAME = CommonHelpers.FriendlyName()
                 };
                 this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -----------------------
@@ -1034,10 +1057,12 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted Customer Group Mapping for customer: { customer} with Code: {groupMap.TBL_CUSTOMER.CUSTOMERCODE} to group({customerGroupName })",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             context.TBL_AUDIT.Add(audit);
@@ -1071,7 +1096,9 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 //IPAddress = entity.userIPAddress,
                 //Url = entity./*applicationUrl*/,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -1138,10 +1165,12 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Updated Customer Group Mapping for customer: { customer }  with code:  { targetGroupMapping.TBL_CUSTOMER.CUSTOMERCODE } to group ( {groupName } ) ",
-                IPADDRESS = model.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = model.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -1185,10 +1214,12 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Deleted Customer Group Mapping for customer: { customer} with Code: {groupMap.TBL_CUSTOMER.CUSTOMERCODE} to group({customerGroupName })",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
@@ -1234,10 +1265,12 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Approved Customer Group Mapping '{customerGroupMapModel.CUSTOMERGROUPMAPPINGID}'",
-                IPADDRESS = user.userIPAddress,
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
                 URL = user.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName()
             };
 
             this.auditTrail.AddAuditTrail(audit);
