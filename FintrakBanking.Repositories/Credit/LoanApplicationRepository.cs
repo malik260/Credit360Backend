@@ -1751,7 +1751,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        public RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
+        public RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int? operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
             var msg = new RacReturnInfoViewModel();
@@ -1795,13 +1795,13 @@ namespace FintrakBanking.Repositories.Credit
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 if (submission == null) continue;
 
-                bool validation = validation = ValidRacSubmission(i == 0 && isRacRelated ? defaultTier : definition, submission.value, operationId, targetId); 
+                bool validation = validation = ValidRacSubmission(i == 0 && isRacRelated ? defaultTier : definition, submission.value, operationId ?? 0, targetId); 
 
                 if (validation == false && ctr == 0)
                 {
                     if(racTiers.Count() <= 0)
                     {
-                        saveRacoptions(definitions, rac, operationId, targetId, staffId);
+                        saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
                         msg.loanApplicationDetailId = targetId;
                         msg.loanApplicationId = applicationId;
                         return msg;
@@ -1817,7 +1817,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (racTiers.Count() > 0 && ctr > 0)
                     {
-                        saveRacoptions(definitions, rac, operationId, targetId, staffId);
+                        saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
                         msg.loanApplicationDetailId = targetId;
                         msg.loanApplicationId = applicationId;
                         return msg;
@@ -1831,7 +1831,7 @@ namespace FintrakBanking.Repositories.Credit
                     details.Add(new TBL_RAC_DETAIL
                     {
                         RACDEFINITIONID = definition.RACDEFINITIONID,
-                        OPERATIONID = operationId,
+                        OPERATIONID = operationId ?? 0,
                         TARGETID = targetId,
                         ACTUALVALUE = submission.value,
                         CREATEDBY = staffId,
