@@ -28,6 +28,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool ISSKIPPROCESSENABLED { get; set; }
 
+        public bool HASOPERATIONBASEDRAC { get; set; }
+
         public  int OPERATIONID { get; set; }
         //public int INTERESTPAYMENT { get; set; }
 
