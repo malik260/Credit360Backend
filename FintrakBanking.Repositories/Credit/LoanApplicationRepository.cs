@@ -2576,7 +2576,7 @@ namespace FintrakBanking.Repositories.Credit
             if (response > 0)
             {
 
-                var recResponse = SaveRac(loan.rac, (int)loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId , data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
+                var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId , data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
                 if (recResponse != null) return recResponse;
             } // todo 99999
 
