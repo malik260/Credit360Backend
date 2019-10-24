@@ -48,13 +48,13 @@ namespace FintrakBanking.ReportObjects.Credit
                                           customerAddress = e.ADDRESS ?? " ",
                                           customerEmailAddress = b.EMAILADDRESS,
                                           customerPhoneNumber = g.PHONENUMBER,
-                                          isFinal = h.ISFINAL,
+                                          isFinal = (h.ISFINAL == null) ? false : h.ISFINAL,
                                           producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                           loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                           offerLetterTitle = b.OFFERLETTERTITLE,
                                           offerLetterSalutation = b.OFFERLETTERSALUTATION,
-                                              offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
-                                              offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
+                                          offerLetteracceptance = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERACCEPTANCE).FirstOrDefault(),
+                                          offerLetterClauses = context.TBL_LOAN_OFFER_LETTER.Where(x => x.LOANAPPLICATIONID == a.LOANAPPLICATIONID).Select(x => x.OFFERLETTERCLAUSES).FirstOrDefault(),
 
                                       }).ToList();
 
