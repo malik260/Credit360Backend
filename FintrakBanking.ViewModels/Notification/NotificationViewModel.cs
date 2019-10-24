@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels.Notification
 
     public class ExternalAlertViewModel
     {
-        public int alertId { get; set; }
+        //public int alertId { get; set; }
         public string accountName { get; set; }
         public string accountNumber { get; set; }
         public string accountOfficerName { get; set; }
@@ -43,7 +43,7 @@ namespace FintrakBanking.ViewModels.Notification
         public decimal lastCreditAmount { get; set; }
         public decimal principalBalance { get; set; }
         public decimal shareOfShf { get; set; }
-        public decimal principaloutstandingBalance { get; set; }
+        public decimal principalOutstandingBalanceFcy { get; set; }
         public decimal unpoDaysOverdue { get; set; }
         public decimal averageBalance { get; set; }
         public decimal amountDue { get; set; }
