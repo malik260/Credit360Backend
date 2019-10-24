@@ -14,7 +14,7 @@
 
         public string TYPENAME { get; set; }
         public string URL { get; set; }
-        public string KEY { get; set; }
+        public string APIKEY { get; set; }
 
         //public int CREATEDBY { get; set; }
 
