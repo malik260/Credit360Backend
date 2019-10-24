@@ -1,11 +1,13 @@
 ﻿using FintrakBanking.Common;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.AlertReportingModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Notification;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
@@ -20,13 +22,15 @@ namespace FintrakBanking.Repositories.Setups.General
     {
         private FinTrakBankingContext context;
         private FinTrakBankingStagingContext context2;
+        private FinTrakBankingAlertContext alertContext;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
-                                FinTrakBankingStagingContext _context2)
+                                FinTrakBankingStagingContext _context2, FinTrakBankingAlertContext _alertContext)
         {
             this.context = _context;
             this.context2 = _context2;
+            this.alertContext = _alertContext;
             this.audit = _audit;
             this.general = _general;
         }
@@ -44,6 +48,46 @@ namespace FintrakBanking.Repositories.Setups.General
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
                               templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS"
+                          });
+            return alerts;
+        }
+
+        public IEnumerable<ExternalAlertViewModel> GetAllExternalAlerts()
+        {
+            var alerts = (from a in alertContext.ALERT
+                          select new ExternalAlertViewModel
+                          {
+                              //alertId = a.ALERTID,
+                              accountName = a.ACCOUNTNAME,
+                              accountNumber = a.ACCOUNTNUMBER,
+                              accountStatus = a.ACCOUNTSTATUS,
+                              accountOfficerName = a.ACCOUNTOFFICERNAME,
+                              accountType = a.ACCOUNTTYPE,
+                              cbnClassification = a.CBNCLASSIFICATION,
+                              customerName = a.CUSTOMERNAME,
+                              dormancyDays = a.DORMANCYDAYS,
+                              ifrsClassification = a.IFRSCLASSIFICATION,
+                              divisionName = a.DIVISIONNAME,
+                              groupHeadName = a.GROUPHEADNAME,
+                              groupObligorName = a.GROUPOBLIGORNAME,
+                              date = a.DATE,
+                              expiringBand = a.EXPIRINGBAND,
+                              ageLastCreditDate = a.AGELASTCREDITDATE,
+                              bookingDate = a.BOOKINGDATE,
+                              npl = a.NPL,
+                              originalAmountDisbursed = a.ORIGINALAMOUNTDISBURSED,
+                              totalExposureLcy = a.TOTALEXPOSURELCY,
+                              loanAmountLcy = a.LOANAMOUNTLCY,
+                              lastCreditAmount = a.LASTCREDITAMOUNT,
+                              principalBalance = a.PRINCIPALBALANCE,
+                              shareOfShf = a.SHAREOFSHF,
+                              principalOutstandingBalanceFcy = a.PRINCIPALOUTSTANDINGBALANCEFCY,
+                              unpoDaysOverdue = a.UNPODAYSOVERDUE,
+                              averageBalance = a.AVERAGEBALANCE,
+                              amountDue = a.AMOUNTDUE,
+                              totalUnpaidObligation = a.TOTALUNPAIDOBLIGATION,
+                              maturityDate = a.MATURITYDATE,
+                              scheduleDueDate = a.SCHEDULEDUEDATE
                           });
             return alerts;
         }

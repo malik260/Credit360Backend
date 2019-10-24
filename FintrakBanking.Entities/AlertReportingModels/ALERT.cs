@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FintrakBanking.Entities.AlertReportingModels
 {
 
-    [Table("ALERT")]
+    [Table("vw_alert")]
     public partial class ALERT
     {
        
@@ -33,12 +33,12 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string BOOKINGDATE { get; set; }
         public decimal NPL { get; set; }
         public decimal ORIGINALAMOUNTDISBURSED { get; set; }
-        public decimal TOTTALEXPOSURELCY { get; set; }
+        public decimal TOTALEXPOSURELCY { get; set; }
         public decimal LOANAMOUNTLCY { get; set; }
         public decimal LASTCREDITAMOUNT { get; set; }
         public decimal PRINCIPALBALANCE { get; set; }
         public decimal SHAREOFSHF { get; set; }
-        public decimal PRINCIPALOUTSTANDINGBALANCE { get; set; }
+        public decimal PRINCIPALOUTSTANDINGBALANCEFCY { get; set; }
         public decimal UNPODAYSOVERDUE { get; set; }
         public decimal AVERAGEBALANCE { get; set; }
         public decimal AMOUNTDUE { get; set; }
