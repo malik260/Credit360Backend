@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Risk
             List<string> employeeType = new List<string> { "EMPLOYER", "SELFEMPLOYED","EMPLOYEE" };
             if (model.searchBasePlaceholder == "PRODUCT" || model.searchBasePlaceholder == "PRODUCTCLASS")
             {
-                if (model.isOperationbased)
+                if (!model.isOperationbased)
                 {
                     var racDefinitionOnProduct = context.TBL_RAC_DEFINITION.Where(x => x.PRODUCTID == model.productId
                                                                                        && x.SEARCHPLACEHOLDER == "PRODUCT"
@@ -95,8 +95,8 @@ namespace FintrakBanking.Repositories.Risk
                                                                                            && x.DELETED == false).ToList();
 
                         racDefinitionOnEmployerByProductCorporate.AddRange(racDefinitionOnEmployerByProduct);
-                    }
-                else
+                }
+                else if(!isCorporate)
                 {
                     var racDefinitionOnEmployerByProduct = context.TBL_RAC_DEFINITION.Where(x =>
                                                                                           (
