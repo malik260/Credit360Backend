@@ -781,7 +781,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     }
 
-                    financeTransaction.PostEarnUnEarnedFeeOperationEntries(viewModel, viewModel.mainAmount, "Earn UnEarned Fee", (int)OperationsEnum.EarnUnEarnedFee);
+                    financeTransaction.PostEarnUnEarnedFeeOperationEntries(viewModel, viewModel.mainAmount, "Earn UnEarned Fee", (int)OperationsEnum.EarnUnEarnedFee,  loanSystemTypeId);
 
                 }
 
@@ -18114,8 +18114,20 @@ namespace FintrakBanking.Repositories.Credit
                             //{
                             //    item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                             //}
-                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                            output = context.SaveChanges() > 0;
+
+                            try
+                            {
+                                reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                output = context.SaveChanges() > 0;
+                            }
+                            catch (Exception ex)
+                            {
+
+                                var me = ex;
+                            }
+
+
+
                         }
                         if (output == true && result == true)
                         {
@@ -20466,7 +20478,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         result = OverdraftTopUp(twoFactorAuth, loanId, (decimal)model.newAmount);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20482,7 +20494,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = OverdraftRenewal(twoFactorAuth, loanReviewOperationsId, loanId, (decimal)model.newAmount);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20498,7 +20510,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = OverdraftExtension(twoFactorAuth, loanId, (decimal)model.newAmount);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20514,7 +20526,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = SubAllocation(twoFactorAuth, loanId, (decimal)model.newAmount, applicationDate, staffId);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -20530,7 +20542,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         result = OverdraftInterestRate(twoFactorAuth, loanId);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {
@@ -21427,7 +21439,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         result = ProcessContingentLiabilityTermination(twoFactorAuth, model, approvalComment);
 
-                        EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
+                        //EarnUnEarnedFee(loanId, (short)facilityType, applicationDate, loanReviewOperationsId);
 
                         if (result == true)
                         {

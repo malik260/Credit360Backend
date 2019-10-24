@@ -2521,11 +2521,11 @@ namespace FintrakBanking.Repositories.Credit
                 //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
             };
 
-            var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
-                    && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
-                    && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED != true);
+            //var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
+            //        && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
+            //        && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED != true);
 
-            if (loanExist == true) throw new SecureException("This loan application has already been saved!");
+            //if (loanExist == true) throw new SecureException("This loan application has already been saved!");
 
             context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
 
