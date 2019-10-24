@@ -43,7 +43,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               businessOwner = a.BUSINESSOWNER,
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
-                              templateTypeName = a.TEMPLATETYPE==1? "EMAIL":"SMS"
+                              templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS"
                           });
             return alerts;
         }
@@ -60,7 +60,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               businessOwner = a.BUSINESSOWNER,
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
-                              templateTypeName = a.TEMPLATETYPE == 1 ? "EMAIL" : "SMS"
+                              templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS"
                           });
             return alerts;
         }
@@ -77,7 +77,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              businessOwner = a.BUSINESSOWNER,
                              senderEmail = a.SENDEREMAIL,
                              senderName = a.SENDERNAME,
-                             templateTypeName = a.TEMPLATETYPE == 1 ? "EMAIL" : "SMS"
+                             templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS"
                          }).FirstOrDefault();
             return alert;
         }
