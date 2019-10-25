@@ -5496,9 +5496,8 @@ namespace FintrakBanking.Repositories.Credit
             //detail.DELETED = true;
             //detail.DATETIMEDELETED = genSetup.GetApplicationDate();
             //detail.DELETEDBY = deletedBy;
-            return true;
-            //return context.SaveChanges() > 0;
-            return true;
+            //return true;
+            return context.SaveChanges() > 0;
         }
 
         public LoanApplicationFlowChangeViewModel GetLoanAppicationFlowChange(int id)
@@ -5540,6 +5539,7 @@ namespace FintrakBanking.Repositories.Credit
                     skipflow=x.ISSKIPPROCESSENABLED,
                     skipFlo = x.ISSKIPPROCESSENABLED == true ? "YES" : "NO",
                     operation =context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==o.OPERATIONID).Select(s=>s.OPERATIONNAME).FirstOrDefault(),
+                    
                 })
                 .ToList();
         }
