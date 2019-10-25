@@ -44,7 +44,7 @@ namespace FintrakBanking.ViewModels.Notification
         public decimal? principalBalance { get; set; }
         public decimal? shareOfShf { get; set; }
         public decimal? principalOutstandingBalanceFcy { get; set; }
-        public decimal? unpoDaysOverdue { get; set; }
+        public string unpoDaysOverdue { get; set; }
         public decimal? averageBalance { get; set; }
         public decimal? amountDue { get; set; }
         public decimal? totalUnpaidObligation { get; set; }
