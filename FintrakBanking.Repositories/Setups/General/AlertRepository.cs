@@ -88,7 +88,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               totalUnpaidObligation = a.TOTALUNPAIDOBLIGATION,
                               maturityDate = a.MATURITYDATE,
                               scheduleDueDate = a.SCHEDULEDUEDATE,
-                             // divisionId = a.DIVISIONID
+                             // divisionId = a.DIVISIONID 
                           });
             return alerts;
         }

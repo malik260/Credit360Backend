@@ -591,12 +591,12 @@ namespace FintrakBanking.Common
           
              try
                {
-                //foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                //    {
-                //           return queryObj["Manufacturer"].ToString();
-                //     }
-                //       return "";
-                return Environment.UserName;
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
+                {
+                    return queryObj["Manufacturer"].ToString();
+                }
+                return "";
+               //return Environment.UserName;
 
                    }
                 
