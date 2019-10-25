@@ -1472,11 +1472,12 @@ namespace FintrakBanking.Repositories.Credit
            IList selectedApprovalTrailIds = new List<int>();
             foreach (var t in data.ToList())
             {
-                if (data.FindAll(d => d.fromApprovalLevelId == t.fromApprovalLevelId).Count() > 1)
+                if (data.FindAll(d => d?.fromApprovalLevelId == t?.fromApprovalLevelId).Count() > 1)
                 {
                     if(selectedApprovalTrailIds.IndexOf(t.fromApprovalLevelId) == -1)
                     {
-                        selectedApprovalTrailIds.Add(t.fromApprovalLevelId);
+                        if (t.fromApprovalLevelId != null)
+                            selectedApprovalTrailIds.Add(t.fromApprovalLevelId);
                     }
                     else
                     {
