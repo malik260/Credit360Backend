@@ -1472,11 +1472,12 @@ namespace FintrakBanking.Repositories.Credit
            IList selectedApprovalTrailIds = new List<int>();
             foreach (var t in data.ToList())
             {
-                if (data.FindAll(d => d.fromApprovalLevelId == t.fromApprovalLevelId).Count() > 1)
+                if (data.FindAll(d => d?.fromApprovalLevelId == t?.fromApprovalLevelId).Count() > 1)
                 {
                     if(selectedApprovalTrailIds.IndexOf(t.fromApprovalLevelId) == -1)
                     {
-                        selectedApprovalTrailIds.Add(t.fromApprovalLevelId);
+                        if (t.fromApprovalLevelId != null)
+                            selectedApprovalTrailIds.Add(t.fromApprovalLevelId);
                     }
                     else
                     {
@@ -2133,7 +2134,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerId = x.a.CUSTOMERID,
                 branchId = x.a.BRANCHID,
                 currencyId = context.TBL_LOAN_APPLICATION_DETAIL
-                                            .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID)
+                                            .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID && s.DELETED==false)
                                             .Select(s => s.CURRENCYID)
                                             .FirstOrDefault(),
                 productClassId = x.a.PRODUCTCLASSID,
@@ -2178,7 +2179,7 @@ namespace FintrakBanking.Repositories.Credit
                 tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID,
                 //jumpedDestination = x.b.OPERATIONID == (short)OperationsEnum.InitiationLevelAppraisal,
                 globalsla = context.TBL_LOAN_APPLICATION_DETAIL
-                                            .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID)
+                                            .Where(s => s.LOANAPPLICATIONID == x.a.LOANAPPLICATIONID &&  s.DELETED==false)
                                             .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA)
                                             .FirstOrDefault(),
                 currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,

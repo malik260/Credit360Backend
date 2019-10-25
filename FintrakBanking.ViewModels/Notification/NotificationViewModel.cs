@@ -19,7 +19,7 @@ namespace FintrakBanking.ViewModels.Notification
 
     public class ExternalAlertViewModel
     {
-        //public int alertId { get; set; }
+        public long id { get; set; }
         public string accountName { get; set; }
         public string accountNumber { get; set; }
         public string accountOfficerName { get; set; }
@@ -36,19 +36,20 @@ namespace FintrakBanking.ViewModels.Notification
         public string expiringBand { get; set; }
         public string ageLastCreditDate { get; set; }
         public string bookingDate { get; set; }
-        public decimal npl { get; set; }
-        public decimal originalAmountDisbursed { get; set; }
-        public decimal totalExposureLcy { get; set; }
-        public decimal loanAmountLcy { get; set; }
-        public decimal lastCreditAmount { get; set; }
-        public decimal principalBalance { get; set; }
-        public decimal shareOfShf { get; set; }
-        public decimal principalOutstandingBalanceFcy { get; set; }
-        public decimal unpoDaysOverdue { get; set; }
-        public decimal averageBalance { get; set; }
-        public decimal amountDue { get; set; }
-        public decimal totalUnpaidObligation { get; set; }
+        public decimal? npl { get; set; }
+        public decimal? originalAmountDisbursed { get; set; }
+        public decimal? totalExposureLcy { get; set; }
+        public decimal? loanAmountLcy { get; set; }
+        public decimal? lastCreditAmount { get; set; }
+        public decimal? principalBalance { get; set; }
+        public decimal? shareOfShf { get; set; }
+        public decimal? principalOutstandingBalanceFcy { get; set; }
+        public decimal? unpoDaysOverdue { get; set; }
+        public decimal? averageBalance { get; set; }
+        public decimal? amountDue { get; set; }
+        public decimal? totalUnpaidObligation { get; set; }
         public string maturityDate { get; set; }
         public string scheduleDueDate { get; set; }
+        //public string divisionId { get; set; }
     }
 }

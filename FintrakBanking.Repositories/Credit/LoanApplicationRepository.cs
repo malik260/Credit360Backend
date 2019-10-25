@@ -1654,7 +1654,7 @@ namespace FintrakBanking.Repositories.Credit
             //using (var trans = context.Database.BeginTransaction())
             //{
                 ValidateLoanApplicationLimits(loan);
-                var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
+                var additionalAmount = loan.LoanApplicationDetail.Where(x=>x.deleted == false).Sum(x => x.exchangeAmount);
                 var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED==false).ToList();
 
                 decimal cumulativeSum = 0;
@@ -5488,16 +5488,11 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteLoanApplicationThatFailedRAC(int loanApplicationDetailId, int deletedBy)
         {
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == loanApplicationDetailId).Select(o => o).FirstOrDefault();
-
-           context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
-
-            return true;
-            //if (detail == null)
-            //{
-            //    return true;
-            //}
-            //context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
-
+            if (detail == null)
+            {
+                return true;
+            }
+            context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
             //detail.DELETED = true;
             //detail.DATETIMEDELETED = genSetup.GetApplicationDate();
             //detail.DELETEDBY = deletedBy;

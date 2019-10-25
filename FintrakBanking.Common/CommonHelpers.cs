@@ -549,52 +549,19 @@ namespace FintrakBanking.Common
 
         public static string GetLocalIpAddress()
         {
-            UnicastIPAddressInformation mostSuitableIp = null;
-
-            var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
-
-            foreach (var network in networkInterfaces)
-            {
-                if (network.OperationalStatus != OperationalStatus.Up)
-                    continue;
-
-                var properties = network.GetIPProperties();
-
-                if (properties.GatewayAddresses.Count == 0)
-                    continue;
-
-                foreach (var address in properties.UnicastAddresses)
-                {
-                    if (address.Address.AddressFamily != AddressFamily.InterNetwork)
-                        continue;
-
-                    if (IPAddress.IsLoopback(address.Address))
-                        continue;
-
-                    if (!address.IsDnsEligible)
-                    {
-                        if (mostSuitableIp == null)
-                            mostSuitableIp = address;
-                        continue;
-                    }
-
-                    // The best IP is the IP got from DHCP server
-                    if (address.PrefixOrigin != PrefixOrigin.Dhcp)
-                    {
-                        if (mostSuitableIp == null || !mostSuitableIp.IsDnsEligible)
-                            mostSuitableIp = address;
-                        continue;
-                    }
-
-                    return address.Address.ToString();
-                }
-            }
-
-            return mostSuitableIp != null
-                ? mostSuitableIp.Address.ToString()
-                : "";
+            return GetIPAddress(new HttpRequestWrapper(HttpContext.Current.Request));
         }
 
+        internal static string GetIPAddress(HttpRequestBase request)
+        {
+            if (request.Headers["CF-CONNECTING-IP"] != null) return request.Headers["CF-CONNECTING-IP"].ToString();
+
+            if (request.ServerVariables["HTTP_X_FORWARDED_FOR"] != null) return request.ServerVariables["HTTP_X_FORWARDED_FOR"].ToString();
+
+            return request.UserHostAddress;
+        }
+    
+        
         public static string HKLM_GetString(string path, string key)
         {
             try
@@ -618,31 +585,21 @@ namespace FintrakBanking.Common
             return "";
         }
 
-        //public static string GetDeviceName()
-        //{
-        //    ManagementClass mc = new ManagementClass("Win32_ComputerSystem");
-        //    ManagementObjectCollection moc = mc.GetInstances();
-        //    String info = String.Empty;
-        //    foreach (ManagementObject mo in moc)
-        //    {
-        //        info = mo.Properties["Name"].Value.ToString(); //(string)mo["Name"];
-        //        //mo.Properties["Name"].Value.ToString();
-        //        //break;
-        //    }
-        //    return info;
-        //}
-
+       
         public static string GetDeviceName()
         {
           
              try
                {
-                 foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                     {
-                            return queryObj["Manufacturer"].ToString();
-                      }
-                        return "";
-                    }
+                //foreach (ManagementObject queryObj in baseboardSearcher.Get())
+                //    {
+                //           return queryObj["Manufacturer"].ToString();
+                //     }
+                //       return "";
+                return Environment.UserName;
+
+                   }
+                
                     catch (Exception e)
                     {
                         return "";

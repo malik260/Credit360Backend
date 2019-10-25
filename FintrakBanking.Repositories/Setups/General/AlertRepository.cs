@@ -57,7 +57,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var alerts = (from a in alertContext.ALERT
                           select new ExternalAlertViewModel
                           {
-                              //alertId = a.ALERTID,
+                              id = a.ID,
                               accountName = a.ACCOUNTNAME,
                               accountNumber = a.ACCOUNTNUMBER,
                               accountStatus = a.ACCOUNTSTATUS,
@@ -87,7 +87,8 @@ namespace FintrakBanking.Repositories.Setups.General
                               amountDue = a.AMOUNTDUE,
                               totalUnpaidObligation = a.TOTALUNPAIDOBLIGATION,
                               maturityDate = a.MATURITYDATE,
-                              scheduleDueDate = a.SCHEDULEDUEDATE
+                              scheduleDueDate = a.SCHEDULEDUEDATE,
+                             // divisionId = a.DIVISIONID
                           });
             return alerts;
         }
