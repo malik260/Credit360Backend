@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace FintrakBanking.Entities.AlertReportingModels
 {
 
-    [Table("vw_alert")]
+    [Table("ALERT")]
     public partial class ALERT
     {
        
         [Key]
-        public int ALERTID { get; set; }
+        public long ID { get; set; }
         public string ACCOUNTNAME { get; set; }
         public string ACCOUNTNUMBER { get; set; }
         public string ACCOUNTOFFICERNAME { get; set; }
@@ -31,20 +31,20 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string EXPIRINGBAND { get; set; }
         public string AGELASTCREDITDATE { get; set; }
         public string BOOKINGDATE { get; set; }
-        public decimal NPL { get; set; }
-        public decimal ORIGINALAMOUNTDISBURSED { get; set; }
-        public decimal TOTALEXPOSURELCY { get; set; }
-        public decimal LOANAMOUNTLCY { get; set; }
-        public decimal LASTCREDITAMOUNT { get; set; }
-        public decimal PRINCIPALBALANCE { get; set; }
-        public decimal SHAREOFSHF { get; set; }
-        public decimal PRINCIPALOUTSTANDINGBALANCEFCY { get; set; }
-        public decimal UNPODAYSOVERDUE { get; set; }
-        public decimal AVERAGEBALANCE { get; set; }
-        public decimal AMOUNTDUE { get; set; }
-        public decimal TOTALUNPAIDOBLIGATION { get; set; }
+        public decimal? NPL { get; set; }
+        public decimal? ORIGINALAMOUNTDISBURSED { get; set; }
+        public decimal? TOTALEXPOSURELCY { get; set; }
+        public decimal? LOANAMOUNTLCY { get; set; }
+        public decimal? LASTCREDITAMOUNT { get; set; }
+        public decimal? PRINCIPALBALANCE { get; set; }
+        public decimal? SHAREOFSHF { get; set; }
+        public decimal? PRINCIPALOUTSTANDINGBALANCEFCY { get; set; }
+        public decimal? UNPODAYSOVERDUE { get; set; }
+        public decimal? AVERAGEBALANCE { get; set; }
+        public decimal? AMOUNTDUE { get; set; }
+        public decimal? TOTALUNPAIDOBLIGATION { get; set; }
         public string MATURITYDATE { get; set; }
         public string SCHEDULEDUEDATE { get; set; }
-
+        //public string DIVISIONID { get; set; }
     }
 }
