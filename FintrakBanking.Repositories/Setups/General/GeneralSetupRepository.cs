@@ -229,17 +229,28 @@ namespace FintrakBanking.Repositories.Setups.General
       
         public IEnumerable<LookupViewModel> GetOperations(short operationTypeId)
         {
-            return (from data in context.TBL_OPERATIONS
-                    join op in context.TBL_OPERATIONS_TYPE on data.OPERATIONTYPEID equals op.BINDINGTYPEID
-                    where (data.OPERATIONTYPEID == operationTypeId || (data.OPERATIONTYPEID == op.BINDINGTYPEID && op.OPERATIONTYPEID == operationTypeId))
-
+            var operations = (from data in context.TBL_OPERATIONS
+                    where data.OPERATIONTYPEID == operationTypeId
                     select new LookupViewModel()
                     {
                         lookupId = (short)data.OPERATIONID,
                         lookupName = data.OPERATIONNAME,
                         lookupTypeId = data.OPERATIONTYPEID,
                         lookupTypeName = data.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
-                    });
+                    }).ToList();
+
+            var operations2 = (from data in context.TBL_OPERATIONS
+                              join op in context.TBL_OPERATIONS_TYPE on data.OPERATIONTYPEID equals op.BINDINGTYPEID
+                              where data.OPERATIONTYPEID == op.BINDINGTYPEID && op.OPERATIONTYPEID == operationTypeId
+
+                              select new LookupViewModel()
+                              {
+                                  lookupId = (short)data.OPERATIONID,
+                                  lookupName = data.OPERATIONNAME,
+                                  lookupTypeId = data.OPERATIONTYPEID,
+                                  lookupTypeName = data.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
+                              }).ToList();
+            return operations.Union(operations2);
         }
 
         /// <summary>
