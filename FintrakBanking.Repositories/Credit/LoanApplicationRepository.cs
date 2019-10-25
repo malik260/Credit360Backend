@@ -5496,8 +5496,8 @@ namespace FintrakBanking.Repositories.Credit
             //detail.DELETED = true;
             //detail.DATETIMEDELETED = genSetup.GetApplicationDate();
             //detail.DELETEDBY = deletedBy;
-            return true;
-            //return context.SaveChanges() > 0;
+            //return true;
+            return context.SaveChanges() > 0;
         }
 
         public LoanApplicationFlowChangeViewModel GetLoanAppicationFlowChange(int id)
