@@ -270,7 +270,11 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetAppraisalMemorandumTrail(applicationId, operationId,all);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                if(data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "No record Found"});
             }
             catch (SecureException ex)
             {
