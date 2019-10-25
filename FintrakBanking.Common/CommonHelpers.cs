@@ -575,14 +575,22 @@ namespace FintrakBanking.Common
 
         public static string FriendlyName()
         {
-            string ProductName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
-            string CSDVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CSDVersion");
-            if (ProductName != "")
+            string result = string.Empty;
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem");
+            foreach (ManagementObject os in searcher.Get())
             {
-                return (ProductName.StartsWith("Microsoft") ? "" : "Microsoft ") + ProductName +
-                            (CSDVersion != "" ? " " + CSDVersion : "");
+                result = os["Caption"].ToString();
+                break;
             }
-            return "";
+            return result;
+            //string ProductName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
+            //string CSDVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CSDVersion");
+            //if (ProductName != "")
+            //{
+            //    return (ProductName.StartsWith("Microsoft") ? "" : "Microsoft ") + ProductName +
+            //                (CSDVersion != "" ? " " + CSDVersion : "");
+            //}
+            //return "";
         }
 
        
@@ -591,14 +599,12 @@ namespace FintrakBanking.Common
           
              try
                {
-                //foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                //    {
-                //           return queryObj["Manufacturer"].ToString();
-                //     }
-                //       return "";
-                return Environment.UserName;
-
-                   }
+                foreach (ManagementObject queryObj in baseboardSearcher.Get())
+                {
+                    return queryObj["Manufacturer"].ToString();
+                }
+                return "";
+              }
                 
                     catch (Exception e)
                     {

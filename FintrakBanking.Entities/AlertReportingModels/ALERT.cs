@@ -39,7 +39,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public decimal? PRINCIPALBALANCE { get; set; }
         public decimal? SHAREOFSHF { get; set; }
         public decimal? PRINCIPALOUTSTANDINGBALANCEFCY { get; set; }
-        public decimal? UNPODAYSOVERDUE { get; set; }
+        public string UNPODAYSOVERDUE { get; set; }
         public decimal? AVERAGEBALANCE { get; set; }
         public decimal? AMOUNTDUE { get; set; }
         public decimal? TOTALUNPAIDOBLIGATION { get; set; }

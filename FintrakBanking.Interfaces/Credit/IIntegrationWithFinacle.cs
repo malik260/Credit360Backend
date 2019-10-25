@@ -49,6 +49,7 @@ namespace FintrakBanking.Interfaces.Credit
         Users GetUserRoleFinacle(string staffCode);
 
         List<RatingAndRatioViewModel> GetCustomerRatioByCustomerCode(string customerCode);
+        CutomerRatingViewModel GetCorporateCustomerRatingByCustomerCode(string customerCode);
 
     }
 }

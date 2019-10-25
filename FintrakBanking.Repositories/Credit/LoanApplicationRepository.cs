@@ -1340,20 +1340,24 @@ namespace FintrakBanking.Repositories.Credit
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
-                        creditCommon.LoadCustomerRatios(
-                               applicationId,
-                               loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                               staffId
-                           );
-
-
+                      
                         creditCommon.LoadCustomerTurnover(
                                 applicationId,
                                 loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                                 staffId
                             );
 
-                        
+                        creditCommon.LoadCustomerRatios(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                         );
+
+                        creditCommon.GetCorporateCustomerRating(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                         );
                         //if (casa != null)
                         //{
                         //    creditCommon.LoadCustomerTurnover(
@@ -3414,6 +3418,11 @@ namespace FintrakBanking.Repositories.Credit
                                     // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                     isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.APPLICATIONREFERENCENUMBER).Any()
                                 }).ToList();
+
+            applications = applications.Where(x => x.applicationReferenceNumber != "-")
+                            .GroupBy(p => p.applicationReferenceNumber)
+                                .Select(g => g.First())
+                                    .ToList();
 
             return applications;
 
@@ -5490,6 +5499,9 @@ namespace FintrakBanking.Repositories.Credit
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == loanApplicationDetailId).Select(o => o).FirstOrDefault();
             if (detail == null)
             {
+                detail.DELETED = true;
+                detail.DATETIMEDELETED = genSetup.GetApplicationDate();
+                detail.DELETEDBY = deletedBy;
                 return true;
             }
             context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
