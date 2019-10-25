@@ -297,7 +297,7 @@
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="XLeratorDLL-financial">
-      <HintPath>..\..\..\Users\USER\Documents\C# Materials\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>C:\Users\Ifeanyi\Desktop\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

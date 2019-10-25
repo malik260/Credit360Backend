@@ -575,14 +575,22 @@ namespace FintrakBanking.Common
 
         public static string FriendlyName()
         {
-            string ProductName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
-            string CSDVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CSDVersion");
-            if (ProductName != "")
+            string result = string.Empty;
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem");
+            foreach (ManagementObject os in searcher.Get())
             {
-                return (ProductName.StartsWith("Microsoft") ? "" : "Microsoft ") + ProductName +
-                            (CSDVersion != "" ? " " + CSDVersion : "");
+                result = os["Caption"].ToString();
+                break;
             }
-            return "";
+            return result;
+            //string ProductName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
+            //string CSDVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CSDVersion");
+            //if (ProductName != "")
+            //{
+            //    return (ProductName.StartsWith("Microsoft") ? "" : "Microsoft ") + ProductName +
+            //                (CSDVersion != "" ? " " + CSDVersion : "");
+            //}
+            //return "";
         }
 
        
@@ -596,9 +604,7 @@ namespace FintrakBanking.Common
                     return queryObj["Manufacturer"].ToString();
                 }
                 return "";
-               //return Environment.UserName;
-
-                   }
+              }
                 
                     catch (Exception e)
                     {

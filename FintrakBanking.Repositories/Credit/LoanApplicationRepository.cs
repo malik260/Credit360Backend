@@ -3421,6 +3421,11 @@ namespace FintrakBanking.Repositories.Credit
                                     isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.APPLICATIONREFERENCENUMBER).Any()
                                 }).ToList();
 
+            applications = applications.Where(x => x.applicationReferenceNumber != "-")
+                            .GroupBy(p => p.applicationReferenceNumber)
+                                .Select(g => g.First())
+                                    .ToList();
+
             return applications;
 
             /*var applications = context.TBL_LOAN_APPLICATION
