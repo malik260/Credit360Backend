@@ -1189,7 +1189,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Facility</b></th>
                         <th><b>LLL Impact</b></th>
                         <th><b>Currency</b></th>
-                        <th><b>Current Amount</b></th>
+                        <th><b>Approved Amount</b></th>
                         <th><b>Proposed Amount</b></th>
                         <th><b>Change</b></th>
                         <th><b>Tenor (Months)</b></th>
