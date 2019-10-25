@@ -5488,16 +5488,21 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteLoanApplicationThatFailedRAC(int loanApplicationDetailId, int deletedBy)
         {
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == loanApplicationDetailId).Select(o => o).FirstOrDefault();
+
+           context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
+
+            return true;
             //if (detail == null)
             //{
             //    return true;
             //}
             //context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
-            detail.DELETED = true;
-            detail.DATETIMEDELETED = genSetup.GetApplicationDate();
-            detail.DELETEDBY = deletedBy;
 
-            return context.SaveChanges() > 0;
+            //detail.DELETED = true;
+            //detail.DATETIMEDELETED = genSetup.GetApplicationDate();
+            //detail.DELETEDBY = deletedBy;
+
+            //return context.SaveChanges() > 0;
         }
 
         public LoanApplicationFlowChangeViewModel GetLoanAppicationFlowChange(int id)
