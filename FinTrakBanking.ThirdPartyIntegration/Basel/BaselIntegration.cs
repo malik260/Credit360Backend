@@ -122,7 +122,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<CutomerRatingViewModel>> GetCorporateCustomerRatingByCustomerCode(string customerNumber)
+        public async Task<CutomerRatingViewModel> GetCorporateCustomerRatingByCustomerCode(string customerNumber)
         {
             HttpClientHandler handler = new HttpClientHandler();
             HttpClient httpClientInstance;
@@ -156,7 +156,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<CutomerRatingViewModel> customerRatios = new List<CutomerRatingViewModel>();
+                CutomerRatingViewModel customerRatios = new CutomerRatingViewModel();
                 if (response.IsSuccessStatusCode)
                 {
                     //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
@@ -165,7 +165,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                     JObject responseDataJsonString = JObject.Parse(responseData);
 
                     var data = responseDataJsonString["data"].ToString();
-                    customerRatios = JsonConvert.DeserializeObject<List<CutomerRatingViewModel>>(data);
+                    customerRatios = JsonConvert.DeserializeObject<CutomerRatingViewModel>(data);
                 }
 
 
