@@ -2590,6 +2590,12 @@ namespace FintrakBanking.Repositories.Credit
 
                         }).ToList();
 
+                 data = data.Where(x => x.applicationReferenceNumber != "-")
+                   .GroupBy(p => p.applicationReferenceNumber)
+                   .Select(g => g.First())
+                       .ToList();
+
+
                 foreach (var item in data)
                 {
                     var casa1 = context.TBL_CASA.Find(item.casaAccountId);
