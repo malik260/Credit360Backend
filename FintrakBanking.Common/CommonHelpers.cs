@@ -576,10 +576,17 @@ namespace FintrakBanking.Common
 
         public static string FriendlyName()
         {
+            OperatingSystem os = Environment.OSVersion;
+            var platform = os.Platform.ToString();
+            var version = os.Version.ToString();
+            var servicePack = os.ServicePack.ToString();
+           
             String userAgent = HttpContext.Current.Request.UserAgent;
             var uaParser = Parser.GetDefault();
             ClientInfo c = uaParser.Parse(userAgent);
-            return c.OS.Family;
+            var fullOs = c.OS.Family + " " + version + " " + servicePack;
+            //return c.OS.Family;
+            return fullOs;
 
             //string ProductName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
             //string CSDVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CSDVersion");
