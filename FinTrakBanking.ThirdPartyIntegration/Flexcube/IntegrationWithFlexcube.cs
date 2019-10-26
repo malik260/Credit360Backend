@@ -786,9 +786,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return customerRatio;
         } // GetCorporateProbabilityDefaultByCustomerId
 
-        public List<CutomerRatingViewModel> GetCorporateCustomerRatingByCustomerCode(string customerCode)
+        public CutomerRatingViewModel GetCorporateCustomerRatingByCustomerCode(string customerCode)
         {
-            List<CutomerRatingViewModel> customerRating = new List<CutomerRatingViewModel>();
+            CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
             Task.Run(async () => customerRating = await basel.GetCorporateCustomerRatingByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
             return customerRating;

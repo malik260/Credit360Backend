@@ -1340,20 +1340,24 @@ namespace FintrakBanking.Repositories.Credit
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
-                        creditCommon.LoadCustomerRatios(
-                               applicationId,
-                               loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                               staffId
-                           );
-
-
+                      
                         creditCommon.LoadCustomerTurnover(
                                 applicationId,
                                 loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                                 staffId
                             );
 
-                        
+                        creditCommon.LoadCustomerRatios(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                         );
+
+                        creditCommon.GetCorporateCustomerRating(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                         );
                         //if (casa != null)
                         //{
                         //    creditCommon.LoadCustomerTurnover(
@@ -5490,6 +5494,9 @@ namespace FintrakBanking.Repositories.Credit
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == loanApplicationDetailId).Select(o => o).FirstOrDefault();
             if (detail == null)
             {
+                detail.DELETED = true;
+                detail.DATETIMEDELETED = genSetup.GetApplicationDate();
+                detail.DELETEDBY = deletedBy;
                 return true;
             }
             context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);

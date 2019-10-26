@@ -205,6 +205,7 @@ namespace FintrakBanking.Entities.Models
         public string OFFERLETTERTITLE { get; set; }
         public string OFFERLETTERSALUTATION { get; set; }
         public string APIREQUESTID { get; set; }
+        public string CUSTOMERRATING { get; set; }
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

@@ -79,6 +79,8 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string environmentalSocialRiskHolder = "@{{EnvironmentalSocialRisk}}";
         private readonly string monitoringTriggersHolder = "@{{MonitoringTriggers}}";
         private readonly string proposedConditionsHolder = "@{{ProposedConditions}}";
+        private readonly string conditionsPrecedenceListHolder = "@{{ConditionsPrecedenceList}}";
+        private readonly string dynamicsListHolder = "@{{DynamicsList}}";
         private readonly string conditionsPrecedentToDrawdownHolder = "@{{ConditionsPrecedentToDrawdown}}";
         private readonly string transactionsDynamicsHolder = "@{{TransactionsDynamics}}";
         private readonly string isSecurityHolder = "@{{IsSecurity}}";
@@ -155,6 +157,8 @@ namespace FintrakBanking.Repositories.Credit
         private string environmentalSocialRisk;
         private string monitoringTriggers;
         private string proposedConditions;
+        private string conditionsPrecedenceList;
+        private string dynamicsList;
         private string conditionsPrecedentToDrawdown;
         private string transactionsDynamics;
         private string rmCountry;
@@ -463,6 +467,8 @@ namespace FintrakBanking.Repositories.Credit
             this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
+            this.conditionsPrecedenceList = GetConditionsMarkUp();
+            this.dynamicsList = GetDynamicsMarkUp();
             this.monitoringTriggers = MonitoringTriggersMarkup();
             //this.customerTurnover = CustomerTurnoverMarkup(); // lazy loaded
 
@@ -1123,6 +1129,56 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        private string GetConditionsMarkUp()
+        {
+            var conditions = GetConditionsPrecedentToDrawdown().GroupBy(c => c.typeId); // new
+            var result = String.Empty;
+            var n = 0;
+
+            foreach (var g in conditions)
+            {
+                var c = g.FirstOrDefault();
+                result += c.title;
+                foreach (var e in g)
+                {
+                    n++;
+                    result = result + $@"
+                        <br/>{n}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {e.name}
+                    ";
+                }
+
+            }
+            result = result + $"</table>";
+            return result;
+        }
+
+        public string GetDynamicsMarkUp()
+        {
+            var transactions = GetTransactionsDynamics().GroupBy(t => t.typeId); // new
+            var result = String.Empty;
+            var n = 0;
+
+            foreach (var group in transactions)
+            {
+                n++;
+                var o = 0;
+                var c = group.FirstOrDefault();
+                result += c.title;
+                foreach (var t in group)
+                {
+                    n++;
+                    result = result + $@"
+                        <br/>{n}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {t.name}
+                    ";
+                }
+
+            }
+            result = result + $"</table>";
+            return result;
+        }
+
         private string GetTransactionsDynamicsMarkup()
         {
             var transactions = GetTransactionsDynamics().GroupBy(t => t.typeId); // new
@@ -1189,7 +1245,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Facility</b></th>
                         <th><b>LLL Impact</b></th>
                         <th><b>Currency</b></th>
-                        <th><b>Current Amount</b></th>
+                        <th><b>Approved Amount</b></th>
                         <th><b>Proposed Amount</b></th>
                         <th><b>Change</b></th>
                         <th><b>Tenor (Months)</b></th>
@@ -2625,6 +2681,8 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(approvalLevelHolder, approvalLevel);
             content = content.Replace(accountNumbersHolder, accountNumbers);
             content = content.Replace(proposedConditionsHolder, proposedConditions);
+            content = content.Replace(conditionsPrecedenceListHolder, conditionsPrecedenceList);
+            content = content.Replace(dynamicsListHolder, dynamicsList);
             content = content.Replace(conditionsPrecedentToDrawdownHolder, conditionsPrecedentToDrawdown);
             content = content.Replace(transactionsDynamicsHolder, transactionsDynamics);
             content = content.Replace(monitoringTriggersHolder, monitoringTriggers);

@@ -6,6 +6,8 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerViewModels : GeneralEntity
     {
+        public string customerRating { get; set; }
+
         public string branchCode { get; set; }
         public string rcNumber { get; set; }
         public string customerAccountNo { get; set; }
