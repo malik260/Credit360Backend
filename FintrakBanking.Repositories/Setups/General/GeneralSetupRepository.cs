@@ -222,7 +222,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             lookupName = a.OPERATIONNAME,
                             lookupTypeId = a.OPERATIONTYPEID,
                             lookupTypeName = a.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
-                        }).ToList();
+                        }).OrderBy(l => l.lookupName).ToList();
 
             return data;
         }
@@ -230,7 +230,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<LookupViewModel> GetOperations(short operationTypeId)
         {
             var operations = (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONTYPEID == operationTypeId
+                    where data.OPERATIONTYPEID == operationTypeId && data.ISDISABLED == false
                     select new LookupViewModel()
                     {
                         lookupId = (short)data.OPERATIONID,
@@ -241,16 +241,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var operations2 = (from data in context.TBL_OPERATIONS
                               join op in context.TBL_OPERATIONS_TYPE on data.OPERATIONTYPEID equals op.BINDINGTYPEID
-                              where data.OPERATIONTYPEID == op.BINDINGTYPEID && op.OPERATIONTYPEID == operationTypeId
+                              where data.OPERATIONTYPEID == op.BINDINGTYPEID && op.OPERATIONTYPEID == operationTypeId && data.ISDISABLED == false
 
-                              select new LookupViewModel()
+                               select new LookupViewModel()
                               {
                                   lookupId = (short)data.OPERATIONID,
                                   lookupName = data.OPERATIONNAME,
                                   lookupTypeId = data.OPERATIONTYPEID,
                                   lookupTypeName = data.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
                               }).ToList();
-            return operations.Union(operations2);
+            return operations.Union(operations2).OrderBy(l => l.lookupName).ToList();
         }
 
         /// <summary>
