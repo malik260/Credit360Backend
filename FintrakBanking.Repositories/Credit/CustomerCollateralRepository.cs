@@ -8119,7 +8119,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             UpdateCASAcollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, collaterId);
 
-                            UpdateCollateralDocument(ApprovalModel.targetId, collaterId);
+                            //UpdateCollateralDocument(ApprovalModel.targetId, collaterId);
                             UpdateCollateralVisitation(ApprovalModel.targetId, collaterId);
 
                             if (mainCollateral.REQUIREINSURANCEPOLICY) { UpdateItemPolicyDetail(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, collaterId); } //insurance documents
@@ -8161,7 +8161,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             UpdateDepositCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, collaterId);
 
-                            UpdateCollateralDocument(ApprovalModel.targetId, collaterId);
+                            //UpdateCollateralDocument(ApprovalModel.targetId, collaterId);
                             UpdateCollateralVisitation(ApprovalModel.targetId, collaterId);
 
                             if (mainCollateral.REQUIREINSURANCEPOLICY) { UpdateItemPolicyDetail(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, collaterId); } //insurance documents
@@ -8199,7 +8199,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             UpdateTempApprovalStatus(ApprovalModel.targetId, status);
 
-                            UpdateCollateralDocument(ApprovalModel.targetId, newCollaterId);
+                            //UpdateCollateralDocument(ApprovalModel.targetId, newCollaterId);
                             UpdateCollateralVisitation(ApprovalModel.targetId, newCollaterId);
 
                             if (mainCollateral.REQUIREINSURANCEPOLICY) { UpdateItemPolicyDetail(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); } //insurance documents
