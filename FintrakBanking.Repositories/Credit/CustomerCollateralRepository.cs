@@ -1152,7 +1152,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = collateralId;
                 workflow.Comment = comment;
-                workflow.OperationId = (int)OperationsEnum.CollateralMaintenance;
+                workflow.OperationId = (int)OperationsEnum.CollateralApproval;
                 workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                 workflow.ExternalInitialization = true;
                 workflow.LogActivity();
@@ -9996,6 +9996,7 @@ namespace FintrakBanking.Repositories.Credit
                         BALANCEAVAILABLE = model.availableCollateralValue - model.actualCollateralCoverage,
                         CREATEDBY = model.createdBy,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = genSetup.GetApplicationDate(),
                         CUSTOMERID = model.customerId,
                         DELETED = false,
 
