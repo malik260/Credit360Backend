@@ -1769,6 +1769,7 @@ namespace FintrakBanking.Repositories.Credit
             // is tier related?, get default rac
             var isRacRelated = definitions.Where(o => o.RACCATEGORYTYPEID != null).Any();
             TBL_RAC_DEFINITION defaultTier = new TBL_RAC_DEFINITION();
+            List<TBL_RAC_DEFINITION> defaultDefinition = new List<TBL_RAC_DEFINITION>();
             List<TBL_RAC_DEFINITION> racTiers = new List<TBL_RAC_DEFINITION>();
             if (isRacRelated == true)
             {
@@ -1781,13 +1782,19 @@ namespace FintrakBanking.Repositories.Credit
                     defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && ids.Contains(x.RACDEFINITIONID)
                                 ).Select(x => x).FirstOrDefault();
                 }
-
+                defaultDefinition.Add(defaultTier);
                 var racCategoryIds = definitions.Select(x => x.RACCATEGORYID);
+
+                racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                        && ids.Contains(x.RACDEFINITIONID) && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
+                        //&& x.RACCATEGORYID == defaultTier.RACCATEGORYID
+                        ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
 
                 racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
                     && x.ISRACTIERCONTROLKEY == true && racCategoryIds.Contains(x.RACCATEGORYID)
                 ).ToList();
 
+                definitions = defaultDefinition;
             }
 
             
@@ -1819,6 +1826,7 @@ namespace FintrakBanking.Repositories.Credit
                         && ids.Contains(x.RACDEFINITIONID) && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
                         && x.RACCATEGORYID == defaultTier.RACCATEGORYID
                         ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
+
                     }
 
                     if (racTiers.Count() > 0 && ctr > 0)
@@ -1927,6 +1935,7 @@ namespace FintrakBanking.Repositories.Credit
             var result = context.SaveChanges();
             return details;
         }
+
         private bool ValidRacSubmission(TBL_RAC_DEFINITION definition, string value, int operationId, int targetId)
         {
             //if (definition.ISREQUIRED == false) return true;
