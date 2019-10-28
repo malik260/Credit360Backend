@@ -79,6 +79,8 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string environmentalSocialRiskHolder = "@{{EnvironmentalSocialRisk}}";
         private readonly string monitoringTriggersHolder = "@{{MonitoringTriggers}}";
         private readonly string proposedConditionsHolder = "@{{ProposedConditions}}";
+        private readonly string conditionsPrecedenceListHolder = "@{{ConditionsPrecedenceList}}";
+        private readonly string dynamicsListHolder = "@{{DynamicsList}}";
         private readonly string conditionsPrecedentToDrawdownHolder = "@{{ConditionsPrecedentToDrawdown}}";
         private readonly string transactionsDynamicsHolder = "@{{TransactionsDynamics}}";
         private readonly string isSecurityHolder = "@{{IsSecurity}}";
@@ -155,12 +157,16 @@ namespace FintrakBanking.Repositories.Credit
         private string environmentalSocialRisk;
         private string monitoringTriggers;
         private string proposedConditions;
+        private string conditionsPrecedenceList;
+        private string dynamicsList;
         private string conditionsPrecedentToDrawdown;
         private string transactionsDynamics;
         private string rmCountry;
         private string misCode;
         private string reviewType;
         private string preparedBy;
+        private string relationshipOfficerName;
+        private string relationshipManagerName;
         private string businessSectors;
         private string exchangeRate;
         private string groupFacilitySummary;
@@ -461,6 +467,8 @@ namespace FintrakBanking.Repositories.Credit
             this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
+            this.conditionsPrecedenceList = GetConditionsMarkUp();
+            this.dynamicsList = GetDynamicsMarkUp();
             this.monitoringTriggers = MonitoringTriggersMarkup();
             //this.customerTurnover = CustomerTurnoverMarkup(); // lazy loaded
 
@@ -503,7 +511,10 @@ namespace FintrakBanking.Repositories.Credit
                 this.effectiveDate = "";
                 this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
                 this.currentDate = DateTime.Now.ToShortDateString();
-                approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+                this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
+                this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
+                //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
+            approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
 
                 newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault() == null ? "0.00" : context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00");
@@ -589,13 +600,17 @@ namespace FintrakBanking.Repositories.Credit
             if (operationId == (int)OperationsEnum.CreditAppraisal)
             {
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
-                var conditions = this.conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == details.FirstOrDefault()?.LOANAPPLICATIONDETAILID);
+                var conditions = new List<ConditionPrecedentViewModel>();
+                foreach (var f in details)
+                {
+                    conditions.AddRange(conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == f.LOANAPPLICATIONDETAILID));
+                }
                 foreach (var d in conditions)
                 {
                     if (d.condition != null)
                     {
                         var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == d.loanApplicationDetailId).FirstOrDefault();
-                        result.Add(new DropDownSelect { typeId = (int)d.loanApplicationDetailId, id = d.conditionId, name = d.condition, title = detail.TBL_PRODUCT1.PRODUCTNAME });
+                        result.Add(new DropDownSelect { typeId = d.loanApplicationDetailId, id = d.conditionId, name = d.condition, title = detail.TBL_PRODUCT1.PRODUCTNAME });
                     }
                 }
             }
@@ -1089,19 +1104,19 @@ namespace FintrakBanking.Repositories.Credit
             var conditions = GetConditionsPrecedentToDrawdown().GroupBy(c => c.typeId); // new
 
             var result = String.Empty;
-            var n = 0;
-            result = result + $@"
+            foreach (var g in conditions)
+            {
+                var n = 0;
+                var c = g.FirstOrDefault();
+                result += c.title;
+                result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
                     </tr>
                  ";
-            foreach (var g in conditions)
-            {
-                var c = g.FirstOrDefault();
-                result += c.title;
-                foreach(var e in g)
+                foreach (var e in g)
                 {
                     n++;
                     result = result + $@"
@@ -1111,11 +1126,60 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     ";
                 }
-                
+                result = result + $"</table>";
+            }
+            return result;
+
+        }
+
+        private string GetConditionsMarkUp()
+        {
+            var conditions = GetConditionsPrecedentToDrawdown().GroupBy(c => c.typeId); // new
+            var result = String.Empty;
+            var n = 0;
+
+            foreach (var g in conditions)
+            {
+                var c = g.FirstOrDefault();
+                result += c.title;
+                foreach (var e in g)
+                {
+                    n++;
+                    result = result + $@"
+                        <br/>{n}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {e.name}
+                    ";
+                }
+
             }
             result = result + $"</table>";
             return result;
+        }
 
+        public string GetDynamicsMarkUp()
+        {
+            var transactions = GetTransactionsDynamics().GroupBy(t => t.typeId); // new
+            var result = String.Empty;
+            var n = 0;
+
+            foreach (var group in transactions)
+            {
+                n++;
+                var o = 0;
+                var c = group.FirstOrDefault();
+                result += c.title;
+                foreach (var t in group)
+                {
+                    n++;
+                    result = result + $@"
+                        <br/>{n}&nbsp;&nbsp;&nbsp;&nbsp;
+                        {t.name}
+                    ";
+                }
+
+            }
+            result = result + $"</table>";
+            return result;
         }
 
         private string GetTransactionsDynamicsMarkup()
@@ -1184,7 +1248,7 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b>Facility</b></th>
                         <th><b>LLL Impact</b></th>
                         <th><b>Currency</b></th>
-                        <th><b>Current Amount</b></th>
+                        <th><b>Approved Amount</b></th>
                         <th><b>Proposed Amount</b></th>
                         <th><b>Change</b></th>
                         <th><b>Tenor (Months)</b></th>
@@ -2620,6 +2684,8 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(approvalLevelHolder, approvalLevel);
             content = content.Replace(accountNumbersHolder, accountNumbers);
             content = content.Replace(proposedConditionsHolder, proposedConditions);
+            content = content.Replace(conditionsPrecedenceListHolder, conditionsPrecedenceList);
+            content = content.Replace(dynamicsListHolder, dynamicsList);
             content = content.Replace(conditionsPrecedentToDrawdownHolder, conditionsPrecedentToDrawdown);
             content = content.Replace(transactionsDynamicsHolder, transactionsDynamics);
             content = content.Replace(monitoringTriggersHolder, monitoringTriggers);
@@ -7541,21 +7607,21 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                     <br/>
-                   <p><strong><em>ACCOUNT OFFICER:</em></strong>{relationshipOfficer}</p>
+                   <p><strong><em>ACCOUNT OFFICER:&nbsp;&nbsp;</em></strong>{relationshipOfficerName}</p>
                     <br/>
-                   <p><strong><em>RELATIONSHIP MANAGER:</em></strong>{relationshipManager}</p>
+                   <p><strong><em>RELATIONSHIP MANAGER:&nbsp;&nbsp;</em></strong>{relationshipManagerName}</p>
                        <br/>
-                   <p><strong><em>GROUP HEAD:</em></strong></p>
+                   <p><strong><em>GROUP HEAD:&nbsp;&nbsp;</em></strong></p>
                       <br/>
-                   <p><strong><em>CRM:</em></strong></p>
+                   <p><strong><em>CRM:&nbsp;&nbsp;</em></strong></p>
                       <br/>
-                   <p><strong><em>APPROVAL:</em></strong></p>
+                   <p><strong><em>APPROVAL:&nbsp;&nbsp;</em></strong></p>
                     <br/>
-                   <p><strong><em>ED:</em></strong>...........</p>
+                   <p><strong><em>ED:&nbsp;&nbsp;</em></strong>...........</p>
                      <br/>
-                   <p><strong><em>GDMD:</em></strong>...........<br><em>(for deferrals below N1Billion)</em></p>
+                   <p><strong><em>GDMD:&nbsp;&nbsp;</em></strong>...........<br><em>(for deferrals below N1Billion)</em></p>
                      <br/>
-                   <p><strong><em>GMD:</em></strong>...........<br><em>(for deferrals above N1Billion)</em></p>
+                   <p><strong><em>GMD:&nbsp;&nbsp;</em></strong>...........<br><em>(for deferrals above N1Billion)</em></p>
                        <br/>
                    <p><strong>(Waivers of any Pre-availment condition included in the credit approval shall require approval in writing at the appropriate approval credit authority level)</strong></p>
                    ";
@@ -7633,8 +7699,8 @@ namespace FintrakBanking.Repositories.Credit
                                applicationReferenceNumber = a.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
                                checklistStatus = context.TBL_CHECKLIST_STATUS.Where(o => o.CHECKLISTSTATUSID == b.CHECKLISTSTATUSID).Select(o => o.CHECKLISTSTATUSNAME).FirstOrDefault(),
                                dateCreated = b.DATETIMECREATED,
-                               relationshipOfficerName = "",//context.TBL_STAFF.Where(o=>o.STAFFID ==a. a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF.FIRSTNAME,
-                               relationshipManagerName = "",//a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME + " " + a.TBL_LOAN_APPLICATION.TBL_STAFF1.FIRSTNAME,
+                               relationshipOfficerName = context.TBL_STAFF.Where(o=>o.STAFFID ==a.CREATEDBY).Select(o=>o.FIRSTNAME).FirstOrDefault()+" "+ context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.MIDDLENAME).FirstOrDefault() + " " + context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.LASTNAME).FirstOrDefault(),
+                               relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.FIRSTNAME).FirstOrDefault() + " " + context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.MIDDLENAME).FirstOrDefault() + " " + context.TBL_STAFF.Where(o => o.STAFFID == a.CREATEDBY).Select(o => o.LASTNAME).FirstOrDefault(),
                                applicationAmount = 0,//a.TBL_LOAN_APPLICATION.APPLICATIONAMOUNT,
                                applicationTenor = 0,//a.PROPOSEDTENOR,
                                applicationDate = a.TBL_LMSR_APPLICATION.APPLICATIONDATE,
@@ -7651,122 +7717,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return dataLOS.Union(dataLMS);
         }
-
-        
-       //public string OfferLetterForBondsAndGuaranteesFormHtml(string applicationRefNumber)
-       // {
-       //     DateTime today = DateTime.Today;
-       //     var isInitialize = GenerateOfferLetter(applicationRefNumber);
-            
-       //      var result = String.Empty;
-       //     result = result + $@"
-       //         <br />
-       //        <p><strong>{today}</strong></p>
-       //         <br />
-       //        <p><strong>{isInitialize.offerLetterSalutation}</strong></p>
-       //        <p><strong>{isInitialize.offerLetterTitle}</strong></p>
-       //         <br />
-       //         <p align=justify>We refer to our various discussions on the above subject and are pleased to inform you that the Management of First City Monument Bank Plc has approved the issuance of Bank Guarantee(BG) on behalf of your Company under the following terms and conditions:</p>
-       //         <br>
-       //         <p>Issuer:  {isInitialize.companyName}</p>
-       //         <p>Applicant:  {isInitialize.customerName}</p>
-       //         <p>Beneficiary:  {isInitialize.customerName}</p>
-       //         <p>Type:  {isInitialize.loanType}</p>
-       //         <p>Amount:  {isInitialize.customerName}</p>
-       //         <p>Purpose:  {isInitialize.purpose}</p>
-       //         <p>Tenor:  {isInitialize.tenor}</p>
-       //         <p>Pricing:  {isInitialize.pricing}</p>
-       //         <p>Security:  <ol type=1>
-       //         <li>In line with approval and customer’s tier</li>
-       //         <li>Personal guarantee of the MD of XXXXXXXX supported with a statement of net worth</li>
-       //         <li>Counter Indemnity of XXXXXXXXXXXXXX in favour of FCMB Plc for the full value of the Guarantee.</li>
-       //         <li>Inchoate Legal Mortgage (where applicable)</li>
-       //         <li>Executed Letter of Set Off for the facility sum (where applicable)</li>
-       //         </ol></p>
-       //         <br>
-       //         <p><strong>Communication/Notification</strong></p>    
-       //         <ol type=a>
-       //         <li>Any communication to be made in connection with the facility shall be made in writing either by a letter delivered to the Applicant at its registered address, e-mail or by text message unless otherwise stated. </li>
-       //         <li>Any communication or document including notification of changes to the terms of this facility made or delivered to the Applicant in accordance with (a) above will be deemed to have been made and delivered to the applicant  </li>
-       //         <li>The bank’s lending rates are also published on the Bank’s website <a href=(www.firstcitygroup.com)></a> </li>
-       //         </ol>
-                
-       //         <br>
-       //         <p><strong>Conditions Precedent to Release</strong></p>    
-       //         <ol type=1>
-       //         <li>Receipt of the Company’s request letter. </li>
-       //         <li>Receipt and satisfactory review by the bank of: a)	Contract document for Payment Guarantee and Bank Guarantee </li>
-       //         <li>Lien on investment or any other security provided (where applicable). This must be  backed by the Cash Security Confirmation Form duly completed by the BHOP</li>
-       //         <li>Receipt of bond fee(in line with approval)</li>
-       //         </ol>
-                
-       //         <br>
-       //         <p><strong>Conditions Precedent to Release</strong></p>    
-       //         <ol type=1>
-       //         <li>Receipt of duly accepted Offer Letter signed by the authorized signatories of the Company accepting the Offer</li>
-       //         <li>Receipt of duly executed Board Resolution accepting the facility (where applicable). </li>
-       //         <li>Receipt of executed Personal Guarantee of the Company’s MD/CEO supported with statement of net worth.</li>
-       //         <li>Execution of all documents required for Inchoate Legal Mortgage (where applicable)</li>
-       //         <li>Receipt of Certificate of Pledge/Letter of Set Off for the full facility amount (where applicable) </li>
-       //         <li>Undated Acceptance letter and executed stepping-in right (where applicable) </li>
-       //         <li>Receipt of Form CO2 and CO7</li>
-       //         <li>Receipt of executed Guarantee Application form</li>
-       //         <li>Satisfactory credit checks. CRC,CRMS & XDS</li>
-       //         <li>Receipt of Duly Completed Loan Application Form (LAF)</li>
-       //         </ol>
-
-       //         <br>
-       //         <p><strong>Other conditions or covenants</strong></p>    
-       //         <ol type=1>
-       //         <li>All out-of-pocket expenses including registration, legal fees stamp duties and other fees and charges incurred by the Bank in the processing of this facility, enforcement of security and recovery of the facility in the event of default will be for the account of the Company.</li>
-       //         <li>The text of the performance bond must be acceptable to the bank and must not be open ended.</li>
-       //         <li>The Company shall submit periodic Certificate of Valuation to the Bank as shall be issued from time to time.</li>
-       //         <li>All proceeds from the contract shall be routed through the account of the Company with the bank.</li>
-       //         <li>In line with Clause 5.3 of the Guideline for the Licensing, Operations and Regulation of Credit Bureaus and Credit bureaus Related Transactions in Nigeria by Central Bank of Nigeria, the Bank hereby gives Notice to the Borrower of its duty to share information on the Borrower’s credit status and business history as may be required from time to time by Regulators</li>
-       //         <li>In the event that the bond crystallizes, the Bank will activate an overdraft back up line for the applicant, charge interest and a management fee, and the applicant would be liable to repay. Where any portion of principal and/or interest/fees thereon remains unpaid upon the expiration of these facilities, this offer/acceptance letter with all its attendant terms and conditions shall continue to be in force until full payout of the entire facility. However, this shall neither be deemed as regularization of any default that has occurred nor a waiver of the bank’s right to recall the facilities.</li>
-       //         </ol>
-       //         <br>
-       //         <p align=justify>The Bank reserves the right to review the facility from time to time in the light of changing market conditions and also to terminate this banking facility based on any adverse information threatening the basis of this relationship or putting the facility at the risk of loss and where the company is in breach of any of the terms and conditions of this facility.</p>
-       //         <p align=justify>The terms and conditions of this banking facility are subject to the Laws of the Federal Republic of Nigeria as prescribed from time to time.</p>
-       //         <p>We are pleased to have been able to arrange this facility for your company and hold same available for your acceptance until {today} after which it expires at the option of the Bank.</p>
-       //         <p>Kindly indicate your acceptance of the offer by appending your signature and affixing your Company seal on the attached copy of this offer letter.</p>
-       //         <p>Thank you.</p>
-       //         <br>
-       //         <p>Yours Faithfully, </p>
-       //         <p><strong>For:  FIRST CITY MONUMENT BANK PLC</strong></p>
-       //         <br><br>
-       //         <p></p>
-       //         <p><strong>XXXXXXX</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>XXXXXXX</strong></p>
-       //         <p><strong>ACCOUNT OFFICER</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>BRANCH MANAGER</strong></p>
-       //         <p align=center>Accepted for and on behalf of</p>
-       //         <p align=center>XXXXX</p>
-       //         <p align=center><strong>Accepted by and on behalf of</strong></p>
-       //         <p align=center><strong>(CUSTOMER NAME)</strong></p>
-            
-       //         <p><strong>……………………………….</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>……………………………….</strong></p>
-       //         <p><strong>Authorised Signatory</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Authorised Signatory</strong></p>
-                
-       //         <p><strong>Title:……………………………….</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Title:……………………………….</strong></p>
-                
-       //         <p><strong>Name:……………………………….</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Name:……………………………….</strong></p>
-                
-       //         <p><strong>Date:……………………………….</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>Date:……………………………….</strong></p>
-                
-       //         <p><strong>Company’s E-mail:……………………………….</strong></p>
-                
-       //         <p><strong>Company’s Telephone number……………………………….</strong></p>";
-                        
-       //     return result;
-       // }
-
-        
-
-
-        
-
-        
-
-       
+  
 
     }
 }

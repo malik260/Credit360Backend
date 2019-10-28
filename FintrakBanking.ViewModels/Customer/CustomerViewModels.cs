@@ -6,6 +6,8 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerViewModels : GeneralEntity
     {
+        public string customerRating { get; set; }
+
         public string branchCode { get; set; }
         public string rcNumber { get; set; }
         public string customerAccountNo { get; set; }
@@ -284,7 +286,7 @@ namespace FintrakBanking.ViewModels.Customer
     {
 
         public string customerType { get; set; }
-        public string request_Id { get; set; }
+        public string requestId { get; set; }
         public ApiCustomerBusinessDetailsViewModel corporateCustomerInformation { get; set; }
         public ApiIndividualCustomerDetails individualCustomerInformation { get; set; }
         public List<ApiAddressesViewModel> customerAddresses { get; set; }
@@ -602,7 +604,8 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class CflLoanApplication : GeneralEntity
     {
-        public string requestId { get; set; }
+        public string requestId { get; set; } 
+        public string callStatusCode { get; set; }
         public string applicationDate { get; set; }
 
         public string accountOfficerStaffCode { get; set; }
@@ -631,7 +634,7 @@ namespace FintrakBanking.ViewModels.Customer
 
         public string sectorCode { get; set; }
 
-        public string subSector { get; set; }
+        public string subSectorCode { get; set; }
 
         public string exchangeRate { get; set; }
 
@@ -653,7 +656,8 @@ namespace FintrakBanking.ViewModels.Customer
     {
         public string StatusCode { get; set; }   
         public string Message { get; set; }
-
+        public string requestId { get; set; }
+    	public string applicationReferenceNumber { get; set; }
     }
 
 }

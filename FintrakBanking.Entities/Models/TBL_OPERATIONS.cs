@@ -39,6 +39,7 @@ namespace FintrakBanking.Entities.Models
 
         public short OPERATIONTYPEID { get; set; }
 
+        public short? PRODUCTTYPEID { get; set; }
         public bool TERMINATEIFDISAPPROVED { get; set; }
 
         [StringLength(300)]

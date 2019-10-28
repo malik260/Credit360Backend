@@ -90,7 +90,7 @@ namespace FintrakBanking.Interfaces.Finance
         bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model);
 
         string GetCustomerAccountType(string accountNumber);
-        FinanceTransactionViewModel PostEarnUnEarnedFeeOperationEntries(DailyInterestAccrualViewModel model, decimal postedAmount, string description, int operationId);
+        FinanceTransactionViewModel PostEarnUnEarnedFeeOperationEntries(DailyInterestAccrualViewModel model, decimal postedAmount, string description, int operationId, int loanSystemTypeId);
 
 
 

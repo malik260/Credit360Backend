@@ -155,9 +155,8 @@ namespace FintrakBanking.Repositories.Credit
         public void LoadCustomerRatios(int applicationId, List<int> customerIds, int staffId) 
         {
             bool isGroup = false;
-            var apiTransactions = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
             var apiCustomerRatio = new List<RatingAndRatioViewModel>();
-            var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
+            var apiTransactionsOthers = new List<RatingAndRatioViewModel>();
             var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
             if(application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
             var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
@@ -192,11 +191,9 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
-        public void GetCorporateCustomerRating(List<int> customerIds, int staffId)
+        public void GetCorporateCustomerRating(int applicationId, List<int> customerIds, int staffId)
         {
-            var apiTransactions = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
-            var apiCustomerRatio = new List<RatingAndRatioViewModel>();
-            var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.RatingAndRatioViewModel>();
+            var apiCustomerRating = new CutomerRatingViewModel();
 
             var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
 
@@ -204,19 +201,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (customer.ISPROSPECT == false)
                 {
-                    apiCustomerRatio = integration.GetCustomerRatioByCustomerCode(customer.CUSTOMERCODE);
-                    foreach (var item in apiCustomerRatio)
-                    {
-                        context.TBL_CUSTOMER_RATIOS.Add(new TBL_CUSTOMER_RATIOS
-                        {
-                            DESCRIPTION = item.indicatorname,
-                            VALUE = item.indicatorvalue,
-                            CUSTOMERID = item.customerId,
-                            DATETIMECREATED = DateTime.Now,
-                            CREATEDBY = staffId,
-                            DELETED = false,
-                        });
-                    }
+                    apiCustomerRating = integration.GetCorporateCustomerRatingByCustomerCode(customer.CUSTOMERCODE);
+                    customer.CUSTOMERRATING = apiCustomerRating.companYRating;
                 }
             }
 

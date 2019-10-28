@@ -18,7 +18,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string businessOwner { get; set; }
         public string senderName { get; set; }
         public string senderEmail { get; set; }
-        public int templateType { get; set; }
+        public string templateType { get; set; }
     }
     public class AlertSetupViewModel : GeneralEntity
     {

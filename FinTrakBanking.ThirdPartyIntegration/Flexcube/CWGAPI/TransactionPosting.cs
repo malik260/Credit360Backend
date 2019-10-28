@@ -24,14 +24,14 @@
 
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
-            private List<TBL_API_URL> APIUrlConfig;
+            private IEnumerable<TBL_API_URL> APIUrlConfig;
             //  private IIntegrationWithFinacle finacle;
 
             public TransactionPosting(FinTrakBankingContext _context)
             {
                 this.context = _context;
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
-                APIUrlConfig = context.TBL_API_URL.ToList();
+                APIUrlConfig = context.TBL_API_URL;
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
             }
@@ -41,13 +41,13 @@
                 if(apiConfig != null)
                 {
                     API_URL = apiConfig.URL;
-                    API_KEY = apiConfig.KEY;
+                    API_KEY = apiConfig.APIKEY;
                 }
                 if (apiConfig == null)
                 {
                     apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
                     API_URL = apiConfig.URL;
-                    API_KEY = apiConfig.KEY;
+                    API_KEY = apiConfig.APIKEY;
                 }
             }
 

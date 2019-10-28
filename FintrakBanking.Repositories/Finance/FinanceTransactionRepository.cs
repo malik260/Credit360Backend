@@ -3256,7 +3256,7 @@ namespace FintrakBanking.Repositories.Finance
         }
 
 
-        public FinanceTransactionViewModel PostEarnUnEarnedFeeOperationEntries(DailyInterestAccrualViewModel model, decimal postedAmount, string description, int operationId)
+        public FinanceTransactionViewModel PostEarnUnEarnedFeeOperationEntries(DailyInterestAccrualViewModel model, decimal postedAmount, string description, int operationId, int loanSystemTypeId)
         {
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
 
@@ -3270,7 +3270,12 @@ namespace FintrakBanking.Repositories.Finance
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+
+
+
             var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId && x.COMPANYID == model.companyId);
+
+
 
             if (postedAmount > 0)
             {

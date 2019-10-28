@@ -1340,20 +1340,24 @@ namespace FintrakBanking.Repositories.Credit
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
-                        creditCommon.LoadCustomerRatios(
-                               applicationId,
-                               loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                               staffId
-                           );
-
-
+                      
                         creditCommon.LoadCustomerTurnover(
                                 applicationId,
                                 loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                                 staffId
                             );
 
-                        
+                        creditCommon.LoadCustomerRatios(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                         );
+
+                        creditCommon.GetCorporateCustomerRating(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                         );
                         //if (casa != null)
                         //{
                         //    creditCommon.LoadCustomerTurnover(
@@ -1654,8 +1658,8 @@ namespace FintrakBanking.Repositories.Credit
             //using (var trans = context.Database.BeginTransaction())
             //{
                 ValidateLoanApplicationLimits(loan);
-                var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
-                var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
+                var additionalAmount = loan.LoanApplicationDetail.Where(x=>x.deleted == false).Sum(x => x.exchangeAmount);
+                var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED==false).ToList();
 
                 decimal cumulativeSum = 0;
                 foreach (var s in savedDetails) { cumulativeSum = cumulativeSum + (s.PROPOSEDAMOUNT * (decimal)s.EXCHANGERATE); }
@@ -1670,7 +1674,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) {  return loan; }
 
-                loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber);
+                loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber && l.DELETED == false);
 
                 if (loan.productClassId == (short)ProductClassEnum.Creditcards)
                 {
@@ -1751,7 +1755,7 @@ namespace FintrakBanking.Repositories.Credit
             return null;
         }
 
-        public RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
+        public RacReturnInfoViewModel SaveRac(RacInformationViewModel rac, int? operationId, int productId, int? productClassId, int targetId, int staffId, int applicationId)
         {
             List<TBL_RAC_DEFINITION> definitions = new List<TBL_RAC_DEFINITION>();
             var msg = new RacReturnInfoViewModel();
@@ -1777,9 +1781,11 @@ namespace FintrakBanking.Repositories.Credit
                     defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && ids.Contains(x.RACDEFINITIONID)
                                 ).Select(x => x).FirstOrDefault();
                 }
-                
+
+                var racCategoryIds = definitions.Select(x => x.RACCATEGORYID);
+
                 racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                    && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYID == definitions.FirstOrDefault().RACCATEGORYID
+                    && x.ISRACTIERCONTROLKEY == true && racCategoryIds.Contains(x.RACCATEGORYID)
                 ).ToList();
 
             }
@@ -1795,13 +1801,13 @@ namespace FintrakBanking.Repositories.Credit
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 if (submission == null) continue;
 
-                bool validation = validation = ValidRacSubmission(i == 0 && isRacRelated ? defaultTier : definition, submission.value, operationId, targetId); 
+                bool validation = validation = ValidRacSubmission(i == 0 && isRacRelated ? defaultTier : definition, submission.value, operationId ?? 0, targetId); 
 
                 if (validation == false && ctr == 0)
                 {
                     if(racTiers.Count() <= 0)
                     {
-                        saveRacoptions(definitions, rac, operationId, targetId, staffId);
+                        saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
                         msg.loanApplicationDetailId = targetId;
                         msg.loanApplicationId = applicationId;
                         return msg;
@@ -1817,7 +1823,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (racTiers.Count() > 0 && ctr > 0)
                     {
-                        saveRacoptions(definitions, rac, operationId, targetId, staffId);
+                        saveRacoptions(definitions, rac, operationId ?? 0, targetId, staffId);
                         msg.loanApplicationDetailId = targetId;
                         msg.loanApplicationId = applicationId;
                         return msg;
@@ -1831,7 +1837,7 @@ namespace FintrakBanking.Repositories.Credit
                     details.Add(new TBL_RAC_DETAIL
                     {
                         RACDEFINITIONID = definition.RACDEFINITIONID,
-                        OPERATIONID = operationId,
+                        OPERATIONID = operationId ?? 0,
                         TARGETID = targetId,
                         ACTUALVALUE = submission.value,
                         CREATEDBY = staffId,
@@ -2521,11 +2527,11 @@ namespace FintrakBanking.Repositories.Credit
                 //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
             };
 
-            var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
-                    && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
-                    && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED != true);
+            //var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
+            //        && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
+            //        && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED != true);
 
-            if (loanExist == true) throw new SecureException("This loan application has already been saved!");
+            //if (loanExist == true) throw new SecureException("This loan application has already been saved!");
 
             context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
 
@@ -2576,7 +2582,7 @@ namespace FintrakBanking.Repositories.Credit
             if (response > 0)
             {
 
-                var recResponse = SaveRac(loan.rac, (int)loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId , data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
+                var recResponse = SaveRac(loan.rac, loan.rac?.operationId, (int)loan.rac.productId, loan.rac.productClassId , data.LOANAPPLICATIONDETAILID, loan.createdBy, data.LOANAPPLICATIONID);
                 if (recResponse != null) return recResponse;
             } // todo 99999
 
@@ -3414,6 +3420,11 @@ namespace FintrakBanking.Repositories.Credit
                                     // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                     isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.APPLICATIONREFERENCENUMBER).Any()
                                 }).ToList();
+
+            applications = applications.Where(x => x.applicationReferenceNumber != "-")
+                            .GroupBy(p => p.applicationReferenceNumber)
+                                .Select(g => g.First())
+                                    .ToList();
 
             return applications;
 
@@ -5375,6 +5386,7 @@ namespace FintrakBanking.Repositories.Credit
                                           destinationUrl = c.DESTINATIONURL,
                                           skipProcessFlowEnabled = c.ISSKIPPROCESSENABLED,
                                           operationId = c.OPERATIONID,
+                                          hasOperationBasedRac = c.HASOPERATIONBASEDRAC,
                                           dateTimeCreated = c.DATETIMECREATED,
                                           createdBy = c.CREATEDBY
                                       }).ToList();
@@ -5487,15 +5499,18 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteLoanApplicationThatFailedRAC(int loanApplicationDetailId, int deletedBy)
         {
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == loanApplicationDetailId).Select(o => o).FirstOrDefault();
-            //if (detail == null)
-            //{
-            //    return true;
-            //}
-            //context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
-            detail.DELETED = true;
-            detail.DATETIMEDELETED = genSetup.GetApplicationDate();
-            detail.DELETEDBY = deletedBy;
-
+            if (detail == null)
+            {
+                detail.DELETED = true;
+                detail.DATETIMEDELETED = genSetup.GetApplicationDate();
+                detail.DELETEDBY = deletedBy;
+                return true;
+            }
+            context.TBL_LOAN_APPLICATION_DETAIL.Remove(detail);
+            //detail.DELETED = true;
+            //detail.DATETIMEDELETED = genSetup.GetApplicationDate();
+            //detail.DELETEDBY = deletedBy;
+            //return true;
             return context.SaveChanges() > 0;
         }
 
@@ -5692,7 +5707,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationLienViewModel> GetLienByApplicationDetailId(int applicationDetailId)
         {
             return (from x in context.TBL_APPLICATIONDETAIL_LIEN
-                    where x.APPLICATIONDETAILID == applicationDetailId
+                    where x.APPLICATIONDETAILID == applicationDetailId && x.DELETED == false
                     select new LoanApplicationLienViewModel
                     {
                         applicationDetailLienId = x.APPLICATIONDETAILLIENID,
@@ -5707,7 +5722,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationLienViewModel> GetApplicationDetailLienByIsReleased(bool isReleased)
         {
             return (from x in context.TBL_APPLICATIONDETAIL_LIEN
-                    where x.ISRELEASED == isReleased
+                    where x.ISRELEASED == isReleased && x.DELETED == false
                     select new LoanApplicationLienViewModel
                     {
                         applicationDetailLienId = x.APPLICATIONDETAILLIENID,
@@ -5721,7 +5736,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationLienViewModel> GetApplicationDetailLienByAccountNo(string accountNo)
         {
             return (from x in context.TBL_APPLICATIONDETAIL_LIEN
-                    where x.ACCOUNTNO.Trim() == accountNo.Trim()
+                    where x.ACCOUNTNO.Trim() == accountNo.Trim() && x.DELETED == false
                     select new LoanApplicationLienViewModel
                     {
                         applicationDetailLienId = x.APPLICATIONDETAILLIENID,
@@ -5741,6 +5756,8 @@ namespace FintrakBanking.Repositories.Credit
                     ACCOUNTNO = model.accountNo,
                     ISRELEASED = false,
                     COLLATERALCUSTOMERID = model.collateralId,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = general.GetApplicationDate()
                 };
 
                 var id = context.TBL_APPLICATIONDETAIL_LIEN.Add(entity);
@@ -5749,6 +5766,7 @@ namespace FintrakBanking.Repositories.Credit
                 // Audit Section ---------------------------
                 this.audit.AddAuditTrail(new TBL_AUDIT
                 {
+                    //AUDITTYPEID = (short)AuditTypeEnum.LienProposed,
                     AUDITTYPEID = (short)AuditTypeEnum.LienPlaced,
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
@@ -5801,13 +5819,15 @@ namespace FintrakBanking.Repositories.Credit
         public bool DeleteLoanApplicationDetailLien(int id, UserInfo user)
         {
             var entity = this.context.TBL_APPLICATIONDETAIL_LIEN.Find(id);
+            entity.DELETED = true;
             entity.ISRELEASED = true;
-           
+
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LienReleased,
+                //AUDITTYPEID = (short)AuditTypeEnum.LienUnproposed,
                 STAFFID = user.createdBy,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"TBL_APPLICATIONDETAIL_LIEN '{entity.ToString()}' was deleted by {auditStaff}",

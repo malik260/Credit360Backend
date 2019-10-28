@@ -25,7 +25,7 @@
         {
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
-            private List<TBL_API_URL> APIUrlConfig;
+            private IEnumerable<TBL_API_URL> APIUrlConfig;
 
             //private static HttpClient httpClientInstance;
             //private HttpClientHandler handler = new HttpClientHandler();
@@ -34,7 +34,7 @@
             {
                 this.context = _context;
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
-                APIUrlConfig = context.TBL_API_URL.ToList();
+                APIUrlConfig = context.TBL_API_URL;
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
                 //staffRepo = _staffRepo;
@@ -46,7 +46,7 @@
                 if (apiConfig != null)
                 {
                     API_URL = apiConfig.URL;
-                    API_KEY = apiConfig.KEY;
+                    API_KEY = apiConfig.APIKEY;
                 }
                 if (apiConfig == null)
                 {
@@ -54,7 +54,7 @@
 
                     if (apiConfig != null) {
                         API_URL = apiConfig.URL;
-                        API_KEY = apiConfig.KEY;
+                        API_KEY = apiConfig.APIKEY;
                     }
                 }
             }
@@ -203,24 +203,24 @@
 
                             var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == accountOutput.product).FirstOrDefault();
 
-                            accountOutput.accountName = accountAPI.accountName;
-                            accountOutput.accountNo = accountAPI.accountNumber;
-                            accountOutput.availableBalance = accountAPI.balance;
+                            //accountOutput.accountName = accountAPI.accountName;
+                            //accountOutput.accountNo = accountAPI.accountNumber;
+                            //accountOutput.availableBalance = accountAPI.balance;
                             accountOutput.currencyId = currencyId;
                             accountOutput.accountStatusId = (CASAAccountStatusEnum)accountStatusId;
-                            accountOutput.customerCode = accountAPI.customerCode;
-                            accountOutput.product = accountAPI.product;
-                            accountOutput.currencyType = accountAPI.currencyType;
-                            accountOutput.accountStatus = accountAPI.accountStatus;
-                            accountOutput.freezeStatus = accountAPI.freezeStatus;
-                            accountOutput.freezeReason = accountAPI.freezeReason;
-                            accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
+                            //accountOutput.customerCode = accountAPI.customerCode;
+                            //accountOutput.product = accountAPI.product;
+                            //accountOutput.currencyType = accountAPI.currencyType;
+                            //accountOutput.accountStatus = accountAPI.accountStatus;
+                            //accountOutput.freezeStatus = accountAPI.freezeStatus;
+                            //accountOutput.freezeReason = accountAPI.freezeReason;
+                            //accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
                             accountOutput.hasBalance = true;
                             accountOutput.isCasaAccountDetailAvailable = true;
                             if(product != null)
                             {
-                                accountOutput.productType = accountAPI.productType;
-                                accountOutput.productName = accountAPI.productName;
+                                //accountOutput.productType = accountAPI.productType;
+                                //accountOutput.productName = accountAPI.productName;
                             }
 
 

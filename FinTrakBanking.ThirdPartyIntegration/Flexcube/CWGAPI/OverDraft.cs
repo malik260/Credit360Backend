@@ -20,14 +20,14 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
         {
             private FinTrakBankingContext _context;
             private string API_KEY, API_URL = string.Empty;
-            private List<TBL_API_URL> APIUrlConfig;
+            private IEnumerable<TBL_API_URL> APIUrlConfig;
 
             public OverDraft(FinTrakBankingContext context)
             {
                 _context = context;
 
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
-                APIUrlConfig = context.TBL_API_URL.ToList();
+                APIUrlConfig = context.TBL_API_URL;
                 if (configdata != null)
                 {
                     API_KEY = configdata.APIKEY;
@@ -41,13 +41,13 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 if (apiConfig != null)
                 {
                     API_URL = apiConfig.URL;
-                    API_KEY = apiConfig.KEY;
+                    API_KEY = apiConfig.APIKEY;
                 }
                 if (apiConfig == null)
                 {
                     apiConfig = APIUrlConfig.Where(x => x.TYPENAME.ToUpper() == "DEFAULT").FirstOrDefault();
                     API_URL = apiConfig.URL;
-                    API_KEY = apiConfig.KEY;
+                    API_KEY = apiConfig.APIKEY;
                 }
             }
 

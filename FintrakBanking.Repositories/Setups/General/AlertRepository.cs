@@ -1,11 +1,13 @@
 ﻿using FintrakBanking.Common;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.AlertReportingModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Notification;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
@@ -43,7 +45,48 @@ namespace FintrakBanking.Repositories.Setups.General
                               businessOwner = a.BUSINESSOWNER,
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
-                              templateTypeName = a.TEMPLATETYPE==1? "EMAIL":"SMS"
+                              templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS"
+                          });
+            return alerts;
+        }
+
+        public IEnumerable<ExternalAlertViewModel> GetAllExternalAlerts()
+        {
+            var alerts = (from a in context.EXTERNAL_ALERT
+                          select new ExternalAlertViewModel
+                          {
+                              id = a.id,
+                              accountName = a.AccountName,
+                              accountNumber = a.AccountNumber,
+                              accountStatus = a.AccountStatus,
+                              accountOfficerName = a.AccountOfficerName,
+                              accountType = a.AccountType,
+                              cbnClassification = a.CBNClassification,
+                              customerName = a.CustomerName,
+                              dormancyDays = a.DormancyDays,
+                              ifrsClassification = a.IFRSClassification,
+                              divisionName = a.DivisionName,
+                              groupHeadName = a.GroupHeadName,
+                              groupObligorName = a.GroupObligorName,
+                              date = a.Date,
+                              expiringBand = a.ExpiringBand,
+                              ageLastCreditDate = a.AgeLastCreditDate,
+                              bookingDate = a.BookingDate,
+                              npl = a.npl,
+                              originalAmountDisbursed = a.OriginalAmountDisbursed,
+                              totalExposureLcy = a.TotalExposureLCY,
+                              loanAmountLcy = a.LoanAmountLCY,
+                              lastCreditAmount = a.LastCreditAmount,
+                              principalBalance = a.PrincipalBalance,
+                              shareOfShf = a.ShareOfSHF,
+                              principalOutstandingBalanceFcy = a.PrincipalOutstandingBalanceFCY,
+                              unpoDaysOverdue = a.UNPODaysOverdue,
+                              averageBalance = a.AverageBalance,
+                              amountDue = a.AmountDue,
+                              totalUnpaidObligation = a.TotalUnpaidObligation,
+                              maturityDate = a.MaturityDate,
+                              scheduleDueDate = a.ScheduleDueDate,
+                             // divisionId = a.DIVISIONID 
                           });
             return alerts;
         }
@@ -60,7 +103,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               businessOwner = a.BUSINESSOWNER,
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
-                              templateTypeName = a.TEMPLATETYPE == 1 ? "EMAIL" : "SMS"
+                              templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS"
                           });
             return alerts;
         }
@@ -77,7 +120,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              businessOwner = a.BUSINESSOWNER,
                              senderEmail = a.SENDEREMAIL,
                              senderName = a.SENDERNAME,
-                             templateTypeName = a.TEMPLATETYPE == 1 ? "EMAIL" : "SMS"
+                             templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS"
                          }).FirstOrDefault();
             return alert;
         }

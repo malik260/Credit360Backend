@@ -39,7 +39,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isLMSChecklist { get; set; }
         public int checklistDifinitionId { get; set; }
         public int? operationId { get; set; }
-        public bool isCheckListSpecific { get; set; }
+        public bool? isCheckListSpecific { get; set; }
         public string comment { get; set; }
     }
 

@@ -63,7 +63,7 @@ namespace FintrakBanking.Repositories.credit
                                     from u in usance.DefaultIfEmpty()
                                     join ut in context.TBL_APPROVAL_TRAIL on u.LCUSSANCEID equals ut.TARGETID into ustr
                                     from usstrail in ustr.DefaultIfEmpty()
-                                    where 
+                                    where
                                     //y.RESPONSESTAFFID == null
                                     (
                                      (y.OPERATIONID == (int)OperationsEnum.lcIssuance
