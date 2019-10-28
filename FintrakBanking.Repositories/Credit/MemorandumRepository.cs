@@ -600,13 +600,17 @@ namespace FintrakBanking.Repositories.Credit
             if (operationId == (int)OperationsEnum.CreditAppraisal)
             {
                 var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId && x.DELETED == false).ToList();
-                var conditions = this.conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == details.FirstOrDefault()?.LOANAPPLICATIONDETAILID);
+                var conditions = new List<ConditionPrecedentViewModel>();
+                foreach (var f in details)
+                {
+                    conditions.AddRange(conditionsRepo.GetAllConditionPrecedent().Where(x => x.loanApplicationDetailId == f.LOANAPPLICATIONDETAILID));
+                }
                 foreach (var d in conditions)
                 {
                     if (d.condition != null)
                     {
                         var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == d.loanApplicationDetailId).FirstOrDefault();
-                        result.Add(new DropDownSelect { typeId = (int)d.loanApplicationDetailId, id = d.conditionId, name = d.condition, title = detail.TBL_PRODUCT1.PRODUCTNAME });
+                        result.Add(new DropDownSelect { typeId = d.loanApplicationDetailId, id = d.conditionId, name = d.condition, title = detail.TBL_PRODUCT1.PRODUCTNAME });
                     }
                 }
             }
@@ -1100,19 +1104,19 @@ namespace FintrakBanking.Repositories.Credit
             var conditions = GetConditionsPrecedentToDrawdown().GroupBy(c => c.typeId); // new
 
             var result = String.Empty;
-            var n = 0;
-            result = result + $@"
+            foreach (var g in conditions)
+            {
+                var n = 0;
+                var c = g.FirstOrDefault();
+                result += c.title;
+                result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
                     </tr>
                  ";
-            foreach (var g in conditions)
-            {
-                var c = g.FirstOrDefault();
-                result += c.title;
-                foreach(var e in g)
+                foreach (var e in g)
                 {
                     n++;
                     result = result + $@"
@@ -1122,9 +1126,8 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                     ";
                 }
-                
+                result = result + $"</table>";
             }
-            result = result + $"</table>";
             return result;
 
         }

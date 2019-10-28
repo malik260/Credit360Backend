@@ -1773,14 +1773,14 @@ namespace FintrakBanking.Repositories.Credit
             List<TBL_RAC_DEFINITION> racTiers = new List<TBL_RAC_DEFINITION>();
             if (isRacRelated == true)
             {
-                defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
+                defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false 
                  && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID) 
-             ).Select(x => x).FirstOrDefault();
+             ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).FirstOrDefault();
 
                 if(defaultTier == null)
                 {
                     defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && ids.Contains(x.RACDEFINITIONID)
-                                ).Select(x => x).FirstOrDefault();
+                                ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).FirstOrDefault();
                 }
                 defaultDefinition.Add(defaultTier);
                 var racCategoryIds = definitions.Select(x => x.RACCATEGORYID);

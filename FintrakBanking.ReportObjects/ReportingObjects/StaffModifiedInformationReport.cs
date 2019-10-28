@@ -58,12 +58,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                   //join d in context.TBL_TEMP_STAFF on c.TEMPSTAFFID equals d.TEMPSTAFFID
                                                                   join e in context.TBL_STAFF on a.CREATEDBY equals e.STAFFID
                                                                   
-
-
                                                                   where e.COMPANYID  == companyId && a.APPROVALSTATUSID == (short)(ApprovalStatusEnum.Approved)
-                                                                  && (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
-                                                                  && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
-
+                                                                  //&& (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
+                                                                  //&& DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                                                   
                                                                   orderby a.DATETIMECREATED descending
                                                                   select new UserGroupProfileViewModel()
                                                                   {

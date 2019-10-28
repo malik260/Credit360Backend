@@ -22,15 +22,13 @@ namespace FintrakBanking.Repositories.Setups.General
     {
         private FinTrakBankingContext context;
         private FinTrakBankingStagingContext context2;
-        private FinTrakBankingAlertContext alertContext;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
-                                FinTrakBankingStagingContext _context2, FinTrakBankingAlertContext _alertContext)
+                                FinTrakBankingStagingContext _context2)
         {
             this.context = _context;
             this.context2 = _context2;
-            this.alertContext = _alertContext;
             this.audit = _audit;
             this.general = _general;
         }
@@ -54,40 +52,40 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ExternalAlertViewModel> GetAllExternalAlerts()
         {
-            var alerts = (from a in alertContext.ALERT
+            var alerts = (from a in context.EXTERNAL_ALERT
                           select new ExternalAlertViewModel
                           {
-                              id = a.ID,
-                              accountName = a.ACCOUNTNAME,
-                              accountNumber = a.ACCOUNTNUMBER,
-                              accountStatus = a.ACCOUNTSTATUS,
-                              accountOfficerName = a.ACCOUNTOFFICERNAME,
-                              accountType = a.ACCOUNTTYPE,
-                              cbnClassification = a.CBNCLASSIFICATION,
-                              customerName = a.CUSTOMERNAME,
-                              dormancyDays = a.DORMANCYDAYS,
-                              ifrsClassification = a.IFRSCLASSIFICATION,
-                              divisionName = a.DIVISIONNAME,
-                              groupHeadName = a.GROUPHEADNAME,
-                              groupObligorName = a.GROUPOBLIGORNAME,
-                              date = a.DATE,
-                              expiringBand = a.EXPIRINGBAND,
-                              ageLastCreditDate = a.AGELASTCREDITDATE,
-                              bookingDate = a.BOOKINGDATE,
-                              npl = a.NPL,
-                              originalAmountDisbursed = a.ORIGINALAMOUNTDISBURSED,
-                              totalExposureLcy = a.TOTALEXPOSURELCY,
-                              loanAmountLcy = a.LOANAMOUNTLCY,
-                              lastCreditAmount = a.LASTCREDITAMOUNT,
-                              principalBalance = a.PRINCIPALBALANCE,
-                              shareOfShf = a.SHAREOFSHF,
-                              principalOutstandingBalanceFcy = a.PRINCIPALOUTSTANDINGBALANCEFCY,
-                              unpoDaysOverdue = a.UNPODAYSOVERDUE,
-                              averageBalance = a.AVERAGEBALANCE,
-                              amountDue = a.AMOUNTDUE,
-                              totalUnpaidObligation = a.TOTALUNPAIDOBLIGATION,
-                              maturityDate = a.MATURITYDATE,
-                              scheduleDueDate = a.SCHEDULEDUEDATE,
+                              id = a.id,
+                              accountName = a.AccountName,
+                              accountNumber = a.AccountNumber,
+                              accountStatus = a.AccountStatus,
+                              accountOfficerName = a.AccountOfficerName,
+                              accountType = a.AccountType,
+                              cbnClassification = a.CBNClassification,
+                              customerName = a.CustomerName,
+                              dormancyDays = a.DormancyDays,
+                              ifrsClassification = a.IFRSClassification,
+                              divisionName = a.DivisionName,
+                              groupHeadName = a.GroupHeadName,
+                              groupObligorName = a.GroupObligorName,
+                              date = a.Date,
+                              expiringBand = a.ExpiringBand,
+                              ageLastCreditDate = a.AgeLastCreditDate,
+                              bookingDate = a.BookingDate,
+                              npl = a.npl,
+                              originalAmountDisbursed = a.OriginalAmountDisbursed,
+                              totalExposureLcy = a.TotalExposureLCY,
+                              loanAmountLcy = a.LoanAmountLCY,
+                              lastCreditAmount = a.LastCreditAmount,
+                              principalBalance = a.PrincipalBalance,
+                              shareOfShf = a.ShareOfSHF,
+                              principalOutstandingBalanceFcy = a.PrincipalOutstandingBalanceFCY,
+                              unpoDaysOverdue = a.UNPODaysOverdue,
+                              averageBalance = a.AverageBalance,
+                              amountDue = a.AmountDue,
+                              totalUnpaidObligation = a.TotalUnpaidObligation,
+                              maturityDate = a.MaturityDate,
+                              scheduleDueDate = a.ScheduleDueDate,
                              // divisionId = a.DIVISIONID 
                           });
             return alerts;
