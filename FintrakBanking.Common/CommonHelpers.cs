@@ -556,9 +556,7 @@ namespace FintrakBanking.Common
         internal static string GetIPAddress(HttpRequestBase request)
         {
             if (request.Headers["CF-CONNECTING-IP"] != null) return request.Headers["CF-CONNECTING-IP"].ToString();
-
             if (request.ServerVariables["HTTP_X_FORWARDED_FOR"] != null) return request.ServerVariables["HTTP_X_FORWARDED_FOR"].ToString();
-
             return request.UserHostAddress;
         }
     
@@ -585,17 +583,8 @@ namespace FintrakBanking.Common
             var uaParser = Parser.GetDefault();
             ClientInfo c = uaParser.Parse(userAgent);
             var fullOs = c.OS.Family + " " + version + " " + servicePack;
-            //return c.OS.Family;
             return fullOs;
 
-            //string ProductName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
-            //string CSDVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CSDVersion");
-            //if (ProductName != "")
-            //{
-            //    return (ProductName.StartsWith("Microsoft") ? "" : "Microsoft ") + ProductName +
-            //                (CSDVersion != "" ? " " + CSDVersion : "");
-            //}
-            //return "";
         }
 
         public static string GetDeviceName()
@@ -604,19 +593,6 @@ namespace FintrakBanking.Common
             var uaParser = Parser.GetDefault();
             ClientInfo c = uaParser.Parse(userAgent);
             return c.Device.Family;
-            //try
-            //  {
-            //   foreach (ManagementObject queryObj in baseboardSearcher.Get())
-            //   {
-            //       return queryObj["Manufacturer"].ToString();
-            //   }
-            //   return "";
-            // }
-
-            //       catch (Exception e)
-            //       {
-            //           return "";
-            //       }
 
         }
 
