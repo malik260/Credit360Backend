@@ -6816,8 +6816,35 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
+        
+        public int GetDrawdownOperationId(int applicationDetailId)
+        {
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(applicationDetailId);
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId)
+            var requestedProduct = context.TBL_PRODUCT.Find(loanApplicationDetails.APPROVEDPRODUCTID);
+
+            var operationId = 0;
+            if (requestedProduct.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
+            {
+                operationId = (short)OperationsEnum.CreditCardDrawdownRequest;
+            }
+            else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
+            {
+                if (requestedProduct.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                {
+                    operationId = (short)OperationsEnum.CorporateDrawdownRequest;
+                }
+                operationId = (short)OperationsEnum.IndividualDrawdownRequest;
+            }
+            else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
+            {
+                operationId = (short)OperationsEnum.CorporateDrawdownRequest;
+            }
+
+            return operationId;
+        }
+
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId) 
         {
             //var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
             var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).ToList();
@@ -6834,7 +6861,7 @@ namespace FintrakBanking.Repositories.Credit
                 var lcapprovedLCIFFsRecords = lcapprovedLCIFFs.Where(i => i.FUNDSOURCEDETAILS == item.loanApplicationId);
                 var lcApprovedAmounts = lcapprovedLCIFFsRecords.Count() > 0 ? lcapprovedLCIFFsRecords?.Sum(i => i.LETTEROFCREDITAMOUNT) : 0;
                 var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-
+                item.operationId = GetDrawdownOperationId(item.loanApplicationDetailId);
                 if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
                 { item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED); }
 
