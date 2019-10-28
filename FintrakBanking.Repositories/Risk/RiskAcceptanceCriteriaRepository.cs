@@ -108,7 +108,7 @@ namespace FintrakBanking.Repositories.Risk
 
             }
 
-            if (model.isOperationbased)
+            if (model.isOperationbased || model.searchBasePlaceholder != "CREDITCARD")
             {
                 var racDefinitionOperation = context.TBL_RAC_DEFINITION.Where(x => x.OPERATIONID == model.operationId
                                                                                      && x.SEARCHPLACEHOLDER == "OPERATION"
@@ -118,7 +118,7 @@ namespace FintrakBanking.Repositories.Risk
                 racDefinition.AddRange(racDefinitionOperation);
             }
 
-            if (model.searchBasePlaceholder == "CREDITCARD")
+            if (model.searchBasePlaceholder == "CREDITCARD" && !model.isOperationbased)
             {
                 var localCurrencyId = context.TBL_COMPANY.FirstOrDefault()?.CURRENCYID ?? 0;
                 racDefinition = context.TBL_RAC_DEFINITION.Where(x => x.CURRENCYTYPE == model.currencyType

@@ -1781,9 +1781,11 @@ namespace FintrakBanking.Repositories.Credit
                     defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && ids.Contains(x.RACDEFINITIONID)
                                 ).Select(x => x).FirstOrDefault();
                 }
-                
+
+                var racCategoryIds = definitions.Select(x => x.RACCATEGORYID);
+
                 racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                    && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYID == definitions.FirstOrDefault().RACCATEGORYID
+                    && x.ISRACTIERCONTROLKEY == true && racCategoryIds.Contains(x.RACCATEGORYID)
                 ).ToList();
 
             }
@@ -3418,6 +3420,11 @@ namespace FintrakBanking.Repositories.Credit
                                     // accountNumber = ca.PRODUCTACCOUNTNUMBER,
                                     isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.APPLICATIONREFERENCENUMBER).Any()
                                 }).ToList();
+
+            applications = applications.Where(x => x.applicationReferenceNumber != "-")
+                            .GroupBy(p => p.applicationReferenceNumber)
+                                .Select(g => g.First())
+                                    .ToList();
 
             return applications;
 
