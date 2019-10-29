@@ -296,9 +296,6 @@
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="XLeratorDLL-financial">
-      <HintPath>C:\Users\Ifeanyi\Desktop\XLeratorDLL-financial.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNet.Identity.Core">
@@ -467,6 +464,11 @@
     <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx.designer.cs">
       <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\DeferralWaiver.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DeferralWaiver.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\DRAWDOWN.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -488,6 +490,11 @@
     </Compile>
     <Compile Include="Reports\ReportDataset\PSR.designer.cs">
       <DependentUpon>PSR.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportDataset\PSR1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PSR.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\ReportDataSet1.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -661,6 +668,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\DailyAccrualReport.aspx.designer.cs">
       <DependentUpon>DailyAccrualReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DeferralWaiver.aspx.cs">
+      <DependentUpon>DeferralWaiver.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\DeferralWaiver.aspx.designer.cs">
+      <DependentUpon>DeferralWaiver.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\DisbursalCreditTurnover.aspx.cs">
       <DependentUpon>DisbursalCreditTurnover.aspx</DependentUpon>
@@ -1253,6 +1267,7 @@
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
+    <Content Include="Reports\ReportViews\DeferralWaiver.aspx" />
     <Content Include="Reports\ReportViews\DisbursalCreditTurnover.aspx" />
     <Content Include="Reports\ReportViews\DrawdownMemo.aspx" />
     <Content Include="Reports\ReportViews\ExcessReport.aspx" />
@@ -1380,6 +1395,17 @@
     <Content Include="Reports\ReportDataset\DRAWDOWN.xsc">
       <DependentUpon>DRAWDOWN.xsd</DependentUpon>
     </Content>
+    <Content Include="Reports\ReportDataset\DeferralWaiver.xsc">
+      <DependentUpon>DeferralWaiver.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\DeferralWaiver.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DeferralWaiver.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\DeferralWaiver.xss">
+      <DependentUpon>DeferralWaiver.xsd</DependentUpon>
+    </Content>
     <None Include="Reports\ReportDataset\DRAWDOWN.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>DRAWDOWN.Designer.cs</LastGenOutput>
@@ -1434,6 +1460,7 @@
     </Content>
     <Content Include="Reports\ReportDataset\PSR.xsc">
       <DependentUpon>PSR.xsd</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="Reports\ReportDataset\PSR.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1591,6 +1618,7 @@
     <EmbeddedResource Include="Reports\Report\CreditScheduleReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\DeferralWaiver.rdlc" />
     <EmbeddedResource Include="Reports\Report\DisbursalCreditTurnover.rdlc" />
     <EmbeddedResource Include="Reports\Report\DrawdownMemo.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />

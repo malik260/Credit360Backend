@@ -2722,6 +2722,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-deferralwaiver-memo-pdf/{operationId}/{targetId}")]
+        public HttpResponseMessage GetDeferralWaiverMemoPdf([FromUri] int operationId, [FromUri] int targetId)
+        {
+            try
+            {
+                var response = repo.DeferralWaiverReport(token.GetStaffId, operationId, targetId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }
 
