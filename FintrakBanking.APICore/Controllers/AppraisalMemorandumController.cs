@@ -166,7 +166,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 WorkflowResponse response = repo.LcAppraisalMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The LC ISSUANCE request has been acted on successfully" : "The LC ISSUANCE request has been APPROVED successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved)? "The LC ISSUANCE request has been APPROVED successfully" : "The LC ISSUANCE request has been REJECTED successfully") : "The LC ISSUANCE request has been acted on successfully" });
             }
             catch (SecureException ex)
             {
