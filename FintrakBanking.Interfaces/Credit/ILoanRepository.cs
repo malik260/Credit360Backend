@@ -150,8 +150,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTriggers(int loanId, int loanSystemTypeId);
         bool VerifyLegalContingentCode(string legalContingentCode, int loanApplicationDetailId);
 
-        List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
-        List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId);
+        List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int loanTypeId, int companyId);
+        List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int loanTypeId, int companyId);
 
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> GetLoanScheduleByLoanId(int loanId);
         IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, string param);

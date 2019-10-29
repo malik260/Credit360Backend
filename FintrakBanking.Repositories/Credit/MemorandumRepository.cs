@@ -1185,35 +1185,32 @@ namespace FintrakBanking.Repositories.Credit
         private string GetTransactionsDynamicsMarkup()
         {
             var transactions = GetTransactionsDynamics().GroupBy(t => t.typeId); // new
-
+            
             var result = String.Empty;
-            var n = 0;
-            result = result + $@"
+            foreach (var group in transactions)
+            {
+                var n = 0;
+                result = result + $@"
                 <table border=1 width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>TRANSACTIONS DYNAMICS</b></th>
                     </tr>
                  ";
-            foreach (var group in transactions)
-            {
-                n++;
-                var o = 0;
                 var c = group.FirstOrDefault();
                 result += c.title;
                 foreach (var t in group)
                 {
-                    o++;
+                    n++;
                     result = result + $@"
                         <tr>
-                            <td>{o}</td>
+                            <td>{n}</td>
                             <td>{t.name}</td>
                         </tr>
                 ";
                 }
-                
-            }
             result = result + $"</table>";
+            }
             return result;
         }
         
@@ -2766,7 +2763,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<CurrentCustomerExposure> GetCustomerExposure(List<CustomerExposure> customerIds, int companyId) // not used!
         {
-            return loanRepo.GetCurrentCustomerExposure(customerIds, companyId); // old maurer impl
+            return loanRepo.GetCurrentCustomerExposure(customerIds, loanApplication.LOANAPPLICATIONTYPEID, companyId); // old maurer impl
         }
 
         // html markup
