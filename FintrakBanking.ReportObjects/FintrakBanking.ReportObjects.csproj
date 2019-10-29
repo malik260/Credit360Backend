@@ -72,6 +72,7 @@
     <Compile Include="ReportHelper\RunningLoan.cs" />
     <Compile Include="ReportingObjects\Audit.cs" />
     <Compile Include="ReportingObjects\CompanyLogo.cs" />
+    <Compile Include="ReportingObjects\DEFERRALWAIVER.cs" />
     <Compile Include="ReportingObjects\DRAWDOWN.cs" />
     <Compile Include="ReportingObjects\FinanceRepotObject.cs" />
     <Compile Include="ReportCalls\ReportRoutes.cs" />
