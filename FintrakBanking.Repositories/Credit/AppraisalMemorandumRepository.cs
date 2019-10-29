@@ -1775,7 +1775,7 @@ namespace FintrakBanking.Repositories.Credit
                         conditionPrecedent = x.d.CONDITIONPRECIDENT,
                         conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
                         transactionDynamics = x.d.TRANSACTIONDYNAMICS,
-
+                        
                     })
                     .ToList();
 
@@ -2183,7 +2183,7 @@ namespace FintrakBanking.Repositories.Credit
                                             .Select(s => s.TBL_PRODUCT1.TBL_PRODUCT_CLASS.GLOBALSLA)
                                             .FirstOrDefault(),
                 currentApprovalLevelSlaInterval = x.b.TBL_APPROVAL_LEVEL1.SLAINTERVAL,
-                dateTimeCreated = x.a.DATETIMECREATED
+                dateTimeCreated = x.a.DATETIMECREATED,
             }).ToList();
 
             applications = query.AsQueryable()

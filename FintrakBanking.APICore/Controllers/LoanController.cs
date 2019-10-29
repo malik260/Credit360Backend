@@ -61,12 +61,12 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("current-exposure/customer")]
-        public HttpResponseMessage GetCurrentCustomerExposure([FromBody] List<CustomerExposure> customer)
+        [Route("current-exposure/customer/{loanTypeId}")]
+        public HttpResponseMessage GetCurrentCustomerExposure([FromBody] List<CustomerExposure> customer, int loanTypeId)
         {
             try
             {
-                var data = repo.GetCurrentCustomerExposure(customer, token.GetCompanyId);
+                var data = repo.GetCurrentCustomerExposure(customer, loanTypeId, token.GetCompanyId);
                 //if (!data.Any())
                 //{
                 //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -90,10 +90,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("current-camsol/customer")]
-        public HttpResponseMessage GetCurrentCamsolByCustomer([FromBody] List<CustomerExposure> customer)
+        [Route("current-camsol/customer/{loanTypeId}")]
+        public HttpResponseMessage GetCurrentCamsolByCustomer([FromBody] List<CustomerExposure> customer, int loanTypeId)
         {
-            var data = repo.GetCurrentCamsolByCustomer(customer, token.GetCompanyId);
+            var data = repo.GetCurrentCamsolByCustomer(customer, loanTypeId, token.GetCompanyId);
             //if (!data.Any())
             //{
             //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

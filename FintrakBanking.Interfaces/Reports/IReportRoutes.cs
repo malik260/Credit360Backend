@@ -12,6 +12,7 @@ namespace FintrakBanking.Interfaces.Reports
 {
     public interface IReportRoutes
     {
+        string DeferralWaiverReport(int staffId, int operationId, int targetId, int loanApplicationDetailId);
         string GetWorkflowSLA(int loanApplicationId, int companyId, int staffId);
         string GetLoanScheduleReport(int tearmLoanId, int companyId, int staffId);
         string GetSectorLimitMonitoringReport(int companyId, int staffId);
@@ -125,6 +126,7 @@ namespace FintrakBanking.Interfaces.Reports
         string IfrsClassificationReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetByIFRSClassificationReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetByVarianceReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
+        string RiskAssetCombinedReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetDistributionBySectorReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetMainReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);
         string RiskAssetTeamReport(DateTime runDate, string level, string misCode, string exposureType, string divisionName, string groupName, string branchName, string regionName);

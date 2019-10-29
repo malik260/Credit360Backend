@@ -29,7 +29,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     if (extension != null)
                     {
                         System.Reflection.FieldInfo fieldInfo = extension.GetType().GetField("m_isVisible", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-                        fieldInfo.SetValue(extension, false);
+                        fieldInfo.SetValue(extension, true);
                     }
 
                     RSR psr = new RSR();

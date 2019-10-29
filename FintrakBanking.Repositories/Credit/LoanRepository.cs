@@ -8560,9 +8560,29 @@ namespace FintrakBanking.Repositories.Credit
             return loans;
         }
 
-        public List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId)
+        public List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int loanTypeId, int companyId)
         {
             List<LoanCAMSOLViewModel> camsol = new List<LoanCAMSOLViewModel>();
+            if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
+            {
+                var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                           where a.CUSTOMERGROUPID == customer.FirstOrDefault().customerId && a.DELETED == false
+                                           select new CustomerGroupMappingViewModel
+                                           {
+                                               customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                               customerGroupId = a.CUSTOMERGROUPID,
+                                               relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                               relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                               customerId = a.CUSTOMERID,
+                                               customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                               customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                               customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                           }).ToList();
+                if (customerGroupMapping.Count() > 0)
+                {
+                    customer = customerGroupMapping.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                }
+            }
 
             foreach (var item in customer)
             {
@@ -8592,11 +8612,31 @@ namespace FintrakBanking.Repositories.Credit
             return camsol;
         }
 
-        public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId)
+        public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int loanTypeId, int companyId)
         {
             IEnumerable<CurrentCustomerExposure> exposure = null;
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
 
+            if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
+            {
+                var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                            where a.CUSTOMERGROUPID == customer.FirstOrDefault().customerId && a.DELETED == false
+                                            select new CustomerGroupMappingViewModel
+                                            {
+                                                customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                                customerGroupId = a.CUSTOMERGROUPID,
+                                                relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                                relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                                customerId = a.CUSTOMERID,
+                                                customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                                customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                                customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                            }).ToList();
+                if (customerGroupMapping.Count() > 0)
+                {
+                    customer = customerGroupMapping.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                }
+            }
 
             foreach (var item in customer)
             {
