@@ -15,6 +15,7 @@ using System.Net.Sockets;
 using System.Net;
 using Microsoft.Win32;
 using System.Management;
+using UAParser;
 
 namespace FintrakBanking.Common
 {
@@ -555,9 +556,7 @@ namespace FintrakBanking.Common
         internal static string GetIPAddress(HttpRequestBase request)
         {
             if (request.Headers["CF-CONNECTING-IP"] != null) return request.Headers["CF-CONNECTING-IP"].ToString();
-
             if (request.ServerVariables["HTTP_X_FORWARDED_FOR"] != null) return request.ServerVariables["HTTP_X_FORWARDED_FOR"].ToString();
-
             return request.UserHostAddress;
         }
     
@@ -575,43 +574,26 @@ namespace FintrakBanking.Common
 
         public static string FriendlyName()
         {
-            //string result = string.Empty;
-            //ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem");
-            //foreach (ManagementObject os in searcher.Get())
-            //{
-            //    result = os["Caption"].ToString();
-            //    break;
-            //}
-            //return result;
+            OperatingSystem os = Environment.OSVersion;
+            var platform = os.Platform.ToString();
+            var version = os.Version.ToString();
+            var servicePack = os.ServicePack.ToString();
+           
+            String userAgent = HttpContext.Current.Request.UserAgent;
+            var uaParser = Parser.GetDefault();
+            ClientInfo c = uaParser.Parse(userAgent);
+            var fullOs = c.OS.Family + " " + version + " " + servicePack;
+            return fullOs;
 
-            string ProductName = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName");
-            string CSDVersion = HKLM_GetString(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", "CSDVersion");
-            if (ProductName != "")
-            {
-                return (ProductName.StartsWith("Microsoft") ? "" : "Microsoft ") + ProductName +
-                            (CSDVersion != "" ? " " + CSDVersion : "");
-            }
-            return "";
         }
 
-       
         public static string GetDeviceName()
         {
-          
-             try
-               {
-                foreach (ManagementObject queryObj in baseboardSearcher.Get())
-                {
-                    return queryObj["Manufacturer"].ToString();
-                }
-                return "";
-              }
-                
-                    catch (Exception e)
-                    {
-                        return "";
-                    }
-              
+            String userAgent = HttpContext.Current.Request.UserAgent;
+            var uaParser = Parser.GetDefault();
+            ClientInfo c = uaParser.Parse(userAgent);
+            return c.Device.Family;
+
         }
 
     }

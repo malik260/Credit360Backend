@@ -621,6 +621,75 @@
                 </TablixCell>
               </TablixCells>
             </TablixRow>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox7">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>i. NEXT INSPECTION DATE:</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox7</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="nextVisitationDate">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!nextVisitationDate.Value</Value>
+                              <Style>
+                                <Format>d</Format>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>nextVisitationDate</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
           </TablixRows>
         </TablixBody>
         <TablixColumnHierarchy>
@@ -642,6 +711,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixMember>
           </TablixMembers>
@@ -649,7 +719,7 @@
         <DataSetName>detail</DataSetName>
         <Top>1.64667in</Top>
         <Left>0.26333in</Left>
-        <Height>2.75832in</Height>
+        <Height>3.00832in</Height>
         <Width>6.66001in</Width>
         <ZIndex>2</ZIndex>
         <Style>
@@ -676,7 +746,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>4.6025in</Top>
+        <Top>4.7275in</Top>
         <Left>0.26333in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -756,8 +826,8 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>11.69666in</Top>
-        <Left>0.155in</Left>
+        <Top>16.20639in</Top>
+        <Left>0.21333in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
         <ZIndex>6</ZIndex>
@@ -789,7 +859,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>12.52166in</Top>
+        <Top>11.64666in</Top>
         <Left>0.155in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -822,7 +892,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>13.43806in</Top>
+        <Top>12.56306in</Top>
         <Left>0.155in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -855,7 +925,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>14.74125in</Top>
+        <Top>14.24125in</Top>
         <Left>0.17583in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -885,7 +955,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox91</rd:DefaultName>
-        <Top>16.15917in</Top>
+        <Top>15.28417in</Top>
         <Left>0.17583in</Left>
         <Height>0.25in</Height>
         <Width>6.695in</Width>
@@ -915,7 +985,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox92</rd:DefaultName>
-        <Top>16.5675in</Top>
+        <Top>15.8175in</Top>
         <Left>0.17583in</Left>
         <Height>0.25in</Height>
         <Width>6.695in</Width>
@@ -989,7 +1059,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>observation</DataSetName>
-        <Top>12.85375in</Top>
+        <Top>12.10375in</Top>
         <Left>0.155in</Left>
         <Height>0.25in</Height>
         <Width>6.73251in</Width>
@@ -1059,7 +1129,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>13.7575in</Top>
+        <Top>13.0075in</Top>
         <Left>0.155in</Left>
         <Height>0.25in</Height>
         <Width>6.73251in</Width>
@@ -1129,7 +1199,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>nextInspection</DataSetName>
-        <Top>15.10931in</Top>
+        <Top>14.60931in</Top>
         <Left>0.155in</Left>
         <Height>0.25in</Height>
         <Width>6.7325in</Width>
@@ -2741,7 +2811,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>14.22431in</Top>
+        <Top>13.59931in</Top>
         <Left>0.155in</Left>
         <Height>0.25in</Height>
         <Width>6.73251in</Width>
@@ -2829,7 +2899,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -2919,8 +2988,8 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>comment</DataSetName>
-        <Top>12.07167in</Top>
-        <Left>0.155in</Left>
+        <Top>16.52583in</Top>
+        <Left>0.17583in</Left>
         <Height>0.25in</Height>
         <Width>6.61458in</Width>
         <ZIndex>19</ZIndex>
@@ -3085,6 +3154,10 @@
         </Field>
         <Field Name="inspectionDate">
           <DataField>inspectionDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="nextVisitationDate">
+          <DataField>nextVisitationDate</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

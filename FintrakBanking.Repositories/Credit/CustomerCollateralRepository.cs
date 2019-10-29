@@ -1152,7 +1152,7 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = collateralId;
                 workflow.Comment = comment;
-                workflow.OperationId = (int)OperationsEnum.CollateralMaintenance;
+                workflow.OperationId = (int)OperationsEnum.CollateralApproval;
                 workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                 workflow.ExternalInitialization = true;
                 workflow.LogActivity();
@@ -1438,16 +1438,14 @@ namespace FintrakBanking.Repositories.Credit
             if (entity == null) return false;
 
             entity.INSURANCECOMPANYID = model.insuranceCompanyId;
+            entity.COMPANYADDRESS = model.companyAddress;
             entity.SUMINSURED = model.sumInsured;
             entity.STARTDATE = (DateTime)model.startDate;
             entity.ENDDATE = (DateTime)model.expiryDate;
             entity.INSURANCETYPEID = model.insuranceTypeId;
-            entity.CREATEDBY = model.createdBy;
-            entity.DELETED = false;
             entity.PREMIUMAMOUNT = model.inSurPremiumAmount;
             entity.PREMIUMPERCENT = model.premiumPercent;
             entity.DESCRIPTION = model.description;
-            entity.HASEXPIRED = false;
             entity.POLICYSTATEID = model.policyStateId;
             entity.LASTUPDATEDBY = model.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
@@ -1468,6 +1466,7 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALCUSTOMERID = entity.collateraalId,
                 POLICYREFERENCENUMBER = entity.referenceNumber,
                 INSURANCECOMPANYID = entity.insuranceCompanyId,
+                COMPANYADDRESS = entity.companyAddress,
                 SUMINSURED = entity.sumInsured,
                 STARTDATE = (DateTime)entity.startDate,
                 ENDDATE = (DateTime)entity.expiryDate,
@@ -1689,8 +1688,8 @@ namespace FintrakBanking.Repositories.Credit
                 REQUESTREASON = model.requestReason,
                 REQUESTCOMMENT = model.requestComment,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = model.dateTimeCreated,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
             });
 
             return context.SaveChanges() > 0;
@@ -2890,8 +2889,10 @@ namespace FintrakBanking.Repositories.Credit
                                     || c.MIDDLENAME.ToLower().Contains(searchString)
                                     )
                                 )
+                              orderby atrail.APPROVALTRAILID descending
                               select new InsurancePolicy
                               {
+                                  targetId = atrail.TARGETID,
                                   insuranceRequestId = x.INSURANCEREQUESTID,
                                   requestNumber = x.REQUESTNUMBER,
                                   //collateralCode = s.COLLATERALCODE,  
@@ -2904,6 +2905,8 @@ namespace FintrakBanking.Repositories.Credit
                                   approvalStatusName = context.TBL_APPROVAL_STATUS.Where(a => a.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(a => a.APPROVALSTATUSNAME).FirstOrDefault(),
                                   customerId = c.CUSTOMERID,
                               }).ToList();
+
+            operations = operations.GroupBy(x => x.targetId).Select(x => x.FirstOrDefault()).ToList();
 
             return operations;
         }
@@ -7790,6 +7793,8 @@ namespace FintrakBanking.Repositories.Credit
         }
         private int AddTempCollateralMainForm(CollateralViewModel model)
         {
+            DateTime date = DateTime.Now;
+            var xchRate = repo.GetExchangeRate(date, model.currencyId, model.companyId);
             if (model.isRegistrationDoneViaLoanApplication == (int)CollateralRegistrationTypeEnum.isRegistrationDoneViaLoanApplication)
             {
                 var mainCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == model.collateralCode).Select(x => x).FirstOrDefault();
@@ -7830,7 +7835,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    DateTime date = DateTime.Now;
                     var collateral = context.TBL_COLLATERAL_CUSTOMER.Add(new TBL_COLLATERAL_CUSTOMER
                     {
                         COLLATERALTYPEID = model.collateralTypeId,
@@ -7884,7 +7888,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("The specified Collateral is edited and is going through approval!");
                 }
-                DateTime date = DateTime.Now;
 
                 var collateral = context.TBL_TEMP_COLLATERAL_CUSTOMER.Add(new TBL_TEMP_COLLATERAL_CUSTOMER
                 {
@@ -7898,7 +7901,7 @@ namespace FintrakBanking.Repositories.Credit
                     VALUATIONCYCLE = model.valuationCycle,
                     HAIRCUT = model.haircut,
                     CURRENCYID = model.currencyId,
-                    EXCHANGERATE = repo.GetExchangeRate(date, model.currencyId, model.companyId).sellingRate,
+                    EXCHANGERATE = xchRate.sellingRate,
                     CUSTOMERID = model.customerId,
                     CAMREFNUMBER = model.camRefNumber,
                     CREATEDBY = model.createdBy,
@@ -7912,16 +7915,18 @@ namespace FintrakBanking.Repositories.Credit
                     VALIDTILL = model.validTill,
                 });
 
-                if (model.loanTypeId == 1)
+                if (model.customerId == 1)
+                    //if (model.loanTypeId == 1)
                     collateral.CUSTOMERID = model.customerId;
                 else if (model.loanTypeId == 2)
-                    collateral.CUSTOMERGROUPID = model.customerGroupId;
+                //else if (model.loanTypeId == 2)
+                        collateral.CUSTOMERGROUPID = model.customerGroupId;
                 else
                     collateral.CUSTOMERID = model.customerId;
 
                 try
                 {
-                    if (context.SaveChanges() == 1)
+                    if (context.SaveChanges() > 0)
                     {
                         return collateral.TEMPCOLLATERALCUSTOMERID;
                     }
@@ -8117,7 +8122,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             UpdateCASAcollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, collaterId);
 
-                            UpdateCollateralDocument(ApprovalModel.targetId, collaterId);
+                            //UpdateCollateralDocument(ApprovalModel.targetId, collaterId);
                             UpdateCollateralVisitation(ApprovalModel.targetId, collaterId);
 
                             if (mainCollateral.REQUIREINSURANCEPOLICY) { UpdateItemPolicyDetail(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, collaterId); } //insurance documents
@@ -8159,7 +8164,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             UpdateDepositCollateral(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, collaterId);
 
-                            UpdateCollateralDocument(ApprovalModel.targetId, collaterId);
+                            //UpdateCollateralDocument(ApprovalModel.targetId, collaterId);
                             UpdateCollateralVisitation(ApprovalModel.targetId, collaterId);
 
                             if (mainCollateral.REQUIREINSURANCEPOLICY) { UpdateItemPolicyDetail(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, collaterId); } //insurance documents
@@ -8197,7 +8202,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             UpdateTempApprovalStatus(ApprovalModel.targetId, status);
 
-                            UpdateCollateralDocument(ApprovalModel.targetId, newCollaterId);
+                            //UpdateCollateralDocument(ApprovalModel.targetId, newCollaterId);
                             UpdateCollateralVisitation(ApprovalModel.targetId, newCollaterId);
 
                             if (mainCollateral.REQUIREINSURANCEPOLICY) { UpdateItemPolicyDetail(ApprovalModel.targetId, mainCollateral.COLLATERALCODE, newCollaterId); } //insurance documents
@@ -9994,6 +9999,7 @@ namespace FintrakBanking.Repositories.Credit
                         BALANCEAVAILABLE = model.availableCollateralValue - model.actualCollateralCoverage,
                         CREATEDBY = model.createdBy,
                         DATETIMECREATED = genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = genSetup.GetApplicationDate(),
                         CUSTOMERID = model.customerId,
                         DELETED = false,
 
@@ -10265,7 +10271,34 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
+        public CollateralInsurancePolicyViewModel GetAddedInsuranceById(int id)
+        {
+            var insurance = context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == id
+                                                                     && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).FirstOrDefault();
 
+            var result = new CollateralInsurancePolicyViewModel();
+
+            if (insurance != null)
+            {
+                result.policyId = insurance.POLICYID;
+                result.collateraalId = insurance.COLLATERALCUSTOMERID;
+                result.referenceNumber = insurance.POLICYREFERENCENUMBER;
+                result.insuranceCompanyId = insurance.INSURANCECOMPANYID;
+                result.sumInsured = insurance.SUMINSURED;
+                result.startDate = (DateTime)insurance.STARTDATE;
+                result.expiryDate = (DateTime)insurance.ENDDATE;
+                result.insuranceTypeId = insurance.INSURANCETYPEID;
+                result.inSurPremiumAmount = insurance.PREMIUMAMOUNT;
+                result.premiumPercent = insurance.PREMIUMPERCENT;
+                result.description = insurance.DESCRIPTION;
+                //result.hasExpired = insurance.HASEXPIRED;
+                result.policyStateId = insurance.POLICYSTATEID;
+                result.companyAddress = insurance.COMPANYADDRESS;
+                
+            }
+
+            return result;
+        }
 
         public InsuranceTypeViewModel GetInsuranceType(int id)
         {
