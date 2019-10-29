@@ -298,6 +298,7 @@ namespace FintrakBanking.Repositories.Credit
         private string staffPersonalLoanData;
         private string temporaryOverdraftData;
         private string documentatonDeferralWaiverData;
+        private int loanApplicationDetailId;
         //private string OfferLetterForBondsAndGuaranteesData;
 
         // init
@@ -509,12 +510,13 @@ namespace FintrakBanking.Repositories.Credit
                 this.commitmentFee = "";
                 this.otherFee = "";
                 this.effectiveDate = "";
+                this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
                 this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
                 this.currentDate = DateTime.Now.ToShortDateString();
                 this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
                 this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
                 //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
-            approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+                approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
                 amountUtilised = "0.00";
 
                 newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault() == null ? "0.00" : context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00");
@@ -708,14 +710,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId)
         {
+               //int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CAM, (int)OperationsEnum.InterestPastDueLoanRepayment,
+               //        (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
+               //    (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanTrancheBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
+               //        (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
+               //    ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval};
 
-            //int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CAM, (int)OperationsEnum.InterestPastDueLoanRepayment,
-            //        (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
-            //    (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanTrancheBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
-            //        (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
-            //    ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval};
-
-            var allstaff = this.GetAllStaffNames();
+               var allstaff = this.GetAllStaffNames();
 
             var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.TARGETID == applicationId);
 
@@ -7581,6 +7582,8 @@ namespace FintrakBanking.Repositories.Credit
                  ";
             result = result + $"</table>";
             var condition = GetChecklistAwaitingApproval(staffId,operationId);
+            var appId = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
+            var precedent = GetConditionPrecedentByApplicationDetailId(appId.LOANAPPLICATIONDETAILID);
             result = result + $@"
                 <br />              
                 <table border=1 width=900 cellpadding=10 cellspacing=0>
@@ -7607,24 +7610,14 @@ namespace FintrakBanking.Repositories.Credit
             result = result + $"</table>";
             result = result + $@"
                     <br/>
-                   <p><strong><em>ACCOUNT OFFICER:&nbsp;&nbsp;</em></strong>{relationshipOfficerName}</p>
-                    <br/>
-                   <p><strong><em>RELATIONSHIP MANAGER:&nbsp;&nbsp;</em></strong>{relationshipManagerName}</p>
-                       <br/>
-                   <p><strong><em>GROUP HEAD:&nbsp;&nbsp;</em></strong></p>
-                      <br/>
-                   <p><strong><em>CRM:&nbsp;&nbsp;</em></strong></p>
-                      <br/>
-                   <p><strong><em>APPROVAL:&nbsp;&nbsp;</em></strong></p>
-                    <br/>
-                   <p><strong><em>ED:&nbsp;&nbsp;</em></strong>...........</p>
-                     <br/>
-                   <p><strong><em>GDMD:&nbsp;&nbsp;</em></strong>...........<br><em>(for deferrals below N1Billion)</em></p>
-                     <br/>
-                   <p><strong><em>GMD:&nbsp;&nbsp;</em></strong>...........<br><em>(for deferrals above N1Billion)</em></p>
-                       <br/>
-                   <p><strong>(Waivers of any Pre-availment condition included in the credit approval shall require approval in writing at the appropriate approval credit authority level)</strong></p>
-                   ";
+                 <p><strong><em> RELATIONSHIP OFFICER: &nbsp; &nbsp;</em></strong>{relationshipOfficerName}</p>
+                <br/>";
+            foreach (var pre in precedent)
+            {
+                var approvals = GetDeferralnAprroval(operationId, pre.loanConditionId);
+                    result = result + $@"
+                 <p><strong><em>{approvals?.fromApprovalLevelName}&nbsp;&nbsp;</em></strong>{approvals?.fromStaffName}</p><br/>";
+            }
             return result;
         }
 
@@ -7717,7 +7710,87 @@ namespace FintrakBanking.Repositories.Credit
 
             return dataLOS.Union(dataLMS);
         }
-  
+
+        public IEnumerable<ApprovalTrailViewModel> GetDeferralnAprrovalTrail(int operationId, int targetId)
+        {
+
+            var allstaff = this.GetAllStaffNames();
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID== operationId && x.TARGETID == targetId);
+            var data = trail.Select(x => new ApprovalTrailViewModel
+            {
+                approvalTrailId = x.APPROVALTRAILID,
+                comment = x.COMMENT,
+                vote = x.VOTE,
+                targetId = x.TARGETID,
+                arrivalDate = x.ARRIVALDATE,
+                systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                responseDate = x.RESPONSEDATE,
+                systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                responseStaffId = x.RESPONSESTAFFID,
+                requestStaffId = x.REQUESTSTAFFID,
+                fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
+                approvalStateId = x.APPROVALSTATEID,
+                approvalStatusId = x.APPROVALSTATUSID,
+                approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+            }).ToList();
+
+            return data;
+        }
+
+        public ApprovalTrailViewModel GetDeferralnAprroval(int operationId, int targetId)
+        {
+
+            var allstaff = this.GetAllStaffNames();
+            var staffs = context.TBL_STAFF.ToList();
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == operationId && x.TARGETID == targetId);
+            var data = trail.Select(x => new ApprovalTrailViewModel
+            {
+                approvalTrailId = x.APPROVALTRAILID,
+                comment = x.COMMENT,
+                vote = x.VOTE,
+                targetId = x.TARGETID,
+                arrivalDate = x.ARRIVALDATE,
+                systemArrivalDateTime = x.SYSTEMARRIVALDATETIME,
+                responseDate = x.RESPONSEDATE,
+                systemResponseDateTime = x.SYSTEMRESPONSEDATETIME,
+                responseStaffId = x.RESPONSESTAFFID,
+                requestStaffId = x.REQUESTSTAFFID,
+                fromApprovalLevelId = x.FROMAPPROVALLEVELID,
+                fromApprovalLevelName = x.FROMAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.FROMAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelName = x.TOAPPROVALLEVELID == null ? "N/A" : context.TBL_APPROVAL_LEVEL.Where(a => a.APPROVALLEVELID == x.TOAPPROVALLEVELID).Select(a => a.LEVELNAME).FirstOrDefault(),
+                toApprovalLevelId = (int)x.TOAPPROVALLEVELID,
+                approvalStateId = x.APPROVALSTATEID,
+                approvalStatusId = x.APPROVALSTATUSID,
+                approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
+                approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                toStaffName = allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.RESPONSESTAFFID).name,
+                fromStaffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "N/A" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
+            }).FirstOrDefault();
+
+            return data;
+        }
+
+
+        public IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByApplicationDetailId(int applicationDetailId)
+        {
+
+            var trail = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => x.LOANAPPLICATIONDETAILID == applicationDetailId);
+            var data = trail.Select(x => new ConditionPrecedentViewModel
+            {
+                loanConditionId = x.LOANCONDITIONID,
+                loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
+                condition = x.CONDITION
+            }).ToList();
+
+            return data;
+        }
+
 
     }
 }
