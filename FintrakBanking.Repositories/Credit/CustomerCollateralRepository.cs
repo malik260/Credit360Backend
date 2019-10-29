@@ -2104,10 +2104,11 @@ namespace FintrakBanking.Repositories.Credit
                                join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                               where x.CUSTOMERID == customerId && x.DELETED == false
+                               where c.CUSTOMERID == customerId && x.DELETED == false
 
                                select new CollateralCoverageViewModel
                                {
+                                   loanAppCollateralId = x.LOANAPPCOLLATERALID,
                                    collateralId = x.COLLATERALCUSTOMERID,
                                    collateralCode = c.COLLATERALCODE,
                                    currencyId = c.CURRENCYID,
@@ -2130,10 +2131,11 @@ namespace FintrakBanking.Repositories.Credit
                                join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                               where x.CUSTOMERID == customerId && f.CUSTOMERID == customerId && x.DELETED == false
+                               where c.CUSTOMERID == customerId && f.CUSTOMERID == customerId && x.DELETED == false
 
                                select new CollateralCoverageViewModel
                                {
+                                   loanAppCollateralId = x.LOANAPPCOLLATERALID,
                                    collateralId = x.COLLATERALCUSTOMERID,
                                    collateralCode = c.COLLATERALCODE,
                                    currencyId = c.CURRENCYID,
@@ -2205,6 +2207,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var cov = new CollateralCoverageViewModel
                 {
+                    loanAppCollateralId = collateral.loanAppCollateralId,
                     collateralSummary = collateral.collateralSummary,
                     loanApplicationDetailId = collateral.loanApplicationDetailId,
                     collateralId = collateral.collateralId,
@@ -6788,10 +6791,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteProposedCollateral(CollateralCoverageViewModel model)
         {
-            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && o.COLLATERALCUSTOMERID == model.collateralId).Select(o => o).FirstOrDefault();
+            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPCOLLATERALID == model.loanAppCollateralId).Select(o => o).FirstOrDefault();
             if (data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
             {
-                throw new Exception("Cannot Delete Approved Already Mapped Collateral");
+                throw new Exception("Cannot Delete An Already Approved Collateral Mapping");
             }
             data.DELETED = true;
             data.DELETEDBY = model.createdBy;
