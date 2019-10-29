@@ -551,22 +551,14 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [Route("customer-lines/{customerId}")]
         public HttpResponseMessage GetCustomerLines(int customerId)
         {
-            try
-            {
-                var data = repo.GetCustomerLines(customerId);
-                if (!data.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, result = data, count = data.Count() });
-            }
-            catch (SecureException e)
+            var data = repo.GetCustomerLines(customerId);
+            if (!data.Any())
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = $"Error: {e.Message}" });
+                   new { success = false, message = "No record found" });
             }
+            return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
         }
 
         [HttpGet]

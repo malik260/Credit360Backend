@@ -5662,42 +5662,38 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetCustomerLines(int customerId)
         {
-            try
+            var data = GetCustomerApprovedLines(customerId).ToList();
+            foreach (var item in data)
             {
-                var data = GetCustomerApprovedLines(customerId).ToList();
-                foreach (var item in data)
+
+                var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+                var multipleDrawnFacilities = context.TBL_LOAN_APPLICATION.Where(l => l.LOANAPPROVEDLIMITID == item.loanApplicationId).ToList();
+                var multipleDrawnFacilitiesAmount = multipleDrawnFacilities.Sum(f => f.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT));
+                if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
+                    item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED);
+
+                if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
+                    item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
+
+                if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
+                    item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
+
+                item.disapprovedCount = (int)requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Count();
+
+                if (item.disapprovedCount > 0)
+                    item.disApprovedAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Sum(s => s.AMOUNT_REQUESTED);
+
+                item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount) - multipleDrawnFacilitiesAmount;
+
+                var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
+                if (disbursedLoan.Any())
                 {
-
-                    var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-                    var multipleDrawnFacilities = context.TBL_LOAN_APPLICATION.Where(l => l.LOANAPPROVEDLIMITID == item.loanApplicationId).ToList();
-                    var multipleDrawnFacilitiesAmount = multipleDrawnFacilities.Sum(f => f.TBL_LOAN_APPLICATION_DETAIL.Sum(d => d.PROPOSEDAMOUNT));
-                    if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
-                        item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED);
-
-                    if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
-                        item.pendingRequestAmount = (decimal)requests.Where(j => j.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
-
-                    if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
-                        item.allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED) - item.requestedAmount;
-
-                    item.disapprovedCount = (int)requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Count();
-
-                    if (item.disapprovedCount > 0)
-                        item.disApprovedAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).Sum(s => s.AMOUNT_REQUESTED);
-
-                    item.customerAvailableAmount = item.approvedAmount - (item.allRequestAmount - item.requestedAmount) - multipleDrawnFacilitiesAmount;
-
-                    var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
-                    if (disbursedLoan.Any())
-                    {
-                        item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
-                    }
-                    item.productName = item.productName + " " + item.currencyCode + String.Format("{0:0,0.00}", item.customerAvailableAmount);
+                    item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
                 }
-
-                return data;
+                item.productName = item.productName + " " + item.currencyCode + String.Format("{0:0,0.00}", item.customerAvailableAmount);
             }
-            catch (Exception ex) { throw ex; }
+
+            return data;
 
 
         }
@@ -6816,8 +6812,35 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
+        
+        public int GetDrawdownOperationId(int applicationDetailId)
+        {
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(applicationDetailId);
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId)
+            var requestedProduct = context.TBL_PRODUCT.Find(loanApplicationDetails.APPROVEDPRODUCTID);
+
+            var operationId = 0;
+            if (requestedProduct.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
+            {
+                operationId = (short)OperationsEnum.CreditCardDrawdownRequest;
+            }
+            else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
+            {
+                if (requestedProduct.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                {
+                    operationId = (short)OperationsEnum.CorporateDrawdownRequest;
+                }
+                operationId = (short)OperationsEnum.IndividualDrawdownRequest;
+            }
+            else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
+            {
+                operationId = (short)OperationsEnum.CorporateDrawdownRequest;
+            }
+
+            return operationId;
+        }
+
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId) 
         {
             //var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
             var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).ToList();
@@ -6834,7 +6857,7 @@ namespace FintrakBanking.Repositories.Credit
                 var lcapprovedLCIFFsRecords = lcapprovedLCIFFs.Where(i => i.FUNDSOURCEDETAILS == item.loanApplicationId);
                 var lcApprovedAmounts = lcapprovedLCIFFsRecords.Count() > 0 ? lcapprovedLCIFFsRecords?.Sum(i => i.LETTEROFCREDITAMOUNT) : 0;
                 var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-
+                item.operationId = GetDrawdownOperationId(item.loanApplicationDetailId);
                 if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
                 { item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED); }
 
