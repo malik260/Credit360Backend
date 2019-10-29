@@ -203,7 +203,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<CutomerRatingViewModel>> GetPersonalLoansRetailByCustomerCode(string customerNumber)
+        public async Task<List<FacilityRatingViewModel>> GetPersonalLoansRetailByCustomerCode(string customerNumber)
         {
 
             //THIS METHOD's VIEW MODEL, CLASSESES ARE  YET TO BE CREATED
@@ -239,20 +239,18 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<CutomerRatingViewModel> customerRatios = new List<CutomerRatingViewModel>();
+                List<FacilityRatingViewModel> personalLoans = new List<FacilityRatingViewModel>();
                 if (response.IsSuccessStatusCode)
                 {
                     //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
-
                     var responseData = await response.Content.ReadAsStringAsync();
                     JObject responseDataJsonString = JObject.Parse(responseData);
 
                     var data = responseDataJsonString["data"].ToString();
-                    customerRatios = JsonConvert.DeserializeObject<List<CutomerRatingViewModel>>(data);
+                    personalLoans = JsonConvert.DeserializeObject<List<FacilityRatingViewModel>>(data);
                 }
 
-
-                return customerRatios;
+                return personalLoans;
             }
             catch (APIErrorException ex)
             {
@@ -286,7 +284,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<CutomerRatingViewModel>> GetCreditCardRetailProbabilityOfDefaultByCustomerCode(string customerNumber)
+        public async Task<List<FacilityRatingViewModel>> GetCreditCardRetailProbabilityOfDefaultByCustomerCode(string customerNumber)
         {
 
             //THIS METHOD's VIEW MODEL, CLASSESES ARE  YET TO BE CREATED
@@ -322,20 +320,18 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<CutomerRatingViewModel> customerRatios = new List<CutomerRatingViewModel>();
+                List<FacilityRatingViewModel> creditCards = new List<FacilityRatingViewModel>();
                 if (response.IsSuccessStatusCode)
                 {
                     //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
-
                     var responseData = await response.Content.ReadAsStringAsync();
                     JObject responseDataJsonString = JObject.Parse(responseData);
 
                     var data = responseDataJsonString["data"].ToString();
-                    customerRatios = JsonConvert.DeserializeObject<List<CutomerRatingViewModel>>(data);
+                    creditCards = JsonConvert.DeserializeObject<List<FacilityRatingViewModel>>(data);
                 }
 
-
-                return customerRatios;
+                return creditCards;
             }
             catch (APIErrorException ex)
             {
@@ -369,7 +365,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<CutomerRatingViewModel>> GetAutoLoanProbabilityOfDefaultByCustomerCode(string customerNumber)
+        public async Task<List<FacilityRatingViewModel>> GetAutoLoanProbabilityOfDefaultByCustomerCode(string customerNumber)
         {
 
             //THIS METHOD's VIEW MODEL, CLASSESES ARE  YET TO BE CREATED
@@ -405,20 +401,18 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<CutomerRatingViewModel> customerRatios = new List<CutomerRatingViewModel>();
+                List<FacilityRatingViewModel> autoLoans = new List<FacilityRatingViewModel>();
                 if (response.IsSuccessStatusCode)
                 {
                     //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
-
                     var responseData = await response.Content.ReadAsStringAsync();
                     JObject responseDataJsonString = JObject.Parse(responseData);
 
                     var data = responseDataJsonString["data"].ToString();
-                    customerRatios = JsonConvert.DeserializeObject<List<CutomerRatingViewModel>>(data);
+                    autoLoans = JsonConvert.DeserializeObject<List<FacilityRatingViewModel>>(data);
                 }
 
-
-                return customerRatios;
+                return autoLoans;
             }
             catch (APIErrorException ex)
             {
@@ -445,9 +439,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 };
 
                 FinTrakBankingContext logContext = new FinTrakBankingContext();
-
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
                 logContext.SaveChanges();
             }
         }

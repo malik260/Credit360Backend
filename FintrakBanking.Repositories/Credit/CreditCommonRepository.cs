@@ -209,6 +209,108 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
+        public void GetAutoLoansRetail(int applicationId, List<int> customerIds, int staffId)
+        {
+            //bool isGroup = false;
+            var autoLoans = new List<FacilityRatingViewModel>();
+            //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
+
+            foreach (var customer in customers)
+            {
+                if (customer.ISPROSPECT == false)
+                {
+                    autoLoans = integration.GetAutoLoanRetailByCustomerCode(customer.CUSTOMERCODE);
+
+                    foreach (var item in autoLoans)
+                    {
+                        context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
+                        {
+                            LOANAPPLICATIONDETAILID = item.loanApplicationDetailId,
+                            PROBABILITYOFDEFAULT = item.probabilityOfDefault,
+                            REMARK = item.remark,
+                            CUSTOMERID = customer.CUSTOMERID,
+                            DATETIMECREATED = DateTime.Now,
+                            CREATEDBY = staffId,
+                            DELETED = false,
+                        });
+                    }
+                }
+            }
+
+            context.SaveChanges();
+        }
+
+        public void GetPersonalLoansRetail(int applicationId, List<int> customerIds, int staffId)
+        {
+            //bool isGroup = false;
+            var personalLoans = new List<FacilityRatingViewModel>();
+            //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
+
+            foreach (var customer in customers)
+            {
+                if (customer.ISPROSPECT == false)
+                {
+                    personalLoans = integration.GetPersonalLoanRetailByCustomerCode(customer.CUSTOMERCODE);
+
+                    foreach (var item in personalLoans)
+                    {
+                        context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
+                        {
+                            LOANAPPLICATIONDETAILID = item.loanApplicationDetailId,
+                            PROBABILITYOFDEFAULT = item.probabilityOfDefault,
+                            REMARK = item.remark,
+                            CUSTOMERID = customer.CUSTOMERID,
+                            DATETIMECREATED = DateTime.Now,
+                            CREATEDBY = staffId,
+                            DELETED = false,
+                        });
+                    }
+                }
+            }
+
+            context.SaveChanges();
+        }
+
+        public void GetCreditCardsRetail(int applicationId, List<int> customerIds, int staffId)
+        {
+            //bool isGroup = false;
+            var creditCards = new List<FacilityRatingViewModel>();
+            //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
+
+            foreach (var customer in customers)
+            {
+                if (customer.ISPROSPECT == false)
+                {
+                    creditCards = integration.GetCreditCardRetailByCustomerCode(customer.CUSTOMERCODE);
+
+                    foreach (var item in creditCards)
+                    {
+                        context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
+                        {
+                            LOANAPPLICATIONDETAILID = item.loanApplicationDetailId,
+                            PROBABILITYOFDEFAULT = item.probabilityOfDefault,
+                            REMARK = item.remark,
+                            CUSTOMERID = customer.CUSTOMERID,
+                            DATETIMECREATED = DateTime.Now,
+                            CREATEDBY = staffId,
+                            DELETED = false,
+                        });
+                    }
+                }
+            }
+
+            context.SaveChanges();
+        }
+
         public void ValidateLoanApplicationLimits(
                 List<int> customerIds, 
                 List<short> sectorIds, 

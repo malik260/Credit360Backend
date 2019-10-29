@@ -794,6 +794,30 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return customerRating;
         }
 
+        public List<FacilityRatingViewModel> GetAutoLoanRetailByCustomerCode(string customerCode)
+        {
+            List<FacilityRatingViewModel> autoLoans = new List<FacilityRatingViewModel>();
+            Task.Run(async () => autoLoans = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
+                .GetAwaiter().GetResult();
+            return autoLoans;
+        }
+
+        public List<FacilityRatingViewModel> GetPersonalLoanRetailByCustomerCode(string customerCode)
+        {
+            List<FacilityRatingViewModel> personalLoans = new List<FacilityRatingViewModel>();
+            Task.Run(async () => personalLoans = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
+                .GetAwaiter().GetResult();
+            return personalLoans;
+        }
+
+        public List<FacilityRatingViewModel> GetCreditCardRetailByCustomerCode(string customerCode)
+        {
+            List<FacilityRatingViewModel> creditCards = new List<FacilityRatingViewModel>();
+            Task.Run(async () => creditCards = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
+                .GetAwaiter().GetResult();
+            return creditCards;
+        }
+
         //public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths)
         //{
         //    List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();

@@ -563,6 +563,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_SWAP_REQUEST> TBL_COLLATERAL_SWAP_REQUEST { get; set; }
         public virtual DbSet<TBL_COLLATERAL_MAPPING_ARCHIVE> TBL_COLLATERAL_MAPPING_ARCHIVE { get; set; }
 
+        public virtual DbSet<TBL_FACILITY_RATING> TBL_FACILITY_RATING { get; set; }
+
+
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 
 

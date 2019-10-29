@@ -1358,6 +1358,25 @@ namespace FintrakBanking.Repositories.Credit
                              loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                              staffId
                          );
+
+                        creditCommon.GetAutoLoansRetail(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                         );
+
+                        creditCommon.GetPersonalLoansRetail(
+                            applicationId,
+                            loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                            staffId
+                        );
+
+                        creditCommon.GetCreditCardsRetail(
+                            applicationId,
+                            loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                            staffId
+                        );
+
                         //if (casa != null)
                         //{
                         //    creditCommon.LoadCustomerTurnover(
