@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.Reports
 {
     public interface IReportRoutes
     {
-        string DeferralWaiverReport(int staffId, int operationId, int targetId);
+        string DeferralWaiverReport(int staffId, int operationId, int targetId, int loanApplicationDetailId);
         string GetWorkflowSLA(int loanApplicationId, int companyId, int staffId);
         string GetLoanScheduleReport(int tearmLoanId, int companyId, int staffId);
         string GetSectorLimitMonitoringReport(int companyId, int staffId);

@@ -23,7 +23,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     string operationId = Request.QueryString["operationId"];
                     string targetId = Request.QueryString["targetId"];
                     string staffId = Request.QueryString["staffId"];
-                    //string applicationDetailId = Request.QueryString["applicationDetailId"];
+                    string loanApplicationDetailId = Request.QueryString["loanApplicationDetailId"];
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -53,23 +53,24 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     DEFERRALWAIVER deferralWaiver = new DEFERRALWAIVER();
 
-                    var data = deferralWaiver.GetDeferralWaiver(Int32.Parse(staffId), Int32.Parse(operationId), Int32.Parse(targetId));
+                    var data = deferralWaiver.GetDeferralWaiver(Int32.Parse(staffId), Int32.Parse(operationId), Int32.Parse(loanApplicationDetailId));
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
                     reportDataSource.Name = "DeferralWaiver";
+                    ReportViewer.LocalReport.DataSources.Add(reportDataSource);
 
                     var conditions = deferralWaiver.GetChecklistAwaitingApproval(Int32.Parse(staffId), Int32.Parse(operationId));
-                    this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSourceCon = new ReportDataSource();
                     reportDataSourceCon.Value = conditions;
                     reportDataSourceCon.Name = "conditions";
+                    ReportViewer.LocalReport.DataSources.Add(reportDataSourceCon);
 
-                    var approvals = deferralWaiver.GetAwaitingApproval(Int32.Parse(operationId), Int32.Parse(targetId));
-                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    var approvals = deferralWaiver.GetDeferralnAprroval(Int32.Parse(operationId), Int32.Parse(targetId));
                     ReportDataSource reportDataSourceApp = new ReportDataSource();
                     reportDataSourceApp.Value = approvals;
                     reportDataSourceApp.Name = "approvals";
+                    ReportViewer.LocalReport.DataSources.Add(reportDataSourceApp);
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
