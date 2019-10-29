@@ -1438,16 +1438,14 @@ namespace FintrakBanking.Repositories.Credit
             if (entity == null) return false;
 
             entity.INSURANCECOMPANYID = model.insuranceCompanyId;
+            entity.COMPANYADDRESS = model.companyAddress;
             entity.SUMINSURED = model.sumInsured;
             entity.STARTDATE = (DateTime)model.startDate;
             entity.ENDDATE = (DateTime)model.expiryDate;
             entity.INSURANCETYPEID = model.insuranceTypeId;
-            entity.CREATEDBY = model.createdBy;
-            entity.DELETED = false;
             entity.PREMIUMAMOUNT = model.inSurPremiumAmount;
             entity.PREMIUMPERCENT = model.premiumPercent;
             entity.DESCRIPTION = model.description;
-            entity.HASEXPIRED = false;
             entity.POLICYSTATEID = model.policyStateId;
             entity.LASTUPDATEDBY = model.createdBy;
             entity.DATETIMEUPDATED = DateTime.Now;
@@ -1468,6 +1466,7 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALCUSTOMERID = entity.collateraalId,
                 POLICYREFERENCENUMBER = entity.referenceNumber,
                 INSURANCECOMPANYID = entity.insuranceCompanyId,
+                COMPANYADDRESS = entity.companyAddress,
                 SUMINSURED = entity.sumInsured,
                 STARTDATE = (DateTime)entity.startDate,
                 ENDDATE = (DateTime)entity.expiryDate,
@@ -1689,8 +1688,8 @@ namespace FintrakBanking.Repositories.Credit
                 REQUESTREASON = model.requestReason,
                 REQUESTCOMMENT = model.requestComment,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = model.dateTimeCreated,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
             });
 
             return context.SaveChanges() > 0;
@@ -2890,8 +2889,10 @@ namespace FintrakBanking.Repositories.Credit
                                     || c.MIDDLENAME.ToLower().Contains(searchString)
                                     )
                                 )
+                              orderby atrail.APPROVALTRAILID descending
                               select new InsurancePolicy
                               {
+                                  targetId = atrail.TARGETID,
                                   insuranceRequestId = x.INSURANCEREQUESTID,
                                   requestNumber = x.REQUESTNUMBER,
                                   //collateralCode = s.COLLATERALCODE,  
@@ -2904,6 +2905,8 @@ namespace FintrakBanking.Repositories.Credit
                                   approvalStatusName = context.TBL_APPROVAL_STATUS.Where(a => a.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(a => a.APPROVALSTATUSNAME).FirstOrDefault(),
                                   customerId = c.CUSTOMERID,
                               }).ToList();
+
+            operations = operations.GroupBy(x => x.targetId).Select(x => x.FirstOrDefault()).ToList();
 
             return operations;
         }
@@ -10268,7 +10271,34 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
+        public CollateralInsurancePolicyViewModel GetAddedInsuranceById(int id)
+        {
+            var insurance = context.TBL_COLLATERAL_ITEM_POLICY.Where(x => x.COLLATERALCUSTOMERID == id
+                                                                     && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).FirstOrDefault();
 
+            var result = new CollateralInsurancePolicyViewModel();
+
+            if (insurance != null)
+            {
+                result.policyId = insurance.POLICYID;
+                result.collateraalId = insurance.COLLATERALCUSTOMERID;
+                result.referenceNumber = insurance.POLICYREFERENCENUMBER;
+                result.insuranceCompanyId = insurance.INSURANCECOMPANYID;
+                result.sumInsured = insurance.SUMINSURED;
+                result.startDate = (DateTime)insurance.STARTDATE;
+                result.expiryDate = (DateTime)insurance.ENDDATE;
+                result.insuranceTypeId = insurance.INSURANCETYPEID;
+                result.inSurPremiumAmount = insurance.PREMIUMAMOUNT;
+                result.premiumPercent = insurance.PREMIUMPERCENT;
+                result.description = insurance.DESCRIPTION;
+                //result.hasExpired = insurance.HASEXPIRED;
+                result.policyStateId = insurance.POLICYSTATEID;
+                result.companyAddress = insurance.COMPANYADDRESS;
+                
+            }
+
+            return result;
+        }
 
         public InsuranceTypeViewModel GetInsuranceType(int id)
         {

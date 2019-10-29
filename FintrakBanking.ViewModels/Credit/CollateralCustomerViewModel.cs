@@ -319,7 +319,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralPrimaryDocumentTitle { get; set; }
         public string comment { get; set; }
         public int? releaseType { get; set; }
-        public int? approvalStatusId { get; set; }
+        public short? approvalStatusId { get; set; }
 
         public DateTime nextVisitationDate { get { return lastVisitationDate.AddDays((double)(visitationCycle)); } set { } }
         public DateTime lastVisitationDate { get; set; }
@@ -517,6 +517,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string policyStateId { get; set; }
         public string companyAddress { get; set; }
         public int? prevoiusInsuranceId { get; set; }
+        public int approvalTrailId { get; set; }
+        public int targetId { get; set; }
     }
 
     public class NewCollateralViewModel
@@ -738,6 +740,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationUrl { get; set; }
         public string userIPAddress { get; set; }
         public int? policyStateId { get; set; }
+        public bool hasExpired { get; set; }
+        public string companyAddress { get; set; }
+        public int policyId { get; set; }
     }
 
     public class CollateralGauranteeViewModel
