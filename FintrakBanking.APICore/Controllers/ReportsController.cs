@@ -2587,6 +2587,30 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
+        [Route("risk-asset-combined-report")]
+        public HttpResponseMessage GetRiskAssetCombinedReport([FromBody] RiskAssets obj)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.RiskAssetCombinedReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("risk-asset-distribution-report")]
         public HttpResponseMessage GetRiskAssetDistributionBySectorReport([FromBody] RiskAssets obj)
         {
@@ -2724,12 +2748,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-deferralwaiver-memo-pdf/{operationId}/{targetId}")]
-        public HttpResponseMessage GetDeferralWaiverMemoPdf([FromUri] int operationId, [FromUri] int targetId)
+        [Route("get-deferralwaiver-memo-pdf/{operationId}/{targetId}/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetDeferralWaiverMemoPdf([FromUri] int operationId, [FromUri] int targetId, [FromUri] int loanApplicationDetailId)
         {
             try
             {
-                var response = repo.DeferralWaiverReport(token.GetStaffId, operationId, targetId);
+                var response = repo.DeferralWaiverReport(token.GetStaffId, operationId, targetId, loanApplicationDetailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)
