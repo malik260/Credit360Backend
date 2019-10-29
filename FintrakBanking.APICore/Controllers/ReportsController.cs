@@ -2724,12 +2724,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("get-deferralwaiver-memo-pdf/{operationId}/{targetId}")]
-        public HttpResponseMessage GetDeferralWaiverMemoPdf([FromUri] int operationId, [FromUri] int targetId)
+        [Route("get-deferralwaiver-memo-pdf/{operationId}/{targetId}/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetDeferralWaiverMemoPdf([FromUri] int operationId, [FromUri] int targetId, [FromUri] int loanApplicationDetailId)
         {
             try
             {
-                var response = repo.DeferralWaiverReport(token.GetStaffId, operationId, targetId);
+                var response = repo.DeferralWaiverReport(token.GetStaffId, operationId, targetId, loanApplicationDetailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)

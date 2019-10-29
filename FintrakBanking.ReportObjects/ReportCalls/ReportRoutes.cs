@@ -1180,11 +1180,11 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string DeferralWaiverReport(int staffId, int operationId, int targetId)
+        public string DeferralWaiverReport(int staffId, int operationId, int targetId, int loanApplicationDetailId)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
             string path = string.Empty;
-            path = reportPath + "ReportViews/DeferralWaiver.aspx?staffId=" + staffId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&operationId=" + operationId + "&targetId=" + targetId;
+            path = reportPath + "ReportViews/DeferralWaiver.aspx?staffId=" + staffId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&operationId=" + operationId + "&targetId=" + targetId + "&loanApplicationDetailId=" + loanApplicationDetailId;
             return path;
         }
 

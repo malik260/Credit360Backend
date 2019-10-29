@@ -29,10 +29,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                            select new DeferralWaiverViewModel
                            {
                                branchName = context.TBL_BRANCH.Where(h => h.BRANCHID == b.BRANCHID).Select(h => h.BRANCHNAME).FirstOrDefault() == null ? "" : context.TBL_BRANCH.Where(h => h.BRANCHID == b.BRANCHID).Select(h => h.BRANCHNAME).FirstOrDefault(),
-                               facilityType = context.TBL_PRODUCT.Where(pr => pr.PRODUCTID == b.PRODUCTID).Select(pr => pr.PRODUCTNAME).FirstOrDefault() == null ? "" : context.TBL_PRODUCT.Where(pr => pr.PRODUCTID == b.PRODUCTID).Select(pr => pr.PRODUCTNAME).FirstOrDefault(), //p.PRODUCTNAME,
-                               approvedAmount = b.APPROVEDAMOUNT.ToString("#,##.00"),
+                               facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == a.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault(),
+                               approvedAmount = b.APPROVEDAMOUNT,
                                customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
-                               currentDate = DateTime.Now.ToShortDateString(),
+                               currentDate = DateTime.Now,
                                preparedBy = b.TBL_STAFF.FIRSTNAME + " " + b.TBL_STAFF.LASTNAME,
                                
                            };
@@ -45,7 +45,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int operationId)
         {
-            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, operationId).ToList();
+            var ids = GetStaffApprovalLevelIds(staffId, operationId).ToList();
 
             var dataLOS = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                            join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
@@ -133,11 +133,85 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return dataLOS.Union(dataLMS);
         }
 
+        public IEnumerable<int> GetRelievedStaffApprovalLevelIds(int staffId, int operationId)
+        {
+            var now = DateTime.Now;
+
+            var staffIds = context.TBL_STAFF_RELIEF
+                .Where(x => x.DELETED == false
+                    && x.RELIEFSTAFFID == staffId
+                    && x.STARTDATE <= now
+                    && x.ENDDATE >= now
+                    && x.ISACTIVE == true
+                ).Select(x => x.STAFFID).Distinct();
+
+            var staff = context.TBL_STAFF.Where(x => staffIds.Contains(x.STAFFID));
+            var roleids = staff.Select(x => x.STAFFROLEID).ToList();
+
+            var roleLevelIds = context.TBL_APPROVAL_LEVEL
+                .Where(x => x.DELETED == false && roleids.Contains((int)x.STAFFROLEID))
+                .Select(x => x.APPROVALLEVELID)
+                .Distinct();
+
+            var allLevels = context.TBL_APPROVAL_GROUP_MAPPING
+                .Where(x => x.OPERATIONID == operationId)
+                .Select(g => g.TBL_APPROVAL_GROUP)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL
+                .Where(l => l.ISACTIVE == true));
+
+            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.DELETED == false && staffIds.Contains(x.STAFFID));
+
+            var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
+
+            return staffLevels.Union(roleLevelIds);
+        }
+        public IEnumerable<int> GetStaffApprovalLevelIds(int staffId, int operationId)
+        {
+            var relievedLevelids = GetRelievedStaffApprovalLevelIds(staffId, operationId); // for approval delegation
+
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var roleLevelIds = context.TBL_APPROVAL_LEVEL
+                .Where(x => x.DELETED == false && x.STAFFROLEID == staff.STAFFROLEID)
+                .Select(x => x.APPROVALLEVELID)
+                .Distinct().ToList();
+
+            int scope = (int)ProcessViewScopeEnum.Level; // default 1
+
+            var allLevels = context.TBL_APPROVAL_GROUP_MAPPING
+                .Where(x => x.OPERATIONID == operationId)
+                .Select(g => g.TBL_APPROVAL_GROUP)
+                .SelectMany(x => x.TBL_APPROVAL_LEVEL
+                .Where(l => l.DELETED == false && l.ISACTIVE == true)).ToList();
+
+            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId).ToList();
+
+            if (staffWorkflow.Count() > 0) scope = staffWorkflow.Max(x => x.PROCESSVIEWSCOPEID);
+
+            if (scope == 3) return allLevels.Select(x => x.APPROVALLEVELID).Distinct().Union(roleLevelIds).Union(relievedLevelids);
+
+            var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
+
+            if (scope == 2)
+            {
+                var groups = context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
+                return context.TBL_APPROVAL_LEVEL
+                    .Where(x => groups.Contains(x.GROUPID))
+                    .Select(x => x.APPROVALLEVELID)
+                    .Distinct()
+                    .Union(roleLevelIds)
+                    .Union(relievedLevelids);
+            }
+
+            //return staffLevels.Union(roleLevelIds); // without relief code
+            return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
+        }
+
         public List<ApprovalTrailViewModel> GetAwaitingApproval(int operationId, int targetId)
         {
             List<ApprovalTrailViewModel> approvalTrailViewModels = new List<ApprovalTrailViewModel>();
-            var appId = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
-            var precedent = GetConditionPrecedentByApplicationDetailId(appId.LOANAPPLICATIONDETAILID);
+            //var appId = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
+            var precedent = GetConditionPrecedentByApplicationDetailId(targetId);
             foreach (var pre in precedent)
             {
                 approvalTrailViewModels = GetDeferralnAprroval(operationId, pre.loanConditionId);

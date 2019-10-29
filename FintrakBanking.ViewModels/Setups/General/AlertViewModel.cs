@@ -58,7 +58,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int alertLevelId { get; set; }
         public string emailList { get; set; }
         public string levelCode { get; set; }
-        public short levelGroupId { get; set; }
+        public int levelGroupId { get; set; }
     }
 
     public class AlertsViewModel : GeneralEntity
