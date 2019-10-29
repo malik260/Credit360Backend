@@ -2094,7 +2094,7 @@ namespace FintrakBanking.Repositories.Credit
                                join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                               where x.CUSTOMERID == customerId && x.DELETED == false
+                               where c.CUSTOMERID == customerId && x.DELETED == false
 
                                select new CollateralCoverageViewModel
                                {
@@ -2121,7 +2121,7 @@ namespace FintrakBanking.Repositories.Credit
                                join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                               where x.CUSTOMERID == customerId && f.CUSTOMERID == customerId && x.DELETED == false
+                               where c.CUSTOMERID == customerId && f.CUSTOMERID == customerId && x.DELETED == false
 
                                select new CollateralCoverageViewModel
                                {
