@@ -1773,26 +1773,27 @@ namespace FintrakBanking.Repositories.Credit
             List<TBL_RAC_DEFINITION> racTiers = new List<TBL_RAC_DEFINITION>();
             if (isRacRelated == true)
             {
-                defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false 
-                 && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID) 
-             ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).FirstOrDefault();
+               var  defaultTierItems = definitions.Where(x=>x.ISRACTIERCONTROLKEY == true).ToList();
 
-                if(defaultTier == null)
+                foreach(var i in defaultTierItems)
                 {
-                    defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && ids.Contains(x.RACDEFINITIONID)
-                                ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).FirstOrDefault();
+                    var submission = rac.form.FirstOrDefault(x => x.criteriaId == i.RACDEFINITIONID);
+                    if (ValidRacSubmission(i, submission.value, operationId ?? 0, targetId))
+                    {
+                        defaultTier = definitions.Where(x => x.RACCATEGORYTYPEID == i.RACCATEGORYTYPEID.Value)?.FirstOrDefault();
+                    };
                 }
-                defaultDefinition.Add(defaultTier);
-                var racCategoryIds = definitions.Select(x => x.RACCATEGORYID);
 
-                racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                        && ids.Contains(x.RACDEFINITIONID) && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
-                        //&& x.RACCATEGORYID == defaultTier.RACCATEGORYID
-                        ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
+                if(defaultTierItems.Count() <=0)
+                {
+                    defaultTier = definitions.Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).FirstOrDefault();
+                }
 
-                racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                    && x.ISRACTIERCONTROLKEY == true && racCategoryIds.Contains(x.RACCATEGORYID)
-                ).ToList();
+                defaultDefinition.AddRange(definitions.Where(x=>x.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList());
+
+                racTiers = definitions.Where(x => x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID)
+                                                                                                                      .ThenByDescending(a => a.RACITEMID).ToList();
+
 
                 definitions = defaultDefinition;
             }
@@ -1808,7 +1809,7 @@ namespace FintrakBanking.Repositories.Credit
                 var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
                 if (submission == null) continue;
 
-                bool validation = validation = ValidRacSubmission(i == 0 && isRacRelated ? defaultTier : definition, submission.value, operationId ?? 0, targetId); 
+                bool validation = validation = ValidRacSubmission(definition, submission.value, operationId ?? 0, targetId); 
 
                 if (validation == false && ctr == 0)
                 {
@@ -1823,8 +1824,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (racTiers.Count() > 0 && ctr == 0)
                     {
                         definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                        && ids.Contains(x.RACDEFINITIONID) && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
-                        && x.RACCATEGORYID == defaultTier.RACCATEGORYID
+                        && ids.Contains(x.RACDEFINITIONID) && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != definition.RACCATEGORYTYPEID
                         ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
 
                     }
