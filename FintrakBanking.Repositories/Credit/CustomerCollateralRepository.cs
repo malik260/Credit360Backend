@@ -2098,6 +2098,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                select new CollateralCoverageViewModel
                                {
+                                   loanAppCollateralId = x.LOANAPPCOLLATERALID,
                                    collateralId = x.COLLATERALCUSTOMERID,
                                    collateralCode = c.COLLATERALCODE,
                                    currencyId = c.CURRENCYID,
@@ -2124,6 +2125,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                select new CollateralCoverageViewModel
                                {
+                                   loanAppCollateralId = x.LOANAPPCOLLATERALID,
                                    collateralId = x.COLLATERALCUSTOMERID,
                                    collateralCode = c.COLLATERALCODE,
                                    currencyId = c.CURRENCYID,
@@ -2195,6 +2197,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var cov = new CollateralCoverageViewModel
                 {
+                    loanAppCollateralId = collateral.loanAppCollateralId,
                     collateralSummary = collateral.collateralSummary,
                     loanApplicationDetailId = collateral.loanApplicationDetailId,
                     collateralId = collateral.collateralId,
@@ -6778,10 +6781,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DeleteProposedCollateral(CollateralCoverageViewModel model)
         {
-            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId && o.COLLATERALCUSTOMERID == model.collateralId).Select(o => o).FirstOrDefault();
+            var data = context.TBL_LOAN_APPLICATION_COLLATERL.Where(o => o.LOANAPPCOLLATERALID == model.loanAppCollateralId).Select(o => o).FirstOrDefault();
             if (data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
             {
-                throw new Exception("Cannot Delete Approved Already Mapped Collateral");
+                throw new Exception("Cannot Delete An Already Approved Collateral Mapping");
             }
             data.DELETED = true;
             data.DELETEDBY = model.createdBy;
