@@ -1425,11 +1425,21 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool checkInsurancePolicy(InsurancePolicy model)
         {
-            var result = context.TBL_COLLATERAL_ITEM_POLICY.Where(ip => ip.COLLATERALCUSTOMERID == model.collateraalId
+            try
+            {
+                var result = context.TBL_COLLATERAL_ITEM_POLICY.Where(ip => ip.COLLATERALCUSTOMERID == model.collateraalId
                                                                     && ip.APPROVALSTATUSID != (short)ApprovalStatusEnum.Approved
                                                                     && ip.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved).ToList();
-            if (result.Count > 0) return false;
-            else return true;
+
+                if (result.Count > 0) return false;
+                else return true;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            
+            
         }
 
         public bool UpdateInsurancePolicy(int id, CollateralInsurancePolicyViewModel model)
