@@ -188,7 +188,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 WorkflowResponse response = repo.LcReleaseMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The LC SHIPPING DOCUMENTS RELEASE request has been  acted on successfully" : "The LC SHIPPING DOCUMENTS RELEASE request has been APPROVED successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC SHIPPING DOCUMENTS RELEASE request has been APPROVED successfully" : "The LC SHIPPING DOCUMENTS RELEASE request has been REJECTED successfully") : "The LC SHIPPING DOCUMENTS RELEASE request has been acted on successfully" });
             }
             catch (SecureException ex)
             {
@@ -210,7 +210,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 WorkflowResponse response = repo.LcUssanceMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The LC USSANCE request has been acted on successfully" : "The LC USSANCE request has been APPROVED successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LC USANCE request has been APPROVED successfully" : "The LC USANCE request has been REJECTED successfully") : "The LC USANCE request has been acted on successfully" });
             }
             catch (SecureException ex)
             {
@@ -232,7 +232,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 WorkflowResponse response = repo.LetterGenerationRequestMemorandum(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalStatusEnum.Approved) ? "The Letter Generation request has been acted on successfully" : "The Letter Generation request has been APPROVED successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = (response.stateId == (int)ApprovalState.Ended) ? ((response.statusId == (int)ApprovalStatusEnum.Approved) ? "The LETTER GENERATION request has been APPROVED successfully" : "The LETTER GENERATION request has been REJECTED successfully") : "The LETTER GENERATION request has been acted on successfully" });
             }
             catch (SecureException ex)
             {
