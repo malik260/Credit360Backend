@@ -5,6 +5,7 @@ using FintrakBanking.Entities.AlertReportingModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Notification;
@@ -20,17 +21,19 @@ namespace FintrakBanking.Repositories.Setups.General
 {
     public class AlertRepository : IAlertRepository
     {
+        private IExternalAlertRepository externalAlertRepository;
         private FinTrakBankingContext context;
         private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
-                                FinTrakBankingStagingContext _context2)
+                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository)
         {
             this.context = _context;
             this.context2 = _context2;
             this.audit = _audit;
             this.general = _general;
+            this.externalAlertRepository = _externalAlertRepository;
         }
 
         public IEnumerable<AlertTitleViewModel> GetAllAlerts()
@@ -45,7 +48,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               businessOwner = a.BUSINESSOWNER,
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
-                              templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS"
+                              templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS",
                           });
             return alerts;
         }
@@ -681,6 +684,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     alert.alertTitle = alertcategory.TITLE;
                     alert.template = alertcategory.TEMPLATE;
+                    //alert.template = externalAlertRepository.Replace(alertcategory.TEMPLATE);
 
                     if (validateConditionTrigger(i.FREQUENCYID, i.CONDITIONID ?? 0))
                     {

@@ -1004,7 +1004,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
                 var data = (from b in context.TBL_CUSTOMER_GROUP_MAPPING
                             join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
-                            where b.CUSTOMERGROUPID == customerGroupId && b.DELETED == false
+                            where b.CUSTOMERGROUPID == customerGroupId && b.DELETED != true
                             && c.COMPANYID == companyId
                            && c.ACCOUNTCREATIONCOMPLETE == true
                             select new GroupCustomerMembersViewModel
@@ -1281,7 +1281,9 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapsAwaitingApprovals(int staffId, int companyId)
         {
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerGroupCreation).ToList();
+            /*var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerGroupCreation).ToList();*/ 
+
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerGroupMapping).ToList();
 
             var data = (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG
                     join g in context.TBL_CUSTOMER_GROUP on c.CUSTOMERGROUPID equals g.CUSTOMERGROUPID

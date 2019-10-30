@@ -34,7 +34,7 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetAlertTitle()
         {
             try
-            {
+            { 
                 var alertViewModels = _repo.GetAllAlerts();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = alertViewModels, count = alertViewModels.Count() });
             }

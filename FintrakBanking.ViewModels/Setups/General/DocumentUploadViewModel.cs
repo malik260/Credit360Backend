@@ -8,6 +8,8 @@ namespace FintrakBanking.ViewModels.Setups.General
 {
     public class DocumentUploadViewModel : GeneralEntity
     {
+        public string deletedByName;
+
         public int documentUploadId { get; set; }
 
         public string fileName { get; set; }
