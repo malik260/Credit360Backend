@@ -4117,7 +4117,8 @@ namespace FintrakBanking.Repositories.Customer
                     lastName = c.LASTNAME,
                     customerTypeId = c.CUSTOMERTYPEID,
                     customerType = c.TBL_CUSTOMER_TYPE.NAME,
-                    isProspect = c.ISPROSPECT
+                    isProspect = c.ISPROSPECT,
+                    customerRating = c.CUSTOMERRATING
                 }).ToList();
 
             return data;

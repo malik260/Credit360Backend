@@ -1413,6 +1413,21 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public FacilityRatingViewModel GetFacilityRating(int loanApplicationDetailId)
+        {
+            var facilityRating = context.TBL_FACILITY_RATING.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetailId)
+                                        .OrderByDescending(O => O.FACILITYRATINGID).Select(O => new FacilityRatingViewModel
+                                        {
+                                            loanApplicationDetailId = O.LOANAPPLICATIONDETAILID,
+                                            probabilityOfDefault = O.PROBABILITYOFDEFAULT,
+                                            remark = O.REMARK,
+                                            customerId = O.CUSTOMERID,
+                                            dateTimeCreated = O.DATETIMECREATED,
+                                            createdBy = O.CREATEDBY
+                                        }).FirstOrDefault();
+            return facilityRating;
+        }
+
         public short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
         {
 

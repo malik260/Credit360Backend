@@ -773,8 +773,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public List<CasaViewModel> GetCustomerAccountsBalanceByCustomerCode(string customerCode)
         {
             List<CasaViewModel> casa = new List<CasaViewModel>();
-            Task.Run(async () => casa = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode))
-                .GetAwaiter().GetResult();
+            try
+            {
+                Task.Run(async () => casa = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode))
+                    .GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+      
             return casa;
         }
 
@@ -801,6 +809,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 .GetAwaiter().GetResult();
             return autoLoans;
         }
+
 
         public List<FacilityRatingViewModel> GetPersonalLoanRetailByCustomerCode(string customerCode)
         {

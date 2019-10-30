@@ -56,6 +56,7 @@ namespace FintrakBanking.APICore.Filters
             var ex = httpContext.Exception;
             var endPoint = httpContext.Request.RequestUri;
             var userName = httpContext.ActionContext.RequestContext.Principal.Identity.Name;
+
             var errorMessage = ex.Message;
             if (innerException != null) errorMessage = errorMessage + ", INNER_EXCETION: " + innerException;
             var time = DateTime.Now;
@@ -63,7 +64,7 @@ namespace FintrakBanking.APICore.Filters
 
             var log = new TBL_ERRORLOG()
             {
-                USERNAME = userName == null ? string.Empty : userName,
+                USERNAME = userName == null ? "SYSTEM" : userName,
                 APIENDPOINT = endPoint.ToString(),
                 ERRORPATH = ex.TargetSite.ToString(),
                 ERRORSOURCE = ex.Source,
