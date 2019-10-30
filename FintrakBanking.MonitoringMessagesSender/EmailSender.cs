@@ -11,6 +11,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Common.CustomException;
 using System.IO;
 using FintrakBanking.Entities.DocumentModels;
+using Topshelf.Logging;
 
 namespace FintrakBanking.MonitoringMessagesSender
 {
@@ -28,7 +29,7 @@ namespace FintrakBanking.MonitoringMessagesSender
         private string requireCredential = ConfigurationManager.AppSettings["requireCredential"];
         private string exceptionReportingEmails = ConfigurationManager.AppSettings["exceptionReportingEmails"];
         private  string[] Addy = { };
-
+        private static readonly LogWriter _log = HostLogger.Get<WindowService>();
         FinTrakBankingContext dbContext = new FinTrakBankingContext();
         FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
        
@@ -171,15 +172,15 @@ namespace FintrakBanking.MonitoringMessagesSender
                     var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending 
                     || o.MESSAGESTATUSID == (int)MessageStatusEnum.Attempted).ToList();
 
-
-                    if (listOfMails!=null)
+                   if (listOfMails !=null)
                     {
                         foreach (var newMail in listOfMails)
                         {
+
                             MailMessage mail = new MailMessage();
 
                             mail.From = new MailAddress(userName, displayName);
-
+                           
                             if (newMail.TOADDRESS != null && newMail.TOADDRESS != string.Empty)
                             {
                                 char[] seperators = { ',', ';' };
@@ -231,8 +232,6 @@ namespace FintrakBanking.MonitoringMessagesSender
                                     }
 
                                 }
-
-
 
                                 if (newMail.ATTACHMENTTYPEID == (int)AttachementTypeEnum.JobRequest)
                                 {

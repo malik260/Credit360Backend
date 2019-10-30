@@ -24,7 +24,8 @@ namespace FintrakBanking.MonitoringMessagesSender
         private string alertMessageLoggertime = ConfigurationManager.AppSettings["alertMessageLoggingTime"];
         private static readonly LogWriter _log = HostLogger.Get<WindowService>();
         AlertMessageLogger logger = new AlertMessageLogger();
-       // CurrencyAndRateUpdate currencyAndRateUpdate = new CurrencyAndRateUpdate();
+        
+        // CurrencyAndRateUpdate currencyAndRateUpdate = new CurrencyAndRateUpdate();
         public WindowService()
         {
         }
@@ -62,7 +63,7 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
                 try
                 {
-                    alert.validateAlertCheck();
+                   alert.validateAlertCheck();
                    // SEND EMAILS
                     bool response = emailSender.SendEmails();
                     if (response == true)
