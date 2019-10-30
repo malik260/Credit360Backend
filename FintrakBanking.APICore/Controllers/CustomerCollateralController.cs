@@ -2142,8 +2142,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("insurance-policy-request")]
-        public HttpResponseMessage AddInsurancePolicyRequest([FromBody] CollateralInsuranceRequestViewModel model)
+        [Route("insurance-policy-request/{id}")]
+        public HttpResponseMessage AddInsurancePolicyRequest([FromBody] CollateralInsuranceRequestViewModel model, int? id)
         {
             try
             {
@@ -2153,7 +2153,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
 
-                var response = repo.AddInsurancePolicyRequest(model);
+                var response = repo.AddInsurancePolicyRequest(model, id);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
