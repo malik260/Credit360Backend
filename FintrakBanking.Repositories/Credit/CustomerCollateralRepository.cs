@@ -2115,10 +2115,11 @@ namespace FintrakBanking.Repositories.Credit
                                    collateralValue = c.COLLATERALVALUE,
                                    actualCollateralCoverage = x.COLLATERALCOVERAGE,
                                    loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
-                                   collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
+                                   collateralSubTypeId = s.COLLATERALSUBTYPEID,
                                    approvalStatusId = x.APPROVALSTATUSID,
                                    collateralSummary = c.COLLATERALSUMMARY,
                                    facilityAmount = f.APPROVEDAMOUNT,
+                                   customerId = (int)c.CUSTOMERID,
                                    //facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
                                    facilityCurrencyId = f.CURRENCYID,
                                }).ToList();
@@ -2131,7 +2132,7 @@ namespace FintrakBanking.Repositories.Credit
                                join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
                                join f in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals f.LOANAPPLICATIONDETAILID
                                //where x.LOANAPPLICATIONDETAILID == f.LOANAPPLICATIONDETAILID
-                               where c.CUSTOMERID == customerId && f.CUSTOMERID == customerId && x.DELETED == false
+                               where f.CUSTOMERID == customerId && x.DELETED == false
 
                                select new CollateralCoverageViewModel
                                {
@@ -2142,9 +2143,10 @@ namespace FintrakBanking.Repositories.Credit
                                    collateralValue = c.COLLATERALVALUE,
                                    actualCollateralCoverage = x.COLLATERALCOVERAGE,
                                    loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
-                                   collateralSubTypeId = (short)s.COLLATERALSUBTYPEID,
+                                   collateralSubTypeId = s.COLLATERALSUBTYPEID,
                                    approvalStatusId = x.APPROVALSTATUSID,
                                    collateralSummary = c.COLLATERALSUMMARY,
+                                   customerId = (int)c.CUSTOMERID,
                                    facilityAmount = f.APPROVEDAMOUNT,
                                    //facilityAmount = context.TBL_LOAN_APPLICATION_DETAIL.Where(o => o.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Sum(o => o.APPROVEDAMOUNT),
                                    facilityCurrencyId = f.CURRENCYID,
@@ -2215,6 +2217,7 @@ namespace FintrakBanking.Repositories.Credit
                     collateralValue = collateralValue,
                     collateralValueFcy = collateral.collateralValue,
                     currencyId = collateral.currencyId,
+                    customerId = collateral.customerId,
                     actualCoveragePercentage = coveragePercentage,
                     facilityAmount = facilityAmount,
                     facilityAmountFcy = collateral.facilityAmount,
