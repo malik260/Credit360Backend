@@ -396,6 +396,8 @@ namespace FintrakBanking.Repositories.Credit
                         SIGNATORYID = s.signatoryId,
                         OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
                         POSITION = n,
+                        DATETIMECREATED = general.GetApplicationDate(),
+                        CREATEDBY = model.createdBy,
                     });
                 }
                 context.TBL_OPERATION_SIGNATORY.AddRange(sig);
@@ -413,6 +415,8 @@ namespace FintrakBanking.Repositories.Credit
                         LOAN_CAMSOLID = c.camsolId,
                         OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
                         POSITION = n,
+                        DATETIMECREATED = general.GetApplicationDate(),
+                        CREATEDBY = model.createdBy,
                     });
                 }
                 context.TBL_OPERATION_CAMSOL_LIST.AddRange(cam);
@@ -576,14 +580,14 @@ namespace FintrakBanking.Repositories.Credit
         {
             string[] str = {" "};
             //string[] customerNames;
-             //let customerNames = customerName.Trim().ToLower().Split(str, StringSplitOptions.RemoveEmptyEntries);
-            //customerNames.ToList();
+            var customerNames = customerName.Trim().ToLower().Split(str, StringSplitOptions.RemoveEmptyEntries);
+            customerNames.ToList();
             //var test = context.TBL_LOAN_CAMSOL.Where(c => customerNames.Any(n => c.CUSTOMERNAME.Trim().ToLower().Contains(n))).ToList();
             //var test2 = context.TBL_LOAN_CAMSOL.Select(c => c.CUSTOMERNAME.Trim().ToLower()).ToList();
             //var contains = test2.Exists(n => n.Contains(customerName));
             var data = from O in context.TBL_LOAN_CAMSOL
                        join C in context.TBL_LOAN_CAMSOL_TYPE on O.CAMSOLTYPEID equals C.CAMSOLTYPEID
-                       let customerNames = customerName.Trim().ToLower().Split(str, StringSplitOptions.RemoveEmptyEntries)
+                       //let customerNames = customerName.Trim().ToLower().Split(str, StringSplitOptions.RemoveEmptyEntries)
                        where customerNames.Any(n => O.CUSTOMERNAME.Trim().ToLower().Contains(n)) || O.CUSTOMERCODE == customerCode || O.CUSTOMERNAME.Trim().ToLower() == customerName
                        orderby O.LOAN_CAMSOLID descending
                        select new CamsolLoanDocumentViewModel

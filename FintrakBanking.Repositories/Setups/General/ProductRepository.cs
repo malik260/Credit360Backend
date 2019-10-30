@@ -595,7 +595,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                        productPriceIndexSpread = data.PRODUCTPRICEINDEXSPREAD,
 
                                        productCode = data.PRODUCTCODE,
-                                       productName = data.PRODUCTNAME,
+                                       productName = data.PRODUCTNAME + " " + data.PRODUCTCODE,
                                        productDescription = data.PRODUCTDESCRIPTION,
 
                                        productGroupId = g.PRODUCTGROUPID,
