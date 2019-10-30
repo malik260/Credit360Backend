@@ -119,6 +119,67 @@ namespace FintrakBanking.Repositories.Media
             .ToList();
         }
 
+        public IEnumerable<DocumentUploadViewModel> GetDocumentDeleted(int staffId, int operationId, int targetId)
+        {
+            return docContext.TBL_DOCUMENT_USAGE.Where(x => x.DELETED == true && x.OPERATIONID == operationId && x.TARGETID == targetId)
+                .Join(docContext.TBL_DOCUMENT_UPLOAD.Where(x => x.DELETED == true)
+                , us => us.DOCUMENTUPLOADID, up => up.DOCUMENTUPLOADID, (us, up) =>
+                    new {
+                        documentUploadId = up.DOCUMENTUPLOADID,
+                        fileName = up.FILENAME,
+                        fileExtension = up.FILEEXTENSION,
+                        fileSize = up.FILESIZE,
+                        fileSizeUnit = up.FILESIZEUNIT,
+                        fileData = up.FILEDATA,
+                        companyId = up.COMPANYID,
+                        issueDate = up.ISSUEDATE,
+                        expiryDate = up.EXPIRYDATE,
+                        physicalFilenumber = up.PHYSICALFILENUMBER,
+                        physicalLocation = up.PHYSICALLOCATION,
+                        documentTypeId = up.DOCUMENTTYPEID,
+                        documentTypeName = up.TBL_DOCUMENT_TYPE.DOCUMENTTYPENAME,
+                        documentCategoryId = up.TBL_DOCUMENT_TYPE.DOCUMENTCATEGORYID,
+                        documentCategoryName = up.TBL_DOCUMENT_TYPE.TBL_DOCUMENT_CATEGORY.DOCUMENTCATEGORYNAME,
+                        owner = us.CREATEDBY == staffId,
+                        dateTimeCreated = us.DATETIMECREATED,
+                        dateTimeDeleted = us. DATETIMEDELETED,
+                        dateTimeUpdated = us.DATETIMEUPDATED,
+                        createdBy = us.CREATEDBY.Value,
+                        deletedBy = us.DELETEDBY,
+
+                    }
+            ).AsEnumerable()
+            .Select(up => new DocumentUploadViewModel
+            {
+                documentUploadId = up.documentUploadId,
+                fileName = up.fileName,
+                fileExtension = up.fileExtension,
+                fileSize = up.fileSize,
+                fileSizeUnit = up.fileSizeUnit,
+                fileData = up.fileData,
+                companyId = up.companyId,
+                issueDate = up.issueDate,
+                expiryDate = up.expiryDate,
+                physicalFilenumber = up.physicalFilenumber,
+                physicalLocation = up.physicalLocation,
+                documentTypeId = up.documentTypeId,
+                documentTypeName = up.documentTypeName,
+                documentCategoryId = up.documentCategoryId,
+                documentCategoryName = up.documentCategoryName,
+                owner = up.owner,
+                dateTimeCreated = up.dateTimeCreated,
+                dateTimeDeleted = up.dateTimeDeleted,
+                dateTimeUpdated = up.dateTimeUpdated,
+                createdBy = up.createdBy,
+                uploadedBy = context.TBL_STAFF.Where(s => s.STAFFID == up.deletedBy && s.DELETED != true).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + "(" + s.STAFFCODE + ")").FirstOrDefault(),
+
+            })
+            .OrderBy(x => x.dateTimeCreated)
+            .ThenBy(x => x.documentCategoryId)
+            .ThenBy(x => x.documentTypeId)
+            .ToList();
+        }
+
         public IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int staffId)
         {
             //var staffs = context.TBL_STAFF.ToList();
