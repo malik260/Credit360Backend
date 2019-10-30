@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Setups.General
                               businessOwner = a.BUSINESSOWNER,
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
-                              templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS"
+                              templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS",
                           });
             return alerts;
         }
@@ -683,7 +683,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (alertcategory != null)
                 {
                     alert.alertTitle = alertcategory.TITLE;
-                    alert.template = externalAlertRepository.Replace(alertcategory.TEMPLATE);
+                    alert.template = alertcategory.TEMPLATE;
+                    //alert.template = externalAlertRepository.Replace(alertcategory.TEMPLATE);
 
                     if (validateConditionTrigger(i.FREQUENCYID, i.CONDITIONID ?? 0))
                     {

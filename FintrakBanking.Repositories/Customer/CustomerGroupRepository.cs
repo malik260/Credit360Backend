@@ -1004,7 +1004,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
                 var data = (from b in context.TBL_CUSTOMER_GROUP_MAPPING
                             join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
-                            where b.CUSTOMERGROUPID == customerGroupId && b.DELETED == false
+                            where b.CUSTOMERGROUPID == customerGroupId && b.DELETED != true
                             && c.COMPANYID == companyId
                            && c.ACCOUNTCREATIONCOMPLETE == true
                             select new GroupCustomerMembersViewModel
