@@ -1619,6 +1619,7 @@ namespace FintrakBanking.Repositories.Credit
                            join cc in context.TBL_COLLATERAL_CUSTOMER on ir.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                            join atrail in context.TBL_APPROVAL_TRAIL on ir.INSURANCEREQUESTID equals atrail.TARGETID
                            where atrail.OPERATIONID == (int)OperationsEnum.IsurancePolicyApproval
+                            && (ir.APPROVALSTATUSID ==(short)ApprovalStatusEnum.Processing || ir.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved || ir.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                             && atrail.TARGETID == ir.INSURANCEREQUESTID
                            orderby atrail.APPROVALTRAILID descending
                            select new CollateralViewModel()
@@ -1666,7 +1667,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() > 0;
         }
-        public bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model)
+        public bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model, int? id)
         {
             var data = context.TBL_INSURANCE_REQUEST.FirstOrDefault(d => d.COLLATERALCUSTOMERID == model.collateralCustomerId &&
                                                                         d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
@@ -1692,7 +1693,24 @@ namespace FintrakBanking.Repositories.Credit
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
             });
 
-            return context.SaveChanges() > 0;
+            var output = context.SaveChanges() > 0;
+
+            if (output == true && id != null)
+            {
+                var rejectedInsurance = context.TBL_INSURANCE_REQUEST.Find(id);
+
+                if (rejectedInsurance == null || (rejectedInsurance != null && rejectedInsurance.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved))
+                {
+                    throw new SecureException("An Error Occured, Please Contact the System Administrator");
+                }
+
+                rejectedInsurance.APPROVALSTATUSID = (short)ApprovalStatusEnum.RePresent;
+
+                return context.SaveChanges() > 0;
+
+            }
+
+            return output;
 
         }
 
@@ -2864,7 +2882,8 @@ namespace FintrakBanking.Repositories.Credit
                                  requestComment = x.REQUESTCOMMENT,
                                  approvalStatusId = atrail.APPROVALSTATUSID,
                                  approvalStatusName = context.TBL_APPROVAL_STATUS.Where(s => s.APPROVALSTATUSID == atrail.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
-                                 customerId = c.CUSTOMERID
+                                 customerId = c.CUSTOMERID,
+                                 arrivalTime = atrail.SYSTEMARRIVALDATETIME
                              }).ToList();
 
 

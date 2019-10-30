@@ -187,7 +187,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         #region collateralInsuranceRequest
 
-        bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model);
+        bool AddInsurancePolicyRequest(CollateralInsuranceRequestViewModel model, int? id);
         string GetReferenceNumber();
         IEnumerable<CollateralViewModel> GetInsuranceRequests(int staffId);
         bool InsuranceRequestGoForApproval(CollateralViewModel model);
