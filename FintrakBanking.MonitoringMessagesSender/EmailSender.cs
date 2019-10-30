@@ -168,8 +168,8 @@ namespace FintrakBanking.MonitoringMessagesSender
 
                     }
 
-                    var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (int)MessageStatusEnum.Pending 
-                    || o.MESSAGESTATUSID == (int)MessageStatusEnum.Attempted).ToList();
+                    var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending 
+                    || o.MESSAGESTATUSID == (short)MessageStatusEnum.Attempted).ToList();
 
 
                     if (listOfMails!=null)
@@ -216,12 +216,12 @@ namespace FintrakBanking.MonitoringMessagesSender
 
                             if (newMail.ATTACHMENTTYPEID != null)
                             {
-                                if (newMail.ATTACHMENTTYPEID == (int)AttachementTypeEnum.ContingentTermination)
+                                if (newMail.ATTACHMENTTYPEID == (short)AttachementTypeEnum.ContingentTermination)
                                 {
                                     List<TBL_MEDIA_LOAN_DOCUMENTS> requestDoc = new List<TBL_MEDIA_LOAN_DOCUMENTS>();
                                     int loanOperationID = Convert.ToInt32(newMail.ATTACHMENTCODE);
 
-                                    requestDoc = docContext.TBL_MEDIA_LOAN_DOCUMENTS.Where(x => x.LOANREVIEWOPERATIONID == loanOperationID).ToList();
+                                    requestDoc = docContext.TBL_MEDIA_LOAN_DOCUMENTS.Where(x => x.LOANREVIEWOPERATIONID == loanOperationID)?.ToList();
                                     foreach (var binaryFile in requestDoc)
                                     {
                                         MemoryStream memoryStream = new MemoryStream(binaryFile.FILEDATA);
@@ -234,7 +234,7 @@ namespace FintrakBanking.MonitoringMessagesSender
 
 
 
-                                if (newMail.ATTACHMENTTYPEID == (int)AttachementTypeEnum.JobRequest)
+                                if (newMail?.ATTACHMENTTYPEID == (short)AttachementTypeEnum.JobRequest)
                                 {
                                     List<TBL_MEDIA_JOB_REQUEST_DOCUMENT> requestDoc = new List<TBL_MEDIA_JOB_REQUEST_DOCUMENT>();
                                     
@@ -261,7 +261,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                               ///  throw new SecureException("Error : " + ex);
                             }
 
-                            UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");
+                            UpdateMailDeliveryStatus(newMail.MESSAGEID, (short)MessageStatusEnum.Sent, "Email Sent Successfully");
                         }
                     }
                    
@@ -271,7 +271,7 @@ namespace FintrakBanking.MonitoringMessagesSender
             catch (Exception ex)
             {
 
-                UpdateMailDeliveryStatus(mailId, (int)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
+                UpdateMailDeliveryStatus(mailId, (short)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
 
                 //throw new SecureException("Failed with error : " + ex.Message);
                 return false;
@@ -313,7 +313,7 @@ namespace FintrakBanking.MonitoringMessagesSender
                 var mail = dbContext.TBL_MESSAGE_LOG.Where(p => p.MESSAGEID == ID).FirstOrDefault();
                 if (mail != null)
                 {
-                    mail.MESSAGESTATUSID = (int)MessageStatusEnum.Sent;
+                    mail.MESSAGESTATUSID = (short)MessageStatusEnum.Sent;
                     dbContext.SaveChanges();
                     return true;
                 }
