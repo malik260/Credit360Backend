@@ -1281,7 +1281,9 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapsAwaitingApprovals(int staffId, int companyId)
         {
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerGroupCreation).ToList();
+            /*var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerGroupCreation).ToList();*/ 
+
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerGroupMapping).ToList();
 
             var data = (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG
                     join g in context.TBL_CUSTOMER_GROUP on c.CUSTOMERGROUPID equals g.CUSTOMERGROUPID
