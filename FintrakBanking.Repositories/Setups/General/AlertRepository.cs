@@ -21,19 +21,19 @@ namespace FintrakBanking.Repositories.Setups.General
 {
     public class AlertRepository : IAlertRepository
     {
-        //private IExternalAlertRepository externalAlertRepository;
+        private IExternalAlertRepository externalAlertRepository;
         private FinTrakBankingContext context;
         private FinTrakBankingStagingContext context2;
         private IAuditTrailRepository audit;
         private IGeneralSetupRepository general;
         public AlertRepository(FinTrakBankingContext _context, IAuditTrailRepository _audit, IGeneralSetupRepository _general,
-                                FinTrakBankingStagingContext _context2)
+                                FinTrakBankingStagingContext _context2, IExternalAlertRepository _externalAlertRepository)
         {
             this.context = _context;
             this.context2 = _context2;
             this.audit = _audit;
             this.general = _general;
-            //this.externalAlertRepository = _externalAlertRepository;
+            this.externalAlertRepository = _externalAlertRepository;
         }
 
         public IEnumerable<AlertTitleViewModel> GetAllAlerts()
