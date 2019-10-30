@@ -396,6 +396,8 @@ namespace FintrakBanking.Repositories.Credit
                         SIGNATORYID = s.signatoryId,
                         OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
                         POSITION = n,
+                        DATETIMECREATED = general.GetApplicationDate(),
+                        CREATEDBY = model.createdBy,
                     });
                 }
                 context.TBL_OPERATION_SIGNATORY.AddRange(sig);
@@ -413,6 +415,8 @@ namespace FintrakBanking.Repositories.Credit
                         LOAN_CAMSOLID = c.camsolId,
                         OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
                         POSITION = n,
+                        DATETIMECREATED = general.GetApplicationDate(),
+                        CREATEDBY = model.createdBy,
                     });
                 }
                 context.TBL_OPERATION_CAMSOL_LIST.AddRange(cam);
