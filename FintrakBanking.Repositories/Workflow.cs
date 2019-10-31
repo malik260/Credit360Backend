@@ -830,7 +830,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.skipLimitsCheck == true || IsPresetFinalLevel()) { return; }
 
-            if (this.nextLevelId != null && this.amount > 0 && ActionIsApprovalDecision())
+            if (this.nextLevelId != null && this.amount > 0) // && ActionIsApprovalDecision()
             {
                 if (WithinAllLimits() == true)
                 {
@@ -1405,6 +1405,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int NumberOfApprovals { get; set; }
         public bool CanRouteBack { get; set; }
         public bool IsPoliticallyExposed { get; set; }
+        //public bool IsInsiderRelated { get; set; }
         public bool IsActive { get; set; }
         public bool CanEdit { get; set; }
         public bool CanRecieveEmail { get; set; }
