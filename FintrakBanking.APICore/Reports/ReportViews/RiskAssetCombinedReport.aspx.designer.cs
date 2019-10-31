@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FintrakBanking.APICore.Reports.Report {
+namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class MaturityReport {
+    public partial class RiskAssetCombinedReport {
         
         /// <summary>
         /// form1 control.
