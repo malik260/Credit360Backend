@@ -6812,8 +6812,35 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
+        
+        public int GetDrawdownOperationId(int applicationDetailId)
+        {
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(applicationDetailId);
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId)
+            var requestedProduct = context.TBL_PRODUCT.Find(loanApplicationDetails.APPROVEDPRODUCTID);
+
+            var operationId = 0;
+            if (requestedProduct.PRODUCTCLASSID == (short)ProductClassEnum.Creditcards)
+            {
+                operationId = (short)OperationsEnum.CreditCardDrawdownRequest;
+            }
+            else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Individual)
+            {
+                if (requestedProduct.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID == (short)ProductClassProcessEnum.CAMBased)
+                {
+                    operationId = (short)OperationsEnum.CorporateDrawdownRequest;
+                }
+                operationId = (short)OperationsEnum.IndividualDrawdownRequest;
+            }
+            else if (loanApplicationDetails.TBL_CUSTOMER.CUSTOMERTYPEID == (short)CustomerTypeEnum.Corporate)
+            {
+                operationId = (short)OperationsEnum.CorporateDrawdownRequest;
+            }
+
+            return operationId;
+        }
+
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId) 
         {
             //var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
             var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).ToList();
@@ -6830,7 +6857,7 @@ namespace FintrakBanking.Repositories.Credit
                 var lcapprovedLCIFFsRecords = lcapprovedLCIFFs.Where(i => i.FUNDSOURCEDETAILS == item.loanApplicationId);
                 var lcApprovedAmounts = lcapprovedLCIFFsRecords.Count() > 0 ? lcapprovedLCIFFsRecords?.Sum(i => i.LETTEROFCREDITAMOUNT) : 0;
                 var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-
+                item.operationId = GetDrawdownOperationId(item.loanApplicationDetailId);
                 if (requests.Where(a => a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Count() > 0)
                 { item.approveRequestAmount = (decimal)requests.Where(k => k.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved).Sum(s => s.AMOUNT_REQUESTED); }
 
@@ -8533,9 +8560,29 @@ namespace FintrakBanking.Repositories.Credit
             return loans;
         }
 
-        public List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId)
+        public List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int loanTypeId, int companyId)
         {
             List<LoanCAMSOLViewModel> camsol = new List<LoanCAMSOLViewModel>();
+            if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
+            {
+                var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                           where a.CUSTOMERGROUPID == customer.FirstOrDefault().customerId && a.DELETED == false
+                                           select new CustomerGroupMappingViewModel
+                                           {
+                                               customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                               customerGroupId = a.CUSTOMERGROUPID,
+                                               relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                               relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                               customerId = a.CUSTOMERID,
+                                               customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                               customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                               customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                           }).ToList();
+                if (customerGroupMapping.Count() > 0)
+                {
+                    customer = customerGroupMapping.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                }
+            }
 
             foreach (var item in customer)
             {
@@ -8565,11 +8612,31 @@ namespace FintrakBanking.Repositories.Credit
             return camsol;
         }
 
-        public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId)
+        public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int loanTypeId, int companyId)
         {
             IEnumerable<CurrentCustomerExposure> exposure = null;
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
 
+            if (loanTypeId == (int)LoanTypeEnum.CustomerGroup && customer.Count() == 1)
+            {
+                var customerGroupMapping = (from a in context.TBL_CUSTOMER_GROUP_MAPPING
+                                            where a.CUSTOMERGROUPID == customer.FirstOrDefault().customerId && a.DELETED == false
+                                            select new CustomerGroupMappingViewModel
+                                            {
+                                                customerGroupMappingId = a.CUSTOMERGROUPMAPPINGID,
+                                                customerGroupId = a.CUSTOMERGROUPID,
+                                                relationshipTypeId = a.RELATIONSHIPTYPEID,
+                                                relationshipTypeName = a.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
+                                                customerId = a.CUSTOMERID,
+                                                customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
+                                                customerName = a.TBL_CUSTOMER.LASTNAME + " " + a.TBL_CUSTOMER.FIRSTNAME,
+                                                customerType = a.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                                            }).ToList();
+                if (customerGroupMapping.Count() > 0)
+                {
+                    customer = customerGroupMapping.Select(m => new CustomerExposure { customerId = m.customerId }).ToList();
+                }
+            }
 
             foreach (var item in customer)
             {

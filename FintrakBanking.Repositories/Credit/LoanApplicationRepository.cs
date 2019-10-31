@@ -1771,16 +1771,20 @@ namespace FintrakBanking.Repositories.Credit
             TBL_RAC_DEFINITION defaultTier = new TBL_RAC_DEFINITION();
             List<TBL_RAC_DEFINITION> defaultDefinition = new List<TBL_RAC_DEFINITION>();
             List<TBL_RAC_DEFINITION> racTiers = new List<TBL_RAC_DEFINITION>();
+            List<TBL_RAC_DEFINITION> allTierRacs = new List<TBL_RAC_DEFINITION>();
+            var b = definitions.FirstOrDefault();
+            allTierRacs = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && x.RACCATEGORYID == b.RACCATEGORYID).ToList();
+
             if (isRacRelated == true)
             {
-               var  defaultTierItems = definitions.Where(x=>x.ISRACTIERCONTROLKEY == true).ToList();
+               var  defaultTierItems = allTierRacs.Where(x=>x.ISRACTIERCONTROLKEY == true).ToList();
 
                 foreach(var i in defaultTierItems)
                 {
                     var submission = rac.form.FirstOrDefault(x => x.criteriaId == i.RACDEFINITIONID);
                     if (ValidRacSubmission(i, submission.value, operationId ?? 0, targetId))
                     {
-                        defaultTier = definitions.Where(x => x.RACCATEGORYTYPEID == i.RACCATEGORYTYPEID.Value)?.FirstOrDefault();
+                        defaultTier = allTierRacs.Where(x => x.RACCATEGORYTYPEID == i.RACCATEGORYTYPEID.Value)?.FirstOrDefault();
                     };
                 }
 
@@ -1791,7 +1795,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 defaultDefinition.AddRange(definitions.Where(x=>x.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList());
 
-                racTiers = definitions.Where(x => x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID)
+                racTiers = allTierRacs.Where(x => x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID)
                                                                                                                       .ThenByDescending(a => a.RACITEMID).ToList();
 
 
