@@ -124,7 +124,7 @@ namespace FintrakBanking.APICore.App_Start
                 throw;
             }
         }
-
+       
         /// <summary>
         /// Load your modules or register your services here!
         /// </summary>
@@ -136,6 +136,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<FinTrakBankingStagingContext>().To<FinTrakBankingStagingContext>();
             kernel.Bind<IBulkDisbursementPackageRepository>().To<BulkDisbursementPackageRepository>();
             kernel.Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
+            kernel.Bind<IExternalAlertRepository>().To<ExternalAlertRepository>();
             kernel.Bind<IAuthenticationRepository>().To<AuthenticationRepository>();
             kernel.Bind<IAuthorizationRepository>().To<AuthorizationRepository>();
             kernel.Bind<IChartOfAccountRepository>().To<ChartOfAccountRepository>();

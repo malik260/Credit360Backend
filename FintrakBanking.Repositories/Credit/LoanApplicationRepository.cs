@@ -1771,28 +1771,49 @@ namespace FintrakBanking.Repositories.Credit
             TBL_RAC_DEFINITION defaultTier = new TBL_RAC_DEFINITION();
             List<TBL_RAC_DEFINITION> defaultDefinition = new List<TBL_RAC_DEFINITION>();
             List<TBL_RAC_DEFINITION> racTiers = new List<TBL_RAC_DEFINITION>();
+            List<TBL_RAC_DEFINITION> allTierRacs = new List<TBL_RAC_DEFINITION>();
+            List<TBL_RAC_DEFINITION> defaultTierItems = new List<TBL_RAC_DEFINITION>();
+
+            var b = definitions.FirstOrDefault();
+            allTierRacs = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && x.RACCATEGORYID == b.RACCATEGORYID).ToList();
+            int lastRacIndex = 0;
+            //List<int?> racCategoryTypeIds = allTierRacs.Select(x => x.RACCATEGORYTYPEID).ToList() ;
+
+            var submission = new RacFormControlValue();
+
             if (isRacRelated == true)
             {
-                defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false 
-                 && x.ISRACTIERCONTROLKEY == true && ids.Contains(x.RACDEFINITIONID) 
-             ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).FirstOrDefault();
+                defaultTierItems = allTierRacs.Where(x=>x.ISRACTIERCONTROLKEY == true).ToList();
+                if(defaultTierItems.Count() <= 0) { throw new ConditionNotMetException("Control keys have not been setup for the RAC Tiers"); }
 
-                if(defaultTier == null)
+                List<TBL_RAC_DEFINITION> matchedTierRac = new List<TBL_RAC_DEFINITION>();
+
+                var submissionRac = new RacFormControlValue().value;
+                foreach (var i in defaultTierItems)
                 {
-                    defaultTier = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && ids.Contains(x.RACDEFINITIONID)
-                                ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).FirstOrDefault();
+                    submissionRac = (submissionRac == null) ? rac.form.FirstOrDefault(x => x.criteriaId == i.RACDEFINITIONID).value : submissionRac;
+
+                    if (submission != null && ValidRacSubmission(i, submissionRac, operationId ?? 0, targetId))
+                    {
+                        matchedTierRac = allTierRacs.Where(x => x.RACCATEGORYTYPEID == i.RACCATEGORYTYPEID.Value)?.ToList();
+                    };
+
+                    if (matchedTierRac.Count() > 0) { defaultTier = matchedTierRac.FirstOrDefault(); lastRacIndex = defaultTierItems.IndexOf(i); break; }
                 }
-                defaultDefinition.Add(defaultTier);
-                var racCategoryIds = definitions.Select(x => x.RACCATEGORYID);
 
-                racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                        && ids.Contains(x.RACDEFINITIONID) && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
-                        //&& x.RACCATEGORYID == defaultTier.RACCATEGORYID
-                        ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
+                if (matchedTierRac.Count() <= 0)
+                {
+                    //throw new ConditionNotMetException("Could match RAC control key to any tier");
+                    msg.loanApplicationDetailId = targetId;
+                    msg.loanApplicationId = applicationId;
+                    return msg;
+                }
 
-                racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                    && x.ISRACTIERCONTROLKEY == true && racCategoryIds.Contains(x.RACCATEGORYID)
-                ).ToList();
+                defaultDefinition.AddRange(allTierRacs.Where(x=>x.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList());
+
+                racTiers = allTierRacs.Where(x => x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID)
+                                                                                                                      .ThenByDescending(a => a.RACITEMID).ToList();
+
 
                 definitions = defaultDefinition;
             }
@@ -1805,10 +1826,23 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var definition = definitions[i];
                 index = i;
-                var submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
+
+                submission = rac.form.FirstOrDefault(x => x.criteriaId == definition.RACDEFINITIONID);
+
+                if (isRacRelated)
+                {
+                    
+                    List<int> definitionId = new List<int>();
+                    definitionId = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false && x.RACCATEGORYID == definition.RACCATEGORYID && x.RACITEMID == definition.RACITEMID).Select(d=>d.RACDEFINITIONID).ToList();
+                    //definitionId.AddRange(allTierRacs.Select(x => x.RACDEFINITIONID));
+
+                    submission = rac.form.FirstOrDefault(x => definitionId.Contains(x.criteriaId));
+                }
+                    
+
                 if (submission == null) continue;
 
-                bool validation = validation = ValidRacSubmission(i == 0 && isRacRelated ? defaultTier : definition, submission.value, operationId ?? 0, targetId); 
+                bool validation = validation = ValidRacSubmission(definition, submission.value, operationId ?? 0, targetId); 
 
                 if (validation == false && ctr == 0)
                 {
@@ -1823,8 +1857,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (racTiers.Count() > 0 && ctr == 0)
                     {
                         definitions = racTiers = context.TBL_RAC_DEFINITION.Where(x => x.ISACTIVE == true && x.DELETED == false
-                        && ids.Contains(x.RACDEFINITIONID) && x.ISRACTIERCONTROLKEY == true && x.RACCATEGORYTYPEID != defaultTier.RACCATEGORYTYPEID
-                        && x.RACCATEGORYID == defaultTier.RACCATEGORYID
+                        && ids.Contains(x.RACDEFINITIONID) && x.RACCATEGORYTYPEID == defaultTierItems[lastRacIndex + 1].RACCATEGORYTYPEID && x.RACCATEGORYTYPEID != definition.RACCATEGORYTYPEID
                         ).Select(x => x).OrderByDescending(a => a.RACCATEGORYTYPEID).ThenByDescending(a => a.RACITEMID).ToList();
 
                     }

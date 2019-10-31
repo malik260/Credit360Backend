@@ -519,6 +519,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? prevoiusInsuranceId { get; set; }
         public int approvalTrailId { get; set; }
         public int targetId { get; set; }
+        public DateTime arrivalTime { get; set; }
     }
 
     public class NewCollateralViewModel
