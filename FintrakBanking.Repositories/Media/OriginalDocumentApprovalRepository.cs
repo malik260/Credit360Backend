@@ -139,6 +139,30 @@ namespace FintrakBanking.Repositories.Media
             return entity;
         }
 
+        public List<OriginalDocumentApprovalViewModel> GetApprovedOriginalDocumentByCollateralCustomerId(int id)
+        {
+            var entity = context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(x => x.COLLATERALCUSTOMERID == id && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && x.DELETED == false)
+                .Select(x => new OriginalDocumentApprovalViewModel
+                {
+                    originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
+                    loanApplicationId = x.LOANAPPLICATIONID,
+                    description = x.DESCRIPTION,
+                    approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == x.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                    applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                    referenceNumber = x.REFERENCENUMBER,
+                    dateTimeCreated = x.DATETIMECREATED,
+                    approvalDate = x.APPROVALDATE,
+                    approvalStatusId = x.APPROVALSTATUSID,
+                    collateralCustomerId = x.COLLATERALCUSTOMERID,
+
+                    //applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
+                    customerId = x.COLLATERALCUSTOMERID,
+                    operationId = (int)OperationsEnum.OriginalDocumentApproval,
+                }).ToList();
+
+            return entity;
+        }
+
         public List<OriginalDocumentApprovalViewModel> GetReleaseDocumentByCollateralCustomerId(int id)
         {
             List<OriginalDocumentApprovalViewModel> data = new List<OriginalDocumentApprovalViewModel>();
