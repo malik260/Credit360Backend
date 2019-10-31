@@ -1803,10 +1803,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (matchedTierRac.Count() <= 0)
                 {
-                    throw new ConditionNotMetException("Could match RAC control key to any tier");
-                    //msg.loanApplicationDetailId = targetId;
-                    //msg.loanApplicationId = applicationId;
-                    //return msg;
+                    //throw new ConditionNotMetException("Could match RAC control key to any tier");
+                    msg.loanApplicationDetailId = targetId;
+                    msg.loanApplicationId = applicationId;
+                    return msg;
                 }
 
                 defaultDefinition.AddRange(allTierRacs.Where(x=>x.RACCATEGORYTYPEID == defaultTier.RACCATEGORYTYPEID).ToList());
