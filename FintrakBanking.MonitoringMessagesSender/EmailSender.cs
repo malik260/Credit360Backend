@@ -210,10 +210,10 @@ namespace FintrakBanking.MonitoringMessagesSender
                                 }
                             }
 
-                            mail.IsBodyHtml = true;
-                            mail.Subject = newMail.MESSAGESUBJECT;
-                            mail.Body = newMail.MESSAGEBODY;
-                            mailId = newMail.MESSAGEID;
+                                mail.IsBodyHtml = true;
+                                mail.Subject = newMail.MESSAGESUBJECT.Trim();
+                                mail.Body = newMail.MESSAGEBODY;
+                                mailId = newMail.MESSAGEID;
 
                             if (newMail.ATTACHMENTTYPEID != null)
                             {
@@ -252,16 +252,8 @@ namespace FintrakBanking.MonitoringMessagesSender
     
 
                             }
-
-                            try
-                            {
-                                client.Send(mail);
-
-                            }catch(Exception ex)
-                            {
-                              ///  throw new SecureException("Error : " + ex);
-                            }
-
+                           
+                            client.Send(mail);
                             UpdateMailDeliveryStatus(newMail.MESSAGEID, (short)MessageStatusEnum.Sent, "Email Sent Successfully");
                         }
                     }
@@ -273,7 +265,6 @@ namespace FintrakBanking.MonitoringMessagesSender
             {
 
                 UpdateMailDeliveryStatus(mailId, (short)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
-
                 //throw new SecureException("Failed with error : " + ex.Message);
                 return false;
             }
