@@ -216,12 +216,12 @@ namespace FintrakBanking.Repositories.Credit
             //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
             //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
 
-            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID)).ToList();
 
             foreach (var customer in customers)
             {
-                if (customer.ISPROSPECT == false)
-                {
+                //if (customer.ISPROSPECT == false)
+                //{
                     autoLoans = integration.GetAutoLoanRetailByCustomerCode(customer.CUSTOMERCODE);
 
                     foreach (var item in autoLoans)
@@ -237,7 +237,7 @@ namespace FintrakBanking.Repositories.Credit
                             DELETED = false,
                         });
                     }
-                }
+                //}
             }
 
             context.SaveChanges();
