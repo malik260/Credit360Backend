@@ -345,7 +345,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.environmentalSocialRisk = GetEnvironmentalSocialRiskMarkup();
                 this.conditionsPrecedentToDrawdown = GetConditionsPrecedentToDrawdownMarkup();
                 this.transactionsDynamics = GetTransactionsDynamicsMarkup();
-                this.rmCountry = this.loanApplication.TBL_BRANCH.TBL_STATE.TBL_COUNTRY.NAME;
+                this.rmCountry = this.loanApplication.TBL_BRANCH?.TBL_STATE?.TBL_COUNTRY?.NAME;
                 this.misCode = this.loanApplication.MISCODE;
                 this.reviewType = "Initial";
                 this.preparedBy = this.loanApplication.TBL_STAFF.FIRSTNAME + " " + this.loanApplication.TBL_STAFF.LASTNAME;
@@ -818,7 +818,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml() + GetApprovalLevelsHtml() + GetOtherConditionsHtml();
+            result = result + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetApprovalLevelsHtml() + GetOtherConditionsHtml();
             return result;
         }
 
@@ -870,8 +870,14 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        public string GetPrecedentConditionsHtml()
+        public string GetPrecedentConditionsHtml(int applicationDetailId)
         {
+            var inPlace = "";
+            var perfected = "";
+            var deferred = "";
+
+            int n = 0;
+            var conditionsPre = GetConditionPrecedentByApplicationDetailId(applicationDetailId);
             var result = String.Empty;
             result = result + $@"
                 <br />
@@ -890,58 +896,25 @@ namespace FintrakBanking.Repositories.Credit
                         <td>In Place</td>
                         <td>Perfected</td>
                         <td>Deferred</td>
+                    </tr>";
+            foreach (var e in conditionsPre)
+            {
+                inPlace = context.TBL_CHECKLIST_STATUS.Where(x => x.CHECKLISTSTATUSID == e.checkListStatusId).Select(x => x.CHECKLISTSTATUSNAME).FirstOrDefault()==null? "": "Yes";
+                perfected = context.TBL_CHECKLIST_STATUS.Where(x => x.CHECKLISTSTATUSID == e.checkListStatusId).Select(x => x.CHECKLISTSTATUSNAME).FirstOrDefault() == null ? "" : "Yes";
+                deferred = context.TBL_CHECKLIST_STATUS.Where(x => x.CHECKLISTSTATUSID == e.checkListStatusId).Select(x => x.CHECKLISTSTATUSNAME).FirstOrDefault() == null ? "" : "Yes";
+                n++;
+                result = result + $@"
+                    < tr>
+                        <td>{n}</td>
+                        <td>{e.condition}</td>
+                        <td>{inPlace}</td>
+                        <td>{perfected}</td>
+                        <td>{deferred}</td>
                     </tr>
-                    <tr>
-                        <td>1</td>
-                        <td>Request letter for the facility</td>
-                        <td>{inPlace1}</td>
-                        <td>{perfected1}</td>
-                        <td>{deferred1}</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Accepted offer letter</td>
-                        <td>{inPlace2}</td>
-                        <td>{perfected2}</td>
-                        <td>{deferred2}</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Board resolution accepting the facility (for corporate customers)</td>
-                        <td>{inPlace3}</td>
-                        <td>{perfected3}</td>
-                        <td>{deferred3}</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Positive CRMS/Credit check</td>
-                        <td>{inPlace4}</td>
-                        <td>{perfected4}</td>
-                        <td>{deferred4}</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>Evidence of payroll mandate (for corporate customers)</td>
-                        <td>{inPlace5}</td>
-                        <td>{perfected5}</td>
-                        <td>{deferred5}</td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td>Status of Perfection of Mortgage/Debenture</td>
-                        <td>{inPlace6}</td>
-                        <td>{perfected6}</td>
-                        <td>{deferred6}</td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td>Other conditions as specified on the approval memo/FAM (please see overleaf)</td>
-                        <td>{inPlace7}</td>
-                        <td>{perfected7}</td>
-                        <td>{deferred7}</td>
-                    </tr>
-                 ";
-            result = result + $"</table>";
+                ";
+            }
+                   
+            result = result + $"</table> <br />";
             return result;
         }
 

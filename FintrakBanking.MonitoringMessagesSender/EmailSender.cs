@@ -211,9 +211,13 @@ namespace FintrakBanking.MonitoringMessagesSender
                             }
 
                                 mail.IsBodyHtml = true;
-                                mail.Subject = newMail.MESSAGESUBJECT.Trim();
-                                mail.Body = newMail.MESSAGEBODY;
+                                mail.Subject = newMail.MESSAGESUBJECT.Replace("\"", string.Empty);
+                                mail.Body = newMail.MESSAGEBODY.Replace("\"", string.Empty);
                                 mailId = newMail.MESSAGEID;
+
+                                _log.Info("");
+                                _log.Info("==================================================================");
+                                _log.Info("MESSAGESUBJECT : " + newMail.MESSAGESUBJECT.Replace("\"", string.Empty));
 
                             if (newMail.ATTACHMENTTYPEID != null)
                             {

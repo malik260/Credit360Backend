@@ -49,9 +49,9 @@ namespace FintrakBanking.Repositories.Setups.General
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
                               templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS",
-                              bindingType = a.BINDINGTYPE,
-                              lastSentDate = a.LASTSENTDATE,
-                              source = a.SOURECE,
+                              //bindingType = a.BINDINGTYPE,
+                              //lastSentDate = a.LASTSENTDATE,
+                              //source = a.SOURECE,
                           });
             return alerts;
         }
@@ -110,9 +110,9 @@ namespace FintrakBanking.Repositories.Setups.General
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
                               templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
-                              bindingType = a.BINDINGTYPE,
-                              lastSentDate = a.LASTSENTDATE,
-                              source = a.SOURECE,
+                              //bindingType = a.BINDINGTYPE,
+                              //lastSentDate = a.LASTSENTDATE,
+                              //source = a.SOURECE,
                           });
             return alerts;
         }
@@ -130,9 +130,9 @@ namespace FintrakBanking.Repositories.Setups.General
                              senderEmail = a.SENDEREMAIL,
                              senderName = a.SENDERNAME,
                              templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
-                             bindingType = a.BINDINGTYPE,
-                             lastSentDate = a.LASTSENTDATE,
-                             source = a.SOURECE,
+                             //bindingType = a.BINDINGTYPE,
+                             //lastSentDate = a.LASTSENTDATE,
+                             //source = a.SOURECE,
                          }).FirstOrDefault();
             return alert;
         }
@@ -147,9 +147,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 SENDEREMAIL = model.senderEmail,
                 SENDERNAME = model.senderName,
                 TEMPLATETYPE = model.templateType,
-                BINDINGTYPE = model.bindingType,
-                LASTSENTDATE = general.GetApplicationDate(),
-                SOURECE = model.source,
+                //BINDINGTYPE = model.bindingType,
+                //LASTSENTDATE = general.GetApplicationDate(),
+                //SOURECE = model.source,
             };
 
             context.TBL_ALERT_TITLE.Add(entity);
@@ -183,9 +183,9 @@ namespace FintrakBanking.Repositories.Setups.General
             entity.SENDERNAME = model.senderName;
             entity.SENDEREMAIL = model.senderEmail;
             entity.TEMPLATETYPE = model.templateType;
-            entity.BINDINGTYPE = model.bindingType;
-            entity.LASTSENTDATE = general.GetApplicationDate();
-            entity.SOURECE = model.source;
+            //entity.BINDINGTYPE = model.bindingType;
+            //entity.LASTSENTDATE = general.GetApplicationDate();
+            //entity.SOURECE = model.source;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
