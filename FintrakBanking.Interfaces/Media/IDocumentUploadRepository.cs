@@ -22,6 +22,7 @@ namespace FintrakBanking.Interfaces.Media
         bool DeleteDocumentUpload(int id, UserInfo user);
         DocumentUploadViewModel GetDocument(int documentId);
         IEnumerable<DocumentUploadViewModel> GetDocumentUploads(int getStaffId, int operationId, int targetId);
+        IEnumerable<DocumentUploadViewModel> GetDocumentDeleted(int staffId, int operationId, int targetId);
         IEnumerable<DocumentCategoryViewModel> GetDocumentCategories();
         IEnumerable<DocumentTypeViewModel> GetDocumentTypes(int id);
         CustomerDocumentSearchViewModel GetCustomerDocuments(DocumentUploadViewModel model, UserInfo user);

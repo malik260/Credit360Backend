@@ -269,9 +269,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                //var loanAppId = repo.GetLoanApplicationIdByReferenceNumber(applicationRefNumber);
-                //var data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
-                var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
+                var loanAppId = repo.GetLoanApplicationIdByReferenceNumber(applicationRefNumber);
+                var data = creditTemplateRepo.GetLoadedDocumentation(token.GetStaffId, 6, loanAppId);
+                //var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -2571,6 +2571,30 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.RiskAssetByVarianceReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("risk-asset-combined-report")]
+        public HttpResponseMessage GetRiskAssetCombinedReport([FromBody] RiskAssets obj)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.RiskAssetCombinedReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
