@@ -2353,12 +2353,14 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.OperationId = entity.operationId;
                 workflow.DeferredExecution = true;
                 workflow.ExternalInitialization = false;
+                workflow.Amount = request.AMOUNT_REQUESTED;
+                //if(request.AMOUNT_REQUESTED > 100000000)
                 //workflow.FinalLevel = application.TRANCHEAPPROVAL_LEVELID;
 
-                if (GetCurrentApprovalLevelId(entity.companyId, entity.operationId, entity.targetId) == application.TRANCHEAPPROVAL_LEVELID)
-                {
-                    workflow.NextLevelId = GetFirstAvailmentLevelId(entity.operationId);
-                }
+                //if (GetCurrentApprovalLevelId(entity.companyId, entity.operationId, entity.targetId) == application.TRANCHEAPPROVAL_LEVELID)
+                //{
+                //    workflow.NextLevelId = GetFirstAvailmentLevelId(entity.operationId);
+                //}
 
                 workflow.LevelBusinessRule = new LevelBusinessRule
                 {
@@ -14934,6 +14936,37 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        //public bool getNextApprovalLevel(ApprovalViewModel model)
+        //{
+        //    int staffId = model.staffId;
 
+        //    var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+        //    var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
+        //         .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+        //         .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+        //             mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+        //             {
+        //                 groupPosition = mg.m.POSITION,
+        //                 levelPosition = l.POSITION,
+        //                 levelId = l.APPROVALLEVELID,
+        //                 levelName = l.LEVELNAME,
+        //                 staffRoleId = l.STAFFROLEID,
+        //             })
+        //             .OrderBy(x => x.groupPosition)
+        //             .ThenBy(x => x.levelPosition)
+        //             .ToList();
+
+        //    var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+        //    var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+        //    var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+        //    int currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
+        //    int nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+
+        //    if (nextLevelIndex > currentLevelIndex)
+        //        throw new ConditionNotMetException("The refered level is higher than the current level.");
+
+        //}
     }
 }

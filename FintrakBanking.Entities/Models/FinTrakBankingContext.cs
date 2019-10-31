@@ -553,7 +553,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_AUTHORISED_SIGNATORY> TBL_AUTHORISED_SIGNATORY { get; set; }
         public virtual DbSet<TBL_OPERATION_SIGNATORY> TBL_OPERATION_SIGNATORY { get; set; }
         public virtual DbSet<TBL_OPERATION_CAMSOL_LIST> TBL_OPERATION_CAMSOL_LIST { get; set; }
-        public virtual DbSet<TBL_ALERT_TITLE> TBL_ALERT_TITLE { get; set; }
+        public virtual DbSet<TBL_ALERT_TITLE> TBL_ALERT_TITLE { get; set; } 
+        public virtual DbSet<TBL_ALERT_DATA_BINDINGTYPE> TBL_ALERT_DATA_BINDINGTYPE { get; set; }
         public virtual DbSet<TBL_ALERT_SETUP> TBL_ALERT_SETUP { get; set; }
         public virtual DbSet<TBL_ALERT_LEVEL_GRP_MAPPING> TBL_ALERT_LEVEL_GRP_MAPPING { get; set; }
         public virtual DbSet<TBL_ALERT_LEVEL_GROUP> TBL_ALERT_LEVEL_GROUP { get; set; }
