@@ -482,6 +482,9 @@ namespace FintrakBanking.Repositories.Credit
                     SIGNATORYID = s.signatoryId,
                     OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
                     POSITION = n,
+                    DELETED = false,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = general.GetApplicationDate()
                 });
                 //if (!signatories.Exists(sig => sig.SIGNATORYID == s.signatoryId))
                 //{
@@ -511,6 +514,9 @@ namespace FintrakBanking.Repositories.Credit
                     LOAN_CAMSOLID = s.camsolId,
                     OPERATIONID = (int)OperationsEnum.LetterGenerationRequest,
                     POSITION = n,
+                    DELETED = false,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = general.GetApplicationDate()
                 });
             }
             if (cams.Count() > 0)

@@ -48,7 +48,10 @@ namespace FintrakBanking.Repositories.Setups.General
                               businessOwner = a.BUSINESSOWNER,
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
-                              templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS"
+                              templateTypeName = a.TEMPLATETYPE=="1"? "EMAIL":"SMS",
+                              //bindingType = a.BINDINGTYPE,
+                              //lastSentDate = a.LASTSENTDATE,
+                              //source = a.SOURECE,
                           });
             return alerts;
         }
@@ -106,7 +109,10 @@ namespace FintrakBanking.Repositories.Setups.General
                               businessOwner = a.BUSINESSOWNER,
                               senderEmail = a.SENDEREMAIL,
                               senderName = a.SENDERNAME,
-                              templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS"
+                              templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
+                              //bindingType = a.BINDINGTYPE,
+                              //lastSentDate = a.LASTSENTDATE,
+                              //source = a.SOURECE,
                           });
             return alerts;
         }
@@ -123,7 +129,10 @@ namespace FintrakBanking.Repositories.Setups.General
                              businessOwner = a.BUSINESSOWNER,
                              senderEmail = a.SENDEREMAIL,
                              senderName = a.SENDERNAME,
-                             templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS"
+                             templateTypeName = a.TEMPLATETYPE == "1" ? "EMAIL" : "SMS",
+                             //bindingType = a.BINDINGTYPE,
+                             //lastSentDate = a.LASTSENTDATE,
+                             //source = a.SOURECE,
                          }).FirstOrDefault();
             return alert;
         }
@@ -137,7 +146,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 BUSINESSOWNER = model.businessOwner,
                 SENDEREMAIL = model.senderEmail,
                 SENDERNAME = model.senderName,
-                TEMPLATETYPE = model.templateType
+                TEMPLATETYPE = model.templateType,
+                //BINDINGTYPE = model.bindingType,
+                //LASTSENTDATE = general.GetApplicationDate(),
+                //SOURECE = model.source,
             };
 
             context.TBL_ALERT_TITLE.Add(entity);
@@ -171,6 +183,9 @@ namespace FintrakBanking.Repositories.Setups.General
             entity.SENDERNAME = model.senderName;
             entity.SENDEREMAIL = model.senderEmail;
             entity.TEMPLATETYPE = model.templateType;
+            //entity.BINDINGTYPE = model.bindingType;
+            //entity.LASTSENTDATE = general.GetApplicationDate();
+            //entity.SOURECE = model.source;
 
             var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
             // Audit Section ---------------------------
@@ -669,6 +684,183 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.SaveChanges() != 0;
         }
 
+
+        public IEnumerable<AlertMisViewModel> GetAllUserMisCode()
+        {
+            var alerts = (from a in context2.STG_USER_MIS
+                          select new AlertMisViewModel
+                          {
+                              loginId = a.LOGINID,
+                              userMisId = a.USERMISID,
+                              profitCenterDefinitionCode = a.PROFITCENTERDEFINITIONCODE,
+                              profitCenterMisCode = a.PROFITCENTERMISCODE
+                          }).GroupBy(a => a.profitCenterDefinitionCode).Select(a => a.FirstOrDefault());
+            return alerts;
+        }
+
+        public IEnumerable<AlertFrequencyViewModel> GetAllFrequency()
+        {
+            var frequency = (from a in context.TBL_ALERT_FREQUENCY
+                             select new AlertFrequencyViewModel
+                             {
+                                 alertFrequencyId = a.ALERTFREQUENCYID,
+                                 frequencyMode = a.FREQUENCYMODE,
+                                 description = a.DESCRIPTION
+                             }).ToList();
+            return frequency;
+        }
+
+        public IEnumerable<AlertConditionViewModel> GetAllConditions()
+        {
+            var condition = (from a in context.TBL_ALERT_CONDITION
+                             select new AlertConditionViewModel
+                             {
+                                 alertConditionId = a.ALERTCONDITIONID,
+                                 triggerSource = a.TRIGGERSOURCE,
+                                 type = a.TYPE,
+                                 formular = a.FORMULAR,
+                                 operationId = a.OPERATIONID,
+                                 operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault() == null ? "N/A" : context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
+                                 lastRunDate = a.LASTRUNDATE,
+                                 alertInterval = a.ALERTINTERVAL,
+                                 nextRunDate = (DateTime)a.NEXTRUNDATE,
+                                 title = a.TITLE,
+                                 actionForTrigger = a.ACTIONFORTRIGGER,
+                                 titleName = context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()
+                             });
+            return condition;
+        }
+
+        public AlertConditionViewModel GetAlertConditionById(int id)
+        {
+            var alert = (from a in context.TBL_ALERT_CONDITION.Where(x => x.ALERTCONDITIONID == id)
+                         select new AlertConditionViewModel
+                         {
+                             alertConditionId = a.ALERTCONDITIONID,
+                             triggerSource = a.TRIGGERSOURCE,
+                             type = a.TYPE,
+                             formular = a.FORMULAR,
+                             operationId = a.OPERATIONID,
+                             operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault() == null ? "N/A" : context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
+                             lastRunDate = a.LASTRUNDATE,
+                             alertInterval = a.ALERTINTERVAL,
+                             nextRunDate = (DateTime)a.NEXTRUNDATE,
+                             title = a.TITLE,
+                             actionForTrigger = a.ACTIONFORTRIGGER,
+                             titleName = context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()
+                         }).FirstOrDefault();
+            return alert;
+        }
+
+        public bool AddAlertCondition(AlertConditionViewModel model)
+        {
+            var entity = new TBL_ALERT_CONDITION
+            {
+                TRIGGERSOURCE = model.triggerSource,
+                TYPE = model.type,
+                FORMULAR = model.formular,
+                OPERATIONID = model.operationId,
+                LASTRUNDATE = model.lastRunDate,
+                ALERTINTERVAL = model.alertInterval,
+                NEXTRUNDATE = model.nextRunDate,
+                TITLE = model.title,
+                ACTIONFORTRIGGER = model.actionForTrigger
+
+            };
+
+            context.TBL_ALERT_CONDITION.Add(entity);
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"TBL_ALERT_CONDITION '{entity.ToString()}' created by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateAlertCondition(int id, AlertConditionViewModel model, UserInfo user)
+        {
+            var entity = this.context.TBL_ALERT_CONDITION.Find(id);
+            entity.TRIGGERSOURCE = model.triggerSource;
+            entity.LASTRUNDATE = model.lastRunDate;
+            entity.NEXTRUNDATE = model.nextRunDate;
+            entity.FORMULAR = model.formular;
+            entity.OPERATIONID = model.operationId;
+            entity.TYPE = model.type;
+            entity.ALERTINTERVAL = model.alertInterval;
+            entity.TITLE = model.title;
+            entity.ACTIONFORTRIGGER = model.actionForTrigger;
+
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_ALERT_CONDITION'{entity.ToString()}' was updated by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.ALERTCONDITIONID,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool DeleteAlertCondition(int id, UserInfo user)
+        {
+            var entity = this.context.TBL_ALERT_CONDITION.Find(id);
+            context.TBL_ALERT_CONDITION.Remove(entity);
+            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
+            // Audit Section ---------------------------
+            this.audit.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionDeleted,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"TBL_ALERT_TITLE '{entity.ToString()}' was deleted by {auditStaff}",
+                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = entity.ALERTCONDITIONID,
+                DEVICENAME = CommonHelpers.GetDeviceName(),
+                OSNAME = CommonHelpers.FriendlyName(),
+            });
+            // Audit Section end ------------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public IEnumerable<TblOperationsViewModel> GetAllOperations()
+        {
+            var opeartion = (from a in context.TBL_OPERATIONS
+                             select new TblOperationsViewModel
+                             {
+                                 operationId = a.OPERATIONID,
+                                 operationName = a.OPERATIONNAME,
+                             });
+            return opeartion;
+        }
+
+        #region ALERT ENGINE
         public void validateAlertCheck()
         {
             List<AlertsViewModel> alerts = new List<AlertsViewModel>();
@@ -683,6 +875,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (alertcategory != null)
                 {
                     alert.alertTitle = alertcategory.TITLE;
+                    //alert.template = alertcategory.TEMPLATE;
                     alert.template = externalAlertRepository.Replace(alertcategory.TEMPLATE);
 
                     if (validateConditionTrigger(i.FREQUENCYID, i.CONDITIONID ?? 0))
@@ -842,180 +1035,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         }
 
+        #endregion END OF ALERT ENGINE
 
-        public IEnumerable<AlertMisViewModel> GetAllUserMisCode()
-        {
-            var alerts = (from a in context2.STG_USER_MIS
-                          select new AlertMisViewModel
-                          {
-                              loginId = a.LOGINID,
-                              userMisId = a.USERMISID,
-                              profitCenterDefinitionCode = a.PROFITCENTERDEFINITIONCODE,
-                              profitCenterMisCode = a.PROFITCENTERMISCODE
-                          }).GroupBy(a => a.profitCenterDefinitionCode).Select(a => a.FirstOrDefault());
-            return alerts;
-        }
-
-        public IEnumerable<AlertFrequencyViewModel> GetAllFrequency()
-        {
-            var frequency = (from a in context.TBL_ALERT_FREQUENCY
-                          select new AlertFrequencyViewModel
-                          {
-                              alertFrequencyId = a.ALERTFREQUENCYID,
-                              frequencyMode = a.FREQUENCYMODE,
-                              description = a.DESCRIPTION
-                          }).ToList();
-            return frequency;
-        }
-
-        public IEnumerable<AlertConditionViewModel> GetAllConditions()
-        {
-            var condition = (from a in context.TBL_ALERT_CONDITION
-                             select new AlertConditionViewModel
-                             {
-                                 alertConditionId = a.ALERTCONDITIONID,
-                                 triggerSource = a.TRIGGERSOURCE,
-                                 type = a.TYPE,
-                                 formular = a.FORMULAR,
-                                 operationId = a.OPERATIONID,
-                                 operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID == a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault()==null ? "N/A" : context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
-                                 lastRunDate = a.LASTRUNDATE,
-                                 alertInterval = a.ALERTINTERVAL,
-                                 nextRunDate = (DateTime)a.NEXTRUNDATE,
-                                 title = a.TITLE,
-                                 actionForTrigger = a.ACTIONFORTRIGGER,
-                                 titleName = context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()==null ? "N/A" : context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()
-                             });
-            return condition;
-        }
-
-        public AlertConditionViewModel GetAlertConditionById(int id)
-        {
-            var alert = (from a in context.TBL_ALERT_CONDITION.Where(x => x.ALERTCONDITIONID == id)
-                         select new AlertConditionViewModel
-                         {
-                             alertConditionId = a.ALERTCONDITIONID,
-                             triggerSource = a.TRIGGERSOURCE,
-                             type = a.TYPE,
-                             formular = a.FORMULAR,
-                             operationId = a.OPERATIONID,
-                             operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault() == null ? "N/A" : context.TBL_OPERATIONS.Where(o => o.OPERATIONID == a.OPERATIONID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
-                             lastRunDate = a.LASTRUNDATE,
-                             alertInterval = a.ALERTINTERVAL,
-                             nextRunDate = (DateTime)a.NEXTRUNDATE,
-                             title = a.TITLE,
-                             actionForTrigger = a.ACTIONFORTRIGGER,
-                             titleName = context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault() == null ? "N/A" : context.TBL_ALERT_TITLE.Where(b => b.ALERTTITLEID == a.TITLE).Select(b => b.TITLE).FirstOrDefault()
-                         }).FirstOrDefault();
-            return alert;
-        }
-
-        public bool AddAlertCondition(AlertConditionViewModel model)
-        {
-            var entity = new TBL_ALERT_CONDITION
-            {
-                TRIGGERSOURCE = model.triggerSource,
-                TYPE = model.type,
-                FORMULAR = model.formular,
-                OPERATIONID = model.operationId,
-                LASTRUNDATE = model.lastRunDate,
-                ALERTINTERVAL = model.alertInterval,
-                NEXTRUNDATE = model.nextRunDate,
-                TITLE = model.title,
-                ACTIONFORTRIGGER = model.actionForTrigger
-                
-            };
-
-            context.TBL_ALERT_CONDITION.Add(entity);
-
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"TBL_ALERT_CONDITION '{entity.ToString()}' created by {auditStaff}",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName(),
-            });
-            // Audit Section end ------------------------
-
-            return context.SaveChanges() != 0;
-        }
-
-        public bool UpdateAlertCondition(int id, AlertConditionViewModel model, UserInfo user)
-        {
-            var entity = this.context.TBL_ALERT_CONDITION.Find(id);
-            entity.TRIGGERSOURCE = model.triggerSource;
-            entity.LASTRUNDATE = model.lastRunDate;
-            entity.NEXTRUNDATE = model.nextRunDate;
-            entity.FORMULAR = model.formular;
-            entity.OPERATIONID = model.operationId;
-            entity.TYPE = model.type;
-            entity.ALERTINTERVAL = model.alertInterval;
-            entity.TITLE = model.title;
-            entity.ACTIONFORTRIGGER = model.actionForTrigger;
-
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionUpdated,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_ALERT_CONDITION'{entity.ToString()}' was updated by {auditStaff}",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.ALERTCONDITIONID,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName(),
-            });
-            // Audit Section end ------------------------
-
-            return context.SaveChanges() != 0;
-        }
-
-        public bool DeleteAlertCondition(int id, UserInfo user)
-        {
-            var entity = this.context.TBL_ALERT_CONDITION.Find(id);
-            context.TBL_ALERT_CONDITION.Remove(entity);
-            var auditStaff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
-            // Audit Section ---------------------------
-            this.audit.AddAuditTrail(new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.AlertConditionDeleted,
-                STAFFID = user.createdBy,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"TBL_ALERT_TITLE '{entity.ToString()}' was deleted by {auditStaff}",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = user.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = entity.ALERTCONDITIONID,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName(),
-            });
-            // Audit Section end ------------------------
-
-            return context.SaveChanges() != 0;
-        }
-
-        public IEnumerable<TblOperationsViewModel> GetAllOperations()
-        {
-            var opeartion = (from a in context.TBL_OPERATIONS
-                          select new TblOperationsViewModel
-                          {
-                              operationId = a.OPERATIONID,
-                              operationName = a.OPERATIONNAME,
-                          });
-            return opeartion;
-        }
     }
 }
