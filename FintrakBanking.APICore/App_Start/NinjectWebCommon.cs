@@ -136,6 +136,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<FinTrakBankingStagingContext>().To<FinTrakBankingStagingContext>();
             kernel.Bind<IBulkDisbursementPackageRepository>().To<BulkDisbursementPackageRepository>();
             kernel.Bind<IGeneralSetupRepository>().To<GeneralSetupRepository>();
+            kernel.Bind<ICashBackRepository>().To<CashBackRepository>();
             kernel.Bind<IExternalAlertRepository>().To<ExternalAlertRepository>();
             kernel.Bind<IAuthenticationRepository>().To<AuthenticationRepository>();
             kernel.Bind<IAuthorizationRepository>().To<AuthorizationRepository>();

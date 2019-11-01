@@ -110,7 +110,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial">
-      <HintPath>..\..\..\Users\FINTRAK\Desktop\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\Users\USER\Documents\C# Materials\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +132,7 @@
     <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="Credit\AtcLodgmentDetailRepository.cs" />
     <Compile Include="Credit\AtcLodgmentRepository.cs" />
+    <Compile Include="Credit\CashBackRepository.cs" />
     <Compile Include="Credit\CashFlowLendingRepository.cs" />
     <Compile Include="Credit\CollateralValuationRepository.cs" />
     <Compile Include="Credit\CreditCommonRepository.cs" />
