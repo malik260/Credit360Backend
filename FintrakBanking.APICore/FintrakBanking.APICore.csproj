@@ -641,6 +641,13 @@
     <Compile Include="Reports\ReportViews\ContigentReport.aspx.designer.cs">
       <DependentUpon>ContigentReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CopyOfRiskAssetMain.aspx.cs">
+      <DependentUpon>CopyOfRiskAssetMain.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CopyOfRiskAssetMain.aspx.designer.cs">
+      <DependentUpon>CopyOfRiskAssetMain.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx.cs">
       <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -906,6 +913,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\RiskAssetByVariance.aspx.designer.cs">
       <DependentUpon>RiskAssetByVariance.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetCalcCombinedReport.aspx.cs">
+      <DependentUpon>RiskAssetCalcCombinedReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetCalcCombinedReport.aspx.designer.cs">
+      <DependentUpon>RiskAssetCalcCombinedReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\RiskAssetCombinedReport.aspx.cs">
       <DependentUpon>RiskAssetCombinedReport.aspx</DependentUpon>
@@ -1270,6 +1284,7 @@
     <Content Include="Reports\ReportViews\ContigentLiabilityReportMain.aspx" />
     <Content Include="Reports\ReportViews\ContigentLiabilityReportMain1.aspx" />
     <Content Include="Reports\ReportViews\ContigentReport.aspx" />
+    <Content Include="Reports\ReportViews\CopyOfRiskAssetMain.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
@@ -1309,6 +1324,7 @@
     <Content Include="Reports\ReportViews\RiskAssetByCbnClassification.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByIFRSClassificationaspx.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByVariance.aspx" />
+    <Content Include="Reports\ReportViews\RiskAssetCalcCombinedReport.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetCombinedReport.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetDistributionBySector.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetMain.aspx" />
