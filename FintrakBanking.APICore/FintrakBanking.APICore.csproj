@@ -810,6 +810,13 @@
     <Compile Include="Reports\ReportViews\LoggingStatus.aspx.designer.cs">
       <DependentUpon>LoggingStatus.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\MaturityReport.aspx.cs">
+      <DependentUpon>MaturityReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\MaturityReport.aspx.designer.cs">
+      <DependentUpon>MaturityReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\MiddleOfficeReport.aspx.cs">
       <DependentUpon>MiddleOfficeReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -900,6 +907,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\RiskAssetByVariance.aspx.designer.cs">
       <DependentUpon>RiskAssetByVariance.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetCombinedReport.aspx.cs">
+      <DependentUpon>RiskAssetCombinedReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetCombinedReport.aspx.designer.cs">
+      <DependentUpon>RiskAssetCombinedReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\RiskAssetDistributionBySector.aspx.cs">
       <DependentUpon>RiskAssetDistributionBySector.aspx</DependentUpon>
@@ -1201,13 +1215,6 @@
     <Compile Include="Reports\ReportViews\SectorialLimitMonitoring.aspx.designer.cs">
       <DependentUpon>SectorialLimitMonitoring.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\Report\MaturityReport.aspx.cs">
-      <DependentUpon>MaturityReport.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\Report\MaturityReport.aspx.designer.cs">
-      <DependentUpon>MaturityReport.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -1289,6 +1296,7 @@
     <Content Include="Reports\ReportViews\LoanDocumentDeferred.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\LoggingStatus.aspx" />
+    <Content Include="Reports\ReportViews\MaturityReport.aspx" />
     <Content Include="Reports\ReportViews\MiddleOfficeReport.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OutPutTemplate.aspx" />
@@ -1302,6 +1310,7 @@
     <Content Include="Reports\ReportViews\RiskAssetByCbnClassification.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByIFRSClassificationaspx.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByVariance.aspx" />
+    <Content Include="Reports\ReportViews\RiskAssetCombinedReport.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetDistributionBySector.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetMain.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetMain1.aspx" />
@@ -1372,7 +1381,6 @@
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Reports\Report\MaturityReport.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />

@@ -102,8 +102,13 @@
     <Compile Include="Models\TBL_ATC_RELEASE.cs" />
     <Compile Include="Models\TBL_ATC_RELEASE_ARCHIVE.cs" />
     <Compile Include="Models\TBL_ATC_TYPE.cs" />
+<<<<<<< HEAD
     <Compile Include="Models\TBL_CASHBACK.cs" />
+=======
+    <Compile Include="Models\TBL_COLLATERAL_DEPOSIT_ARCHV.cs" />
+>>>>>>> 075043b02f9192e7ccda7e4d457d89c6faa1352b
     <Compile Include="Models\TBL_COLLATERAL_SWAP_REQUEST.cs" />
+    <Compile Include="Models\TBL_COLLATERL_CUSTOMER_ARCHV.cs" />
     <Compile Include="Models\TBL_DAILY_ACCRUAL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_DAILY_ACCRUAL_TEMP.cs" />
     <Compile Include="Models\TBL_EOD_OPERATION_LOG_DETAIL.cs" />
