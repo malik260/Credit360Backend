@@ -37,4 +37,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string deskDescription { get; set; }
         public string buDescription { get; set; }
     }
+
+    public class CashBackViewModel : GeneralEntity
+    {
+        public int cashBackId { get; set; }
+        public string background { get; set; }
+        public string issues { get; set; }
+        public string request { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public int operationId { get; set; }
+    }
 }
