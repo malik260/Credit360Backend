@@ -829,14 +829,14 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             if (this.skipLimitsCheck == true || IsPresetFinalLevel()) { return; }
-
-            if (this.nextLevelId != null && this.amount > 0 && ActionIsApprovalDecision())
+            //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
+            if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision())
             {
                 if (WithinAllLimits() == true)
                 {
                     this.EndProcess(this.statusId);
                 }
-                else
+                else if (ActionIsApprovalDecision())
                 {
                     if(this.statusId != (short)ApprovalStatusEnum.Disapproved)
                     {
@@ -1405,6 +1405,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public int NumberOfApprovals { get; set; }
         public bool CanRouteBack { get; set; }
         public bool IsPoliticallyExposed { get; set; }
+        //public bool IsInsiderRelated { get; set; }
         public bool IsActive { get; set; }
         public bool CanEdit { get; set; }
         public bool CanRecieveEmail { get; set; }

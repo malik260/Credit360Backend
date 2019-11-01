@@ -3613,7 +3613,7 @@ namespace FintrakBanking.ReportObjects
                         originalDocumentApprovalId = x.ORIGINALDOCUMENTAPPROVALID,
                         loanApplicationId = x.LOANAPPLICATIONID,
                         description = x.DESCRIPTION,
-                        approvalStatusId = x.APPROVALSTATUSID,
+                        approvalStatusId = (short)x.APPROVALSTATUSID,
                         applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                         referenceNumber = x.REFERENCENUMBER,
                         dateTimeCreated = x.DATETIMECREATED,

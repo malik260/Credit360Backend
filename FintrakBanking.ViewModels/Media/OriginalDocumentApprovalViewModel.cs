@@ -14,7 +14,7 @@ namespace FintrakBanking.ViewModels.Media
 
         public string description { get; set; }
 
-        public int approvalStatusId { get; set; }
+        public short approvalStatusId { get; set; }
         public string applicationReferenceNumber { get; set; }
         public string referenceNumber { get; set; }
         public string approvalStatusName { get; set; }

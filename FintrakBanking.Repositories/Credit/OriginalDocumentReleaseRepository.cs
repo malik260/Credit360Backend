@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
@@ -72,10 +73,11 @@ namespace FintrakBanking.Repositories.Credit
                                                                             && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                                                                    .Any();
 
-                if (result == true) return false;
+                if (result == true) throw new SecureException("One of the Selected Documents is currently Undergoing Approval");
 
                 var entity = new TBL_ORIGINAL_DOCUMENT_RELEASE
                 {
+                    COLLATERALCUSTOMERID = _context.TBL_ORIGINAL_DOCUMENT_APPROVAL.Where(oda => oda.ORIGINALDOCUMENTAPPROVALID == mod.originalDocumentApprovalId).Select(oda => oda.COLLATERALCUSTOMERID).FirstOrDefault(),
                     ORIGINALDOCUMENTRELEASEID = mod.originalDocumentReleaseId,
                     ORIGINALDOCUMENTAPPROVALID = mod.originalDocumentApprovalId,
                     DOCUMENTUPLOADID = mod.documentUploadId,
@@ -163,7 +165,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<OriginalDocumentReleaseViewModel> GetRejectedAndReferredSecurityRelease(int staffId)
         {
             //var ids = _general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.SecurityRelease).ToList();
-            var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.AtcReleaseApproval).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
+            var initiator = _context.TBL_APPROVAL_TRAIL.Where(o => o.OPERATIONID == (int)OperationsEnum.SecurityRelease).OrderBy(o => o.APPROVALTRAILID).Select(o => o.REQUESTSTAFFID).FirstOrDefault();
 
             var record = (from dr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
                          join oda in _context.TBL_ORIGINAL_DOCUMENT_APPROVAL on dr.ORIGINALDOCUMENTAPPROVALID equals oda.ORIGINALDOCUMENTAPPROVALID
@@ -174,9 +176,9 @@ namespace FintrakBanking.Repositories.Credit
                          where dr.DELETED == false
                             && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
                             && atrail.TARGETID == dr.ORIGINALDOCUMENTAPPROVALID
-                            && ((atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred
+                            && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
                             && atrail.LOOPEDSTAFFID == initiator) 
-                                || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                                || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                             && atrail.RESPONSESTAFFID == null
                           orderby atrail.APPROVALTRAILID descending
                           select new OriginalDocumentReleaseViewModel
@@ -197,15 +199,62 @@ namespace FintrakBanking.Repositories.Credit
                              collateralCustomerId = cc.COLLATERALCUSTOMERID,
                              operationId = (int)OperationsEnum.SecurityRelease,
                              collateralId = cc.COLLATERALCUSTOMERID,
-
+                             loopedStaffId = atrail.LOOPEDSTAFFID,
+                             approvalTrailId = atrail.APPROVALTRAILID,
                           }).ToList();
 
             var result = record.GroupBy(r => r.originalDocumentApprovalId)
-                               .Select(r => r.FirstOrDefault()).ToList();
+                               .Select(r => r.FirstOrDefault()).Where(first => (first.approvalStatusId == (short)ApprovalStatusEnum.Referred
+                               && first.loopedStaffId == initiator) || first.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                               .ToList();
 
             return result;
         }
         
+        public bool reinitiateSecurityRelease(int id, int staffId, int companyId)
+        {
+            var output = false;
+
+            var rejected = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Find(id);
+
+            if(rejected != null)
+            {
+                var rejectedDocumentList = _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Where(odr => odr.ORIGINALDOCUMENTAPPROVALID == rejected.ORIGINALDOCUMENTAPPROVALID
+                                                                                            && odr.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved).ToList(); 
+                foreach(var rej in rejectedDocumentList)
+                {
+                    
+                    rej.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+                    rej.LASTUPDATEDBY = staffId;
+                    rej.DATETIMEUPDATED = DateTime.Now;
+                }
+
+                var result = _context.SaveChanges() > 0;
+                if (result)
+                {
+                    _workflow.StaffId = staffId;
+                    _workflow.CompanyId = companyId;
+                    _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    _workflow.TargetId = rejected.ORIGINALDOCUMENTAPPROVALID;
+                    _workflow.Comment = "Request for security release approval";
+                    _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
+                    _workflow.DeferredExecution = true;
+                    _workflow.ExternalInitialization = true;
+                    _workflow.LogActivity();
+
+                    if (_context.SaveChanges() > 0)
+                    {
+                        foreach (var model in rejectedDocumentList)
+                        {
+                            model.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
+                        }
+                    }
+                }
+                output = _context.SaveChanges() > 0;
+            }
+
+            return output;
+        }
 
         public IEnumerable<OriginalDocumentReleaseViewModel> GetOriginalAllDocmentRelease(int id)
         {
