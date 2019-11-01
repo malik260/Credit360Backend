@@ -16,7 +16,6 @@ namespace FintrakBanking.Entities.Models
 
         //[Column(TypeName = "date")]
         public DateTime VISITATIONDATE { get; set; }
-        public DateTime NEXTVISITATIONDATE { get; set; }
 
         [Required]
         [StringLength(2000)]

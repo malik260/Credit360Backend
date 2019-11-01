@@ -228,9 +228,9 @@
       <Project>{18cefc20-2662-4757-94de-23d623ffc98d}</Project>
       <Name>FintrakBanking.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FintrakBanking.ExtractionService\FintrakBanking.ExtractionService.csproj">
-      <Project>{9e3f4d8e-e235-4551-be43-0e0b80aee18e}</Project>
-      <Name>FintrakBanking.ExtractionService</Name>
+    <ProjectReference Include="..\FintrakBanking.Entities\FintrakBanking.Entities.csproj">
+      <Project>{fb338a9b-9c63-46ed-a8c3-d75a08dad6f0}</Project>
+      <Name>FintrakBanking.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\FintrakBanking.ViewModels\FintrakBanking.ViewModels.csproj">
       <Project>{53a300f2-b78d-4708-bfb4-2b86de64ec7d}</Project>
