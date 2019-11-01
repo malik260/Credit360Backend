@@ -1131,7 +1131,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/RiskAssetByVarianceReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
+            path = reportPath + "ReportViews/RiskAssetCombinedReport.aspx?runDate=" + runDate + "&level=" + level + "&MisCode=" + misCode + "&exposureType=" + exposureType + "&divisionName=" + divisionName + "&branchName=" + branchName + "&regionName=" + regionName + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&groupName=" + groupName;
             return path;
         }
 
