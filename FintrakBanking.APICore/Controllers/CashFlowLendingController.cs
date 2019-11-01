@@ -103,15 +103,8 @@ namespace FintrakBanking.APICore.Controllers
                 //entity.applicationUrl = HttpContext.Current.Request.Path;
 
                 var data = repo.AddCustomer(entity);
-                if (data != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully, now waiting for approval" });
-                }
-                else
-                {
 
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { result = data });
             }
             catch (Exception ex)
             {
@@ -131,21 +124,15 @@ namespace FintrakBanking.APICore.Controllers
                 //entity.companyId = token.GetCompanyId;
                 //entity.createdBy = token.GetStaffId;
                 //entity.applicationUrl = HttpContext.Current.Request.Path;
-
+    
                 var data = repo.submitRequest(entity);
-                if (data != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully, now waiting for approval" });
-                }
-                else
-                {
 
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, new {result = data });
+                
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record, confirm all requested parameters are captured" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { message = $"There was an error creating this record, confirm all requested parameters are captured" });
             }
         }
 
