@@ -199,8 +199,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId, bool isInitiation);
 
-        //int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
-        WorkflowResponse GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        //WorkflowResponse GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
         IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview(int staffId, int companyId);
         IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReviewAwaitingApproval(int staffId, int companyId);
