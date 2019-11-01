@@ -3977,7 +3977,7 @@ namespace FintrakBanking.Repositories.Credit
                     userDetail.companyId = loanRecord.COMPANYID;
 
                     loanRecords.Add(loanRecord);
-                    createLoanOnThirdParty(loanRecords, userDetail);
+                   // createLoanOnThirdParty(loanRecords, userDetail);
                 }
                 //DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
 
