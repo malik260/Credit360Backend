@@ -1985,7 +1985,7 @@ namespace FintrakBanking.Repositories.Credit
                                join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                join a in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals a.COLLATERALTYPEID
                                join s in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals s.COLLATERALSUBTYPEID
-                               where x.LOANAPPLICATIONID == loanApplicationId && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing && x.DELETED == false
+                               where x.LOANAPPLICATIONID == loanApplicationId && x.DELETED == false
                                orderby x.LOANAPPCOLLATERALID
                                select new CollateralCoverageViewModel
                                {
@@ -2014,7 +2014,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var obligor = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == collateral.customerId);
                 var obligorName = obligor.FIRSTNAME + " " + obligor.MIDDLENAME + " " + obligor.LASTNAME;
-                var collateralOwner = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == collateral.customerId);
+                var collateralOwner = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == collateral.collateralOwnerId);
                 var collateralOwnerName = collateralOwner.FIRSTNAME + " " + collateralOwner.MIDDLENAME + " " + collateralOwner.LASTNAME;
                 var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateral.collateralSubTypeId && o.CURRENCYID == collateral.currencyId).Select(o => o).FirstOrDefault();
                 if (data == null) continue;
@@ -2192,7 +2192,7 @@ namespace FintrakBanking.Repositories.Credit
                 var collateralExchangeRate = repo.GetExchangeRate(DateTime.Now, (short)collateral.currencyId, facility.TBL_LOAN_APPLICATION.COMPANYID);
                 var obligor = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == collateral.customerId);
                 var obligorName = obligor.FIRSTNAME + " " + obligor.MIDDLENAME + " " + obligor.LASTNAME;
-                var collateralOwner = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == collateral.customerId);
+                var collateralOwner = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == collateral.collateralOwnerId);
                 var collateralOwnerName = collateralOwner.FIRSTNAME + " " + collateralOwner.MIDDLENAME + " " + collateralOwner.LASTNAME;
 
                 var data = context.TBL_COLLATERAL_COVERAGE.Where(o => o.COLLATERALSUBTYPEID == collateral.collateralSubTypeId && o.CURRENCYID == collateral.currencyId).Select(o => o).FirstOrDefault();
