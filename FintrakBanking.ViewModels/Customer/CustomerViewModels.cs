@@ -286,7 +286,7 @@ namespace FintrakBanking.ViewModels.Customer
     {
 
         public string customerType { get; set; }
-        public string requestId { get; set; }
+        public string request_Id { get; set; }
         public ApiCustomerBusinessDetailsViewModel corporateCustomerInformation { get; set; }
         public ApiIndividualCustomerDetails individualCustomerInformation { get; set; }
         public List<ApiAddressesViewModel> customerAddresses { get; set; }
@@ -659,5 +659,4 @@ namespace FintrakBanking.ViewModels.Customer
         public string requestId { get; set; }
     	public string applicationReferenceNumber { get; set; }
     }
-
 }
