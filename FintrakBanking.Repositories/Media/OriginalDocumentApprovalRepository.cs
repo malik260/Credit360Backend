@@ -64,7 +64,7 @@ namespace FintrakBanking.Repositories.Media
                         collateralCode = o.COLLATERALCODE,
                         collateralType = context.TBL_COLLATERAL_TYPE.Where(a=>a.COLLATERALTYPEID==o.COLLATERALTYPEID).Select(o=>o.COLLATERALTYPENAME).FirstOrDefault(),
                         collateralTypeId = o.COLLATERALTYPEID,
-                        approvalStatusId = x.APPROVALSTATUSID,
+                        approvalStatusId = (short)x.APPROVALSTATUSID,
                         applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                         referenceNumber = x.REFERENCENUMBER,
                         dateTimeCreated = x.DATETIMECREATED,
@@ -102,7 +102,7 @@ namespace FintrakBanking.Repositories.Media
                     collateralCode = o.COLLATERALCODE,
                     collateralType = context.TBL_COLLATERAL_TYPE.Where(a => a.COLLATERALTYPEID == o.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault(),
                     collateralTypeId = o.COLLATERALTYPEID,
-                    approvalStatusId = entity.APPROVALSTATUSID,
+                    approvalStatusId = (short)entity.APPROVALSTATUSID,
                     applicationReferenceNumber = entity.APPLICATIONREFERNECENUMBER,
                     referenceNumber = entity.REFERENCENUMBER,
                     dateTimeCreated = entity.DATETIMECREATED,
@@ -128,7 +128,7 @@ namespace FintrakBanking.Repositories.Media
                     referenceNumber = x.REFERENCENUMBER,
                     dateTimeCreated = x.DATETIMECREATED,
                     approvalDate = x.APPROVALDATE,
-                    approvalStatusId = x.APPROVALSTATUSID,
+                    approvalStatusId = (short)x.APPROVALSTATUSID,
                     collateralCustomerId = x.COLLATERALCUSTOMERID,
 
                     //applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
@@ -152,7 +152,7 @@ namespace FintrakBanking.Repositories.Media
                     referenceNumber = x.REFERENCENUMBER,
                     dateTimeCreated = x.DATETIMECREATED,
                     approvalDate = x.APPROVALDATE,
-                    approvalStatusId = x.APPROVALSTATUSID,
+                    approvalStatusId = (short)x.APPROVALSTATUSID,
                     collateralCustomerId = x.COLLATERALCUSTOMERID,
 
                     //applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
@@ -229,7 +229,7 @@ namespace FintrakBanking.Repositories.Media
                     referenceNumber = x.REFERENCENUMBER,
                     dateTimeCreated = x.DATETIMECREATED,
                     approvalDate = x.APPROVALDATE,
-                    approvalStatusId = x.APPROVALSTATUSID,
+                    approvalStatusId = (short)x.APPROVALSTATUSID,
 
                     applicationReferenceNumber = x.APPLICATIONREFERNECENUMBER,
                     customerId = x.COLLATERALCUSTOMERID,
@@ -298,7 +298,7 @@ namespace FintrakBanking.Repositories.Media
                               collateralCustomerId = cc.COLLATERALCUSTOMERID,
                               customerId = c.CUSTOMERID,
                               operationId = (int)OperationsEnum.OriginalDocumentApproval,
-                              approvalStatusId = oda.APPROVALSTATUSID,
+                              approvalStatusId = (short)oda.APPROVALSTATUSID,
                               approvalStatusName = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == oda.APPROVALSTATUSID).Select(s => s.APPROVALSTATUSNAME).FirstOrDefault(),
 
 

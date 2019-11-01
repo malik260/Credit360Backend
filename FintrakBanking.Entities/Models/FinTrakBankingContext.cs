@@ -17,8 +17,6 @@ namespace FintrakBanking.Entities.Models
 
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }
         //public virtual DbSet<TBL_ENDOFDAY_MONITORING> TBL_ENDOFDAY_MONITORING { get; set; } 
-        public virtual DbSet<TBL_COLLATERAL_DEPOSIT_ARCHV> TBL_COLLATERAL_DEPOSIT_ARCHV { get; set; }
-        public virtual DbSet<TBL_COLLATERL_CUSTOMER_ARCHV> TBL_COLLATERL_CUSTOMER_ARCHV { get; set; }
         public virtual DbSet<EXTERNAL_ALERT> EXTERNAL_ALERT { get; set; }
         public virtual DbSet<TBL_APPLICATIONDETAIL_LIEN> TBL_APPLICATIONDETAIL_LIEN { get; set; }
         public virtual DbSet<TBL_ACCOUNT_CATEGORY> TBL_ACCOUNT_CATEGORY { get; set; }
@@ -41,7 +39,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_APPROVAL_BUSINESS_RULE> TBL_APPROVAL_BUSINESS_RULE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_USAGE_STATUS> TBL_COLLATERAL_USAGE_STATUS { get; set; }
         public virtual DbSet<TBL_PSR_PROJECT_SITE_REPORT> TBL_PSR_PROJECT_SITE_REPORT { get; set; }
-        public virtual DbSet<TBL_PSR_REPORT_TYPE> TBL_PSR_REPORT_TYPE { get; set; }
+        public virtual DbSet<TBL_PSR_REPORT_TYPE> TBL_PSR_REPORT_TYPE { get; set; } 
+        public virtual DbSet<TBL_CASHBACK> TBL_CASHBACK { get; set; }
         public virtual DbSet<TBL_PSR_COMMENT> TBL_PSR_COMMENT { get; set; }
         public virtual DbSet<TBL_PSR_NEXT_INSPECTION_TASK> TBL_PSR_NEXT_INSPECTION_TASK { get; set; }
         public virtual DbSet<TBL_PSR_OBSERVATION> TBL_PSR_OBSERVATION { get; set; }

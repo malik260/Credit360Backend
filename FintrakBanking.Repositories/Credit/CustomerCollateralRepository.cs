@@ -5983,22 +5983,22 @@ namespace FintrakBanking.Repositories.Credit
         {
             var collateral = context.TBL_COLLATERAL_DEPOSIT.FirstOrDefault(c => c.COLLATERALCUSTOMERID == collateralId);
             if (collateral == null) throw new SecureException("Deposit Collateral Not Found to be Archived");
-            context.TBL_COLLATERAL_DEPOSIT_ARCHV.Add(new TBL_COLLATERAL_DEPOSIT_ARCHV
-            {
-                //COLLATERALCUSTOMERID = collateralId,
-                //BANK = entity.bank,
-                //DEALREFERENCENUMBER = entity.dealReferenceNumber,
-                //ACCOUNTNUMBER = entity.accountNumber,
-                //EXISTINGLIENAMOUNT = entity.existingLienAmount,
-                //LIENAMOUNT = entity.lienAmount,
-                //AVAILABLEBALANCE = entity.availableBalance,
-                //SECURITYVALUE = (decimal)entity.securityValue,
-                //MATURITYDATE = entity.maturityDate,
-                //MATURITYAMOUNT = entity.maturityAmount,
-                //EFFECTIVEDATE = entity.effectiveDate,
-                //REMARK = entity.remark,
-                //ACCOUNTNAME = entity.accountName
-            });
+            //context.TBL_COLLATERAL_DEPOSIT_ARCHV.Add(new TBL_COLLATERAL_DEPOSIT_ARCHV
+            //{
+            //    //COLLATERALCUSTOMERID = collateralId,
+            //    //BANK = entity.bank,
+            //    //DEALREFERENCENUMBER = entity.dealReferenceNumber,
+            //    //ACCOUNTNUMBER = entity.accountNumber,
+            //    //EXISTINGLIENAMOUNT = entity.existingLienAmount,
+            //    //LIENAMOUNT = entity.lienAmount,
+            //    //AVAILABLEBALANCE = entity.availableBalance,
+            //    //SECURITYVALUE = (decimal)entity.securityValue,
+            //    //MATURITYDATE = entity.maturityDate,
+            //    //MATURITYAMOUNT = entity.maturityAmount,
+            //    //EFFECTIVEDATE = entity.effectiveDate,
+            //    //REMARK = entity.remark,
+            //    //ACCOUNTNAME = entity.accountName
+            //});
             return true;
         }
 
