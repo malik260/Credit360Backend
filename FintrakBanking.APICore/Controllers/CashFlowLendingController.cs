@@ -108,7 +108,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record, confirm all requested parameters are captured"});
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, $"There was an error creating this record, confirm all requested parameters are captured");
             }
         }
 
@@ -132,7 +132,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { message = $"There was an error creating this record, confirm all requested parameters are captured" });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, $"There was an error creating this record, confirm all requested parameters are captured" );
             }
         }
 
