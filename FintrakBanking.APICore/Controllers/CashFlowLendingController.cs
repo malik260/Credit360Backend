@@ -104,7 +104,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var data = repo.AddCustomer(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { result = data });
+                return Request.CreateResponse(HttpStatusCode.OK,  data );
             }
             catch (Exception ex)
             {
@@ -127,7 +127,7 @@ namespace FintrakBanking.APICore.Controllers
     
                 var data = repo.submitRequest(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new {result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, data );
                 
             }
             catch (Exception ex)
