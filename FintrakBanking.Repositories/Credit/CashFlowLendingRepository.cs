@@ -52,13 +52,13 @@ namespace FintrakBanking.Repositories.Credit
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
         {
            APIResponse response = new APIResponse();
-           if (model.customerType == "I")
+           if (model.customerType == "1")
            {
                if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99"); }
 
                return AddIndividualCustomer(model);
            }
-           else if (model.customerType == "C")
+           else if (model.customerType == "2")
            {
                if (model.corporateCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99"); }
 
@@ -71,11 +71,11 @@ namespace FintrakBanking.Repositories.Credit
         {
             APIResponse response = new APIResponse();
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
+            //if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
+            //if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
 
-            if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99"); }
+            //if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99"); }
 
             List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
             if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99"); }
@@ -416,7 +416,9 @@ namespace FintrakBanking.Repositories.Credit
             var sector = context.TBL_SECTOR.Where(x => x.CODE == subSector.CODE).FirstOrDefault();
 
             var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == model.currencyCode || x.CURRENCYCODE =="NGN").FirstOrDefault();
-            if (currency == null) fireResponse("Missing currency code", "99");
+            if (currency == null) return fireResponse("Missing currency code", "99");
+
+            if (model.accountOfficerStaffCode == string.Empty) return fireResponse("Missing account officer code", "99");
 
             var accountOfficerr = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
 
@@ -424,14 +426,14 @@ namespace FintrakBanking.Repositories.Credit
 
             loanApp.proposedTenor = Convert.ToInt16(model.tenor);
             loanApp.tenorModeId = (short)TenorModeEnum.Days;
-            loanApp.proposedAmount = Convert.ToInt16(model.loanAmount);
+            loanApp.proposedAmount = Convert.ToDecimal(model.loanAmount);
             loanApp.productId = product.PRODUCTID;
             loanApp.productClassId = product.PRODUCTCLASSID;
             loanApp.productClassProcessId = product.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID;
             loanApp.loanPurpose = model.purpose;
-            loanApp.sectorId = (int) sector?.SECTORID;
+            loanApp.sectorId = (int)subSector?.SECTORID;
             loanApp.subSectorId = (short)subSector?.SUBSECTORID;
-            loanApp.exchangeRate = Convert.ToDouble(model.exchangeRate);
+            loanApp.exchangeRate = model.exchangeRate != string.Empty ? Convert.ToDouble(model.exchangeRate ) : (double)0;
             loanApp.currencyCode = currency.CURRENCYCODE;
             loanApp.interestRate = Convert.ToDouble(model.interestRate);
             loanApp.editMode = model.callStatusCode == "01" ?  true : false;
@@ -601,10 +603,10 @@ namespace FintrakBanking.Repositories.Credit
             var isGroupLoan = false;
             var response = 0;
             int loanId = 0;
-            var proposedProductId = loan.LoanApplicationDetail.FirstOrDefault().proposedProductId;
+            //var proposedProductId = loan.LoanApplicationDetail.FirstOrDefault()?.proposedProductId ?? 0;
 
             // ValidateLoanApplicationLimits(loan); // init only
-            var workflowProductId = GetWorkflowProductId(proposedProductId);
+            var workflowProductId = GetWorkflowProductId(loan.productId);
 
             if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
