@@ -238,7 +238,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
-                    //var responseData = await response.Content.ReadAsStringAsync();
+                    var responseData = await response.Content.ReadAsStringAsync();
                     if(result != null)personalLoan = result;
                 }
 
