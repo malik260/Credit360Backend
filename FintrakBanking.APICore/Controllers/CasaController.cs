@@ -375,7 +375,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                repo.AddCustomerAccounts(model.customerCode);
+                repo.AddCustomerAccounts(model?.customerCode);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true });
             }
             catch (SecureException ex)

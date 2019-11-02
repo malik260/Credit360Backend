@@ -503,6 +503,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-cashback-memo-html/{operationId}/operationId/{targetId}/targetId")]
+        public HttpResponseMessage GetCashBackMemoHtml(int operationId, int targetId)
+        {
+            try
+            {
+                var response = _memoRepo.CashBackMemoMarkupHtml(token.GetStaffId, operationId, targetId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("get-drawdown-memo/{operationId}/operationId/{targetId}/targetId")]
         public HttpResponseMessage GetDrawdownMemo([FromUri] int operationId, [FromUri] int targetId)
         {

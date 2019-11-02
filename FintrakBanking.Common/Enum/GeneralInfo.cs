@@ -440,6 +440,8 @@ namespace FintrakBanking.Common.Enum
         AlertConditionAdded = 541,
         AlertConditionUpdated = 542,
         AlertConditionDeleted = 543,
+        CashbackSectionAdded = 544,
+        CashbackSectionUpdated = 545,
         //LienProposed = 544,
         //LienUnproposed = 545
     };

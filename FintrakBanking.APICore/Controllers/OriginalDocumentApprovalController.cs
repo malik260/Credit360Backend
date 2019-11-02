@@ -62,6 +62,16 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("approved-original-document-by-id/{id}")]
+        public HttpResponseMessage GetApprovedOriginalDocumentByCollateralCustomerId(int id)
+        {
+            var response = repo.GetApprovedOriginalDocumentByCollateralCustomerId(id);
+            if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("original-document-status-by-id/{id}")]
         public HttpResponseMessage GetReleaseDocumentByCollateralCustomerId(int id)
         {
