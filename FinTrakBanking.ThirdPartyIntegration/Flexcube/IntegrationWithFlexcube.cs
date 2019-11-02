@@ -773,8 +773,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public List<CasaViewModel> GetCustomerAccountsBalanceByCustomerCode(string customerCode)
         {
             List<CasaViewModel> casa = new List<CasaViewModel>();
-            Task.Run(async () => casa = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode))
-                .GetAwaiter().GetResult();
+            try
+            {
+                Task.Run(async () => casa = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode))
+                    .GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+      
             return casa;
         }
 
@@ -792,6 +800,31 @@ namespace FinTrakBanking.ThirdPartyIntegration
             Task.Run(async () => customerRating = await basel.GetCorporateCustomerRatingByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
             return customerRating;
+        }
+
+        public FacilityRatingViewModel GetAutoLoanRetailByCustomerCode(string customerCode)
+        {
+            FacilityRatingViewModel autoLoan = new FacilityRatingViewModel();
+            Task.Run(async () => autoLoan = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
+                .GetAwaiter().GetResult();
+            return autoLoan;
+        }
+
+
+        public FacilityRatingViewModel GetPersonalLoanRetailByCustomerCode(string customerCode)
+        {
+            FacilityRatingViewModel personalLoan = new FacilityRatingViewModel();
+            Task.Run(async () => personalLoan = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
+                .GetAwaiter().GetResult();
+            return personalLoan;
+        }
+
+        public FacilityRatingViewModel GetCreditCardRetailByCustomerCode(string customerCode)
+        {
+            FacilityRatingViewModel creditCard = new FacilityRatingViewModel();
+            Task.Run(async () => creditCard = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
+                .GetAwaiter().GetResult();
+            return creditCard;
         }
 
         //public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths)
