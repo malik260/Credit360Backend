@@ -950,6 +950,7 @@ namespace FintrakBanking.Repositories.CASA
 
         public void AddCustomerAccounts(string customerCode)
         {
+            if (customerCode == null || customerCode == string.Empty) return;
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             if (setup.USE_THIRD_PARTY_INTEGRATION)
             {

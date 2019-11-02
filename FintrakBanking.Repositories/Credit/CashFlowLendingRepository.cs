@@ -52,75 +52,78 @@ namespace FintrakBanking.Repositories.Credit
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
         {
            APIResponse response = new APIResponse();
-           if (model.customerType == "I")
+           if (model.customerType == "1")
            {
-               if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99"); }
+               if (model.individualCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",""); }
 
                return AddIndividualCustomer(model);
            }
-           else if (model.customerType == "C")
+           else if (model.customerType == "2")
            {
-               if (model.corporateCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99"); }
+               if (model.corporateCustomerInformation.customerCode == string.Empty) { return fireResponse("Missing Customer Number", "99",model.request_Id); }
 
                return AddCorporateCustomer(model);
            }
-           else { return fireResponse("Uknown Customer Type","99"); }
+           else { return fireResponse("Uknown Customer Type","99",""); }
         }
 
         private APIResponse AddIndividualCustomer(IncomingCustomerViewModels model)
         {
             APIResponse response = new APIResponse();
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
+            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
+            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99"); }
+            if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
             List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
-            if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99"); }
+            if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99",""); }
 
             DateTime dateTime12;
-            if (!DateTime.TryParse(model.individualCustomerInformation.dateOfBirth, out dateTime12)) { return fireResponse("Date of birth not in the right format", "99"); }
+            if (!DateTime.TryParse(model.individualCustomerInformation.dateOfBirth, out dateTime12)) { return fireResponse("Date of birth not in the right format", "99",""); }
 
             List<string> mStatus = new List<string> { "single", "married", "divorced", "widowed" };
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "single") { model.individualCustomerInformation.maritalStatus = "1"; }
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "married") { model.individualCustomerInformation.maritalStatus = "2"; }
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "divorced") { model.individualCustomerInformation.maritalStatus = "3"; }
             if (model.individualCustomerInformation.maritalStatus.ToLower() == "widowed") { model.individualCustomerInformation.maritalStatus = "4"; }
-            if (model.individualCustomerInformation.maritalStatus == "0") { fireResponse("Zero value is not a recognized marital status.","99"); }
-            if (!mStatus.Contains(model.individualCustomerInformation.maritalStatus)) { fireResponse($"Value, '{model.individualCustomerInformation.maritalStatus}' is not a valid marital status.", "99"); }
+            if (model.individualCustomerInformation.maritalStatus == "0") { fireResponse("Zero value is not a recognized marital status.","99",""); }
+            if (!mStatus.Contains(model.individualCustomerInformation.maritalStatus)) { fireResponse($"Value, '{model.individualCustomerInformation.maritalStatus}' is not a valid marital status.", "99",""); }
 
             if (saveIndividualCustomerInformation(model))
             {
-                fireResponse("Success","00");
+                return fireResponse("Success","00","");
             }
-            else { fireResponse("Unresolved error: could not save customer information","99"); }
+            else { return fireResponse("Unresolved error: could not save customer information","99",""); }
 
-            return response;
+           // return response;
         }
 
         private APIResponse AddCorporateCustomer(IncomingCustomerViewModels model)
         {
             APIResponse response = new APIResponse();
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
+            if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99"); }
+            if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99"); }
+            if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
             List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
-            if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false)
-                                    { return fireResponse("Missing CRC credit bureau","99"); }
+
+            //List<int> crcCreditBureauType = new List<int> { 3 };
+            //if (creditBureautype.Contains(crcCreditBureauType) == false)
+            //{ return fireResponse("Missing CRC credit bureau", "99",""); }
 
             if (saveCorporateCustomerInformation(model))
             {
-                fireResponse("Success", "00");
+                
+                return fireResponse("Success", "00",model.request_Id);
             }
-            else { fireResponse("Unresolved error: could not save customer information", "99"); }
+            else { return fireResponse("Unresolved error: could not save customer information", "99",""); }
 
-            return response;
+          //  return response;
         }
 
         private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
@@ -176,7 +179,7 @@ namespace FintrakBanking.Repositories.Credit
                 TEAMNPL = model.teamNpl,
                 //CORR = model.corr,
                 PASTDUEOBLIGATIONS = Convert.ToDecimal(model.pastDueObligation),
-                APIREQUESTID = entity.requestId,
+                APIREQUESTID = entity.request_Id,
                 //BUSINESSUNTID = model.businessUnitId
 
             };
@@ -192,8 +195,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             ApiCustomerBusinessDetailsViewModel corporateDetails = model.corporateCustomerInformation;
 
-
-            return false; var customer = new TBL_CUSTOMER
+           var crmsType = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == corporateDetails.crmsCompanySize).FirstOrDefault();
+           var customer = new TBL_CUSTOMER
             {
                 ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
                 BRANCHID = 1, //entity.userBranchId,
@@ -219,9 +222,9 @@ namespace FintrakBanking.Repositories.Credit
                 //CUSTOMERBVN = corporateDetails.customerBvn,
                 //PROSPECTCUSTOMERCODE = model.prospectCustomerCode,
                 ISPROSPECT = false,
-                CRMSCOMPANYSIZEID = Convert.ToInt32(corporateDetails.crmsCompanySize),
+                CRMSCOMPANYSIZEID = crmsType?.CRMSREGULATORYID,
                 //CRMSLEGALSTATUSID = model.crmsLegalStatus,
-                CRMSRELATIONSHIPTYPEID = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == (corporateDetails.crmsRelationship)).FirstOrDefault()?.CRMSREGULATORYID,
+                CRMSRELATIONSHIPTYPEID = context.TBL_CRMS_REGULATORY.Where(x => x.CODE == (corporateDetails.crmsRelationship))?.FirstOrDefault()?.CRMSREGULATORYID,
                // COUNTRYOFRESIDENTID = context.TBL_COUNTRY.Where(X => X.NAME == corporateDetails.countryOfResidence).FirstOrDefault()?.COUNTRYID,
 
                 //NUMBEROFLOANSTAKEN = model.numberOfLoansTaken,
@@ -230,7 +233,7 @@ namespace FintrakBanking.Repositories.Credit
                 //RELATIONSHIPTYPEID = model.relationshipTypeCode,
                 TEAMLDR = corporateDetails.teamLdr,
                 TEAMNPL = corporateDetails.teamNpl,
-                APIREQUESTID = model.requestId,
+                APIREQUESTID = model.request_Id,
                 //CORR = model.corr,
                 //PASTDUEOBLIGATIONS = Convert.ToDecimal(corporateDetails.pastDueObligation),
                 //BUSINESSUNTID = model.businessUnitId
@@ -382,11 +385,12 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        private APIResponse fireResponse(string message, string statusCode)
+        private APIResponse fireResponse(string message, string statusCode, string requestId)
         {
             APIResponse response = new APIResponse();
             response.StatusCode = statusCode;
             response.Message = message;
+            response.requestId = requestId;
 
             return response;
         }
@@ -407,16 +411,18 @@ namespace FintrakBanking.Repositories.Credit
             APIResponse response = new APIResponse();
             var product = context.TBL_PRODUCT.Where(x => x.PRODUCTCODE == model.productCode).FirstOrDefault();
 
-            if (product == null) { return fireResponse("Product Code does not exist", "99"); }
-            if (model.requestId == null) { return fireResponse("Missing application unique indentifier", "99"); }
+            if (product == null) { return fireResponse("Product Code does not exist", "99",""); }
+            if (model.requestId == null) { return fireResponse("Missing application unique indentifier", "99",""); }
 
             var subSector = context.TBL_SUB_SECTOR.Where(x => x.CODE == model.subSectorCode).FirstOrDefault();
-            if (subSector == null) { return fireResponse("Missing sub sector code", "99"); }
+            if (subSector == null) { return fireResponse("Missing sub sector code", "99",""); }
 
             var sector = context.TBL_SECTOR.Where(x => x.CODE == subSector.CODE).FirstOrDefault();
 
             var currency = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == model.currencyCode || x.CURRENCYCODE =="NGN").FirstOrDefault();
-            if (currency == null) fireResponse("Missing currency code", "99");
+            if (currency == null) return fireResponse("Missing currency code", "99","");
+
+            if (model.accountOfficerStaffCode == string.Empty) return fireResponse("Missing account officer code", "99","");
 
             var accountOfficerr = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
 
@@ -424,14 +430,14 @@ namespace FintrakBanking.Repositories.Credit
 
             loanApp.proposedTenor = Convert.ToInt16(model.tenor);
             loanApp.tenorModeId = (short)TenorModeEnum.Days;
-            loanApp.proposedAmount = Convert.ToInt16(model.loanAmount);
+            loanApp.proposedAmount = Convert.ToDecimal(model.loanAmount);
             loanApp.productId = product.PRODUCTID;
             loanApp.productClassId = product.PRODUCTCLASSID;
             loanApp.productClassProcessId = product.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID;
             loanApp.loanPurpose = model.purpose;
-            loanApp.sectorId = (int) sector?.SECTORID;
+            loanApp.sectorId = (int)subSector?.SECTORID;
             loanApp.subSectorId = (short)subSector?.SUBSECTORID;
-            loanApp.exchangeRate = Convert.ToDouble(model.exchangeRate);
+            loanApp.exchangeRate = model.exchangeRate != string.Empty ? Convert.ToDouble(model.exchangeRate ) : (double)0;
             loanApp.currencyCode = currency.CURRENCYCODE;
             loanApp.interestRate = Convert.ToDouble(model.interestRate);
             loanApp.editMode = model.callStatusCode == "01" ?  true : false;
@@ -464,7 +470,7 @@ namespace FintrakBanking.Repositories.Credit
             if (loan.relationshipOfficerId != 0)
             {
                 var validation = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId);
-                if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) fireResponse($"RM Limit Exceeded. The limit of this RM is {validation.limit}","99");
+                if (validation.maximumAllowedLimit > 0) if ((cumulativeSum + additionalAmount) > (decimal)validation.limit) fireResponse($"RM Limit Exceeded. The limit of this RM is {validation.limit}","99","");
             }
 
             loan.applicationAmount = cumulativeSum + additionalAmount;
@@ -525,12 +531,12 @@ namespace FintrakBanking.Repositories.Credit
 
             if (a.repaymentScheduleId <= 0)
             {
-                fireResponse("Please select a repayment pattern","99");
+                fireResponse("Please select a repayment pattern","99","");
             }
 
             if (a.proposedTenor == 0)
             {
-                fireResponse("Tenor can not be ZERO (0)","99");
+                fireResponse("Tenor can not be ZERO (0)","99","");
             }
 
             var data = new TBL_LOAN_APPLICATION_DETAIL
@@ -601,10 +607,10 @@ namespace FintrakBanking.Repositories.Credit
             var isGroupLoan = false;
             var response = 0;
             int loanId = 0;
-            var proposedProductId = loan.LoanApplicationDetail.FirstOrDefault().proposedProductId;
+            //var proposedProductId = loan.LoanApplicationDetail.FirstOrDefault()?.proposedProductId ?? 0;
 
             // ValidateLoanApplicationLimits(loan); // init only
-            var workflowProductId = GetWorkflowProductId(proposedProductId);
+            var workflowProductId = GetWorkflowProductId(loan.productId);
 
             if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
@@ -733,11 +739,11 @@ namespace FintrakBanking.Repositories.Credit
 
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
             var update = loan.LoanApplicationDetail.SingleOrDefault();
-            if (update == null) fireResponse("Sequence contain not single! " + loan.LoanApplicationDetail.Count(), "99");
+            if (update == null) fireResponse("Sequence contain not single! " + loan.LoanApplicationDetail.Count(), "99","");
 
             if (update.repaymentScheduleId <= 0 && (detail.TBL_PRODUCT1.PRODUCTCLASSID != (int)ProductClassEnum.BondAndGuarantees))
             {
-                fireResponse("Please select a repayment pattern for the product " + update.productName, "99");
+                fireResponse("Please select a repayment pattern for the product " + update.productName, "99","");
             }
 
             // LEFT TO RIGHT MAPPING
@@ -907,7 +913,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (limitValidation.ProductLimitExceeded(productId, application.proposedAmount))
                 {
-                    fireResponse("Product Limit exceeded!","99");
+                    fireResponse("Product Limit exceeded!","99","");
                 }
             }
             catch (Exception ex) { throw ex; }
@@ -917,14 +923,14 @@ namespace FintrakBanking.Repositories.Credit
             var company = context.TBL_COMPANY.Find(application.companyId);
             if (proposedExposure >= company.SHAREHOLDERSFUND)
             {
-                fireResponse("Company Limit Exceeded","99");
+                fireResponse("Company Limit Exceeded","99","");
             }
 
             var insiderLimit = limitValidation.ValidateNPLByInsiderCustomer();
             var insiderExposure = insiderLimit.outstandingBalance + (double)applicationAmount;
             if (insiderExposure >= (double)insiderLimit.maximumAllowedLimit)
             {
-                fireResponse("Insider Limit Exceeded", "99");
+                fireResponse("Insider Limit Exceeded", "99","");
             }
 
             if (limitValidation.IsDirectorRelatedGroup(application.customerGroupId) || limitValidation.CustomerIsDirector(application.customerId))
@@ -933,7 +939,7 @@ namespace FintrakBanking.Repositories.Credit
                 var directorExposure = (double)applicationAmount;
                 if (directorExposure >= (double)directorLimit.maximumAllowedLimit)
                 {
-                    fireResponse("Director Limit Exceeded","99");
+                    fireResponse("Director Limit Exceeded","99","");
                 }
 
             }

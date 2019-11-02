@@ -18,7 +18,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         public int DOCUMENTUPLOADID { get; set; }
         public int? DOCSUBMISSIONOPERATIONID { get; set; }
-        public short APPROVALSTATUSID { get; set; }
+        public int APPROVALSTATUSID { get; set; }
         public int COMPANYID { get; set; }
         public int CREATEDBY { get; set; }
         public DateTime? DATETIMECREATED { get; set; }
@@ -26,7 +26,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
         public bool DELETED { get; set; }
         public int DELETEDBY { get; set; }
-        public DateTime? DATETIMEDELETED { get; set; }
+        public DateTime DATETIMEDELETED { get; set; }
         public DateTime? APPROVALDATE { get; set; }
         public int? COLLATERALCUSTOMERID { get; set; }
 

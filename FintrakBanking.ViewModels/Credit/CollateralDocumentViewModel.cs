@@ -13,6 +13,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string documentTitle { get; set; }
         public int collateralCustomerId { get; set; }
         public DateTime lastVisitaionDate { get; set; }
+        public DateTime nextVisitationDate { get; set; }
         public string visitationRemark { get; set; }
         public int? CollateralVisitationID { get; set; }
         public bool isPrimaryDocument { get; set; }
@@ -23,6 +24,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal ContingentAmount { get; set; }
         public int? collateralReleaseStatusId { get; set; }
         public string collateralReleaseStatusName { get; set; }
+        public string doneBy { get; set; }
+        public string collateralSummary { get; set; }
     }
 
     public class CollateralVisitationDocumentViewModel : GeneralEntity

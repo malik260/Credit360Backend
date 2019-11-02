@@ -299,6 +299,7 @@ namespace FintrakBanking.Repositories.Credit
         private string temporaryOverdraftData;
         private string documentatonDeferralWaiverData;
         private int loanApplicationDetailId;
+        private string cardType;
         //private string OfferLetterForBondsAndGuaranteesData;
 
         // init
@@ -497,6 +498,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
 
                 this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
+                this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
                 this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER).FirstOrDefault();
                 this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME).FirstOrDefault();
                 this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
@@ -818,7 +820,7 @@ namespace FintrakBanking.Repositories.Credit
                     </tr>
                  ";
             result = result + $"</table>";
-            result = result + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetApprovalLevelsHtml() + GetOtherConditionsHtml();
+            result = result + GetTrancheDisbursementHtml() + GetRequestTypeHtml() + GetPrecedentConditionsHtml(targetId) + GetDrawdownApprovalsMarkupLOS() + GetOtherConditionsHtml();
             return result;
         }
 
@@ -2290,6 +2292,39 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             result = result + $"</table>";
+            return result;
+
+        }
+
+        private string GetDrawdownApprovalsMarkupLOS()
+        {
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=900 cellpadding=15 cellspacing=0>
+                    <tr>
+                        <th><b>APPROVALS:</b></th>
+                        <th><b></b></th>
+                    </tr>
+                    <tr>
+                        <th><b>Role</b></th>
+                        <th><b>Name</b></th>
+                        <th><b>Comment</b></th>
+                       
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{trail.comment}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table><br/>";
             return result;
 
         }
@@ -7764,6 +7799,90 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+
+        public string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId)
+        {
+            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+            var flowChange = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.OPERATIONID == operationId).FirstOrDefault();
+            var cashbackSection = context.TBL_CASHBACK.Where(x => x.LOANAPPLICATIONDETAILID == targetId).FirstOrDefault();
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <br />
+                <h3><b>MEMO</b></h3> <br />
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <td><b>Date:</b></td>
+                        <td>{DateTime.Now}</td>
+                    </tr>
+                    <tr>
+                        <td><b>From:</b></td>
+                        <td>{relationshipOfficerName.ToUpper()}</td>
+                    </tr>
+                    <tr>
+                        <td><b>To:</b></td>
+                        <td>THE UNDRELISTED</td>
+                    </tr>
+                    <tr>
+                        <td><b>Location:</b></td>
+                        <td>{locationName?.ToUpper()}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Subject:</b></td>
+                        <td>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</td>
+                    </tr>
+                 ";
+            result = result + $"</table>";
+            result = result + $@" 
+                    <p></p>
+                    <p><b>BACKGROUND</b></p>
+                    <p>{cashbackSection?.BACKGROUND}</p>
+                    <p><b>ISSUES</b></p>
+                    <p>{cashbackSection?.ISSUES}</p>
+                    <p><b>REQUEST</b></p>
+                    <p>{cashbackSection?.REQUEST}</p>
+                    
+                <p align='center'><h2><b>APPROVAL LOG</b></h2></p>
+                <p><b>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</b></p>
+                <p><b>{flowChange?.PLACEHOLDER.ToUpper()} MEMO</b></p>
+            ";
+            result = result + GetCashBackApprovalsMarkupLOS();
+            return result;
+        }
+
+
+        private string GetCashBackApprovalsMarkupLOS()
+        {
+            var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
+            var result = String.Empty;
+            result = result + $@"
+                <table border=1 width=900 cellpadding=10 cellspacing=0>
+                    <tr>
+                        <th><b>APPROVAL NAME</b></th>
+                        <th><b>DESIGNATION</b></th>
+                        <th><b>COMMENT</b></th>
+                        <th><b>ROUTING STATUS</b></th>
+                        <th><b>DATE APPROVED</b></th>
+                    </tr>
+                    ";
+            foreach (var trail in appraisals)
+            {
+                result = result + $@"
+                    <tr>
+                        <td>{trail.fromStaffName}</td>
+                        <td>{trail.fromApprovalLevelName.ToUpper()}</td>
+                        <td>{trail.comment}</td>
+                        <td>{GetDecision(trail.vote)}</td>
+                        <td>{trail.systemArrivalDateTime}</td>
+                    </tr>
+                ";
+            }
+
+            result = result + $"</table>";
+            return result;
+
+        }
 
     }
 }

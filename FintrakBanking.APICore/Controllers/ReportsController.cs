@@ -2609,6 +2609,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        
         [HttpPost]
         [ClaimsAuthorization]
         [Route("risk-asset-distribution-report")]

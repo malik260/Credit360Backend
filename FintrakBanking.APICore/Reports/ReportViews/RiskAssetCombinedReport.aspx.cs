@@ -9,10 +9,11 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace FintrakBanking.APICore.Reports.Report
+namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class MaturityReport : System.Web.UI.Page
+    public partial class RiskAssetCombinedReport : System.Web.UI.Page
     {
+      
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -65,7 +66,7 @@ namespace FintrakBanking.APICore.Reports.Report
 
                     ReportViewer.ServerReport.ReportServerUrl = new Uri(reportServerUrl);
                     ReportViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials(userName, password, domain);
-                    ReportViewer.ServerReport.ReportPath = reportPath + "Maturity"; // string.Format(reportPath, "Risk Asset");
+                    ReportViewer.ServerReport.ReportPath = reportPath + "RiskAssetCombined"; // string.Format(reportPath, "Risk Asset");
 
                     ReportViewer.ProcessingMode = ProcessingMode.Remote;
                     ReportViewer.ShowCredentialPrompts = false;
@@ -93,7 +94,6 @@ namespace FintrakBanking.APICore.Reports.Report
                     return;
                 }
             }
-
         }
     }
 }
