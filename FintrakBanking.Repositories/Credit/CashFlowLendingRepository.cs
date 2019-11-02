@@ -93,11 +93,11 @@ namespace FintrakBanking.Repositories.Credit
 
             if (saveIndividualCustomerInformation(model))
             {
-                fireResponse("Success","00","");
+                return fireResponse("Success","00","");
             }
-            else { fireResponse("Unresolved error: could not save customer information","99",""); }
+            else { return fireResponse("Unresolved error: could not save customer information","99",""); }
 
-            return response;
+           // return response;
         }
 
         private APIResponse AddCorporateCustomer(IncomingCustomerViewModels model)
@@ -121,9 +121,9 @@ namespace FintrakBanking.Repositories.Credit
                 
                 return fireResponse("Success", "00",model.request_Id);
             }
-            else { fireResponse("Unresolved error: could not save customer information", "99",""); }
+            else { return fireResponse("Unresolved error: could not save customer information", "99",""); }
 
-            return response;
+          //  return response;
         }
 
         private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
