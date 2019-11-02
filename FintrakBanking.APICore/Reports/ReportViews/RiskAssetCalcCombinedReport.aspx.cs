@@ -65,7 +65,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     ReportViewer.ServerReport.ReportServerUrl = new Uri(reportServerUrl);
                     ReportViewer.ServerReport.ReportServerCredentials = new ReportServerCredentials(userName, password, domain);
-                    ReportViewer.ServerReport.ReportPath = reportPath + "Risk Asset Calc Combined"; // string.Format(reportPath, "Risk Asset");
+                    ReportViewer.ServerReport.ReportPath = reportPath + "Risk Asset Calc Combined Report"; // string.Format(reportPath, "Risk Asset");
 
                     ReportViewer.ProcessingMode = ProcessingMode.Remote;
                     ReportViewer.ShowCredentialPrompts = false;

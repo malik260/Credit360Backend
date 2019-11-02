@@ -2370,13 +2370,13 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("risk-asset-calc-combined-report")]
-        public HttpResponseMessage RiskAssetCalcCombined([FromBody] RiskAssets obj)
+        public HttpResponseMessage RiskAssetCalcCombinedReport([FromBody] RiskAssets obj)
         {
 
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.RiskAssetCalcCombined(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+                var data = repo.RiskAssetCalcCombinedReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -2427,7 +2427,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.RiskAssetCalcComReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+                var data = repo.RiskAssetCalcCombinedReportTeam(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
