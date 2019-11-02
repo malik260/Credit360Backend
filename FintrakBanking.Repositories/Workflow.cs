@@ -197,6 +197,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             CheckApprovalLimits();
 
+            LastApproverCheck();
+
             SetState();
 
             SetReroute();
@@ -829,7 +831,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
 
             if (this.skipLimitsCheck == true || IsPresetFinalLevel()) { return; }
-            //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
+            //if (request.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.fromLevelId; }//temporary fix o!!!!!
             if (this.nextLevelId != null && this.amount > 0 || ActionIsApprovalDecision())
             {
                 if (WithinAllLimits() == true)
@@ -902,11 +904,25 @@ namespace FintrakBanking.Repositories.WorkFlow
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
             if (level == null) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
             if (this.disputed == true && level.CANRESOLVEDISPUTE != true) { return false; }
-
             return WithinTenorLimit(level) == true
                 && WithinMaximumLimit(level) == true
                 && WithinInvestmentGradeLimit(level) == true
                 && WithinPoliticallyExposedLimit(level) == true;
+        }
+
+        private void LastApproverCheck()
+        {
+            var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
+            if (IsLastApprover(level) && this.statusId == (int)ApprovalStatusEnum.Processing) this.statusId = (int)ApprovalStatusEnum.Approved;
+        }
+
+        private bool IsLastApprover(TBL_APPROVAL_LEVEL level)
+        {
+            if(this.nextLevelId == null && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
+            {
+                return true;
+            }
+                return false;
         }
 
         private int SetState()
@@ -985,7 +1001,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool ActionIsApprovalDecision()
         {
-            return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved);
+            return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved || this.statusId == (int)ApprovalStatusEnum.Authorised);
         }
 
         private IEnumerable<WorkflowSetup> GetWorkflowSetup(int operationId, int? productClassId, int? productId)

@@ -104,11 +104,11 @@ namespace FintrakBanking.APICore.Controllers
 
                 var data = repo.AddCustomer(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { result = data });
+                return Request.CreateResponse(HttpStatusCode.OK,  data );
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record, confirm all requested parameters are captured"});
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, $"There was an error creating this record, confirm all requested parameters are captured");
             }
         }
 
@@ -127,12 +127,12 @@ namespace FintrakBanking.APICore.Controllers
     
                 var data = repo.submitRequest(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new {result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, data );
                 
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { message = $"There was an error creating this record, confirm all requested parameters are captured" });
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, $"There was an error creating this record, confirm all requested parameters are captured" );
             }
         }
 

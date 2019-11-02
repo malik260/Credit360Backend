@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.Credit;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
@@ -526,6 +527,22 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-facility-rating/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetFacilityRating(int loanApplicationDetailId)
+        {
+            try
+            {
+                var facility = repo.GetFacilityRating(loanApplicationDetailId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = facility });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
