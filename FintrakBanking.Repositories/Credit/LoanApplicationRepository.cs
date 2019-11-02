@@ -1359,11 +1359,11 @@ namespace FintrakBanking.Repositories.Credit
                              staffId
                          );
 
-                        creditCommon.GetAutoLoansRetail(
-                             applicationId,
-                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                             staffId
-                         );
+                        //creditCommon.GetAutoLoansRetail(
+                        //     applicationId,
+                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //     staffId
+                        // );
 
                         creditCommon.GetPersonalLoansRetail(
                             applicationId,
@@ -1413,18 +1413,18 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public FacilityRatingViewModel GetFacilityRating(int loanApplicationDetailId)
+        public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId)
         {
             var facilityRating = context.TBL_FACILITY_RATING.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetailId)
                                         .OrderByDescending(O => O.FACILITYRATINGID).Select(O => new FacilityRatingViewModel
                                         {
                                             loanApplicationDetailId = O.LOANAPPLICATIONDETAILID,
-                                            probabilityOfDefault = O.PROBABILITYOFDEFAULT,
+                                            probability_of_Default = O.PROBABILITYOFDEFAULT,
                                             remark = O.REMARK,
-                                            customerId = O.CUSTOMERID,
+                                            customer_ID = O.CUSTOMERID,
                                             dateTimeCreated = O.DATETIMECREATED,
                                             createdBy = O.CREATEDBY
-                                        }).FirstOrDefault();
+                                        }).ToList();
             return facilityRating;
         }
 
@@ -4036,7 +4036,8 @@ namespace FintrakBanking.Repositories.Credit
             bool isHeadOffice = (user.BranchId == 1) ? true : false;
 
             var applications = context.TBL_LOAN_APPLICATION
-                .Where(x => (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected)
+                .Where(x => (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected
+                || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted)
                 //&& x.REVIEW_TYPE == null // <------------------- INT of APPLICATIONSTATUSID to filter
                 )
             .Select(x => new LoanApplicationViewModel

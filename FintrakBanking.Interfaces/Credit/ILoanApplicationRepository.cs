@@ -79,7 +79,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<ProductFeesViewModel> GetLoanApplicationFees(int loanDetailId);
 
-        FacilityRatingViewModel GetFacilityRating(int applicationDetailId);
+        List<FacilityRatingViewModel> GetFacilityRating(int applicationDetailId);
 
         short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex);
 

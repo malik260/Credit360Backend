@@ -802,29 +802,29 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return customerRating;
         }
 
-        public List<FacilityRatingViewModel> GetAutoLoanRetailByCustomerCode(string customerCode)
+        public FacilityRatingViewModel GetAutoLoanRetailByCustomerCode(string customerCode)
         {
-            List<FacilityRatingViewModel> autoLoans = new List<FacilityRatingViewModel>();
-            Task.Run(async () => autoLoans = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
+            FacilityRatingViewModel autoLoan = new FacilityRatingViewModel();
+            Task.Run(async () => autoLoan = await basel.GetAutoLoanProbabilityOfDefaultByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return autoLoans;
+            return autoLoan;
         }
 
 
-        public List<FacilityRatingViewModel> GetPersonalLoanRetailByCustomerCode(string customerCode)
+        public FacilityRatingViewModel GetPersonalLoanRetailByCustomerCode(string customerCode)
         {
-            List<FacilityRatingViewModel> personalLoans = new List<FacilityRatingViewModel>();
-            Task.Run(async () => personalLoans = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
+            FacilityRatingViewModel personalLoan = new FacilityRatingViewModel();
+            Task.Run(async () => personalLoan = await basel.GetPersonalLoansRetailByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return personalLoans;
+            return personalLoan;
         }
 
-        public List<FacilityRatingViewModel> GetCreditCardRetailByCustomerCode(string customerCode)
+        public FacilityRatingViewModel GetCreditCardRetailByCustomerCode(string customerCode)
         {
-            List<FacilityRatingViewModel> creditCards = new List<FacilityRatingViewModel>();
-            Task.Run(async () => creditCards = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
+            FacilityRatingViewModel creditCard = new FacilityRatingViewModel();
+            Task.Run(async () => creditCard = await basel.GetCreditCardRetailProbabilityOfDefaultByCustomerCode(customerCode))
                 .GetAwaiter().GetResult();
-            return creditCards;
+            return creditCard;
         }
 
         //public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths)

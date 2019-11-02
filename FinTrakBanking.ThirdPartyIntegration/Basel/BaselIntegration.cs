@@ -23,7 +23,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
         public BaselIntegration(FinTrakBankingContext context)
         {
             _context = context;
-            API_KEY = "WzKQBRQXboWsIVI";
+            //API_KEY = "WzKQBRQXboWsIVI";
+            API_KEY = "XtSREijsrZYkt9S";
             API_URL = "http://10.1.9.197:94/api/Credit360API/";
             //var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
             //if (configdata != null)
@@ -46,7 +47,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"GetCorporateRatioPDConsolidatedByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetCorporateRatioPDConsolidatedByCustomerID/{customerNumber}?key={API_KEY}";
             try
             { 
                 handler.UseDefaultCredentials = true;
@@ -132,7 +133,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"GetCorporatePDByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetCorporatePDByCustomerID/{customerNumber}?key={API_KEY}";
             try 
             {
                 handler.UseDefaultCredentials = true;
@@ -156,20 +157,16 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                CutomerRatingViewModel customerRatios = new CutomerRatingViewModel();
+                CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
-
+                    var result = await response.Content.ReadAsAsync<CutomerRatingViewModel>();
                     var responseData = await response.Content.ReadAsStringAsync();
-                    JObject responseDataJsonString = JObject.Parse(responseData);
-
-                    var data = responseDataJsonString["data"].ToString();
-                    customerRatios = JsonConvert.DeserializeObject<CutomerRatingViewModel>(data);
+                    customerRating = result;
                 }
 
 
-                return customerRatios;
+                return customerRating;
             }
             catch (APIErrorException ex)
             {
@@ -203,7 +200,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<FacilityRatingViewModel>> GetPersonalLoansRetailByCustomerCode(string customerNumber)
+        public async Task<FacilityRatingViewModel> GetPersonalLoansRetailByCustomerCode(string customerNumber)
         {
 
             //THIS METHOD's VIEW MODEL, CLASSESES ARE  YET TO BE CREATED
@@ -215,7 +212,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"api/Credit360API/GetPersonalLoansRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetPersonalLoansRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
             try
             {
                 handler.UseDefaultCredentials = true;
@@ -239,18 +236,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<FacilityRatingViewModel> personalLoans = new List<FacilityRatingViewModel>();
+                FacilityRatingViewModel personalLoan = new FacilityRatingViewModel();
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
+                    var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
                     var responseData = await response.Content.ReadAsStringAsync();
-                    JObject responseDataJsonString = JObject.Parse(responseData);
-
-                    var data = responseDataJsonString["data"].ToString();
-                    personalLoans = JsonConvert.DeserializeObject<List<FacilityRatingViewModel>>(data);
+                    personalLoan = result;
                 }
 
-                return personalLoans;
+                return personalLoan;
             }
             catch (APIErrorException ex)
             {
@@ -284,7 +278,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<FacilityRatingViewModel>> GetCreditCardRetailProbabilityOfDefaultByCustomerCode(string customerNumber)
+        public async Task<FacilityRatingViewModel> GetCreditCardRetailProbabilityOfDefaultByCustomerCode(string customerNumber)
         {
 
             //THIS METHOD's VIEW MODEL, CLASSESES ARE  YET TO BE CREATED
@@ -296,7 +290,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"api/Credit360API/GetcreditCardRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetcreditCardRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
             try
             {
                 handler.UseDefaultCredentials = true;
@@ -320,18 +314,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<FacilityRatingViewModel> creditCards = new List<FacilityRatingViewModel>();
+                FacilityRatingViewModel creditCard = new FacilityRatingViewModel();
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
+                    var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
                     var responseData = await response.Content.ReadAsStringAsync();
-                    JObject responseDataJsonString = JObject.Parse(responseData);
-
-                    var data = responseDataJsonString["data"].ToString();
-                    creditCards = JsonConvert.DeserializeObject<List<FacilityRatingViewModel>>(data);
+                    creditCard = result;
                 }
 
-                return creditCards;
+                return creditCard;
             }
             catch (APIErrorException ex)
             {
@@ -365,7 +356,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             }
         }
 
-        public async Task<List<FacilityRatingViewModel>> GetAutoLoanProbabilityOfDefaultByCustomerCode(string customerNumber)
+        public async Task<FacilityRatingViewModel> GetAutoLoanProbabilityOfDefaultByCustomerCode(string customerNumber)
         {
 
             //THIS METHOD's VIEW MODEL, CLASSESES ARE  YET TO BE CREATED
@@ -377,7 +368,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             HttpResponseMessage response = null;
             ResponseMessageViewModel res = null;
             string responseMessage = "";
-            string endPointUrl = $"api/Credit360API/GetAutoLoanRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
+            string endPointUrl = $"{API_URL}GetAutoLoanRetailPDByCustomerID/{customerNumber}?key={API_KEY}";
             try
             {
                 handler.UseDefaultCredentials = true;
@@ -401,18 +392,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
 
                 responseMessage = await response.Content.ReadAsStringAsync();
 
-                List<FacilityRatingViewModel> autoLoans = new List<FacilityRatingViewModel>();
+                FacilityRatingViewModel autoLoan = new FacilityRatingViewModel();
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
+                    var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
                     var responseData = await response.Content.ReadAsStringAsync();
-                    JObject responseDataJsonString = JObject.Parse(responseData);
-
-                    var data = responseDataJsonString["data"].ToString();
-                    autoLoans = JsonConvert.DeserializeObject<List<FacilityRatingViewModel>>(data);
+                    autoLoan = result;
                 }
 
-                return autoLoans;
+                return autoLoan;
             }
             catch (APIErrorException ex)
             {
