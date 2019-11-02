@@ -20,6 +20,7 @@
         public int? RELEASEAPPROVALSTATUSID { get; set; }
 
         public int? RELEASEAPPLICATIONSTATUSID { get; set; }
+        public string RELEASEREF { get; set; }
 
         public DateTime? DATETIMECREATED { get; set; }
         

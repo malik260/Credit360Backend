@@ -88,6 +88,10 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now,
                 };
 
+                var inUseCollateral = _context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.COLLATERALCUSTOMERID == entity.COLLATERALCUSTOMERID && x.DELETED == false).ToList();
+
+                if (inUseCollateral.Any()) throw new SecureException("Cannot release document for a Collateral with existing Exposure(s)");
+
                 _context.TBL_ORIGINAL_DOCUMENT_RELEASE.Add(entity);
 
             }
