@@ -2129,6 +2129,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
                 loanApplicationId = x.a.LOANAPPLICATIONID,
+                //loanApplicationDetailId = x.a.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
                 relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
                 customerId = x.a.CUSTOMERID,

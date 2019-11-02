@@ -44,7 +44,7 @@ namespace FintrakBanking.Repositories.credit
 
             var data = (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
-                    where x.DELETED == false && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending)
+                    where x.DELETED == false && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                     select new AtcLodgmentViewModel
                     {
                         atcLodgmentId = x.ATCLODGMENTID,
@@ -121,8 +121,8 @@ namespace FintrakBanking.Repositories.credit
             return (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
                     join atrail in context.TBL_APPROVAL_TRAIL on x.ATCLODGMENTID equals atrail.TARGETID
-                    where x.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing 
-                     || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                    where x.DELETED == false && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing 
+                     || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                      && atrail.RESPONSESTAFFID == null
                      && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                      && atrail.OPERATIONID == (int)OperationsEnum.AtcLodgementApproval
@@ -231,7 +231,7 @@ namespace FintrakBanking.Repositories.credit
         {
             workflow.StaffId = model.createdBy;
             workflow.CompanyId = model.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.StatusId = (short)ApprovalStatusEnum.Processing;
             workflow.TargetId = model.atcLodgmentId;
             workflow.Comment = "Update has been Applied, Request for ATC approval";
             workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
@@ -252,7 +252,7 @@ namespace FintrakBanking.Repositories.credit
                 {
                     workflow.StaffId = mod.createdBy;
                     workflow.CompanyId = mod.companyId;
-                    workflow.StatusId = mod.approvalStatusId == 2 ? (int)ApprovalStatusEnum.Processing : mod.approvalStatusId;
+                    workflow.StatusId = mod.approvalStatusId == 2 ? (short)ApprovalStatusEnum.Processing : mod.approvalStatusId;
                     workflow.TargetId = mod.atcLodgmentId;
                     workflow.Comment = mod.comment;
                     workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
@@ -266,7 +266,7 @@ namespace FintrakBanking.Repositories.credit
                         {
                             ctr = ctr + 1;
                             var document = context.TBL_ATC_RELEASE.Where(o => o.ATCLODGMENTID == mod.atcLodgmentId &&
-                                                                    (o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || o.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred))
+                                                                    (o.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || o.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                                                                     .FirstOrDefault();
 
                             var doc = context.TBL_ATC_LODGMENT.Where(o => o.ATCLODGMENTID == mod.atcLodgmentId).FirstOrDefault();
@@ -464,11 +464,11 @@ namespace FintrakBanking.Repositories.credit
                                where atc.atcLodgmentId == ar.ATCLODGMENTID
                                orderby ar.ATCLODGMENTID descending
                                select ar).FirstOrDefault();
-                if (record == null || (record != null && (record.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || record.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)))
+                if (record == null || (record != null && (record.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || record.APPROVALSTATUSID == (short)ApprovalStatusEnum.Disapproved)))
                 {
                     continue;
                 }
-                else return false;
+                else throw new SecureException("One or More records may currently be Undergoing Approval");
             }
 
             foreach(var atc in model)
@@ -482,7 +482,7 @@ namespace FintrakBanking.Repositories.credit
                         UNITBALANCE = balance,
                         UNITNUMBER = atc.unitNumber,
                         UNITTORELEASE = atc.unitToRelease,
-                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
+                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing,
                         // COMPANYID = model.companyId,
                         CREATEDBY = atc.createdBy,
                         DATETIMECREATED = general.GetApplicationDate(),
@@ -494,7 +494,7 @@ namespace FintrakBanking.Repositories.credit
                     {
                         workflow.StaffId = atc.createdBy;
                         workflow.CompanyId = atc.companyId;
-                        workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                        workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                         workflow.TargetId = id.ATCLODGMENTID;
                         workflow.Comment = "Request for ATC Release approval";
                         workflow.OperationId = (int)OperationsEnum.AtcReleaseApproval;
@@ -542,7 +542,7 @@ namespace FintrakBanking.Repositories.credit
                 UNITNUMBER = model.unitNumber,
                 //  CERTIFICATENUMBER = model.certificateNumber,
                 STATUSID = model.statusId,
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 // COMPANYID = model.companyId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -591,7 +591,7 @@ namespace FintrakBanking.Repositories.credit
                 {
                     workflow.StaffId = model.createdBy;
                     workflow.CompanyId = model.companyId;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                     workflow.TargetId = model.atcLodgmentId;
                     workflow.Comment = "Update has been applied, Request for ATC lodgment Approval";
                     workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
@@ -630,7 +630,7 @@ namespace FintrakBanking.Repositories.credit
 
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                 workflow.Comment = "Request for ATC Lodgement approval";
                 workflow.OperationId = (int)OperationsEnum.AtcLodgementApproval;
                 workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
@@ -640,7 +640,7 @@ namespace FintrakBanking.Repositories.credit
                 
                 if (context.SaveChanges() != 0)
                 {
-                    entity.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    entity.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
                 }
 
                 return context.SaveChanges() != 0;
@@ -778,7 +778,7 @@ namespace FintrakBanking.Repositories.credit
             
             return (from x in context.TBL_ATC_LODGMENT
                     join c in context.TBL_CUSTOMER on x.CUSTOMERID equals c.CUSTOMERID
-                    where x.DELETED == false && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.UNITNUMBER > 0
+                    where x.DELETED == false && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && x.UNITNUMBER > 0
                     select new AtcLodgmentViewModel
                     {
                         atcLodgmentId = x.ATCLODGMENTID,
@@ -814,7 +814,7 @@ namespace FintrakBanking.Repositories.credit
                     join al in context.TBL_ATC_LODGMENT on ar.ATCLODGMENTID equals al.ATCLODGMENTID
                     join c in context.TBL_CUSTOMER on al.CUSTOMERID equals c.CUSTOMERID
                     where ar.DELETED ==
-                           false && (ar.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
+                           false && (ar.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                     select new AtcLodgmentViewModel
                     {
                         atcReleaseId = ar.ATCRELEASEID,
