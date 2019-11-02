@@ -258,17 +258,21 @@ namespace FintrakBanking.Repositories.Credit
                     //personalLoan = integration.GetPersonalLoanRetailByCustomerCode("000428107");
                     personalLoan = integration.GetPersonalLoanRetailByCustomerCode(customer.CUSTOMERCODE);
 
-                    context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
+                    if(personalLoan != null)
                     {
-                        LOANAPPLICATIONDETAILID = loanApplicationDetailId,
-                        PROBABILITYOFDEFAULT = personalLoan.probability_of_Default,
-                        REMARK = personalLoan.remark,
-                        CUSTOMERID = customer.CUSTOMERID,
-                        DATETIMECREATED = DateTime.Now,
-                        CREATEDBY = staffId,
-                        DELETED = false,
-                    });
+                        context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
+                        {
+                            LOANAPPLICATIONDETAILID = loanApplicationDetailId,
+                            PROBABILITYOFDEFAULT = personalLoan.probability_of_Default,
+                            REMARK = personalLoan.remark,
+                            CUSTOMERID = customer.CUSTOMERID,
+                            DATETIMECREATED = DateTime.Now,
+                            CREATEDBY = staffId,
+                            DELETED = false,
+                        });
+                    }
                 }
+                    
             }
 
             context.SaveChanges();

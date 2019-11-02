@@ -1365,17 +1365,17 @@ namespace FintrakBanking.Repositories.Credit
                         //     staffId
                         // );
 
-                        creditCommon.GetPersonalLoansRetail(
-                            applicationId,
-                            loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                            staffId
-                        );
+                        //creditCommon.GetPersonalLoansRetail(
+                        //    applicationId,
+                        //    loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //    staffId
+                        //);
 
-                        creditCommon.GetCreditCardsRetail(
-                            applicationId,
-                            loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                            staffId
-                        );
+                        //creditCommon.GetCreditCardsRetail(
+                        //    applicationId,
+                        //    loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //    staffId
+                        //);
 
                         //if (casa != null)
                         //{

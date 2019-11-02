@@ -154,7 +154,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                     response = await client.GetAsync(endPointUrl);
                     responseDateTime = DateTime.Now;
                 
-
                 responseMessage = await response.Content.ReadAsStringAsync();
 
                 CutomerRatingViewModel customerRating = new CutomerRatingViewModel();
@@ -164,7 +163,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                     var responseData = await response.Content.ReadAsStringAsync();
                     customerRating = result;
                 }
-
 
                 return customerRating;
             }
@@ -240,8 +238,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
-                    var responseData = await response.Content.ReadAsStringAsync();
-                    personalLoan = result;
+                    //var responseData = await response.Content.ReadAsStringAsync();
+                    if(result != null)personalLoan = result;
                 }
 
                 return personalLoan;
