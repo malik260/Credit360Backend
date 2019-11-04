@@ -582,6 +582,65 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
+
+        private bool InitializeCashBackMemoProperties(int operationId, int targetId) // feeder
+        {
+            this.targetId = targetId;
+            this.operationId = operationId;
+
+            if (loanApplicationDetail == null)
+            {
+                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(targetId);
+                //this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
+                
+
+                //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
+                //this.customerExposure = CustomerExposureMarkup();
+            }
+            //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
+            string customerName = String.Empty;
+            if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
+            if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
+
+            this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
+            this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
+            //this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER)?.FirstOrDefault();
+            this.facilityType = "Testing"; //context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID).Select(O => O.PRODUCTNAME)?.FirstOrDefault();
+            //this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+            //this.tenor = loanApplicationDetail?.APPROVEDTENOR;
+            //this.moratorium = loanApplicationDetail.MORATORIUMDURATION;
+            this.principalRepayment = "";
+            //this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
+            //this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
+            this.processingFee = ""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
+            this.managementFee = "";
+            this.commitmentFee = "";
+            this.otherFee = "";
+            this.effectiveDate = "";
+            //this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
+            //this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
+            this.currentDate = DateTime.Now.ToShortDateString();
+            this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
+            this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
+            //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
+            approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
+            amountUtilised = "0.00";
+
+            //newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault() == null ? "0.00" : context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00");
+
+            requestType = "";
+
+            relationshipOfficer = "";
+            relationshipManager = "";
+            riskManagement = "";
+            legal = "";
+            treasury = "";
+            coo = "";
+            crmInternational = "";
+
+            return true;
+        }
+
         public List<DropDownSelect> GetProposedConditions()
         {
             var result = new List<DropDownSelect>();
@@ -7802,7 +7861,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId)
         {
+            
             var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
+            //var isInitialize = InitializeCashBackMemoProperties(operationId, targetId);
             var flowChange = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.OPERATIONID == operationId).FirstOrDefault();
             var cashbackSection = context.TBL_CASHBACK.Where(x => x.LOANAPPLICATIONDETAILID == targetId).FirstOrDefault();
 
