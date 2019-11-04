@@ -29,7 +29,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
     public class FacilityRatingViewModel : GeneralEntity
     {
         public int loanApplicationDetailId { get; set; }
-        public int customer_ID { get; set; }
+        public string customer_ID { get; set; }
         public string probability_of_Default { get; set; }
         public string remark { get; set; }
 

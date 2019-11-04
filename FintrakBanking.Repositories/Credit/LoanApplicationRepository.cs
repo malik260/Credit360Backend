@@ -1359,23 +1359,7 @@ namespace FintrakBanking.Repositories.Credit
                              staffId
                          );
 
-                        //creditCommon.GetAutoLoansRetail(
-                        //     applicationId,
-                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                        //     staffId
-                        // );
-
-                        //creditCommon.GetPersonalLoansRetail(
-                        //    applicationId,
-                        //    loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                        //    staffId
-                        //);
-
-                        //creditCommon.GetCreditCardsRetail(
-                        //    applicationId,
-                        //    loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                        //    staffId
-                        //);
+                        AddFacilityRating(loanApplicationDetails.ToList(), staffId);
 
                         //if (casa != null)
                         //{
@@ -1413,6 +1397,16 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        private void AddFacilityRating(List<TBL_LOAN_APPLICATION_DETAIL> loanApplicationDetails, int staffId)
+        {
+            foreach (var item in loanApplicationDetails) {
+                creditCommon.GetAutoLoansRetail(item.LOANAPPLICATIONDETAILID, item.CUSTOMERID, staffId);
+                creditCommon.GetPersonalLoansRetail(item.LOANAPPLICATIONDETAILID, item.CUSTOMERID, staffId);
+                creditCommon.GetCreditCardsRetail(item.LOANAPPLICATIONDETAILID, item.CUSTOMERID, staffId);
+            }
+
+        }
+
         public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId)
         {
             var facilityRating = context.TBL_FACILITY_RATING.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetailId)
@@ -1421,7 +1415,7 @@ namespace FintrakBanking.Repositories.Credit
                                             loanApplicationDetailId = O.LOANAPPLICATIONDETAILID,
                                             probability_of_Default = O.PROBABILITYOFDEFAULT,
                                             remark = O.REMARK,
-                                            customer_ID = O.CUSTOMERID,
+                                            customer_ID = O.CUSTOMERCODE,
                                             dateTimeCreated = O.DATETIMECREATED,
                                             createdBy = O.CREATEDBY
                                         }).ToList();
