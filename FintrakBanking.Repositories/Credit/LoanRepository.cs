@@ -2328,7 +2328,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public WorkflowResponse GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId)
+        public int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId)
         {
             using (var trans = context.Database.BeginTransaction())
             {
@@ -2384,7 +2384,7 @@ namespace FintrakBanking.Repositories.Credit
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
                     trans.Commit();
                     context.SaveChanges();
-                    //return 3;
+                    return 3;
                 }
 
                 else if (workflow.NewState == (int)ApprovalState.Ended)
@@ -2415,7 +2415,7 @@ namespace FintrakBanking.Repositories.Credit
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
                     context.SaveChanges();
                     trans.Commit();
-                    //return 0;
+                    return 0;
                 }
 
                 else
@@ -2423,11 +2423,11 @@ namespace FintrakBanking.Repositories.Credit
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestInitiated;
                     context.SaveChanges();
                     trans.Commit();
-                    //return 1;
+                    return 1;
                 }
             }
 
-            return workflow.Response;
+            //return workflow.Response;
         }
 
         private int? GetCurrentApprovalLevelId(int companyId, int operationId, int targetId)
@@ -6587,6 +6587,8 @@ namespace FintrakBanking.Repositories.Credit
                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                         where a.COMPANYID == companyId && d.DELETED == false
                         && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
                         && a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                         && a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                         //&& a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.BookingRequestInitiated

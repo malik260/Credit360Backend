@@ -320,8 +320,8 @@ namespace FintrakBanking.Repositories.credit
                                 totalApprovedAmountCurrencyId = a.TOTALAPPROVEDAMOUNTCURRENCYID,
                                 availableAmountCurrencyId = a.AVAILABLEAMOUNTCURRENCYID,
                                 cashBuildUpAvailable = a.CASHBUILDUPAVAILABLE,
-                                cashBuildUpReferenceNumber = (string)a.CASHBUILDUPREFERENCETYPE,
-                                cashBuildUpReferenceType = (string)a.CASHBUILDUPREFERENCENUMBER,
+                                cashBuildUpReferenceNumber = a.CASHBUILDUPREFERENCENUMBER,
+                                cashBuildUpReferenceType = a.CASHBUILDUPREFERENCETYPE,
                                 percentageToCover = a.PERCENTAGETOCOVER,
                                 lcTolerancePercentage = a.LCTOLERANCEPERCENTAGE,
                                 lcToleranceValue = a.LCTOLERANCEVALUE,
@@ -881,9 +881,11 @@ namespace FintrakBanking.Repositories.credit
         public LcReleaseAmountViewModel AddLCReleaseAmount(LcReleaseAmountViewModel entity)
         {
             ValidateReleaseAmount(entity);
+            var reference = CommonHelpers.GenerateRandomDigitCode(10);
             context.TBL_LCRELEASE_AMOUNT.Add( new TBL_LCRELEASE_AMOUNT
             {
                 LCISSUANCEID = entity.lcIssuanceId,
+                RELEASEREF = reference,
                 RELEASEAMOUNT = entity.releaseAmount,
                 DATETIMECREATED = DateTime.Now
         });
@@ -908,7 +910,7 @@ namespace FintrakBanking.Repositories.credit
             context.TBL_AUDIT.Add(aud);
             // Audit Section end ------------------------
             context.SaveChanges();
-            var newLC = context.TBL_LCRELEASE_AMOUNT.Where(l => l.LCISSUANCEID == entity.lcIssuanceId && l.RELEASEAMOUNT == entity.releaseAmount).OrderByDescending(l => l.LCRELEASEAMOUNTID).FirstOrDefault();
+            var newLC = context.TBL_LCRELEASE_AMOUNT.FirstOrDefault(l => l.RELEASEREF == reference);
             entity.lcReleaseAmountId = newLC.LCRELEASEAMOUNTID;
             return entity;
         }

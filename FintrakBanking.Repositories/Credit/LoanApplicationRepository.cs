@@ -1353,11 +1353,30 @@ namespace FintrakBanking.Repositories.Credit
                              staffId
                          );
 
-                        //creditCommon.GetCorporateCustomerRating(
+                        creditCommon.GetCorporateCustomerRating(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                         );
+
+                        //creditCommon.GetAutoLoansRetail(
                         //     applicationId,
                         //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                         //     staffId
                         // );
+
+                        //creditCommon.GetPersonalLoansRetail(
+                        //    applicationId,
+                        //    loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //    staffId
+                        //);
+
+                        //creditCommon.GetCreditCardsRetail(
+                        //    applicationId,
+                        //    loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //    staffId
+                        //);
+
                         //if (casa != null)
                         //{
                         //    creditCommon.LoadCustomerTurnover(
@@ -1392,6 +1411,21 @@ namespace FintrakBanking.Repositories.Credit
                 jumpToDrawdown = jumpToDrawdown
             };
 
+        }
+
+        public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId)
+        {
+            var facilityRating = context.TBL_FACILITY_RATING.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetailId)
+                                        .OrderByDescending(O => O.FACILITYRATINGID).Select(O => new FacilityRatingViewModel
+                                        {
+                                            loanApplicationDetailId = O.LOANAPPLICATIONDETAILID,
+                                            probability_of_Default = O.PROBABILITYOFDEFAULT,
+                                            remark = O.REMARK,
+                                            customer_ID = O.CUSTOMERID,
+                                            dateTimeCreated = O.DATETIMECREATED,
+                                            createdBy = O.CREATEDBY
+                                        }).ToList();
+            return facilityRating;
         }
 
         public short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
@@ -4002,7 +4036,8 @@ namespace FintrakBanking.Repositories.Credit
             bool isHeadOffice = (user.BranchId == 1) ? true : false;
 
             var applications = context.TBL_LOAN_APPLICATION
-                .Where(x => (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected)
+                .Where(x => (x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.OfferLetterRejected || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationRejected
+                || x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted)
                 //&& x.REVIEW_TYPE == null // <------------------- INT of APPLICATIONSTATUSID to filter
                 )
             .Select(x => new LoanApplicationViewModel

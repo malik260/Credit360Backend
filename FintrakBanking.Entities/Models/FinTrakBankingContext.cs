@@ -18,6 +18,8 @@ namespace FintrakBanking.Entities.Models
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }
         //public virtual DbSet<TBL_ENDOFDAY_MONITORING> TBL_ENDOFDAY_MONITORING { get; set; } 
         public virtual DbSet<EXTERNAL_ALERT> EXTERNAL_ALERT { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_DEPOSIT_ARCHV> TBL_COLLATERAL_DEPOSIT_ARCHV { get; set; }
+        public virtual DbSet<TBL_COLLATERL_CUSTOMER_ARCHV> TBL_COLLATERL_CUSTOMER_ARCHV { get; set; }
         public virtual DbSet<TBL_APPLICATIONDETAIL_LIEN> TBL_APPLICATIONDETAIL_LIEN { get; set; }
         public virtual DbSet<TBL_ACCOUNT_CATEGORY> TBL_ACCOUNT_CATEGORY { get; set; }
         public virtual DbSet<TBL_ACCOUNT_TYPE> TBL_ACCOUNT_TYPE { get; set; }
@@ -564,6 +566,9 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ALERT_CONDITION> TBL_ALERT_CONDITION { get; set; }
         public virtual DbSet<TBL_COLLATERAL_SWAP_REQUEST> TBL_COLLATERAL_SWAP_REQUEST { get; set; }
         public virtual DbSet<TBL_COLLATERAL_MAPPING_ARCHIVE> TBL_COLLATERAL_MAPPING_ARCHIVE { get; set; }
+
+        public virtual DbSet<TBL_FACILITY_RATING> TBL_FACILITY_RATING { get; set; }
+
 
         //public virtual DbSet<TBL_REPAYMENT_TERMS> TBL_REPAYMENT_TERMS { get; set; }
 
