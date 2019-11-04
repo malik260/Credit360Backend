@@ -93,18 +93,16 @@ namespace FintrakBanking.Repositories.Credit
 
             if (saveIndividualCustomerInformation(model))
             {
-                fireResponse("Success","00","");
+                return fireResponse("Success","00","");
             }
-            else { fireResponse("Unresolved error: could not save customer information","99",""); }
+            else { return fireResponse("Unresolved error: could not save customer information","99",""); }
 
-            return response;
+           // return response;
         }
 
         private APIResponse AddCorporateCustomer(IncomingCustomerViewModels model)
         {
             APIResponse response = new APIResponse();
-
-            if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
             if (model.creditBureauReport == null || model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
@@ -121,9 +119,9 @@ namespace FintrakBanking.Repositories.Credit
                 
                 return fireResponse("Success", "00",model.request_Id);
             }
-            else { fireResponse("Unresolved error: could not save customer information", "99",""); }
+            else { return fireResponse("Unresolved error: could not save customer information", "99",""); }
 
-            return response;
+          //  return response;
         }
 
         private bool saveIndividualCustomerInformation(IncomingCustomerViewModels entity)
@@ -246,144 +244,6 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        
-        //public string AddCustomer(IncomingCustomerViewModels model)
-        //{
-        //    validateCustomerDetails(model);
-        //    var entity = getCustomerViewModel(model);
-
-        //    int? maritalStatus = null;
-        //    if (entity.customerTypeId == (short)CustomerTypeEnum.Individual)
-        //    {
-        //        maritalStatus = Convert.ToInt32(entity.maritalStatus);
-        //    }
-        //    var customer = new TBL_CUSTOMER
-        //    {
-        //        ACCOUNTCREATIONCOMPLETE = false, //entity.accountCreationComplete,
-        //        BRANCHID = 1, //entity.userBranchId,
-        //        COMPANYID = 1, //entity.companyId,
-        //        CREATEDBY = 1, //(int)entity.createdBy,
-        //        CREATIONMAILSENT = false, //entity.creationMailSent,
-        //        CUSTOMERCODE = model.customerNumber,
-        //        CUSTOMERSENSITIVITYLEVELID = 1, //entity.customerSensitivityLevelId,
-        //        CUSTOMERTYPEID = entity.customerTypeId,
-        //        DATEOFBIRTH = entity.dateOfBirth,
-        //        DATETIMECREATED = DateTime.Now,
-        //        EMAILADDRESS = entity.emailAddress,
-        //        FIRSTNAME = entity.firstName,
-        //        GENDER = entity.gender,
-        //        LASTNAME = entity.lastName,
-        //        MAIDENNAME = entity.maidenName,
-        //        MARITALSTATUS = maritalStatus,
-        //        TITLE = entity.title,
-        //        MIDDLENAME = entity.middleName,
-        //        MISCODE = entity.misCode,
-        //        MISSTAFF = entity.misStaff,
-        //        NATIONALITYID = entity.nationalityId,
-        //        OCCUPATION = entity.occupation,
-        //        PLACEOFBIRTH = entity.placeOfBirth,
-        //        ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed,
-        //        ISINVESTMENTGRADE = entity.isInvestmentGrade,
-        //        ISREALATEDPARTY = entity.isRealatedParty,
-        //        RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
-        //        SPOUSE = entity.spouse,
-        //        SUBSECTORID = entity.subSectorId,
-        //        TAXNUMBER = entity.taxNumber,
-        //        RISKRATINGID = entity.riskRatingId,
-        //        CUSTOMERBVN = entity.customerBVN,
-        //        PROSPECTCUSTOMERCODE = entity.prospectCustomerCode,
-        //        ISPROSPECT = entity.isProspect,
-        //        CRMSCOMPANYSIZEID = entity.crmsCompanySizeId,
-        //        CRMSLEGALSTATUSID = entity.crmsLegalStatusId,
-        //        CRMSRELATIONSHIPTYPEID = entity.crmsRelationshipTypeId,
-        //        COUNTRYOFRESIDENTID = entity.countryOfResidentId,
-        //        NUMBEROFDEPENDENTS = entity.numberOfDependents,
-        //        NUMBEROFLOANSTAKEN = entity.numberOfLoansTaken,
-        //        MONTHLYLOANREPAYMENT = entity.loanMonthlyRepaymentFromOtherBanks,
-        //        DATEOFRELATIONSHIPWITHBANK = entity.dateOfRelationshipWithBank,
-        //        RELATIONSHIPTYPEID = entity.relationshipTypeId,
-        //        TEAMLDR = entity.teamLDP,
-        //        TEAMNPL = entity.teamNPL,
-        //        CORR = entity.corr,
-        //        PASTDUEOBLIGATIONS = entity.pastDueObligations,
-        //        BUSINESSUNTID = entity.businessUnitId
-        //    };
-        //    context.TBL_CUSTOMER.Add(customer);
-
-        //    //var audit = new TBL_AUDIT
-        //    //{
-        //    //    AUDITTYPEID = (short)AuditTypeEnum.CustomerAdded,
-        //    //    STAFFID = entity.createdBy,
-        //    //    BRANCHID = (short)entity.userBranchId,
-        //    //    DETAIL = $"Added Customer  '{entity.customerName}' with Code: {entity.customerCode}",
-        //    //    IPADDRESS = entity.userIPAddress,
-        //    //    URL = entity.applicationUrl,
-        //    //    APPLICATIONDATE = genSetup.GetApplicationDate(),
-        //    //    SYSTEMDATETIME = DateTime.Now
-        //    //};
-
-        //    //auditTrail.AddAuditTrail(audit);
-
-        //    try
-        //    {
-        //        var output = context.SaveChanges() > 0;
-        //        var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
-        //        if (output == true)
-        //        {
-        //            return result;
-        //        }
-        //        else
-        //        {
-        //            return null;
-        //        }
-
-        //    }
-        //    catch (DbEntityValidationException ex)
-        //    {
-        //        string errorMessages = string.Join("; ",
-        //            ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-        //        throw new DbEntityValidationException(errorMessages);
-        //    }
-        //}
-
-        public CustomerViewModels getCustomerViewModel(ApiIndividualClientViewModel entity)
-        {
-            CustomerViewModels model = new CustomerViewModels();
-           // model.accountCreationComplete = "";
-            //model.userBranchId = "";
-            //model.companyId = "";
-            //model.createdBy = "";
-            //model.creationMailSent = "";
-           // model.customerCode = entity.customerNumber;
-           // //model.customerSensitivityLevelId = "";
-           // model.dateOfBirth = Convert.ToDateTime(entity.dateOfBirth).Date;
-           // model.emailAddress = entity.emailAddress;
-           // model.firstName = entity.firstName;
-           // model.gender = entity.gender;
-           // model.lastName = entity.lastName;
-           // model.maidenName = entity.maidenName;
-           // model.maritalStatus = entity.maritalStatus;
-           // model.title = entity.title;
-           // model.middleName = entity.middleName;
-           // model.misCode = entity.misCode;
-           // model.misStaff = entity.misStaff;
-           //// model.nationalityId = entity.nationality;
-           // model.occupation = entity.occupation;
-           // model.placeOfBirth = entity.placeOfBirth;
-           // model.isPoliticallyExposed = Convert.ToBoolean(entity.isPoliticallyExposed);
-           // model.isInvestmentGrade = Convert.ToBoolean(entity.isInvestmentGrade);
-           // model.isRealatedParty = Convert.ToBoolean(entity.isRealatedParty); 
-           //// model.relationshipOfficerId = ;
-           // model.spouse = entity.spouse;
-           // model.subSectorId = Convert.ToInt16(entity.subSectorId);
-           // model.taxNumber = entity.taxNumber;
-           // model.riskRatingId = Convert.ToInt16(entity.riskRatingId);
-           // model.customerBVN = entity.customerBVN;
-           // model.relationshipTypeId = Convert.ToInt16(entity.relationshipTypeId);
-
-
-            return model;
-        }
 
         private APIResponse fireResponse(string message, string statusCode, string requestId)
         {
@@ -426,8 +286,11 @@ namespace FintrakBanking.Repositories.Credit
 
             var accountOfficerr = context.TBL_STAFF.Where(x => x.STAFFCODE == model.accountOfficerStaffCode).FirstOrDefault();
 
-            LoanApplicationViewModel loanApp = new LoanApplicationViewModel();
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == model.customerCode).FirstOrDefault();
+            if(customer == null) return fireResponse("This customer is not profiled on Fintrak Credit360 application", "99", "");
 
+            LoanApplicationViewModel loanApp = new LoanApplicationViewModel();
+            loanApp.customerId = customer.CUSTOMERID;
             loanApp.proposedTenor = Convert.ToInt16(model.tenor);
             loanApp.tenorModeId = (short)TenorModeEnum.Days;
             loanApp.proposedAmount = Convert.ToDecimal(model.loanAmount);
@@ -442,6 +305,7 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.interestRate = Convert.ToDouble(model.interestRate);
             loanApp.editMode = model.callStatusCode == "01" ?  true : false;
             loanApp.relationshipOfficerId = accountOfficerr.STAFFID;
+            loanApp.companyId = model.companyId;
             //loanApp.casaAccountId = model.settlementAccount;
 
             response.applicationReferenceNumber = AddLoanApplication(loanApp,model.requestId);
@@ -497,16 +361,11 @@ namespace FintrakBanking.Repositories.Credit
                 if (loanData == null) 
                 {
                     if (string.IsNullOrEmpty(loan.applicationReferenceNumber)) loan.applicationReferenceNumber = GetRefrenceNumber();
-                    AddloanApplicationSub(loan, apiRequestId);
+                    var app = AddloanApplicationSub(loan, apiRequestId);
+
+                    if (AddLoanApplicationDetail(loan, app)) return app.APPLICATIONREFERENCENUMBER;
                 }
 
-                if (loan.LoanApplicationDetail.Count > 0)
-                {
-
-                    if (AddLoanApplicationDetail(loan)) return loan.applicationReferenceNumber;
-
-                }
-                else return null;
             }
             else
             {
@@ -522,22 +381,22 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private bool AddLoanApplicationDetail(LoanApplicationViewModel loan)//List<LoanApplicationDetailViewModel> entity, int createdBy)
+        private bool AddLoanApplicationDetail(LoanApplicationViewModel loan, TBL_LOAN_APPLICATION app)//List<LoanApplicationDetailViewModel> entity, int createdBy)
         {
             var createdBy = loan.createdBy;
             //foreach (var a in entity)
             //{
             var a = loan.LoanApplicationDetail.FirstOrDefault();
 
-            if (a.repaymentScheduleId <= 0)
-            {
-                fireResponse("Please select a repayment pattern","99","");
-            }
+            //if (a.repaymentScheduleId <= 0)
+            //{
+            //    fireResponse("Please select a repayment pattern","99","");
+            //}
 
-            if (a.proposedTenor == 0)
-            {
-                fireResponse("Tenor can not be ZERO (0)","99","");
-            }
+            //if (a.proposedTenor == 0)
+            //{
+            //    fireResponse("Tenor can not be ZERO (0)","99","");
+            //}
 
             var data = new TBL_LOAN_APPLICATION_DETAIL
             {
@@ -600,7 +459,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        private void AddloanApplicationSub(LoanApplicationViewModel loan, string apiRequestId)
+        private TBL_LOAN_APPLICATION AddloanApplicationSub(LoanApplicationViewModel loan, string apiRequestId)
         {
             short productClassProcessId = 0;
             short? productClassId = null;
@@ -651,7 +510,7 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONREFERENCENUMBER = loan.applicationReferenceNumber,
                 PRODUCT_CLASS_PROCESSID = productClassProcessId,
                 COMPANYID = loan.companyId,
-                BRANCHID = (short)loan.branchId,
+                BRANCHID = loan.branchId ?? 0,
                 RELATIONSHIPOFFICERID = loan.createdBy,
                 RELATIONSHIPMANAGERID = loan.createdBy,
                 MISCODE = loan.misCode,
@@ -677,11 +536,11 @@ namespace FintrakBanking.Repositories.Credit
                 LOANTERMSHEETID = loan.loanTermSheetId,
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
-                FLOWCHANGEID = loan.flowchangeId,
-                OPERATIONID = ((loan.exclusiveOperationId == null) || (loan.exclusiveOperationId == 0)) ? (int)OperationsEnum.CreditAppraisal : (int)loan.exclusiveOperationId,
-                LOANAPPLICATIONTYPEID = loan.loanTypeId,
+                // FLOWCHANGEID = loan.flowchangeId,
+                OPERATIONID = (short)OperationsEnum.CreditAppraisal,
+                LOANAPPLICATIONTYPEID = (short)LoanTypeEnum.Single,
                 COLLATERALDETAIL = loan.collateralDetail,
-                ISADHOCAPPLICATION = loan.isadhocapplication,
+                ISADHOCAPPLICATION = false,
                 LOANSWITHOTHERS = loan.loansWithOthers,
                 OWNERSHIPSTRUCTURE = loan.ownershipStructure,
                 LOANAPPROVEDLIMITID = loan.loanApprovedLimitId,
@@ -731,6 +590,8 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             this.auditTrail.AddAuditTrail(audit);
+
+            return loanData;
         }
 
         private string UpdateLoanApplicationDetail(LoanApplicationViewModel loan)
@@ -849,9 +710,9 @@ namespace FintrakBanking.Repositories.Credit
         private void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
         {
             var details = application.LoanApplicationDetail;
-            int branchId = (int)application.branchId;
-            int customerId = (int)application.customerId;
-            int productId = application.productId;
+            int branchId = application?.branchId ?? 0;
+            int customerId = application?.customerId ?? 0;
+            int productId = application?.productId ?? 0;
             decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
 
             var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
@@ -884,7 +745,7 @@ namespace FintrakBanking.Repositories.Credit
                 var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
                 decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
                 var branch = context.TBL_BRANCH.Find(branchId);
-                if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+                if (branch?.NPL_LIMIT > 0 && branch?.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
             }
 
             if (sectorOverrideRequest != null)
