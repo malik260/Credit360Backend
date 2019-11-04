@@ -289,6 +289,8 @@ namespace FintrakBanking.Repositories.Credit
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == model.customerCode).FirstOrDefault();
             if(customer == null) return fireResponse("This customer is not profiled on Fintrak Credit360 application", "99", "");
 
+            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == model.settlementAccount).FirstOrDefault();
+
             LoanApplicationViewModel loanApp = new LoanApplicationViewModel();
             loanApp.customerId = customer.CUSTOMERID;
             loanApp.proposedTenor = Convert.ToInt16(model.tenor);
@@ -306,6 +308,9 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.editMode = model.callStatusCode == "01" ?  true : false;
             loanApp.relationshipOfficerId = accountOfficerr.STAFFID;
             loanApp.companyId = model.companyId;
+            loanApp.loanInformation = "<p></p>";
+            loanApp.casaAccountId = casa?.CASAACCOUNTID;
+            loanApp.branchId = 94;
             //loanApp.casaAccountId = model.settlementAccount;
 
             response.applicationReferenceNumber = AddLoanApplication(loanApp,model.requestId);
@@ -397,49 +402,50 @@ namespace FintrakBanking.Repositories.Credit
             //{
             //    fireResponse("Tenor can not be ZERO (0)","99","");
             //}
+      
 
             var data = new TBL_LOAN_APPLICATION_DETAIL
             {
-                APPROVEDAMOUNT = a.proposedAmount,
-                APPROVEDINTERESTRATE = (double)a.proposedInterestRate,
-                APPROVEDPRODUCTID = a.proposedProductId,
+                APPROVEDAMOUNT = loan.proposedAmount,
+                APPROVEDINTERESTRATE = (double)app.INTERESTRATE,
+                APPROVEDPRODUCTID = (short)app.PRODUCTID,
                 APPROVEDTENOR = loan.proposedTenor,
-
-                EXCHANGERATE = a.exchangeRate,
-                CURRENCYID = a.currencyId,
-                CUSTOMERID = a.customerId,
-                LOANAPPLICATIONID = loan.loanApplicationId,
+                
+                EXCHANGERATE = loan.exchangeRate,
+                CURRENCYID = 1,
+                CUSTOMERID = (int)app.CUSTOMERID,
+                LOANAPPLICATIONID = app.LOANAPPLICATIONID,
                 STATUSID = (short)LoanApplicationDetailsStatusEnum.Pending,
-
-                EQUITYCASAACCOUNTID = a.equityCasaAccountId,
-                EQUITYAMOUNT = a.equityAmount,
-
-                PROPOSEDAMOUNT = a.proposedAmount,
-                PROPOSEDINTERESTRATE = (int)a.proposedInterestRate,
-                PROPOSEDPRODUCTID = a.proposedProductId,
-                PROPOSEDTENOR = loan.proposedTenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
+                
+                //EQUITYCASAACCOUNTID = a?.equityCasaAccountId,
+                //EQUITYAMOUNT = a?.equityAmount ,
+                
+                PROPOSEDAMOUNT = app.APPROVEDAMOUNT,
+                PROPOSEDINTERESTRATE = (int)app.INTERESTRATE,
+                PROPOSEDPRODUCTID = (short)app.PRODUCTID,
+                PROPOSEDTENOR = loan.proposedTenor, //Convert.ToInt32(Math.Round(((decimal)(app.pr / 12) * (decimal)365))),
                 DELETED = false,
-                SUBSECTORID = a.subSectorId,
-                CREATEDBY = createdBy,
+                SUBSECTORID = loan.subSectorId,
+                CREATEDBY = 1,
                 DATETIMECREATED = DateTime.Now,
-                LOANPURPOSE = a.loanPurpose,
-                CASAACCOUNTID = a.casaAccountId,
-                OPERATINGCASAACCOUNTID = a.operatingCasaAccountId,
-                REPAYMENTSCHEDULEID = a.repaymentScheduleId,
-                REPAYMENTTERMS = a.repaymentTerm,
-                CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
-                CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
-                CRMSFUNDINGSOURCECATEGORY = a.crmsFundingSourceCategory,
-                CRMS_ECCI_NUMBER = a.crms_ECCI_Number,
-                FIELD1 = a.fieldOne,
-                FIELD2 = a.fieldTwo,
-                FIELD3 = a.fieldThree,
-                PRODUCTPRICEINDEXID = a.productPriceIndexId,
-                PRODUCTPRICEINDEXRATE = a.productPriceIndexRate,
-                TENORFREQUENCYTYPEID = a.tenorModeId,
+                LOANPURPOSE = loan.loanPurpose,
+                CASAACCOUNTID = loan.casaAccountId,
+                OPERATINGCASAACCOUNTID = loan.casaAccountId,
+                REPAYMENTSCHEDULEID = (short)FrequencyTypeEnum.Monthly,
+                REPAYMENTTERMS = "Monthly",
+                //CRMSFUNDINGSOURCEID = loan.fundingSource,
+                //CRMSREPAYMENTSOURCEID = a?.crmsPaymentSourceId,
+                //CRMSFUNDINGSOURCECATEGORY = a?.crmsFundingSourceCategory,
+                //CRMS_ECCI_NUMBER = a?.crms_ECCI_Number,
+                //FIELD1 = a.fieldOne,
+                //FIELD2 = a.fieldTwo,
+                //FIELD3 = a.fieldThree,
+                //PRODUCTPRICEINDEXID = a?.productPriceIndexId,
+                //PRODUCTPRICEINDEXRATE = a?.productPriceIndexRate,
+               
+                TENORFREQUENCYTYPEID = (short) TenorModeEnum.Months,
                 CRMSVALIDATED = false,
-                ISTAKEOVERAPPLICATION = a.isTakeOverApplication,
-                //LOANAPPLICATIONDETAILID = a.loanApplicationDetailId
+                ISTAKEOVERAPPLICATION = false,
             };
 
             var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
@@ -450,10 +456,10 @@ namespace FintrakBanking.Repositories.Credit
 
             var appl = context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
 
-            if (a.productFees.Count > 0)
-            {
-                ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
-            }
+            //if (a.productFees.Count > 0)
+            //{
+            //    ProductFees(a.productFees, a.loanApplicationDetailId, createdBy);
+            //}
 
            return context.SaveChanges() > 0;
 
@@ -511,10 +517,10 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCT_CLASS_PROCESSID = productClassProcessId,
                 COMPANYID = loan.companyId,
                 BRANCHID = loan.branchId ?? 0,
-                RELATIONSHIPOFFICERID = loan.createdBy,
-                RELATIONSHIPMANAGERID = loan.createdBy,
-                MISCODE = loan.misCode,
-                TEAMMISCODE = loan.teamMisCode,
+                RELATIONSHIPOFFICERID = 1, //loan.createdBy,
+                RELATIONSHIPMANAGERID = 1, //loan.createdBy,
+                MISCODE = loan.misCode ?? "002",
+                TEAMMISCODE = loan.teamMisCode ?? "002",
                 INTERESTRATE = loan.interestRate,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 LOANINFORMATION = loan.loanInformation,
@@ -527,7 +533,7 @@ namespace FintrakBanking.Repositories.Credit
                 CASAACCOUNTID = loan.casaAccountId,
                 APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                APPLICATIONAMOUNT = loan.applicationAmount,
+                APPLICATIONAMOUNT = loan.proposedAmount,
                 APPLICATIONTENOR = loan.proposedTenor,
                 ISINVESTMENTGRADE = loan.isInvestmentGrade,
                 CAPREGIONID = loan.regionId,
@@ -574,22 +580,22 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION.Add(loanData);
 
             // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanApplication,
-                STAFFID = loan.createdBy,
-                BRANCHID = (short)loan.userBranchId,
-                DETAIL = $"Applied for loan with reference number: {loan.applicationReferenceNumber}",
-                IPADDRESS = CommonHelpers.GetLocalIpAddress(),
-                URL = loan.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = loan.loanApplicationId,
-                DEVICENAME = CommonHelpers.GetDeviceName(),
-                OSNAME = CommonHelpers.FriendlyName(),
-            };
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.LoanApplication,
+            //    STAFFID = loan.createdBy,
+            //    BRANCHID = (short)loan.userBranchId,
+            //    DETAIL = $"Applied for loan with reference number: {loan.applicationReferenceNumber}",
+            //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+            //    URL = loan.applicationUrl,
+            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    TARGETID = loan.loanApplicationId,
+            //    DEVICENAME = CommonHelpers.GetDeviceName(),
+            //    OSNAME = CommonHelpers.FriendlyName(),
+            //};
 
-            this.auditTrail.AddAuditTrail(audit);
+            //this.auditTrail.AddAuditTrail(audit);
 
             return loanData;
         }
