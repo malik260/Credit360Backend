@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Credit
             //workflow.Amount = totalApplicationAmount; 
             workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
             workflow.InvestmentGrade = model.investmentGrade;
-            workflow.Tenor = model.applicationTenor;
+            //workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
             workflow.Untenored = model.untenored;
             workflow.InterestRateConcession = model.interestRateConcession;
@@ -2129,6 +2129,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 //groupRoleId = y.TBL_APPROVAL_LEVEL1.TBL_APPROVAL_GROUP.ROLEID,
                 loanApplicationId = x.a.LOANAPPLICATIONID,
+                //loanApplicationDetailId = x.a.LOANAPPLICATIONID,
                 applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
                 relatedReferenceNumber = x.a.RELATEDREFERENCENUMBER,
                 customerId = x.a.CUSTOMERID,

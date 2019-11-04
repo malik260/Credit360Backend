@@ -30,6 +30,7 @@
 
         public DateTime? LCUSSANCEMATURITYDATE { get; set; }
 
+        public string USANCEREF { get; set; }
         public bool DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }

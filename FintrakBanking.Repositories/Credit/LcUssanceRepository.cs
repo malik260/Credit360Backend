@@ -205,12 +205,14 @@ namespace FintrakBanking.Repositories.credit
                                  })
                            .ToList();
             var lcs = lcsNotStarted.Union(lcsInProgress);
+            lcs = lcs.Distinct();
             return lcs;
         }
 
         public LcUssanceViewModel AddLcUssance(LcUssanceViewModel model)
         {
             ValidateUsanceAmount(model);
+            var reference = CommonHelpers.GenerateRandomDigitCode(10);
             var entity = new TBL_LC_USSANCE
             {
                 LCISSUANCEID = model.lcIssuanceId,
@@ -223,6 +225,7 @@ namespace FintrakBanking.Repositories.credit
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 USANCEAMOUNTCURRENCYID = model.usanceAmountCurrencyId,
+                USANCEREF = reference
             };
 
             context.TBL_LC_USSANCE.Add(entity);
@@ -231,7 +234,7 @@ namespace FintrakBanking.Repositories.credit
             // Audit Section ---------------------------
             this.audit.AddAuditTrail(new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.LcShippingAdded,
+                AUDITTYPEID = (short)AuditTypeEnum.LcUsanceAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"TBL_LC_USSANCE '{entity.ToString()}' created by {auditStaff}",
@@ -244,7 +247,7 @@ namespace FintrakBanking.Repositories.credit
             });
             // Audit Section end ------------------------
             context.SaveChanges();
-            var createdlcUssance = context.TBL_LC_USSANCE.FirstOrDefault(lc => lc.DATETIMECREATED == entity.DATETIMECREATED && lc.LCISSUANCEID == entity.LCISSUANCEID);
+            var createdlcUssance = context.TBL_LC_USSANCE.FirstOrDefault(lc => lc.USANCEREF == reference);
             model.lcUssanceId = createdlcUssance.LCUSSANCEID;
             return model;
         }

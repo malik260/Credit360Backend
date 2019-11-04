@@ -6587,6 +6587,8 @@ namespace FintrakBanking.Repositories.Credit
                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                         where a.COMPANYID == companyId && d.DELETED == false
                         && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
+                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.OfferLetterReviewInProgress
                         && a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                         && a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                         //&& a.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.BookingRequestInitiated

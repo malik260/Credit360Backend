@@ -95,7 +95,7 @@
              
                 if (response.IsSuccessStatusCode)
                 {
-                    var customerViewModels = await response.Content.ReadAsAsync<CustomerTransactionViewModels>();
+                    //var customerViewModels = await response.Content.ReadAsAsync<CustomerTransactionViewModels>();
 
                     responseData = await response.Content.ReadAsStringAsync();
                     JObject jsonString = JObject.Parse(responseData);
@@ -365,8 +365,8 @@
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
 
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
                     logContext.SaveChanges();
+                    
                 }
             }
 

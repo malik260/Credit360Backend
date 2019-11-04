@@ -118,7 +118,6 @@ namespace FintrakBanking.Repositories.WorkFlow
         public LevelBusinessRule LevelBusinessRule { set { levelBusinessRule = value; } }
         public AlertPlaceholders Placeholders { set { placeholders = value; } }
         public WorkflowResponse Response { get { return response; } set { response = value; } }
-
         public bool isCrossOperationProcess { get; private set; }
         
         
@@ -913,21 +912,34 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void LastApproverCheck()
         {
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
-            if (IsLastApprover(level) && this.statusId == (int)ApprovalStatusEnum.Processing) this.statusId = (int)ApprovalStatusEnum.Approved;
+            if (IsLastApprover(level) && (this.statusId == (int)ApprovalStatusEnum.Processing || this.statusId == (int)ApprovalStatusEnum.Authorised))
+            {
+                this.statusId = (int)ApprovalStatusEnum.Approved;
+            }
         }
 
         private bool IsLastApprover(TBL_APPROVAL_LEVEL level)
         {
-            if(this.nextLevelId == null && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
-            {
+            var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId).ToList();
+            if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE)
+            //if (IsLastLevel(approvalLevels, level) && level.CANAPPROVE && !(level.MAXIMUMAMOUNT > 0))
+                {
                 return true;
             }
                 return false;
         }
 
+        private bool IsLastLevel(List<WorkflowSetup> levels, TBL_APPROVAL_LEVEL level)
+        {
+            if (levels.Count() < 1 || level == null) return false;
+            var isLastLevel = (levels.FindLastIndex(l => l.Level.APPROVALLEVELID == level.APPROVALLEVELID)) == (levels.Count() - 1);
+            return isLastLevel;
+        }
+
         private int SetState()
         {
-            if (this.nextLevelId == null)
+            var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);//for test!!
+            if (this.nextLevelId == null && IsLastApprover(level))//for test!!
             {
                 if (ActionIsApprovalDecision() || this.amount == 0)
                 {
@@ -1001,6 +1013,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool ActionIsApprovalDecision()
         {
+            //return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved || this.statusId == (int)ApprovalStatusEnum.Authorised);
             return (this.statusId == (int)ApprovalStatusEnum.Approved || this.statusId == (int)ApprovalStatusEnum.Disapproved);
         }
 
@@ -1102,6 +1115,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition)
                            .ToList();
+            
 
             List<WorkflowSetup> grid = new List<WorkflowSetup>();
 

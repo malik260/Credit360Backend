@@ -33,7 +33,7 @@ namespace FintrakBanking.ViewModels.credit
         public int? currencyId { get; set; }
         public string currency { get; set; }
 
-        public int approvalStatusId { get; set; }
+        public short approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
         public string customerName { get; set; }
         public string customerCode { get; set; }
@@ -73,7 +73,7 @@ namespace FintrakBanking.ViewModels.credit
         public int companyId { get; set; }
         public DateTime dateCreated { get; set; }
         public int getBalance { get; set; }
-        public int approvalStatusId { get; set; }
+        public short approvalStatusId { get; set; }
         public string approvalStatusName { get; set; }
         public string comment { get; set; }
         public string depot { get; set; }
