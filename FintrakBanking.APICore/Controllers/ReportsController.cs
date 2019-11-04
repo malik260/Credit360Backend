@@ -2367,29 +2367,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("risk-asset-calc-combined-report")]
-        public HttpResponseMessage RiskAssetCalcCombinedReport([FromBody] RiskAssets obj)
-        {
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("risk-asset-calc-combined-report")]
+        //public HttpResponseMessage RiskAssetCalcCombinedReport([FromBody] RiskAssets obj)
+        //{
 
-            var token = new TokenDecryptionHelper();
-            try
-            {
-                var data = repo.RiskAssetCalcCombinedReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data });  //Ok(accounts);
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        //    var token = new TokenDecryptionHelper();
+        //    try
+        //    {
+        //        var data = repo.RiskAssetCalcCombinedReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = data });  //Ok(accounts);
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
 
 
@@ -2418,29 +2418,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("risk-calc-com-report")]
-        public HttpResponseMessage GetriskAssetCalcComReport([FromBody] RiskAssets obj)
-        {
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("risk-calc-com-report")]
+        //public HttpResponseMessage GetriskAssetCalcComReport([FromBody] RiskAssets obj)
+        //{
 
-            var token = new TokenDecryptionHelper();
-            try
-            {
-                var data = repo.RiskAssetCalcCombinedReportTeam(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data });  //Ok(accounts);
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        //    var token = new TokenDecryptionHelper();
+        //    try
+        //    {
+        //        var data = repo.RiskAssetCalcCombinedReportTeam(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = data });  //Ok(accounts);
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
         [HttpPost]
         [ClaimsAuthorization]
