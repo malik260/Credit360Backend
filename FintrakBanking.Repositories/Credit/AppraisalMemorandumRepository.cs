@@ -362,7 +362,7 @@ namespace FintrakBanking.Repositories.Credit
             //workflow.Amount = totalApplicationAmount; 
             workflow.Amount = appl.TOTALEXPOSUREAMOUNT;
             workflow.InvestmentGrade = model.investmentGrade;
-            workflow.Tenor = model.applicationTenor;
+            //workflow.Tenor = model.applicationTenor;
             workflow.PoliticallyExposed = model.politicallyExposed;
             workflow.Untenored = model.untenored;
             workflow.InterestRateConcession = model.interestRateConcession;
