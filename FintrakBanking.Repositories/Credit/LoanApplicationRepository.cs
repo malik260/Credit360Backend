@@ -1347,19 +1347,19 @@ namespace FintrakBanking.Repositories.Credit
                                 staffId
                             );
 
-                        creditCommon.LoadCustomerRatios(
-                             applicationId,
-                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                             staffId
-                         );
+                        //creditCommon.LoadCustomerRatios(
+                        //     applicationId,
+                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //     staffId
+                        // );
 
-                        creditCommon.GetCorporateCustomerRating(
-                             applicationId,
-                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                             staffId
-                         );
+                        //creditCommon.GetCorporateCustomerRating(
+                        //     applicationId,
+                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //     staffId
+                        // );
 
-                        AddFacilityRating(loanApplicationDetails.ToList(), staffId);
+                        // AddFacilityRating(loanApplicationDetails.ToList(), staffId);
 
                         //if (casa != null)
                         //{
@@ -1384,7 +1384,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
 
-                throw;
+                throw new SecureException(ex.ToString());
             }
         
             return new LoanApplicationUpdateMessage

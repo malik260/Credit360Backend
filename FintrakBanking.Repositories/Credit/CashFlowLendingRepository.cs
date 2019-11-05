@@ -75,10 +75,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.creditBureauReport.Count <= 0) { return fireResponse("Missing Credit Bureau Report", "99",""); }
 
-            if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
+            //if (model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
-            List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
-            if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99",""); }
+            //List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
+            //if (creditBureautype.Contains(CreditBureauEnum.CRCCreditBureau.ToString()) == false) { return fireResponse("Missing CRC credit bureau", "99",""); }
 
             DateTime dateTime12;
             if (!DateTime.TryParse(model.individualCustomerInformation.dateOfBirth, out dateTime12)) { return fireResponse("Date of birth not in the right format", "99",""); }
@@ -93,7 +93,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (saveIndividualCustomerInformation(model))
             {
-                return fireResponse("Success","00","");
+                return fireResponse("Success","00",model.request_Id);
             }
             else { return fireResponse("Unresolved error: could not save customer information","99",""); }
 
@@ -108,7 +108,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.creditBureauReport == null || model.creditBureauReport.Count < 3) { return fireResponse("At least 3 Credit Reports are required", "99",""); }
 
-            List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
+           // List<string> creditBureautype = model.creditBureauReport.Select(x => x.creditBureauType).ToList();
 
             //List<int> crcCreditBureauType = new List<int> { 3 };
             //if (creditBureautype.Contains(crcCreditBureauType) == false)
@@ -289,6 +289,8 @@ namespace FintrakBanking.Repositories.Credit
             var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == model.customerCode).FirstOrDefault();
             if(customer == null) return fireResponse("This customer is not profiled on Fintrak Credit360 application", "99", "");
 
+         
+
             var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == model.settlementAccount).FirstOrDefault();
 
             LoanApplicationViewModel loanApp = new LoanApplicationViewModel();
@@ -312,6 +314,12 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.casaAccountId = casa?.CASAACCOUNTID;
             loanApp.branchId = 94;
             //loanApp.casaAccountId = model.settlementAccount;
+
+            var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == loanApp.proposedAmount
+                 && o.APPROVEDINTERESTRATE == loanApp.interestRate && o.APPROVEDTENOR == loanApp.proposedTenor && o.CURRENCYID == currency.CURRENCYID && o.CUSTOMERID == customer.CUSTOMERID
+                 && o.SUBSECTORID == loanApp.sectorId && o.CREATEDBY == 1 && o.DELETED != true);
+
+            if (loanExist == true) return fireResponse("This loan application has already been saved", "99", "");  
 
             response.applicationReferenceNumber = AddLoanApplication(loanApp,model.requestId);
             response.StatusCode = "00";
@@ -448,11 +456,11 @@ namespace FintrakBanking.Repositories.Credit
                 ISTAKEOVERAPPLICATION = false,
             };
 
-            var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
-                    && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
-                    && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED != true);
+            //var loanExist = context.TBL_LOAN_APPLICATION_DETAIL.Any(o => o.APPROVEDAMOUNT == data.APPROVEDAMOUNT
+            //        && o.APPROVEDINTERESTRATE == data.APPROVEDINTERESTRATE && o.APPROVEDTENOR == data.APPROVEDTENOR && o.CURRENCYID == data.CURRENCYID && o.CUSTOMERID == data.CUSTOMERID
+            //        && o.SUBSECTORID == data.SUBSECTORID && o.CREATEDBY == data.CREATEDBY && o.DELETED != true);
 
-            if (loanExist == true) throw new SecureException("This loan application has already been saved!");
+            //if (loanExist == true) throw new SecureException("This loan application has already been saved!");
 
             var appl = context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
 

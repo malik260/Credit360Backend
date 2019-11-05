@@ -31,4 +31,6 @@ namespace FintrakBanking.ViewModels.CASA
 
 
     }
+
 }
+
