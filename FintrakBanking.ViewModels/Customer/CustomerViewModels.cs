@@ -604,6 +604,8 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class CflLoanApplication : GeneralEntity
     {
+        public string customerCode { get; set; }
+
         public string requestId { get; set; } 
         public string callStatusCode { get; set; }
         public string applicationDate { get; set; }
@@ -658,5 +660,14 @@ namespace FintrakBanking.ViewModels.Customer
         public string Message { get; set; }
         public string requestId { get; set; }
     	public string applicationReferenceNumber { get; set; }
+    }
+
+    public class OfferLetterResponse
+    {
+        public string StatusCode { get; set; }
+        public string RequestId { get; set; }
+        public string WorkflowStage { get; set; }
+        public string FileLink { get; set; }
+        public string FileType { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.APICore.CFLAuthentication;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
@@ -13,15 +14,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace FintrakBanking.APICore.Controllers
 {
+   
     [MyBasicAuthenticationFilter] // Authorization: Basic ZmludHJhayZAIyQ6ZmludHJhayZAIzM0OA==
     [RoutePrefix("api/v1/fintrak")]
     public class CashFlowLendingController : ApiController
-    { 
+    {
+       
         private ICashFlowLendingRepository repo;
         //private readonly IAuthenticationRepository repo_Auth;
         private  IGeneralSetupRepository genSetup;
@@ -36,6 +41,7 @@ namespace FintrakBanking.APICore.Controllers
             FinTrakBankingContext _context
             //IGeneralSetupRepository _genSetup,
             //IAuditTrailRepository _auditTrail
+             
             )
         {
             this.repo = _repo;
@@ -43,6 +49,8 @@ namespace FintrakBanking.APICore.Controllers
             this.context = _context;
             //    this.genSetup = _genSetup;
             //    this.auditTrail = _auditTrail;
+           
+
         }
 
         //[HttpPost]// [ClaimsAuthorization]
@@ -108,7 +116,11 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, $"There was an error creating this record, confirm all requested parameters are captured");
+                APIResponse response = new APIResponse();
+                response.Message = $"There was an error creating this record, confirm all requested parameters are captured";
+                response.requestId = null;
+                response.StatusCode = "99";
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
 
@@ -121,7 +133,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 //entity.userBranchId = (short)token.GetBranchId;
-                //entity.companyId = token.GetCompanyId;
+                entity.companyId = 1; // token.GetCompanyId;
                 //entity.createdBy = token.GetStaffId;
                 //entity.applicationUrl = HttpContext.Current.Request.Path;
     
@@ -132,9 +144,14 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, $"There was an error creating this record, confirm all requested parameters are captured" );
+                APIResponse response = new APIResponse();
+                response.Message = $"There was an error creating this record, confirm all requested parameters are captured";
+                response.requestId = null;
+                response.StatusCode = "99";
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
             }
         }
 
-    }
+
+  }
 }

@@ -9,13 +9,14 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationViewModel : GeneralEntity
     {
-        public string approvedProductName;
-        public decimal? equityControl;
-        public int? moratrium;
-        public string pledgeCollateral;
-        public decimal valueOfCollateral;
-        public string reportTypeName;
-        public int psrReportTypeId;
+        public string approvedProductName { get; set; }
+        public decimal? equityControl { get; set; }
+        public int? moratrium { get; set; }
+        public string pledgeCollateral { get; set; }
+        public decimal valueOfCollateral { get; set; }
+        public string reportTypeName { get; set; }
+        public int psrReportTypeId { get; set; }
+        public string facility { get; set; }
 
         public LoanApplicationViewModel()
         {
@@ -35,7 +36,6 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? newApplicationDate { get; set; }
         public decimal? loansWithOthers { get; set; }
         public string ownershipStructure { get; set; }
-
 
         public short? branchId { get; set; }
         public short? productClassId { get; set; }

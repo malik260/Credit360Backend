@@ -5046,7 +5046,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var staff = context.TBL_STAFF.FirstOrDefault(s => s.STAFFID == file.createdBy);
                 var staffName = staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME;
-                var uploadedBy = staff.TBL_STAFF_ROLE.STAFFROLENAME + " " + staffName;
+                var uploadedBy = staff.TBL_STAFF_ROLE.STAFFROLENAME + ", " + staffName;
                 CollateralDocumentViewModel list = new CollateralDocumentViewModel();
                 var data = (from image in documentContext.TBL_DOC_COLLATERAL_VISITATION
                             where image.COLLATERALVISITATIONID == file.CollateralVisitationID
