@@ -72,6 +72,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public decimal? workEndDuration { get; set; }
         public AppUserViewModel user { get; set; }
         public string businessUnitName { get; set; }
+        public string misCode { get; set; }
     }
 
     public class staffBulkFeedbackViewModel

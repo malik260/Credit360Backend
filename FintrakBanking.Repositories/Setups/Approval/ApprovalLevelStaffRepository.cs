@@ -788,7 +788,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               operationName = e.OPERATIONNAME,
                               approvalStatus = k.APPROVALSTATUSNAME
                           });
-            var vr = result.ToList();
+            var vr = result.Distinct().ToList();
             return result;
         }
 

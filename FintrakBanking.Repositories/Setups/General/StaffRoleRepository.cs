@@ -347,8 +347,8 @@ namespace FintrakBanking.Repositories.Setups.General
             var existingGroups = context.TBL_PROFILE_STAFF_ROLE_GROUP.Where(x => x.STAFFROLEID == staffRoleId).ToList();
             var existingActivities = context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.Where(x => x.STAFFROLEID == staffRoleId).ToList();
 
-            if (existingGroups.Any()) foreach (var item in existingGroups) context.TBL_PROFILE_STAFF_ROLE_GROUP.Remove(item);
-            if (existingActivities.Any()) foreach (var item in existingActivities) context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.Remove(item);
+            if (existingGroups.Any()) context.TBL_PROFILE_STAFF_ROLE_GROUP.RemoveRange(existingGroups);
+            if (existingActivities.Any()) context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.RemoveRange(existingActivities);
 
             List<TBL_PROFILE_STAFF_ROLE_GROUP> newGroups = new List<TBL_PROFILE_STAFF_ROLE_GROUP>();
             List<TBL_PROFILE_STAFF_ROLE_ADT_ACT> newActivities = new List<TBL_PROFILE_STAFF_ROLE_ADT_ACT>();
