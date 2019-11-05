@@ -205,7 +205,7 @@ namespace FintrakBanking.Repositories.Setups.General
             // Audit Section ----------------------------
             auditTrail.AddAuditTrail(new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                AUDITTYPEID = (short)AuditTypeEnum.StaffUpdated,
                 STAFFID = entity.createdBy,
                 BRANCHID = (short)entity.userBranchId,
                 DETAIL = "Added/Modified Staff Role",
@@ -275,7 +275,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             staffRoleCode = c.STAFFROLECODE,
                             staffRoleId = c.STAFFROLEID,
                             operationId = (int)OperationsEnum.StaffRoleCreation,
-                        }).GroupBy(c=> c.staffRoleId).Select(g=>g.FirstOrDefault()) ;
+                        }).GroupBy(c=> c.staffRoleId).Select(g=>g.FirstOrDefault()).ToList() ;
 
             var userGroup = (from x in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP
                              select new UserGroup
@@ -347,12 +347,15 @@ namespace FintrakBanking.Repositories.Setups.General
             var existingGroups = context.TBL_PROFILE_STAFF_ROLE_GROUP.Where(x => x.STAFFROLEID == staffRoleId).ToList();
             var existingActivities = context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.Where(x => x.STAFFROLEID == staffRoleId).ToList();
 
+            if (existingGroups.Any()) foreach (var item in existingGroups) context.TBL_PROFILE_STAFF_ROLE_GROUP.Remove(item);
+            if (existingActivities.Any()) foreach (var item in existingActivities) context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.Remove(item);
+
             List<TBL_PROFILE_STAFF_ROLE_GROUP> newGroups = new List<TBL_PROFILE_STAFF_ROLE_GROUP>();
             List<TBL_PROFILE_STAFF_ROLE_ADT_ACT> newActivities = new List<TBL_PROFILE_STAFF_ROLE_ADT_ACT>();
 
             foreach (var item in tempGroup)
             {
-                if (existingGroups.Any(x => x.GROUPID == item.GROUPID)) continue;
+                //if (existingGroups.Any(x => x.GROUPID == item.GROUPID)) continue;
                 newGroups.Add(new TBL_PROFILE_STAFF_ROLE_GROUP()
                 {
                     STAFFROLEID = item.STAFFROLEID,
@@ -366,7 +369,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             foreach (var item in tempActivities)
             {
-                if (existingActivities.Any(x => x.ACTIVITYID == item.ACTIVITYID)) continue;
+                //if (existingActivities.Any(x => x.ACTIVITYID == item.ACTIVITYID)) continue;
                 newActivities.Add(new TBL_PROFILE_STAFF_ROLE_ADT_ACT()
                 {
                     STAFFROLEID = item.STAFFROLEID,
