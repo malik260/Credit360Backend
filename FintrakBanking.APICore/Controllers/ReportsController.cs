@@ -241,7 +241,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         #region Offer-Letter Generation & Loan Monitoring Reports
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("offer-letter")]
         public HttpResponseMessage GetGeneratedOfferLetter(string applicationRefNumber)
         {
@@ -262,6 +262,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("form3800b-los")]

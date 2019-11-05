@@ -657,7 +657,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionPrecident</DataSetName>
-            <Top>9.02766in</Top>
+            <Top>9.27766in</Top>
             <Left>0.20181in</Left>
             <Height>0.53124in</Height>
             <Width>6.59053in</Width>
@@ -812,7 +812,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionSubsequent</DataSetName>
-            <Top>9.62834in</Top>
+            <Top>10.00334in</Top>
             <Left>0.21223in</Left>
             <Height>0.51736in</Height>
             <Width>6.58011in</Width>
@@ -2500,10 +2500,10 @@
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>8.82986in</Top>
-            <Left>0.22935in</Left>
+            <Top>9.07986in</Top>
+            <Left>0.1995in</Left>
             <Height>0.07479in</Height>
-            <Width>6.60354in</Width>
+            <Width>6.56299in</Width>
             <ZIndex>10</ZIndex>
             <Style>
               <Border>
@@ -2550,7 +2550,7 @@
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>11.55573in</Top>
+            <Top>11.80573in</Top>
             <Left>0.57892in</Left>
             <Height>0.07292in</Height>
             <Width>5.72917in</Width>
@@ -2581,10 +2581,10 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox33</rd:DefaultName>
-            <Top>11.06597in</Top>
-            <Left>0.22935in</Left>
+            <Top>11.31597in</Top>
+            <Left>0.18628in</Left>
             <Height>0.25in</Height>
-            <Width>6.56299in</Width>
+            <Width>6.60606in</Width>
             <ZIndex>13</ZIndex>
             <Style>
               <Border>
@@ -2616,7 +2616,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox34</rd:DefaultName>
-            <Top>11.79306in</Top>
+            <Top>12.04306in</Top>
             <Left>0.22935in</Left>
             <Height>0.25in</Height>
             <Width>6.56299in</Width>
@@ -2766,7 +2766,7 @@
             <rd:DefaultName>Textbox1</rd:DefaultName>
             <Top>8.14653in</Top>
             <Left>0.1995in</Left>
-            <Height>0.55209in</Height>
+            <Height>0.86389in</Height>
             <Width>6.56299in</Width>
             <ZIndex>15</ZIndex>
             <Style>
@@ -2915,7 +2915,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>TrasactionDynamics</DataSetName>
-            <Top>10.27222in</Top>
+            <Top>10.64722in</Top>
             <Left>0.18628in</Left>
             <Height>0.5in</Height>
             <Width>6.61739in</Width>
@@ -2941,7 +2941,7 @@
             </Style>
           </Image>
         </ReportItems>
-        <Height>12.04306in</Height>
+        <Height>31.56833cm</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2954,10 +2954,10 @@
           </BackgroundImage>
         </Style>
       </Body>
-      <Width>6.887in</Width>
+      <Width>17.49298cm</Width>
       <Page>
         <PageHeader>
-          <Height>1.14111in</Height>
+          <Height>2.89842cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <Style>
@@ -2967,7 +2967,7 @@
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>1.02566in</Height>
+          <Height>1.07059cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -2991,7 +2991,7 @@
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
-              <Top>0.23158in</Top>
+              <Top>0in</Top>
               <Left>4.49966in</Left>
               <Height>0.25in</Height>
               <Width>2.30401in</Width>
@@ -3012,12 +3012,13 @@
             </Border>
           </Style>
         </PageFooter>
-        <PageHeight>10.7in</PageHeight>
-        <PageWidth>9in</PageWidth>
-        <LeftMargin>1in</LeftMargin>
-        <RightMargin>1in</RightMargin>
-        <TopMargin>1in</TopMargin>
-        <BottomMargin>1in</BottomMargin>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>1cm</LeftMargin>
+        <RightMargin>1cm</RightMargin>
+        <TopMargin>2.54cm</TopMargin>
+        <BottomMargin>2.54cm</BottomMargin>
+        <ColumnSpacing>1.27cm</ColumnSpacing>
         <Style />
       </Page>
     </ReportSection>
@@ -3484,6 +3485,6 @@ RRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAB
 ZsncJRpULHaUNwUaZFy1qRWXO+cj9EUdw4gdqTCp4c77T1T2gynLsnyNAVBdXe46GEANddXRAnx/nf0lLoEGhX20s+eDNi3QH2Uss+Atd7g9pL1fkCk/HOEEuLgu6ZpcxaFL2AJmeVytwqR6+g7zsYhgJ1usGm8a00KiAP0R7BHmHugWRrtraoQmbiLGLzzxa3Kt6RKmK2Ph/eZVjd/YZspeSza8ExmtHyMyUHWbqH6fYgPLJhKqL1hXIzRC2mxkcQYLA/yv7amaYo1aKquzIyp7cNGcPRQxX3PUxOagBydtxHbT42k+sgtLiheKwbsQCgaGHg1U3g5nhgKhnRdvWAK4Vae54HxNvAwvGDCUfSuUyextt9W6V9rrAUcmH/SynVgWsZoTazRnhCyDdEX2JeR67xZdmLSwFCQESkYmXRGY38gcDmgEyjAlxDhhE5QuhXfvE3RjBSfgZ3YZ4ldavkSYnFuauW6HfSot80uQ1oGGw8kP5peNJzvQ2bhRpwtC69rtTMbO2OpI9yZ8IKJzz3iGWXqnkKAv0lHz3s5Ow9F01izCWCiFTLDhWLpROjaA64KO18OPtrYphURlZ8dx03Iz6ano4VKoEgxXFSsfmZpszjcqiaYsyBJzlnPhnxG/H/aHyWAw9PkZyZ51Nun/G01WW08Mqwn6gt8Zr8ki6A/FLCEHoEcUc2MS6BLJU9AD/gJW+BE006z6uQAAAABJRU5ErkJggg==</ImageData>
     </EmbeddedImage>
   </EmbeddedImages>
-  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>3b115608-9b46-41ac-851f-86c7cdcdbe3c</rd:ReportID>
 </Report>

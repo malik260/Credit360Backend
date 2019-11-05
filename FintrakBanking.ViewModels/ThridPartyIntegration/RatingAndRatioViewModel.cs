@@ -19,10 +19,9 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
     public class CutomerRatingViewModel : GeneralEntity
     {
-        public string customerCode { get; set; } //
         //public string companYRating { get; set; }
         public string companY_RATING { get; set; }
-        public int customeR_ID { get; set; }
+        public string customeR_ID { get; set; }
 
     }
 
