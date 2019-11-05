@@ -661,4 +661,13 @@ namespace FintrakBanking.ViewModels.Customer
         public string requestId { get; set; }
     	public string applicationReferenceNumber { get; set; }
     }
+
+    public class OfferLetterResponse
+    {
+        public string StatusCode { get; set; }
+        public string RequestId { get; set; }
+        public string WorkflowStage { get; set; }
+        public string FileLink { get; set; }
+        public string FileType { get; set; }
+    }
 }
