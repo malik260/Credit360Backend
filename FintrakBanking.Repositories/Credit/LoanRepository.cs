@@ -7022,16 +7022,16 @@ namespace FintrakBanking.Repositories.Credit
                         }
                     }
 
-                    if (model.isLienPlacementForLoan)
-                    {
-                        var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
-                        {
-                            username = model.username,
-                            passcode = model.passCode
-                        };
+                    //if (model.isLienPlacementForLoan)
+                    //{
+                    //    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                    //    {
+                    //        username = model.username,
+                    //        passcode = model.passCode
+                    //    };
 
-                        PlaceLienForLoan(model, twoFactorAuthDetails);
-                    }
+                    //    PlaceLienForLoan(model, twoFactorAuthDetails);
+                    //}
                 }
                 trans.Commit();
                 return true;

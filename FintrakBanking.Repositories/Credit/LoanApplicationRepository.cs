@@ -1347,19 +1347,19 @@ namespace FintrakBanking.Repositories.Credit
                                 staffId
                             );
 
-                        creditCommon.LoadCustomerRatios(
-                             applicationId,
-                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                             staffId
-                         );
+                        //creditCommon.LoadCustomerRatios(
+                        //     applicationId,
+                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //     staffId
+                        // );
 
-                        creditCommon.GetCorporateCustomerRating(
-                             applicationId,
-                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                             staffId
-                         );
+                        //creditCommon.GetCorporateCustomerRating(
+                        //     applicationId,
+                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                        //     staffId
+                        // );
 
-                        AddFacilityRating(loanApplicationDetails.ToList(), staffId);
+                        // AddFacilityRating(loanApplicationDetails.ToList(), staffId);
 
                         //if (casa != null)
                         //{
@@ -1384,7 +1384,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
 
-                throw;
+                throw new SecureException(ex.ToString());
             }
         
             return new LoanApplicationUpdateMessage
@@ -5585,8 +5585,13 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanApplicationFlowChange(int loanApplicationId)
         {
             var detail = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == loanApplicationId).Select(o => o).FirstOrDefault();
+            var flowChange = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.PLACEHOLDER == "FAM").FirstOrDefault();
+
+            if (flowChange == null) { throw new ConditionNotMetException("Workflow Change to reroute not found. Contact admin." ); }
+
             detail.PRODUCT_CLASS_PROCESSID = 1;
-            detail.FLOWCHANGEID = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.PLACEHOLDER == "FAM").Select(o => o.FLOWCHANGEID).FirstOrDefault();
+            detail.FLOWCHANGEID = flowChange?.FLOWCHANGEID;
+            detail.OPERATIONID = flowChange.OPERATIONID ;
 
             return context.SaveChanges() > 0;
         }
