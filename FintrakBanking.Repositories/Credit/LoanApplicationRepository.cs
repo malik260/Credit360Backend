@@ -5144,7 +5144,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationDetailViewModel> SearchApprovedLoanApplicationDetails(string reference, int companyId)
         {
             var data = GetLoanApplicationDetailsByReference(reference, companyId).Where(a => a.approvalStatusId == (int)ApprovalStatusEnum.Approved).ToList(); ;
-            var mappings = context.TBL_LOAN_APPLICATION_COLLATERL.ToList();
+            var mappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(m => m.DELETED == false).ToList();
             var filtered = data.Where(d => mappings.Exists(m => d.loanApplicationDetailId == m.LOANAPPLICATIONDETAILID));
             var result = filtered.ToList();
             return result;
