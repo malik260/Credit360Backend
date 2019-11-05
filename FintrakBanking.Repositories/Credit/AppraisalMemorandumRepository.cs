@@ -2203,6 +2203,7 @@ namespace FintrakBanking.Repositories.Credit
             int operationId = (int)OperationsEnum.CreditAppraisal;
             var levelIds = general.GetStaffApprovalLevelIds(user.staffId, operationId);// new int[] {3,1,5};
             int productBasedId = (int)ProductClassProcessEnum.ProductBased;
+            //int[] productBasedIds = { (int)ProductClassProcessEnum.ProductBased, (int)ProductClassProcessEnum.CAMBased };
 
             var applications = context.TBL_LOAN_APPLICATION.Where(x =>
                 x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
@@ -2235,6 +2236,7 @@ namespace FintrakBanking.Repositories.Credit
             .ToList()
             ;
 
+            //var productClasses = context.TBL_PRODUCT_CLASS.Where(x => productBasedIds.Contains(x.PRODUCT_CLASS_PROCESSID))
             var productClasses = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCT_CLASS_PROCESSID == productBasedId)
                 .Select(item => new PendingProductProgramViewModel
                 {
