@@ -28,75 +28,18 @@ namespace FintrakBanking.APICore.Controllers
     {
        
         private ICashFlowLendingRepository repo;
-        //private readonly IAuthenticationRepository repo_Auth;
         private  IGeneralSetupRepository genSetup;
-        //// private ILoanApplicationRepository loanApplicationRepo;
-        //private ILoanApplicationRepository loanApplicationRepo;
-        //TokenDecryptionHelper token = new TokenDecryptionHelper();
         private readonly FinTrakBankingContext context;
-        //private readonly IAuditTrailRepository auditTrail;
-
         public CashFlowLendingController(ICashFlowLendingRepository _repo,
-            //IAuthenticationRepository _repo_Auth, 
             FinTrakBankingContext _context
-            //IGeneralSetupRepository _genSetup,
-            //IAuditTrailRepository _auditTrail
+
              
             )
         {
             this.repo = _repo;
-            //    this.repo_Auth = _repo_Auth;
             this.context = _context;
-            //    this.genSetup = _genSetup;
-            //    this.auditTrail = _auditTrail;
-           
 
         }
-
-        //[HttpPost]// [ClaimsAuthorization]
-        //[Route("")]
-        //public HttpResponseMessage GetTokenAsync([FromBody] TokenVM user)
-        //{
-        //    //try
-        //    //{
-        //    byte[] pass = Convert.FromBase64String(user.password);
-        //    string password = Encoding.UTF8.GetString(pass);
-
-
-        //    user.password = StaticHelpers.EncryptSha512(password, StaticHelpers.EncryptionKey);
-        //    string ipAddressStr = String.Empty;
-        //    if (token.LoginCode == null) ipAddressStr = token.LoginCode.Split('@')[1];
-
-        //    repo_Auth.SessionInfo = repo_Auth.CheckSessionState(user.username.ToLower(), ipAddressStr);
-        //    var foundUser = repo_Auth.FindUserByUserNameAndPassword(user.username.ToLower(), user.password);
-
-        //    if (foundUser == null)
-        //    {
-        //        var found = repo_Auth.GetSingleUserByUserName(user.username.ToLower());
-
-        //        if (found.branchId != null)
-        //        {
-        //            var audit1 = new TBL_AUDIT
-        //            {
-        //                AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
-        //                STAFFID = found.staffId,
-        //                BRANCHID = (short)found.branchId,
-        //                DETAIL = $"{user.username} login failed",
-        //                IPADDRESS = CommonHelpers.GetUserIP(),
-        //                URL = Request.RequestUri.AbsoluteUri,
-        //                APPLICATIONDATE = genSetup.GetApplicationDate(),
-        //                SYSTEMDATETIME = DateTime.Now,
-        //                TARGETID = -1
-        //            };
-
-        //            auditTrail.AddAuditTrail(audit1);
-        //        }
-
-        //        context.SaveChanges();
-                
-        //    }
-        //    return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = "1001 Login Failure." });
-        //}
 
         [HttpPost]
         //[ClaimsAuthorization]
@@ -120,7 +63,7 @@ namespace FintrakBanking.APICore.Controllers
                 response.Message = $"There was an error creating this record, confirm all requested parameters are captured";
                 response.requestId = null;
                 response.StatusCode = "99";
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.ToString());
             }
         }
 
@@ -130,6 +73,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("cfl-loan-request")]
         public HttpResponseMessage submitRequest([FromBody] CflLoanApplication entity)
         {
+
             try
             {
                 //entity.userBranchId = (short)token.GetBranchId;
@@ -148,8 +92,10 @@ namespace FintrakBanking.APICore.Controllers
                 response.Message = $"There was an error creating this record, confirm all requested parameters are captured";
                 response.requestId = null;
                 response.StatusCode = "99";
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.ToString());
+                
             }
+           
         }
 
 
