@@ -5415,7 +5415,29 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
             }
+        }
 
+        public CurrentCustomerExposure GetTotalBankExposure()
+        {
+            decimal? totalBankExposure = 0;
+            decimal? exposureProposedLimit = context.TBL_LOAN.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active)?.Sum(l => l.OUTSTANDINGPRINCIPAL);
+            if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit;
+
+            exposureProposedLimit = 0;
+            exposureProposedLimit = context.TBL_LOAN_REVOLVING.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active)?.Sum(l => l.OVERDRAFTLIMIT);
+            if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit;
+
+            //exposureProposedLimit = 0;
+            //exposureProposedLimit = context?.TBL_LOAN_CONTINGENT.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active).Sum(l => l.CONTINGENTAMOUNT);
+            //if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit;
+
+
+
+            return new CurrentCustomerExposure
+            {
+                totalBankExposure = totalBankExposure,
+                companyLimit = context.TBL_COMPANY.FirstOrDefault().COMPANYLIMIT
+            };
         }
 
         public bool UpdateLoanApplicationTags(LoanApplicationTagsViewModel model, int id, UserInfo user)
