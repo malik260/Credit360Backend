@@ -15,7 +15,7 @@ namespace FintrakBanking.Entities.Models
         public int FACILITYRATINGID { get; set; }
 
         public int LOANAPPLICATIONDETAILID { get; set; }
-        public int CUSTOMERID { get; set; }
+        public string CUSTOMERCODE { get; set; }
 
         public string PROBABILITYOFDEFAULT { get; set; }
         public string REMARK { get; set; }

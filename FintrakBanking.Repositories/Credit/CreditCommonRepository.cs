@@ -210,97 +210,59 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
-        public void GetAutoLoansRetail(int loanApplicationDetailId, List<int> customerIds, int staffId)
+        public void GetAutoLoansRetail(int loanApplicationDetailId, int customerId, int staffId)
         {
             //bool isGroup = false;
             var autoLoan = new FacilityRatingViewModel();
             //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
             //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
 
-            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID)).ToList();
-
-            foreach (var customer in customers)
+            if (customer.ISPROSPECT == false)
             {
-                if (customer.ISPROSPECT == false)
-                {
-                    autoLoan = integration.GetAutoLoanRetailByCustomerCode(customer.CUSTOMERCODE);
-                    //autoLoans = integration.GetAutoLoanRetailByCustomerCode("007484680");
+                autoLoan = integration.GetAutoLoanRetailByCustomerCode(customer.CUSTOMERCODE);
+                //autoLoans = integration.GetAutoLoanRetailByCustomerCode("007484680");
 
+                if (autoLoan.probability_of_Default != null)
+                {
                     context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
                     {
                         LOANAPPLICATIONDETAILID = loanApplicationDetailId,
                         PROBABILITYOFDEFAULT = autoLoan.probability_of_Default,
                         REMARK = autoLoan.remark,
-                        CUSTOMERID = customer.CUSTOMERID,
+                        CUSTOMERCODE = customer.CUSTOMERCODE,
                         DATETIMECREATED = DateTime.Now,
                         CREATEDBY = staffId,
                         DELETED = false,
                     });
                 }
+
             }
 
             context.SaveChanges();
         }
 
-        public void GetPersonalLoansRetail(int loanApplicationDetailId, List<int> customerIds, int staffId)
+        public void GetPersonalLoansRetail(int loanApplicationDetailId, int customerId, int staffId)
         {
             //bool isGroup = false;
             var personalLoan = new FacilityRatingViewModel();
             //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
             //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
 
-            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
-
-            foreach (var customer in customers)
+            if (customer.ISPROSPECT == false)
             {
-                if (customer.ISPROSPECT == false)
+                //personalLoan = integration.GetPersonalLoanRetailByCustomerCode("000428107");
+                personalLoan = integration.GetPersonalLoanRetailByCustomerCode(customer.CUSTOMERCODE);
+
+                if (personalLoan.probability_of_Default != null)
                 {
-                    //personalLoan = integration.GetPersonalLoanRetailByCustomerCode("000428107");
-                    personalLoan = integration.GetPersonalLoanRetailByCustomerCode(customer.CUSTOMERCODE);
-
-                    if(personalLoan != null)
-                    {
-                        context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
-                        {
-                            LOANAPPLICATIONDETAILID = loanApplicationDetailId,
-                            PROBABILITYOFDEFAULT = personalLoan.probability_of_Default,
-                            REMARK = personalLoan.remark,
-                            CUSTOMERID = customer.CUSTOMERID,
-                            DATETIMECREATED = DateTime.Now,
-                            CREATEDBY = staffId,
-                            DELETED = false,
-                        });
-                    }
-                }
-                    
-            }
-
-            context.SaveChanges();
-        }
-
-        public void GetCreditCardsRetail(int loanApplicationDetailId, List<int> customerIds, int staffId)
-        {
-            //bool isGroup = false;
-            var creditCard = new FacilityRatingViewModel();
-            //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
-            //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
-
-            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));
-
-            foreach (var customer in customers)
-            {
-                if (customer.ISPROSPECT == false)
-                {
-                    //creditCard = integration.GetCreditCardRetailByCustomerCode("006179612");
-                    creditCard = integration.GetCreditCardRetailByCustomerCode(customer.CUSTOMERCODE);
-
-
                     context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
                     {
                         LOANAPPLICATIONDETAILID = loanApplicationDetailId,
-                        PROBABILITYOFDEFAULT = creditCard.probability_of_Default,
-                        REMARK = creditCard.remark,
-                        CUSTOMERID = customer.CUSTOMERID,
+                        PROBABILITYOFDEFAULT = personalLoan.probability_of_Default,
+                        REMARK = personalLoan.remark,
+                        CUSTOMERCODE = customer.CUSTOMERCODE,
                         DATETIMECREATED = DateTime.Now,
                         CREATEDBY = staffId,
                         DELETED = false,
@@ -308,6 +270,37 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
+            context.SaveChanges();
+        }
+
+        public void GetCreditCardsRetail(int loanApplicationDetailId, int customerId, int staffId)
+        {
+            //bool isGroup = false;
+            var creditCard = new FacilityRatingViewModel();
+            //var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            //if (application.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup) { isGroup = true; }
+            var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId).FirstOrDefault();
+
+            if (customer.ISPROSPECT == false)
+            {
+                //creditCard = integration.GetCreditCardRetailByCustomerCode("006179612");
+                creditCard = integration.GetCreditCardRetailByCustomerCode(customer.CUSTOMERCODE);
+
+                if (creditCard.probability_of_Default != null)
+                {
+                    context.TBL_FACILITY_RATING.Add(new TBL_FACILITY_RATING
+                    {
+                        LOANAPPLICATIONDETAILID = loanApplicationDetailId,
+                        PROBABILITYOFDEFAULT = creditCard.probability_of_Default,
+                        REMARK = creditCard.remark,
+                        CUSTOMERCODE = customer.CUSTOMERCODE,
+                        DATETIMECREATED = DateTime.Now,
+                        CREATEDBY = staffId,
+                        DELETED = false,
+                    });
+                }
+            }
+          
             context.SaveChanges();
         }
 

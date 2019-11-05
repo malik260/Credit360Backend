@@ -1151,7 +1151,7 @@ namespace FintrakBanking.Repositories.Credit
                 var c = g.FirstOrDefault();
                 result += c.title;
                 result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 align=center width=1200 cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>S/N</b></th>
                         <th><b>CONDITIONS PRECEDENT TO DRAWDOWN</b></th>
@@ -1232,10 +1232,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var n = 0;
                 result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 align=center width=1200 cellpadding=15 cellspacing=0>
                     <tr>
-                        <th><b>S/N</b></th>
-                        <th><b>TRANSACTIONS DYNAMICS</b></th>
+                        <th><b><h2>S/N</h2></b></th>
+                        <th><b><h2>TRANSACTIONS DYNAMICS</h2></b></th>
                     </tr>
                  ";
                 var c = group.FirstOrDefault();
@@ -1281,15 +1281,15 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
-                    <tr>
-                        <th><b>Facility</b></th>
-                        <th><b>LLL Impact</b></th>
-                        <th><b>Currency</b></th>
-                        <th><b>Approved Amount</b></th>
-                        <th><b>Proposed Amount</b></th>
-                        <th><b>Change</b></th>
-                        <th><b>Tenor (Months)</b></th>
+                <table border=1 align=center width=1200 cellpadding=15 cellspacing=0>
+                    < tr>
+                        <th><b><h2>Facility</h2></b></th>
+                        <th><b><h2>LLL Impact</h2></b></th>
+                        <th><b><h2>Currency</h2></b></th>
+                        <th><b><h2>Approved Amount</h2></b></th>
+                        <th><b><h2>Proposed Amount</h2></b></th>
+                        <th><b><h2>Change</h2></b></th>
+                        <th><b><h2>Tenor (Months)</h2></b></th>
                     </tr>
                         {GetDirectFacilitiesMarkupLOS()}
                         {GetTotalDirectFacilitiesMarkupLOS()}
@@ -1304,23 +1304,23 @@ namespace FintrakBanking.Repositories.Credit
                         {GetTotalIFFMarkupLOS()}
                         {GetTotalFacilitiesMarkupLOS()}
                     <tr>
-                        <td>Legal Lending Limit:</td>
+                        <td><b><h2>Legal Lending Limit:</h2></b></td>
                         <td>{String.Format("{0:0,0.00}", legalLendingLimit)}</td>
                     </tr>
                     <tr>
-                        <td>LLL Impact of Proposed Facilities:</td>
+                        <td><b><h2>LLL Impact of Proposed Facilities:</h2></b></td>
                         <td>{String.Format("{0:0,0.00}", getTotalLLLImpact())}</td>
                     </tr>
                     <tr>
-                        <td>Any LLL violation? (Yes / No):</td>
+                        <td><b><h2>Any LLL violation? (Yes / No):</h2></b></td>
                         <td>{(IsLLLViolated() ? "Yes" : "No")}</td>
                     </tr>
                     <tr>
-                        <td>Director-related? (Yes / No):</td>
+                        <td><b><h2>Director-related? (Yes / No):</h2></b></td>
                         <td>{getIsDirectorRelated()}</td>
                     </tr>
                     <tr>
-                        <td>Environmental And Social Risk Summary:</td>
+                        <td><b><h2>Environmental And Social Risk Summary:</h2></b></td>
                         <td>{GetEnvironmentalSocialRiskMarkup()}</td>
                     </tr>
                  ";
@@ -2266,14 +2266,14 @@ namespace FintrakBanking.Repositories.Credit
             var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerName);
             var n = 0;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=1200 align=center cellpadding=15 cellspacing=0>
                     <tr>
-                        <th><b>Customer Name</b></th>
-                        <th><b>Facility Type</b></th>
-                        <th><b>Currency</b></th>
-                        <th><b>Approved Amount</b></th>
-                        <th><b>Current Amount</b></th>
-                        <th><b>Maturity</b></th>
+                        <th><b><h2>Customer Name</h2></b></th>
+                        <th><b><h2>Facility Type</h2></b></th>
+                        <th><b><h2>Currency</h2></b></th>
+                        <th><b><h2>Approved Amount</h2></b></th>
+                        <th><b><h2>Current Amount</h2></b></th>
+                        <th><b><h2>Maturity</h2></b></th>
                     </tr>
                 ";
             foreach (var customerGroups in exposureGroupsByCustomer)
@@ -2334,7 +2334,7 @@ namespace FintrakBanking.Repositories.Credit
             var appraisals = GetAppraisalMemorandumTrail(this.targetId).OrderBy(a => a.approvalTrailId);
             var result = String.Empty;
             result = result + $@"
-                <table border=1 width=1200 cellpadding=15 cellspacing=0>
+                <table border=1 width=1200 align=center cellpadding=15 cellspacing=0>
                     <tr>
                         <th><b>Role</b></th>
                         <th><b>Name</b></th>

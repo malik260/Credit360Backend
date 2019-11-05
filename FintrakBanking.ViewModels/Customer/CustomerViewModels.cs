@@ -604,6 +604,8 @@ namespace FintrakBanking.ViewModels.Customer
 
     public class CflLoanApplication : GeneralEntity
     {
+        public string customerCode { get; set; }
+
         public string requestId { get; set; } 
         public string callStatusCode { get; set; }
         public string applicationDate { get; set; }

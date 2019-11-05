@@ -238,8 +238,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
-                    var responseData = await response.Content.ReadAsStringAsync();
-                    if(result != null)personalLoan = result;
+                    //var responseData = await response.Content.ReadAsStringAsync();
+                    if (result != null) personalLoan = result;
                 }
 
                 return personalLoan;
@@ -316,8 +316,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
-                    var responseData = await response.Content.ReadAsStringAsync();
-                    creditCard = result;
+                    //var responseData = await response.Content.ReadAsStringAsync();
+                    if (result != null) creditCard = result;
                 }
 
                 return creditCard;
@@ -394,8 +394,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsAsync<FacilityRatingViewModel>();
-                    var responseData = await response.Content.ReadAsStringAsync();
-                    autoLoan = result;
+                    //var responseData = await response.Content.ReadAsStringAsync();
+                    if (result != null) autoLoan = result;
                 }
 
                 return autoLoan;

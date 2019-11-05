@@ -164,6 +164,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              workStartDuration = c.WORKSTARTDURATION,
                              workEndDuration = c.WORKENDDURATION,
                              businessUnitId =c.BUSINESSUNITID,
+                             misCode = c.MISCODE,
                              businessUnitName = c.BUSINESSUNITID != null ? c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                          }).ToList();
 
@@ -238,6 +239,7 @@ namespace FintrakBanking.Repositories.Setups.General
                              workStartDuration = c.WORKSTARTDURATION,
                              workEndDuration = c.WORKENDDURATION,
                              businessUnitId = c.BUSINESSUNITID,
+                             misCode = c.MISCODE,
                              businessUnitName = c.BUSINESSUNITID != null ? c.TBL_PROFILE_BUSINESS_UNIT.BUSINESSUNITNAME : null,
                          }).SingleOrDefault();
             return staff;

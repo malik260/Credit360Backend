@@ -2322,7 +2322,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("contigent-liability")]
+        [Route("contigent-liability-main")]
         public HttpResponseMessage ContigentLiabilityReportMain1([FromBody] RiskAssets obj)
         {
 
@@ -2344,7 +2344,57 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-     
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("copy-of-risk-asset-main")]
+        public HttpResponseMessage CopyOfRiskAssetMain([FromBody] RiskAssets obj)
+        {
+
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.CopyOfRiskAssetMain(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("risk-asset-calc-combined-report")]
+        //public HttpResponseMessage RiskAssetCalcCombinedReport([FromBody] RiskAssets obj)
+        //{
+
+        //    var token = new TokenDecryptionHelper();
+        //    try
+        //    {
+        //        var data = repo.RiskAssetCalcCombinedReport(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = data });  //Ok(accounts);
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
+
+
+
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -2369,6 +2419,30 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("risk-calc-com-report")]
+        //public HttpResponseMessage GetriskAssetCalcComReport([FromBody] RiskAssets obj)
+        //{
+
+        //    var token = new TokenDecryptionHelper();
+        //    try
+        //    {
+        //        var data = repo.RiskAssetCalcCombinedReportTeam(obj.runDate, obj.level, obj.misCode, obj.exposureType, obj.divisionName, obj.groupName, obj.branchName, obj.regionName);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = data });  //Ok(accounts);
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
 
         [HttpPost]
         [ClaimsAuthorization]
