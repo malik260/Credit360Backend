@@ -385,9 +385,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                
             }
 
-            //templateLink = links.General;
-
-            //return templateLink;
+            
         }
 
         #endregion Offer Letter Generation
