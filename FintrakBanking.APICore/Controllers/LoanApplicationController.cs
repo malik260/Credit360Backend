@@ -1381,6 +1381,23 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-total-bank-exposure-and-limit")]
+        public HttpResponseMessage GetBankTotalExposure()
+        {
+            try
+            {
+                var response = repo.GetTotalBankExposure();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-application/cancellation")]
         public HttpResponseMessage LoanApplicationCancellation()
         {
