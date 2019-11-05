@@ -15,6 +15,9 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,7 +32,6 @@ namespace FintrakBanking.Repositories.Credit
         private CustomerDetails customerRequest;
         private ICreditLimitValidationsRepository limitValidation;
         private ICasaRepository casa;
-
 
         public CashFlowLendingRepository(FinTrakBankingContext _context, 
                                         ICustomerRepository _customer, 
@@ -47,6 +49,7 @@ namespace FintrakBanking.Repositories.Credit
             this.customerRequest = _customerRequest;
             limitValidation = _limitValidation;
             casa = _casa;
+           
         }
 
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
@@ -454,6 +457,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return response;
         }
+
 
         public string AddLoanApplication(LoanApplicationViewModel loan, string apiRequestId)
         {
