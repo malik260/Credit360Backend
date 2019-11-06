@@ -2806,7 +2806,7 @@ namespace FintrakBanking.Repositories.Customer
             //get previous customer name
             var previousCustomerName = customerMain?.FIRSTNAME;
 
-            if (customerMain != null && customerMain.ACCOUNTCREATIONCOMPLETE == false && entity.canModified == true)
+            if (customerMain != null && customerMain.ACCOUNTCREATIONCOMPLETE == false)// && entity.canModified == true)
             {
                 customerMain.CRMSCOMPANYSIZEID = entity.crmsCompanySizeId;
                 customerMain.CRMSLEGALSTATUSID = entity.crmsLegalStatusId;

@@ -40,6 +40,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         Task<List<CustomerTurnoverViewModel>> TestTurnover();
         Task<List<CustomerTurnoverViewModel>> TestTurnoverInterest();
+        bool UpdateSingleObligorLimit(int companyId, CompanyViewModel model);
 
     }
 }
