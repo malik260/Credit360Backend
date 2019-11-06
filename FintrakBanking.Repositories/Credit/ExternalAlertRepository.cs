@@ -76,19 +76,19 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool InitializeDrawdownMemoProperties() // feeder
         {
-            var debitPosition = context.EXTERNAL_ALERT.Where(x => x.LastCreditAmount < 100);
-            foreach (var d in debitPosition)
-            {
-                this.customerName = d.CustomerName;
-                this.accountOfficerName = d.AccountOfficerName;
-                this.accountNumber = d.AccountNumber;
-                this.branchName = d.GroupHeadName;
-                this.dueDate = d.MaturityDate;
-                this.description = "N/A";
-                this.provider = "N/A";
-                this.meetingDate = DateTime.Now.ToShortDateString();
+            //var debitPosition = context.EXTERNAL_ALERT.Where(x => x.LastCreditAmount < 100);
+            //foreach (var d in debitPosition)
+            //{
+            //    this.customerName = d.CustomerName;
+            //    this.accountOfficerName = d.AccountOfficerName;
+            //    this.accountNumber = d.AccountNumber;
+            //    this.branchName = d.GroupHeadName;
+            //    this.dueDate = d.MaturityDate;
+            //    this.description = "N/A";
+            //    this.provider = "N/A";
+            //    this.meetingDate = DateTime.Now.ToShortDateString();
             
-            }
+            //}
                 return true;
         }
 
