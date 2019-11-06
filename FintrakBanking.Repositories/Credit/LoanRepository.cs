@@ -8644,11 +8644,11 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in customer)
             {
-                var customerId = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId).CUSTOMERID.ToString();
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId).CUSTOMERCODE.ToString();
                 //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
                 exposure = from a in context.EXTERNAL_ALERT
-                           where a.CUSTOMERID.Contains(customerId)
+                           where a.CUSTOMERID.Contains(customerCode)
                            select new CurrentCustomerExposure
                            {
                                facilityType = a.ADJFACILITYTYPE,
