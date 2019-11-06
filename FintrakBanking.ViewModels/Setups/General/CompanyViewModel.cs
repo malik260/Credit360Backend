@@ -43,7 +43,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public DateTime? dateTimeUpdated { get; set; }
         public string natureOfBusiness { get; set; }
         public decimal? shareHoldersFund { get; set; }
-
+        public decimal? companyLimit { get; set; }
+        public decimal? singleObligorLimit { get; set; }
     }
     public class CompanyDirectorsViewModel : GeneralEntity
     {

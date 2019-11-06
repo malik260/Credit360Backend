@@ -56,7 +56,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("company")]
-        public HttpResponseMessage GetCompanies()
+        public HttpResponseMessage GetCompanies() 
         {
             try
             {
@@ -236,6 +236,32 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("single/obligor-limit/{Id}")]
+
+        public HttpResponseMessage UpdateSingleObligorLimit(int Id, [FromBody] CompanyViewModel model)
+        {
+            try
+            {
+                var data = repo.UpdateSingleObligorLimit(Id, model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, message = "Changes Saved successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "Saved changes not successfull" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         #region Company Director
         [HttpGet]
         [ClaimsAuthorization]

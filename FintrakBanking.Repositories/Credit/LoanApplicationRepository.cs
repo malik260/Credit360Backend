@@ -1336,30 +1336,29 @@ namespace FintrakBanking.Repositories.Credit
                 if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex) == 1)
                 {
                     var casa = context.TBL_CASA.Find(application.CASAACCOUNTID);
-
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
-                      
                         creditCommon.LoadCustomerTurnover(
                                 applicationId,
                                 loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                                 staffId
-                            );
+                        );
 
-                        //creditCommon.LoadCustomerRatios(
-                        //     applicationId,
-                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                        //     staffId
-                        // );
+                        creditCommon.LoadCustomerRatios(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                        );
 
-                        //creditCommon.GetCorporateCustomerRating(
-                        //     applicationId,
-                        //     loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                        //     staffId
-                        // );
+                        creditCommon.GetCorporateCustomerRating(
+                             applicationId,
+                             loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                             staffId
+                        );
 
-                        // AddFacilityRating(loanApplicationDetails.ToList(), staffId);
+                        AddFacilityRating(loanApplicationDetails.ToList(), staffId);
 
                         //if (casa != null)
                         //{
@@ -1404,7 +1403,6 @@ namespace FintrakBanking.Repositories.Credit
                 creditCommon.GetPersonalLoansRetail(item.LOANAPPLICATIONDETAILID, item.CUSTOMERID, staffId);
                 creditCommon.GetCreditCardsRetail(item.LOANAPPLICATIONDETAILID, item.CUSTOMERID, staffId);
             }
-
         }
 
         public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId)
@@ -5144,7 +5142,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationDetailViewModel> SearchApprovedLoanApplicationDetails(string reference, int companyId)
         {
             var data = GetLoanApplicationDetailsByReference(reference, companyId).Where(a => a.approvalStatusId == (int)ApprovalStatusEnum.Approved).ToList(); ;
-            var mappings = context.TBL_LOAN_APPLICATION_COLLATERL.ToList();
+            var mappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(m => m.DELETED == false).ToList();
             var filtered = data.Where(d => mappings.Exists(m => d.loanApplicationDetailId == m.LOANAPPLICATIONDETAILID));
             var result = filtered.ToList();
             return result;
