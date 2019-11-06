@@ -626,6 +626,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.HASLIEN = false;
                 addCustomerAcct.POSTNOSTATUSID = 1;
                 addCustomerAcct.DELETED = false;
+                addCustomerAcct.DATETIMECREATED = DateTime.Now;
 
                 customerAcct.Add(addCustomerAcct);
             }
@@ -688,8 +689,10 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == item.currency).CURRENCYID;
                 var accountStatusId = context.TBL_CASA_ACCOUNTSTATUS
-                    .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower())
+                    .FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == item.accountStatusName.ToLower())?
                     .ACCOUNTSTATUSID;
+
+                if(item.accountStatusName.ToLower() == "open") { accountStatusId = 1; }
                 TBL_CASA addCustomerAcct = new TBL_CASA();
                 addCustomerAcct.CUSTOMERID = customerId;
                 addCustomerAcct.AVAILABLEBALANCE = item.availableBalance;
@@ -698,7 +701,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.PRODUCTACCOUNTNUMBER = item.productAccountNumber;
                 addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA; //(short)(item.productCode != "" ? 8 : 8);
                 addCustomerAcct.COMPANYID = 1;
-                addCustomerAcct.BRANCHID = (short)(item.branchCode != "" ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode).BRANCHID : 94);
+                addCustomerAcct.BRANCHID = (short)(item.branchCode != "" || item.branchCode != null ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode)?.BRANCHID ?? 94 : 94);
                 addCustomerAcct.CURRENCYID = currencyId;//(short)(item.currency == "NGN" ? 1 : 0);
                 addCustomerAcct.ISCURRENTACCOUNT = true;
                 addCustomerAcct.ACCOUNTSTATUSID = (short)accountStatusId;//(short)(item.accountStatusName == "Active" ? 1 : 3);

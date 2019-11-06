@@ -170,9 +170,11 @@ namespace FintrakBanking.Repositories.Setups.General
                                  createdBy = data.CREATEDBY ?? 0,
                                  lastUpdatedBy = data.LASTUPDATEDBY ?? 0,
                                  CompanyLogo = data.COMPANYLOGO,
-                                 shareHoldersFund = data.SHAREHOLDERSFUND,
+                                 companyLimit = data.COMPANYLIMIT,
                                  dateTimeCreated = data.DATETIMECREATED ?? DateTime.Now,
-                                 dateTimeUpdated = data.DATETIMEUPDATED ?? DateTime.Now
+                                 dateTimeUpdated = data.DATETIMEUPDATED ?? DateTime.Now,
+                                 shareHoldersFund = data.SHAREHOLDERSFUND,
+                                 singleObligorLimit = data.SINGLEOBLIGORLIMIT,
                              });
 
             return companies;
@@ -228,6 +230,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     data.LASTUPDATEDBY = model.lastUpdatedBy;
                     data.COMPANYLOGO = model.CompanyLogo;
                     data.SHAREHOLDERSFUND = model.shareHoldersFund;
+                    data.COMPANYLIMIT = model.companyLimit;
                     data.DATETIMECREATED = model.dateTimeCreated;
                     data.DATETIMEUPDATED = model.dateTimeUpdated;
 
@@ -251,13 +254,37 @@ namespace FintrakBanking.Repositories.Setups.General
             var data = context.TBL_COMPANY.Find(companyId);
 
             try
-            {
+            {  
                 if (data != null)
                 {
                     data.COMPANYID = companyId;
                     data.NAME = model.companyName;
                     data.SHAREHOLDERSFUND = model.shareHoldersFund;
+                    data.COMPANYLIMIT = model.companyLimit;
 
+                    return context.SaveChanges() > 0;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        public bool UpdateSingleObligorLimit(int companyId, CompanyViewModel model)
+        {
+            var data = context.TBL_COMPANY.Find(companyId);
+
+            try
+            {
+                if (data != null)
+                {
+                    data.SINGLEOBLIGORLIMIT = model.singleObligorLimit;
+                   
                     return context.SaveChanges() > 0;
                 }
                 else
