@@ -25,7 +25,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             _context = context;
             //API_KEY = "WzKQBRQXboWsIVI";
             API_KEY = "XtSREijsrZYkt9S";
-            API_URL = "http://10.1.9.197:94/api/Credit360API/";
+            API_URL = "http://10.1.12.186:94/api/Credit360API/";
+            //API_URL = "http://10.1.9.197:94/api/Credit360API/";
+
             //var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
             //if (configdata != null)
             //{
@@ -33,9 +35,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Basel
             //    API_URL = configdata.APIURL;
             //}
         }
-       // private static HttpClient _httpClientInstance;
+        // private static HttpClient _httpClientInstance;
 
-       // private ResponseMessageViewModel responseAPI;
+        // private ResponseMessageViewModel responseAPI;
 
         public async Task<List<RatingAndRatioViewModel>> GetCustomerRatio( string customerNumber)
         {

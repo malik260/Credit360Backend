@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Customer;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -266,6 +267,7 @@ public class LienProcessViewModel //: GeneralEntity
     public class ResponseMessage
     {
         public ResponseMessageViewModel APIResponse { get; set; }
+        public OfferLetterResponse APIOffetResponse { get; set; }
         public bool APIStatus { get; set; }
         public HttpResponseMessage Message { get; set; }
         public bool TransactionIsSuccessfull { get; set; }

@@ -962,13 +962,17 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var visitationDate = provider.FormData["lastVisitaionDate"];
+                var nextVisitation = provider.FormData["nextVisitationDate"];
 
                 var actualDate = visitationDate.Substring(0, 15);
+                var nextDate = nextVisitation.Substring(0, 15);
                 var dateVisited = DateTime.ParseExact(actualDate, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
+                var nextVisitationDate = DateTime.ParseExact(nextDate, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
 
                 var entity = new CollateralDocumentViewModel
                 {
                     lastVisitaionDate = dateVisited,
+                    nextVisitationDate = nextVisitationDate,
                     visitationRemark = provider.FormData["visitationRemark"],
                     collateralCustomerId = Convert.ToInt32(provider.FormData["collateralCustomerId"]),
                     fileName = provider.FormData["fileName"],

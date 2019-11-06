@@ -388,8 +388,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (!result.errorOccured)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, data = result, message = " download Completed" });
+                    return Request.CreateResponse(HttpStatusCode.OK,  new { success = true, data = result, message = " download Completed" });
                 }
                 else
                 {
@@ -420,7 +419,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: An unhandles error occured" });
+                    new { success = false, message = $"Error: An unhandles error occured"+ex.Message });
             }
         }
 

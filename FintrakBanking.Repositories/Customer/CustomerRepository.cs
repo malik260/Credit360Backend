@@ -35,6 +35,7 @@ namespace FintrakBanking.Repositories.Customer
         private IWorkflow workflow;
         private IApprovalLevelStaffRepository level;
         private IIntegrationWithFinacle finacle;
+        private IIntegrationWithFinacle integration;
 
         private int customerId;
         int status = 0;
@@ -45,13 +46,14 @@ namespace FintrakBanking.Repositories.Customer
             IWorkflow _workFlow,
             IApprovalLevelStaffRepository _level,
             FinTrakBankingContext _context,
-            ICustomerCreditBureauRepository bureau, IIntegrationWithFinacle finacle)
+            ICustomerCreditBureauRepository bureau, IIntegrationWithFinacle finacle, IIntegrationWithFinacle _integration)
         {
             context = _context;
             workflow = _workFlow;
             auditTrail = _auditTrail;
             _genSetup = genSetup;
             level = _level;
+            this.integration = _integration;
             this.finacle = finacle;
             this.bureau = bureau;
             var global = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -177,6 +179,7 @@ namespace FintrakBanking.Repositories.Customer
                 var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
                 if (output == true)
                 {
+                    fetchCustomerAccountBalance(customer);
                     return result;
                 }
                 else
@@ -191,6 +194,12 @@ namespace FintrakBanking.Repositories.Customer
                     ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
                 throw new DbEntityValidationException(errorMessages);
             }
+        }
+
+        private void fetchCustomerAccountBalance(TBL_CUSTOMER data)
+        {
+
+            integration.AddCustomerAccounts(data.CUSTOMERCODE);
         }
 
         public bool GetPoliticallyExposedPerson(string customerCode)
