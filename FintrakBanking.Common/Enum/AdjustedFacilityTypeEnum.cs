@@ -30,6 +30,12 @@ namespace FintrakBanking.Common.Enum
         ONLENDINGCBN = 21,
         USANCE = 22,
         FINANCELEASE = 23
-
     }
+
+    public enum ExposureTypeEnum
+    {
+        Direct = 10,
+        Contingent = 11
+    }
+
 }
