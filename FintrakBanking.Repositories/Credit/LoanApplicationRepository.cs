@@ -1340,24 +1340,23 @@ namespace FintrakBanking.Repositories.Credit
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
-                      
                         creditCommon.LoadCustomerTurnover(
                                 applicationId,
                                 loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                                 staffId
-                            );
+                        );
 
                         creditCommon.LoadCustomerRatios(
                              applicationId,
                              loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                              staffId
-                         );
+                        );
 
                         creditCommon.GetCorporateCustomerRating(
                              applicationId,
                              loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                              staffId
-                         );
+                        );
 
                         AddFacilityRating(loanApplicationDetails.ToList(), staffId);
 
@@ -1404,7 +1403,6 @@ namespace FintrakBanking.Repositories.Credit
                 creditCommon.GetPersonalLoansRetail(item.LOANAPPLICATIONDETAILID, item.CUSTOMERID, staffId);
                 creditCommon.GetCreditCardsRetail(item.LOANAPPLICATIONDETAILID, item.CUSTOMERID, staffId);
             }
-
         }
 
         public List<FacilityRatingViewModel> GetFacilityRating(int loanApplicationDetailId)
