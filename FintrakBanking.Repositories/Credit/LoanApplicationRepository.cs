@@ -1336,8 +1336,8 @@ namespace FintrakBanking.Repositories.Credit
                 if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex) == 1)
                 {
                     var casa = context.TBL_CASA.Find(application.CASAACCOUNTID);
-
                     var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+
                     if (setup.USE_THIRD_PARTY_INTEGRATION)
                     {
                         creditCommon.LoadCustomerTurnover(
