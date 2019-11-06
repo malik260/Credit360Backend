@@ -8644,7 +8644,7 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in customer)
             {
-                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId).CUSTOMERCODE.ToString();
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId).CUSTOMERCODE.Trim();
                 //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
                 exposure = from a in context.EXTERNAL_ALERT
