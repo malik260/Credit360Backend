@@ -204,7 +204,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERCODE = corporateDetails.customerCode,
                 CUSTOMERSENSITIVITYLEVELID = 1, //entity.customerSensitivityLevelId,
                 CUSTOMERTYPEID = (short)CustomerTypeEnum.Corporate,
-                DATEOFBIRTH = Convert.ToDateTime(corporateDetails.dateOfIncorporation),
+                //DATEOFBIRTH = Convert.ToDateTime(corporateDetails.dateOfIncorporation),
                 DATETIMECREATED = DateTime.Now,
                 EMAILADDRESS = corporateDetails.emailAddress,
                 FIRSTNAME = corporateDetails.corporateName,
