@@ -92,7 +92,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string businessSectorsHolder = "@{{BusinessSectors}}";
         private readonly string exchangeRateHolder = "@{{ExchangeRate}}";
         private readonly string groupFacilitySummaryHolder = "@{{GroupFacilitySummary}}";
-        private readonly string groupFacilitySummaryFcyHolder = "@{{GroupFacilitySummaryFcy}}";
+        //private readonly string groupFacilitySummaryFcyHolder = "@{{GroupFacilitySummaryFcy}}";
         //private readonly string directFacilitiesHolder = "@{{DirectFacilities}}";
         //private readonly string totalDirectsHolder = "@{{TotalDirects}}";
         //private readonly string contingentFacilitiesHolder = "@{{ContingentFacilities}}";
@@ -114,6 +114,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string allCustomerCollateralRemarksHolder = "@{{AllCustomerCollateralRemarks}}";
         private readonly string collateralCoverageHolder = "@{{CollateralCoverage}}";
         private readonly string allCustomerFacilitiesHolder = "@{{AllCustomerFacilities}}";
+        private readonly string obligorRiskRatingHolder = "@{{ObligorRiskRating}}";
         //private readonly string totalGroupExposureHolder = "@{{TotalGroupExposure}}";
         // lms only
         private readonly string securityTypeHolder = "@{{SecurityType}}";
@@ -192,6 +193,7 @@ namespace FintrakBanking.Repositories.Credit
         private string allCustomerCollateralRemarks;
         private string collateralCoverage;
         private string allCustomerFacilities;
+        private string obligorRiskRating;
         //private string totalGroupExposure;
         // lms
         private string securityType;
@@ -373,6 +375,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.collateralCoverage = GetCollateralCoverageMarkupLOS();
                 this.allCustomerCollateralRemarks = GetAllCustomerCollateralsMarkup();
                 this.allCustomerFacilities = GetAllCustomerFacilitiesMarkup();
+                this.obligorRiskRating = GetCustomerRiskRating();
                 //this.legalLendingLimit = (long)loanApplication.TBL_COMPANY.SHAREHOLDERSFUND;
                 //this.totalGroupExposure = GetTotalGroupExposureMarkupLOS();
 
@@ -2532,7 +2535,13 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
         
-
+        private string GetCustomerRiskRating()
+        {
+            var result = String.Empty;
+            var rating = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERID == customerId).CUSTOMERRATING;
+            result += rating;
+            return result;
+        }
         //lms
         private string GetDirectFacilitiesMarkupLMS()
         {
@@ -2794,6 +2803,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(allCustomerCollateralRemarksHolder, allCustomerCollateralRemarks);
             content = content.Replace(collateralCoverageHolder, collateralCoverage);
             content = content.Replace(allCustomerFacilitiesHolder, allCustomerFacilities);
+            content = content.Replace(obligorRiskRatingHolder, obligorRiskRating);
             //content = content.Replace(totalGroupExposureHolder, totalGroupExposure);
 
             if (content.Contains(customerTurnoverHolder))

@@ -686,14 +686,14 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
+            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa?.PRODUCTACCOUNTNUMBER;
             chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
-            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
+            if (casa != null) referenceNumber = casa?.PRODUCTACCOUNTNUMBER;
 
-            chargeModel.feeAmount = chargeAmount;
-            chargeModel.referenceNumber = referenceNumber;
-            chargeModel.casaAccountId = casa.CASAACCOUNTID;
-            chargeModel.debitBusiness = searchInfo.debitBusiness;
+            //chargeModel.feeAmount = chargeAmount;
+            //chargeModel.referenceNumber = referenceNumber;
+            //chargeModel.casaAccountId = casa?.CASAACCOUNTID;
+            //chargeModel.debitBusiness = searchInfo.debitBusiness;
 
             if (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeBank || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && searchInfo.debitBusiness))
             {
@@ -882,7 +882,7 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.userBranchId = request.userBranchId;
             chargeModel.companyId = request.companyId;
             chargeModel.referenceNumber = referenceNumber;
-            chargeModel.casaAccountId = casa.CASAACCOUNTID;
+            chargeModel.casaAccountId = casa?.CASAACCOUNTID;
             chargeModel.debitBusiness = request.debitBusiness;
 
             if (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeBank || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && request.debitBusiness))
@@ -1096,9 +1096,9 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.passCode = searchInput.passCode;
             chargeModel.referenceNumber = referenceNumber;
             chargeModel.feeAmount = chargeAmount;
-            chargeModel.casaAccountId = casa.CASAACCOUNTID;
+            chargeModel.casaAccountId = casa?.CASAACCOUNTID;
 
-            searchInput.customerCreditBureauUploadDetails.accountNumber = casa != null ? casa.PRODUCTACCOUNTNUMBER : null;
+            searchInput.customerCreditBureauUploadDetails.accountNumber = casa != null ? casa?.PRODUCTACCOUNTNUMBER : null;
             searchInput.customerCreditBureauUploadDetails.userBranchId = searchInput.userBranchId;
             searchInput.userName = creditBureau.USERNAME;
             searchInput.password = creditBureau.PASSWORD;
