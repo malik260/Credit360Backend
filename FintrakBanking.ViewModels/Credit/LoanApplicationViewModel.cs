@@ -111,6 +111,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanPurpose { get; set; }
 
         public int tenor { get; set; }
+        public string apiRequestId { get; set; }
         public bool customerInfoValidated { get; set; }
         public bool notInNegativeCrms { get; set; }
         public bool notInBlackbook { get; set; }
