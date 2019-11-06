@@ -13,7 +13,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string documentTitle { get; set; }
         public int collateralCustomerId { get; set; }
         public DateTime lastVisitaionDate { get; set; }
-        public DateTime nextVisitationDate { get; set; }
+        public DateTime? nextVisitationDate { get; set; }
         public string visitationRemark { get; set; }
         public int? CollateralVisitationID { get; set; }
         public bool isPrimaryDocument { get; set; }

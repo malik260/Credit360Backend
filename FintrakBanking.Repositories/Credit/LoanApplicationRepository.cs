@@ -1383,7 +1383,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
 
-                throw;
+                throw new SecureException(ex.ToString());
             }
         
             return new LoanApplicationUpdateMessage
@@ -5142,7 +5142,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanApplicationDetailViewModel> SearchApprovedLoanApplicationDetails(string reference, int companyId)
         {
             var data = GetLoanApplicationDetailsByReference(reference, companyId).Where(a => a.approvalStatusId == (int)ApprovalStatusEnum.Approved).ToList(); ;
-            var mappings = context.TBL_LOAN_APPLICATION_COLLATERL.ToList();
+            var mappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(m => m.DELETED == false).ToList();
             var filtered = data.Where(d => mappings.Exists(m => d.loanApplicationDetailId == m.LOANAPPLICATIONDETAILID));
             var result = filtered.ToList();
             return result;
@@ -5583,8 +5583,13 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanApplicationFlowChange(int loanApplicationId)
         {
             var detail = context.TBL_LOAN_APPLICATION.Where(o => o.LOANAPPLICATIONID == loanApplicationId).Select(o => o).FirstOrDefault();
+            var flowChange = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.PLACEHOLDER == "FAM").FirstOrDefault();
+
+            if (flowChange == null) { throw new ConditionNotMetException("Workflow Change to reroute not found. Contact admin." ); }
+
             detail.PRODUCT_CLASS_PROCESSID = 1;
-            detail.FLOWCHANGEID = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.PLACEHOLDER == "FAM").Select(o => o.FLOWCHANGEID).FirstOrDefault();
+            detail.FLOWCHANGEID = flowChange?.FLOWCHANGEID;
+            detail.OPERATIONID = flowChange.OPERATIONID ;
 
             return context.SaveChanges() > 0;
         }
