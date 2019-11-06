@@ -2392,9 +2392,13 @@ namespace FintrakBanking.Repositories.Credit
 
                 var staffName = context.TBL_STAFF.Where(s => s.STAFFID == model.staffId).FirstOrDefault();
                 var fullNames = staffName?.FIRSTNAME +" "+ staffName?.LASTNAME;
-                if (appl.PRODUCTID == 13)
+                if (appl.PRODUCTID == 20)
                 {
-                    reportRoutes.GetProductSpecificTemplateCFL(null, appl.PRODUCTCLASSID, model.applicationReferenceNumber, "90", appl.APIREQUESTID, "14", model.comment, fullNames);
+                   var sendOfferLetter = reportRoutes.GetProductSpecificTemplateCFL(null, appl.PRODUCTCLASSID, model.applicationReferenceNumber, "90", appl.APIREQUESTID, "14", model.comment, fullNames);
+                   if(sendOfferLetter != "")
+                    {
+                        return workflow.Response;
+                    }
                 }
             }
 
