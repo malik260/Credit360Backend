@@ -2508,6 +2508,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = response, result = response, count = 1 });
         }
 
+        #region collateral-swap
         [HttpGet]
         [ClaimsAuthorization]
         [Route("collateral-swap")]
@@ -2608,7 +2609,7 @@ namespace FintrakBanking.APICore.Controllers
             if (response == null) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
-
+        #endregion collateral-swap
     }
 
 }

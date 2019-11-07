@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" elementFormDefault="qualified" targetNamespace="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element ibmSchExtn:docRoot="true" name="Login">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="UserName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="Password" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="LoginResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="LoginResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="IsTicketValid">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="FirstCentralNigeriaWebServiceTicket" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="IsTicketValidResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="1" maxOccurs="1" name="IsTicketValidResult" type="xsd:boolean" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="ConnectConsumerMatch">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="EnquiryReason" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ConsumerName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="DateOfBirth" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="Identification" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="AccountNumber" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ProductID" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="ConnectConsumerMatchResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="ConnectConsumerMatchResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="ConnectCommercialMatch">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="EnquiryReason" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="BusinessName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="BusinessRegistrationNumber" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="AccountNumber" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ProductID" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="ConnectCommercialMatchResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="ConnectCommercialMatchResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerAccountMatch">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="AccountNo" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="Subscriberid" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerAccountMatchResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetConsumerAccountMatchResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerEnquiryReport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ProductID" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerEnquiryReportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetConsumerEnquiryReportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetCommercialEnquiryReport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="CommercialID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ProductID" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetCommercialEnquiryReportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetCommercialEnquiryReportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerBasicTraceReport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerBasicTraceReportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetConsumerBasicTraceReportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerPrimeReport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerPrimeReportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetConsumerPrimeReportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerXscorePrimereport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerXscorePrimereportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetConsumerXscorePrimereportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerBasicCreditReport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerBasicCreditReportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetConsumerBasicCreditReportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetXSCoreConsumerFullCreditReport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetXSCoreConsumerFullCreditReportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetXSCoreConsumerFullCreditReportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerFullCreditReport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerFullCreditReportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetConsumerFullCreditReportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetCommercialBasicCreditReport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="CommercialID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="commercialMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetCommercialBasicCreditReportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetCommercialBasicCreditReportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetCommercialFullCreditReport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="CommercialID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="commercialMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetCommercialFullCreditReportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetCommercialFullCreditReportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetXSCoreConsumerFullCreditReportBinary">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetXSCoreConsumerFullCreditReportBinaryResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetXSCoreConsumerFullCreditReportBinaryResult" type="xsd:base64Binary" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerFullCreditReportBinary">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetConsumerFullCreditReportBinaryResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetConsumerFullCreditReportBinaryResult" type="xsd:base64Binary" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetCommercialFullCreditReportBinary">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="CommercialID" type="xsd:int" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="commercialMergeList" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="enquiryID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetCommercialFullCreditReportBinaryResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetCommercialFullCreditReportBinaryResult" type="xsd:base64Binary" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetReport">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="DataTicket" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="SubscriberEnquiryResultID" type="xsd:int" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="GetReportResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="GetReportResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

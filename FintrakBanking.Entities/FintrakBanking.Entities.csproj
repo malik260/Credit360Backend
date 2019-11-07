@@ -76,7 +76,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\EXTERNAL_ALERT.cs" />
+    <Compile Include="Models\TBL_GLOBAL_EXPOSURE.cs" />
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_DOCUMENT_UPLOAD.cs" />
@@ -106,6 +106,7 @@
     <Compile Include="Models\TBL_COLLATERAL_DEPOSIT_ARCHV.cs" />
     <Compile Include="Models\TBL_COLLATERAL_SWAP_REQUEST.cs" />
     <Compile Include="Models\TBL_COLLATERL_CUSTOMER_ARCHV.cs" />
+    <Compile Include="Models\TBL_CREDIT_OFFICER_STAFFROLE.cs" />
     <Compile Include="Models\TBL_DAILY_ACCRUAL_ARCHIVE.cs" />
     <Compile Include="Models\TBL_DAILY_ACCRUAL_TEMP.cs" />
     <Compile Include="Models\TBL_EOD_OPERATION_LOG_DETAIL.cs" />

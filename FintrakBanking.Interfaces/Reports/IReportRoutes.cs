@@ -12,6 +12,8 @@ namespace FintrakBanking.Interfaces.Reports
 {
     public interface IReportRoutes
     {
+        string GetProductSpecificTemplateCFL(short? productClassProcessId, short? productClassId, string applicationRefNumber,
+                       string StatusCode, string RequestId, string WorkflowStage, string ReasonForRejection, string ActionByName);
         string DeferralWaiverReport(int staffId, int operationId, int targetId, int loanApplicationDetailId);
         string GetWorkflowSLA(int loanApplicationId, int companyId, int staffId);
         string GetLoanScheduleReport(int tearmLoanId, int companyId, int staffId);

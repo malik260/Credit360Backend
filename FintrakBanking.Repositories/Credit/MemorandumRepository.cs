@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
@@ -20,6 +21,7 @@ namespace FintrakBanking.Repositories.Credit
         // dependencies
         private FinTrakBankingContext context;
         private IAppraisalMemorandumRepository memo;
+        private ICreditLimitValidationsRepository limitValidation;
         private ILoanRepository loanRepo;
         private IFinanceTransactionRepository financeTransaction;
         private ICustomerGroupRepository groupRepo;
@@ -32,7 +34,8 @@ namespace FintrakBanking.Repositories.Credit
         public MemorandumRepository(
             FinTrakBankingContext context, 
             IAppraisalMemorandumRepository memo, 
-            ILoanRepository loanRepo,     
+            ICreditLimitValidationsRepository limitValidation,
+            ILoanRepository loanRepo,
             IFinanceTransactionRepository financeTransaction,
             ICustomerGroupRepository groupRepo, 
             ITransactionDynamicsRepository transactionsRepo,
@@ -43,6 +46,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             this.context = context;
             this.memo = memo;
+            this.limitValidation = limitValidation;
             this.loanRepo = loanRepo;
             this.financeTransaction = financeTransaction;
             this.groupRepo = groupRepo;
@@ -1376,6 +1380,10 @@ namespace FintrakBanking.Repositories.Credit
         private string GetDirectFacilitiesMarkupLOS()
         {
             var result = String.Empty;
+            //var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
+            //                                    && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
+            //var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN
+            //                                                    && l.ISDISBURSED == true).ToList();
             var loans = context.TBL_LOAN.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN && l.ISDISBURSED == true
                                                 && l.TBL_PRODUCT.PRODUCTCLASSID != (int)ProductClassEnum.ImportFinanceFacilities).ToList();
             var overdrafts = context.TBL_LOAN_REVOLVING.Where(l => l.CUSTOMERID == loanApplication.CUSTOMERID && l.TBL_CURRENCY.CURRENCYID == (int)CurrencyEnum.NGN

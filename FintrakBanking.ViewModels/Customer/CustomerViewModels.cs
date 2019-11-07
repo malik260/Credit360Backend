@@ -662,12 +662,20 @@ namespace FintrakBanking.ViewModels.Customer
     	public string applicationReferenceNumber { get; set; }
     }
 
-    public class OfferLetterResponse
+    public class Attachment
+    {
+        public string FileLink { get; set; }
+        public string FileType { get; set; }
+    }
+
+    public class OfferLetterResponse 
     {
         public string StatusCode { get; set; }
         public string RequestId { get; set; }
         public string WorkflowStage { get; set; }
-        public string FileLink { get; set; }
-        public string FileType { get; set; }
+        public string ReasonForRejection { get; set; }
+        public string ActionByName { get; set; }
+        public string Comment { get; set; }
+        public Attachment Attachment { get; set; }
     }
 }

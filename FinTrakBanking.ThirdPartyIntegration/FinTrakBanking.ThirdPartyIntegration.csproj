@@ -74,6 +74,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Connected Services\TestESBFirstCentralService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\TestService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -207,6 +212,67 @@
     <None Include="Connected Services\FbnAlertWS\Service2.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.ConnectCommercialMatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.ConnectConsumerMatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetCommercialBasicCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetCommercialEnquiryReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetCommercialFullCreditReportBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetCommercialFullCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetConsumerAccountMatchResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetConsumerBasicCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetConsumerBasicTraceReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetConsumerEnquiryReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetConsumerFullCreditReportBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetConsumerFullCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetConsumerPrimeReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetConsumerXscorePrimereportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetXSCoreConsumerFullCreditReportBinaryResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.GetXSCoreConsumerFullCreditReportResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.IsTicketValidResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.TestESBFirstCentralService.LoginResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\firstcentral.wsdl" />
+    <None Include="Connected Services\TestESBFirstCentralService\firstcentral.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\TestService\FinTrakBanking.ThirdPartyIntegration.TestService.ForecastReturn.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -321,6 +387,7 @@
     <WCFMetadataStorage Include="Connected Services\CRCWebService\" />
     <WCFMetadataStorage Include="Connected Services\ESBFirstCentralService\" />
     <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
+    <WCFMetadataStorage Include="Connected Services\TestESBFirstCentralService\" />
     <WCFMetadataStorage Include="Connected Services\TestService\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthService\" />
     <WCFMetadataStorage Include="Connected Services\TwoFactorAuthSoapService1\" />
@@ -404,6 +471,12 @@
     <None Include="Connected Services\ESBFirstCentralService\configuration91.svcinfo" />
     <None Include="Connected Services\ESBFirstCentralService\configuration.svcinfo" />
     <None Include="Connected Services\ESBFirstCentralService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\TestESBFirstCentralService\configuration91.svcinfo" />
+    <None Include="Connected Services\TestESBFirstCentralService\configuration.svcinfo" />
+    <None Include="Connected Services\TestESBFirstCentralService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
