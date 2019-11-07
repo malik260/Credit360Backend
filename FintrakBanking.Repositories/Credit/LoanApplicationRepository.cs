@@ -5463,7 +5463,7 @@ namespace FintrakBanking.Repositories.Credit
         public CurrentCustomerExposure GetTotalBankExposure()
         {
             decimal? totalBankExposure = 0;
-            decimal? exposureProposedLimit = context.EXTERNAL_ALERT.Sum(l => l.TOTALEXPOSURE);
+            decimal? exposureProposedLimit = context.EXTERNAL_ALERT?.Sum(l => l.TOTALEXPOSURE) ?? 0;
             //decimal? exposureProposedLimit = context.TBL_LOAN.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active)?.Sum(l => l.OUTSTANDINGPRINCIPAL);
             if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit;
 
