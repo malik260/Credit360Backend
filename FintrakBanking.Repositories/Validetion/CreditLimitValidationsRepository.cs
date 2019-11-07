@@ -591,13 +591,13 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             {
                 customerCode.Trim();
 
-                exposure = from a in context.EXTERNAL_ALERT
+                exposure = from a in context.TBL_GLOBAL_EXPOSURE
                            where a.CUSTOMERID.Contains(customerCode)
                            select new CurrentCustomerExposure
                            {
                                facilityType = a.ADJFACILITYTYPE,
                                existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                               proposedLimit = a.LOANAMOUNTLCY ?? 0,
+                               proposedLimit = a.LOANAMOUNYLCY ?? 0,
                                outstandings = a.TOTALEXPOSURE ?? 0,
                                recommendedLimit = 0,
                                //PastDueObligationsInterest = a.PASTDUEINTEREST,
