@@ -8655,7 +8655,7 @@ namespace FintrakBanking.Repositories.Credit
                                existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                proposedLimit = a.LOANAMOUNTLCY ?? 0,
                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                               outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                               outstandings = a.TOTALEXPOSURE ?? 0,
                                recommendedLimit = 0,
                                //PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,

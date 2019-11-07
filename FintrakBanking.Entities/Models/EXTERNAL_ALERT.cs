@@ -22,6 +22,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string ACCOUNTNUMBER { get; set; }
         public string ACCOUNTOFFICERCODE { get; set; }
         public string ACCOUNTOFFICERNAME { get; set; }
+        public string ALPHACODE { get; set; }
         public string PRODUCTCODE { get; set; }
         public string CURRENCYNAME { get; set; }
         public string PRODUCTNAME { get; set; }

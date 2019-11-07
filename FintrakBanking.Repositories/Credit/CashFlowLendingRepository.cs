@@ -811,8 +811,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (limitValidation.IsDirectorRelatedGroup(application.customerGroupId) || limitValidation.CustomerIsDirector(application.customerId))
             {
-                var directorLimit = limitValidation.ValidateNPLByDirectors();
-                var directorExposure = (double)applicationAmount;
+                var directorLimit = limitValidation.ValidateNPLByDirectors(application);
+                var directorExposure = (double)applicationAmount + directorLimit.outstandingBalance;
                 if (directorExposure >= (double)directorLimit.maximumAllowedLimit)
                 {
                     fireResponse("Director Limit Exceeded","99","");
