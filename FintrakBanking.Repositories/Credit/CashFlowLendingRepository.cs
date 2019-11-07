@@ -338,7 +338,7 @@ namespace FintrakBanking.Repositories.Credit
             //using (var trans = context.Database.BeginTransaction())
             //{
 
-            ValidateLoanApplicationLimits(loan);
+           // ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED == false).ToList();
 

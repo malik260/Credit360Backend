@@ -8654,13 +8654,13 @@ namespace FintrakBanking.Repositories.Credit
                 var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId).CUSTOMERCODE.Trim();
                 //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
-                exposure = from a in context.EXTERNAL_ALERT
+                exposure = (from a in context.TBL_GLOBAL_EXPOSURE
                            where a.CUSTOMERID.Contains(customerCode)
                            select new CurrentCustomerExposure
                            {
                                facilityType = a.ADJFACILITYTYPE,
                                existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                               proposedLimit = a.LOANAMOUNTLCY ?? 0,
+                               proposedLimit = a.LOANAMOUNYLCY ?? 0,
                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                                outstandings = a.TOTALEXPOSURE ?? 0,
                                recommendedLimit = 0,
@@ -8670,9 +8670,9 @@ namespace FintrakBanking.Repositories.Credit
                                //prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                loanStatus = a.CBNCLASSIFICATION,
                                referenceNumber = a.REFERENCENUMBER,
-                           };
+                           }).ToList();
 
-                //if (exposure.Count() > 0) exposures.AddRange(exposure);
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
 
                 //exposure = from a in context.TBL_LOAN
                 //           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID

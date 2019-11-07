@@ -5261,12 +5261,12 @@ namespace FintrakBanking.Repositories.Credit
             //            loanStatus = "Running"
             //        });
 
-            exposure = from a in context.EXTERNAL_ALERT
+            exposure = from a in context.TBL_GLOBAL_EXPOSURE
                        select new CurrentCustomerExposure
                        {
                            facilityType = a.ADJFACILITYTYPE,
                            existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                           proposedLimit = a.LOANAMOUNTLCY ?? 0,
+                           proposedLimit = a.LOANAMOUNYLCY ?? 0,
                            //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                            outstandings = a.TOTALEXPOSURE ?? 0,
                            recommendedLimit = 0,
@@ -5463,7 +5463,7 @@ namespace FintrakBanking.Repositories.Credit
         public CurrentCustomerExposure GetTotalBankExposure()
         {
             decimal? totalBankExposure = 0;
-            decimal? exposureProposedLimit = context.EXTERNAL_ALERT?.Sum(l => l.TOTALEXPOSURE) ?? 0;
+            decimal? exposureProposedLimit = context.TBL_GLOBAL_EXPOSURE.Sum(l => l.TOTALEXPOSURE);
             //decimal? exposureProposedLimit = context.TBL_LOAN.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active)?.Sum(l => l.OUTSTANDINGPRINCIPAL);
             if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit;
 
