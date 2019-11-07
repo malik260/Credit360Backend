@@ -5245,59 +5245,96 @@ namespace FintrakBanking.Repositories.Credit
 
             //foreach (var detail in details)
             //{
-            exposure = context.TBL_LOAN
-                    .Where(x => x.LOANSTATUSID == (int)LoanStatusEnum.Active)
-                    .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
-                    .Select(g => new CurrentCustomerExposure
-                    {
-                        facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
-                        existingLimit = g.Sum(x => x.PRINCIPALAMOUNT),
-                        proposedLimit = g.Sum(x => x.OUTSTANDINGPRINCIPAL),
-                        recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                        PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
-                        PastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
-                        reviewDate = DateTime.Now,
-                        prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
-                        loanStatus = "Running"
-                    });
+            //exposure = context.TBL_LOAN
+            //        .Where(x => x.LOANSTATUSID == (int)LoanStatusEnum.Active)
+            //        .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
+            //        .Select(g => new CurrentCustomerExposure
+            //        {
+            //            facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
+            //            existingLimit = g.Sum(x => x.PRINCIPALAMOUNT),
+            //            proposedLimit = g.Sum(x => x.OUTSTANDINGPRINCIPAL),
+            //            recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+            //            PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
+            //            PastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
+            //            reviewDate = DateTime.Now,
+            //            prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
+            //            loanStatus = "Running"
+            //        });
+
+            exposure = from a in context.EXTERNAL_ALERT
+                       select new CurrentCustomerExposure
+                       {
+                           facilityType = a.ADJFACILITYTYPE,
+                           existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                           proposedLimit = a.LOANAMOUNTLCY ?? 0,
+                           //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                           outstandings = a.TOTALEXPOSURE ?? 0,
+                           recommendedLimit = 0,
+                           //PastDueObligationsInterest = a.PASTDUEINTEREST,
+                           PastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
+                           reviewDate = DateTime.Now,
+                           //prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                           loanStatus = a.CBNCLASSIFICATION,
+                           referenceNumber = a.REFERENCENUMBER,
+                       };
 
             if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+            //exposure = from a in context.EXTERNAL_ALERT
+            //           where a.CURRENCYTYPE.Contains("FCY")
+            //           select new CurrentCustomerExposure
+            //           {
+            //               facilityType = a.ADJFACILITYTYPE,
+            //               existingLimit = a.PRINCIPALOUTSTANDINGBALLCY * (decimal.Parse(a.FXRATE)) ?? 0,
+            //               proposedLimit = a.LOANAMOUNTLCY * (decimal.Parse(a.FXRATE)) ?? 0,
+            //               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+            //               outstandings = a.TOTALEXPOSURE * (decimal.Parse(a.FXRATE))?? 0,
+            //               recommendedLimit = 0,
+            //               //PastDueObligationsInterest = a.PASTDUEINTEREST,
+            //               PastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT * (decimal.Parse(a.FXRATE)) ?? 0,
+            //               reviewDate = DateTime.Now,
+            //               //prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+            //               loanStatus = a.CBNCLASSIFICATION,
+            //               referenceNumber = a.REFERENCENUMBER,
+            //           };
+
+            //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
             // Same for revolving and contegent facility ...
 
-            exposure = context.TBL_LOAN_REVOLVING
-                .Where(x => x.LOANSTATUSID == (int)LoanStatusEnum.Active)
-                .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
-                .Select(g => new CurrentCustomerExposure
-                {
-                    facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
-                    existingLimit = g.Sum(x => x.OVERDRAFTLIMIT),
-                    proposedLimit = g.Sum(x => x.OVERDRAFTLIMIT),
-                    recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                    PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
-                    PastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
-                    reviewDate = DateTime.Now,
-                    prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
-                    loanStatus = "Running"
-                });
+            //exposure = context.TBL_LOAN_REVOLVING
+            //    .Where(x => x.LOANSTATUSID == (int)LoanStatusEnum.Active)
+            //    .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
+            //    .Select(g => new CurrentCustomerExposure
+            //    {
+            //        facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
+            //        existingLimit = g.Sum(x => x.OVERDRAFTLIMIT),
+            //        proposedLimit = g.Sum(x => x.OVERDRAFTLIMIT),
+            //        recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+            //        PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
+            //        PastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
+            //        reviewDate = DateTime.Now,
+            //        prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
+            //        loanStatus = "Running"
+            //    });
 
-            if (exposure.Count() > 0) exposures.AddRange(exposure);
+            //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
 
-            exposure = context.TBL_LOAN_CONTINGENT
-                .Where(x => x.LOANSTATUSID == (int)LoanStatusEnum.Active)
-                .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
-                .Select(g => new CurrentCustomerExposure
-                {
-                    facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
-                    existingLimit = g.Sum(x => x.CONTINGENTAMOUNT),
-                    proposedLimit = g.Sum(x => x.CONTINGENTAMOUNT),
-                    recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                    reviewDate = DateTime.Now,
-                    loanStatus = "Running"
-                });
+            //exposure = context.TBL_LOAN_CONTINGENT
+            //    .Where(x => x.LOANSTATUSID == (int)LoanStatusEnum.Active)
+            //    .GroupBy(x => new { x.CUSTOMERID, x.PRODUCTID })
+            //    .Select(g => new CurrentCustomerExposure
+            //    {
+            //        facilityType = g.FirstOrDefault().TBL_PRODUCT.PRODUCTNAME,
+            //        existingLimit = g.Sum(x => x.CONTINGENTAMOUNT),
+            //        proposedLimit = g.Sum(x => x.CONTINGENTAMOUNT),
+            //        recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+            //        reviewDate = DateTime.Now,
+            //        loanStatus = "Running"
+            //    });
 
-            if (exposure.Count() > 0) exposures.AddRange(exposure);
+            //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
 
             totalExposures = new CurrentCustomerExposure()
@@ -5389,7 +5426,8 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex) { }
 
             var exposure = GetCurrentCompanyExposure();
-            var proposedExposure = exposure.proposedLimit + applicationAmount;
+            var proposedExposure = exposure.outstandings + applicationAmount;
+            //var proposedExposure = exposure.proposedLimit + applicationAmount;
             var company = context.TBL_COMPANY.Find(application.companyId);
             if (proposedExposure >= company.SHAREHOLDERSFUND)
             {
@@ -5405,29 +5443,39 @@ namespace FintrakBanking.Repositories.Credit
 
             if(limitValidation.IsDirectorRelatedGroup(application.customerGroupId) || limitValidation.CustomerIsDirector(application.customerId))
             {
-                var directorLimit = limitValidation.ValidateNPLByDirectors();
-                var directorExposure = (double)applicationAmount;
+                var directorLimit = limitValidation.ValidateNPLByDirectors(application);
+                var directorExposure = (double)applicationAmount + directorLimit.outstandingBalance;
                 if (directorExposure >= (double)directorLimit.maximumAllowedLimit)
                 {
                     throw new SecureException("Director Limit Exceeded");
                 }
 
             }
+
+            var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
+            var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
+            if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+            {
+                throw new SecureException("Single Obligor Limit Exceeded");
+            }
         }
 
         public CurrentCustomerExposure GetTotalBankExposure()
         {
             decimal? totalBankExposure = 0;
-            decimal? exposureProposedLimit = context.TBL_LOAN.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active)?.Sum(l => l.OUTSTANDINGPRINCIPAL);
-            if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit;
-
-            exposureProposedLimit = 0;
-            exposureProposedLimit = context.TBL_LOAN_REVOLVING.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active)?.Sum(l => l.OVERDRAFTLIMIT);
+            decimal? exposureProposedLimit = context.EXTERNAL_ALERT.Sum(l => l.TOTALEXPOSURE);
+            //decimal? exposureProposedLimit = context.TBL_LOAN.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active)?.Sum(l => l.OUTSTANDINGPRINCIPAL);
             if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit;
 
             //exposureProposedLimit = 0;
-            //exposureProposedLimit = context?.TBL_LOAN_CONTINGENT.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active).Sum(l => l.CONTINGENTAMOUNT);
+            //exposureProposedLimit = context.TBL_LOAN_REVOLVING.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active)?.Sum(l => l.OVERDRAFTLIMIT);
             //if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit;
+
+            exposureProposedLimit = 0;
+            exposureProposedLimit = context.TBL_LOAN_CONTINGENT.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active).Sum(l => (decimal?)l.CONTINGENTAMOUNT) ?? 0;
+            if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit.Value;
+
+
 
             return new CurrentCustomerExposure
             {
