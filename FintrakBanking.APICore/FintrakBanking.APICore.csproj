@@ -444,6 +444,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Credit.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\CFLOfferLetter.aspx.cs">
+      <DependentUpon>CFLOfferLetter.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\CFLOfferLetter.aspx.designer.cs">
+      <DependentUpon>CFLOfferLetter.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.aspx.cs">
       <DependentUpon>ClassifiedAssetManagement.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1251,6 +1258,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Reports\Collateral\ScheduledCollateralReport.aspx" />
+    <Content Include="Reports\Credit\OfferLetterGeneration\CFLOfferLetter.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />

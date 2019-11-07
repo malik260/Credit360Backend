@@ -5466,9 +5466,9 @@ namespace FintrakBanking.Repositories.Credit
             //exposureProposedLimit = context.TBL_LOAN_REVOLVING.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active)?.Sum(l => l.OVERDRAFTLIMIT);
             //if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit;
 
-            //exposureProposedLimit = 0;
-            //exposureProposedLimit = context?.TBL_LOAN_CONTINGENT.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active).Sum(l => l.CONTINGENTAMOUNT);
-            //if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit;
+            exposureProposedLimit = 0;
+            exposureProposedLimit = context.TBL_LOAN_CONTINGENT.Where(l => l.LOANSTATUSID == (short)LoanStatusEnum.Active).Sum(l => (decimal?)l.CONTINGENTAMOUNT) ?? 0;
+            if (exposureProposedLimit.HasValue) totalBankExposure += exposureProposedLimit.Value;
 
 
 
