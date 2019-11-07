@@ -5452,7 +5452,12 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            limitValidation.ValidateSingleObligorLimit(application);
+            var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
+            var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
+            if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+            {
+                throw new SecureException("Single Obligor Limit Exceeded");
+            }
         }
 
         public CurrentCustomerExposure GetTotalBankExposure()

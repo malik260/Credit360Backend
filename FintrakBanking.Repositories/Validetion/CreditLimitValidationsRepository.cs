@@ -633,9 +633,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return exposures;
         }
 
-        public void ValidateSingleObligorLimit(LoanApplicationViewModel application)
+        public CreditLimitValidationsModel ValidateSingleObligorLimit(LoanApplicationViewModel application)
         {
             List<CurrentCustomerExposure> exposures;
+            CreditLimitValidationsModel models = new CreditLimitValidationsModel();
             var company = context.TBL_COMPANY.FirstOrDefault(c => c.COMPANYID == application.companyId);
             var globalLimit = company.SINGLEOBLIGORLIMIT;
             if (!(globalLimit > 0) || globalLimit == null)
@@ -654,11 +655,9 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 exposures = GetGroupCustomerGlobalExposure((int)application.customerGroupId);
             }
 
-            var proposedExposure = exposures.Sum(e => e.outstandings) + application.proposedAmount;
-            if (proposedExposure >= globalLimit)
-            {
-                throw new SecureException("Single Obligor Limit Exceeded!");
-            }
+            models.maximumAllowedLimit = (decimal?)globalLimit ?? 0;
+            models.outstandingBalance = exposures.Sum(e => (double)e.outstandings);
+            return models;
         }
 
         public CreditLimitValidationsModel ValidateNPLByDirectors(LoanApplicationViewModel application)

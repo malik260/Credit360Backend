@@ -820,6 +820,13 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
+            var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
+            var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
+            if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+            {
+                fireResponse("Single Obligor Limit Exceeded","99","");
+            }
+
         }
 
         public string GetRefrenceNumber()
