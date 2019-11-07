@@ -338,7 +338,7 @@ namespace FintrakBanking.Repositories.Credit
             //using (var trans = context.Database.BeginTransaction())
             //{
 
-            ValidateLoanApplicationLimits(loan);
+           // ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED == false).ToList();
 
@@ -811,13 +811,20 @@ namespace FintrakBanking.Repositories.Credit
 
             if (limitValidation.IsDirectorRelatedGroup(application.customerGroupId) || limitValidation.CustomerIsDirector(application.customerId))
             {
-                var directorLimit = limitValidation.ValidateNPLByDirectors();
-                var directorExposure = (double)applicationAmount;
+                var directorLimit = limitValidation.ValidateNPLByDirectors(application);
+                var directorExposure = (double)applicationAmount + directorLimit.outstandingBalance;
                 if (directorExposure >= (double)directorLimit.maximumAllowedLimit)
                 {
                     fireResponse("Director Limit Exceeded","99","");
                 }
 
+            }
+
+            var singleObligor = limitValidation.ValidateSingleObligorLimit(application);
+            var proposedObligorLimit = singleObligor.outstandingBalance + (double)applicationAmount;
+            if (proposedObligorLimit >= (double)singleObligor.maximumAllowedLimit)
+            {
+                fireResponse("Single Obligor Limit Exceeded","99","");
             }
 
         }

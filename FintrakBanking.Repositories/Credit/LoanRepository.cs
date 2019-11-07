@@ -35,11 +35,18 @@ using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using GemBox.Spreadsheet;
 using System.IO;
 using FintrakBanking.ViewModels.Setups.Credit;
+using System.Net.Http;
+using System.Web.Script.Serialization;
+using System.Net.Http.Headers;
+using System.Net;
+using System.Text;
 
 namespace FintrakBanking.Repositories.Credit
 {
     public class LoanRepository : ILoanRepository
     {
+        private string API_KEY = "RlRDMzYwOnRlc3RTZWNyZXQ=";
+        private string API_URL = "http://10.1.7.116:8989/";
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
@@ -8647,15 +8654,15 @@ namespace FintrakBanking.Repositories.Credit
                 var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId).CUSTOMERCODE.Trim();
                 //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
 
-                exposure = from a in context.EXTERNAL_ALERT
+                exposure = (from a in context.TBL_GLOBAL_EXPOSURE
                            where a.CUSTOMERID.Contains(customerCode)
                            select new CurrentCustomerExposure
                            {
                                facilityType = a.ADJFACILITYTYPE,
                                existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
-                               proposedLimit = a.LOANAMOUNTLCY ?? 0,
+                               proposedLimit = a.LOANAMOUNYLCY ?? 0,
                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                               outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                               outstandings = a.TOTALEXPOSURE ?? 0,
                                recommendedLimit = 0,
                                //PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
@@ -8663,9 +8670,9 @@ namespace FintrakBanking.Repositories.Credit
                                //prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                loanStatus = a.CBNCLASSIFICATION,
                                referenceNumber = a.REFERENCENUMBER,
-                           };
+                           }).ToList();
 
-                //if (exposure.Count() > 0) exposures.AddRange(exposure);
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
 
                 //exposure = from a in context.TBL_LOAN
                 //           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -13331,6 +13338,16 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
+            OfferLetterResponse offerLetters = new OfferLetterResponse();
+            var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
+            var staffFullName = staffDetail.FIRSTNAME + " " + staffDetail.LASTNAME;
+            offerLetters.Comment = model.comment;
+            //offerLetters.RequestId = RequestId;
+            //offerLetters.WorkflowStage = WorkflowStage;
+            offerLetters.ActionByName = staffFullName;
+
+           // ApiOfferLetterPosting(offerLetters, applicationRefNumber);
+
             //Audit Section ---------------------------
             //var audit = new TBL_AUDIT
             //{
@@ -13349,6 +13366,111 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
         #endregion
+
+        public async Task<ResponseMessage> ApiOfferLetterPosting(OfferLetterResponse model, string refNumber)
+        {
+            HttpClientHandler handler = new HttpClientHandler();
+            HttpClient httpClientInstance;
+
+            HttpClient client = new HttpClient(handler);
+            var inputJson = new JavaScriptSerializer().Serialize(model);
+            DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+            HttpResponseMessage response = null;
+            OfferLetterResponse responseApi = new OfferLetterResponse();
+            ResponseMessage responseMsg = null;
+            string responseJson = "";
+
+            string apiUrl = "api/CallBack/ReferBack";
+            try
+            {
+                var token = new AuthenticationHeaderValue("Basic", API_KEY);
+                handler.UseDefaultCredentials = true;
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                client.Timeout = TimeSpan.FromSeconds(180);
+                client.DefaultRequestHeaders.Authorization = token;
+
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                requestDatetime = DateTime.Now;
+
+                response = client.PostAsync(apiUrl, new StringContent(
+                                                new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                responseDateTime = DateTime.Now;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseApi = await response.Content.ReadAsAsync<OfferLetterResponse>();
+                    var res = new OfferLetterResponse
+                    {
+                        StatusCode = responseApi.StatusCode,
+                        RequestId = responseApi.RequestId,
+                        WorkflowStage = responseApi.WorkflowStage,
+
+                    };
+                    responseMsg = new ResponseMessage
+                    {
+                        APIOffetResponse = res,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+                else
+                {
+                    responseMsg = new ResponseMessage
+                    {
+                        APIResponse = null,
+                        APIStatus = response.IsSuccessStatusCode,
+                        Message = response
+                    };
+                }
+
+                responseJson = await response.Content.ReadAsStringAsync();
+
+                responseMsg.responseMessage = responseJson;
+                //handler.Dispose();
+                //client.Dispose();
+
+                return responseMsg;
+            }
+            catch (Exception ex)
+            {
+                var innerExceptionMessage = "";
+                if (ex.InnerException != null)
+                    innerExceptionMessage = ex.InnerException.Message;
+                //if (responseJson == string.Empty) responseJson = innerExceptionMessage;
+                throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+            }
+
+            finally
+            {
+                handler.Dispose();
+                client.Dispose();
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = apiUrl,
+                    LOGTYPEID = 14,
+                    REFERENCENUMBER = refNumber,
+                    REQUESTDATETIME = requestDatetime,
+                    REQUESTMESSAGE = inputJson,
+                    RESPONSEDATETIME = responseDateTime,
+                    RESPONSEMESSAGE = responseJson,
+                };
+
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                logContext.SaveChanges();
+            }
+
+        }
 
         #region Line Operations
 

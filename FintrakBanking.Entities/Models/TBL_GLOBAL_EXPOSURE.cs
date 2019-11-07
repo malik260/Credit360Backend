@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 namespace FintrakBanking.Entities.AlertReportingModels
 {
 
-    [Table("EXTERNAL_ALERT")]
-    public partial class EXTERNAL_ALERT
+    [Table("TBL_GLOBAL_EXPOSURE")]
+    public partial class TBL_GLOBAL_EXPOSURE
     {
 
         [Key]
@@ -22,6 +22,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public string ACCOUNTNUMBER { get; set; }
         public string ACCOUNTOFFICERCODE { get; set; }
         public string ACCOUNTOFFICERNAME { get; set; }
+        public string ALPHACODE { get; set; }
         public string PRODUCTCODE { get; set; }
         public string CURRENCYNAME { get; set; }
         public string PRODUCTNAME { get; set; }
@@ -54,7 +55,7 @@ namespace FintrakBanking.Entities.AlertReportingModels
         public decimal? PRINCIPALOUTSTANDINGBALTCY { get; set; }
         public decimal? PRINCIPALOUTSTANDINGBALLCY { get; set; }
         public decimal? LOANAMOUNYTCY { get; set; }
-        public decimal? LOANAMOUNTLCY { get; set; }
+        public decimal? LOANAMOUNYLCY { get; set; }
         public string CARDLIMIT { get; set; }
         public string FXRATE { get; set; }
         public float SHF { get; set; }

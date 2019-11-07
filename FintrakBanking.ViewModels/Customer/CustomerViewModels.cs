@@ -675,6 +675,7 @@ namespace FintrakBanking.ViewModels.Customer
         public string WorkflowStage { get; set; }
         public string ReasonForRejection { get; set; }
         public string ActionByName { get; set; }
+        public string Comment { get; set; }
         public Attachment Attachment { get; set; }
     }
 }

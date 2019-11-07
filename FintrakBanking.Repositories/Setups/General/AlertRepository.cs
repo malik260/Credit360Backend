@@ -58,7 +58,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<ExternalAlertViewModel> GetAllExternalAlerts()
         {
-            var alerts = (from a in context.EXTERNAL_ALERT
+            var alerts = (from a in context.TBL_GLOBAL_EXPOSURE
                           select new ExternalAlertViewModel
                           {
                               //id = a.id,
