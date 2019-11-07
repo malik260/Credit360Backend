@@ -136,6 +136,42 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="GetConsumerPrimeReport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerPrimeReportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetConsumerPrimeReportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerXscorePrimereport">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DataTicket" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ConsumerID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="consumerMergeList" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="SubscriberEnquiryEngineID" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="enquiryID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetConsumerXscorePrimereportResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetConsumerXscorePrimereportResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="GetConsumerBasicCreditReport">
         <s:complexType>
           <s:sequence>
@@ -345,6 +381,18 @@
   <wsdl:message name="GetConsumerBasicTraceReportSoapOut">
     <wsdl:part name="parameters" element="tns:GetConsumerBasicTraceReportResponse" />
   </wsdl:message>
+  <wsdl:message name="GetConsumerPrimeReportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetConsumerPrimeReport" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerPrimeReportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetConsumerPrimeReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerXscorePrimereportSoapIn">
+    <wsdl:part name="parameters" element="tns:GetConsumerXscorePrimereport" />
+  </wsdl:message>
+  <wsdl:message name="GetConsumerXscorePrimereportSoapOut">
+    <wsdl:part name="parameters" element="tns:GetConsumerXscorePrimereportResponse" />
+  </wsdl:message>
   <wsdl:message name="GetConsumerBasicCreditReportSoapIn">
     <wsdl:part name="parameters" element="tns:GetConsumerBasicCreditReport" />
   </wsdl:message>
@@ -439,6 +487,16 @@
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria for Consumer Basic Trace Report based on ConsumerID.</wsdl:documentation>
       <wsdl:input message="tns:GetConsumerBasicTraceReportSoapIn" />
       <wsdl:output message="tns:GetConsumerBasicTraceReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerPrimeReport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Return Full XML Nigeria for X-Score Prime Report based on ConsumerID</wsdl:documentation>
+      <wsdl:input message="tns:GetConsumerPrimeReportSoapIn" />
+      <wsdl:output message="tns:GetConsumerPrimeReportSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerXscorePrimereport">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Return Full XML Nigeria for Prime Report based on ConsumerID</wsdl:documentation>
+      <wsdl:input message="tns:GetConsumerXscorePrimereportSoapIn" />
+      <wsdl:output message="tns:GetConsumerXscorePrimereportSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetConsumerBasicCreditReport">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns Full XML Nigeria for Consumer Basic Credit Report based on ConsumerID.</wsdl:documentation>
@@ -553,6 +611,24 @@
     </wsdl:operation>
     <wsdl:operation name="GetConsumerBasicTraceReport">
       <soap:operation soapAction="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerBasicTraceReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerPrimeReport">
+      <soap:operation soapAction="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerPrimeReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerXscorePrimereport">
+      <soap:operation soapAction="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerXscorePrimereport" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -709,6 +785,24 @@
     </wsdl:operation>
     <wsdl:operation name="GetConsumerBasicTraceReport">
       <soap12:operation soapAction="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerBasicTraceReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerPrimeReport">
+      <soap12:operation soapAction="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerPrimeReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConsumerXscorePrimereport">
+      <soap12:operation soapAction="https://online.firstcentralcreditbureau.com/FirstCentralNigeriaWebService/GetConsumerXscorePrimereport" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

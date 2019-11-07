@@ -22,13 +22,15 @@ namespace FintrakBanking.Repositories.Risk
         private TBL_CORR_OFFICER_RATING currentRating;
         //private decimal totalExposure;
         //private int totalBorrowingCustomers;
-        private List<int> creditOfficerRoleIds = new List<int> { 6, 7, 9 };
+        private List<int> creditOfficerRoleIds;
+        //private List<int> creditOfficerRoleIds = new List<int> { 6, 7, 9, 48 };
 
         public CreditOfficerRiskRepository(
                 FinTrakBankingContext _context
             )
         {
             this.context = _context;
+            creditOfficerRoleIds = context.TBL_CREDIT_OFFICER_STAFFROLE.Select(s => s.STAFFROLEID).ToList();
         }
 
         private bool Init(string username)

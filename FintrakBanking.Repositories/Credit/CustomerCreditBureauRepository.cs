@@ -686,14 +686,14 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
+            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa?.PRODUCTACCOUNTNUMBER;
             chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
-            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
+            if (casa != null) referenceNumber = casa?.PRODUCTACCOUNTNUMBER;
 
-            chargeModel.feeAmount = chargeAmount;
-            chargeModel.referenceNumber = referenceNumber;
-            chargeModel.casaAccountId = casa.CASAACCOUNTID;
-            chargeModel.debitBusiness = searchInfo.debitBusiness;
+            //chargeModel.feeAmount = chargeAmount;
+            //chargeModel.referenceNumber = referenceNumber;
+            //chargeModel.casaAccountId = casa?.CASAACCOUNTID;
+            //chargeModel.debitBusiness = searchInfo.debitBusiness;
 
             if (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeBank || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && searchInfo.debitBusiness))
             {

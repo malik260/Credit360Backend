@@ -8644,52 +8644,74 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in customer)
             {
-                var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
-                exposure = from a in context.TBL_LOAN
-                           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                           join b in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                var customerCode = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == item.customerId).CUSTOMERCODE.Trim();
+                //var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+
+                exposure = from a in context.EXTERNAL_ALERT
+                           where a.CUSTOMERID.Contains(customerCode)
                            select new CurrentCustomerExposure
                            {
-                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               existingLimit = a.PRINCIPALAMOUNT,
-                               //proposedLimit = a.OUTSTANDINGPRINCIPAL,
-                               proposedLimit = 0,
+                               facilityType = a.ADJFACILITYTYPE,
+                               existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                               proposedLimit = a.LOANAMOUNTLCY ?? 0,
                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                               outstandings = a.OUTSTANDINGPRINCIPAL,
+                               outstandings = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                recommendedLimit = 0,
-                               PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               //PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               PastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                reviewDate = DateTime.Now,
-                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                               loanStatus = "Running",
-                               referenceNumber = a.LOANREFERENCENUMBER,
-                               applicationStatusId = b.APPLICATIONSTATUSID
+                               //prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                               loanStatus = a.CBNCLASSIFICATION,
+                               referenceNumber = a.REFERENCENUMBER,
                            };
 
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
-                exposure = (from a in context.TBL_LOAN_REVOLVING
-                            join b in context.TBL_LOAN_APPLICATION on a.LOANREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
-                            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                            select new CurrentCustomerExposure
-                            {
-                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                                existingLimit = a.OVERDRAFTLIMIT,
-                                //proposedLimit = a.OVERDRAFTLIMIT,
-                                proposedLimit = 0,
-                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,   
-                                outstandings = a.OVERDRAFTLIMIT,
-                                recommendedLimit = 0,
-                                casaAccountId = a.CASAACCOUNTID,
-                                PastDueObligationsInterest = a.PASTDUEINTEREST,
-                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
-                                reviewDate = DateTime.Now,
-                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                                loanStatus = "Running",
-                                referenceNumber = a.LOANREFERENCENUMBER,
-                                applicationStatusId = b.APPLICATIONSTATUSID
-                            }).ToList();
+                //exposure = from a in context.TBL_LOAN
+                //           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                //           join b in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                //           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                //           select new CurrentCustomerExposure
+                //           {
+                //               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                //               existingLimit = a.PRINCIPALAMOUNT,
+                //               //proposedLimit = a.OUTSTANDINGPRINCIPAL,
+                //               proposedLimit = 0,
+                //               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                //               outstandings = a.OUTSTANDINGPRINCIPAL,
+                //               recommendedLimit = 0,
+                //               PastDueObligationsInterest = a.PASTDUEINTEREST,
+                //               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                //               reviewDate = DateTime.Now,
+                //               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                //               loanStatus = "Running",
+                //               referenceNumber = a.LOANREFERENCENUMBER,
+                //               applicationStatusId = b.APPLICATIONSTATUSID
+                //           };
+
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+                //exposure = (from a in context.TBL_LOAN_REVOLVING
+                //            join b in context.TBL_LOAN_APPLICATION on a.LOANREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                //            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                //            select new CurrentCustomerExposure
+                //            {
+                //                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                //                existingLimit = a.OVERDRAFTLIMIT,
+                //                //proposedLimit = a.OVERDRAFTLIMIT,
+                //                proposedLimit = 0,
+                //                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,   
+                //                outstandings = a.OVERDRAFTLIMIT,
+                //                recommendedLimit = 0,
+                //                casaAccountId = a.CASAACCOUNTID,
+                //                PastDueObligationsInterest = a.PASTDUEINTEREST,
+                //                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                //                reviewDate = DateTime.Now,
+                //                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                //                loanStatus = "Running",
+                //                referenceNumber = a.LOANREFERENCENUMBER,
+                //                applicationStatusId = b.APPLICATIONSTATUSID
+                //            }).ToList();
                 //.Select(x =>
                 //{
                 //    //var availableBalance = transRepo.GetCASABalance((int)x.casaAccountId).availableBalance;
@@ -8706,7 +8728,7 @@ namespace FintrakBanking.Repositories.Credit
                 //    return x;
                 //});
 
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
                 exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
                            join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
@@ -8730,24 +8752,24 @@ namespace FintrakBanking.Repositories.Credit
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
 
 
-                var staggingLoan = from a in stgCon.STG_LOAN_MART
-                                   where a.CUST_ID == customCode
-                                   select new CurrentCustomerExposure
-                                   {
-                                       facilityType = a.SCHM_TYPE,
-                                       existingLimit = a.FAC_GRANT_AMT,
-                                       //proposedLimit = a.FINAL_BALANCE,
-                                       proposedLimit = 0,
-                                       recommendedLimit = 0,
-                                       outstandings = a.FINAL_BALANCE,
-                                       PastDueObligationsInterest = a.INT_DUE,
-                                       PastDueObligationsPrincipal = a.DAYS_PAST_DUE,// 0,
-                                       reviewDate = DateTime.Now,
-                                       prudentialGuideline = a.USER_CLASSIFICATION == "1" ? "Performing" : "Non-Performing",
-                                       loanStatus = "Running"
-                                   };
+                //var staggingLoan = from a in stgCon.STG_LOAN_MART
+                //                   where a.CUST_ID == customCode
+                //                   select new CurrentCustomerExposure
+                //                   {
+                //                       facilityType = a.SCHM_TYPE,
+                //                       existingLimit = a.FAC_GRANT_AMT,
+                //                       //proposedLimit = a.FINAL_BALANCE,
+                //                       proposedLimit = 0,
+                //                       recommendedLimit = 0,
+                //                       outstandings = a.FINAL_BALANCE,
+                //                       PastDueObligationsInterest = a.INT_DUE,
+                //                       PastDueObligationsPrincipal = a.DAYS_PAST_DUE,// 0,
+                //                       reviewDate = DateTime.Now,
+                //                       prudentialGuideline = a.USER_CLASSIFICATION == "1" ? "Performing" : "Non-Performing",
+                //                       loanStatus = "Running"
+                //                   };
 
-                exposures.Union(staggingLoan);
+                //exposures.Union(staggingLoan);
 
             }
 
