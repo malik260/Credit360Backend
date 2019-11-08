@@ -1483,12 +1483,14 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                            select new CurrentCustomerExposure
                            {
                                customerName = a.CUSTOMERNAME,
+                               customerCode = a.CUSTOMERID.Trim(),
                                facilityType = a.PRODUCTNAME,
                                approvedAmount = a.LOANAMOUNYLCY ?? 0,
                                currency = a.CURRENCYNAME,
                                exposureTypeId = int.Parse(a.EXPOSURETYPECODE),
                                adjFacilityType = a.ADJFACILITYTYPE,
                                productId = int.Parse(a.PRODUCTID),
+                               productName = a.PRODUCTNAME,
                                //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
                                //proposedLimit = a.LOANAMOUNYLCY ?? 0,
                                outstandings = a.TOTALEXPOSURE ?? 0,

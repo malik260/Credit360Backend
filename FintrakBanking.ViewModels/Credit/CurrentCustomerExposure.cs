@@ -14,6 +14,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal approvedAmount { get; set; }
         public int exposureTypeId { get; set; }
         public string adjFacilityType { get; set; }
+        public string customerCode { get; set; }
 
         public decimal PastDueObligationsPrincipal { get; set; }
         public decimal PastDueObligationsInterest { get; set; }
