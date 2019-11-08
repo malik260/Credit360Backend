@@ -115,14 +115,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
 
             //LiveRequestInvokerSoapClient crc = new LiveRequestInvokerSoapClient();
             ESBCRCService.LiveRequestInvokerSoapClient crc = new ESBCRCService.LiveRequestInvokerSoapClient();
-
-
             string dataPacket = crc.PostRequest(xml.ToString(),  userName,  password);
 
             if (dataPacket.Contains(DATA_PACKET))
             {
                 if (!dataPacket.Contains(ERROR)) {
-                    
                     
                     xdoc.LoadXml(dataPacket);
                     result = new CRCSearchResult
