@@ -2335,13 +2335,17 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var exposures = GetGroupExposurebyCustomerId(this.customerId, this.loanApplication.COMPANYID);
+            var directs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityType.Contains("LC") && !e.adjFacilityType.Contains("TRADE LOAN")).ToList();
+            var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityType.Contains("LC") && !e.adjFacilityType.Contains("TRADE LOAN")).ToList();
+            var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityType.Contains("LC")).ToList();
+            var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityType.Contains("TRADE LOAN")).ToList();
             var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerName);
             var n = 0;
             result = result + $@"
                 <table border=1 width=1200 align=center cellpadding=15 cellspacing=0>
                     <tr>
-                        <th><b><h2>Customer Name</h2></b></th>
-                        <th><b><h2>Facility Type</h2></b></th>
+                        <th><b><h2>Related Obligors(domestic)</h2></b></th>
+                        <th><b><h2>Facility Name</h2></b></th>
                         <th><b><h2>Currency</h2></b></th>
                         <th><b><h2>Approved Amount</h2></b></th>
                         <th><b><h2>Outstanding Exposure</h2></b></th>
@@ -2349,26 +2353,63 @@ namespace FintrakBanking.Repositories.Credit
                         <th><b><h2>End Date</h2></b></th>
                     </tr>
                 ";
-            foreach (var customerGroups in exposureGroupsByCustomer)
+            if (directs.Count() > 0)
             {
-                var customerName = customerGroups.Key;
-                var facilities = customerGroups.GroupBy(c => c.facilityType.Trim());
-                foreach (var facility in facilities)
+                result = result + $@"<tr><td>Direct Facilities:</td></tr>";
+
+                var directsGroup = directs.GroupBy(f => f.productId);
+                foreach (var product in directsGroup)
                 {
-                    ++n;
-                    result = result + $@"
+                        var facility = product.FirstOrDefault().productName;
+                        var currency = "Naira";
+                        //var currentAmount = curr.Sum(p => p.CONTINGENTAMOUNT);
+                        //var currentAmountForLLLImpact = curr.Sum(p => p.CONTINGENTAMOUNT * (decimal)p.EXCHANGERATE);
+                        var currentAmount = product.Sum(p => p.approvedAmount);
+                        var currentAmountForLLLImpact = curr.Sum(p => p.APPROVEDAMOUNT * (decimal)p.EXCHANGERATE);
+                        var proposedAmountTest = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
+                                                  f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.PROPOSEDAMOUNT)) ?? 0;
+                        var proposedAmountTestForLLLImpact = (this.loanApplication.TBL_LOAN_APPLICATION_DETAIL.Where(f => curr.First().TBL_PRODUCT.PRODUCTID ==
+                                                  f.TBL_PRODUCT.PRODUCTID && f.TBL_CURRENCY.CURRENCYID == curr.First().CURRENCYID)?.Sum(p => p.PROPOSEDAMOUNT * (decimal)p.EXCHANGERATE)) ?? 0;
+                        var proposedAmount = (proposedAmountTest > 0) ? proposedAmountTest + currentAmount : currentAmount;
+                        var proposedAmountForLLLImpact = (proposedAmountTestForLLLImpact > 0) ? proposedAmountTestForLLLImpact + currentAmountForLLLImpact : currentAmountForLLLImpact;
+                        var LLLImpact = proposedAmountForLLLImpact / 3;
+                        var change = (proposedAmount > 0) ? proposedAmount - currentAmount : 0;
+                        var tenor = curr.Sum(p => p.APPROVEDTENOR);
+                        //var tenor = curr.Sum(p => p.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+
+                        result = result + $@"
                      <tr>
-                        <td>{customerName}</td>
-                        <td>{facility.Key}</td>
-                        <td>{facility.FirstOrDefault()?.currency}</td>
-                        <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.approvedAmount))}</td>
-                        <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.outstandings))}</td>
-                        <td>{facility.Max(f => f.bookingDate).ToShortDateString()}</td>
-                        <td>{facility.Max(f => f.maturityDate).ToShortDateString()}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", proposedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", change)}</td>
+                        <td>{(tenor / 30)}</td>
                     </tr>
-                ";
+                    ";
                 }
             }
+            //foreach (var customerGroups in exposureGroupsByCustomer)
+            //{
+            //    var customerName = customerGroups.Key;
+            //    var facilities = customerGroups.GroupBy(c => c.facilityType.Trim());
+            //    foreach (var facility in facilities)
+            //    {
+            //        ++n;
+            //        result = result + $@"
+            //         <tr>
+            //            <td>{customerName}</td>
+            //            <td>{facility.Key}</td>
+            //            <td>{facility.FirstOrDefault()?.currency}</td>
+            //            <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.approvedAmount))}</td>
+            //            <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.outstandings))}</td>
+            //            <td>{facility.Max(f => f.bookingDate).ToShortDateString()}</td>
+            //            <td>{facility.Max(f => f.maturityDate).ToShortDateString()}</td>
+            //        </tr>
+            //    ";
+            //    }
+            //}
             result = result + $@"
                     {GetTotalGroupExposureMarkup()}
                 ";
