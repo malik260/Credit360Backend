@@ -908,7 +908,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 //if(!bAndGRequestSent) throw new ConditionNotMetException("You have not sent any request to legal to validate this B&G.");
             }
-
+            entity.casaAccountId2 = (entity.casaAccountId2 == 0 || entity.casaAccountId2 == null) ? entity.casaAccountId : entity.casaAccountId2;
             var loanReferenceNumber = GenerateLoanReferenceNumber(application.BRANCHID, entity.productId, (short)LoanSystemTypeEnum.ContingentLiability);
 
             var data = new TBL_LOAN_CONTINGENT
@@ -917,6 +917,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = entity.customerId,
                 PRODUCTID = request.PRODUCTID,
                 CASAACCOUNTID = entity.casaAccountId,
+                CASAACCOUNTID2 = entity.casaAccountId2,
                 BRANCHID = application.BRANCHID, //entity.branchId,
                 CURRENCYID = contingentLoanInput.currencyId,
                 EXCHANGERATE = currentExchangeRate,
@@ -15082,6 +15083,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        //private 
         //public bool getNextApprovalLevel(ApprovalViewModel model)
         //{
         //    int staffId = model.staffId;
