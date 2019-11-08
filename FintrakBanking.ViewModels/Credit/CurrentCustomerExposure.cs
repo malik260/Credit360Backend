@@ -27,7 +27,6 @@ namespace FintrakBanking.ViewModels.Credit
         public short applicationStatusId { get; set; }
         public string currency { get; set; }
         public DateTime maturityDate { get; set; }
-        public DateTime bookingDate { get; set; }
         public decimal? totalBankExposure { get; set; }
         public decimal? companyLimit { get; set; }
     }
