@@ -262,6 +262,27 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
+        public string GetGeneratedCFLOfferLetter(string applicationRefNumber, string StatusCode, string RequestId, string WorkflowStage, string ReasonForRejection, string ActionByName)
+        {
+            try
+            {
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+                    var productClassId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x => x.PRODUCTCLASSID).FirstOrDefault();
+                    var productClassProcessId = context.TBL_LOAN_APPLICATION.Where(c => c.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x => x.PRODUCT_CLASS_PROCESSID).FirstOrDefault();
+                    return GetProductSpecificTemplateCFL(productClassProcessId, productClassId, applicationRefNumber,
+                       StatusCode, RequestId, WorkflowStage, ReasonForRejection, ActionByName);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
         public int GetLoanApplicationIdByReferenceNumber(string applicationRefNumber)
         {
             int loanAppId;
@@ -386,6 +407,51 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
 
             
+        }
+
+        public string GetProductSpecificTemplateCFL(short? productClassProcessId, short? productClassId, string applicationRefNumber,
+                       string StatusCode, string RequestId, string WorkflowStage, string ReasonForRejection, string ActionByName)
+            {
+
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+            var links = new
+            {
+                General = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage="+ WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                IDF = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                FirstEdu = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                FirstTrader = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                BondsAndGuarantees = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                ImportFinance = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                CashBackedOnly = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+                InvoiceDiscountingFacility = reportPath + "Credit/OfferLetterGeneration/CFLOfferLetter.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&StatusCode=" + StatusCode + "&RequestId=" + RequestId + "&WorkflowStage=" + WorkflowStage + "&ReasonForRejection=" + ReasonForRejection + "&ActionByName=" + ActionByName,
+            };
+
+            if (productClassProcessId == (short)ProductClassProcessEnum.CAMBased)
+            {
+                return links.General;
+            }
+            else
+            {
+                switch (productClassId)
+                {
+                    case (short)ProductClassEnum.BondAndGuarantees:
+                        return links.BondsAndGuarantees;
+
+                    case (short)ProductClassEnum.CashCollaterized:
+                        return links.CashBackedOnly;
+
+                    case (short)ProductClassEnum.InvoiceDiscountingFacility:
+                        return links.InvoiceDiscountingFacility;
+
+                    default:
+                        return links.General;
+                }
+
+
+            }
+
+
         }
 
         #endregion Offer Letter Generation
