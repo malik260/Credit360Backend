@@ -785,7 +785,7 @@
 
                 responseTime = DateTime.Now;
 
-                List<CustomerTurnoverViewModelAPI> result = null;
+                List<CustomerTurnoverGroupViewModel> result = null;
 
                 List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
 
@@ -793,13 +793,13 @@
 
                 if (response.IsSuccessStatusCode)
                 {
-                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
+                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverGroupViewModel>>();
 
                     var responseData = await response.Content.ReadAsStringAsync();
                     JObject responseDataJsonString = JObject.Parse(responseData);
 
                     var data = responseDataJsonString["data"].ToString();
-                    var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverViewModelAPI>>(data);
+                    var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverGroupViewModel>>(data);
 
 
                     //var jsonString = await response.Content.ReadAsStringAsync();
@@ -808,51 +808,79 @@
 
                     foreach (var item in apiData)
                     {
-
-                        decimal amc = 0;
-                        Decimal.TryParse(item.amc.Replace(",", ""), out amc);
-
-                        decimal vat = 0;
-                        Decimal.TryParse(item.vat.Replace(",", ""), out vat);
-
-                        decimal management_Fee = 0;
-                        Decimal.TryParse(item.management_Fee.Replace(",", ""), out management_Fee);
-
-                        decimal commitment_Fees = 0;
-                        Decimal.TryParse(item.commitment_Fees.Replace(",", ""), out commitment_Fees);
-
-                        decimal com_Contigent_Liab = 0;
-                        Decimal.TryParse(item.com_Contigent_Liab.Replace(",", ""), out com_Contigent_Liab);
-
-                        decimal lc_Commission = 0;
-                        Decimal.TryParse(item.lc_Commission.Replace(",", ""), out lc_Commission);
-
-                        decimal sms_Alert = 0;
-                        Decimal.TryParse(item.sms_Alert.Replace(",", ""), out lc_Commission);
-
-                        accounts.Add(new CustomerTurnoverViewModel
+                        if (item.Account[0].cust_Id != null)
                         {
-                            accountNumber = item.foracid,
-                            customerCode = item.cust_Id,
-                            period = item.period,
-                            productName = item.schm_Type,
-                            max_Credit_Balance = item.max_Credit_Balance,
-                            max_Debit_Balance = item.max_Debit_Balance,
-                            min_Credit_Balance = item.min_Credit_Balance,
-                            min_Debit_Balance = item.min_Debit_Balance,
-                            credit_Turnover = item.credit_Turnover,
-                            debit_Turnover = item.debit_Turnover,
-                            amc = amc,
-                            vat = vat,
-                            management_Fee = management_Fee,
-                            commitment_Fees = commitment_Fees,
-                            com_Contigent_Liab = com_Contigent_Liab,
-                            lc_Commission = lc_Commission,
-                            sms_Alert = sms_Alert,
-                            month = item.month,
-                            year = item.year,
 
-                        });
+                            decimal amc = 0;
+                            Decimal.TryParse(item.Account[0].amc.Replace(",", ""), out amc);
+
+                            decimal vat = 0;
+                            Decimal.TryParse(item.Account[0].vat.Replace(",", ""), out vat);
+
+                            decimal management_Fee = 0;
+                            Decimal.TryParse(item.Account[0].management_Fee.Replace(",", ""), out management_Fee);
+
+                            decimal commitment_Fees = 0;
+                            Decimal.TryParse(item.Account[0].commitment_Fees.Replace(",", ""), out commitment_Fees);
+
+                            decimal com_Contigent_Liab = 0;
+                            Decimal.TryParse(item.Account[0].com_Contigent_Liab.Replace(",", ""), out com_Contigent_Liab);
+
+                            decimal lc_Commission = 0;
+                            Decimal.TryParse(item.Account[0].lc_Commission.Replace(",", ""), out lc_Commission);
+
+                            decimal sms_Alert = 0;
+                            Decimal.TryParse(item.Account[0].sms_Alert.Replace(",", ""), out lc_Commission);
+
+
+                            decimal max_Credit_Balance = 0;
+                            Decimal.TryParse(item.Account[0].max_Credit_Balance.Replace(",", ""), out max_Credit_Balance);
+
+                            decimal max_Debit_Balance = 0;
+                            Decimal.TryParse(item.Account[0].max_Debit_Balance.Replace(",", ""), out max_Debit_Balance);
+
+                            decimal min_Credit_Balance = 0;
+                            Decimal.TryParse(item.Account[0].min_Credit_Balance.Replace(",", ""), out min_Credit_Balance);
+
+                            decimal min_Debit_Balance = 0;
+                            Decimal.TryParse(item.Account[0].min_Debit_Balance.Replace(",", ""), out min_Debit_Balance);
+
+                            decimal credit_Turnover = 0;
+                            Decimal.TryParse(item.Account[0].credit_Turnover.Replace(",", ""), out credit_Turnover);
+
+                            decimal debit_Turnover = 0;
+                            Decimal.TryParse(item.Account[0].debit_Turnover.Replace(",", ""), out debit_Turnover);
+
+                            int month1 = 0;
+                            int.TryParse(item.Account[0].month.Replace(",", ""), out month1);
+
+                            int year1 = 0;
+                            int.TryParse(item.Account[0].debit_Turnover.Replace(",", ""), out year1);
+
+                            accounts.Add(new CustomerTurnoverViewModel
+                            {
+                                accountNumber = item.Account[0].foracid,
+                                customerCode = item.Account[0].cust_Id,
+                                period = item.Account[0].period,
+                                productName = item.Account[0].schm_Type,
+                                max_Credit_Balance = max_Credit_Balance,
+                                max_Debit_Balance = max_Debit_Balance,
+                                min_Credit_Balance = min_Credit_Balance,
+                                min_Debit_Balance = min_Debit_Balance,
+                                credit_Turnover = credit_Turnover,
+                                debit_Turnover = debit_Turnover,
+                                amc = amc,
+                                vat = vat,
+                                management_Fee = management_Fee,
+                                commitment_Fees = commitment_Fees,
+                                com_Contigent_Liab = com_Contigent_Liab,
+                                lc_Commission = lc_Commission,
+                                sms_Alert = sms_Alert,
+                                month = month1,
+                                year = year1,
+
+                            });
+                        }
                     }
 
                 }
@@ -935,6 +963,13 @@
                         Decimal.TryParse(item.float_Charge.Replace(",", ""), out float_Charge);
                         decimal interest = 0;
                         Decimal.TryParse(item.interest.Replace(",", ""), out interest);
+
+                        int month1 = 0;
+                        int.TryParse(item.month.Replace(",", ""), out month1);
+
+                        int year1 = 0;
+                        int.TryParse(item.debit_Turnover.Replace(",", ""), out year1);
+
                         accounts.Add(new CustomerTurnoverViewModel
                         {
                             accountNumber = item.foracid,
@@ -943,8 +978,8 @@
                             productName = item.schm_Type,
                             interest = interest,
                             float_Charge = float_Charge,
-                            month = item.month,
-                            year = item.year,
+                            month = month1,
+                            year = year1,
                         });
                     }
 

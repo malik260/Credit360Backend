@@ -1476,92 +1476,115 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
             foreach (var item in customer)
             {
-                var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
-                exposure = from a in context.TBL_LOAN
-                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                var customerCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+
+                exposure = from a in context.TBL_GLOBAL_EXPOSURE
+                           where a.CUSTOMERID.Contains(customerCode)
                            select new CurrentCustomerExposure
                            {
-                               customerName = c.FIRSTNAME + c.LASTNAME,
-                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               existingLimit = a.PRINCIPALAMOUNT,
-                               //proposedLimit = a.OUTSTANDINGPRINCIPAL,
-                               proposedLimit = 0,
-                               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                               approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                               outstandings = a.OUTSTANDINGPRINCIPAL + a.OUTSTANDINGINTEREST,
-                               recommendedLimit = 0,
-                               PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               customerName = a.CUSTOMERNAME,
+                               facilityType = a.PRODUCTNAME,
+                               approvedAmount = a.LOANAMOUNYLCY ?? 0,
+                               currency = a.CURRENCYNAME,
+                               //existingLimit = a.PRINCIPALOUTSTANDINGBALLCY ?? 0,
+                               //proposedLimit = a.LOANAMOUNYLCY ?? 0,
+                               outstandings = a.TOTALEXPOSURE ?? 0,
+                               PastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                reviewDate = DateTime.Now,
-                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                               loanStatus = "Running",
-                               referenceNumber = a.LOANREFERENCENUMBER,
-                               applicationStatusId = b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
-                               currency = a.TBL_CURRENCY.CURRENCYNAME,
-                               maturityDate = a.MATURITYDATE
+                               bookingDate = DateTime.Parse(a.BOOKINGDATE),
+                               maturityDate = DateTime.Parse(a.MATURITYDATE),
+                               loanStatus = a.CBNCLASSIFICATION,
+                               referenceNumber = a.REFERENCENUMBER,
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
 
-                exposure = (from a in context.TBL_LOAN_REVOLVING
-                            join b in context.TBL_LOAN_APPLICATION on a.LOANREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
-                            join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                            select new CurrentCustomerExposure
-                            {
-                                customerName = c.FIRSTNAME + c.LASTNAME,
-                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                                existingLimit = a.OVERDRAFTLIMIT,
-                                //proposedLimit = a.OVERDRAFTLIMIT,
-                                proposedLimit = 0,
-                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,   
-                                approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                                outstandings = a.OVERDRAFTLIMIT,
-                                recommendedLimit = 0,
-                                casaAccountId = a.CASAACCOUNTID,
-                                PastDueObligationsInterest = a.PASTDUEINTEREST,
-                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
-                                reviewDate = DateTime.Now,
-                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                                loanStatus = "Running",
-                                referenceNumber = a.LOANREFERENCENUMBER,
-                                applicationStatusId = b.APPLICATIONSTATUSID,
-                                currency = a.TBL_CURRENCY.CURRENCYNAME,
-                                maturityDate = a.MATURITYDATE
-                            }).ToList();
 
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
+                //exposure = from a in context.TBL_LOAN
+                //           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                //           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                //           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                //           select new CurrentCustomerExposure
+                //           {
+                //               customerName = c.FIRSTNAME + c.LASTNAME,
+                //               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                //               existingLimit = a.PRINCIPALAMOUNT,
+                //               //proposedLimit = a.OUTSTANDINGPRINCIPAL,
+                //               proposedLimit = 0,
+                //               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                //               approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                //               outstandings = a.OUTSTANDINGPRINCIPAL + a.OUTSTANDINGINTEREST,
+                //               recommendedLimit = 0,
+                //               PastDueObligationsInterest = a.PASTDUEINTEREST,
+                //               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                //               reviewDate = DateTime.Now,
+                //               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                //               loanStatus = "Running",
+                //               referenceNumber = a.LOANREFERENCENUMBER,
+                //               applicationStatusId = b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID,
+                //               currency = a.TBL_CURRENCY.CURRENCYNAME,
+                //               maturityDate = a.MATURITYDATE
+                //           };
 
-                exposure = (from a in context.TBL_LOAN_CONTINGENT
-                            join b in context.TBL_LOAN_APPLICATION on a.LOANREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
-                            join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                            select new CurrentCustomerExposure
-                            {
-                                customerName = c.FIRSTNAME + c.LASTNAME,
-                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                                existingLimit = a.CONTINGENTAMOUNT,
-                                //proposedLimit = a.OVERDRAFTLIMIT,
-                                proposedLimit = 0,
-                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,   
-                                approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                                outstandings = a.CONTINGENTAMOUNT,
-                                recommendedLimit = 0,
-                                casaAccountId = a.CASAACCOUNTID,
-                                PastDueObligationsInterest = a.CONTINGENTAMOUNT,
-                                PastDueObligationsPrincipal = a.CONTINGENTAMOUNT,
-                                reviewDate = DateTime.Now,
-                                //prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                                loanStatus = "Running",
-                                referenceNumber = a.LOANREFERENCENUMBER,
-                                applicationStatusId = b.APPLICATIONSTATUSID,
-                                currency = a.TBL_CURRENCY.CURRENCYNAME,
-                                maturityDate = a.MATURITYDATE
-                            }).ToList();
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
+                //exposure = (from a in context.TBL_LOAN_REVOLVING
+                //            join b in context.TBL_LOAN_APPLICATION on a.LOANREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                //            join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                //            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                //            select new CurrentCustomerExposure
+                //            {
+                //                customerName = c.FIRSTNAME + c.LASTNAME,
+                //                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                //                existingLimit = a.OVERDRAFTLIMIT,
+                //                //proposedLimit = a.OVERDRAFTLIMIT,
+                //                proposedLimit = 0,
+                //                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,   
+                //                approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                //                outstandings = a.OVERDRAFTLIMIT,
+                //                recommendedLimit = 0,
+                //                casaAccountId = a.CASAACCOUNTID,
+                //                PastDueObligationsInterest = a.PASTDUEINTEREST,
+                //                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                //                reviewDate = DateTime.Now,
+                //                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                //                loanStatus = "Running",
+                //                referenceNumber = a.LOANREFERENCENUMBER,
+                //                applicationStatusId = b.APPLICATIONSTATUSID,
+                //                currency = a.TBL_CURRENCY.CURRENCYNAME,
+                //                maturityDate = a.MATURITYDATE
+                //            }).ToList();
+
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+                //exposure = (from a in context.TBL_LOAN_CONTINGENT
+                //            join b in context.TBL_LOAN_APPLICATION on a.LOANREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
+                //            join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                //            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                //            select new CurrentCustomerExposure
+                //            {
+                //                customerName = c.FIRSTNAME + c.LASTNAME,
+                //                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                //                existingLimit = a.CONTINGENTAMOUNT,
+                //                //proposedLimit = a.OVERDRAFTLIMIT,
+                //                proposedLimit = 0,
+                //                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,   
+                //                approvedAmount = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                //                outstandings = a.CONTINGENTAMOUNT,
+                //                recommendedLimit = 0,
+                //                casaAccountId = a.CASAACCOUNTID,
+                //                PastDueObligationsInterest = a.CONTINGENTAMOUNT,
+                //                PastDueObligationsPrincipal = a.CONTINGENTAMOUNT,
+                //                reviewDate = DateTime.Now,
+                //                //prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                //                loanStatus = "Running",
+                //                referenceNumber = a.LOANREFERENCENUMBER,
+                //                applicationStatusId = b.APPLICATIONSTATUSID,
+                //                currency = a.TBL_CURRENCY.CURRENCYNAME,
+                //                maturityDate = a.MATURITYDATE
+                //            }).ToList();
+
+                //if (exposure.Count() > 0) exposures.AddRange(exposure);
 
                 //exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
                 //           join b in context.TBL_LOAN_APPLICATION on a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER equals b.APPLICATIONREFERENCENUMBER
