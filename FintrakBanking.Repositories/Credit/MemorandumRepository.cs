@@ -2335,40 +2335,180 @@ namespace FintrakBanking.Repositories.Credit
         {
             var result = String.Empty;
             var exposures = GetGroupExposurebyCustomerId(this.customerId, this.loanApplication.COMPANYID);
-            var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerName);
+            var directs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && !e.adjFacilityType.Contains("LC") && !e.adjFacilityType.Contains("TRADE LOAN")).ToList();
+            var contingents = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && !e.adjFacilityType.Contains("LC") && !e.adjFacilityType.Contains("TRADE LOAN")).ToList();
+            var lcs = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Direct && e.adjFacilityType.Contains("LC")).ToList();
+            var tradeLoans = exposures.Where(e => e.exposureTypeId == (int)ExposureTypeEnum.Contingent && e.adjFacilityType.Contains("TRADE LOAN")).ToList();
+            var exposureGroupsByCustomer = exposures.GroupBy(e => e.customerCode);
             var n = 0;
             result = result + $@"
                 <table border=1 width=1200 align=center cellpadding=15 cellspacing=0>
                     <tr>
-                        <th><b><h2>Customer Name</h2></b></th>
-                        <th><b><h2>Facility Type</h2></b></th>
+                        <th><b><h2>Related Obligors(domestic)</h2></b></th>
+                        <th><b><h2>Facility Name</h2></b></th>
+                        <th><b><h2>LLL Impact (NGN)</h2></b></th>
                         <th><b><h2>Currency</h2></b></th>
                         <th><b><h2>Approved Amount</h2></b></th>
                         <th><b><h2>Outstanding Exposure</h2></b></th>
-                        <th><b><h2>Start Date</h2></b></th>
+                        <th><b><h2>[O/S] Ccy</h2></b></th>
                         <th><b><h2>End Date</h2></b></th>
                     </tr>
                 ";
-            foreach (var customerGroups in exposureGroupsByCustomer)
+            if (directs.Count() > 0)
             {
-                var customerName = customerGroups.Key;
-                var facilities = customerGroups.GroupBy(c => c.facilityType.Trim());
-                foreach (var facility in facilities)
+                result = result + $@"<tr><td>Direct Facilities:</td></tr>";
+                var customers = directs.GroupBy(e => e.customerCode);
+                foreach(var cust in customers)
                 {
-                    ++n;
-                    result = result + $@"
+                    var directsGroup = cust.GroupBy(f => f.productId);
+                    foreach (var product in directsGroup)
+                    {
+                        var facility = product.FirstOrDefault().productName;
+                        var currency = "Naira";
+                        var currentAmount = product.Sum(p => p.outstandings);
+                        var approvedAmount = product.Sum(p => p.approvedAmount);
+                        var amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                        var LLLImpact = amountForLLL;
+                        //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                        result = result + $@"
                      <tr>
-                        <td>{customerName}</td>
-                        <td>{facility.Key}</td>
-                        <td>{facility.FirstOrDefault()?.currency}</td>
-                        <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.approvedAmount))}</td>
-                        <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.outstandings))}</td>
-                        <td>{facility.Max(f => f.bookingDate).ToShortDateString()}</td>
-                        <td>{facility.Max(f => f.maturityDate).ToShortDateString()}</td>
+                        <td>{product.FirstOrDefault().customerName}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{currency}</td>
+                        <td>{product.Max(p => p.maturityDate)}</td>
                     </tr>
-                ";
+                    ";
+                    }
                 }
             }
+
+            if (contingents.Count() > 0)
+            {
+                result = result + $@"<tr><td>Contingent Facilities:</td></tr>";
+                var customers = contingents.GroupBy(e => e.customerCode);
+                foreach (var cust in customers)
+                {
+                    var contingentsGroup = cust.GroupBy(f => f.productId);
+                    foreach (var product in contingentsGroup)
+                    {
+                        var facility = product.FirstOrDefault().productName;
+                        var currency = "Naira";
+                        var currentAmount = product.Sum(p => p.outstandings);
+                        var approvedAmount = product.Sum(p => p.approvedAmount);
+                        var amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                        var LLLImpact = (amountForLLL / 3);
+                        //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                        result = result + $@"
+                     <tr>
+                        <td>{product.FirstOrDefault().customerName}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{currency}</td>
+                        <td>{product.Max(p => p.maturityDate)}</td>
+                    </tr>
+                    ";
+                    }
+                }
+            }
+
+            if (tradeLoans.Count() > 0 || lcs.Count() > 0)
+            {
+                result = result + $@"<tr><td>(Import Finance Facilities)</td></tr>";
+                if (lcs.Count() > 0)
+                {
+                    result = result + $@"<tr><td>(Contingent)</td></tr>";
+                    var customers = lcs.GroupBy(e => e.customerCode);
+                    foreach (var cust in customers)
+                    {
+                        var contingentsGroup = cust.GroupBy(f => f.productId);
+                        foreach (var product in contingentsGroup)
+                        {
+                            var facility = product.FirstOrDefault().productName;
+                            var currency = "Naira";
+                            var currentAmount = product.Sum(p => p.outstandings);
+                            var approvedAmount = product.Sum(p => p.approvedAmount);
+                            var amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                            var LLLImpact = amountForLLL;
+                            //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                            result = result + $@"
+                     <tr>
+                        <td>{product.FirstOrDefault().customerName}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{currency}</td>
+                        <td>{product.Max(p => p.maturityDate)}</td>
+                    </tr>
+                    ";
+                        }
+                    }
+                }
+
+                if (tradeLoans.Count() > 0)
+                {
+                    result = result + $@"<tr><td>(Direct)</td></tr>";
+                    var customers = tradeLoans.GroupBy(e => e.customerCode);
+                    foreach (var cust in customers)
+                    {
+                        var directsGroup = cust.GroupBy(f => f.productId);
+                        foreach (var product in directsGroup)
+                        {
+                            var facility = product.FirstOrDefault().productName;
+                            var currency = "Naira";
+                            var currentAmount = product.Sum(p => p.outstandings);
+                            var approvedAmount = product.Sum(p => p.approvedAmount);
+                            var amountForLLL = (currentAmount >= approvedAmount) ? currentAmount : approvedAmount;
+                            var LLLImpact = amountForLLL;
+                            //var tenor = curr.Sum(p => p.APPROVEDTENOR);
+
+                            result = result + $@"
+                     <tr>
+                        <td>{product.FirstOrDefault().customerName}</td>
+                        <td>{facility}</td>
+                        <td>{String.Format("{0:0,0.00}", LLLImpact)}</td>
+                        <td>{currency}</td>
+                        <td>{String.Format("{0:0,0.00}", approvedAmount)}</td>
+                        <td>{String.Format("{0:0,0.00}", currentAmount)}</td>
+                        <td>{currency}</td>
+                        <td>{product.Max(p => p.maturityDate)}</td>
+                    </tr>
+                    ";
+                        }
+                    }
+                }
+            }
+            //foreach (var customerGroups in exposureGroupsByCustomer)
+            //{
+            //    var customerName = customerGroups.Key;
+            //    var facilities = customerGroups.GroupBy(c => c.facilityType.Trim());
+            //    foreach (var facility in facilities)
+            //    {
+            //        ++n;
+            //        result = result + $@"
+            //         <tr>
+            //            <td>{customerName}</td>
+            //            <td>{facility.Key}</td>
+            //            <td>{facility.FirstOrDefault()?.currency}</td>
+            //            <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.approvedAmount))}</td>
+            //            <td>{String.Format("{0:0,0.00}", facility.Sum(f => f.outstandings))}</td>
+            //            <td>{facility.Max(f => f.bookingDate).ToShortDateString()}</td>
+            //            <td>{facility.Max(f => f.maturityDate).ToShortDateString()}</td>
+            //        </tr>
+            //    ";
+            //    }
+            //}
             result = result + $@"
                     {GetTotalGroupExposureMarkup()}
                 ";
@@ -2388,14 +2528,15 @@ namespace FintrakBanking.Repositories.Credit
                 outstandings = exposures.Sum(t => t.outstandings),
                 approvedAmount = exposures.Sum(t => t.approvedAmount),
             };
-            
             result = result + $@"
                      <tr>
                         <td><b>{totalExposure.facilityType}</b></td>
                         <td>&nbsp;</td>
+                        <td>&nbsp;</td>
                         <td><b>{exposures.FirstOrDefault()?.currency}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalExposure.approvedAmount)}</b></td>
                         <td><b>{String.Format("{0:0,0.00}", totalExposure.outstandings)}</b></td>
+                        <td><b>{exposures.FirstOrDefault()?.currency}</b></td>
                         <td>&nbsp;</td>
                     </tr>
                 ";

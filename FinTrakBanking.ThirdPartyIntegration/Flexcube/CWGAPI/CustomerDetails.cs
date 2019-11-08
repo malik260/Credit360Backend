@@ -752,7 +752,7 @@
                 var year = DateTime.Now.Year;
                 var searchDate = "0" + month + "-" + year;
                 getAPIURLSettings("CustomerTransactions");
-
+                API_URL = "http://10.111.13.47:7002/fintrakapi/v1/";
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
@@ -883,7 +883,7 @@
                 var year = DateTime.Now.Year;
                 var searchDate = "0"+month + "-" + year;
                 getAPIURLSettings("CustomerLoanInterestDetails");
-
+                API_URL = "http://10.111.13.47:7002/fintrakapi/v1/";
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
 
