@@ -599,48 +599,33 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loanApplicationDetail == null)
             {
-                this.loanApplication = context.TBL_LOAN_APPLICATION.Find(targetId);
-                //this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
                 
+                this.loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(targetId);
+                this.loanApplication = loanApplicationDetail.TBL_LOAN_APPLICATION;
 
-                //this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
-                //this.customerExposure = CustomerExposureMarkup();
+                this.customerIds = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId).Select(x => new CustomerExposure { customerId = x.CUSTOMERID }).Distinct().ToList();
+                this.customerExposure = CustomerExposureMarkup();
             }
 
             var chargeFeeId = context.TBL_LOAN_APPLICATION_DETL_FEE.Find(targetId).CHARGEFEEID;
-
-            //this.documentatonDeferralWaiverData = DocumentationDeferralWaiverFormHtml();
             string customerName = String.Empty;
             if (loanApplication.CUSTOMERGROUPID != null) this.customerName = loanApplication.TBL_CUSTOMER_GROUP.GROUPNAME;
             if (loanApplication.CUSTOMERID != null) this.customerName = loanApplication.TBL_CUSTOMER.FIRSTNAME + " " + loanApplication.TBL_CUSTOMER.MIDDLENAME + " " + loanApplication.TBL_CUSTOMER.LASTNAME;
 
             this.branchName = loanApplication.TBL_BRANCH.BRANCHNAME;
             this.locationName = loanApplication.TBL_BRANCH.ADDRESSLINE1 + " " + loanApplication.TBL_BRANCH.ADDRESSLINE2;
-            //this.currentAccountNo = context.TBL_CASA.Where(O => O.CASAACCOUNTID == loanApplicationDetail.CASAACCOUNTID).Select(O => O.PRODUCTACCOUNTNUMBER)?.FirstOrDefault();
             this.facilityType = context.TBL_PRODUCT.Where(O => O.PRODUCTID == loanApplicationDetail.APPROVEDPRODUCTID)?.Select(O => O.PRODUCTNAME)?.FirstOrDefault();
-            //this.drawdownAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
-            //this.tenor = loanApplicationDetail?.APPROVEDTENOR;
-            //this.moratorium = loanApplicationDetail.MORATORIUMDURATION;
             this.principalRepayment = "";
-            //this.interestRepayment = loanApplicationDetail.REPAYMENTTERMS;
-            //this.interestRate = loanApplicationDetail.APPROVEDINTERESTRATE;
-            // this.processingFee = ""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
             this.processingFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); //""; //context.TBL_LOAN_APPLICATION_DETL_FEE.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).Select(O => O.TBL_CHARGE_FEE).FirstOrDefault();
             this.managementFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
             this.commitmentFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault();
             this.otherFee = context.TBL_CHARGE_FEE_DETAIL.Where(p => p.CHARGEFEEID == chargeFeeId).Select(p => p.VALUE).FirstOrDefault(); ;
             this.effectiveDate = loanApplication.APPROVEDDATE;
-            //this.loanApplicationDetailId = loanApplicationDetail.LOANAPPLICATIONDETAILID;
-            //this.misCode = loanApplicationDetail.TBL_LOAN_APPLICATION.MISCODE;
             this.currentDate = DateTime.Now.ToShortDateString();
             this.preparedBy = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
             this.relationshipOfficerName = loanApplication.TBL_STAFF.FIRSTNAME + " " + loanApplication.TBL_STAFF.MIDDLENAME + " " + loanApplication.TBL_STAFF.LASTNAME;
-            //this.relationshipManagerName = loanApplication.TBL_STAFF1.FIRSTNAME + " " + loanApplication.TBL_STAFF1.MIDDLENAME + " " + loanApplication.TBL_STAFF1.LASTNAME;
             approvedAmount = loanApplicationDetail.APPROVEDAMOUNT.ToString("#,##.00");
             amountUtilised = "0.00";
-
-            //newRequest = context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault() == null ? "0.00" : context.TBL_LOAN_BOOKING_REQUEST.Where(O => O.LOANAPPLICATIONDETAILID == loanApplicationDetail.LOANAPPLICATIONDETAILID).FirstOrDefault().AMOUNT_REQUESTED.ToString("#,##.00");
-
             requestType = "";
 
             relationshipOfficer = "";
@@ -7886,8 +7871,7 @@ namespace FintrakBanking.Repositories.Credit
         public string CashBackMemoMarkupHtml(int staffId, int operationId, int targetId)
         {
             
-            var isInitialize = InitializeDrawdownMemoProperties(operationId, targetId);
-            //var isInitialize = InitializeCashBackMemoProperties(operationId, targetId);
+            var isInitialize = InitializeCashBackMemoProperties(operationId, targetId);
             var flowChange = context.TBL_LOAN_APPLICATN_FLOW_CHANGE.Where(o => o.OPERATIONID == operationId).FirstOrDefault();
             var cashbackSection = context.TBL_CASHBACK.Where(x => x.LOANAPPLICATIONDETAILID == targetId).FirstOrDefault();
 
@@ -7918,8 +7902,8 @@ namespace FintrakBanking.Repositories.Credit
                         <td>APPROVAL TO ISSUE {flowChange?.PLACEHOLDER.ToUpper()} {facilityType?.ToUpper()} TO {customerName?.ToUpper()}</td>
                     </tr>
                  ";
-            result = result + $"</table>";
-            result = result + $@" 
+                result = result + $"</table>";
+                result = result + $@" 
                     <p></p>
                     <p><b>BACKGROUND</b></p>
                     <p>{cashbackSection?.BACKGROUND}</p>
