@@ -880,6 +880,20 @@
     <Compile Include="Reports\ReportViews\PSR.aspx.designer.cs">
       <DependentUpon>PSR.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\RACCR.aspx.cs">
+      <DependentUpon>RACCR.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RACCR.aspx.designer.cs">
+      <DependentUpon>RACCR.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RACCRT.aspx.cs">
+      <DependentUpon>RACCRT.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RACCRT.aspx.designer.cs">
+      <DependentUpon>RACCRT.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ReceivableInterest.aspx.cs">
       <DependentUpon>ReceivableInterest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1313,6 +1327,8 @@
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
     <Content Include="Reports\ReportViews\ProfileActivityReport.aspx" />
     <Content Include="Reports\ReportViews\PSR.aspx" />
+    <Content Include="Reports\ReportViews\RACCR.aspx" />
+    <Content Include="Reports\ReportViews\RACCRT.aspx" />
     <Content Include="Reports\ReportViews\ReceivableInterest.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByCbnClassification.aspx" />
