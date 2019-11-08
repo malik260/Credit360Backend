@@ -943,6 +943,13 @@
     <Compile Include="Reports\ReportViews\RiskAssetCombinedReport.aspx.designer.cs">
       <DependentUpon>RiskAssetCombinedReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetContigentReportMain.aspx.cs">
+      <DependentUpon>RiskAssetContigentReportMain.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RiskAssetContigentReportMain.aspx.designer.cs">
+      <DependentUpon>RiskAssetContigentReportMain.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\RiskAssetDistributionBySector.aspx.cs">
       <DependentUpon>RiskAssetDistributionBySector.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1343,6 +1350,7 @@
     <Content Include="Reports\ReportViews\RiskAssetByIFRSClassificationaspx.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetByVariance.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetCombinedReport.aspx" />
+    <Content Include="Reports\ReportViews\RiskAssetContigentReportMain.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetDistributionBySector.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetMain.aspx" />
     <Content Include="Reports\ReportViews\RiskAssetMain1.aspx" />
