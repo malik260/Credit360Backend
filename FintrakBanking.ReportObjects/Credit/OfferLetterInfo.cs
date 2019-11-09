@@ -225,6 +225,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        productClassId = a.PRODUCTCLASSID,
                                        currencyName = h.CURRENCYCODE,//b.TBL_CURRENCY.CURRENCYNAME,
                                        tenor = b.APPROVEDTENOR,
+                                       //approvedTenorString = b.APPROVEDTENOR,
                                        interestRate = b.APPROVEDINTERESTRATE,
                                        loanAmount = b.APPROVEDAMOUNT,
                                        exchangeRate = b.EXCHANGERATE,
