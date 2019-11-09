@@ -439,7 +439,7 @@
     <Compile Include="Filters\SecureExceptionFilterAttribute.cs" />
     <Compile Include="Providers\ReportServerCredentials.cs" />
     <Compile Include="Providers\SimpleRefreshTokenProvider.cs" />
-    <Compile Include="Reports\Credit\Credit1.Designer.cs">
+    <Compile Include="Reports\Credit\Credit.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Credit.xsd</DependentUpon>
@@ -1371,12 +1371,6 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
-    <Content Include="Reports\Credit\Credit.xss">
-      <DependentUpon>Credit.xsd</DependentUpon>
-    </Content>
-    <Content Include="Reports\Credit\Credit.xsc">
-      <DependentUpon>Credit.xsd</DependentUpon>
-    </Content>
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Agribusiness Report - 2019-03-14.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Autos Report - 2019-04-02.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Banking &amp; Financial Services Report -2019-03-19.pdf" />
@@ -1392,11 +1386,6 @@
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Power Report - 2019-05-08.pdf" />
     <Content Include="Content\IndustryWideAnalysisDocuments\Fitch Nigeria Telecommunications Report - 2019-03-13.pdf" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
-    <None Include="Reports\Credit\Credit.xsd">
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -1422,6 +1411,17 @@
     </Content>
     <Content Include="Reports\ReportDataset\DeferralWaiver.xsc">
       <DependentUpon>DeferralWaiver.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\Credit\Credit.xsc">
+      <DependentUpon>Credit.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\Credit\Credit.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>Credit.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\Credit\Credit.xss">
+      <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\DeferralWaiver.xsd">
       <Generator>MSDataSetGenerator</Generator>
