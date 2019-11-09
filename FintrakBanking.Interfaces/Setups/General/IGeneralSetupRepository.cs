@@ -60,5 +60,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetRegionByType(int regionTypeId);
 
         IEnumerable<ProfileBusinessUnitViewModel> GetProfileBusinessUnits();
+        List<int> GetStaffRlieved(int staffId);
     }
 }

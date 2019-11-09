@@ -2102,7 +2102,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 levelIds.AddRange(general.GetStaffApprovalLevelIds(staffId, operationId).ToList());
             }
-            
+            var staffs = general.GetStaffRlieved(staffId);
             IQueryable<LoanApplicationViewModel> applications = null;
 
             // query
@@ -2120,7 +2120,8 @@ namespace FintrakBanking.Repositories.Credit
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.RESPONSESTAFFID == null
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
-                    && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
+                    //&& (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
+                    && (x.TOSTAFFID == null || staffs.Contains((int)x.TOSTAFFID))
                 ),
                 a => a.LOANAPPLICATIONID,
                 b => b.TARGETID,
