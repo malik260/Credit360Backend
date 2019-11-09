@@ -1263,7 +1263,6 @@ namespace FintrakBanking.Repositories.Credit
         //private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
         //{
         //    var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
-
         //    FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
         //    debit.operationId = (int)OperationsEnum.CreditBureauSearch;
         //    debit.description = creditBureau.CREDITBUREAUNAME + " search charge";
@@ -1366,7 +1365,6 @@ namespace FintrakBanking.Repositories.Credit
         //    credit.creditAmount = chargeAmount;
         //    credit.sourceBranchId = creditBureauInputs.userBranchId;
         //    credit.destinationBranchId = creditBureauInputs.userBranchId;
-
 
         //    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
         //    inputTransactions.Add(debit);
@@ -1494,7 +1492,6 @@ namespace FintrakBanking.Repositories.Credit
                             debit.approvedDateTime = DateTime.Now;
                             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                             debit.companyId = model.companyId;
-
 
                             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = model.referenceNumber;
