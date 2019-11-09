@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.CASA;
+using System.Globalization;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -77,14 +78,14 @@ namespace FintrakBanking.Repositories.Credit
 
                     foreach (var transaction in apiTransactions)
                     {
-
                         context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
                         {
                             LOANAPPLICATIONID = applicationId,
                             CUSTOMERID = customer.CUSTOMERID,
                             CUSTOMERCODE = customer.CUSTOMERCODE,
                             ACCOUNTNUMBER = transaction.accountNumber,
-                            PERIOD = transaction.period,
+                            //PERIOD = transaction.period,
+                            PERIOD = transaction.month == null ? "" : new DateTime(2019, (int)transaction.month, 1).ToString("MMM", CultureInfo.InvariantCulture).ToUpper(),
                             PRODUCTNAME = transaction.productName,
                             MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
                             MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
