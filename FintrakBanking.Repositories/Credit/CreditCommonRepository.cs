@@ -104,6 +104,7 @@ namespace FintrakBanking.Repositories.Credit
                             MONTH = transaction.month,
                             YEAR = transaction.year,
                             ISLMS = isLms
+
                         });
                     }
                     //foreach (var account in apiCustomerAccounts) 
