@@ -905,16 +905,24 @@ namespace FintrakBanking.Repositories.Credit
                               productAccountName = context.TBL_CASA.Where(o => o.CUSTOMERID == customerId).Select(o => o.PRODUCTACCOUNTNAME).FirstOrDefault(),
                           }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList(); ;
 
+
             first.Add(new CustomerTransactionsViewModels
             {
-                cust_Id = "TOTAL",
-                max_Credit_Balance = first.Sum(t => t.max_Credit_Balance),
-                max_Debit_Balance = first.Sum(t => t.max_Debit_Balance),
-                min_Credit_Balance = first.Sum(t => t.min_Credit_Balance),
-                min_Debit_Balance = first.Sum(t => t.min_Debit_Balance),
-                credit_Turnover = first.Sum(t => t.credit_Turnover),
-                debit_Turnover = first.Sum(t => t.debit_Turnover),
+                cust_Id = "",
+                period = "",
+                productName = "",
+                accountNumber = "TOTAL",
+                max_Credit_Balance = first.Sum(O => O.max_Credit_Balance),
+                max_Debit_Balance = first.Sum(O => O.max_Debit_Balance),
+                min_Credit_Balance = first.Sum(O => O.min_Credit_Balance),
+                min_Debit_Balance = first.Sum(O => O.min_Debit_Balance),
+                credit_Turnover = first.Sum(O => O.credit_Turnover),
+                debit_Turnover = first.Sum(O => O.debit_Turnover),
+                month = null,
+                year = null,
+                productAccountName = "",
             });
+
             second.Add(new CustomerTransactionsViewModels
             {
                 cust_Id = "TOTAL",
