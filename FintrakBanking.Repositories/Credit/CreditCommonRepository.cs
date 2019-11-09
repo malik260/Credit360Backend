@@ -73,43 +73,45 @@ namespace FintrakBanking.Repositories.Credit
                     //Task.Run(async () => apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration)).GetAwaiter().GetResult();
                     apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode(customer.CUSTOMERCODE);
                     //apiCustomerAccounts = integration.GetCustomerAccountsBalanceByCustomerCode("0689601167");
-                    foreach (var account in apiCustomerAccounts) 
+                    apiTransactions = integration.GetCustomerAccountTurnover(customer.CUSTOMERCODE, turnoverDuration);
+
+                    foreach (var transaction in apiTransactions)
                     {
-                        apiTransactions = integration.GetCustomerAccountTurnover(account.productAccountNumber, turnoverDuration);
 
-                        foreach (var transaction in apiTransactions)
+                        context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
                         {
+                            LOANAPPLICATIONID = applicationId,
+                            CUSTOMERID = customer.CUSTOMERID,
+                            CUSTOMERCODE = customer.CUSTOMERCODE,
+                            ACCOUNTNUMBER = transaction.accountNumber,
+                            PERIOD = transaction.period,
+                            PRODUCTNAME = transaction.productName,
+                            MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
+                            MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
+                            MINIMUMCREDITBALANCE = transaction.min_Credit_Balance,
+                            MAXIMUMCREDITBALANCE = transaction.max_Credit_Balance,
+                            DEBITTURNOVER = transaction.debit_Turnover,
+                            CREDITTURNOVER = transaction.credit_Turnover,
+                            SMSALERT = transaction.sms_Alert,
+                            AMC = transaction.amc,
+                            VAT = transaction.vat,
+                            MANAGEMENTFEE = transaction.management_Fee,
+                            COMMITMENTFEE = transaction.commitment_Fees,
+                            CONTINGENTLIABILITYCOMM = transaction.com_Contigent_Liab,
+                            LC_COMMISSION = transaction.lc_Commission,
+                            CREATEDBY = staffId,
+                            DATETIMECREATED = DateTime.Now,
+                            MONTH = transaction.month,
+                            YEAR = transaction.year,
+                            ISLMS = isLms
 
-                            context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
-                            {
-                                LOANAPPLICATIONID = applicationId,
-                                CUSTOMERID = customer.CUSTOMERID,
-                                CUSTOMERCODE = customer.CUSTOMERCODE,
-                                ACCOUNTNUMBER = transaction.accountNumber,
-                                PERIOD = transaction.period,
-                                PRODUCTNAME = transaction.productName,
-                                MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
-                                MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
-                                MINIMUMCREDITBALANCE = transaction.min_Credit_Balance,
-                                MAXIMUMCREDITBALANCE = transaction.max_Credit_Balance,
-                                DEBITTURNOVER = transaction.debit_Turnover,
-                                CREDITTURNOVER = transaction.credit_Turnover,
-                                SMSALERT = transaction.sms_Alert,
-                                AMC = transaction.amc,
-                                VAT = transaction.vat,
-                                MANAGEMENTFEE = transaction.management_Fee,
-                                COMMITMENTFEE = transaction.commitment_Fees,
-                                CONTINGENTLIABILITYCOMM = transaction.com_Contigent_Liab,
-                                LC_COMMISSION = transaction.lc_Commission,
-                                CREATEDBY = staffId,
-                                DATETIMECREATED = DateTime.Now,
-                                MONTH = transaction.month,
-                                YEAR = transaction.year,
-                                ISLMS = isLms
-                            });
-                        }
+                        });
                     }
-                    
+                    //foreach (var account in apiCustomerAccounts) 
+                    //{
+
+                    //}
+
 
                 }
             }

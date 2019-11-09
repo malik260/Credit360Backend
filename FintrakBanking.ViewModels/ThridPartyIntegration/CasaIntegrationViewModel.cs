@@ -158,6 +158,10 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string interestTableCode { get; set; }
     }
 
+    public class CustomerTurnoverGroupViewModel
+    {
+        public List<CustomerTurnoverViewModelAPI> Account { get; set; }
+    }
     public class CustomerTurnoverViewModelAPI // TEMPORARY LOCATION
     {
         public string foracid { get; set; } // ": "2022072744",

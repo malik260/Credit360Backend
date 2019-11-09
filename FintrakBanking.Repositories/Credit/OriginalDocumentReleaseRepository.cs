@@ -73,7 +73,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                             && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                                                                    .Any();
 
-                if (result == true) throw new SecureException("One of the Selected Documents is currently Undergoing Approval");
+                    if (result == true) throw new SecureException("One of the Selected Documents is currently Undergoing Approval");
 
                 var entity = new TBL_ORIGINAL_DOCUMENT_RELEASE
                 {

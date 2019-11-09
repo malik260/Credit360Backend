@@ -2,7 +2,7 @@
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.ThridPartyIntegration; 
-using FinTrakBanking.ThirdPartyIntegration.CRCWebService;
+//using FinTrakBanking.ThirdPartyIntegration.CRCWebService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,14 +113,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
             XmlDocument xdoc = new XmlDocument();
             CRCSearchResult result = null;
 
-            LiveRequestInvokerSoapClient crc = new LiveRequestInvokerSoapClient();
-
+            //LiveRequestInvokerSoapClient crc = new LiveRequestInvokerSoapClient();
+            ESBCRCService.LiveRequestInvokerSoapClient crc = new ESBCRCService.LiveRequestInvokerSoapClient();
             string dataPacket = crc.PostRequest(xml.ToString(),  userName,  password);
 
             if (dataPacket.Contains(DATA_PACKET))
             {
                 if (!dataPacket.Contains(ERROR)) {
-                    
                     
                     xdoc.LoadXml(dataPacket);
                     result = new CRCSearchResult
@@ -151,10 +150,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
 
         private string SearchMergedOutput(string userName, string password, XElement xml)
         {
-            LiveRequestInvokerSoapClient crc = new LiveRequestInvokerSoapClient();
-
+            //LiveRequestInvokerSoapClient crc = new LiveRequestInvokerSoapClient();
+            ESBCRCService.LiveRequestInvokerSoapClient crc = new ESBCRCService.LiveRequestInvokerSoapClient();
             string dataPacket = crc.PostRequest(xml.ToString(), userName, password);
-
             return dataPacket;
         }
 
