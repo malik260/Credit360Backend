@@ -164,18 +164,12 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string cust_Id { get; set; } // ": "483008974",
         public string schm_Type { get; set; } // ": "ODA|OVERDRAFT A/C",
         public string period { get; set; } // ": "Apr-15",
-        //public decimal? min_Debit_Balance { get; set; } // ": "",
-        public string min_Debit_Balance { get; set; }
-        //public decimal? max_Debit_Balance { get; set; } // ": "",
-        public string max_Debit_Balance { get; set; }
-        //public decimal? min_Credit_Balance { get; set; } // ": "34218.39",
-        public string min_Credit_Balance { get; set; }
-        //public decimal? max_Credit_Balance { get; set; } // ": "1050843.73",
-        public string max_Credit_Balance { get; set; }
-        //public decimal? debit_Turnover { get; set; } // ": "1159360.11",
-        public string debit_Turnover { get; set; }
-        //public decimal? credit_Turnover { get; set; } // ": "1207425.56",
-        public string credit_Turnover { get; set; }
+        public decimal? min_Debit_Balance { get; set; } // ": "",
+        public decimal? max_Debit_Balance { get; set; } // ": "",
+        public decimal? min_Credit_Balance { get; set; } // ": "34218.39",
+        public decimal? max_Credit_Balance { get; set; } // ": "1050843.73",
+        public decimal? debit_Turnover { get; set; } // ": "1159360.11",
+        public decimal? credit_Turnover { get; set; } // ": "1207425.56",
         public string sms_Alert { get; set; } // ": "-176",
         public string amc { get; set; } // ": "",
         public string vat { get; set; } // ": "-92.50",
@@ -185,10 +179,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string lc_Commission { get; set; } // ": 
         public string float_Charge { get; set; } // "2081981.94",
         public string interest { get; set; } // "2909416.54",
-        //public int? month { get; set; } // "0",
-        public string month { get; set; }
-        //public int? year { get; set; } // "0",
-        public string year { get; set; }
+        public int? month { get; set; } // "0",
+        public int? year { get; set; } // "0",
 
         //public string foracid { get; set; }
         //public string cusT_ID { get; set; }

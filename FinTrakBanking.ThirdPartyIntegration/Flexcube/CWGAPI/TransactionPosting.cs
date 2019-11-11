@@ -848,8 +848,8 @@
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
                         APIURL = apiUrl,
-                        LOGTYPEID = model.FirstOrDefault().operationId,
-                        REFERENCENUMBER = model.FirstOrDefault().sourceReferenceNumber,
+                        LOGTYPEID = 2,
+                        REFERENCENUMBER = model.sourceReferenceNumber,
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = inputJson,
                         RESPONSEDATETIME = responseDateTime,

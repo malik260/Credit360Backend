@@ -160,5 +160,56 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("staff-relief/staffId/{staffId}")]
+        public HttpResponseMessage GetAllStaffRelief(int staffId)
+        {
+            try
+            {
+                var data = repo.GetAllStaffRelief(token.GetCompanyId, staffId);
+
+                var rec = data.ToList();
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("staff-relief")]
+        public HttpResponseMessage AddStaffRelief([FromBody] ApprovalReliefViewModel model)
+        {
+
+            model.userBranchId = (short)token.GetBranchId;
+            model.createdBy = token.GetStaffId;
+            model.companyId = token.GetCompanyId;
+            model.applicationUrl = HttpContext.Current.Request.Path;
+
+            var data = repo.AddStaffRelief(model);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, message = "The Relief has been created successfully." });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "There was an error creating this record" });
+
+
+        }
     }
 }

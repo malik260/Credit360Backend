@@ -2090,6 +2090,7 @@ namespace FintrakBanking.Repositories.Credit
             faciltyCreationModel.p_line_serial = facilityDetail.LOANAPPLICATIONDETAILID.ToString();
             faciltyCreationModel.p_liab_no = "007188830";
             faciltyCreationModel.p_line_code = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+            faciltyCreationModel.sourceReferenceNumber = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
             faciltyCreationModel.p_collateral_amount = "";
             faciltyCreationModel.p_collateral_code = "";
             faciltyCreationModel.p_channel_code = "FINTRAK";
@@ -13345,10 +13346,11 @@ namespace FintrakBanking.Repositories.Credit
             int currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
             int nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
 
+
             if (nextLevelIndex > currentLevelIndex)
                 throw new ConditionNotMetException("The refered level is higher than the current level.");
 
-
+            
             workflow.StaffId = model.createdBy;
             workflow.OperationId = model.operationId;
             workflow.TargetId = model.targetId;
@@ -13365,16 +13367,39 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            OfferLetterResponse offerLetters = new OfferLetterResponse();
-            var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
-            var staffFullName = staffDetail.FIRSTNAME + " " + staffDetail.LASTNAME;
-            offerLetters.Comment = model.comment;
-            //offerLetters.RequestId = RequestId;
-            //offerLetters.WorkflowStage = WorkflowStage;
-            offerLetters.ActionByName = staffFullName;
+            string WorkflowStageName = "";
+            var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
+            if(WorkflowStage == "RM")
+            {
+                WorkflowStageName = "11";
+            }
+            if (WorkflowStage.Substring(0,2) == "CR")
+            {
+                WorkflowStageName = "12";
+            }
+            if (WorkflowStage == "GH")
+            {
+                WorkflowStageName = "13";
+            }
+            
+            var appl = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).FirstOrDefault();
+            if(appl != null && appl.APIREQUESTID != null)
+            {
+                var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
+                if(product.PRODUCTCODE == "CFL")
+                {
+                    OfferLetterResponse offerLetters = new OfferLetterResponse();
+                    var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
+                    var staffFullName = staffDetail.FIRSTNAME + " " + staffDetail.LASTNAME;
+                    offerLetters.Comment = model.comment;
+                    offerLetters.RequestId = appl.APIREQUESTID;
+                    offerLetters.WorkflowStage = WorkflowStageName;
+                    offerLetters.ActionByName = staffFullName;
 
-           // ApiOfferLetterPosting(offerLetters, applicationRefNumber);
-
+                    ApiOfferLetterPosting(offerLetters, appl.APPLICATIONREFERENCENUMBER);
+                }
+            }
+            
             //Audit Section ---------------------------
             //var audit = new TBL_AUDIT
             //{

@@ -591,6 +591,29 @@ namespace FintrakBanking.Repositories.Setups.General
                })
                .ToList();
         }
+
+        public List<int> GetStaffRlieved(int staffId)
+        {
+            List<int> staffs = new List<int>();
+            var now = DateTime.Now;
+            staffs.Add(staffId);
+            var staffIds = context.TBL_STAFF_RELIEF
+                .Where(x => x.DELETED == false
+                    && x.RELIEFSTAFFID == staffId
+                    && x.STARTDATE <= now
+                    && x.ENDDATE >= now
+                    && x.ISACTIVE == true
+                ).Select(x => x.STAFFID).Distinct();
+            if (staffIds.Any())
+            {
+                foreach (var rec in staffIds)
+                {
+                    staffs.Add(rec);
+                }
+            }
+
+            return staffs;
+        }
     }
 
 }
