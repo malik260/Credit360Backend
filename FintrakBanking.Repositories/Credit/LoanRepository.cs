@@ -2081,7 +2081,6 @@ namespace FintrakBanking.Repositories.Credit
             var systemDate = generalSetup.GetApplicationDate();
             var facilityDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loan.LOANAPPLICATIONDETAILID);
 
-
             faciltyCreationModel.p_account_no = loan.TBL_CASA.PRODUCTACCOUNTNUMBER;
             faciltyCreationModel.p_limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
             faciltyCreationModel.p_interest_rate = facilityDetail.APPROVEDINTERESTRATE.ToString();
