@@ -162,6 +162,15 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="SUPPORTIMAGES" msprop:Generator_TableClassName="SUPPORTIMAGESDataTable" msprop:Generator_TableVarName="tableSUPPORTIMAGES" msprop:Generator_TablePropName="SUPPORTIMAGES" msprop:Generator_RowDeletingName="SUPPORTIMAGESRowDeleting" msprop:Generator_RowChangingName="SUPPORTIMAGESRowChanging" msprop:Generator_RowEvHandlerName="SUPPORTIMAGESRowChangeEventHandler" msprop:Generator_RowDeletedName="SUPPORTIMAGESRowDeleted" msprop:Generator_UserTableName="SUPPORTIMAGES" msprop:Generator_RowChangedName="SUPPORTIMAGESRowChanged" msprop:Generator_RowEvArgName="SUPPORTIMAGESRowChangeEvent" msprop:Generator_RowClassName="SUPPORTIMAGESRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="imageCaption" msprop:Generator_ColumnVarNameInTable="columnimageCaption" msprop:Generator_ColumnPropNameInRow="imageCaption" msprop:Generator_ColumnPropNameInTable="imageCaptionColumn" msprop:Generator_UserColumnName="imageCaption" type="xs:string" minOccurs="0" />
+              <xs:element name="fileData" msprop:Generator_ColumnVarNameInTable="columnfileData" msprop:Generator_ColumnPropNameInRow="fileData" msprop:Generator_ColumnPropNameInTable="fileDataColumn" msprop:Generator_UserColumnName="fileData" type="xs:string" minOccurs="0" />
+              <xs:element name="fileName" msprop:Generator_ColumnVarNameInTable="columnfileName" msprop:Generator_ColumnPropNameInRow="fileName" msprop:Generator_ColumnPropNameInTable="fileNameColumn" msprop:Generator_UserColumnName="fileName" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>

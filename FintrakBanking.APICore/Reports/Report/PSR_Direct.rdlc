@@ -633,7 +633,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>i. NEXT INSPECTION DATE:</Value>
+                              <Value>i. NEXT INSPECTION DATE</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1537,10 +1537,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>14.00874in</Top>
-        <Left>0.22583in</Left>
+        <Top>12.64416in</Top>
+        <Left>0.23167in</Left>
         <Height>0.25in</Height>
-        <Width>2.375in</Width>
+        <Width>3.58333in</Width>
         <ZIndex>7</ZIndex>
         <Style>
           <Border>
@@ -1570,7 +1570,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>8.59416in</Top>
+        <Top>8.34416in</Top>
         <Left>0.23167in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1603,7 +1603,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>9.71792in</Top>
+        <Top>9.09292in</Top>
         <Left>0.22583in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1636,7 +1636,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>11.68875in</Top>
+        <Top>10.68875in</Top>
         <Left>0.22583in</Left>
         <Height>0.25in</Height>
         <Width>3.58333in</Width>
@@ -1666,7 +1666,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox91</rd:DefaultName>
-        <Top>12.98167in</Top>
+        <Top>11.85667in</Top>
         <Left>0.22583in</Left>
         <Height>0.26042in</Height>
         <Width>6.85583in</Width>
@@ -1696,7 +1696,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox92</rd:DefaultName>
-        <Top>13.39in</Top>
+        <Top>12.265in</Top>
         <Left>0.22583in</Left>
         <Height>0.23958in</Height>
         <Width>6.85583in</Width>
@@ -1770,7 +1770,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>observation</DataSetName>
-        <Top>9.05125in</Top>
+        <Top>8.67625in</Top>
         <Left>0.22583in</Left>
         <Height>0.25in</Height>
         <Width>6.85583in</Width>
@@ -1840,7 +1840,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>10.14848in</Top>
+        <Top>9.52348in</Top>
         <Left>0.23167in</Left>
         <Height>0.25in</Height>
         <Width>6.84999in</Width>
@@ -1910,7 +1910,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>nextInspection</DataSetName>
-        <Top>12.05681in</Top>
+        <Top>11.05681in</Top>
         <Left>0.22583in</Left>
         <Height>0.27083in</Height>
         <Width>6.85583in</Width>
@@ -1976,9 +1976,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!projectSum.Value</Value>
-                              <Style>
-                                <Format>#,0.00;(#,0.00)</Format>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2043,9 +2041,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!initialProjectSum.Value</Value>
-                              <Style>
-                                <Format>#,0.00;(#,0.00)</Format>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2116,9 +2112,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!initialProjectSum.Value</Value>
-                              <Style>
-                                <Format>#,0.00;(#,0.00)</Format>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2189,9 +2183,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!pmuAssessed.Value</Value>
-                              <Style>
-                                <Format>#,0.00;(#,0.00)</Format>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2327,9 +2319,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!costVariation.Value</Value>
-                              <Style>
-                                <Format>#,0.00;(#,0.00)</Format>
-                              </Style>
+                              <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2615,7 +2605,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>recomendations</DataSetName>
-        <Top>10.95334in</Top>
+        <Top>10.07834in</Top>
         <Left>0.21292in</Left>
         <Height>0.25in</Height>
         <Width>6.86874in</Width>
@@ -2684,7 +2674,7 @@
                             <TextRun>
                               <Value>=Fields!inspectionDate.Value</Value>
                               <Style>
-                                <Format>M/d/yyyy</Format>
+                                <Format>d</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -2738,12 +2728,12 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>6.86874in</Width>
+              <Width>6.84999in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.25in</Height>
+              <Height>0.26042in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -2792,10 +2782,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>comment</DataSetName>
-        <Top>14.28in</Top>
-        <Left>0.21292in</Left>
-        <Height>0.25in</Height>
-        <Width>6.86874in</Width>
+        <Top>13.03in</Top>
+        <Left>0.23167in</Left>
+        <Height>0.26042in</Height>
+        <Width>6.84999in</Width>
         <ZIndex>19</ZIndex>
         <Style>
           <Border>
@@ -2803,8 +2793,133 @@
           </Border>
         </Style>
       </Tablix>
+      <Textbox Name="Textbox39">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>PICTURES</Value>
+                <Style>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox39</rd:DefaultName>
+        <Top>13.48833in</Top>
+        <Left>0.21292in</Left>
+        <Height>0.25in</Height>
+        <Width>3.60208in</Width>
+        <ZIndex>20</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Tablix Name="Tablix9">
+        <TablixBody>
+          <TablixColumns>
+            <TablixColumn>
+              <Width>6.84999in</Width>
+            </TablixColumn>
+          </TablixColumns>
+          <TablixRows>
+            <TablixRow>
+              <Height>0.29167in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="imageCaption">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!imageCaption.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>imageCaption</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Image Name="fileData">
+                      <Source>Database</Source>
+                      <Value>=Fields!fileData.Value</Value>
+                      <MIMEType>image/png</MIMEType>
+                      <Sizing>FitProportional</Sizing>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </Image>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
+          </TablixRows>
+        </TablixBody>
+        <TablixColumnHierarchy>
+          <TablixMembers>
+            <TablixMember />
+          </TablixMembers>
+        </TablixColumnHierarchy>
+        <TablixRowHierarchy>
+          <TablixMembers>
+            <TablixMember>
+              <Group Name="Details9" />
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixMember>
+          </TablixMembers>
+        </TablixRowHierarchy>
+        <DataSetName>supportImages</DataSetName>
+        <Top>13.80778in</Top>
+        <Left>0.23167in</Left>
+        <Height>0.54167in</Height>
+        <Width>6.84999in</Width>
+        <ZIndex>21</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Tablix>
     </ReportItems>
-    <Height>14.905in</Height>
+    <Height>15.01916in</Height>
     <Style />
   </Body>
   <Width>11.08167in</Width>
@@ -3185,6 +3300,34 @@
         <rd:DataSetName>PSR</rd:DataSetName>
         <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
         <rd:TableName>EVALUATION</rd:TableName>
+        <rd:TableAdapterFillMethod />
+        <rd:TableAdapterGetDataMethod />
+        <rd:TableAdapterName />
+      </rd:DataSetInfo>
+    </DataSet>
+    <DataSet Name="supportImages">
+      <Query>
+        <DataSourceName>PSR</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="imageCaption">
+          <DataField>imageCaption</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="fileData">
+          <DataField>fileData</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="fileName">
+          <DataField>fileName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>PSR</rd:DataSetName>
+        <rd:SchemaPath>C:\FintrakCredit360\ReportDeveloper\ReportDeveloper\ReportDataset\PSR.xsd</rd:SchemaPath>
+        <rd:TableName>SUPPORTIMAGES</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />
