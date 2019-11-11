@@ -6,6 +6,7 @@
     using FintrakBanking.ViewModels.CASA;
     using FintrakBanking.ViewModels.Credit;
     using FintrakBanking.ViewModels.Finance;
+    using FintrakBanking.ViewModels.Flexcube;
     using FintrakBanking.ViewModels.ThridPartyIntegration;
     using System;
     using System.Collections.Generic;
@@ -747,7 +748,9 @@
 
             }
 
-            public async Task<ResponseMessage> ApiTransactionLoanCreationPosting(List<LoanCreationViewModel> model)
+
+            #region FLEXCUBE POSTING INTEGRATIONS
+            public async Task<ResponseMessage> ApiTransactionFacilityCreationPosting(FlexcubeCreateFacilityViewModel model)
             {
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
@@ -845,8 +848,8 @@
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
                         APIURL = apiUrl,
-                        LOGTYPEID = model.FirstOrDefault().operationId,
-                        REFERENCENUMBER = model.FirstOrDefault().sourceReferenceNumber,
+                        LOGTYPEID = 2,
+                        REFERENCENUMBER = model.sourceReferenceNumber,
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = inputJson,
                         RESPONSEDATETIME = responseDateTime,
@@ -863,6 +866,8 @@
 
                 //context.SaveChanges();
             }
+            #endregion END OF  FLEXCUBE POSTING INTEGRATIONS
+
         }
     }
 }
