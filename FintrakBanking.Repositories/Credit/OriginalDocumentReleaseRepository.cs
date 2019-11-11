@@ -56,7 +56,7 @@ namespace FintrakBanking.Repositories.Credit
                 //check if the document was referred
                 var resultReferred =    (from odr in _context.TBL_ORIGINAL_DOCUMENT_RELEASE
                                         join atrail in _context.TBL_APPROVAL_TRAIL on odr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
-                                        where atrail.OPERATIONID == (short)OperationsEnum.SecurityRelease
+                                        where atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
                                             && atrail.TARGETID == odr.ORIGINALDOCUMENTAPPROVALID
                                             && atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred
                                             && odr.DOCUMENTUPLOADID == mod.documentUploadId
@@ -82,7 +82,7 @@ namespace FintrakBanking.Repositories.Credit
                     ORIGINALDOCUMENTAPPROVALID = mod.originalDocumentApprovalId,
                     DOCUMENTUPLOADID = mod.documentUploadId,
                     DOCSUBMISSIONOPERATIONID = (int)OperationsEnum.OriginalDocumentApproval,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                     COMPANYID = mod.companyId,
                     CREATEDBY = mod.createdBy,
                     DATETIMECREATED = DateTime.Now,
@@ -136,7 +136,7 @@ namespace FintrakBanking.Repositories.Credit
                          join cc in _context.TBL_COLLATERAL_CUSTOMER on oda.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
                          join atrail in _context.TBL_APPROVAL_TRAIL on dr.ORIGINALDOCUMENTAPPROVALID equals atrail.TARGETID
                          join c in _context.TBL_CUSTOMER on cc.CUSTOMERID equals c.CUSTOMERID
-                         where dr.DELETED == false && (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                         where dr.DELETED == false && (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred)
                          && atrail.RESPONSESTAFFID == null
                          && (ids.Contains((int)atrail.TOAPPROVALLEVELID) && atrail.LOOPEDSTAFFID == null)
                          && atrail.OPERATIONID == (int)OperationsEnum.SecurityRelease
@@ -238,7 +238,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     _workflow.StaffId = staffId;
                     _workflow.CompanyId = companyId;
-                    _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                     _workflow.TargetId = rejected.ORIGINALDOCUMENTAPPROVALID;
                     _workflow.Comment = "Request for security release approval";
                     _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
@@ -298,7 +298,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         _workflow.StaffId = x.createdBy;
                         _workflow.CompanyId = x.companyId;
-                        _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                        _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                         _workflow.TargetId = x.originalDocumentApprovalId;
                         _workflow.Comment = "Update has been applied, Request for Security Release Approval";
                         _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
@@ -329,7 +329,7 @@ namespace FintrakBanking.Repositories.Credit
                                                                      .ToList();
                     _workflow.StaffId = x.createdBy;
                     _workflow.CompanyId = x.companyId;
-                    _workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    _workflow.StatusId = (short)ApprovalStatusEnum.Processing;
                     _workflow.TargetId = x.originalDocumentApprovalId;
                     _workflow.Comment = "Request for security release approval";
                     _workflow.OperationId = (int)OperationsEnum.SecurityRelease;
