@@ -168,6 +168,7 @@
     <Compile Include="Models\TBL_PROFILE_BUSINESS_UNIT.cs" />
     <Compile Include="Models\TBL_PSR_ANALYSIS.cs" />
     <Compile Include="Models\TBL_PSR_COMMENT.cs" />
+    <Compile Include="Models\TBL_PSR_IMAGES.cs" />
     <Compile Include="Models\TBL_PSR_NEXT_INSPECTION_TASK.cs" />
     <Compile Include="Models\TBL_PSR_OBSERVATION.cs" />
     <Compile Include="Models\TBL_PSR_PERFORMANCE_EVALUATION.cs" />

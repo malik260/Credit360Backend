@@ -40,6 +40,7 @@ using System.Web.Script.Serialization;
 using System.Net.Http.Headers;
 using System.Net;
 using System.Text;
+using FintrakBanking.ViewModels.Flexcube;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -2070,46 +2071,72 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        private void createLoanOnThirdParty(List<TBL_LOAN> loans, UserInfo user)
+        private void CreateFacilityOnThirdParty(TBL_LOAN loan, UserInfo user)
         {
+            FlexcubeCreateFacilityViewModel faciltyCreationModel = new FlexcubeCreateFacilityViewModel();
 
-            List<LoanCreationViewModel> loanCreationInputs = new List<LoanCreationViewModel>();
-            LoanCreationViewModel loanCreationModel = new LoanCreationViewModel();
-            foreach (var loan in loans)
-            {
-                var product = loan.TBL_PRODUCT;
-                var productClass = product.TBL_PRODUCT_CLASS;
-                var staff = context.TBL_STAFF.Find(user.createdBy);
-                var systemDate = generalSetup.GetApplicationDate();
+            var product = loan.TBL_PRODUCT;
+            var productClass = product.TBL_PRODUCT_CLASS;
+            var staff = context.TBL_STAFF.Find(user.createdBy);
+            var systemDate = generalSetup.GetApplicationDate();
+            var facilityDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loan.LOANAPPLICATIONDETAILID);
 
-                loanCreationModel.account_no = loan.TBL_CASA.PRODUCTACCOUNTNUMBER;
-                loanCreationModel.amount_financed = loan.PRINCIPALAMOUNT.ToString();
-                loanCreationModel.interest_rate = loan.INTERESTRATE.ToString();
-                loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME;
-                loanCreationModel.operationId = (int)loan.OPERATIONID;
-                loanCreationModel.product_code = product.PRODUCTCODE;
-                loanCreationModel.product_desc = product.TBL_PRODUCT_TYPE.PRODUCTTYPENAME;
-                loanCreationModel.source = "CREDIT360";
-                loanCreationModel.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
-                loanCreationModel.tax_rate = "";
-                loanCreationModel.user_refno = loan.LOANREFERENCENUMBER;
-                loanCreationModel.app_branch_code = loan.TBL_BRANCH.BRANCHCODE;
-                loanCreationModel.app_user_id = staff.STAFFCODE;
-                loanCreationModel.book_date = loan.BOOKINGDATE.ToShortDateString();
-                loanCreationModel.effective_date = loan.EFFECTIVEDATE.ToShortDateString();
-                loanCreationModel.value_date = systemDate.ToShortDateString();
-                loanCreationModel.maturity_date = loan.MATURITYDATE.ToShortDateString();
-                loanCreationModel.mgt_rate = "";
-                loanCreationModel.creditlife_rate = "";
-                loanCreationModel.creditlife_rate = "";
-                loanCreationModel.first_repayment_date = loan.FIRSTPRINCIPALPAYMENTDATE.ToString();
-
-                loanCreationInputs.Add(loanCreationModel);
-
-            }
-
-            integration.PostLoanCreationInputs(loanCreationInputs);
+            faciltyCreationModel.p_account_no = loan.TBL_CASA.PRODUCTACCOUNTNUMBER;
+            faciltyCreationModel.p_limit_amount = facilityDetail.APPROVEDAMOUNT.ToString();
+            faciltyCreationModel.p_interest_rate = facilityDetail.APPROVEDINTERESTRATE.ToString();
+            faciltyCreationModel.p_facility_description = product.PRODUCTCODE;
+            faciltyCreationModel.p_expiry_date = loan.MATURITYDATE.ToString();
+            faciltyCreationModel.p_start_date = loan.EFFECTIVEDATE.ToString();
+            faciltyCreationModel.p_line_serial = facilityDetail.LOANAPPLICATIONDETAILID.ToString();
+            faciltyCreationModel.p_liab_no = "007188830";
+            faciltyCreationModel.p_line_code = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+            faciltyCreationModel.sourceReferenceNumber = facilityDetail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+            faciltyCreationModel.p_collateral_amount = "";
+            faciltyCreationModel.p_collateral_code = "";
+            faciltyCreationModel.p_channel_code = "FINTRAK";
+            integration.PostLoanCreationInputs(faciltyCreationModel);
         }
+
+        //private void createLoanOnThirdParty(List<TBL_LOAN> loans, UserInfo user)
+        //{
+
+        //    List<LoanCreationViewModel> loanCreationInputs = new List<LoanCreationViewModel>();
+        //    LoanCreationViewModel loanCreationModel = new LoanCreationViewModel();
+        //    foreach (var loan in loans)
+        //    {
+        //        var product = loan.TBL_PRODUCT;
+        //        var productClass = product.TBL_PRODUCT_CLASS;
+        //        var staff = context.TBL_STAFF.Find(user.createdBy);
+        //        var systemDate = generalSetup.GetApplicationDate();
+
+        //        loanCreationModel.account_no = loan.TBL_CASA.PRODUCTACCOUNTNUMBER;
+        //        loanCreationModel.amount_financed = loan.PRINCIPALAMOUNT.ToString();
+        //        loanCreationModel.interest_rate = loan.INTERESTRATE.ToString();
+        //        loanCreationModel.product_cat = productClass.PRODUCTCLASSNAME;
+        //        loanCreationModel.operationId = (int)loan.OPERATIONID;
+        //        loanCreationModel.product_code = product.PRODUCTCODE;
+        //        loanCreationModel.product_desc = product.TBL_PRODUCT_TYPE.PRODUCTTYPENAME;
+        //        loanCreationModel.source = "CREDIT360";
+        //        loanCreationModel.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
+        //        loanCreationModel.tax_rate = "";
+        //        loanCreationModel.user_refno = loan.LOANREFERENCENUMBER;
+        //        loanCreationModel.app_branch_code = loan.TBL_BRANCH.BRANCHCODE;
+        //        loanCreationModel.app_user_id = staff.STAFFCODE;
+        //        loanCreationModel.book_date = loan.BOOKINGDATE.ToShortDateString();
+        //        loanCreationModel.effective_date = loan.EFFECTIVEDATE.ToShortDateString();
+        //        loanCreationModel.value_date = systemDate.ToShortDateString();
+        //        loanCreationModel.maturity_date = loan.MATURITYDATE.ToShortDateString();
+        //        loanCreationModel.mgt_rate = "";
+        //        loanCreationModel.creditlife_rate = "";
+        //        loanCreationModel.creditlife_rate = "";
+        //        loanCreationModel.first_repayment_date = loan.FIRSTPRINCIPALPAYMENTDATE.ToString();
+
+        //        loanCreationInputs.Add(loanCreationModel);
+
+        //    }
+
+        //    integration.PostLoanCreationInputs(loanCreationInputs);
+        //}
 
         public void DisburseLoan(LoanViewModel entity, TwoFactorAutheticationViewModel twoFactorAuthDetails = null)
         {
@@ -13319,10 +13346,11 @@ namespace FintrakBanking.Repositories.Credit
             int currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
             int nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
 
+
             if (nextLevelIndex > currentLevelIndex)
                 throw new ConditionNotMetException("The refered level is higher than the current level.");
 
-
+            
             workflow.StaffId = model.createdBy;
             workflow.OperationId = model.operationId;
             workflow.TargetId = model.targetId;
@@ -13339,16 +13367,39 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.LogActivity();
 
-            OfferLetterResponse offerLetters = new OfferLetterResponse();
-            var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
-            var staffFullName = staffDetail.FIRSTNAME + " " + staffDetail.LASTNAME;
-            offerLetters.Comment = model.comment;
-            //offerLetters.RequestId = RequestId;
-            //offerLetters.WorkflowStage = WorkflowStage;
-            offerLetters.ActionByName = staffFullName;
+            string WorkflowStageName = "";
+            var WorkflowStage = context.TBL_STAFF_ROLE.Where(s => s.STAFFROLEID == staff.STAFFROLEID).Select(s => s.STAFFROLECODE).FirstOrDefault();
+            if(WorkflowStage == "RM")
+            {
+                WorkflowStageName = "11";
+            }
+            if (WorkflowStage.Substring(0,2) == "CR")
+            {
+                WorkflowStageName = "12";
+            }
+            if (WorkflowStage == "GH")
+            {
+                WorkflowStageName = "13";
+            }
+            
+            var appl = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).FirstOrDefault();
+            if(appl != null && appl.APIREQUESTID != null)
+            {
+                var product = context.TBL_PRODUCT.Find(appl.PRODUCTID);
+                if(product.PRODUCTCODE == "CFL")
+                {
+                    OfferLetterResponse offerLetters = new OfferLetterResponse();
+                    var staffDetail = context.TBL_STAFF.Where(s => s.STAFFID == model.createdBy).FirstOrDefault();
+                    var staffFullName = staffDetail.FIRSTNAME + " " + staffDetail.LASTNAME;
+                    offerLetters.Comment = model.comment;
+                    offerLetters.RequestId = appl.APIREQUESTID;
+                    offerLetters.WorkflowStage = WorkflowStageName;
+                    offerLetters.ActionByName = staffFullName;
 
-           // ApiOfferLetterPosting(offerLetters, applicationRefNumber);
-
+                    ApiOfferLetterPosting(offerLetters, appl.APPLICATIONREFERENCENUMBER);
+                }
+            }
+            
             //Audit Section ---------------------------
             //var audit = new TBL_AUDIT
             //{
@@ -14722,7 +14773,7 @@ namespace FintrakBanking.Repositories.Credit
                 AMOUNT_REQUESTED = entity.loanAmount,
                 APPROVALSTATUSID = approvalStatusid == null ? (short)ApprovalStatusEnum.Pending : (short)approvalStatusid,
                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
-                CASAACCOUNTID = 1, //entity.casaAccountId,
+                CASAACCOUNTID = entity.casaAccountId,
                 CASAACCOUNTID2 = entity.casaAccountId2,
                 ISUSED = approvalStatusid == (short)ApprovalStatusEnum.Approved ? true : false,
                 PRODUCTID = (short)entity.productId,
@@ -15082,6 +15133,7 @@ namespace FintrakBanking.Repositories.Credit
             };
             return data;
         }
+
 
         //private 
         //public bool getNextApprovalLevel(ApprovalViewModel model)

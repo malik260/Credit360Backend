@@ -1090,7 +1090,6 @@ namespace FintrakBanking.Repositories.credit
         }
 
         #region
-
         public IEnumerable<PsrPerformanceAnalysisViewModel> GetPsrPerformanceAnalysis(int id)
         {
             return context.TBL_PSR_ANALYSIS.Where(x => x.DELETED == false && x.PROJECTSITEREPORTID == id)
@@ -1201,12 +1200,75 @@ namespace FintrakBanking.Repositories.credit
         }
         #endregion
 
+        #region
+        public IEnumerable<PsrImagesViewModel> GetPsrImages(int id)
+        {
+            return context.TBL_PSR_IMAGES.Where(x => x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrImagesViewModel
+                {
+                    psrImageId = x.PSRIMAGEID,
+                    fileData = x.FILEDATA,
+                    fileExtension = x.FILEEXTENSION,
+                    fileName = x.FILENAME,
+                    imageCaption = x.IMAGECAPTION,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o => o.PSRREPORTTYPEID == x.PROJECTSITEREPORTID).Select(o => o.REPORTTYPENAME).FirstOrDefault(),
+                }).OrderByDescending(o => o.psrImageId)
+                .ToList();
+        }
 
+        public PsrImagesViewModel GetPsrImage(int id)
+        {
+            return context.TBL_PSR_IMAGES.Where(x => x.PROJECTSITEREPORTID == id)
+                .Select(x => new PsrImagesViewModel
+                {
+                    psrImageId = x.PSRIMAGEID,
+                    fileData = x.FILEDATA,
+                    fileExtension = x.FILEEXTENSION,
+                    fileName = x.FILENAME,
+                    imageCaption = x.IMAGECAPTION,
+                    projectSiteReportId = x.PROJECTSITEREPORTID,
+                    psrReportType = context.TBL_PSR_REPORT_TYPE.Where(o => o.PSRREPORTTYPEID == x.PROJECTSITEREPORTID).Select(o => o.REPORTTYPENAME).FirstOrDefault(),
+                }).FirstOrDefault();
+        }
+
+        public int AddPsrImage(PsrImagesViewModel model, byte[] buffer)
+        {
+            var existing = context.TBL_PSR_IMAGES.Where(x => x.FILENAME == model.fileName)
+            .Select(x => new PsrImagesViewModel
+            {
+                psrImageId = x.PSRIMAGEID,
+                fileData = x.FILEDATA,
+                fileExtension = x.FILEEXTENSION,
+                fileName = x.FILENAME,
+                imageCaption = x.IMAGECAPTION,
+                projectSiteReportId = x.PROJECTSITEREPORTID,
+            }).FirstOrDefault();
+
+            if (existing != null && model.overwrite == false) return 3;
+
+            var entity = new TBL_PSR_IMAGES
+            {
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension.ToLower(),
+                FILESIZE = model.fileSize,
+                FILESIZEUNIT = model.fileSizeUnit,
+                FILEDATA = buffer,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                IMAGECAPTION = model.imageCaption,
+                PROJECTSITEREPORTID = model.projectSiteReportId,
+            };
+
+            context.TBL_PSR_IMAGES.Add(entity);
+            context.SaveChanges();
+            return 2;
+        }
+
+        
+        #endregion
 
     }
-
-
-
 }
 
 

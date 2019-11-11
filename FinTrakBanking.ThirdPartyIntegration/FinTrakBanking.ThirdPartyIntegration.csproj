@@ -69,6 +69,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Basel\BaselIntegration.cs" />
+    <Compile Include="Connected Services\ESBCRCService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Connected Services\ESBFirstCentralService\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -138,6 +143,10 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Connected Services\CRCWebService\liverequestinvoker.wsdl" />
+    <None Include="Connected Services\ESBCRCService\crcweb.wsdl" />
+    <None Include="Connected Services\ESBCRCService\crcweb.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Connected Services\ESBFirstCentralService\FinTrakBanking.ThirdPartyIntegration.ESBFirstCentralService.ConnectCommercialMatchResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -385,6 +394,7 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Connected Services\CRCWebService\" />
+    <WCFMetadataStorage Include="Connected Services\ESBCRCService\" />
     <WCFMetadataStorage Include="Connected Services\ESBFirstCentralService\" />
     <WCFMetadataStorage Include="Connected Services\FbnAlertWS\" />
     <WCFMetadataStorage Include="Connected Services\TestESBFirstCentralService\" />
@@ -477,6 +487,12 @@
     <None Include="Connected Services\TestESBFirstCentralService\configuration91.svcinfo" />
     <None Include="Connected Services\TestESBFirstCentralService\configuration.svcinfo" />
     <None Include="Connected Services\TestESBFirstCentralService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Connected Services\ESBCRCService\configuration91.svcinfo" />
+    <None Include="Connected Services\ESBCRCService\configuration.svcinfo" />
+    <None Include="Connected Services\ESBCRCService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
