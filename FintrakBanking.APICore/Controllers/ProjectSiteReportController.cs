@@ -663,6 +663,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.fileSize = Convert.ToInt32(provider.FormData["fileSize"]);
                 entity.fileSizeUnit = provider.FormData["fileSizeUnit"];
                 entity.imageCaption = provider.FormData["imageCaption"];
+                entity.projectSiteReportId = Convert.ToInt32(provider.FormData["projectSiteReportId"]);
                 entity.overwrite = provider.FormData["overwrite"] == "true";
                 
                 entity.userBranchId = (short)token.GetBranchId;

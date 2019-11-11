@@ -1254,9 +1254,10 @@ namespace FintrakBanking.Repositories.credit
                 FILESIZE = model.fileSize,
                 FILESIZEUNIT = model.fileSizeUnit,
                 FILEDATA = buffer,
-                CREATEDBY = model.staffId,
+                CREATEDBY = model.createdBy,
                 DATETIMECREATED = DateTime.Now,
                 IMAGECAPTION = model.imageCaption,
+                PROJECTSITEREPORTID = model.projectSiteReportId,
             };
 
             context.TBL_PSR_IMAGES.Add(entity);
