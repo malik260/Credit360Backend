@@ -130,10 +130,6 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
         public bool isBaseCurrency { get; set; }
 
-        
-
-
-
     }
 
     public class InterestRateInquiryIntegrationViewModel : GeneralEntity
