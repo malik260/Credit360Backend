@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Common;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.DocumentModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.CASA;
@@ -8,6 +9,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
@@ -32,14 +34,15 @@ namespace FintrakBanking.Repositories.Credit
         private CustomerDetails customerRequest;
         private ICreditLimitValidationsRepository limitValidation;
         private ICasaRepository casa;
-
+        private IWorkflow workflow;
         public CashFlowLendingRepository(FinTrakBankingContext _context, 
                                         ICustomerRepository _customer, 
                                         IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail,
                                          CustomerDetails _customerRequest,
                                          ICreditLimitValidationsRepository _limitValidation,
-                                         ICasaRepository _casa
+                                         ICasaRepository _casa,
+                                         IWorkflow _workflow
                                          )
         {
             this.context = _context;
@@ -49,7 +52,9 @@ namespace FintrakBanking.Repositories.Credit
             this.customerRequest = _customerRequest;
             limitValidation = _limitValidation;
             casa = _casa;
-           
+            workflow = _workflow;
+
+
         }
 
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
@@ -347,8 +352,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public string AddLoanApplication(LoanApplicationViewModel loan, string apiRequestId)
         {
-            //using (var trans = context.Database.BeginTransaction())
-            //{
 
            // ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
@@ -389,7 +392,12 @@ namespace FintrakBanking.Repositories.Credit
                     if (string.IsNullOrEmpty(loan.applicationReferenceNumber)) loan.applicationReferenceNumber = GetRefrenceNumber();
                     var app = AddloanApplicationSub(loan, apiRequestId);
 
-                    if (AddLoanApplicationDetail(loan, app)) return app.APPLICATIONREFERENCENUMBER;
+                    if (AddLoanApplicationDetail(loan, app))
+                    {
+                        SubmitLoanApplicationForCam(app.LOANAPPLICATIONID, 1, 0);
+                        context.SaveChanges();
+                        return app.APPLICATIONREFERENCENUMBER;
+                    }
                 }
 
             }
@@ -400,11 +408,7 @@ namespace FintrakBanking.Repositories.Credit
                 UpdateLoanApplication(loan);
             }
 
-
             return null;
-
-
-
         }
 
         private bool AddLoanApplicationDetail(LoanApplicationViewModel loan, TBL_LOAN_APPLICATION app)//List<LoanApplicationDetailViewModel> entity, int createdBy)
@@ -538,8 +542,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCT_CLASS_PROCESSID = productClassProcessId,
                 COMPANYID = loan.companyId,
                 BRANCHID = loan.branchId ?? 0,
-                RELATIONSHIPOFFICERID = 1, //loan.createdBy,
-                RELATIONSHIPMANAGERID = 1, //loan.createdBy,
+                RELATIONSHIPOFFICERID = 1, 
+                RELATIONSHIPMANAGERID = 1, 
                 MISCODE = loan.misCode ?? "002",
                 TEAMMISCODE = loan.teamMisCode ?? "002",
                 INTERESTRATE = loan.interestRate,
@@ -617,6 +621,8 @@ namespace FintrakBanking.Repositories.Credit
             //};
 
             //this.auditTrail.AddAuditTrail(audit);
+
+            
 
             return loanData;
         }
@@ -872,7 +878,7 @@ namespace FintrakBanking.Repositories.Credit
                         proposedLimit = g.Sum(x => x.OUTSTANDINGPRINCIPAL),
                         recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                         PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
-                        PastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
+                        pastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
                         reviewDate = DateTime.Now,
                         prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
                         loanStatus = "Running"
@@ -892,7 +898,7 @@ namespace FintrakBanking.Repositories.Credit
                     proposedLimit = g.Sum(x => x.OVERDRAFTLIMIT),
                     recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                     PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
-                    PastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
+                    pastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
                     reviewDate = DateTime.Now,
                     prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
                     loanStatus = "Running"
@@ -924,7 +930,7 @@ namespace FintrakBanking.Repositories.Credit
                 proposedLimit = exposures.Sum(t => t.proposedLimit),
                 recommendedLimit = exposures.Sum(t => t.recommendedLimit),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
-                PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
+                pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
                 reviewDate = DateTime.Now,
                 prudentialGuideline = String.Empty,
                 loanStatus = String.Empty,
@@ -1047,6 +1053,141 @@ namespace FintrakBanking.Repositories.Credit
         private void validateCustomerDetails(IncomingCustomerViewModels entity)
         {
             
+        }
+
+        private short SubmitLoanApplicationForCam(int applicationId, int staffId, int checkListIndex)
+        {
+
+            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId).FirstOrDefault();
+
+            if (appl.LOANAPPROVEDLIMITID > 0)
+            {
+                appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.BookingRequestInitiated;
+                workflow.NextProcess(appl.COMPANYID, appl.CREATEDBY, (int)OperationsEnum.IndividualDrawdownRequest, appl.FLOWCHANGEID, appl.LOANAPPLICATIONID, null, "New approved application", true, false);
+                context.SaveChanges();
+                return 1;
+            }
+
+            if (appl.PRODUCT_CLASS_PROCESSID == (int)ProductClassProcessEnum.ProductBased && checkListIndex == (int)ChecklistErrorEnum.NegetiveChecklist)
+            {
+                appl.PRODUCT_CLASS_PROCESSID = (int)ProductClassProcessEnum.CAMBased;
+            }
+
+            appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
+
+            int? receiverLevelId = null;
+            int operationId;
+            //var product = context.TBL_PRODUCT.Find(detail.PROPOSEDPRODUCTID);
+            //var productBahaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == detail.PROPOSEDPRODUCTID).FirstOrDefault();
+
+
+            operationId = appl.OPERATIONID; 
+            workflow.OperationId = operationId;
+            appl.OPERATIONID = operationId;
+            receiverLevelId = GetFirstReceiverLevel(staffId, operationId, appl.PRODUCTCLASSID, appl.PRODUCTID);
+            workflow.NextLevelId = receiverLevelId; 
+
+
+            workflow.StaffId = staffId;
+            workflow.TargetId = appl.LOANAPPLICATIONID;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.ProductClassId = appl.PRODUCTCLASSID;
+            workflow.ProductId = appl.PRODUCTID;
+            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workflow.Comment = "New loan application";
+            workflow.ExclusiveFlowChangeId = appl.FLOWCHANGEID;
+
+            if (workflow.LogActivity()) return 1;
+            else return 0;
+        }
+
+
+        private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID).ToList();
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId).ToList();
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
+
+            return nextLevelId;
+        }
+
+        public int AddLoanDocument(LoanDocumentViewModel model, byte[] file)
+        {
+            FinTrakBankingDocumentsContext docContext = new  FinTrakBankingDocumentsContext();
+
+            var existing = docContext.TBL_MEDIA_LOAN_DOCUMENTS
+                .Where(x => x.FILENAME == model.fileName
+                    && x.FILEEXTENSION == model.fileExtension
+                    && x.LOANREFERENCENUMBER == model.loanReferenceNumber
+                    );
+
+            if (existing.Count() > 0 && model.overwrite == false) return 3;
+
+            if (existing.Count() > 0 && model.overwrite == true)
+            {
+                docContext.TBL_MEDIA_LOAN_DOCUMENTS.RemoveRange(existing);
+            }
+
+            var data = new TBL_MEDIA_LOAN_DOCUMENTS
+            {
+                FILEDATA = file,
+                LOANAPPLICATIONNUMBER = model.loanApplicationNumber,
+                LOANREFERENCENUMBER = model.loanReferenceNumber,
+                DOCUMENTTITLE = model.documentTitle,
+                DOCUMENTTYPEID = model.documentTypeId,
+                LOAN_BOOKING_REQUESTID = model.SourceId,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                SYSTEMDATETIME = DateTime.Now,
+                PHYSICALFILENUMBER = model.physicalFileNumber,
+                PHYSICALLOCATION = model.physicalLocation,
+                ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+                CREATEDBY = (int)model.createdBy,
+            };
+
+            docContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+
+            // Audit Section ---------------------------
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+            //    STAFFID = model.createdBy,
+            //    BRANCHID = (short)model.userBranchId,
+            //    DETAIL = $"Added Loan Document with title : '{ model.documentTitle }' ",
+            //    IPADDRESS = CommonHelpers.GetLocalIpAddress(),
+            //    URL = model.applicationUrl,
+            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    DEVICENAME = CommonHelpers.GetDeviceName(),
+            //    OSNAME = CommonHelpers.FriendlyName()
+            //};
+            //this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return docContext.SaveChanges() == 0 ? 1 : 2;
         }
 
 
