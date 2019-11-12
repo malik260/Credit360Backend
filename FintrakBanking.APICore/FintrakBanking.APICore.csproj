@@ -493,13 +493,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MiddleOffice.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportDataset\PSR.cs">
-      <DependentUpon>PSR.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportDataset\PSR.designer.cs">
-      <DependentUpon>PSR.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportDataset\PSR1.Designer.cs">
+    <Compile Include="Reports\ReportDataset\PSR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>PSR.xsd</DependentUpon>
@@ -1509,11 +1503,10 @@
     </Content>
     <Content Include="Reports\ReportDataset\PSR.xsc">
       <DependentUpon>PSR.xsd</DependentUpon>
-      <SubType>Designer</SubType>
     </Content>
     <None Include="Reports\ReportDataset\PSR.xsd">
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>PSR1.Designer.cs</LastGenOutput>
+      <LastGenOutput>PSR.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
     <Content Include="Reports\ReportDataset\PSR.xss">

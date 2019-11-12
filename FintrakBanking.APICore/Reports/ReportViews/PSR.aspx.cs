@@ -91,6 +91,11 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     dsNextInspection.Name = "nextInspection";
                     ReportViewer.LocalReport.DataSources.Add(dsNextInspection);
 
+                    var image = psr.GetPsrImages(projectSiteReportId);
+                    ReportDataSource dsImage = new ReportDataSource();
+                    dsImage.Value = image;
+                    dsImage.Name = "supportImages";
+                    ReportViewer.LocalReport.DataSources.Add(dsImage);
 
                     if (psrReportTypeId == 1)
                     {
