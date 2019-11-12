@@ -147,6 +147,9 @@ namespace FintrakBanking.MonitoringMessagesSender
         {
             try
             {
+                _log.Info("");
+                _log.Info("==================================================================");
+                _log.Info("I have entered inside the method");
 
                 using (SmtpClient client = new SmtpClient())
                 {
@@ -172,10 +175,17 @@ namespace FintrakBanking.MonitoringMessagesSender
                     var listOfMails = dbContext.TBL_MESSAGE_LOG.Where(o => o.MESSAGESTATUSID == (short)MessageStatusEnum.Pending 
                     || o.MESSAGESTATUSID == (short)MessageStatusEnum.Attempted).ToList();
 
-                   if (listOfMails !=null)
+                    _log.Info("");
+                    _log.Info("==================================================================");
+                    _log.Info("LIST OF MESSAGES : " + listOfMails.Count());
+
+                    if (listOfMails !=null)
                     {
                         foreach (var newMail in listOfMails)
                         {
+                            _log.Info("");
+                            _log.Info("==================================================================");
+                            _log.Info("LIST OF MAILS : " + newMail);
 
                             MailMessage mail = new MailMessage();
 
@@ -209,15 +219,26 @@ namespace FintrakBanking.MonitoringMessagesSender
                                     }
                                 }
                             }
+                                _log.Info("");
+                                _log.Info("==================================================================");
+                                _log.Info("MESSAGESUBJECTSSSSS : " + RemoveSpecial(newMail.MESSAGESUBJECT));
+
+                                _log.Info("");
+                                _log.Info("==================================================================");
+                                _log.Info("MESSAGEBODY : " + RemoveSpecial(newMail.MESSAGEBODY));
 
                                 mail.IsBodyHtml = true;
-                                mail.Subject = newMail.MESSAGESUBJECT.Replace("\"", string.Empty);
-                                mail.Body = newMail.MESSAGEBODY.Replace("\"", string.Empty);
+                                mail.Subject = RemoveSpecial(newMail.MESSAGESUBJECT);
+                                mail.Body = RemoveSpecial(newMail.MESSAGEBODY);
                                 mailId = newMail.MESSAGEID;
 
                                 _log.Info("");
                                 _log.Info("==================================================================");
-                                _log.Info("MESSAGESUBJECT : " + newMail.MESSAGESUBJECT.Replace("\"", string.Empty));
+                                _log.Info("MESSAGESUBJECT====================== : " + RemoveSpecial(newMail.MESSAGESUBJECT));
+
+                                _log.Info("");
+                                _log.Info("==================================================================");
+                                _log.Info("MESSAGEBODY====================== : " + RemoveSpecial(newMail.MESSAGEBODY));
 
                             if (newMail.ATTACHMENTTYPEID != null)
                             {
@@ -236,8 +257,6 @@ namespace FintrakBanking.MonitoringMessagesSender
                                     }
 
                                 }
-
-
 
                                 if (newMail?.ATTACHMENTTYPEID == (short)AttachementTypeEnum.JobRequest)
                                 {
@@ -331,5 +350,21 @@ namespace FintrakBanking.MonitoringMessagesSender
 
             }
         }
+
+        public string RemoveSpecial(string evalstr)
+        {
+            StringBuilder finalstr = new StringBuilder();
+            foreach (char c in evalstr)
+            {
+                int charassci = Convert.ToInt16(c);
+                if (!(charassci >= 33 && charassci <= 47))// special char ???
+                    finalstr.Append(c);
+            }
+            return finalstr.ToString();
+        }
+
+
+
+
     }
 }

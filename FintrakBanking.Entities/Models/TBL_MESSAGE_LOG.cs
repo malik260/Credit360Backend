@@ -12,19 +12,19 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int MESSAGEID { get; set; }
 
-        [Required]
-        [StringLength(1000)]
+        //[Required]
+        //[StringLength(1000)]
         public string FROMADDRESS { get; set; }
 
-        [Required]
-        [StringLength(2000)]
+        //[Required]
+        //[StringLength(2000)]
         public string TOADDRESS { get; set; }
 
         [Required]
         public string MESSAGEBODY { get; set; }
 
-        [Required]
-        [StringLength(1000)]
+        //[Required]
+        //[StringLength(1000)]
         public string MESSAGESUBJECT { get; set; }
 
         public short MESSAGESTATUSID { get; set; }

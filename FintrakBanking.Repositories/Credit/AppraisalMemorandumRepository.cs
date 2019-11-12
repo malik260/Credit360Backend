@@ -39,7 +39,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICreditLimitValidationsRepository limitValidation;
         private IEmailAlertLogger emailLogger;
         private IOfferLetterAndAvailmentRepository offerLetter;
-        private LoanApplicationRepository loanApp;
+        private ILoanApplicationRepository loanApp;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
             ICreditLimitValidationsRepository limitValidation,
             IEmailAlertLogger _emailLogger,
             IOfferLetterAndAvailmentRepository _offerLetter,
-            LoanApplicationRepository _loanApp
+            ILoanApplicationRepository _loanApp
             )
         {
             this.context = context;
@@ -500,6 +500,7 @@ namespace FintrakBanking.Repositories.Credit
                 else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                 {
                     SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
+                    loanApp.ArchiveLoanApplication(model.applicationId, operationId);
                 }
 
                 //applid, 

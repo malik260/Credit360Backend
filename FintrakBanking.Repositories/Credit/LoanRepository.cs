@@ -2319,7 +2319,7 @@ namespace FintrakBanking.Repositories.Credit
                         proposedLimit = g.Sum(x => x.OUTSTANDINGPRINCIPAL),
                         recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                         PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
-                        PastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
+                        pastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
                         reviewDate = DateTime.Now,
                         prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
                         loanStatus = "Running"
@@ -2339,7 +2339,7 @@ namespace FintrakBanking.Repositories.Credit
                     proposedLimit = g.Sum(x => x.OVERDRAFTLIMIT),
                     recommendedLimit = g.FirstOrDefault().TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                     PastDueObligationsInterest = g.Sum(x => x.PASTDUEINTEREST),
-                    PastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
+                    pastDueObligationsPrincipal = g.Sum(x => x.PASTDUEPRINCIPAL),
                     reviewDate = DateTime.Now,
                     prudentialGuideline = g.FirstOrDefault().TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME, // ?
                     loanStatus = "Running"
@@ -2371,7 +2371,7 @@ namespace FintrakBanking.Repositories.Credit
                 proposedLimit = exposures.Sum(t => t.proposedLimit),
                 recommendedLimit = exposures.Sum(t => t.recommendedLimit),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
-                PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
+                pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
                 reviewDate = DateTime.Now,
                 prudentialGuideline = String.Empty,
                 loanStatus = String.Empty,
@@ -8778,7 +8778,7 @@ namespace FintrakBanking.Repositories.Credit
                                outstandings = a.TOTALEXPOSURE ?? 0,
                                recommendedLimit = 0,
                                //PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
+                               pastDueObligationsPrincipal = a.UNPAIDOBLIGATIONAMOUNT ?? 0,
                                reviewDate = DateTime.Now,
                                //prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                loanStatus = a.CBNCLASSIFICATION,
@@ -8861,7 +8861,7 @@ namespace FintrakBanking.Repositories.Credit
                                recommendedLimit = a.APPROVEDAMOUNT,
                                outstandings = 0,
                                PastDueObligationsInterest = 0,
-                               PastDueObligationsPrincipal = 0,
+                               pastDueObligationsPrincipal = 0,
                                reviewDate = DateTime.Now,
                                prudentialGuideline = "Processing",
                                loanStatus = "Processing",
@@ -8901,7 +8901,7 @@ namespace FintrakBanking.Repositories.Credit
                 recommendedLimit = exposures.Sum(t => t.recommendedLimit),
                 outstandings = exposures.Sum(t => t.outstandings),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
-                PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
+                pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
                 reviewDate = DateTime.Now,
             });
 
@@ -8932,7 +8932,7 @@ namespace FintrakBanking.Repositories.Credit
                                proposedLimit = a.OUTSTANDINGPRINCIPAL,
                                recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               pastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
                                reviewDate = DateTime.Now,
                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                loanStatus = "Running"
@@ -8951,7 +8951,7 @@ namespace FintrakBanking.Repositories.Credit
                                proposedLimit = a.OVERDRAFTLIMIT,
                                recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               pastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
                                reviewDate = DateTime.Now,
                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                loanStatus = "Running"
@@ -8970,7 +8970,7 @@ namespace FintrakBanking.Repositories.Credit
                                proposedLimit = a.PROPOSEDAMOUNT,
                                recommendedLimit = a.APPROVEDAMOUNT,
                                PastDueObligationsInterest = 0,
-                               PastDueObligationsPrincipal = 0,
+                               pastDueObligationsPrincipal = 0,
                                reviewDate = DateTime.Now,
                                prudentialGuideline = "Processing",
                                loanStatus = "Processing"
@@ -8986,7 +8986,7 @@ namespace FintrakBanking.Repositories.Credit
                 proposedLimit = exposures.Sum(t => t.proposedLimit),
                 recommendedLimit = exposure.Sum(t => t.recommendedLimit),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
-                PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
+                pastDueObligationsPrincipal = exposures.Sum(t => t.pastDueObligationsPrincipal),
                 reviewDate = DateTime.Now,
             });
 
