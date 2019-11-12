@@ -138,6 +138,91 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
+        public ResponseMessageViewModel FlexcubeOverDraft(FlexcubeCreateOverdraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
+        {
+            if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                if (twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+
+            }
+
+            ResponseMessage result = null;
+            // if( LogOverDraftNormal(model))
+            Task.Run(async () => result = await overDraft.FlexcubeAPIOverDraft(model)).GetAwaiter().GetResult();
+
+            if (result.Message.IsSuccessStatusCode)
+            {
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
+                {
+                    throw new SecureException(result.APIResponse.message);
+                }
+                else
+                {
+                    LogOverDraft(model);
+                    return result.APIResponse;
+                }
+            }
+            else
+            {
+                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+            }
+
+
+        }
+
+        public ResponseMessageViewModel FlexcubeCasaLien(FlexcubeLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
+        {
+            if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                if (twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+
+            }
+
+            ResponseMessage result = null;
+            // if( LogOverDraftNormal(model))
+            Task.Run(async () => result = await overDraft.FlexcubeCasaLien(model)).GetAwaiter().GetResult();
+
+            if (result.Message.IsSuccessStatusCode)
+            {
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
+                {
+                    throw new SecureException(result.APIResponse.message);
+                }
+                else
+                {
+                    //LogOverDraft(model);
+                    return result.APIResponse;
+                }
+            }
+            else
+            {
+                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+            }
+
+
+        }
+
+
         public ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
 
@@ -499,7 +584,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public PostingResult PostLoanCreationInputs(FlexcubeCreateFacilityViewModel model)
+        public PostingResult PostFacilityCreationInputs(FlexcubeCreateFacilityViewModel model)
         {
             {
                 ResponseMessage result = null;
@@ -509,7 +594,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 {
                     if (result.APIResponse.responseCode == "0")
                     {
-
                         string str = result.APIResponse.webRequestStatus;
                         str = str.Replace(":", "");
                         str = str.Replace("FAILURE", "");
@@ -532,50 +616,85 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             }
         }
-            //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
-            //{
-            //    ResponseMessage result = null;
-            //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
-
-            //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
 
 
-            //    if (result.APIResponse.responseCode == "0")
-            //    {
-            //        AddCustomTransactions(transactionLst);
-            //    }
+        public PostingResult PostLoanCreationInputs(FlexcubeCreateLoanAccountViewModel model)
+        {
+             {
+                ResponseMessage result = null;
+                Task.Run(async () => result = await transaction.ApiTransactionLoanCreationPosting(model)).GetAwaiter().GetResult();
 
-            //    return result.APIStatus;
-            //}
+                if (result.APIResponse != null)
+                {
+                    if (result.APIResponse.responseCode == "0")
+                    {
+                        string str = result.APIResponse.webRequestStatus;
+                        str = str.Replace(":", "");
+                        str = str.Replace("FAILURE", "");
+                        str = str.Replace("SUCCESS+", "");
 
-            //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
-            //{
-            //    ResponseMessage result = null;
+                        return new PostingResult { posted = true, responseCode = str.Trim() };
+                    }
+                    else
+                    {
+                        var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
 
-            //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
+                        throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
+                    }
+                }
+                else
+                {
+                    var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
+                }
 
-            //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
+            }
+        }
 
-            //    if (result.APIResponse != null)
-            //    {
-            //        if (result.APIResponse.responseCode == "0")
-            //        {
-            //            AddCustomTransactions(transactionLst);
-            //            return true;
-            //        }
-            //        else
-            //        {
-            //            throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
-            //    }
+        //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
+        //{
+        //    ResponseMessage result = null;
+        //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
 
-            //    //return result.APIStatus;
+        //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
 
-            //}
+
+        //    if (result.APIResponse.responseCode == "0")
+        //    {
+        //        AddCustomTransactions(transactionLst);
+        //    }
+
+        //    return result.APIStatus;
+        //}
+
+        //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
+        //{
+        //    ResponseMessage result = null;
+
+        //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
+
+        //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
+
+        //    if (result.APIResponse != null)
+        //    {
+        //        if (result.APIResponse.responseCode == "0")
+        //        {
+        //            AddCustomTransactions(transactionLst);
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
+        //    }
+
+        //    //return result.APIStatus;
+
+        //}
 
         public bool AddCustomerAccounts(int customerId,string customerCode)
         {
@@ -959,7 +1078,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             return result;
         }
-
+        
         private bool LogOverDraftNormal(OverDraftNormalViewModel model)
         {
             bool result = false;
@@ -993,6 +1112,42 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 // model.overdraftNormalId = data.OVERDRAFTNORMALID;
             }
             return result;
+        }
+
+        private bool LogOverDraft(FlexcubeCreateOverdraftViewModel model)
+        {
+            return true;
+            //bool result = false;
+            //var modify = context.TBL_CUSTOM_OVERDRAFTNORMAL.Find(model.overdraftNormalId);
+            //if (modify != null)
+            //{
+            //    modify.CONSUMED = true;
+            //    modify.DATETIMECONSUMED = DateTime.Now;
+            //    result = context.SaveChanges() > 0;
+            //}
+            //else
+            //{
+            //    //var data = new TBL_CUSTOM_OVERDRAFTNORMAL
+            //    //{
+            //    //    ACCOUNTNUMBER = model.accountNumber,
+            //    //    APIURL = @"api/OverDraft/Normal",
+            //    //    DATETIMECREATED = DateTime.Now,
+            //    //    EXPIRYDATE = model.expiryDate,
+            //    //    SANCTIONLIMIT = model.sanctionLimit,
+            //    //    SANCTIONREFERENCENUMBER = model.sanctionReferenceNumber,
+            //    //    APPLICATIONDATE = model.applicationDate,
+            //    //    DOCUMENTDATE = model.documentDate,
+            //    //    REVIEWEDDATE = model.reviewedDate,
+            //    //    SANCTIONAUTHORIZER = model.sanctionAuthorizer,
+            //    //    SANCTIONDATE = model.sanctionDate,
+            //    //    SANCTIONLEVEL = model.sanctionLevel,
+
+            //    //};
+            //    //context.TBL_CUSTOM_OVERDRAFTNORMAL.Add(data);
+            //    //result = context.SaveChanges() > 0;
+            //    // model.overdraftNormalId = data.OVERDRAFTNORMALID;
+            //}
+            //return result;
         }
 
         private bool LogOverDraftTopUpAndRenew(OverDraftTopUpAndRenewViewModel model)
@@ -1165,10 +1320,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return module;
         }
 
-        public void PostLoanCreationInputs(object loanCreationInputs)
-        {
-            throw new NotImplementedException();
-        }
+       
 
 
 

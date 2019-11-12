@@ -23,6 +23,7 @@ using System.Net.Http.Headers;
 using FintrakBanking.ViewModels.credit;
 using FintrakBanking.ViewModels.Setups.Credit;
 using System.Collections;
+using FintrakBanking.ViewModels.Flexcube;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -59,6 +60,7 @@ namespace FintrakBanking.Repositories.Credit
             emailLogger = _emailLogger;
             offerLetter = _offerLetter;
             loanApp = _loanApp;
+
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -561,6 +563,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Response.isFinal = generateOutPutDocument;
             return workflow.Response;
         }
+
+       
 
         public IQueryable<LoanApplicationViewModel> GetPendingAdhocApplications(int operationId, int companyId, int branchId, int staffId, int? classId)
         {

@@ -219,6 +219,8 @@ public class LienProcessViewModel //: GeneralEntity
     }
 
 
+
+
     public class BVNCustomerDetailsViewModel
     {
         public string phoneNumber { get; set; }
@@ -275,6 +277,7 @@ public class LienProcessViewModel //: GeneralEntity
         public string responseMessage { get; set; }
     }
 
+
     public class PostingResult
     {
         
@@ -297,6 +300,22 @@ public class LienProcessViewModel //: GeneralEntity
         public string valueName { get; set; }
         
     }
+
+    public class ResponseMessageOverDraftViewModel
+    {
+        public string webRequestStatus { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
+        public DateTime webRequestDate { get; set; }
+        public string responseCode { get; set; }
+        public string bo_code { get; set; }
+        public string bo_message { get; set; }
+        public string lien_id { get; set; }
+        public string response_message { get; set; }
+        public string collateral_id { get; set; }
+        // public HttpResponseMessage APIMessage { get; set; }
+        // public bool responseStatus { get; set; }
+    }
+
 
 
 }
