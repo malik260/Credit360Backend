@@ -23,6 +23,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using FinTrakBanking.ThirdPartyIntegration.StaffInfo;
     using FinTrakBanking.ThirdPartyIntegration.Basel;
     using FintrakBanking.ViewModels.Credit;
+    using FintrakBanking.ViewModels.Flexcube;
 
     public class IntegrationWithFlexcube : IIntegrationWithFinacle
     {
@@ -498,7 +499,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public PostingResult PostLoanCreationInputs(List<LoanCreationViewModel> model)
+        public PostingResult PostLoanCreationInputs(FlexcubeCreateLoanAccountViewModel model)
         {
             {
                 ResponseMessage result = null;
