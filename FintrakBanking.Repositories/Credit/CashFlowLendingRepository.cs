@@ -57,6 +57,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        #region  CUSTOMER PROFILE METHODS
         public APIResponse AddCustomer(IncomingCustomerViewModels model)
         {
            APIResponse response = new APIResponse();
@@ -193,7 +194,6 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-
         private bool saveCorporateCustomerInformation(IncomingCustomerViewModels model)
         {
             ApiCustomerBusinessDetailsViewModel corporateDetails = model.corporateCustomerInformation;
@@ -249,16 +249,6 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-
-        private APIResponse fireResponse(string message, string statusCode, string requestId)
-        {
-            APIResponse response = new APIResponse();
-            response.StatusCode = statusCode;
-            response.Message = message;
-            response.requestId = requestId;
-
-            return response;
-        }
         public bool ValidateCustomerCode(string customerCode)
         {
             bool itemExist = false;
@@ -271,6 +261,10 @@ namespace FintrakBanking.Repositories.Credit
             return itemExist;
         }
 
+        #endregion END OF CUSTOMER PROFILE METHODS
+
+
+        #region  LOAN REQUEST METHODS
         public APIResponse submitRequest(CflLoanApplication model)
         {
             APIResponse response = new APIResponse();
@@ -318,15 +312,25 @@ namespace FintrakBanking.Repositories.Credit
             loanApp.loanInformation = "<p></p>";
             loanApp.casaAccountId = casa?.CASAACCOUNTID;
             loanApp.branchId = 94;
-            //loanApp.casaAccountId = model.settlementAccount;
+
+            
 
             if(context.TBL_LOAN_APPLICATION.Any(x=>x.APIREQUESTID == model.requestId && x.DELETED != true))
             {
                 if(model.callStatusCode == "01")
                 {
                     response.requestId = model.requestId;
-                    response.StatusCode = "00";
-                    response.Message = "Success";
+                    if (UpdateLoanApplicationDetail(loanApp))
+                    {
+                        response.StatusCode = "00";
+                        response.Message = "Success";
+                    }
+                    else
+                    {
+                        response.StatusCode = "99";
+                        response.Message = "Failed!";
+                    }
+                   
                     return response;
                 }
                 else { return fireResponse("New application request Id already exist", "99", ""); }
@@ -344,15 +348,13 @@ namespace FintrakBanking.Repositories.Credit
             if (response.applicationReferenceNumber == null)
             {
                 response.StatusCode = "99";
-                response.Message = "failed!";
+                response.Message = "Failed!";
             }
             return response;
         }
 
-
         public string AddLoanApplication(LoanApplicationViewModel loan, string apiRequestId)
         {
-
            // ValidateLoanApplicationLimits(loan);
             var additionalAmount = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
             var savedDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId && c.DELETED == false).ToList();
@@ -370,11 +372,11 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loan.editMode == true )
             {
-               return UpdateLoanApplicationDetail(loan);
+                if (UpdateLoanApplicationDetail(loan)) return loan.applicationReferenceNumber;
+                else return null;
             }
 
             var loanData = context.TBL_LOAN_APPLICATION.FirstOrDefault(l => l.APPLICATIONREFERENCENUMBER == loan.applicationReferenceNumber && l.DELETED == false);
-
 
             if (savedDetails.Count() == 0 || loan.isNewApplication)
             {
@@ -384,7 +386,6 @@ namespace FintrakBanking.Repositories.Credit
                     loanData.TOTALEXPOSUREAMOUNT = cumulativeSum + additionalAmount + GetCustomerTotalOutstandingBalance((int)loan.customerId);
                     loanData.ISADHOCAPPLICATION = loan.isadhocapplication;
                     loanData.LOANAPPROVEDLIMITID = loan.loanApprovedLimitId;
-
                 }
 
                 if (loanData == null) 
@@ -399,7 +400,6 @@ namespace FintrakBanking.Repositories.Credit
                         return app.APPLICATIONREFERENCENUMBER;
                     }
                 }
-
             }
             else
             {
@@ -627,9 +627,9 @@ namespace FintrakBanking.Repositories.Credit
             return loanData;
         }
 
-        private string UpdateLoanApplicationDetail(LoanApplicationViewModel loan)
+        private bool UpdateLoanApplicationDetail(LoanApplicationViewModel loan)
         {
-            UpdateLoanApplication(loan); // update main
+            UpdateLoanApplication(loan); 
 
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
             var update = loan.LoanApplicationDetail.SingleOrDefault();
@@ -642,7 +642,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
-            detail.PROPOSEDAMOUNT = update.proposedAmount;
+            //detail.PROPOSEDAMOUNT = update.proposedAmount;
             detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
             detail.PROPOSEDPRODUCTID = update.proposedProductId;
             detail.PROPOSEDTENOR = update.proposedTenor;
@@ -660,8 +660,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var productClassId = detail.TBL_PRODUCT1.PRODUCTCLASSID;
 
-            if (context.SaveChanges() == 0) return detail.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
-            else return null;
+            return context.SaveChanges() > 0;
 
         }
 
@@ -671,12 +670,12 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
 
-            decimal totalApplicationAmount = 0; //loan.applicationAmount;
-            foreach (var item in application)
-            {
-                var exchangeValue = ((decimal)item.PROPOSEDAMOUNT * (decimal)item.EXCHANGERATE);
-                totalApplicationAmount = totalApplicationAmount + exchangeValue;
-            }
+           // decimal totalApplicationAmount = 0; 
+            //foreach (var item in application)
+            //{
+            //    var exchangeValue = ((decimal)item.PROPOSEDAMOUNT * (decimal)item.EXCHANGERATE);
+            //    totalApplicationAmount = totalApplicationAmount + exchangeValue;
+            //}
 
             var loanData = context.TBL_LOAN_APPLICATION.Find(loan.loanApplicationId);
             loanData.REQUIRECOLLATERAL = loan.requireCollateral;
@@ -690,7 +689,7 @@ namespace FintrakBanking.Repositories.Credit
             loanData.DATETIMECREATED = genSetup.GetApplicationDate();
             loanData.SYSTEMDATETIME = DateTime.Now;
             loanData.CASAACCOUNTID = loan.casaAccountId;
-            loanData.APPLICATIONAMOUNT = totalApplicationAmount;
+           // loanData.APPLICATIONAMOUNT = totalApplicationAmount;
             loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
             loanData.COLLATERALDETAIL = loan.collateralDetail;
             loanData.CAPREGIONID = loan.regionId;
@@ -702,7 +701,6 @@ namespace FintrakBanking.Repositories.Credit
             loanData.LOANSWITHOTHERS = loan.loansWithOthers;
             loanData.OWNERSHIPSTRUCTURE = loan.ownershipStructure;
         }
-
 
         public decimal GetCustomerTotalOutstandingBalance(int customerId)
         {
@@ -1005,7 +1003,6 @@ namespace FintrakBanking.Repositories.Credit
             return customer.ISPOLITICALLYEXPOSED;
         }
 
-
         private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
         {
             var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
@@ -1102,7 +1099,6 @@ namespace FintrakBanking.Repositories.Credit
             else return 0;
         }
 
-
         private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, int? productId, bool next = false)
         {
             var staff = context.TBL_STAFF.Find(staffId);
@@ -1190,6 +1186,17 @@ namespace FintrakBanking.Repositories.Credit
             return docContext.SaveChanges() == 0 ? 1 : 2;
         }
 
+        private APIResponse fireResponse(string message, string statusCode, string requestId)
+        {
+            APIResponse response = new APIResponse();
+            response.StatusCode = statusCode;
+            response.Message = message;
+            response.requestId = requestId;
+
+            return response;
+        }
+
+        #endregion END OF LOAN REQUEST METHODS
 
     }
 }

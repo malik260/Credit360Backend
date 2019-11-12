@@ -203,7 +203,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = client.PostAsync("api/OverDraft/Normal", new StringContent(
+                    response = client.PostAsync("FCUBSCreateOverdraft", new StringContent(
                         new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
                     responseDateTime = DateTime.Now;

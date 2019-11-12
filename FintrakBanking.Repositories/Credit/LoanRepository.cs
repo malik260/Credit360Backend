@@ -4049,10 +4049,11 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
+                var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
                 totalBookedAmount = (from a in context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == revolvingLoanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.OVERDRAFTLIMIT);
                 if (totalBookedAmount >= revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
                 {
-                    var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+                    
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
                 }
 
@@ -4062,11 +4063,24 @@ namespace FintrakBanking.Repositories.Credit
                     var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
                     var acctType = "DR";
 
+                    var casa = context.TBL_CASA.Find(revolvingLoanRecord.CASAACCOUNTID);
+                    var collateralMappings = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationRecord.LOANAPPLICATIONID);
+
+                    List<int> collateralCustomerIds = new List<int>();
+                    foreach (var item in collateralMappings)
+                    {
+                        collateralCustomerIds.Add(item.COLLATERALCUSTOMERID);
+                    }
+                    var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => collateralCustomerIds.Contains(x.COLLATERALCUSTOMERID));
+
+                    string collateralcodes = string.Empty;
+                    foreach(var i in collaterals) { collateralcodes = collateralcodes + i.COLLATERALCODE;  }
+
                     var model = new FlexcubeCreateOverdraftViewModel
                     {
-                        p_account_no = "" , // revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                        p_collateral_code = "", //systemDate.ToString("dd-MMM-yyyy", null), //revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                        p_collateral_value = "", //
+                        p_account_no = casa.PRODUCTACCOUNTNUMBER, 
+                        p_collateral_code = collateralcodes, 
+                        p_collateral_value = collaterals?.Sum(x=>x.COLLATERALVALUE).ToString() ?? null,
                         p_start_date = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                         p_end_date = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                         p_channel_code = "FINTRAK",
